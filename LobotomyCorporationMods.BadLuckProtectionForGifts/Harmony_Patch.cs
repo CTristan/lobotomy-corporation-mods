@@ -20,12 +20,25 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
                 var harmonyInstance = HarmonyInstance.Create("BadLuckProtectionForGifts");
                 harmonyInstance.Patch(typeof(CreatureEquipmentMakeInfo).GetMethod("GetProb", AccessTools.all), null,
                     new HarmonyMethod(typeof(Harmony_Patch).GetMethod("GetProb")));
+                harmonyInstance.Patch(typeof(UseSkill).GetMethod("FinishWorkSuccessfully", AccessTools.all),
+                    new HarmonyMethod(typeof(Harmony_Patch).GetMethod("FinishWorkSuccessfully")), null);
             }
             catch (Exception ex)
             {
                 File.WriteAllText(Application.dataPath + "/BaseMods/BadLuckProtectionForGifts_Log.txt",
                     ex.Message + Environment.NewLine + ex.StackTrace);
             }
+        }
+
+        /// <summary>
+        ///     Runs before the original FinishWorkSuccessfully method does to increment the number of times the agent
+        ///     worked on the creature.
+        /// </summary>
+        /// <param name="__instance">The UseSkill event that includes the agent data.</param>
+        public static void FinishWorkSuccessfully([NotNull] UseSkill __instance)
+        {
+            var agentId = __instance.agent.instanceId;
+            NumberOfTimesWorkedByAgent[agentId]++;
         }
 
         /// <summary>
