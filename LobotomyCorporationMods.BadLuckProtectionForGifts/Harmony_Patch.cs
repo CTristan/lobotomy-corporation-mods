@@ -42,8 +42,15 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
                 probabilityBonus += __instance.prob;
             }
 
-            probabilityBonus += NumberOfTimesWorkedByAgent[1] / 100;
+            probabilityBonus += NumberOfTimesWorkedByAgent[1] / 100f;
             __result = __instance.prob + probabilityBonus;
+
+            // Prevent potential overflow issues
+            if (__result > 1f)
+            {
+                __result = 1f;
+            }
+
             return false;
         }
     }
