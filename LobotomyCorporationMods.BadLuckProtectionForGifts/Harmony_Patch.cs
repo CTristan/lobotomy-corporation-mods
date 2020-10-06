@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Harmony;
 using JetBrains.Annotations;
@@ -7,10 +8,13 @@ using UnityEngine;
 // ReSharper disable InconsistentNaming
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts
 {
-    public class Harmony_Patch
+    public sealed class Harmony_Patch
     {
+        public static Dictionary<long, float> NumberOfTimesWorkedByAgent;
+
         public Harmony_Patch()
         {
+            NumberOfTimesWorkedByAgent = new Dictionary<long, float>();
             try
             {
                 var harmonyInstance = HarmonyInstance.Create("BadLuckProtectionForGifts");
@@ -32,9 +36,14 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         /// <returns>Always returns false so that we skip the original method entirely.</returns>
         public static bool GetProb([NotNull] CreatureEquipmentMakeInfo __instance, out float __result)
         {
-            __result = ResearchDataModel.instance.IsUpgradedAbility("add_efo_gift_prob")
-                ? __instance.prob + __instance.prob
-                : __instance.prob;
+            var probabilityBonus = 0f;
+            if (ResearchDataModel.instance.IsUpgradedAbility("add_efo_gift_prob"))
+            {
+                probabilityBonus += __instance.prob;
+            }
+
+            probabilityBonus += NumberOfTimesWorkedByAgent[1] / 100;
+            __result = __instance.prob + probabilityBonus;
             return false;
         }
     }

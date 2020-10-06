@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using LobotomyCorporationMods.BadLuckProtectionForGifts;
 using Xunit;
 
@@ -5,11 +6,26 @@ namespace LobotomyCorporationMods.Test
 {
     public class BadLuckProtectionForGiftsTests
     {
+        private const long AgentId = 1;
         private readonly CreatureEquipmentMakeInfo _creatureEquipmentMakeInfo;
 
         public BadLuckProtectionForGiftsTests()
         {
             _creatureEquipmentMakeInfo = new CreatureEquipmentMakeInfo();
+            Harmony_Patch.NumberOfTimesWorkedByAgent = new Dictionary<long, float> {{AgentId, 0f}};
+        }
+
+        [Theory]
+        [InlineData(1f)]
+        [InlineData(2f)]
+        public void ProbabilityIncreasesByOnePercentForEveryTimeAgentWorkedOnCreature(float numberOfTimes)
+        {
+            Harmony_Patch.NumberOfTimesWorkedByAgent[AgentId] = numberOfTimes;
+            _creatureEquipmentMakeInfo.prob = 0.01f;
+            var probabilityBonus = numberOfTimes / 100;
+            var expected = probabilityBonus + 0.01f;
+            Harmony_Patch.GetProb(_creatureEquipmentMakeInfo, out var actual);
+            Assert.Equal(expected, actual);
         }
 
         [Theory]
