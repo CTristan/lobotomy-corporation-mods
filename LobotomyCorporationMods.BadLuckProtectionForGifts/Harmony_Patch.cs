@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using Harmony;
 using JetBrains.Annotations;
@@ -10,18 +9,20 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
 {
     public sealed class Harmony_Patch
     {
-        public static Dictionary<long, float> NumberOfTimesWorkedByAgent;
+        public static AgentWorkTracker AgentWorkTracker;
 
         public Harmony_Patch()
         {
-            NumberOfTimesWorkedByAgent = new Dictionary<long, float>();
+            AgentWorkTracker = new AgentWorkTracker();
             try
             {
                 var harmonyInstance = HarmonyInstance.Create("BadLuckProtectionForGifts");
+                var harmonyMethod = new HarmonyMethod(typeof(Harmony_Patch).GetMethod("GetProb"));
                 harmonyInstance.Patch(typeof(CreatureEquipmentMakeInfo).GetMethod("GetProb", AccessTools.all), null,
-                    new HarmonyMethod(typeof(Harmony_Patch).GetMethod("GetProb")));
+                    harmonyMethod);
+                harmonyMethod = new HarmonyMethod(typeof(Harmony_Patch).GetMethod("FinishWorkSuccessfully"));
                 harmonyInstance.Patch(typeof(UseSkill).GetMethod("FinishWorkSuccessfully", AccessTools.all),
-                    new HarmonyMethod(typeof(Harmony_Patch).GetMethod("FinishWorkSuccessfully")), null);
+                    harmonyMethod, null);
             }
             catch (Exception ex)
             {
@@ -37,8 +38,11 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         /// <param name="__instance">The UseSkill event that includes the agent data.</param>
         public static void FinishWorkSuccessfully([NotNull] UseSkill __instance)
         {
+            var equipmentMakeInfo = __instance.targetCreature.metaInfo.equipMakeInfos.Find(x =>
+                x.equipTypeInfo.type == EquipmentTypeInfo.EquipmentType.SPECIAL);
+            var giftName = equipmentMakeInfo.equipTypeInfo.Name;
             var agentId = __instance.agent.instanceId;
-            NumberOfTimesWorkedByAgent[agentId]++;
+            AgentWorkTracker.IncrementAgentWorkCount(giftName, agentId);
         }
 
         /// <summary>
@@ -49,7 +53,9 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         /// <returns>Always returns false so that we skip the original method entirely.</returns>
         public static bool GetProb([NotNull] CreatureEquipmentMakeInfo __instance, ref float __result)
         {
-            var probabilityBonus = NumberOfTimesWorkedByAgent[1] / 100f;
+            var giftName = __instance.equipTypeInfo.Name;
+            const long agentId = 1;
+            var probabilityBonus = AgentWorkTracker.GetAgentWorkCount(giftName, agentId) / 100f;
             __result += probabilityBonus;
 
             // Prevent potential overflow issues
