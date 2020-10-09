@@ -18,7 +18,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         public Harmony_Patch()
         {
             File = new File();
-            var dataPath = Application.dataPath + @"/BaseMods/";
+            var dataPath = Application.dataPath + @"/BaseMods/BadLuckProtectionForGifts/";
             JsonFile = dataPath + "BadLuckProtectionForGifts.json";
             LogFile = dataPath + "BadLuckProtectionForGifts_Log.txt";
             AgentWorkTracker = File.ReadFromJson(JsonFile);
