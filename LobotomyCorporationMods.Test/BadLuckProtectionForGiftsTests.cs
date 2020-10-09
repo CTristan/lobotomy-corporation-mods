@@ -34,7 +34,7 @@ namespace LobotomyCorporationMods.Test
             Harmony_Patch.AgentWorkTracker = new AgentWorkTracker();
             var expected = Harmony_Patch.AgentWorkTracker.GetAgentWorkCount(GiftName, AgentId);
             Harmony_Patch.AgentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId);
-            Harmony_Patch.CallNewGame(new AlterTitleController());
+            Harmony_Patch.CallNewgame(new AlterTitleController());
             var actual = Harmony_Patch.AgentWorkTracker.GetAgentWorkCount(GiftName, AgentId);
             Assert.Equal(expected, actual);
         }

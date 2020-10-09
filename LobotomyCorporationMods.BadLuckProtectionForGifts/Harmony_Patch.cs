@@ -5,6 +5,8 @@ using LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using UnityEngine;
 
+// ReSharper disable CommentTypo
+// ReSharper disable IdentifierTypo
 // ReSharper disable InconsistentNaming
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts
 {
@@ -25,8 +27,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
             try
             {
                 var harmonyInstance = HarmonyInstance.Create("BadLuckProtectionForGifts");
-                var harmonyMethod = new HarmonyMethod(typeof(Harmony_Patch).GetMethod("CallNewGame"));
-                harmonyInstance.Patch(typeof(AlterTitleController).GetMethod("CallNewGame", AccessTools.all), null,
+                var harmonyMethod = new HarmonyMethod(typeof(Harmony_Patch).GetMethod("CallNewgame"));
+                harmonyInstance.Patch(typeof(AlterTitleController).GetMethod("CallNewgame", AccessTools.all), null,
                     harmonyMethod);
                 harmonyMethod = new HarmonyMethod(typeof(Harmony_Patch).GetMethod("GetProb"));
                 harmonyInstance.Patch(typeof(CreatureEquipmentMakeInfo).GetMethod("GetProb", AccessTools.all), null,
@@ -43,10 +45,10 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         }
 
         /// <summary>
-        ///     Runs after the original CallNewGame method does to reset our agent work when the player starts a new game.
+        ///     Runs after the original CallNewgame method does to reset our agent work when the player starts a new game.
         /// </summary>
         /// <param name="__instance">The AlterTitleController event that indicates we're starting a new game.</param>
-        public static void CallNewGame([NotNull] AlterTitleController __instance)
+        public static void CallNewgame([NotNull] AlterTitleController __instance)
         {
             AgentWorkTracker = new AgentWorkTracker();
             WriteToJson(File);
