@@ -27,6 +27,18 @@ namespace LobotomyCorporationMods.Test
             Assert.Equal(expected, actual);
         }
 
+        [Fact]
+        public void StartingANewGameResetsAgentWorkProgress()
+        {
+            Harmony_Patch.File = new FakeFile();
+            Harmony_Patch.AgentWorkTracker = new AgentWorkTracker();
+            var expected = Harmony_Patch.AgentWorkTracker.GetAgentWorkCount(GiftName, AgentId);
+            Harmony_Patch.AgentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId);
+            Harmony_Patch.CallNewGame(new AlterTitleController());
+            var actual = Harmony_Patch.AgentWorkTracker.GetAgentWorkCount(GiftName, AgentId);
+            Assert.Equal(expected, actual);
+        }
+
         [Theory]
         [InlineData(1f)]
         [InlineData(2f)]

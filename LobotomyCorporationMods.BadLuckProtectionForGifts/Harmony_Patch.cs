@@ -25,7 +25,10 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
             try
             {
                 var harmonyInstance = HarmonyInstance.Create("BadLuckProtectionForGifts");
-                var harmonyMethod = new HarmonyMethod(typeof(Harmony_Patch).GetMethod("GetProb"));
+                var harmonyMethod = new HarmonyMethod(typeof(Harmony_Patch).GetMethod("CallNewGame"));
+                harmonyInstance.Patch(typeof(AlterTitleController).GetMethod("CallNewGame", AccessTools.all), null,
+                    harmonyMethod);
+                harmonyMethod = new HarmonyMethod(typeof(Harmony_Patch).GetMethod("GetProb"));
                 harmonyInstance.Patch(typeof(CreatureEquipmentMakeInfo).GetMethod("GetProb", AccessTools.all), null,
                     harmonyMethod);
                 harmonyMethod = new HarmonyMethod(typeof(Harmony_Patch).GetMethod("FinishWorkSuccessfully"));
@@ -37,6 +40,16 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
                 WriteToLog(File, ex.Message + Environment.NewLine + ex.StackTrace);
                 throw;
             }
+        }
+
+        /// <summary>
+        ///     Runs after the original CallNewGame method does to reset our agent work when the player starts a new game.
+        /// </summary>
+        /// <param name="__instance">The AlterTitleController event that indicates we're starting a new game.</param>
+        public static void CallNewGame([NotNull] AlterTitleController __instance)
+        {
+            AgentWorkTracker = new AgentWorkTracker();
+            WriteToJson(File);
         }
 
         /// <summary>
