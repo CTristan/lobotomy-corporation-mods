@@ -1,7 +1,8 @@
 ﻿using System;
-using System.IO;
 using Harmony;
 using JetBrains.Annotations;
+using LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations;
+using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using UnityEngine;
 
 // ReSharper disable InconsistentNaming
@@ -10,10 +11,17 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
     public sealed class Harmony_Patch
     {
         public static AgentWorkTracker AgentWorkTracker;
+        public static IFile File;
+        private static string JsonFile;
+        private static string LogFile;
 
         public Harmony_Patch()
         {
-            AgentWorkTracker = new AgentWorkTracker();
+            File = new File();
+            var dataPath = Application.dataPath + @"/BaseMods/";
+            JsonFile = dataPath + "BadLuckProtectionForGifts.json";
+            LogFile = dataPath + "BadLuckProtectionForGifts_Log.txt";
+            AgentWorkTracker = File.ReadFromJson(JsonFile);
             try
             {
                 var harmonyInstance = HarmonyInstance.Create("BadLuckProtectionForGifts");
@@ -26,8 +34,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
             }
             catch (Exception ex)
             {
-                File.WriteAllText(Application.dataPath + "/BaseMods/BadLuckProtectionForGifts_Log.txt",
-                    ex.Message + Environment.NewLine + ex.StackTrace);
+                WriteToLog(File, ex.Message + Environment.NewLine + ex.StackTrace);
+                throw;
             }
         }
 
@@ -43,6 +51,26 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
             var giftName = equipmentMakeInfo.equipTypeInfo.Name;
             var agentId = __instance.agent.instanceId;
             AgentWorkTracker.IncrementAgentWorkCount(giftName, agentId);
+            WriteToJson(File);
+        }
+
+        /// <summary>
+        ///     Writes the AgentWorkTracker to a json file.
+        /// </summary>
+        /// <param name="file">The file interface.</param>
+        private static void WriteToJson([NotNull] IFile file)
+        {
+            file.WriteToJson(JsonFile, AgentWorkTracker);
+        }
+
+        /// <summary>
+        ///     Writes to a log file.
+        /// </summary>
+        /// <param name="file">The file interface.</param>
+        /// <param name="message">The message to log.</param>
+        private static void WriteToLog([NotNull] IFile file, string message)
+        {
+            file.WriteAllText(LogFile, message);
         }
 
         /// <summary>

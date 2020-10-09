@@ -8,19 +8,15 @@ namespace LobotomyCorporationMods.Test
     {
         private const long AgentId = 1;
         private const string GiftName = "Test";
-        private readonly CreatureEquipmentMakeInfo _creatureEquipmentMakeInfo;
-        private readonly UseSkill _useSkill;
-
-        public BadLuckProtectionForGiftsTests()
-        {
-            _creatureEquipmentMakeInfo = new FakeCreatureEquipmentMakeInfo(GiftName);
-            _useSkill = new FakeUseSkill(GiftName, AgentId);
-            Harmony_Patch.AgentWorkTracker = new AgentWorkTracker();
-        }
+        private CreatureEquipmentMakeInfo _creatureEquipmentMakeInfo;
+        private UseSkill _useSkill;
 
         [Fact]
         public void ProbabilityBonusDoesNotCauseProbabilityToGoOverOneHundredPercent()
         {
+            _creatureEquipmentMakeInfo = new FakeCreatureEquipmentMakeInfo(GiftName);
+            Harmony_Patch.AgentWorkTracker = new AgentWorkTracker();
+
             // 101 times worked would equal 101% bonus normally
             Harmony_Patch.AgentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId, 101f);
 
@@ -36,7 +32,10 @@ namespace LobotomyCorporationMods.Test
         [InlineData(2f)]
         public void ProbabilityIncreasesByOnePercentForEveryTimeAgentWorkedOnCreature(float numberOfTimes)
         {
+            Harmony_Patch.File = new FakeFile();
+            Harmony_Patch.AgentWorkTracker = new AgentWorkTracker();
             Harmony_Patch.AgentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId, numberOfTimes);
+            _creatureEquipmentMakeInfo = new FakeCreatureEquipmentMakeInfo(GiftName);
             var expected = numberOfTimes / 100f;
             var actual = 0f;
             Harmony_Patch.GetProb(_creatureEquipmentMakeInfo, ref actual);
@@ -46,6 +45,9 @@ namespace LobotomyCorporationMods.Test
         [Fact]
         public void WorkingOnCreatureIncreasesNumberOfTimesWorkedForThatAgent()
         {
+            _useSkill = new FakeUseSkill(GiftName, AgentId);
+            Harmony_Patch.File = new FakeFile();
+            Harmony_Patch.AgentWorkTracker = new AgentWorkTracker();
             var expected = Harmony_Patch.AgentWorkTracker.GetAgentWorkCount(GiftName, AgentId) + 1;
             Harmony_Patch.FinishWorkSuccessfully(_useSkill);
             var actual = Harmony_Patch.AgentWorkTracker.GetAgentWorkCount(GiftName, AgentId);
