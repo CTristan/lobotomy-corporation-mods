@@ -1,40 +1,17 @@
 ﻿using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
-using UnityEngine;
 
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
 {
     internal sealed class File : IFile
     {
-        private readonly object _jsonLock = new object();
-
-        public AgentWorkTracker ReadFromJson([NotNull] string path)
-        {
-            if (!System.IO.File.Exists(path))
-            {
-                var tracker = new AgentWorkTracker();
-                WriteToJson(path, tracker);
-                return tracker;
-            }
-
-            lock (_jsonLock)
-            {
-                var json = System.IO.File.ReadAllText(path);
-                return JsonUtility.FromJson<AgentWorkTracker>(json);
-            }
-        }
+        private readonly object _fileLock = new object();
 
         public void WriteAllText([NotNull] string path, string contents)
         {
-            System.IO.File.WriteAllText(path, contents);
-        }
-
-        public void WriteToJson([NotNull] string path, object obj)
-        {
-            lock (_jsonLock)
+            lock (_fileLock)
             {
-                var json = JsonUtility.ToJson(obj);
-                WriteAllText(path, json);
+                System.IO.File.WriteAllText(path, contents);
             }
         }
     }

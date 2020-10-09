@@ -14,16 +14,16 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
     {
         public static AgentWorkTracker AgentWorkTracker;
         public static IFile File;
-        private static string JsonFile;
         private static string LogFile;
+        private static string TrackerFile;
 
         public Harmony_Patch()
         {
             File = new File();
             var dataPath = Application.dataPath + @"/BaseMods/BadLuckProtectionForGifts/";
-            JsonFile = dataPath + "BadLuckProtectionForGifts.json";
+            TrackerFile = dataPath + "BadLuckProtectionForGifts.json";
             LogFile = dataPath + "BadLuckProtectionForGifts_Log.txt";
-            AgentWorkTracker = File.ReadFromJson(JsonFile);
+            //AgentWorkTracker = File.ReadFromJson(JsonFile);
             try
             {
                 var harmonyInstance = HarmonyInstance.Create("BadLuckProtectionForGifts");
@@ -51,7 +51,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         public static void CallNewgame([NotNull] AlterTitleController __instance)
         {
             AgentWorkTracker = new AgentWorkTracker();
-            WriteToJson(File);
+            SaveTracker(File);
         }
 
         /// <summary>
@@ -66,26 +66,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
             var giftName = equipmentMakeInfo.equipTypeInfo.Name;
             var agentId = __instance.agent.instanceId;
             AgentWorkTracker.IncrementAgentWorkCount(giftName, agentId);
-            WriteToJson(File);
-        }
-
-        /// <summary>
-        ///     Writes the AgentWorkTracker to a json file.
-        /// </summary>
-        /// <param name="file">The file interface.</param>
-        private static void WriteToJson([NotNull] IFile file)
-        {
-            file.WriteToJson(JsonFile, AgentWorkTracker);
-        }
-
-        /// <summary>
-        ///     Writes to a log file.
-        /// </summary>
-        /// <param name="file">The file interface.</param>
-        /// <param name="message">The message to log.</param>
-        private static void WriteToLog([NotNull] IFile file, string message)
-        {
-            file.WriteAllText(LogFile, message);
+            SaveTracker(File);
         }
 
         /// <summary>
@@ -106,6 +87,25 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
             {
                 __result = 1f;
             }
+        }
+
+        /// <summary>
+        ///     Writes the AgentWorkTracker to a json file.
+        /// </summary>
+        /// <param name="file">The file interface.</param>
+        private static void SaveTracker([NotNull] IFile file)
+        {
+            file.WriteAllText(TrackerFile, AgentWorkTracker.ToString());
+        }
+
+        /// <summary>
+        ///     Writes to a log file.
+        /// </summary>
+        /// <param name="file">The file interface.</param>
+        /// <param name="message">The message to log.</param>
+        private static void WriteToLog([NotNull] IFile file, string message)
+        {
+            file.WriteAllText(LogFile, message);
         }
     }
 }

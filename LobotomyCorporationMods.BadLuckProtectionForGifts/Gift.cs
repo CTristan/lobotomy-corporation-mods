@@ -4,13 +4,13 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
 {
     internal sealed class Gift
     {
-        public Gift(string giftName)
+        internal Gift(string giftName)
         {
-            Name = giftName;
             Agents = new List<Agent>();
+            Name = giftName;
         }
 
-        public string Name { get; }
-        public List<Agent> Agents { get; }
+        internal List<Agent> Agents { get; }
+        internal string Name { get; }
     }
 }
