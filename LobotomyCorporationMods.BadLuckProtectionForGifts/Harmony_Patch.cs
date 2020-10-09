@@ -94,7 +94,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         /// <param name="__instance">The gift being returned from the creature.</param>
         /// <param name="__result">The probability of getting the gift.</param>
         /// <returns>Always returns false so that we skip the original method entirely.</returns>
-        public static bool GetProb([NotNull] CreatureEquipmentMakeInfo __instance, ref float __result)
+        public static void GetProb([NotNull] CreatureEquipmentMakeInfo __instance, ref float __result)
         {
             var giftName = __instance.equipTypeInfo.Name;
             const long agentId = 1;
@@ -106,8 +106,6 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
             {
                 __result = 1f;
             }
-
-            return false;
         }
     }
 }
