@@ -10,6 +10,13 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
 
         public AgentWorkTracker ReadFromJson([NotNull] string path)
         {
+            if (!System.IO.File.Exists(path))
+            {
+                var tracker = new AgentWorkTracker();
+                WriteToJson(path, tracker);
+                return tracker;
+            }
+
             lock (_jsonLock)
             {
                 var json = System.IO.File.ReadAllText(path);
