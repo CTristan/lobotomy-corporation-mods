@@ -30,12 +30,14 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
                 var harmonyMethod = new HarmonyMethod(typeof(Harmony_Patch).GetMethod("CallNewgame"));
                 harmonyInstance.Patch(typeof(AlterTitleController).GetMethod("CallNewgame", AccessTools.all), null,
                     harmonyMethod);
-                harmonyMethod = new HarmonyMethod(typeof(Harmony_Patch).GetMethod("GetProb"));
-                harmonyInstance.Patch(typeof(CreatureEquipmentMakeInfo).GetMethod("GetProb", AccessTools.all), null,
+                harmonyInstance.Patch(typeof(NewTitleScript).GetMethod("ClickAfterNewGame", AccessTools.all), null,
                     harmonyMethod);
                 harmonyMethod = new HarmonyMethod(typeof(Harmony_Patch).GetMethod("FinishWorkSuccessfully"));
                 harmonyInstance.Patch(typeof(UseSkill).GetMethod("FinishWorkSuccessfully", AccessTools.all),
                     harmonyMethod, null);
+                harmonyMethod = new HarmonyMethod(typeof(Harmony_Patch).GetMethod("GetProb"));
+                harmonyInstance.Patch(typeof(CreatureEquipmentMakeInfo).GetMethod("GetProb", AccessTools.all), null,
+                    harmonyMethod);
             }
             catch (Exception ex)
             {
