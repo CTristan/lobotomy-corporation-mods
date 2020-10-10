@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
 
+// ReSharper disable CommentTypo
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts
 {
     public sealed class AgentWorkTracker
@@ -14,6 +15,30 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         }
 
         private List<Gift> Gifts { get; }
+
+        /// <summary>
+        ///     Loads the tracker data from our custom text file.
+        /// </summary>
+        /// <param name="trackerData">The contents of our text file.</param>
+        /// <returns>Loaded AgentWorkTracker object.</returns>
+        [NotNull]
+        public static AgentWorkTracker FromString([NotNull] string trackerData)
+        {
+            var tracker = new AgentWorkTracker();
+            var gifts = trackerData.Split('|');
+            foreach (var gift in gifts)
+            {
+                var giftData = gift.Split('^');
+                var giftName = giftData[0];
+                for (var i = 1; i < giftData.Length; i++)
+                {
+                    var agentData = giftData[i].Split(';');
+                    tracker.IncrementAgentWorkCount(giftName, long.Parse(agentData[0]), float.Parse(agentData[1]));
+                }
+            }
+
+            return tracker;
+        }
 
         [CanBeNull]
         private Agent GetAgent(string giftName, long agentId)
@@ -58,6 +83,13 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
             }
         }
 
+        /// <summary>
+        ///     Converts the AgentWorkTracker object to a custom string format. The format delimits gifts by '|', agents for each
+        ///     gift by '^', and agent id and work count are separated by ';'. A gift can have multiple agents and we don't
+        ///     duplicate the gift names.
+        ///     Example: (gift1)^(agent1);(workcount1)^(agent2);(workcount2)|(gift2)^(agent1);(workcount2)
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             var builder = new StringBuilder();

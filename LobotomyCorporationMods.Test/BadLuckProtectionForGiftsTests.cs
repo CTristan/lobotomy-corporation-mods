@@ -48,6 +48,19 @@ namespace LobotomyCorporationMods.Test
             Assert.Equal(expected, actual);
         }
 
+        [Theory]
+        [InlineData("Test^1;1")]
+        [InlineData("Test^1;1^2;2", GiftName, 2, 2f)]
+        [InlineData("Test^1;1^2;2|Second^1;3", "Second", 1, 3f)]
+        public void LoadingDataFromSavedTrackerPopulatesAValidAgentWorkTracker(string trackerData,
+            string giftName = GiftName, long agentId = AgentId, float numberOfTimes = 1f)
+        {
+            Harmony_Patch.AgentWorkTracker = AgentWorkTracker.FromString(trackerData);
+            var tracker = Harmony_Patch.AgentWorkTracker;
+            var expected = numberOfTimes;
+            Assert.Equal(expected, tracker.GetAgentWorkCount(giftName, agentId));
+        }
+
         [Fact]
         public void ProbabilityBonusDoesNotCauseProbabilityToGoOverOneHundredPercent()
         {

@@ -21,9 +21,9 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         {
             File = new File();
             var dataPath = Application.dataPath + @"/BaseMods/BadLuckProtectionForGifts/";
-            TrackerFile = dataPath + "BadLuckProtectionForGifts.json";
+            TrackerFile = dataPath + "BadLuckProtectionForGifts.dat";
             LogFile = dataPath + "BadLuckProtectionForGifts_Log.txt";
-            //AgentWorkTracker = File.ReadFromJson(JsonFile);
+            AgentWorkTracker = AgentWorkTracker.FromString(File.ReadAllText(TrackerFile));
             try
             {
                 var harmonyInstance = HarmonyInstance.Create("BadLuckProtectionForGifts");
@@ -90,7 +90,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         }
 
         /// <summary>
-        ///     Writes the AgentWorkTracker to a json file.
+        ///     Writes the AgentWorkTracker to a text file.
         /// </summary>
         /// <param name="file">The file interface.</param>
         private static void SaveTracker([NotNull] IFile file)

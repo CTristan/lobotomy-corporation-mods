@@ -7,6 +7,20 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
     {
         private readonly object _fileLock = new object();
 
+        [NotNull]
+        public string ReadAllText([NotNull] string path)
+        {
+            if (!System.IO.File.Exists(path))
+            {
+                return string.Empty;
+            }
+
+            lock (_fileLock)
+            {
+                return System.IO.File.ReadAllText(path);
+            }
+        }
+
         public void WriteAllText([NotNull] string path, string contents)
         {
             lock (_fileLock)
