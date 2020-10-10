@@ -38,6 +38,12 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
                 harmonyMethod = new HarmonyMethod(typeof(Harmony_Patch).GetMethod("GetProb"));
                 harmonyInstance.Patch(typeof(CreatureEquipmentMakeInfo).GetMethod("GetProb", AccessTools.all), null,
                     harmonyMethod);
+                harmonyMethod = new HarmonyMethod(typeof(Harmony_Patch).GetMethod("OnClickNextDay"));
+                harmonyInstance.Patch(typeof(GameSceneController).GetMethod("OnClickNextDay", AccessTools.all), null,
+                    harmonyMethod);
+                harmonyMethod = new HarmonyMethod(typeof(Harmony_Patch).GetMethod("OnStageStart"));
+                harmonyInstance.Patch(typeof(GameSceneController).GetMethod("OnStageStart", AccessTools.all), null,
+                    harmonyMethod);
             }
             catch (Exception ex)
             {
@@ -68,7 +74,6 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
             var giftName = equipmentMakeInfo.equipTypeInfo.Name;
             var agentId = __instance.agent.instanceId;
             AgentWorkTracker.IncrementAgentWorkCount(giftName, agentId);
-            SaveTracker(File);
         }
 
         /// <summary>
@@ -89,6 +94,26 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
             {
                 __result = 1f;
             }
+        }
+
+        /// <summary>
+        ///     Runs after the original OnClickNextDay method to save our tracker progress. We only save when going to the next
+        ///     day because it doesn't make sense that an agent would remember their creature experience if the day is reset.
+        /// </summary>
+        /// <param name="__instance">The GameSceneController instance.</param>
+        public static void OnClickNextDay([NotNull] GameSceneController __instance)
+        {
+            SaveTracker(File);
+        }
+
+        /// <summary>
+        ///     Runs after the original OnStageStart method to reset our tracker progress. We reset the progress on restart
+        ///     because it doesn't make sense that an agent would remember their creature experience if the day is reset.
+        /// </summary>
+        /// <param name="__instance">The GlobalGameManager instance.</param>
+        public static void OnStageStart([NotNull] GameSceneController __instance)
+        {
+            AgentWorkTracker = AgentWorkTracker.FromString(File.ReadAllText(TrackerFile));
         }
 
         /// <summary>
