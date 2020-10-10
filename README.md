@@ -1,5 +1,5 @@
 # Lobotomy Corporation Mods
-Mods for the game [Lobotomy Corporation](https://store.steampowered.com/app/568220/Lobotomy_Corporation__Monster_Management_Simulation/).
+Mods for the game [Lobotomy Corporation](https://store.steampowered.com/app/568220/Lobotomy_Corporation__Monster_Management_Simulation/). They are designed to be used either together or individually, so feel free to pick and choose.
 
 ## List of mods
 ### Bad Luck Protection for Gifts
