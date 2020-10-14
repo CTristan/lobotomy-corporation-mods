@@ -1,11 +1,10 @@
 ﻿using JetBrains.Annotations;
-using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 
-namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
+namespace LobotomyCorporationMods.BadLuckProtectionForGifts
 {
     internal sealed class File : IFile
     {
-        private readonly object _fileLock = new object();
+        [NotNull] private readonly object _fileLock = new object();
 
         [NotNull]
         public string ReadAllText([NotNull] string path)
@@ -21,7 +20,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
             }
         }
 
-        public void WriteAllText([NotNull] string path, string contents)
+        public void WriteAllText([NotNull] string path, [NotNull] string contents)
         {
             lock (_fileLock)
             {
