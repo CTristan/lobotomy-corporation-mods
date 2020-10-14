@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -14,7 +15,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
             Gifts = new List<Gift>();
         }
 
-        private List<Gift> Gifts { get; }
+        [NotNull] private List<Gift> Gifts { get; }
 
         /// <summary>
         ///     Loads the tracker data from our custom text file.
@@ -40,47 +41,31 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
             return tracker;
         }
 
-        [CanBeNull]
-        private Agent GetAgent(string giftName, long agentId)
+        [NotNull]
+        private Agent GetAgent([NotNull] string giftName, long agentId)
         {
-            var gift = Gifts.FirstOrDefault(g => g.Name.Equals(giftName));
+            var gift = Gifts.FirstOrDefault(g => g?.Name.Equals(giftName) == true);
             if (gift != null)
             {
-                var agent = gift.Agents.FirstOrDefault(a => a.Id.Equals(agentId));
-                if (agent != null)
-                {
-                    return agent;
-                }
-
-                gift.Agents.Add(new Agent(agentId));
-                return gift.Agents.Find(a => a.Id == agentId);
+                return gift.GetOrAddAgent(agentId);
             }
 
             // Gift not found, start tracking the gift
-            Gifts.Add(new Gift(giftName));
-            gift = Gifts.Find(g => g.Name.Equals(giftName));
-            gift.Agents.Add(new Agent(agentId));
-            return gift.Agents.Find(a => a.Id == agentId);
+            gift = new Gift(giftName);
+            Gifts.Add(gift);
+            return gift.GetOrAddAgent(agentId);
         }
 
-        public float GetAgentWorkCount(string giftName, long agentId)
+        public float GetAgentWorkCount([NotNull] string giftName, long agentId)
         {
             var agent = GetAgent(giftName, agentId);
-            if (agent == null)
-            {
-                return 0;
-            }
-
             return agent.WorkCount;
         }
 
-        public void IncrementAgentWorkCount(string giftName, long agentId, float numberOfTimes = 1f)
+        public void IncrementAgentWorkCount([NotNull] string giftName, long agentId, float numberOfTimes = 1f)
         {
             var agent = GetAgent(giftName, agentId);
-            if (agent != null)
-            {
-                agent.WorkCount += numberOfTimes;
-            }
+            agent.WorkCount += numberOfTimes;
         }
 
         /// <summary>
@@ -97,7 +82,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
             var builder = new StringBuilder();
             for (var i = 0; i < Gifts.Count; i++)
             {
-                var gift = Gifts[i];
+                var gift = Gifts[i] ?? throw new NullReferenceException(nameof(Gifts));
                 if (i > 0)
                 {
                     builder.Append('|');
@@ -106,7 +91,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
                 builder.Append(gift.Name);
                 foreach (var agent in gift.Agents)
                 {
-                    builder.Append("^" + agent.Id + ";" + agent.WorkCount.ToString(CultureInfo.InvariantCulture));
+                    builder.Append("^" + agent?.Id + ";" + agent?.WorkCount.ToString(CultureInfo.InvariantCulture));
                 }
             }
 

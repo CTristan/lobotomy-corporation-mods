@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts;
 using LobotomyCorporationMods.Test.Fakes;
 using Xunit;
@@ -11,7 +12,7 @@ namespace LobotomyCorporationMods.Test
         private const long AgentId = 1;
         private const string GiftName = "Test";
 
-        private static void IncrementAgentWorkCount(string giftName = GiftName, long agentId = AgentId,
+        private static void IncrementAgentWorkCount([NotNull] string giftName = GiftName, long agentId = AgentId,
             float numberOfTimes = 1f)
         {
             Harmony_Patch.AgentWorkTracker = new AgentWorkTracker();
@@ -52,8 +53,8 @@ namespace LobotomyCorporationMods.Test
         [InlineData("Test^1;1")]
         [InlineData("Test^1;1^2;2", GiftName, 2, 2f)]
         [InlineData("Test^1;1^2;2|Second^1;3", "Second", 1, 3f)]
-        public void LoadingDataFromSavedTrackerPopulatesAValidAgentWorkTracker(string trackerData,
-            string giftName = GiftName, long agentId = AgentId, float numberOfTimes = 1f)
+        public void LoadingDataFromSavedTrackerPopulatesAValidAgentWorkTracker([NotNull] string trackerData,
+            [NotNull] string giftName = GiftName, long agentId = AgentId, float numberOfTimes = 1f)
         {
             Harmony_Patch.AgentWorkTracker = AgentWorkTracker.FromString(trackerData);
             var tracker = Harmony_Patch.AgentWorkTracker;

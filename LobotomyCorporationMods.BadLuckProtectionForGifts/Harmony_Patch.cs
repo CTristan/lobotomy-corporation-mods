@@ -1,8 +1,6 @@
 ﻿using System;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations;
-using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using UnityEngine;
 
 // ReSharper disable CommentTypo
@@ -12,7 +10,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
 {
     public sealed class Harmony_Patch
     {
-        public static AgentWorkTracker AgentWorkTracker;
+        [NotNull] public static AgentWorkTracker AgentWorkTracker = new AgentWorkTracker();
         public static IFile File;
         private static string LogFile;
         private static string TrackerFile;
@@ -23,10 +21,15 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
             var dataPath = Application.dataPath + @"/BaseMods/BadLuckProtectionForGifts/";
             TrackerFile = dataPath + "BadLuckProtectionForGifts.dat";
             LogFile = dataPath + "BadLuckProtectionForGifts_Log.txt";
-            AgentWorkTracker = AgentWorkTracker.FromString(File.ReadAllText(TrackerFile));
+            AgentWorkTracker = AgentWorkTracker.FromString(File.ReadAllText(TrackerFile) ?? string.Empty);
             try
             {
                 var harmonyInstance = HarmonyInstance.Create("BadLuckProtectionForGifts");
+                if (harmonyInstance is null)
+                {
+                    throw new NullReferenceException(nameof(harmonyInstance));
+                }
+
                 var harmonyMethod = new HarmonyMethod(typeof(Harmony_Patch).GetMethod("CallNewgame"));
                 harmonyInstance.Patch(typeof(AlterTitleController).GetMethod("CallNewgame", AccessTools.all), null,
                     harmonyMethod);
@@ -56,10 +59,11 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         ///     Runs after the original CallNewgame method does to reset our agent work when the player starts a new game.
         /// </summary>
         /// <param name="__instance">The AlterTitleController event that indicates we're starting a new game.</param>
+        // ReSharper disable once UnusedParameter.Global
         public static void CallNewgame([NotNull] AlterTitleController __instance)
         {
             AgentWorkTracker = new AgentWorkTracker();
-            SaveTracker(File);
+            SaveTracker(File ?? throw new NullReferenceException(nameof(File)));
         }
 
         /// <summary>
@@ -69,10 +73,17 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         /// <param name="__instance">The UseSkill event that includes the agent data.</param>
         public static void FinishWorkSuccessfully([NotNull] UseSkill __instance)
         {
-            var equipmentMakeInfo = __instance.targetCreature.metaInfo.equipMakeInfos.Find(x =>
-                x.equipTypeInfo.type == EquipmentTypeInfo.EquipmentType.SPECIAL);
+            var equipmentMakeInfo = __instance.targetCreature?.metaInfo?.equipMakeInfos?.Find(x =>
+                x?.equipTypeInfo?.type == EquipmentTypeInfo.EquipmentType.SPECIAL);
+
+            // If the creature has no gift it returns null
+            if (equipmentMakeInfo?.equipTypeInfo?.Name is null)
+            {
+                return;
+            }
+
             var giftName = equipmentMakeInfo.equipTypeInfo.Name;
-            var agentId = __instance.agent.instanceId;
+            var agentId = __instance.agent?.instanceId ?? 0;
             AgentWorkTracker.IncrementAgentWorkCount(giftName, agentId);
         }
 
@@ -84,7 +95,14 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         /// <returns>Always returns false so that we skip the original method entirely.</returns>
         public static void GetProb([NotNull] CreatureEquipmentMakeInfo __instance, ref float __result)
         {
-            var giftName = __instance.equipTypeInfo.Name;
+            var giftName = __instance.equipTypeInfo?.Name;
+
+            // If creature has no gift then giftName will be null
+            if (giftName is null)
+            {
+                return;
+            }
+
             const long agentId = 1;
             var probabilityBonus = AgentWorkTracker.GetAgentWorkCount(giftName, agentId) / 100f;
             __result += probabilityBonus;
@@ -101,9 +119,11 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         ///     day because it doesn't make sense that an agent would remember their creature experience if the day is reset.
         /// </summary>
         /// <param name="__instance">The GameSceneController instance.</param>
+        // ReSharper disable once UnusedMember.Global
+        // ReSharper disable once UnusedParameter.Global
         public static void OnClickNextDay([NotNull] GameSceneController __instance)
         {
-            SaveTracker(File);
+            SaveTracker(File ?? throw new NullReferenceException(nameof(File)));
         }
 
         /// <summary>
@@ -111,9 +131,13 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         ///     because it doesn't make sense that an agent would remember their creature experience if the day is reset.
         /// </summary>
         /// <param name="__instance">The GlobalGameManager instance.</param>
+        // ReSharper disable once UnusedMember.Global
+        // ReSharper disable once UnusedParameter.Global
         public static void OnStageStart([NotNull] GameSceneController __instance)
         {
-            AgentWorkTracker = AgentWorkTracker.FromString(File.ReadAllText(TrackerFile));
+            AgentWorkTracker =
+                AgentWorkTracker.FromString(File?.ReadAllText(TrackerFile) ??
+                                            throw new NullReferenceException(nameof(File)));
         }
 
         /// <summary>
@@ -130,7 +154,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         /// </summary>
         /// <param name="file">The file interface.</param>
         /// <param name="message">The message to log.</param>
-        private static void WriteToLog([NotNull] IFile file, string message)
+        private static void WriteToLog([NotNull] IFile file, [NotNull] string message)
         {
             file.WriteAllText(LogFile, message);
         }

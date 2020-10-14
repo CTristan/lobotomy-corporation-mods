@@ -1,4 +1,4 @@
-﻿namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces
+﻿namespace LobotomyCorporationMods.BadLuckProtectionForGifts
 {
     public interface IFile
     {
