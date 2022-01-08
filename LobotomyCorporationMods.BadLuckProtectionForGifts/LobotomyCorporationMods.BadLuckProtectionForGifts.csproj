@@ -1,9 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
+    <OutputPath>bin\</OutputPath>
+    <OutputType>Library</OutputType>
+    <ProjectGuid>{19D3E31B-FA1A-4C4C-A747-CD060FA9937F}</ProjectGuid>
+    <RuntimeIdentifiers>win</RuntimeIdentifiers>
     <TargetFramework>net35</TargetFramework>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
-
   <ItemGroup>
     <Reference Include="0Harmony, Version=1.0.9.1, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\..\Managed\0Harmony.dll</HintPath>
@@ -246,5 +250,13 @@
       <Private>False</Private>
     </Reference>
   </ItemGroup>
-
+  <ItemGroup>
+    <Compile Include="Agent.cs" />
+    <Compile Include="AgentWorkTracker.cs" />
+    <Compile Include="Gift.cs" />
+    <Compile Include="Harmony_Patch.cs" />
+    <Compile Include="Implementations\File.cs" />
+    <Compile Include="Interfaces\IFile.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

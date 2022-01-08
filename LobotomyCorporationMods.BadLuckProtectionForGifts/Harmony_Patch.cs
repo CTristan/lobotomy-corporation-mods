@@ -25,7 +25,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
             try
             {
                 var harmonyInstance = HarmonyInstance.Create("BadLuckProtectionForGifts");
-                if (harmonyInstance is null)
+                if (harmonyInstance == null)
                 {
                     throw new NullReferenceException(nameof(harmonyInstance));
                 }
@@ -77,7 +77,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
                 x?.equipTypeInfo?.type == EquipmentTypeInfo.EquipmentType.SPECIAL);
 
             // If the creature has no gift it returns null
-            if (equipmentMakeInfo?.equipTypeInfo?.Name is null)
+            if (equipmentMakeInfo?.equipTypeInfo?.Name == null)
             {
                 return;
             }
@@ -98,7 +98,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
             var giftName = __instance.equipTypeInfo?.Name;
 
             // If creature has no gift then giftName will be null
-            if (giftName is null)
+            if (giftName == null)
             {
                 return;
             }
