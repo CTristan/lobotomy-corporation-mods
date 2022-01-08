@@ -1,5 +1,7 @@
 # Lobotomy Corporation Mods
-Mods for the game [Lobotomy Corporation](https://store.steampowered.com/app/568220/Lobotomy_Corporation__Monster_Management_Simulation/). They are designed to be used either together or individually, so feel free to pick and choose. Requires [Basemod](https://www.nexusmods.com/lobotomycorporation/mods/2) to be installed.
+Mods for the game [Lobotomy Corporation](https://store.steampowered.com/app/568220/Lobotomy_Corporation__Monster_Management_Simulation/). They are designed to be used either together or individually, so feel free to pick and choose.
+
+Requires [Basemod](https://www.nexusmods.com/lobotomycorporation/mods/2) to be installed.
 
 ## List of mods
 ### Bad Luck Protection for Gifts
@@ -7,6 +9,8 @@ A mod that provides increasing bad luck protection for agents that work on abnor
 
 ## Building
 The original game files are required which are not provided. My current environment setup is a "src" folder in the BaseMods folder that I placed the repo in, so my folder structure for the repo is LobotomyCorp_Data/BaseMods/src/lobotomy-corporation-mods. If you follow this same structure then the references should use the game's files and will build the output to the appropriate BaseMod folder e.g. LobotomyCorp_Data/BaseMods/LobotomyCorporationMods.BadLuckProtectionForGifts.
+
+If you're running Linux, make sure mono-devel is installed. You should be able to open the solution in VSCode or VSCodium and build with xbuild.
 
 ## License
 
