@@ -1,7 +1,8 @@
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts;
 using LobotomyCorporationMods.Test.Fakes;
 using Xunit;
+using Xunit.Extensions;
 
 namespace LobotomyCorporationMods.Test
 {
@@ -50,11 +51,11 @@ namespace LobotomyCorporationMods.Test
         }
 
         [Theory]
-        [InlineData("Test^1;1")]
+        [InlineData("Test^1;1", GiftName, AgentId, 1f)]
         [InlineData("Test^1;1^2;2", GiftName, 2, 2f)]
         [InlineData("Test^1;1^2;2|Second^1;3", "Second", 1, 3f)]
         public void LoadingDataFromSavedTrackerPopulatesAValidAgentWorkTracker([NotNull] string trackerData,
-            [NotNull] string giftName = GiftName, long agentId = AgentId, float numberOfTimes = 1f)
+            [NotNull] string giftName, long agentId, float numberOfTimes)
         {
             Harmony_Patch.AgentWorkTracker = AgentWorkTracker.FromString(trackerData);
             var tracker = Harmony_Patch.AgentWorkTracker;

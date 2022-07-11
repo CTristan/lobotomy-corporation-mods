@@ -7,6 +7,9 @@
     <RuntimeIdentifiers>win</RuntimeIdentifiers>
     <TargetFramework>net35</TargetFramework>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+    <EnableNETAnalyzers>True</EnableNETAnalyzers>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony, Version=1.0.9.1, Culture=neutral, PublicKeyToken=null">
@@ -249,14 +252,6 @@
       <HintPath>..\..\..\..\Managed\UnityEngine.WindModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Agent.cs" />
-    <Compile Include="AgentWorkTracker.cs" />
-    <Compile Include="Gift.cs" />
-    <Compile Include="Harmony_Patch.cs" />
-    <Compile Include="Implementations\File.cs" />
-    <Compile Include="Interfaces\IFile.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

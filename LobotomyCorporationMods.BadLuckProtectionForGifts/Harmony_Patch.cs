@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using JetBrains.Annotations;
+using LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations;
+using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using UnityEngine;
 
 // ReSharper disable CommentTypo
@@ -8,6 +11,7 @@ using UnityEngine;
 // ReSharper disable InconsistentNaming
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts
 {
+    [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
     public sealed class Harmony_Patch
     {
         [NotNull] public static AgentWorkTracker AgentWorkTracker = new AgentWorkTracker();

@@ -1,6 +1,7 @@
 ﻿using JetBrains.Annotations;
+using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 
-namespace LobotomyCorporationMods.BadLuckProtectionForGifts
+namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
 {
     internal sealed class File : IFile
     {

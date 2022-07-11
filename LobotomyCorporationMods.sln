@@ -1,7 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# 
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LobotomyCorporationMods.BadLuckProtectionForGifts", "LobotomyCorporationMods.BadLuckProtectionForGifts\LobotomyCorporationMods.BadLuckProtectionForGifts.csproj", "{19D3E31B-FA1A-4C4C-A747-CD060FA9937F}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32616.157
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LobotomyCorporationMods.BadLuckProtectionForGifts", "LobotomyCorporationMods.BadLuckProtectionForGifts\LobotomyCorporationMods.BadLuckProtectionForGifts.csproj", "{19D3E31B-FA1A-4C4C-A747-CD060FA9937F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LobotomyCorporationMods.Test", "LobotomyCorporationMods.Test\LobotomyCorporationMods.Test.csproj", "{5186F30E-9617-4955-BE97-0E496DE2148B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,5 +17,15 @@ Global
 		{19D3E31B-FA1A-4C4C-A747-CD060FA9937F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19D3E31B-FA1A-4C4C-A747-CD060FA9937F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{19D3E31B-FA1A-4C4C-A747-CD060FA9937F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5186F30E-9617-4955-BE97-0E496DE2148B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5186F30E-9617-4955-BE97-0E496DE2148B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5186F30E-9617-4955-BE97-0E496DE2148B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5186F30E-9617-4955-BE97-0E496DE2148B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E9157EDB-3B67-4DDC-84D9-69BC893D31B1}
 	EndGlobalSection
 EndGlobal

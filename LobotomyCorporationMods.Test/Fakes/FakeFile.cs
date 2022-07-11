@@ -1,5 +1,6 @@
 ﻿using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts;
+using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 
 namespace LobotomyCorporationMods.Test.Fakes
 {
