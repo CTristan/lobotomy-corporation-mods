@@ -12,26 +12,42 @@ using UnityEngine;
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts
 {
     [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
-    public sealed class Harmony_Patch
+    internal sealed class Harmony_Patch
     {
-        [NotNull] public static AgentWorkTracker AgentWorkTracker = new AgentWorkTracker();
-        public static IFile File;
+        [NotNull] private static IAgentWorkTracker AgentWorkTracker = new AgentWorkTracker();
+        private static IFile File;
         private static string LogFile;
         private static string TrackerFile;
 
-        public Harmony_Patch()
+        /// <summary>
+        /// Default constructor which should only ever be called by Harmony in-game.
+        /// </summary>
+        internal Harmony_Patch()
+        {
+            var dataPath = Application.dataPath + @"/BaseMods/BadLuckProtectionForGifts/";
+            AgentWorkTracker = AgentWorkTracker.FromString(File.ReadAllText(TrackerFile, true));
+            Initialize(dataPath);
+            InitializeHarmonyPatch();
+        }
+
+        internal static void Initialize(string dataPath)
         {
             File = new File();
-            var dataPath = Application.dataPath + @"/BaseMods/BadLuckProtectionForGifts/";
-            TrackerFile = dataPath + "BadLuckProtectionForGifts.dat";
             LogFile = dataPath + "BadLuckProtectionForGifts_Log.txt";
-            AgentWorkTracker = AgentWorkTracker.FromString(File.ReadAllText(TrackerFile) ?? string.Empty);
+            TrackerFile = dataPath + "BadLuckProtectionForGifts.dat";
+        }
+
+        /// <summary>
+        /// Patches all of the relevant method calls through Harmony.
+        /// </summary>
+        private static void InitializeHarmonyPatch()
+        {
             try
             {
                 var harmonyInstance = HarmonyInstance.Create("BadLuckProtectionForGifts");
                 if (harmonyInstance == null)
                 {
-                    throw new NullReferenceException(nameof(harmonyInstance));
+                    throw new InvalidOperationException(nameof(harmonyInstance));
                 }
 
                 var harmonyMethod = new HarmonyMethod(typeof(Harmony_Patch).GetMethod("CallNewgame"));
@@ -59,6 +75,12 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
             }
         }
 
+        [NotNull]
+        public static IAgentWorkTracker GetAgentWorkTracker()
+        {
+            return AgentWorkTracker;
+        }
+
         /// <summary>
         ///     Runs after the original CallNewgame method does to reset our agent work when the player starts a new game.
         /// </summary>
@@ -67,7 +89,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         public static void CallNewgame([NotNull] AlterTitleController __instance)
         {
             AgentWorkTracker = new AgentWorkTracker();
-            SaveTracker(File ?? throw new NullReferenceException(nameof(File)));
+            SaveTracker(File ?? throw new InvalidOperationException(nameof(File)));
         }
 
         /// <summary>
@@ -107,8 +129,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
                 return;
             }
 
-            const long agentId = 1;
-            var probabilityBonus = AgentWorkTracker.GetAgentWorkCount(giftName, agentId) / 100f;
+            var probabilityBonus = AgentWorkTracker.GetLastAgentWorkCountByGift(giftName) / 100f;
             __result += probabilityBonus;
 
             // Prevent potential overflow issues
@@ -127,7 +148,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         // ReSharper disable once UnusedParameter.Global
         public static void OnClickNextDay([NotNull] GameSceneController __instance)
         {
-            SaveTracker(File ?? throw new NullReferenceException(nameof(File)));
+            SaveTracker(File ?? throw new InvalidOperationException(nameof(File)));
         }
 
         /// <summary>
@@ -139,9 +160,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         // ReSharper disable once UnusedParameter.Global
         public static void OnStageStart([NotNull] GameSceneController __instance)
         {
-            AgentWorkTracker =
-                AgentWorkTracker.FromString(File?.ReadAllText(TrackerFile) ??
-                                            throw new NullReferenceException(nameof(File)));
+            AgentWorkTracker = AgentWorkTracker.FromString(File?.ReadAllText(TrackerFile) ??
+                                                           throw new InvalidOperationException(nameof(File)));
         }
 
         /// <summary>

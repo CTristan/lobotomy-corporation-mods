@@ -1,5 +1,6 @@
 ﻿using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts;
+using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.Test.Fakes;
 using Xunit;
 using Xunit.Extensions;
@@ -12,41 +13,52 @@ namespace LobotomyCorporationMods.Test
         private UseSkill _useSkill;
         private const long AgentId = 1;
         private const string GiftName = "Test";
+        private static IAgentWorkTracker s_agentWorkTracker;
 
-        private static void IncrementAgentWorkCount([NotNull] string giftName = GiftName, long agentId = AgentId,
-            float numberOfTimes = 1f)
+        public BadLuckProtectionForGiftsTests()
         {
-            Harmony_Patch.AgentWorkTracker = new AgentWorkTracker();
-            Harmony_Patch.AgentWorkTracker.IncrementAgentWorkCount(giftName, agentId, numberOfTimes);
+            const string DataPath = @"./";
+            Harmony_Patch.Initialize(DataPath);
+            ClearAgentWorkTracker();
+            s_agentWorkTracker = Harmony_Patch.GetAgentWorkTracker();
+        }
+
+        /// <summary>
+        /// Clears the AgentWorkTracker property by calling the New Game function, which we have
+        /// modified to create a new tracker when the player starts a new game. This indirectly tests
+        /// that functionality since otherwise almost every test will fail.
+        /// </summary>
+        private static void ClearAgentWorkTracker()
+        {
+            Harmony_Patch.CallNewgame(new AlterTitleController());
         }
 
         [Fact]
         public void ConvertingTrackerToStringContainsDataInTracker()
         {
-            const string secondGiftName = "Second";
-            const long secondAgentId = AgentId + 1;
-            Harmony_Patch.AgentWorkTracker = new AgentWorkTracker();
+            const string SecondGiftName = "Second";
+            const long SecondAgentId = AgentId + 1;
 
             // First gift first agent
-            Harmony_Patch.AgentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId);
+            s_agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId);
 
             // First gift second agent
-            Harmony_Patch.AgentWorkTracker.IncrementAgentWorkCount(GiftName, secondAgentId);
+            s_agentWorkTracker.IncrementAgentWorkCount(GiftName, SecondAgentId);
 
             // Second gift second agent
-            Harmony_Patch.AgentWorkTracker.IncrementAgentWorkCount(secondGiftName, secondAgentId, 2f);
+            s_agentWorkTracker.IncrementAgentWorkCount(SecondGiftName, SecondAgentId, 2f);
             var expected =
-                $@"{GiftName}^{AgentId.ToString()};1^{secondAgentId.ToString()};1|{secondGiftName}^{secondAgentId.ToString()};2";
-            var actual = Harmony_Patch.AgentWorkTracker.ToString();
+                $@"{GiftName}^{AgentId.ToString()};1^{SecondAgentId.ToString()};1|{SecondGiftName}^{SecondAgentId.ToString()};2";
+            var actual = s_agentWorkTracker.ToString();
             Assert.Equal(expected, actual);
         }
 
         [Fact]
         public void ConvertingTrackerToStringWithSingleGiftAndSingleAgentReturnsCorrectString()
         {
-            IncrementAgentWorkCount();
+            s_agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId);
             var expected = $@"{GiftName}^{AgentId.ToString()};1";
-            var actual = Harmony_Patch.AgentWorkTracker.ToString();
+            var actual = s_agentWorkTracker.ToString();
             Assert.Equal(expected, actual);
         }
 
@@ -57,10 +69,8 @@ namespace LobotomyCorporationMods.Test
         public void LoadingDataFromSavedTrackerPopulatesAValidAgentWorkTracker([NotNull] string trackerData,
             [NotNull] string giftName, long agentId, float numberOfTimes)
         {
-            Harmony_Patch.AgentWorkTracker = AgentWorkTracker.FromString(trackerData);
-            var tracker = Harmony_Patch.AgentWorkTracker;
-            var expected = numberOfTimes;
-            Assert.Equal(expected, tracker.GetAgentWorkCount(giftName, agentId));
+            var agentWorkTracker = s_agentWorkTracker.FromString(trackerData);
+            Assert.Equal(numberOfTimes, agentWorkTracker.GetLastAgentWorkCountByGift(giftName));
         }
 
         [Fact]
@@ -69,13 +79,13 @@ namespace LobotomyCorporationMods.Test
             _creatureEquipmentMakeInfo = new FakeCreatureEquipmentMakeInfo(GiftName);
 
             // 101 times worked would equal 101% bonus normally
-            IncrementAgentWorkCount(GiftName, AgentId, 101f);
+            s_agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId, 101f);
 
             // We should only get back 100% even with the 101% bonus
-            const float expected = 1f;
+            const float Expected = 1f;
             var actual = 0f;
             Harmony_Patch.GetProb(_creatureEquipmentMakeInfo, ref actual);
-            Assert.Equal(expected, actual);
+            Assert.Equal(Expected, actual);
         }
 
         [Theory]
@@ -83,8 +93,7 @@ namespace LobotomyCorporationMods.Test
         [InlineData(2f)]
         public void ProbabilityIncreasesByOnePercentForEveryTimeAgentWorkedOnCreature(float numberOfTimes)
         {
-            Harmony_Patch.File = new FakeFile();
-            IncrementAgentWorkCount(GiftName, AgentId, numberOfTimes);
+            s_agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId, numberOfTimes);
             _creatureEquipmentMakeInfo = new FakeCreatureEquipmentMakeInfo(GiftName);
             var expected = numberOfTimes / 100f;
             var actual = 0f;
@@ -92,27 +101,41 @@ namespace LobotomyCorporationMods.Test
             Assert.Equal(expected, actual);
         }
 
-        [Fact]
-        public void StartingANewGameResetsAgentWorkProgress()
+        [Theory]
+        [InlineData(0f)]
+        [InlineData(1f)]
+        [InlineData(10f)]
+        public void StartingANewGameResetsAgentWorkProgress(float numberOfTimes)
         {
-            Harmony_Patch.File = new FakeFile();
-            Harmony_Patch.AgentWorkTracker = new AgentWorkTracker();
-            var expected = Harmony_Patch.AgentWorkTracker.GetAgentWorkCount(GiftName, AgentId);
-            Harmony_Patch.AgentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId);
+            // Arrange
+            s_agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId);
+            var expected = s_agentWorkTracker.GetLastAgentWorkCountByGift(GiftName);
+            s_agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId, numberOfTimes);
+
+            // Act
             Harmony_Patch.CallNewgame(new AlterTitleController());
-            var actual = Harmony_Patch.AgentWorkTracker.GetAgentWorkCount(GiftName, AgentId);
+            s_agentWorkTracker = Harmony_Patch.GetAgentWorkTracker();
+            s_agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId);
+            var actual = s_agentWorkTracker.GetLastAgentWorkCountByGift(GiftName);
+
+            // Assert
             Assert.Equal(expected, actual);
         }
+
 
         [Fact]
         public void WorkingOnCreatureIncreasesNumberOfTimesWorkedForThatAgent()
         {
+            // Arrange
             _useSkill = new FakeUseSkill(GiftName, AgentId);
-            Harmony_Patch.File = new FakeFile();
-            Harmony_Patch.AgentWorkTracker = new AgentWorkTracker();
-            var expected = Harmony_Patch.AgentWorkTracker.GetAgentWorkCount(GiftName, AgentId) + 1;
+            s_agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId);
+            var expected = s_agentWorkTracker.GetLastAgentWorkCountByGift(GiftName) + 1;
+
+            // Act
             Harmony_Patch.FinishWorkSuccessfully(_useSkill);
-            var actual = Harmony_Patch.AgentWorkTracker.GetAgentWorkCount(GiftName, AgentId);
+            var actual = s_agentWorkTracker.GetLastAgentWorkCountByGift(GiftName);
+
+            // Assert
             Assert.Equal(expected, actual);
         }
     }

@@ -1,14 +1,10 @@
 ﻿<component name="ProjectRunConfigurationManager">
-    <configuration default="true" type="DotNetFolderPublish" factoryName="Publish to folder">
-        <riderPublish runtime="win-x86" self_contained="true"
-                      target_folder="$PROJECT_DIR$/../../BadLuckProtectionForGifts" target_framework="net35"
-                      uuid_high="1861080780333796428" uuid_low="-6392915720112860289"/>
-        <method v="2"/>
-    </configuration>
-    <configuration default="false" name="Publish LobotomyCorporationMods.BadLuckProtectionForGifts to folder"
-                   type="DotNetFolderPublish" factoryName="Publish to folder">
-        <riderPublish runtime="win-x86" target_folder="$PROJECT_DIR$/../../BadLuckProtectionForGifts"
-                      target_framework="net35" uuid_high="1861080780333796428" uuid_low="-6392915720112860289"/>
-        <method v="2"/>
-    </configuration>
+  <configuration default="true" type="DotNetFolderPublish" factoryName="Publish to folder">
+    <riderPublish runtime="win-x86" self_contained="true" target_folder="$PROJECT_DIR$/../../BadLuckProtectionForGifts" target_framework="net35" uuid_high="1861080780333796428" uuid_low="-6392915720112860289" />
+    <method v="2" />
+  </configuration>
+  <configuration default="false" name="Publish LobotomyCorporationMods.BadLuckProtectionForGifts to folder" type="DotNetFolderPublish" factoryName="Publish to folder">
+    <riderPublish configuration="Release" platform="Any CPU" runtime="win-x64" target_folder="$PROJECT_DIR$/../../BadLuckProtectionForGifts" target_framework="net35" uuid_high="1861080780333796428" uuid_low="-6392915720112860289" />
+    <method v="2" />
+  </configuration>
 </component>

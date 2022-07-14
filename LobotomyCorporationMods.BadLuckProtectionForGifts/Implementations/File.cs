@@ -10,9 +10,17 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         [NotNull]
         public string ReadAllText([NotNull] string path)
         {
+            return ReadAllText(path, false);
+        }
+
+        [NotNull]
+        public string ReadAllText([NotNull] string path, bool createIfNotExists)
+        {
             if (!System.IO.File.Exists(path))
             {
-                return string.Empty;
+                if (!createIfNotExists) { return string.Empty; }
+
+                WriteAllText(path, string.Empty);
             }
 
             lock (_fileLock)

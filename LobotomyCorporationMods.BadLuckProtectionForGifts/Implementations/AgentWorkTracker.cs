@@ -4,18 +4,15 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
+using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 
 // ReSharper disable CommentTypo
-namespace LobotomyCorporationMods.BadLuckProtectionForGifts
+namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
 {
-    public sealed class AgentWorkTracker
+    internal sealed class AgentWorkTracker : IAgentWorkTracker
     {
-        public AgentWorkTracker()
-        {
-            Gifts = new List<Gift>();
-        }
-
-        [NotNull] private List<Gift> Gifts { get; }
+        [NotNull] private readonly List<IGift> _gifts = new List<IGift>();
+        private readonly Dictionary<string, long> _mostRecentAgentIdByGift = new Dictionary<string, long>();
 
         /// <summary>
         ///     Loads the tracker data from our custom text file.
@@ -23,7 +20,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         /// <param name="trackerData">The contents of our text file.</param>
         /// <returns>Loaded AgentWorkTracker object.</returns>
         [NotNull]
-        public static AgentWorkTracker FromString([NotNull] string trackerData)
+        public IAgentWorkTracker FromString(string trackerData)
         {
             var tracker = new AgentWorkTracker();
             var gifts = trackerData.Split('|');
@@ -34,7 +31,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
                 for (var i = 1; i < giftData.Length; i++)
                 {
                     var agentData = giftData[i].Split(';');
-                    tracker.IncrementAgentWorkCount(giftName, long.Parse(agentData[0]), float.Parse(agentData[1]));
+                    tracker.IncrementAgentWorkCount(giftName, long.Parse(agentData[0], CultureInfo.InvariantCulture), float.Parse(agentData[1], CultureInfo.InvariantCulture));
                 }
             }
 
@@ -42,9 +39,9 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         }
 
         [NotNull]
-        private Agent GetAgent([NotNull] string giftName, long agentId)
+        private IAgent GetAgent([NotNull] string giftName, long agentId)
         {
-            var gift = Gifts.FirstOrDefault(g => g?.Name.Equals(giftName) == true);
+            var gift = _gifts.FirstOrDefault(g => g?.GetName().Equals(giftName, StringComparison.Ordinal) == true);
             if (gift != null)
             {
                 return gift.GetOrAddAgent(agentId);
@@ -52,20 +49,22 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
 
             // Gift not found, start tracking the gift
             gift = new Gift(giftName);
-            Gifts.Add(gift);
+            _gifts.Add(gift);
             return gift.GetOrAddAgent(agentId);
         }
 
-        public float GetAgentWorkCount([NotNull] string giftName, long agentId)
+        public float GetLastAgentWorkCountByGift(string giftName)
         {
+            var agentId = _mostRecentAgentIdByGift[giftName];
             var agent = GetAgent(giftName, agentId);
-            return agent.WorkCount;
+            return agent.GetWorkCount();
         }
 
-        public void IncrementAgentWorkCount([NotNull] string giftName, long agentId, float numberOfTimes = 1f)
+        public void IncrementAgentWorkCount(string giftName, long agentId, float numberOfTimes = 1f)
         {
             var agent = GetAgent(giftName, agentId);
-            agent.WorkCount += numberOfTimes;
+            agent.IncrementWorkCount(numberOfTimes);
+            _mostRecentAgentIdByGift[giftName] = agent.GetId();
         }
 
         /// <summary>
@@ -80,18 +79,18 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         public override string ToString()
         {
             var builder = new StringBuilder();
-            for (var i = 0; i < Gifts.Count; i++)
+            for (var i = 0; i < _gifts.Count; i++)
             {
-                var gift = Gifts[i] ?? throw new NullReferenceException(nameof(Gifts));
+                var gift = _gifts[i] ?? throw new InvalidOperationException(nameof(_gifts));
                 if (i > 0)
                 {
                     builder.Append('|');
                 }
 
-                builder.Append(gift.Name);
-                foreach (var agent in gift.Agents)
+                builder.Append(gift.GetName());
+                foreach (var agent in gift.GetAgents())
                 {
-                    builder.Append("^" + agent?.Id + ";" + agent?.WorkCount.ToString(CultureInfo.InvariantCulture));
+                    builder.Append("^" + agent?.GetId() + ";" + agent?.GetWorkCount().ToString(CultureInfo.InvariantCulture));
                 }
             }
 

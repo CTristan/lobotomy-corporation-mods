@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
+using JetBrains.Annotations;
 
 namespace LobotomyCorporationMods.Test.Fakes
 {
     internal sealed class FakeUseSkill : UseSkill
     {
-        public FakeUseSkill(string giftName, long agentId)
+        public FakeUseSkill([NotNull] string giftName, long agentId)
         {
             // Calling one of these constructors throws an exception, so we need to create an instance without
             // calling the constructor.
@@ -14,7 +15,7 @@ namespace LobotomyCorporationMods.Test.Fakes
             targetCreature = (CreatureModel)FormatterServices.GetSafeUninitializedObject(typeof(CreatureModel));
             targetCreature.metaInfo = new CreatureTypeInfo
             {
-                equipMakeInfos = new List<CreatureEquipmentMakeInfo> {new FakeCreatureEquipmentMakeInfo(giftName)}
+                equipMakeInfos = new List<CreatureEquipmentMakeInfo> { new FakeCreatureEquipmentMakeInfo(giftName) }
             };
         }
     }
