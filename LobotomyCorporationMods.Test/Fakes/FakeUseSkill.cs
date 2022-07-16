@@ -6,7 +6,7 @@ namespace LobotomyCorporationMods.Test.Fakes
 {
     internal sealed class FakeUseSkill : UseSkill
     {
-        public FakeUseSkill([NotNull] string giftName, long agentId)
+        public FakeUseSkill([NotNull] string giftName, long agentId, int numberOfSuccesses)
         {
             // Calling one of these constructors throws an exception, so we need to create an instance without
             // calling the constructor.
@@ -17,6 +17,7 @@ namespace LobotomyCorporationMods.Test.Fakes
             {
                 equipMakeInfos = new List<CreatureEquipmentMakeInfo> { new FakeCreatureEquipmentMakeInfo(giftName) }
             };
+            successCount = numberOfSuccesses;
         }
     }
 }
