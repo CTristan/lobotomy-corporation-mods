@@ -9,17 +9,19 @@ namespace LobotomyCorporationMods.Test
 {
     public sealed class BadLuckProtectionForGiftsTests
     {
+        private const long AgentId = 1;
+
+        private const string GiftName = "Test";
+
+        // private static Harmony_Patch _harmonyPatch;
+        private static IAgentWorkTracker s_agentWorkTracker;
         private CreatureEquipmentMakeInfo _creatureEquipmentMakeInfo;
         private UseSkill _useSkill;
-        private const long AgentId = 1;
-        private const string GiftName = "Test";
-        private static Harmony_Patch _harmonyPatch;
-        private static IAgentWorkTracker s_agentWorkTracker;
 
         public BadLuckProtectionForGiftsTests()
         {
             const string DataPath = @"./";
-            _harmonyPatch = new Harmony_Patch(DataPath);
+            _ = new Harmony_Patch(DataPath);
             ClearAgentWorkTracker();
             s_agentWorkTracker = Harmony_Patch.GetAgentWorkTracker();
         }
@@ -124,13 +126,16 @@ namespace LobotomyCorporationMods.Test
         }
 
 
-        [Fact]
-        public void WorkingOnCreatureIncreasesNumberOfTimesWorkedForThatAgent()
+        [Theory]
+        [InlineData(0)]
+        [InlineData(1)]
+        [InlineData(10)]
+        public void WorkingOnCreatureIncreasesNumberOfTimesWorkedForThatAgent(int numberOfTimes)
         {
             // Arrange
-            _useSkill = new FakeUseSkill(GiftName, AgentId);
+            _useSkill = new FakeUseSkill(GiftName, AgentId, numberOfTimes);
             s_agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId);
-            var expected = s_agentWorkTracker.GetLastAgentWorkCountByGift(GiftName) + 1;
+            var expected = s_agentWorkTracker.GetLastAgentWorkCountByGift(GiftName) + numberOfTimes;
 
             // Act
             Harmony_Patch.FinishWorkSuccessfully(_useSkill);

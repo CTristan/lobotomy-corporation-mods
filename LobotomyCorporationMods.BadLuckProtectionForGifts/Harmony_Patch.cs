@@ -121,7 +121,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
 
             var giftName = equipmentMakeInfo.equipTypeInfo.Name;
             var agentId = __instance.agent?.instanceId ?? 0;
-            AgentWorkTracker.IncrementAgentWorkCount(giftName, agentId);
+            var numberOfSuccesses = __instance.successCount;
+            AgentWorkTracker.IncrementAgentWorkCount(giftName, agentId, numberOfSuccesses);
         }
 
         /// <summary>
