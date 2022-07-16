@@ -12,7 +12,7 @@ using UnityEngine;
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts
 {
     [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
-    internal sealed class Harmony_Patch
+    public sealed class Harmony_Patch
     {
         [NotNull] private static IAgentWorkTracker AgentWorkTracker = new AgentWorkTracker();
         private static IFile File;
@@ -20,21 +20,32 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         private static string TrackerFile;
 
         /// <summary>
-        /// Default constructor which should only ever be called by Harmony in-game.
+        /// Do not use for testing as it causes an exception. Use the other constructor instead.
         /// </summary>
-        internal Harmony_Patch()
+        public Harmony_Patch()
         {
             var dataPath = Application.dataPath + @"/BaseMods/BadLuckProtectionForGifts/";
-            AgentWorkTracker = AgentWorkTracker.FromString(File.ReadAllText(TrackerFile, true));
             Initialize(dataPath);
             InitializeHarmonyPatch();
         }
 
-        internal static void Initialize(string dataPath)
+        /// <summary>
+        /// Entry point for testing.
+        /// </summary>
+        public Harmony_Patch(string dataPath)
+        {
+            Initialize(dataPath);
+        }
+
+        /// <summary>
+        /// Loads data files.
+        /// </summary>
+        private static void Initialize(string dataPath)
         {
             File = new File();
             LogFile = dataPath + "BadLuckProtectionForGifts_Log.txt";
             TrackerFile = dataPath + "BadLuckProtectionForGifts.dat";
+            AgentWorkTracker = AgentWorkTracker.FromString(File.ReadAllText(TrackerFile, true));
         }
 
         /// <summary>

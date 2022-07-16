@@ -13,12 +13,13 @@ namespace LobotomyCorporationMods.Test
         private UseSkill _useSkill;
         private const long AgentId = 1;
         private const string GiftName = "Test";
+        private static Harmony_Patch _harmonyPatch;
         private static IAgentWorkTracker s_agentWorkTracker;
 
         public BadLuckProtectionForGiftsTests()
         {
             const string DataPath = @"./";
-            Harmony_Patch.Initialize(DataPath);
+            _harmonyPatch = new Harmony_Patch(DataPath);
             ClearAgentWorkTracker();
             s_agentWorkTracker = Harmony_Patch.GetAgentWorkTracker();
         }
