@@ -144,5 +144,22 @@ namespace LobotomyCorporationMods.Test
             // Assert
             Assert.Equal(expected, actual);
         }
+
+        [Theory]
+        [InlineData(0F)]
+        [InlineData(0.1F)]
+        [InlineData(1F)]
+        public void GetProb_NotWorkedOnYet_ShouldReturnBaseValue(float expected)
+        {
+            // Arrange
+            var instance = new FakeCreatureEquipmentMakeInfo(GiftName);
+            var actual = expected;
+
+            // Act
+            Harmony_Patch.GetProb(instance, ref actual);
+
+            // Assert
+            Assert.Equal(expected, actual);
+        }
     }
 }
