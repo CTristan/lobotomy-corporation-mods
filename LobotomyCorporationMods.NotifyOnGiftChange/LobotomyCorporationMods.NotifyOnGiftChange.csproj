@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <OutputPath>bin\</OutputPath>
     <OutputType>Library</OutputType>
-    <ProjectGuid>{19D3E31B-FA1A-4C4C-A747-CD060FA9937F}</ProjectGuid>
+    <ProjectGuid>{D10E5947-2141-407E-B070-550946373D43}</ProjectGuid>
     <RuntimeIdentifiers>win</RuntimeIdentifiers>
     <TargetFramework>net35</TargetFramework>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
