@@ -31,11 +31,29 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
                 for (var i = 1; i < giftData.Length; i++)
                 {
                     var agentData = giftData[i].Split(';');
-                    tracker.IncrementAgentWorkCount(giftName, long.Parse(agentData[0], CultureInfo.InvariantCulture), float.Parse(agentData[1], CultureInfo.InvariantCulture));
+                    tracker.IncrementAgentWorkCount(giftName, long.Parse(agentData[0], CultureInfo.InvariantCulture),
+                        float.Parse(agentData[1], CultureInfo.InvariantCulture));
                 }
             }
 
             return tracker;
+        }
+
+        public float GetLastAgentWorkCountByGift(string giftName)
+        {
+            // Make sure this gift has actually been worked on before doing lookups
+            if (!_mostRecentAgentIdByGift.ContainsKey(giftName)) { return 0; }
+
+            var agentId = _mostRecentAgentIdByGift[giftName];
+            var agent = GetAgent(giftName, agentId);
+            return agent.GetWorkCount();
+        }
+
+        public void IncrementAgentWorkCount(string giftName, long agentId, float numberOfTimes = 1f)
+        {
+            var agent = GetAgent(giftName, agentId);
+            agent.IncrementWorkCount(numberOfTimes);
+            _mostRecentAgentIdByGift[giftName] = agent.GetId();
         }
 
         [NotNull]
@@ -51,20 +69,6 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
             gift = new Gift(giftName);
             _gifts.Add(gift);
             return gift.GetOrAddAgent(agentId);
-        }
-
-        public float GetLastAgentWorkCountByGift(string giftName)
-        {
-            var agentId = _mostRecentAgentIdByGift[giftName];
-            var agent = GetAgent(giftName, agentId);
-            return agent.GetWorkCount();
-        }
-
-        public void IncrementAgentWorkCount(string giftName, long agentId, float numberOfTimes = 1f)
-        {
-            var agent = GetAgent(giftName, agentId);
-            agent.IncrementWorkCount(numberOfTimes);
-            _mostRecentAgentIdByGift[giftName] = agent.GetId();
         }
 
         /// <summary>
@@ -90,7 +94,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
                 builder.Append(gift.GetName());
                 foreach (var agent in gift.GetAgents())
                 {
-                    builder.Append("^" + agent?.GetId() + ";" + agent?.GetWorkCount().ToString(CultureInfo.InvariantCulture));
+                    builder.Append("^" + agent?.GetId() + ";" +
+                                   agent?.GetWorkCount().ToString(CultureInfo.InvariantCulture));
                 }
             }
 
