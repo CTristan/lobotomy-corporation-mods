@@ -1,6 +1,6 @@
-﻿namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces
+﻿namespace LobotomyCorporationMods.Common.Interfaces
 {
-    internal interface IFile
+    public interface IFile
     {
         string ReadAllText(string path);
         string ReadAllText(string path, bool createIfNotExists);
