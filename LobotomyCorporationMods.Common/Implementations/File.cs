@@ -1,9 +1,9 @@
 ﻿using JetBrains.Annotations;
-using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
+using LobotomyCorporationMods.Common.Interfaces;
 
-namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
+namespace LobotomyCorporationMods.Common.Implementations
 {
-    internal sealed class File : IFile
+    public sealed class File : IFile
     {
         [NotNull] private readonly object _fileLock = new object();
 

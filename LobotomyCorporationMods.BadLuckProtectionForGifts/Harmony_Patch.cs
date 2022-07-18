@@ -4,6 +4,8 @@ using Harmony;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
+using LobotomyCorporationMods.Common.Implementations;
+using LobotomyCorporationMods.Common.Interfaces;
 using UnityEngine;
 
 // ReSharper disable CommentTypo
