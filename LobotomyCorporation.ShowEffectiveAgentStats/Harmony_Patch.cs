@@ -17,7 +17,7 @@ namespace LobotomyCorporation.ShowEffectiveAgentStats
         private static string LogFile;
 
         /// <summary>
-        ///     Do not use for testing as it causes an exception. Use the other constructor instead.
+        /// Do not use for testing as it causes an exception. Use the other constructor instead.
         /// </summary>
         public Harmony_Patch()
         {
@@ -27,7 +27,7 @@ namespace LobotomyCorporation.ShowEffectiveAgentStats
         }
 
         /// <summary>
-        ///     Entry point for testing.
+        /// Entry point for testing.
         /// </summary>
         public Harmony_Patch(string dataPath)
         {
@@ -35,7 +35,7 @@ namespace LobotomyCorporation.ShowEffectiveAgentStats
         }
 
         /// <summary>
-        ///     Loads data files.
+        /// Loads data files.
         /// </summary>
         private static void Initialize(string dataPath)
         {
@@ -44,7 +44,7 @@ namespace LobotomyCorporation.ShowEffectiveAgentStats
         }
 
         /// <summary>
-        ///     Patches all of the relevant method calls through Harmony.
+        /// Patches all of the relevant method calls through Harmony.
         /// </summary>
         private static void InitializeHarmonyPatch()
         {
@@ -86,6 +86,50 @@ namespace LobotomyCorporation.ShowEffectiveAgentStats
                         var additionalValue = agent.maxHp - originalValue;
                         var workExperience = Mathf.FloorToInt(agent.primaryStatExp.hp);
                         SetStatText(statEffectList[0], originalValue, additionalValue, workExperience);
+
+                        break;
+                    }
+                case RwbpType.W:
+                    {
+                        statName = "Wstat";
+                        statValue = agent.Wstat;
+
+                        var originalValue = agent.primaryStat.maxMental + agent.titleBonus.maxMental;
+                        var additionalValue = agent.maxMental - originalValue;
+                        var workExperience = Mathf.FloorToInt(agent.primaryStatExp.mental);
+                        SetStatText(statEffectList[0], originalValue, additionalValue, workExperience);
+
+                        break;
+                    }
+                case RwbpType.B:
+                    {
+                        statName = "Bstat";
+                        statValue = agent.Bstat;
+
+                        var originalValue = agent.primaryStat.workProb + agent.titleBonus.workProb;
+                        var additionalValue = agent.workProb - originalValue;
+                        var workExperience = Mathf.FloorToInt(agent.primaryStatExp.work);
+                        SetStatText(statEffectList[0], originalValue, additionalValue, workExperience);
+
+                        originalValue = agent.primaryStat.cubeSpeed + agent.titleBonus.cubeSpeed;
+                        additionalValue = agent.workSpeed - originalValue;
+                        SetStatText(statEffectList[1], originalValue, additionalValue, workExperience);
+
+                        break;
+                    }
+                case RwbpType.P:
+                    {
+                        statName = "Pstat";
+                        statValue = agent.Pstat;
+
+                        var originalValue = agent.primaryStat.attackSpeed + agent.titleBonus.attackSpeed;
+                        var additionalValue = (int)(agent.attackSpeed - originalValue);
+                        var workExperience = Mathf.FloorToInt(agent.primaryStatExp.battle);
+                        SetStatText(statEffectList[0], originalValue, additionalValue, workExperience);
+
+                        originalValue = agent.primaryStat.movementSpeed + agent.titleBonus.movementSpeed;
+                        additionalValue = (int)(agent.movement - originalValue);
+                        SetStatText(statEffectList[1], originalValue, additionalValue, workExperience);
 
                         break;
                     }

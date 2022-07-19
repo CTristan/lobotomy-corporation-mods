@@ -19,6 +19,7 @@ namespace LobotomyCorporationMods.Test
             ui.StatName = Substitute.For<Text>();
             ui.list = new List<AgentInfoWindow.WorkerPrimaryStatUnit>
             {
+                new AgentInfoWindow.WorkerPrimaryStatUnit { StatValue = Substitute.For<Text>() },
                 new AgentInfoWindow.WorkerPrimaryStatUnit { StatValue = Substitute.For<Text>() }
             };
 
@@ -47,8 +48,7 @@ namespace LobotomyCorporationMods.Test
             {
                 { "_statBufList", new List<UnitStatBuf>() },
                 {
-                    "_equipment",
-                    new UnitEquipSpace
+                    "_equipment", new UnitEquipSpace
                     {
                         gifts = new UnitEGOgiftSpace
                         {
@@ -58,13 +58,18 @@ namespace LobotomyCorporationMods.Test
                                 {
                                     bonus = new EGObonusInfo
                                     {
-                                        damage = egoBonus,
-                                        attackSpeed = egoBonus,
-                                        cubeSpeed = egoBonus,
+                                        // Red
                                         hp = egoBonus,
+
+                                        // White
                                         mental = egoBonus,
-                                        movement = egoBonus,
-                                        workProb = egoBonus
+
+                                        // Black
+                                        cubeSpeed = egoBonus,
+                                        workProb = egoBonus,
+
+                                        // Purple
+                                        attackSpeed = egoBonus
                                     }
                                 })
                             }
