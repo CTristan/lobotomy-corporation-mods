@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
-using NSubstitute;
 using Xunit;
 using Xunit.Extensions;
 
@@ -78,7 +76,7 @@ namespace LobotomyCorporationMods.Test
         [Fact]
         public void ProbabilityBonusDoesNotCauseProbabilityToGoOverOneHundredPercent()
         {
-            _creatureEquipmentMakeInfo = CreateCreatureEquipmentMakeInfo(GiftName);
+            _creatureEquipmentMakeInfo = TestExtensions.CreateCreatureEquipmentMakeInfo(GiftName);
 
             // 101 times worked would equal 101% bonus normally
             s_agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId, 101f);
@@ -96,7 +94,7 @@ namespace LobotomyCorporationMods.Test
         public void ProbabilityIncreasesByOnePercentForEveryTimeAgentWorkedOnCreature(float numberOfTimes)
         {
             s_agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId, numberOfTimes);
-            _creatureEquipmentMakeInfo = CreateCreatureEquipmentMakeInfo(GiftName);
+            _creatureEquipmentMakeInfo = TestExtensions.CreateCreatureEquipmentMakeInfo(GiftName);
             var expected = numberOfTimes / 100f;
             var actual = 0f;
             Harmony_Patch.GetProb(_creatureEquipmentMakeInfo, ref actual);
@@ -132,7 +130,7 @@ namespace LobotomyCorporationMods.Test
         public void WorkingOnCreatureIncreasesNumberOfTimesWorkedForThatAgent(int numberOfTimes)
         {
             // Arrange
-            _useSkill = CreateUseSkill(GiftName, AgentId, numberOfTimes);
+            _useSkill = TestExtensions.CreateUseSkill(GiftName, AgentId, numberOfTimes);
             s_agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId);
             var expected = s_agentWorkTracker.GetLastAgentWorkCountByGift(GiftName) + numberOfTimes;
 
@@ -151,7 +149,7 @@ namespace LobotomyCorporationMods.Test
         public void GetProb_NotWorkedOnYet_ShouldReturnBaseValue(float expected)
         {
             // Arrange
-            var instance = CreateCreatureEquipmentMakeInfo(GiftName);
+            var instance = TestExtensions.CreateCreatureEquipmentMakeInfo(GiftName);
             var actual = expected;
 
             // Act
@@ -159,37 +157,6 @@ namespace LobotomyCorporationMods.Test
 
             // Assert
             Assert.Equal(expected, actual);
-        }
-
-        [NotNull]
-        private static CreatureEquipmentMakeInfo CreateCreatureEquipmentMakeInfo(string giftName)
-        {
-            var info = Substitute.For<CreatureEquipmentMakeInfo>();
-            info.equipTypeInfo = new EquipmentTypeInfo
-            {
-                localizeData = new Dictionary<string, string> { { "name", giftName } },
-                type = EquipmentTypeInfo.EquipmentType.SPECIAL
-            };
-
-            LocalizeTextDataModel.instance?.Init(new Dictionary<string, string> { { giftName, giftName } });
-
-            return info;
-        }
-
-        [NotNull]
-        private static UseSkill CreateUseSkill(string giftName, long agentId, int numberOfSuccesses)
-        {
-            var useSkill = Substitute.For<UseSkill>();
-            useSkill.agent = TestExtensions.CreateUninitializedObject<AgentModel>();
-            useSkill.agent.instanceId = agentId;
-            useSkill.targetCreature = TestExtensions.CreateUninitializedObject<CreatureModel>();
-            useSkill.targetCreature.metaInfo = new CreatureTypeInfo
-            {
-                equipMakeInfos = new List<CreatureEquipmentMakeInfo> { CreateCreatureEquipmentMakeInfo(giftName) }
-            };
-            useSkill.successCount = numberOfSuccesses;
-
-            return useSkill;
         }
     }
 }

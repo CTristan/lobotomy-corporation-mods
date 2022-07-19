@@ -22,6 +22,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LobotomyCorporation.ShowEffectiveAgentStats\LobotomyCorporation.ShowEffectiveAgentStats.csproj"/>
     <ProjectReference Include="..\LobotomyCorporationMods.BadLuckProtectionForGifts\LobotomyCorporationMods.BadLuckProtectionForGifts.csproj">
       <Project>{19D3E31B-FA1A-4C4C-A747-CD060FA9937F}</Project>
       <Name>LobotomyCorporationMods.BadLuckProtectionForGifts</Name>
@@ -51,6 +52,9 @@
     </Reference>
     <Reference Include="System.Xml, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
       <HintPath>..\..\..\..\Managed\System.Xml.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>..\..\..\..\Managed\UnityEngine.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>
