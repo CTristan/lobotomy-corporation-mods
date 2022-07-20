@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LobotomyCorporationMods.Com
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LobotomyCorporationMods.ShowEffectiveAgentStats", "LobotomyCorporationMods.ShowEffectiveAgentStats\LobotomyCorporationMods.ShowEffectiveAgentStats.csproj", "{E643058B-C8AA-451F-BA42-9C62D03AD28B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LobotomyCorporationMods.StartNewGameWithNoAgents", "LobotomyCorporationMods.StartNewGameWithNoAgents\LobotomyCorporationMods.StartNewGameWithNoAgents.csproj", "{930C9C52-FE64-44BF-8EBA-43F42F85C9A3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{E643058B-C8AA-451F-BA42-9C62D03AD28B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E643058B-C8AA-451F-BA42-9C62D03AD28B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E643058B-C8AA-451F-BA42-9C62D03AD28B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{930C9C52-FE64-44BF-8EBA-43F42F85C9A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{930C9C52-FE64-44BF-8EBA-43F42F85C9A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{930C9C52-FE64-44BF-8EBA-43F42F85C9A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{930C9C52-FE64-44BF-8EBA-43F42F85C9A3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
