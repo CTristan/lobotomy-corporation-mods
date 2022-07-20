@@ -124,6 +124,9 @@ namespace LobotomyCorporationMods.Test
             return (TObject)FormatterServices.GetSafeUninitializedObject(typeof(TObject));
         }
 
+        /// <summary>
+        ///     Get the fields for an uninitialized object. Can be used to later initialize the individual fields as needed.
+        /// </summary>
         [NotNull]
         private static MemberInfo[] GetUninitializedObjectFields(Type type)
         {
@@ -139,6 +142,9 @@ namespace LobotomyCorporationMods.Test
             return fields.ToArray();
         }
 
+        /// <summary>
+        ///     Populate the fields of an uninitialized object with a provided list of objects.
+        /// </summary>
         [NotNull]
         private static TObject GetPopulatedUninitializedObject<TObject>(TObject obj, MemberInfo[] fields,
             Dictionary<string, object> newValues)

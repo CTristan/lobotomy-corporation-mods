@@ -7,7 +7,7 @@ using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Interfaces;
 using UnityEngine;
 
-namespace LobotomyCorporation.ShowEffectiveAgentStats
+namespace LobotomyCorporationMods.ShowEffectiveAgentStats
 {
     [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
@@ -59,6 +59,9 @@ namespace LobotomyCorporation.ShowEffectiveAgentStats
                 var harmonyMethod = new HarmonyMethod(typeof(Harmony_Patch).GetMethod("SetStatPostfix"));
                 harmonyInstance.Patch(typeof(AgentInfoWindow.WorkerPrimaryStatUI).GetMethod("SetStat", AccessTools.all),
                     null, harmonyMethod);
+                harmonyMethod = new HarmonyMethod(typeof(Harmony_Patch).GetMethod("SetUIPostfix"));
+                harmonyInstance.Patch(typeof(AgentInfoWindow.InGameModeComponent).GetMethod("SetUI", AccessTools.all),
+                    null, harmonyMethod);
             }
             catch (Exception ex)
             {
@@ -67,8 +70,11 @@ namespace LobotomyCorporation.ShowEffectiveAgentStats
             }
         }
 
+        /// <summary>
+        ///     Overwrites the Agent's stat text with our own formatted text.
+        /// </summary>
         [SuppressMessage("ReSharper", "StringLiteralTypo")]
-        public static void SetStat([NotNull] AgentInfoWindow.WorkerPrimaryStatUI __instance, AgentModel agent)
+        public static void SetStatPostfix([NotNull] AgentInfoWindow.WorkerPrimaryStatUI __instance, AgentModel agent)
         {
             var statName = string.Empty;
             var statValue = 0;
@@ -139,17 +145,26 @@ namespace LobotomyCorporation.ShowEffectiveAgentStats
                 LocalizeTextDataModel.instance.GetText(statName), AgentModel.GetLevelGradeText(statValue));
         }
 
+        /// <summary>
+        ///     Needed to make sure the correct stat text method is called.
+        /// </summary>
+        public static void SetUIPostfix([NotNull] AgentInfoWindow.InGameModeComponent __instance, AgentModel agent)
+        {
+            var statUiList = __instance.statUI;
+            foreach (var statUI in statUiList)
+            {
+                statUI.SetStat(agent);
+            }
+        }
+
         private static void SetStatText([NotNull] AgentInfoWindow.WorkerPrimaryStatUnit statUnit, int originalValue,
             int additionalValue, int experienceValue)
         {
             if (additionalValue == 0)
             {
-                statUnit.StatValue.text = originalValue.ToString(CultureInfo.CurrentCulture);
-
-                if (experienceValue > 0)
-                {
-                    statUnit.StatValue.text += string.Format(CultureInfo.CurrentCulture, @"+{0}", experienceValue);
-                }
+                var totalValue = originalValue + experienceValue;
+                statUnit.StatValue.text = string.Format(CultureInfo.CurrentCulture, @"{0} ({1}+{2})", totalValue,
+                    originalValue, experienceValue);
 
                 return;
             }
@@ -171,8 +186,8 @@ namespace LobotomyCorporation.ShowEffectiveAgentStats
             }
 
             var template = @"{0}/{1} ({2}<color=#{3}>{4}{5}</color>+{6})";
-            statUnit.StatValue.text = string.Format(template, effectiveValue, combinedValue, originalValue,
-                additionalValueColor, operation, Mathf.Abs(additionalValue), experienceValue);
+            statUnit.StatValue.text = string.Format(CultureInfo.CurrentCulture, template, effectiveValue, combinedValue,
+                originalValue, additionalValueColor, operation, Mathf.Abs(additionalValue), experienceValue);
         }
 
         /// <summary>
