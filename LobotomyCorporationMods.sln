@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LobotomyCorporationMods.Tes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LobotomyCorporationMods.Common", "LobotomyCorporationMods.Common\LobotomyCorporationMods.Common.csproj", "{D9BB018C-8BB3-4639-983C-F58969C8574E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LobotomyCorporation.ShowEffectiveAgentStats", "LobotomyCorporation.ShowEffectiveAgentStats\LobotomyCorporation.ShowEffectiveAgentStats.csproj", "{E643058B-C8AA-451F-BA42-9C62D03AD28B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LobotomyCorporationMods.ShowEffectiveAgentStats", "LobotomyCorporationMods.ShowEffectiveAgentStats\LobotomyCorporationMods.ShowEffectiveAgentStats.csproj", "{E643058B-C8AA-451F-BA42-9C62D03AD28B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
