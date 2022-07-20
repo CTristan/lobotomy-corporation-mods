@@ -20,9 +20,8 @@ namespace LobotomyCorporationMods.Test
         }
 
         [Theory]
-        [InlineData(1, 0, 0f, "1 (1+0)")]
-        [InlineData(1, 0, 1f, "2 (1+1)")]
-        [InlineData(1, 0, 10f, "11 (1+10)")]
+        [InlineData(1, 0, 0f, "1/1 (1+0)")]
+        [InlineData(1, 0, 1f, "1/2 (1+1)")]
         [InlineData(10, 1, 0f, "11/11 (10<color=#blue>+1</color>+0)")]
         [InlineData(10, -1, 0f, "9/9 (10<color=#red>-1</color>+0)")]
         [InlineData(100, 10, 1f, "110/111 (100<color=#blue>+10</color>+1)")]
@@ -42,9 +41,8 @@ namespace LobotomyCorporationMods.Test
         }
 
         [Theory]
-        [InlineData(1, 0, 0f, "1 (1+0)")]
-        [InlineData(1, 0, 1f, "2 (1+1)")]
-        [InlineData(1, 0, 10f, "11 (1+10)")]
+        [InlineData(1, 0, 0f, "1/1 (1+0)")]
+        [InlineData(1, 0, 1f, "1/2 (1+1)")]
         [InlineData(10, 1, 0f, "11/11 (10<color=#blue>+1</color>+0)")]
         [InlineData(10, -1, 0f, "9/9 (10<color=#red>-1</color>+0)")]
         [InlineData(100, 10, 1f, "110/111 (100<color=#blue>+10</color>+1)")]
@@ -64,9 +62,8 @@ namespace LobotomyCorporationMods.Test
         }
 
         [Theory]
-        [InlineData(1, 0, 0f, "1 (1+0)")]
-        [InlineData(1, 0, 1f, "2 (1+1)")]
-        [InlineData(1, 0, 10f, "11 (1+10)")]
+        [InlineData(1, 0, 0f, "1/1 (1+0)")]
+        [InlineData(1, 0, 1f, "1/2 (1+1)")]
         [InlineData(10, 1, 0f, "11/11 (10<color=#blue>+1</color>+0)")]
         [InlineData(10, -1, 0f, "9/9 (10<color=#red>-1</color>+0)")]
         [InlineData(100, 10, 1f, "110/111 (100<color=#blue>+10</color>+1)")]
@@ -87,9 +84,8 @@ namespace LobotomyCorporationMods.Test
         }
 
         [Theory]
-        [InlineData(1, 0, 0f, "1 (1+0)")]
-        [InlineData(1, 0, 1f, "2 (1+1)")]
-        [InlineData(1, 0, 10f, "11 (1+10)")]
+        [InlineData(1, 0, 0f, "1/1 (1+0)")]
+        [InlineData(1, 0, 1f, "1/2 (1+1)")]
         [InlineData(10, 1, 0f, "11/11 (10<color=#blue>+1</color>+0)")]
         [InlineData(10, -1, 0f, "9/9 (10<color=#red>-1</color>+0)")]
         [InlineData(100, 10, 1f, "110/111 (100<color=#blue>+10</color>+1)")]

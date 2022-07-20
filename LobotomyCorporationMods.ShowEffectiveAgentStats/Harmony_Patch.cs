@@ -163,8 +163,8 @@ namespace LobotomyCorporationMods.ShowEffectiveAgentStats
             if (additionalValue == 0)
             {
                 var totalValue = originalValue + experienceValue;
-                statUnit.StatValue.text = string.Format(CultureInfo.CurrentCulture, @"{0} ({1}+{2})", totalValue,
-                    originalValue, experienceValue);
+                statUnit.StatValue.text = string.Format(CultureInfo.CurrentCulture, @"{0}/{1} ({0}+{2})", originalValue,
+                    totalValue, experienceValue);
 
                 return;
             }
