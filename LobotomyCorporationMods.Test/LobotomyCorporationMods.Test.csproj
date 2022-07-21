@@ -6,20 +6,24 @@
     <OutputType>Library</OutputType>
     <ProjectGuid>{5186F30E-9617-4955-BE97-0E496DE2148B}</ProjectGuid>
     <RuntimeIdentifiers>win</RuntimeIdentifiers>
-    <TargetFramework>net35</TargetFramework>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFramework>net40</TargetFramework>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="2022.1.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
+    <PackageReference Include="JetBrains.Annotations" Version="2022.1.0"/>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0"/>
     <PackageReference Include="NSubstitute" Version="2.0.3"/>
-    <PackageReference Include="xunit" Version="1.9.2" />
-    <PackageReference Include="xunit.extensions" Version="1.9.2" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="0.99.2" />
-    <PackageReference Include="coverlet.collector" Version="3.1.2">
+    <PackageReference Include="xunit" Version="1.9.2"/>
+    <PackageReference Include="xunit.extensions" Version="1.9.2"/>
+    <PackageReference Include="xunit.runner.console" Version="2.4.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.collector" Version="3.1.2"/>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LobotomyCorporationMods.BadLuckProtectionForGifts\LobotomyCorporationMods.BadLuckProtectionForGifts.csproj">
