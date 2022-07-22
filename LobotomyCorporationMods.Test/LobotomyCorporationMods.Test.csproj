@@ -30,6 +30,7 @@
     <PackageReference Include="coverlet.collector" Version="3.1.2"/>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LobotomyCorporationMods.AutoEquipTeam\LobotomyCorporationMods.AutoEquipTeam.csproj"/>
     <ProjectReference Include="..\LobotomyCorporationMods.BadLuckProtectionForGifts\LobotomyCorporationMods.BadLuckProtectionForGifts.csproj">
       <Project>{19D3E31B-FA1A-4C4C-A747-CD060FA9937F}</Project>
       <Name>LobotomyCorporationMods.BadLuckProtectionForGifts</Name>

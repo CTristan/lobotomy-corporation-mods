@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LobotomyCorporationMods.Com
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LobotomyCorporationMods.FreeCustomization", "LobotomyCorporationMods.FreeCustomization\LobotomyCorporationMods.FreeCustomization.csproj", "{4D393EB4-5416-4B79-AFE2-7AE6695D0790}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LobotomyCorporationMods.AutoEquipTeam", "LobotomyCorporationMods.AutoEquipTeam\LobotomyCorporationMods.AutoEquipTeam.csproj", "{180518E8-1F84-4045-AD49-BA723BD5434F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{4D393EB4-5416-4B79-AFE2-7AE6695D0790}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D393EB4-5416-4B79-AFE2-7AE6695D0790}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D393EB4-5416-4B79-AFE2-7AE6695D0790}.Release|Any CPU.Build.0 = Release|Any CPU
+		{180518E8-1F84-4045-AD49-BA723BD5434F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{180518E8-1F84-4045-AD49-BA723BD5434F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{180518E8-1F84-4045-AD49-BA723BD5434F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{180518E8-1F84-4045-AD49-BA723BD5434F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
