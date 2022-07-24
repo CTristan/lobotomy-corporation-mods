@@ -28,7 +28,6 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         /// </summary>
         public Harmony_Patch()
         {
-            FileManager = new FileManager();
             var dataPath = FileManager.GetDataPath(ModFileName);
 
             Initialize(dataPath);
@@ -48,6 +47,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         /// </summary>
         private static void Initialize(string dataPath)
         {
+            FileManager = new FileManager();
             LogFile = Path.Combine(dataPath, "log.txt");
             TrackerFile = Path.Combine(dataPath, "BadLuckProtectionForGifts.dat");
             AgentWorkTracker = AgentWorkTracker.FromString(FileManager.ReadAllText(TrackerFile, true));
