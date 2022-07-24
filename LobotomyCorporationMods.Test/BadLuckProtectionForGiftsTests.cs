@@ -19,16 +19,16 @@ namespace LobotomyCorporationMods.Test
 
         public BadLuckProtectionForGiftsTests()
         {
-            const string DataPath = @"./";
-            _ = new Harmony_Patch(DataPath);
+            var fileManager = TestExtensions.GetFileManager();
+            _ = new Harmony_Patch(fileManager);
             ClearAgentWorkTracker();
             s_agentWorkTracker = Harmony_Patch.GetAgentWorkTracker();
         }
 
         /// <summary>
-        /// Clears the AgentWorkTracker property by calling the New Game function, which we have
-        /// modified to create a new tracker when the player starts a new game. This indirectly tests
-        /// that functionality since otherwise almost every test will fail.
+        ///     Clears the AgentWorkTracker property by calling the New Game function, which we have
+        ///     modified to create a new tracker when the player starts a new game. This indirectly tests
+        ///     that functionality since otherwise almost every test will fail.
         /// </summary>
         private static void ClearAgentWorkTracker()
         {

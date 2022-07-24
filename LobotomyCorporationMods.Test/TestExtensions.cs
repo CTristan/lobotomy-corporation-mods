@@ -1,4 +1,9 @@
+using System.Collections.Generic;
+using System.IO;
 using System.Runtime.Serialization;
+using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Implementations;
+using LobotomyCorporationMods.Common.Interfaces;
 
 namespace LobotomyCorporationMods.Test
 {
@@ -11,6 +16,13 @@ namespace LobotomyCorporationMods.Test
         public static TObject CreateUninitializedObject<TObject>()
         {
             return (TObject)FormatterServices.GetSafeUninitializedObject(typeof(TObject));
+        }
+
+        [NotNull]
+        public static IFileManager GetFileManager()
+        {
+            return new FileManager("LobotomyCorporationMods.Test.dll",
+                new List<DirectoryInfo> { new DirectoryInfo(Directory.GetCurrentDirectory()) });
         }
     }
 }
