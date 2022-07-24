@@ -1,11 +1,26 @@
-﻿using JetBrains.Annotations;
+﻿using System.IO;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Interfaces;
 
 namespace LobotomyCorporationMods.Common.Implementations
 {
-    public sealed class File : IFile
+    public sealed class FileManager : IFileManager
     {
         [NotNull] private readonly object _fileLock = new object();
+
+        [NotNull]
+        public string GetDataPath(string modFileName)
+        {
+            foreach (var directoryInfo in Add_On.instance.DirList)
+            {
+                if (File.Exists(Path.Combine(directoryInfo.FullName, modFileName)))
+                {
+                    return directoryInfo.FullName;
+                }
+            }
+
+            return string.Empty;
+        }
 
         [NotNull]
         public string ReadAllText([NotNull] string path)
@@ -16,7 +31,7 @@ namespace LobotomyCorporationMods.Common.Implementations
         [NotNull]
         public string ReadAllText([NotNull] string path, bool createIfNotExists)
         {
-            if (!System.IO.File.Exists(path))
+            if (!File.Exists(path))
             {
                 if (!createIfNotExists) { return string.Empty; }
 
@@ -25,7 +40,7 @@ namespace LobotomyCorporationMods.Common.Implementations
 
             lock (_fileLock)
             {
-                return System.IO.File.ReadAllText(path);
+                return File.ReadAllText(path);
             }
         }
 
@@ -33,7 +48,7 @@ namespace LobotomyCorporationMods.Common.Implementations
         {
             lock (_fileLock)
             {
-                System.IO.File.WriteAllText(path, contents);
+                File.WriteAllText(path, contents);
             }
         }
     }

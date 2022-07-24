@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using Harmony;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Interfaces;
-using UnityEngine;
 
 // ReSharper disable CommentTypo
 // ReSharper disable IdentifierTypo
@@ -16,23 +16,27 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
     [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
     public sealed class Harmony_Patch
     {
+        private const string ModFileName = "LobotomyCorporationMods.BadLuckProtectionForGifts.dll";
+
         [NotNull] private static IAgentWorkTracker AgentWorkTracker = new AgentWorkTracker();
-        private static IFile File;
+        private static IFileManager FileManager;
         private static string LogFile;
         private static string TrackerFile;
 
         /// <summary>
-        /// Do not use for testing as it causes an exception. Use the other constructor instead.
+        ///     Do not use for testing as it causes an exception. Use the other constructor instead.
         /// </summary>
         public Harmony_Patch()
         {
-            var dataPath = Application.dataPath + @"/BaseMods/BadLuckProtectionForGifts/";
+            FileManager = new FileManager();
+            var dataPath = FileManager.GetDataPath(ModFileName);
+
             Initialize(dataPath);
             InitializeHarmonyPatch();
         }
 
         /// <summary>
-        /// Entry point for testing.
+        ///     Entry point for testing.
         /// </summary>
         public Harmony_Patch(string dataPath)
         {
@@ -40,18 +44,17 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         }
 
         /// <summary>
-        /// Loads data files.
+        ///     Loads data files.
         /// </summary>
         private static void Initialize(string dataPath)
         {
-            File = new File();
-            LogFile = dataPath + "BadLuckProtectionForGifts_Log.txt";
-            TrackerFile = dataPath + "BadLuckProtectionForGifts.dat";
-            AgentWorkTracker = AgentWorkTracker.FromString(File.ReadAllText(TrackerFile, true));
+            LogFile = Path.Combine(dataPath, "log.txt");
+            TrackerFile = Path.Combine(dataPath, "BadLuckProtectionForGifts.dat");
+            AgentWorkTracker = AgentWorkTracker.FromString(FileManager.ReadAllText(TrackerFile, true));
         }
 
         /// <summary>
-        /// Patches all of the relevant method calls through Harmony.
+        ///     Patches all of the relevant method calls through Harmony.
         /// </summary>
         private static void InitializeHarmonyPatch()
         {
@@ -83,7 +86,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
             }
             catch (Exception ex)
             {
-                WriteToLog(File, ex.Message + Environment.NewLine + ex.StackTrace);
+                FileManager.WriteAllText(LogFile, ex.Message + Environment.NewLine + ex.StackTrace);
                 throw;
             }
         }
@@ -102,7 +105,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         public static void CallNewgame([NotNull] AlterTitleController __instance)
         {
             AgentWorkTracker = new AgentWorkTracker();
-            SaveTracker(File ?? throw new InvalidOperationException(nameof(File)));
+            SaveTracker();
         }
 
         /// <summary>
@@ -162,7 +165,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         // ReSharper disable once UnusedParameter.Global
         public static void OnClickNextDay([NotNull] GameSceneController __instance)
         {
-            SaveTracker(File ?? throw new InvalidOperationException(nameof(File)));
+            SaveTracker();
         }
 
         /// <summary>
@@ -174,27 +177,16 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         // ReSharper disable once UnusedParameter.Global
         public static void OnStageStart([NotNull] GameSceneController __instance)
         {
-            AgentWorkTracker = AgentWorkTracker.FromString(File?.ReadAllText(TrackerFile) ??
-                                                           throw new InvalidOperationException(nameof(File)));
+            AgentWorkTracker = AgentWorkTracker.FromString(FileManager.ReadAllText(TrackerFile));
         }
 
         /// <summary>
         ///     Writes the AgentWorkTracker to a text file.
         /// </summary>
         /// <param name="file">The file interface.</param>
-        private static void SaveTracker([NotNull] IFile file)
+        private static void SaveTracker()
         {
-            file.WriteAllText(TrackerFile, AgentWorkTracker.ToString());
-        }
-
-        /// <summary>
-        ///     Writes to a log file.
-        /// </summary>
-        /// <param name="file">The file interface.</param>
-        /// <param name="message">The message to log.</param>
-        private static void WriteToLog([NotNull] IFile file, [NotNull] string message)
-        {
-            file.WriteAllText(LogFile, message);
+            FileManager.WriteAllText(TrackerFile, AgentWorkTracker.ToString());
         }
     }
 }
