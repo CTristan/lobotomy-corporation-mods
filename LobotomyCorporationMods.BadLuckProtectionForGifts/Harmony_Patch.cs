@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using Harmony;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations;
@@ -20,7 +19,6 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
 
         [NotNull] private static IAgentWorkTracker AgentWorkTracker = new AgentWorkTracker();
         private static IFileManager FileManager;
-        private static string LogFile;
         private static string TrackerFile;
 
         /// <summary>
@@ -28,28 +26,26 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         /// </summary>
         public Harmony_Patch()
         {
-            var dataPath = FileManager.GetDataPath(ModFileName);
-
-            Initialize(dataPath);
+            FileManager = new FileManager(ModFileName);
+            Initialize();
             InitializeHarmonyPatch();
         }
 
         /// <summary>
         ///     Entry point for testing.
         /// </summary>
-        public Harmony_Patch(string dataPath)
+        public Harmony_Patch(IFileManager fileManager)
         {
-            Initialize(dataPath);
+            FileManager = fileManager;
+            Initialize();
         }
 
         /// <summary>
         ///     Loads data files.
         /// </summary>
-        private static void Initialize(string dataPath)
+        private static void Initialize()
         {
-            FileManager = new FileManager();
-            LogFile = Path.Combine(dataPath, "log.txt");
-            TrackerFile = Path.Combine(dataPath, "BadLuckProtectionForGifts.dat");
+            TrackerFile = FileManager.GetFile("BadLuckProtectionForGifts.dat");
             AgentWorkTracker = AgentWorkTracker.FromString(FileManager.ReadAllText(TrackerFile, true));
         }
 
@@ -86,7 +82,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
             }
             catch (Exception ex)
             {
-                FileManager.WriteAllText(LogFile, ex.Message + Environment.NewLine + ex.StackTrace);
+                var message = ex.Message + Environment.NewLine + ex.StackTrace;
+                FileManager.WriteToLog(message);
                 throw;
             }
         }
@@ -183,7 +180,6 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         /// <summary>
         ///     Writes the AgentWorkTracker to a text file.
         /// </summary>
-        /// <param name="file">The file interface.</param>
         private static void SaveTracker()
         {
             FileManager.WriteAllText(TrackerFile, AgentWorkTracker.ToString());
