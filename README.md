@@ -14,6 +14,9 @@ The original game files are required which are not provided. My current environm
 
 If you're running Linux, make sure mono-devel is installed. You should be able to open the solution in VSCode or VSCodium and build with xbuild.
 
+## Development Notes
+* Whenever the Common project is modified in ANY way, we need to change the Assembly Name for the Common library. This is because when the mods are loaded, it it finds two DLLs with the same assembly name it will try to re-use the first DLL even if the second DLL is different, which causes the game to crash spectacularly. It doesn't really matter what you rename it to as long as it will be a unique name; the standard I've been using is appending an incrementing number.   
+
 ## License
 
 This work is licensed under MIT.
