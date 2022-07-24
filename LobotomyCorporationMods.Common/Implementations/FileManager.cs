@@ -9,20 +9,6 @@ namespace LobotomyCorporationMods.Common.Implementations
         [NotNull] private readonly object _fileLock = new object();
 
         [NotNull]
-        public string GetDataPath(string modFileName)
-        {
-            foreach (var directoryInfo in Add_On.instance.DirList)
-            {
-                if (File.Exists(Path.Combine(directoryInfo.FullName, modFileName)))
-                {
-                    return directoryInfo.FullName;
-                }
-            }
-
-            return string.Empty;
-        }
-
-        [NotNull]
         public string ReadAllText([NotNull] string path)
         {
             return ReadAllText(path, false);
