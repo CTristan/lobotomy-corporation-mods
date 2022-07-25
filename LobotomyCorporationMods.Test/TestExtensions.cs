@@ -1,9 +1,7 @@
-using System.Collections.Generic;
-using System.IO;
 using System.Runtime.Serialization;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Interfaces;
+using NSubstitute;
 
 namespace LobotomyCorporationMods.Test
 {
@@ -21,8 +19,7 @@ namespace LobotomyCorporationMods.Test
         [NotNull]
         public static IFileManager GetFileManager()
         {
-            return new FileManager("LobotomyCorporationMods.Test.dll",
-                new List<DirectoryInfo> { new DirectoryInfo(Directory.GetCurrentDirectory()) });
+            return Substitute.For<IFileManager>(null);
         }
     }
 }

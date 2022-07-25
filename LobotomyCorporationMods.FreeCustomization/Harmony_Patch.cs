@@ -9,7 +9,7 @@ using LobotomyCorporationMods.Common.Interfaces;
 namespace LobotomyCorporationMods.FreeCustomization
 {
     [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
-    public class Harmony_Patch
+    public sealed class Harmony_Patch
     {
         private const string ModFileName = "LobotomyCorporationMods.FreeCustomization.dll";
 
@@ -69,9 +69,9 @@ namespace LobotomyCorporationMods.FreeCustomization
         ///     The only reason we do this is because there's a hardcoded call to a private method (CustomizingWindow.Start()) that
         ///     closes the appearance window after the first agent window is generated.
         /// </summary>
-        public static bool CloseWindowPrefix(AppearanceUI __instance)
+        public static bool CloseWindowPrefix([NotNull] AppearanceUI __instance)
         {
-            return CustomizingWindow.CurrentWindow.CurrentWindowType != CustomizingType.GENERATE;
+            return __instance.closeAction != null;
         }
 
         /// <summary>
