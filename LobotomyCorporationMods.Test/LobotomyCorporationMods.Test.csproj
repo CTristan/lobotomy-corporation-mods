@@ -10,9 +10,13 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="2022.1.0"/>
+    <PackageReference Include="FluentAssertions" Version="4.19.4"/>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0"/>
     <PackageReference Include="NSubstitute" Version="2.0.3"/>
+    <PackageReference Include="NSubstitute.Analyzers.CSharp" Version="1.0.15">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="xunit" Version="1.9.2"/>
     <PackageReference Include="xunit.extensions" Version="1.9.2"/>
     <PackageReference Include="xunit.runner.console" Version="2.4.1">
@@ -30,6 +34,7 @@
       <Project>{19D3E31B-FA1A-4C4C-A747-CD060FA9937F}</Project>
       <Name>LobotomyCorporationMods.BadLuckProtectionForGifts</Name>
     </ProjectReference>
+    <ProjectReference Include="..\LobotomyCorporationMods.FreeCustomization\LobotomyCorporationMods.FreeCustomization.csproj"/>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony, Version=1.0.9.1, Culture=neutral, PublicKeyToken=null">
@@ -55,6 +60,9 @@
     </Reference>
     <Reference Include="System.Xml, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
       <HintPath>..\..\..\..\Managed\System.Xml.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>..\..\..\..\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>

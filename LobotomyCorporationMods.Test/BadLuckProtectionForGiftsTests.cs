@@ -1,26 +1,32 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using FluentAssertions;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
+using LobotomyCorporationMods.Common.Interfaces;
 using NSubstitute;
 using Xunit;
 using Xunit.Extensions;
 
 namespace LobotomyCorporationMods.Test
 {
+    [SuppressMessage("Non-substitutable member", "NS1004:Argument matcher used with a non-virtual member of a class.")]
     public sealed class BadLuckProtectionForGiftsTests
     {
         private const long AgentId = 1;
         private const string GiftName = "Test";
 
         private static IAgentWorkTracker s_agentWorkTracker;
+        private readonly IFileManager _fileManager;
         private CreatureEquipmentMakeInfo _creatureEquipmentMakeInfo;
         private UseSkill _useSkill;
 
         public BadLuckProtectionForGiftsTests()
         {
-            var fileManager = TestExtensions.GetFileManager();
-            _ = new Harmony_Patch(fileManager);
+            _fileManager = TestExtensions.GetFileManager();
+            _ = new Harmony_Patch(_fileManager);
             ClearAgentWorkTracker();
             s_agentWorkTracker = Harmony_Patch.GetAgentWorkTracker();
         }
@@ -32,7 +38,17 @@ namespace LobotomyCorporationMods.Test
         /// </summary>
         private static void ClearAgentWorkTracker()
         {
-            Harmony_Patch.CallNewgame(new AlterTitleController());
+            Harmony_Patch.CallNewgame(Substitute.For<AlterTitleController>());
+        }
+
+        [Fact]
+        public void Constructor_IsUntestable()
+        {
+            // Act
+            Action act = () => _ = new Harmony_Patch();
+
+            // Assert
+            act.ShouldThrow<TypeInitializationException>();
         }
 
         [Fact]
@@ -115,7 +131,7 @@ namespace LobotomyCorporationMods.Test
             s_agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId, numberOfTimes);
 
             // Act
-            Harmony_Patch.CallNewgame(new AlterTitleController());
+            Harmony_Patch.CallNewgame(Substitute.For<AlterTitleController>());
             s_agentWorkTracker = Harmony_Patch.GetAgentWorkTracker();
             s_agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId);
             var actual = s_agentWorkTracker.GetLastAgentWorkCountByGift(GiftName);
@@ -161,6 +177,19 @@ namespace LobotomyCorporationMods.Test
             Assert.Equal(expected, actual);
         }
 
+        [Fact]
+        public void OnClickNextDay_WhenCalled_CallsSaveTracker()
+        {
+            // Arrange
+            var gameSceneController = Substitute.For<GameSceneController>();
+
+            // Act
+            Harmony_Patch.OnClickNextDay(gameSceneController);
+
+            // Assert
+            AssertSaveTrackerCalled();
+        }
+
         [NotNull]
         private static CreatureEquipmentMakeInfo CreateCreatureEquipmentMakeInfo(string giftName)
         {
@@ -190,6 +219,11 @@ namespace LobotomyCorporationMods.Test
             useSkill.successCount = numberOfSuccesses;
 
             return useSkill;
+        }
+
+        private void AssertSaveTrackerCalled()
+        {
+            _fileManager.Received().WriteAllText(Arg.Any<string>(), s_agentWorkTracker.ToString());
         }
     }
 }
