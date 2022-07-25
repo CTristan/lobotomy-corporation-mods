@@ -1,4 +1,6 @@
+using System;
 using System.Runtime.Serialization;
+using System.Security;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Interfaces;
 using NSubstitute;
@@ -20,6 +22,16 @@ namespace LobotomyCorporationMods.Test
         public static IFileManager GetFileManager()
         {
             return Substitute.For<IFileManager>(null);
+        }
+
+        /// <summary>
+        ///     Depending on the environment, the same test may return a different exception. Both exception types appear for the
+        ///     same reason (trying to use a Unity-specific method), so we'll check if the exception we get is either of those
+        ///     types to verify our test isn't getting an exception for some other reason.
+        /// </summary>
+        public static bool AssertIsUnityException(Exception exception)
+        {
+            return exception is SecurityException || exception is MissingMethodException;
         }
     }
 }

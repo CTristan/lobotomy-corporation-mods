@@ -1,9 +1,9 @@
 using System;
-using System.Security;
 using Customizing;
 using FluentAssertions;
 using LobotomyCorporationMods.FreeCustomization;
 using NSubstitute;
+using UnityEngine;
 using Xunit;
 using Xunit.Extensions;
 
@@ -50,14 +50,15 @@ namespace LobotomyCorporationMods.Test
             // Arrange
             var agentInfoWindow = Substitute.For<AgentInfoWindow>();
             var customizingWindow = Substitute.For<CustomizingWindow>();
+            customizingWindow.appearanceBlock = TestExtensions.CreateUninitializedObject<GameObject>();
             agentInfoWindow.customizingWindow = customizingWindow;
             AgentInfoWindow.currentWindow = agentInfoWindow;
 
             // Act
-            Action act = () => Harmony_Patch.GenerateWindowPostfix();
+            var exception = Record.Exception(Harmony_Patch.GenerateWindowPostfix);
 
             // Assert
-            act.ShouldThrow<SecurityException>();
+            TestExtensions.AssertIsUnityException(exception).Should().BeTrue();
         }
 
         [Theory]
