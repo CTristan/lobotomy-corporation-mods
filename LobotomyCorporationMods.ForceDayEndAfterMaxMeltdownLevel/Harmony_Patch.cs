@@ -1,48 +1,34 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.ForceDayEndAfterMaxMeltdownLevel.Extensions;
+using LobotomyCorporationMods.Common.Implementations;
+using LobotomyCorporationMods.Common.Interfaces;
 
 #pragma warning disable CA1707
 namespace LobotomyCorporationMods.ForceDayEndAfterMaxMeltdownLevel
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public sealed class Harmony_Patch
     {
         private const string ModFileName = "LobotomyCorporationMods.ForceDayEndAfterMaxMeltdownLevel.dll";
-
-        private static string DataPath;
-        private static string LogFile;
+        private static int s_currentQliphothCounter;
+        private static IFileManager s_fileManager;
 
         /// <summary>
         ///     Do not use for testing as it causes an exception. Use the other constructor instead.
         /// </summary>
         public Harmony_Patch()
         {
-            DataPath = ModExtensions.GetDataPath(ModFileName);
+            s_fileManager = new FileManager(ModFileName);
 
-            Initialize();
             InitializeHarmonyPatch();
         }
 
         /// <summary>
         ///     Entry point for testing.
         /// </summary>
-        public Harmony_Patch(string dataPath)
+        public Harmony_Patch(IFileManager fileManager)
         {
-            DataPath = dataPath;
-
-            Initialize();
-        }
-
-        /// <summary>
-        ///     Loads data files.
-        /// </summary>
-        private static void Initialize()
-        {
-            LogFile = Path.Combine(DataPath, "log.txt");
+            s_fileManager = fileManager;
         }
 
         /// <summary>
@@ -64,7 +50,7 @@ namespace LobotomyCorporationMods.ForceDayEndAfterMaxMeltdownLevel
             }
             catch (Exception ex)
             {
-                ModExtensions.WriteAllText(LogFile, ex.Message + Environment.NewLine + ex.StackTrace);
+                s_fileManager.WriteToLog(ex.Message + Environment.NewLine + ex.StackTrace);
                 throw;
             }
         }
@@ -76,11 +62,19 @@ namespace LobotomyCorporationMods.ForceDayEndAfterMaxMeltdownLevel
         // ReSharper disable once IdentifierTypo
         public static bool AddOverloadGaguePrefix([NotNull] CreatureOverloadManager __instance)
         {
-            const int maxMeltdownLevel = 10;
+            const int MaxMeltdownLevel = 10;
             var meltdownLevel = __instance.GetQliphothOverloadLevel();
 
             // If we're not at the max level then go through the normal method
-            if (meltdownLevel < maxMeltdownLevel) { return true; }
+            if (meltdownLevel < MaxMeltdownLevel) { return true; }
+
+            // We only want to force the day to end on a full Qliphoth counter
+            var maxQliphothCounter = __instance.qliphothOverloadMax;
+            if (s_currentQliphothCounter < maxQliphothCounter)
+            {
+                s_currentQliphothCounter++;
+                return true;
+            }
 
             var gameManager = GameManager.currentGameManager;
 

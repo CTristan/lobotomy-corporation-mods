@@ -26,6 +26,7 @@
       <Project>{19D3E31B-FA1A-4C4C-A747-CD060FA9937F}</Project>
       <Name>LobotomyCorporationMods.BadLuckProtectionForGifts</Name>
     </ProjectReference>
+    <ProjectReference Include="..\LobotomyCorporationMods.ForceDayEndAfterMaxMeltdownLevel\LobotomyCorporationMods.ForceDayEndAfterMaxMeltdownLevel.csproj"/>
     <ProjectReference Include="..\LobotomyCorporationMods.FreeCustomization\LobotomyCorporationMods.FreeCustomization.csproj"/>
   </ItemGroup>
   <ItemGroup>
@@ -55,6 +56,9 @@
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>..\..\..\..\Managed\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>..\..\..\..\Managed\UnityEngine.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
