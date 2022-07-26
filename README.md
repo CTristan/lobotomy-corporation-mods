@@ -37,6 +37,23 @@ which you only get a limited number of each day and is used to hire agents and
 improve stats. The fact that customizing an agent directly affects your gameplay
 bothers me, so this mod will make customizing agents not require any additional
 points.
+I do not like when games require a cost for customizing a character in the first place, but in this game customizing
+requires spending an additional LOB point which you only get a limited number of each day and is used to hire agents and
+improve stats. The fact that customizing an agent directly affects your gameplay bothers me, so this mod will make
+customizing agents not require any additional points.
+
+### Force Day to End After Max Meltdown Level
+
+![Force Day to End example](https://raw.githubusercontent.com/ctristan/lobotomy-corporation-mods/assets/force-day-end.webp)
+
+Forces the day to end when working the last time at Meltdown Level 10 if there is no emergency and the energy need to
+complete the day has been met.
+
+The reason for this mod is to resolve what I feel is a design issue that negatively affects the game's pacing. The only
+ways to increase agent stats are items, experience from working, and buying stats with points. Because of this, the game
+unintentionally incentivizes "grinding" by making agents continue to perform work even when the energy need has been
+met. Unfortunately, this also makes the game drag on because the player might feel the need to max out the stats on all
+of their agents which could take a long time.
 
 ## Building
 

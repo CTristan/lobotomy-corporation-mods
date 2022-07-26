@@ -69,7 +69,7 @@ namespace LobotomyCorporationMods.ForceDayEndAfterMaxMeltdownLevel
             if (meltdownLevel < MaxMeltdownLevel) { return true; }
 
             // We only want to force the day to end on a full Qliphoth counter
-            var maxQliphothCounter = __instance.qliphothOverloadMax;
+            var maxQliphothCounter = __instance.qliphothOverloadMax - 1;
             if (s_currentQliphothCounter < maxQliphothCounter)
             {
                 s_currentQliphothCounter++;
