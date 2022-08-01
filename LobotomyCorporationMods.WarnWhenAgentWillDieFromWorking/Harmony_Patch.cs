@@ -54,10 +54,12 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking
             }
         }
 
+        // ReSharper disable once InconsistentNaming
         public static void SetFilterPostfix([NotNull] AgentSlot __instance, AgentState state)
         {
             try
             {
+                // Some initial Command Window checks to make sure we're in the right state
                 var commandWindow = CommandWindow.CommandWindow.CurrentWindow;
 
                 if (state == AgentState.DEAD || state == AgentState.PANIC || state == AgentState.UNCONTROLLABLE)
@@ -78,11 +80,24 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking
                 }
 
                 var agent = __instance.CurrentAgent;
-                var agentWillDie = false;
+                var currentSkill = commandWindow.CurrentSkill.rwbpType;
                 var qliphothCounter = creature.qliphothCounter;
+                var agentWillDie = false;
 
                 switch (creature.metadataId)
                 {
+                    case (long)CreatureIds.CrumblingArmor:
+                        {
+                            agentWillDie = agent.fortitudeLevel == 1;
+
+                            break;
+                        }
+                    case (long)CreatureIds.NothingThere:
+                        {
+                            agentWillDie = agent.fortitudeLevel <= 3;
+
+                            break;
+                        }
                     case (long)CreatureIds.SingingMachine:
                         {
                             /*
@@ -122,6 +137,16 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking
                         }
                 }
 
+                // Other fatal abnormalities
+                if (!agentWillDie)
+                {
+                    // Crumbling Armor
+                    if (HasCrumblingArmor(agent) && currentSkill == RwbpType.B)
+                    {
+                        agentWillDie = true;
+                    }
+                }
+
                 if (agentWillDie)
                 {
                     __instance.WorkFilterFill.color = CommandWindow.CommandWindow.CurrentWindow.DeadColor;
@@ -132,6 +157,12 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking
             catch
             {
             }
+        }
+
+        private static bool HasCrumblingArmor(AgentModel agent)
+        {
+            return agent.HasEquipment(4000371) || agent.HasEquipment(4000372) || agent.HasEquipment(4000373) ||
+                   agent.HasEquipment(4000374);
         }
     }
 }
