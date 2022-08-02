@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using CommandWindow;
 using Harmony;
 using JetBrains.Annotations;
@@ -145,6 +146,11 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking
                     {
                         agentWillDie = true;
                     }
+                    // Fairy Festival
+                    else if (HasFairyHealing(agent) && creature.metadataId != (long)CreatureIds.FairyFestival)
+                    {
+                        agentWillDie = true;
+                    }
                 }
 
                 if (agentWillDie)
@@ -159,10 +165,17 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking
             }
         }
 
-        private static bool HasCrumblingArmor(AgentModel agent)
+        private static bool HasCrumblingArmor([NotNull] AgentModel agent)
         {
             return agent.HasEquipment(4000371) || agent.HasEquipment(4000372) || agent.HasEquipment(4000373) ||
                    agent.HasEquipment(4000374);
+        }
+
+        private static bool HasFairyHealing([NotNull] AgentModel agent)
+        {
+            var buffs = agent.GetUnitBufList();
+
+            return buffs.OfType<FairyBuf>().Any();
         }
     }
 }
