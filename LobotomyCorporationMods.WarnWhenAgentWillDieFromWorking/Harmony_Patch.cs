@@ -87,6 +87,17 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking
 
                 switch (creature.metadataId)
                 {
+                    case (long)CreatureIds.BeautyAndTheBeast:
+                        {
+                            const int WeakenedState = 1;
+                            var animationScript = creature.GetAnimScript() as BeautyBeastAnim;
+                            var animationState = animationScript.GetState();
+                            var isWeakened = animationState == WeakenedState;
+
+                            agentWillDie = isWeakened && currentSkill == RwbpType.P;
+
+                            break;
+                        }
                     case (long)CreatureIds.CrumblingArmor:
                         {
                             agentWillDie = agent.fortitudeLevel == 1;
