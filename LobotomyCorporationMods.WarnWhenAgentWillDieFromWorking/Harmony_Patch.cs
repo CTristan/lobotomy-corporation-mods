@@ -98,6 +98,12 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking
 
                             break;
                         }
+                    case (long)CreatureIds.Bloodbath:
+                        {
+                            agentWillDie = agent.fortitudeLevel == 1 || agent.temperanceLevel == 1;
+
+                            break;
+                        }
                     case (long)CreatureIds.CrumblingArmor:
                         {
                             agentWillDie = agent.fortitudeLevel == 1;
