@@ -90,7 +90,8 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking
                     case (long)CreatureIds.BeautyAndTheBeast:
                         {
                             const int WeakenedState = 1;
-                            var animationScript = creature.GetAnimScript() as BeautyBeastAnim;
+                            if (!(creature.GetAnimScript() is BeautyBeastAnim animationScript)) { break; }
+
                             var animationState = animationScript.GetState();
                             var isWeakened = animationState == WeakenedState;
 
@@ -124,6 +125,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking
                              Fortitude level from 3 to 4. To account for that we look at the actual stat value instead
                              of the level.
                              */
+
                             const int GiftIncrease = 8;
                             const int FortitudeThreshold = 65;
                             var fortitudeStatTooHigh = agent.fortitudeStat >= FortitudeThreshold - GiftIncrease;
@@ -164,7 +166,12 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking
                         agentWillDie = true;
                     }
                     // Fairy Festival
-                    else if (HasFairyHealing(agent) && creature.metadataId != (long)CreatureIds.FairyFestival)
+                    else if (HasBuff<FairyBuf>(agent) && creature.metadataId != (long)CreatureIds.FairyFestival)
+                    {
+                        agentWillDie = true;
+                    }
+                    // Laetitia
+                    else if (HasBuff<LittleWitchBuf>(agent) && creature.metadataId != (long)CreatureIds.Laetitia)
                     {
                         agentWillDie = true;
                     }
@@ -188,11 +195,11 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking
                    agent.HasEquipment(4000374);
         }
 
-        private static bool HasFairyHealing([NotNull] AgentModel agent)
+        private static bool HasBuff<TBuff>([NotNull] UnitModel unit) where TBuff : UnitBuf
         {
-            var buffs = agent.GetUnitBufList();
+            var buffs = unit.GetUnitBufList();
 
-            return buffs.OfType<FairyBuf>().Any();
+            return buffs.OfType<TBuff>().Any();
         }
     }
 }
