@@ -6,6 +6,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking
         Bloodbath = 100027,
         CrumblingArmor = 100037,
         FairyFestival = 100053,
+        HappyTeddyBear = 100002,
         Laetitia = 100041,
         NothingThere = 100005,
         SingingMachine = 100006,

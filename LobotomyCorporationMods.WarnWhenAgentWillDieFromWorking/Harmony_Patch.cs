@@ -111,6 +111,15 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking
 
                             break;
                         }
+                    case (long)CreatureIds.HappyTeddyBear:
+                        {
+                            if (creature.script is HappyTeddy script)
+                            {
+                                agentWillDie = agent.instanceId == script.lastAgent.instanceId;
+                            }
+
+                            break;
+                        }
                     case (long)CreatureIds.NothingThere:
                         {
                             agentWillDie = agent.fortitudeLevel <= 3;
