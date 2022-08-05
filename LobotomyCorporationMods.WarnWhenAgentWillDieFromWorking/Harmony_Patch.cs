@@ -9,6 +9,7 @@ using LobotomyCorporationMods.Common.Interfaces;
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking
 {
+    // ReSharper disable once InconsistentNaming
     [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
     public class Harmony_Patch
     {
@@ -123,6 +124,12 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking
                     case (long)CreatureIds.NothingThere:
                         {
                             agentWillDie = agent.fortitudeLevel <= 3;
+
+                            break;
+                        }
+                    case (long)CreatureIds.RedShoes:
+                        {
+                            agentWillDie = agent.temperanceLevel <= 2;
 
                             break;
                         }
