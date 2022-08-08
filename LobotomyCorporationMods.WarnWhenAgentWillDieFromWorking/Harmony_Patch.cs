@@ -127,6 +127,14 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking
 
                             break;
                         }
+                    case (long)CreatureIds.ParasiteTree:
+                        {
+                            if (!(creature.GetAnimScript() is YggdrasilAnim animationScript)) { break; }
+
+                            var activeFlowers = animationScript.flowers.Where(flower => flower.activeSelf).ToList();
+                            agentWillDie = activeFlowers.Count == 4 && !agent.HasBuffOfType<YggdrasilBlessBuf>();
+                            break;
+                        }
                     case (long)CreatureIds.RedShoes:
                         {
                             agentWillDie = agent.temperanceLevel <= 2;
@@ -177,17 +185,17 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking
                 if (!agentWillDie)
                 {
                     // Crumbling Armor
-                    if (HasCrumblingArmor(agent) && currentSkill == RwbpType.B)
+                    if (agent.HasCrumblingArmor() && currentSkill == RwbpType.B)
                     {
                         agentWillDie = true;
                     }
                     // Fairy Festival
-                    else if (HasBuff<FairyBuf>(agent) && creature.metadataId != (long)CreatureIds.FairyFestival)
+                    else if (agent.HasBuffOfType<FairyBuf>() && creature.metadataId != (long)CreatureIds.FairyFestival)
                     {
                         agentWillDie = true;
                     }
                     // Laetitia
-                    else if (HasBuff<LittleWitchBuf>(agent) && creature.metadataId != (long)CreatureIds.Laetitia)
+                    else if (agent.HasBuffOfType<LittleWitchBuf>() && creature.metadataId != (long)CreatureIds.Laetitia)
                     {
                         agentWillDie = true;
                     }
@@ -203,19 +211,6 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking
             catch
             {
             }
-        }
-
-        private static bool HasCrumblingArmor([NotNull] AgentModel agent)
-        {
-            return agent.HasEquipment(4000371) || agent.HasEquipment(4000372) || agent.HasEquipment(4000373) ||
-                   agent.HasEquipment(4000374);
-        }
-
-        private static bool HasBuff<TBuff>([NotNull] UnitModel unit) where TBuff : UnitBuf
-        {
-            var buffs = unit.GetUnitBufList();
-
-            return buffs.OfType<TBuff>().Any();
         }
     }
 }

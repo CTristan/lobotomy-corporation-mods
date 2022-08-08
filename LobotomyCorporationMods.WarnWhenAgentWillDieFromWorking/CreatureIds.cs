@@ -9,6 +9,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking
         HappyTeddyBear = 100002,
         Laetitia = 100041,
         NothingThere = 100005,
+        ParasiteTree = 100062,
         RedShoes = 100003,
         SingingMachine = 100006,
         SpiderBud = 100012,
