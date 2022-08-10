@@ -14,6 +14,7 @@
     <TargetFramework>net35</TargetFramework>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <LangVersion>8.0</LangVersion>
+    <LangVersion>8.0</LangVersion>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
     <AnalysisLevel>latest-recommended</AnalysisLevel>
@@ -277,6 +278,13 @@
     <!-- common vars https://msdn.microsoft.com/en-us/library/c02as0cs.aspx?f=255&MSPPError=-2147217396 -->
     <!-- bin -->
     <RemoveDir Directories="$(TargetDir)"/>
+  </Target>
+  <Target Name="CompleteClean" AfterTargets="Clean">
+    <!-- common vars https://msdn.microsoft.com/en-us/library/c02as0cs.aspx?f=255&MSPPError=-2147217396 -->
+    <RemoveDir Directories="$(TargetDir)"/>
+    <!-- bin -->
+    <RemoveDir Directories="$(ProjectDir)$(BaseIntermediateOutputPath)"/>
+    <!-- obj -->
   </Target>
 
 </Project>

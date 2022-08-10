@@ -2,9 +2,9 @@ using System.Linq;
 using JetBrains.Annotations;
 
 // ReSharper disable once CheckNamespace
-namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking
+namespace LobotomyCorporationMods.Common
 {
-    internal static class AgentModelExtensions
+    public static class AgentModelExtensions
     {
         public static bool HasBuffOfType<TBuff>([NotNull] this AgentModel agent) where TBuff : UnitBuf
         {
