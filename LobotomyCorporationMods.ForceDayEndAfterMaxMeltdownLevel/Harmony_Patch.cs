@@ -7,6 +7,7 @@ using LobotomyCorporationMods.Common.Interfaces;
 #pragma warning disable CA1707
 namespace LobotomyCorporationMods.ForceDayEndAfterMaxMeltdownLevel
 {
+    // ReSharper disable once InconsistentNaming
     public sealed class Harmony_Patch
     {
         private const string ModFileName = "LobotomyCorporationMods.ForceDayEndAfterMaxMeltdownLevel.dll";
@@ -51,6 +52,7 @@ namespace LobotomyCorporationMods.ForceDayEndAfterMaxMeltdownLevel
             catch (Exception ex)
             {
                 s_fileManager.WriteToLog(ex.Message + Environment.NewLine + ex.StackTrace);
+
                 throw;
             }
         }
@@ -62,27 +64,36 @@ namespace LobotomyCorporationMods.ForceDayEndAfterMaxMeltdownLevel
         // ReSharper disable once IdentifierTypo
         public static bool AddOverloadGaguePrefix([NotNull] CreatureOverloadManager __instance)
         {
-            const int MaxMeltdownLevel = 10;
-            var meltdownLevel = __instance.GetQliphothOverloadLevel();
-
-            // If we're not at the max level then go through the normal method
-            if (meltdownLevel < MaxMeltdownLevel) { return true; }
-
-            // We only want to force the day to end on a full Qliphoth counter
-            var maxQliphothCounter = __instance.qliphothOverloadMax - 1;
-            if (s_currentQliphothCounter < maxQliphothCounter)
-            {
-                s_currentQliphothCounter++;
-                return true;
-            }
-
-            var gameManager = GameManager.currentGameManager;
+            var isMaxMeltdown = CheckForMaxMeltdown(__instance);
+            if (!isMaxMeltdown) { return true; }
 
             // In the interest of fairness, we'll allow the player to clear any emergency before ending the day
+            var gameManager = GameManager.currentGameManager;
             if (!gameManager.emergency)
             {
                 gameManager.ClearStage();
             }
+
+            return false;
+        }
+
+        public static bool CheckForMaxMeltdown([NotNull] CreatureOverloadManager overloadManager)
+        {
+            const int MaxMeltdownLevel = 10;
+            var meltdownLevel = overloadManager.GetQliphothOverloadLevel();
+            if (meltdownLevel < MaxMeltdownLevel)
+            {
+                return false;
+            }
+
+            // We only want to count a max meltdown on a full Qliphoth counter
+            var maxQliphothCounter = overloadManager.qliphothOverloadMax - 1;
+            if (s_currentQliphothCounter >= maxQliphothCounter)
+            {
+                return true;
+            }
+
+            s_currentQliphothCounter++;
 
             return false;
         }

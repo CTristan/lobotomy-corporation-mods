@@ -16,12 +16,11 @@ namespace LobotomyCorporationMods.Test
         {
             var fileManager = TestExtensions.GetFileManager();
             _ = new Harmony_Patch(fileManager);
-
-            // Static instances that need to be created before some of the tests will work
-            _ = TestExtensions.CreateGlobalGameManager();
-            _ = TestExtensions.CreateEnergyModel(999f);
         }
 
+        /// <summary>
+        ///     Needed to verify that constructor is public and externally accessible.
+        /// </summary>
         [Fact]
         public void Constructor_IsUntestable()
         {
@@ -36,63 +35,43 @@ namespace LobotomyCorporationMods.Test
         [InlineData(1)]
         [InlineData(2)]
         [InlineData(3)]
-        public void AddOverloadGaguePrefix_MeltdownLevelLessThanMax_ReturnsTrue(int qliphothCounter)
+        public void CheckForMaxMeltdown_MeltdownLevelLessThanMax_ReturnsFalse(int qliphothCounter)
         {
             // Arrange
             var creatureOverloadManager = TestExtensions.CreateCreatureOverloadManager(qliphothCounter);
 
             // Act
-            var result = Harmony_Patch.AddOverloadGaguePrefix(creatureOverloadManager);
+            var result = Harmony_Patch.CheckForMaxMeltdown(creatureOverloadManager);
 
             // Assert
-            result.Should().BeTrue();
+            result.Should().BeFalse();
         }
 
         [Fact]
-        public void AddOverloadGaguePrefix_MaxMeltdownLevelButNotMaxQliphothCounter_ReturnsTrue()
+        public void CheckForMaxMeltdown_MaxMeltdownLevelButNotMaxQliphothCounter_ReturnsFalse()
         {
             // Arrange
             var creatureOverloadManager = TestExtensions.CreateCreatureOverloadManager(MaxLevel);
 
             // Act
-            var result = Harmony_Patch.AddOverloadGaguePrefix(creatureOverloadManager);
-
-            // Assert
-            result.Should().BeTrue();
-        }
-
-        [Fact]
-        public void AddOverloadGaguePrefix_MaxMeltdownLevelAndMaxQliphothCounterButInEmergency_StageEndedIsFalse()
-        {
-            // Arrange
-            const int OverloadMax = 0;
-            var creatureOverloadManager = TestExtensions.CreateCreatureOverloadManager(MaxLevel, OverloadMax);
-            var gameManager = TestExtensions.CreateGameManager(true);
-
-            // Act
-            var result = Harmony_Patch.AddOverloadGaguePrefix(creatureOverloadManager);
+            var result = Harmony_Patch.CheckForMaxMeltdown(creatureOverloadManager);
 
             // Assert
             result.Should().BeFalse();
-            gameManager.StageEnded.Should().BeFalse();
         }
 
-        /// <summary>
-        ///     This is untestable because the actual method to end the day calls another game method that Unity won't allow.
-        /// </summary>
         [Fact]
-        public void AddOverloadGaguePrefix_MaxMeltdownLevelAndMaxQliphothCounterAndNotInEmergency_InUntestable()
+        public void CheckForMaxMeltdown_MaxMeltdownLevelAndMaxQliphothCounter_ReturnsTrue()
         {
             // Arrange
             const int OverloadMax = 0;
             var creatureOverloadManager = TestExtensions.CreateCreatureOverloadManager(MaxLevel, OverloadMax);
-            var gameManager = TestExtensions.CreateGameManager();
 
             // Act
-            var result = Record.Exception(() => Harmony_Patch.AddOverloadGaguePrefix(creatureOverloadManager));
+            var result = Harmony_Patch.CheckForMaxMeltdown(creatureOverloadManager);
 
             // Assert
-            TestExtensions.AssertIsUnityException(result).Should().BeTrue();
+            result.Should().BeTrue();
         }
     }
 }
