@@ -1,6 +1,9 @@
 ﻿// SPDX-License-Identifier: MIT
 
+using System;
+using System.Globalization;
 using System.IO;
+using FluentAssertions;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
@@ -15,6 +18,16 @@ namespace LobotomyCorporationMods.Test
     {
         private const long AgentId = 1;
         private const string GiftName = "Test";
+
+        /// <summary>
+        ///     Harmony requires the constructor to be public.
+        /// </summary>
+        [Fact]
+        public void Constructor_is_public_and_externally_accessible()
+        {
+            Action act = () => _ = new Harmony_Patch();
+            act.ShouldNotThrow();
+        }
 
         [Fact]
         public void Converting_a_tracker_to_a_string_with_multiple_gifts_and_agents_contains_all_of_the_data_in_the_tracker()
@@ -32,7 +45,8 @@ namespace LobotomyCorporationMods.Test
 
             // Second gift second agent
             agentWorkTracker.IncrementAgentWorkCount(SecondGiftName, SecondAgentId, 2f);
-            var expected = $@"{GiftName}^{AgentId.ToString()};1^{SecondAgentId.ToString()};1|{SecondGiftName}^{SecondAgentId.ToString()};2";
+            var expected = string.Format(CultureInfo.CurrentCulture, "{0}^{1};1^{2};1|{3}^{2};2", GiftName, AgentId.ToString(CultureInfo.CurrentCulture),
+                SecondAgentId.ToString(CultureInfo.CurrentCulture), SecondGiftName);
 
             var actual = agentWorkTracker.ToString();
 
@@ -45,7 +59,7 @@ namespace LobotomyCorporationMods.Test
             const string DataFileName = "Converting_a_tracker_to_a_string_with_a_single_gift_and_a_single_agent_returns_the_correct_string";
             var agentWorkTracker = CreateAgentWorkTracker(DataFileName);
             agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId);
-            var expected = $@"{GiftName}^{AgentId.ToString()};1";
+            var expected = $@"{GiftName}^{AgentId.ToString(CultureInfo.CurrentCulture)};1";
 
             var actual = agentWorkTracker.ToString();
 
@@ -68,8 +82,7 @@ namespace LobotomyCorporationMods.Test
         [InlineData("Test^1;1", GiftName, AgentId, 1f)]
         [InlineData("Test^1;1^2;2", GiftName, 2, 2f)]
         [InlineData("Test^1;1^2;2|Second^1;3", "Second", 1, 3f)]
-        public void Loading_data_multiple_times_from_a_saved_tracker_file_does_not_duplicate_work_progress([NotNull] string trackerData, [NotNull] string giftName, long agentId,
-            float numberOfTimes)
+        public void Loading_data_multiple_times_from_a_saved_tracker_file_does_not_duplicate_work_progress([NotNull] string trackerData, [NotNull] string giftName, long agentId, float numberOfTimes)
         {
             var dataFileName = $"Loading_data_with_a_saved_tracker_file_populates_a_valid_tracker_{giftName}_{agentId}_{numberOfTimes}";
             var agentWorkTracker = CreateAgentWorkTracker(dataFileName, trackerData);
@@ -125,7 +138,7 @@ namespace LobotomyCorporationMods.Test
             var agentWorkTracker = CreateAgentWorkTracker(DataFileName);
             agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId);
 
-            AlterTitleControllerPatchCallNewgame.Postfix();
+            NewTitleScriptPatchOnClickNewGame.Postfix();
             agentWorkTracker = Harmony_Patch.Instance.AgentWorkTracker;
             var actualWorkCount = agentWorkTracker.GetLastAgentWorkCountByGift(GiftName);
 
@@ -182,8 +195,7 @@ namespace LobotomyCorporationMods.Test
         [InlineData("Test^1;1", GiftName, AgentId, 1f)]
         [InlineData("Test^1;1^2;2", GiftName, 2, 2f)]
         [InlineData("Test^1;1^2;2|Second^1;3", "Second", 1, 3f)]
-        public void Restarting_the_day_reloads_the_saved_data_and_overwrites_the_progress_made_that_day([NotNull] string trackerData, [NotNull] string giftName, long agentId,
-            float numberOfTimes)
+        public void Restarting_the_day_reloads_the_saved_data_and_overwrites_the_progress_made_that_day([NotNull] string trackerData, [NotNull] string giftName, long agentId, float numberOfTimes)
         {
             var dataFileName = $"Restarting_the_day_reloads_the_saved_data_and_overwrites_the_progress_made_that_day_{giftName}_{agentId}_{numberOfTimes}";
             var agentWorkTracker = CreateAgentWorkTracker(dataFileName, trackerData);
@@ -196,7 +208,7 @@ namespace LobotomyCorporationMods.Test
 
         #region Test Helper Methods
 
-        private void AssertSaveTrackerCalled([NotNull] IAgentWorkTracker agentWorkTracker)
+        private static void AssertSaveTrackerCalled([NotNull] IAgentWorkTracker agentWorkTracker)
         {
             Harmony_Patch.Instance.FileManager.Received().WriteAllText(Arg.Any<string>(), agentWorkTracker.ToString());
         }

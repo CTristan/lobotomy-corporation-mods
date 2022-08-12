@@ -19,7 +19,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         private readonly Dictionary<string, long> _mostRecentAgentIdByGift = new Dictionary<string, long>();
         private readonly string _trackerFile;
 
-        public AgentWorkTracker(IFileManager fileManager, string dataFileName)
+        internal AgentWorkTracker(IFileManager fileManager, string dataFileName)
         {
             _fileManager = fileManager;
             _trackerFile = _fileManager.GetFile(dataFileName);
@@ -29,7 +29,10 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         public float GetLastAgentWorkCountByGift(string giftName)
         {
             // Make sure this gift has actually been worked on before doing lookups
-            if (!_mostRecentAgentIdByGift.ContainsKey(giftName)) { return 0; }
+            if (!_mostRecentAgentIdByGift.ContainsKey(giftName))
+            {
+                return 0;
+            }
 
             var agentId = _mostRecentAgentIdByGift[giftName];
             var agent = GetAgent(giftName, agentId);
@@ -57,6 +60,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         public void Reset()
         {
             _gifts.Clear();
+            _mostRecentAgentIdByGift.Clear();
             Save();
         }
 
@@ -68,10 +72,11 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         /// <summary>
         ///     Loads the tracker data from our custom text file.
         /// </summary>
-        public void LoadFromString([NotNull] string trackerData)
+        private void LoadFromString([NotNull] string trackerData)
         {
             // Clear any existing data so we aren't duplicating work progress
             _gifts.Clear();
+            _mostRecentAgentIdByGift.Clear();
 
             var gifts = trackerData.Split('|');
             foreach (var gift in gifts)

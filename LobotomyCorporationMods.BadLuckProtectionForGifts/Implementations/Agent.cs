@@ -9,7 +9,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         private readonly long _id;
         private float _workCount;
 
-        public Agent(long id)
+        internal Agent(long id)
         {
             _id = id;
             _workCount = 0f;

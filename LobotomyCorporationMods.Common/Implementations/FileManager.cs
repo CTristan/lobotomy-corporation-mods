@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Interfaces;
 
@@ -18,19 +19,10 @@ namespace LobotomyCorporationMods.Common.Implementations
         {
         }
 
-        public FileManager([NotNull] string modFileName, [NotNull] List<DirectoryInfo> directories)
+        private FileManager([NotNull] string modFileName, [NotNull] IEnumerable<DirectoryInfo> directories)
         {
-            foreach (var directoryInfo in directories)
-            {
-                if (File.Exists(Path.Combine(directoryInfo.FullName, modFileName)))
-                {
-                    _dataPath = directoryInfo;
-
-                    return;
-                }
-            }
-
-            throw new InvalidOperationException("Data path was not found.");
+            var directory = directories.FirstOrDefault(directoryInfo => File.Exists(Path.Combine(directoryInfo.FullName, modFileName)));
+            _dataPath = directory ?? throw new InvalidOperationException("Data path was not found.");
         }
 
         public string GetFile([NotNull] string fileName)
@@ -57,7 +49,10 @@ namespace LobotomyCorporationMods.Common.Implementations
         {
             if (!File.Exists(path))
             {
-                if (!createIfNotExists) { return string.Empty; }
+                if (!createIfNotExists)
+                {
+                    return string.Empty;
+                }
 
                 WriteAllText(path, string.Empty);
             }
@@ -82,9 +77,12 @@ namespace LobotomyCorporationMods.Common.Implementations
             WriteAllText(logFile, message);
         }
 
-        public void WriteToLog([NotNull] Exception ex, [NotNull] string logFileName = "log.txt")
+        public void WriteToLog([CanBeNull] Exception ex, [NotNull] string logFileName = "log.txt")
         {
-            WriteToLog(ex.ToString(), logFileName);
+            if (ex != null)
+            {
+                WriteToLog(ex.ToString(), logFileName);
+            }
         }
     }
 }
