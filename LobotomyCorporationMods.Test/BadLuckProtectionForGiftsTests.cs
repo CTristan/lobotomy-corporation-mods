@@ -5,7 +5,6 @@ using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Patches;
-using LobotomyCorporationMods.Common.Interfaces;
 using NSubstitute;
 using Xunit;
 using Xunit.Extensions;
@@ -16,23 +15,6 @@ namespace LobotomyCorporationMods.Test
     {
         private const long AgentId = 1;
         private const string GiftName = "Test";
-
-        private readonly IFileManager _fileManager;
-
-        public BadLuckProtectionForGiftsTests()
-        {
-            _fileManager = TestExtensions.CreateFileManager();
-        }
-
-        // /// <summary>
-        // ///     Needed to verify that the constructor is public and externally accessible.
-        // /// </summary>
-        // [Fact]
-        // public void Constructor_IsUntestable()
-        // {
-        //     Action act = () => _ = new Harmony_Patch();
-        //     act.ShouldThrow<TypeInitializationException>();
-        // }
 
         [Fact]
         public void Converting_a_tracker_to_a_string_with_multiple_gifts_and_agents_contains_all_of_the_data_in_the_tracker()
@@ -144,7 +126,7 @@ namespace LobotomyCorporationMods.Test
             agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId);
 
             AlterTitleControllerPatchCallNewgame.Postfix();
-            agentWorkTracker = Harmony_Patch.GetAgentWorkTracker();
+            agentWorkTracker = Harmony_Patch.Instance.AgentWorkTracker;
             var actualWorkCount = agentWorkTracker.GetLastAgentWorkCountByGift(GiftName);
 
             Assert.Equal(ExpectedWorkCount, actualWorkCount);
@@ -216,7 +198,7 @@ namespace LobotomyCorporationMods.Test
 
         private void AssertSaveTrackerCalled([NotNull] IAgentWorkTracker agentWorkTracker)
         {
-            _fileManager.Received().WriteAllText(Arg.Any<string>(), agentWorkTracker.ToString());
+            Harmony_Patch.Instance.FileManager.Received().WriteAllText(Arg.Any<string>(), agentWorkTracker.ToString());
         }
 
         /// <summary>
@@ -225,11 +207,12 @@ namespace LobotomyCorporationMods.Test
         [NotNull]
         private IAgentWorkTracker CreateAgentWorkTracker(string dataFileName, string trackerData = "")
         {
+            var fileManager = TestExtensions.CreateFileManager();
             dataFileName = dataFileName.InCurrentDirectory();
             CreateTestTrackerFile(dataFileName, trackerData);
-            _ = new Harmony_Patch(_fileManager, dataFileName);
+            Harmony_Patch.Instance.LoadData(fileManager, dataFileName);
 
-            return Harmony_Patch.GetAgentWorkTracker();
+            return Harmony_Patch.Instance.AgentWorkTracker;
         }
 
         private static void CreateTestTrackerFile([NotNull] string fileName, string trackerData)

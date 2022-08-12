@@ -28,11 +28,11 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
                 var agentId = __instance.agent?.instanceId ?? 0;
                 var numberOfSuccesses = __instance.successCount;
 
-                Harmony_Patch.GetAgentWorkTracker().IncrementAgentWorkCount(giftName, agentId, numberOfSuccesses);
+                Harmony_Patch.Instance.AgentWorkTracker.IncrementAgentWorkCount(giftName, agentId, numberOfSuccesses);
             }
             catch (Exception ex)
             {
-                Harmony_Patch.GetFileManager().WriteToLog(ex);
+                Harmony_Patch.Instance.FileManager.WriteToLog(ex);
 
                 throw;
             }

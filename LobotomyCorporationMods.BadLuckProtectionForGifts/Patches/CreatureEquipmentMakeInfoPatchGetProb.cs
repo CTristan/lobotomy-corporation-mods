@@ -23,7 +23,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
                     return;
                 }
 
-                var probabilityBonus = Harmony_Patch.GetAgentWorkTracker().GetLastAgentWorkCountByGift(giftName) / 100f;
+                var probabilityBonus = Harmony_Patch.Instance.AgentWorkTracker.GetLastAgentWorkCountByGift(giftName) / 100f;
                 __result += probabilityBonus;
 
                 // Prevent potential overflow issues
@@ -34,7 +34,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             }
             catch (Exception ex)
             {
-                Harmony_Patch.GetFileManager().WriteToLog(ex);
+                Harmony_Patch.Instance.FileManager.WriteToLog(ex);
 
                 throw;
             }
