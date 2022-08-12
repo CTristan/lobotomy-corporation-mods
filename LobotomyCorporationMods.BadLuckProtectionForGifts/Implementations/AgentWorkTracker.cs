@@ -14,15 +14,15 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
 {
     internal sealed class AgentWorkTracker : IAgentWorkTracker
     {
-        private static string s_trackerFile;
         private readonly IFileManager _fileManager;
         [NotNull] private readonly List<IGift> _gifts = new List<IGift>();
         private readonly Dictionary<string, long> _mostRecentAgentIdByGift = new Dictionary<string, long>();
+        private readonly string _trackerFile;
 
         public AgentWorkTracker(IFileManager fileManager, string dataFileName)
         {
             _fileManager = fileManager;
-            s_trackerFile = _fileManager.GetFile(dataFileName);
+            _trackerFile = _fileManager.GetFile(dataFileName);
             Load();
         }
 
@@ -51,7 +51,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
 
         public void Load()
         {
-            LoadFromString(_fileManager.ReadAllText(s_trackerFile, true));
+            LoadFromString(_fileManager.ReadAllText(_trackerFile, true));
         }
 
         public void Reset()
@@ -62,7 +62,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
 
         public void Save()
         {
-            _fileManager.WriteAllText(s_trackerFile, ToString());
+            _fileManager.WriteAllText(_trackerFile, ToString());
         }
 
         /// <summary>

@@ -15,11 +15,11 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
         {
             try
             {
-                Harmony_Patch.GetAgentWorkTracker().Reset();
+                Harmony_Patch.Instance.AgentWorkTracker.Reset();
             }
             catch (Exception ex)
             {
-                Harmony_Patch.GetFileManager().WriteToLog(ex);
+                Harmony_Patch.Instance.FileManager.WriteToLog(ex);
 
                 throw;
             }
