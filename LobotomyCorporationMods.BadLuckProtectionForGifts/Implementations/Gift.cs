@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿// SPDX-License-Identifier: MIT
+
+using System.Collections.Generic;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 
@@ -6,24 +8,24 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
 {
     internal sealed class Gift : IGift
     {
-        internal Gift([NotNull] string giftName)
-        {
-            _name = giftName;
-        }
-
         [NotNull] private readonly List<IAgent> _agents = new List<IAgent>();
         [NotNull] private readonly string _name;
 
-        [NotNull]
-        public string GetName()
+        internal Gift([NotNull] string giftName)
         {
-            return _name;
+            _name = giftName;
         }
 
         [NotNull]
         public List<IAgent> GetAgents()
         {
             return _agents;
+        }
+
+        [NotNull]
+        public string GetName()
+        {
+            return _name;
         }
 
         /// <summary>
@@ -42,6 +44,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
 
             agent = new Agent(agentId);
             _agents.Add(agent);
+
             return agent;
         }
     }

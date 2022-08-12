@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿// SPDX-License-Identifier: MIT
+
+using System.IO;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;

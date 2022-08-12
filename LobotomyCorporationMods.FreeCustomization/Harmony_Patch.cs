@@ -1,4 +1,6 @@
-﻿using System;
+﻿// SPDX-License-Identifier: MIT
+
+using System;
 using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;

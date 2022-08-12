@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces
 {
     internal interface IAgent
