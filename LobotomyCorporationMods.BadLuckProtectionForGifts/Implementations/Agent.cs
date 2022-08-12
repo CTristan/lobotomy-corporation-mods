@@ -1,17 +1,19 @@
-﻿using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
+﻿// SPDX-License-Identifier: MIT
+
+using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
 {
     internal sealed class Agent : IAgent
     {
+        private readonly long _id;
+        private float _workCount;
+
         public Agent(long id)
         {
             _id = id;
             _workCount = 0f;
         }
-
-        private readonly long _id;
-        private float _workCount;
 
         public long GetId()
         {

@@ -1,4 +1,6 @@
-﻿using System;
+﻿// SPDX-License-Identifier: MIT
+
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -35,7 +37,12 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
             return agent.GetWorkCount();
         }
 
-        public void IncrementAgentWorkCount(string giftName, long agentId, float numberOfTimes = 1f)
+        public void IncrementAgentWorkCount(string giftName, long agentId)
+        {
+            IncrementAgentWorkCount(giftName, agentId, 1f);
+        }
+
+        public void IncrementAgentWorkCount(string giftName, long agentId, float numberOfTimes)
         {
             var agent = GetAgent(giftName, agentId);
             agent.IncrementWorkCount(numberOfTimes);
