@@ -5,38 +5,23 @@ using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
+using LobotomyCorporationMods.Common.Interfaces;
 
 // ReSharper disable CommentTypo
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
 {
     internal sealed class AgentWorkTracker : IAgentWorkTracker
     {
+        private static string s_trackerFile;
+        private readonly IFileManager _fileManager;
         [NotNull] private readonly List<IGift> _gifts = new List<IGift>();
         private readonly Dictionary<string, long> _mostRecentAgentIdByGift = new Dictionary<string, long>();
 
-        /// <summary>
-        ///     Loads the tracker data from our custom text file.
-        /// </summary>
-        /// <param name="trackerData">The contents of our text file.</param>
-        /// <returns>Loaded AgentWorkTracker object.</returns>
-        [NotNull]
-        public IAgentWorkTracker FromString(string trackerData)
+        public AgentWorkTracker(IFileManager fileManager, string dataFileName)
         {
-            var tracker = new AgentWorkTracker();
-            var gifts = trackerData.Split('|');
-            foreach (var gift in gifts)
-            {
-                var giftData = gift.Split('^');
-                var giftName = giftData[0];
-                for (var i = 1; i < giftData.Length; i++)
-                {
-                    var agentData = giftData[i].Split(';');
-                    tracker.IncrementAgentWorkCount(giftName, long.Parse(agentData[0], CultureInfo.InvariantCulture),
-                        float.Parse(agentData[1], CultureInfo.InvariantCulture));
-                }
-            }
-
-            return tracker;
+            _fileManager = fileManager;
+            s_trackerFile = _fileManager.GetFile(dataFileName);
+            Load();
         }
 
         public float GetLastAgentWorkCountByGift(string giftName)
@@ -46,6 +31,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
 
             var agentId = _mostRecentAgentIdByGift[giftName];
             var agent = GetAgent(giftName, agentId);
+
             return agent.GetWorkCount();
         }
 
@@ -54,6 +40,43 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
             var agent = GetAgent(giftName, agentId);
             agent.IncrementWorkCount(numberOfTimes);
             _mostRecentAgentIdByGift[giftName] = agent.GetId();
+        }
+
+        public void Load()
+        {
+            LoadFromString(_fileManager.ReadAllText(s_trackerFile, true));
+        }
+
+        public void Reset()
+        {
+            _gifts.Clear();
+            Save();
+        }
+
+        public void Save()
+        {
+            _fileManager.WriteAllText(s_trackerFile, ToString());
+        }
+
+        /// <summary>
+        ///     Loads the tracker data from our custom text file.
+        /// </summary>
+        public void LoadFromString([NotNull] string trackerData)
+        {
+            // Clear any existing data so we aren't duplicating work progress
+            _gifts.Clear();
+
+            var gifts = trackerData.Split('|');
+            foreach (var gift in gifts)
+            {
+                var giftData = gift.Split('^');
+                var giftName = giftData[0];
+                for (var i = 1; i < giftData.Length; i++)
+                {
+                    var agentData = giftData[i].Split(';');
+                    IncrementAgentWorkCount(giftName, long.Parse(agentData[0], CultureInfo.InvariantCulture), float.Parse(agentData[1], CultureInfo.InvariantCulture));
+                }
+            }
         }
 
         [NotNull]
@@ -68,6 +91,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
             // Gift not found, start tracking the gift
             gift = new Gift(giftName);
             _gifts.Add(gift);
+
             return gift.GetOrAddAgent(agentId);
         }
 
@@ -94,8 +118,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
                 builder.Append(gift.GetName());
                 foreach (var agent in gift.GetAgents())
                 {
-                    builder.Append("^" + agent?.GetId() + ";" +
-                                   agent?.GetWorkCount().ToString(CultureInfo.InvariantCulture));
+                    builder.Append("^" + agent?.GetId() + ";" + agent?.GetWorkCount().ToString(CultureInfo.InvariantCulture));
                 }
             }
 

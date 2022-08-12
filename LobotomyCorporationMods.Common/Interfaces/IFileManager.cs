@@ -1,4 +1,6 @@
-﻿namespace LobotomyCorporationMods.Common.Interfaces
+﻿using System;
+
+namespace LobotomyCorporationMods.Common.Interfaces
 {
     public interface IFileManager
     {
@@ -7,5 +9,6 @@
         string ReadAllText(string path, bool createIfNotExists);
         void WriteAllText(string path, string contents);
         void WriteToLog(string message, string logFileName = "log.txt");
+        void WriteToLog(Exception ex, string logFileName = "log.txt");
     }
 }

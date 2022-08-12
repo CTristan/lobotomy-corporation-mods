@@ -11,7 +11,7 @@
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
     <AnalysisLevel>latest-recommended</AnalysisLevel>
     <IsPackable>false</IsPackable>
-    <AssemblyName>LobotomyCorporationMods.Common.2</AssemblyName>
+    <AssemblyName>LobotomyCorporationMods.Common.20220811</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
