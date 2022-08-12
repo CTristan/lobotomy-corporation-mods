@@ -23,6 +23,7 @@ namespace LobotomyCorporationMods.Common.Implementations
                 if (File.Exists(Path.Combine(directoryInfo.FullName, modFileName)))
                 {
                     _dataPath = directoryInfo;
+
                     return;
                 }
             }
@@ -77,6 +78,11 @@ namespace LobotomyCorporationMods.Common.Implementations
         {
             var logFile = Path.Combine(_dataPath.FullName, logFileName);
             WriteAllText(logFile, message);
+        }
+
+        public void WriteToLog([NotNull] Exception ex, [NotNull] string logFileName = "log.txt")
+        {
+            WriteToLog(ex.ToString(), logFileName);
         }
     }
 }

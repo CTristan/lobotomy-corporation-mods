@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using FluentAssertions;
+﻿using System.IO;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
+using LobotomyCorporationMods.BadLuckProtectionForGifts.Patches;
 using LobotomyCorporationMods.Common.Interfaces;
 using NSubstitute;
 using Xunit;
@@ -12,71 +10,61 @@ using Xunit.Extensions;
 
 namespace LobotomyCorporationMods.Test
 {
-    [SuppressMessage("Non-substitutable member", "NS1004:Argument matcher used with a non-virtual member of a class.")]
     public sealed class BadLuckProtectionForGiftsTests
     {
         private const long AgentId = 1;
         private const string GiftName = "Test";
 
-        private static IAgentWorkTracker s_agentWorkTracker;
         private readonly IFileManager _fileManager;
-        private CreatureEquipmentMakeInfo _creatureEquipmentMakeInfo;
-        private UseSkill _useSkill;
 
         public BadLuckProtectionForGiftsTests()
         {
-            _fileManager = TestExtensions.GetFileManager();
-            _ = new Harmony_Patch(_fileManager);
-            ClearAgentWorkTracker();
-            s_agentWorkTracker = Harmony_Patch.GetAgentWorkTracker();
+            _fileManager = TestExtensions.CreateFileManager();
         }
 
-        /// <summary>
-        ///     Clears the AgentWorkTracker property by calling the New Game function, which we have
-        ///     modified to create a new tracker when the player starts a new game. This indirectly tests
-        ///     that functionality since otherwise almost every test will fail.
-        /// </summary>
-        private static void ClearAgentWorkTracker()
-        {
-            Harmony_Patch.CallNewgame(Substitute.For<AlterTitleController>());
-        }
+        // /// <summary>
+        // ///     Needed to verify that the constructor is public and externally accessible.
+        // /// </summary>
+        // [Fact]
+        // public void Constructor_IsUntestable()
+        // {
+        //     Action act = () => _ = new Harmony_Patch();
+        //     act.ShouldThrow<TypeInitializationException>();
+        // }
 
         [Fact]
-        public void Constructor_IsUntestable()
+        public void Converting_a_tracker_to_a_string_with_multiple_gifts_and_agents_contains_all_of_the_data_in_the_tracker()
         {
-            // Act
-            Action act = () => _ = new Harmony_Patch();
-
-            // Assert
-            act.ShouldThrow<TypeInitializationException>();
-        }
-
-        [Fact]
-        public void ConvertingTrackerToStringContainsDataInTracker()
-        {
+            const string DataFileName = "Converting_a_tracker_to_a_string_with_multiple_gifts_and_agents_contains_all_of_the_data_in_the_tracker";
             const string SecondGiftName = "Second";
             const long SecondAgentId = AgentId + 1;
+            var agentWorkTracker = CreateAgentWorkTracker(DataFileName);
 
             // First gift first agent
-            s_agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId);
+            agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId);
 
             // First gift second agent
-            s_agentWorkTracker.IncrementAgentWorkCount(GiftName, SecondAgentId);
+            agentWorkTracker.IncrementAgentWorkCount(GiftName, SecondAgentId);
 
             // Second gift second agent
-            s_agentWorkTracker.IncrementAgentWorkCount(SecondGiftName, SecondAgentId, 2f);
-            var expected =
-                $@"{GiftName}^{AgentId.ToString()};1^{SecondAgentId.ToString()};1|{SecondGiftName}^{SecondAgentId.ToString()};2";
-            var actual = s_agentWorkTracker.ToString();
+            agentWorkTracker.IncrementAgentWorkCount(SecondGiftName, SecondAgentId, 2f);
+            var expected = $@"{GiftName}^{AgentId.ToString()};1^{SecondAgentId.ToString()};1|{SecondGiftName}^{SecondAgentId.ToString()};2";
+
+            var actual = agentWorkTracker.ToString();
+
             Assert.Equal(expected, actual);
         }
 
         [Fact]
-        public void ConvertingTrackerToStringWithSingleGiftAndSingleAgentReturnsCorrectString()
+        public void Converting_a_tracker_to_a_string_with_a_single_gift_and_a_single_agent_returns_the_correct_string()
         {
-            s_agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId);
+            const string DataFileName = "Converting_a_tracker_to_a_string_with_a_single_gift_and_a_single_agent_returns_the_correct_string";
+            var agentWorkTracker = CreateAgentWorkTracker(DataFileName);
+            agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId);
             var expected = $@"{GiftName}^{AgentId.ToString()};1";
-            var actual = s_agentWorkTracker.ToString();
+
+            var actual = agentWorkTracker.ToString();
+
             Assert.Equal(expected, actual);
         }
 
@@ -84,60 +72,80 @@ namespace LobotomyCorporationMods.Test
         [InlineData("Test^1;1", GiftName, AgentId, 1f)]
         [InlineData("Test^1;1^2;2", GiftName, 2, 2f)]
         [InlineData("Test^1;1^2;2|Second^1;3", "Second", 1, 3f)]
-        public void LoadingDataFromSavedTrackerPopulatesAValidAgentWorkTracker([NotNull] string trackerData,
-            [NotNull] string giftName, long agentId, float numberOfTimes)
+        public void Loading_data_from_a_saved_tracker_file_populates_a_valid_tracker([NotNull] string trackerData, [NotNull] string giftName, long agentId, float numberOfTimes)
         {
-            var agentWorkTracker = s_agentWorkTracker.FromString(trackerData);
+            var dataFileName = $"Loading_data_with_a_saved_tracker_file_populates_a_valid_tracker_{giftName}_{agentId}_{numberOfTimes}";
+            var agentWorkTracker = CreateAgentWorkTracker(dataFileName, trackerData);
+
+            Assert.Equal(numberOfTimes, agentWorkTracker.GetLastAgentWorkCountByGift(giftName));
+        }
+
+        [Theory]
+        [InlineData("Test^1;1", GiftName, AgentId, 1f)]
+        [InlineData("Test^1;1^2;2", GiftName, 2, 2f)]
+        [InlineData("Test^1;1^2;2|Second^1;3", "Second", 1, 3f)]
+        public void Loading_data_multiple_times_from_a_saved_tracker_file_does_not_duplicate_work_progress([NotNull] string trackerData, [NotNull] string giftName, long agentId,
+            float numberOfTimes)
+        {
+            var dataFileName = $"Loading_data_with_a_saved_tracker_file_populates_a_valid_tracker_{giftName}_{agentId}_{numberOfTimes}";
+            var agentWorkTracker = CreateAgentWorkTracker(dataFileName, trackerData);
+
+            agentWorkTracker.Load();
+            agentWorkTracker.Load();
+
             Assert.Equal(numberOfTimes, agentWorkTracker.GetLastAgentWorkCountByGift(giftName));
         }
 
         [Fact]
-        public void ProbabilityBonusDoesNotCauseProbabilityToGoOverOneHundredPercent()
+        public void Our_probability_bonus_does_not_cause_the_gift_probability_to_go_over_100_percent()
         {
-            _creatureEquipmentMakeInfo = CreateCreatureEquipmentMakeInfo(GiftName);
+            const string DataFileName = "Our_probability_bonus_does_not_cause_the_gift_probability_to_go_over_100_percent";
+            var agentWorkTracker = CreateAgentWorkTracker(DataFileName);
+            var creatureEquipmentMakeInfo = TestExtensions.CreateCreatureEquipmentMakeInfo(GiftName);
 
             // 101 times worked would equal 101% bonus normally
-            s_agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId, 101f);
+            agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId, 101f);
 
             // We should only get back 100% even with the 101% bonus
             const float Expected = 1f;
+
             var actual = 0f;
-            Harmony_Patch.GetProb(_creatureEquipmentMakeInfo, ref actual);
+            CreatureEquipmentMakeInfoPatchGetProb.Postfix(creatureEquipmentMakeInfo, ref actual);
+
             Assert.Equal(Expected, actual);
         }
 
         [Theory]
         [InlineData(1f)]
         [InlineData(2f)]
-        public void ProbabilityIncreasesByOnePercentForEveryTimeAgentWorkedOnCreature(float numberOfTimes)
+        [InlineData(3f)]
+        public void The_gift_probability_increases_by_one_percent_for_every_success_the_agent_has_while_working(float numberOfSuccesses)
         {
-            s_agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId, numberOfTimes);
-            _creatureEquipmentMakeInfo = CreateCreatureEquipmentMakeInfo(GiftName);
-            var expected = numberOfTimes / 100f;
+            var dataFileName = $"The_gift_probability_increases_by_one_percent_for_every_success_the_agent_has_while_working_{numberOfSuccesses}";
+            var agentWorkTracker = CreateAgentWorkTracker(dataFileName);
+            agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId, numberOfSuccesses);
+            var creatureEquipmentMakeInfo = TestExtensions.CreateCreatureEquipmentMakeInfo(GiftName);
+            var expected = numberOfSuccesses / 100f;
+
             var actual = 0f;
-            Harmony_Patch.GetProb(_creatureEquipmentMakeInfo, ref actual);
+            CreatureEquipmentMakeInfoPatchGetProb.Postfix(creatureEquipmentMakeInfo, ref actual);
+
             Assert.Equal(expected, actual);
         }
 
-        [Theory]
-        [InlineData(0f)]
-        [InlineData(1f)]
-        [InlineData(10f)]
-        public void StartingANewGameResetsAgentWorkProgress(float numberOfTimes)
+        [Fact]
+        public void Starting_a_new_game_resets_the_tracker()
         {
-            // Arrange
-            s_agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId);
-            var expected = s_agentWorkTracker.GetLastAgentWorkCountByGift(GiftName);
-            s_agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId, numberOfTimes);
+            const int ExpectedWorkCount = 0;
+            const string DataFileName = "Starting_a_new_game_reloads_the_last_saved_tracker_progress";
+            var agentWorkTracker = CreateAgentWorkTracker(DataFileName);
+            agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId);
 
-            // Act
-            Harmony_Patch.CallNewgame(Substitute.For<AlterTitleController>());
-            s_agentWorkTracker = Harmony_Patch.GetAgentWorkTracker();
-            s_agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId);
-            var actual = s_agentWorkTracker.GetLastAgentWorkCountByGift(GiftName);
+            AlterTitleControllerPatchCallNewgame.Postfix();
+            agentWorkTracker = Harmony_Patch.GetAgentWorkTracker();
+            var actualWorkCount = agentWorkTracker.GetLastAgentWorkCountByGift(GiftName);
 
-            // Assert
-            Assert.Equal(expected, actual);
+            Assert.Equal(ExpectedWorkCount, actualWorkCount);
         }
 
 
@@ -145,18 +153,17 @@ namespace LobotomyCorporationMods.Test
         [InlineData(0)]
         [InlineData(1)]
         [InlineData(10)]
-        public void WorkingOnCreatureIncreasesNumberOfTimesWorkedForThatAgent(int numberOfTimes)
+        public void Working_on_an_abnormality_increases_the_number_of_successes_for_that_agent(int numberOfSuccesses)
         {
-            // Arrange
-            _useSkill = CreateUseSkill(GiftName, AgentId, numberOfTimes);
-            s_agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId);
-            var expected = s_agentWorkTracker.GetLastAgentWorkCountByGift(GiftName) + numberOfTimes;
+            var dataFileName = $"Working_on_an_abnormality_increases_the_number_of_successes_for_that_agent_{numberOfSuccesses}";
+            var agentWorkTracker = CreateAgentWorkTracker(dataFileName);
+            var useSkill = TestExtensions.CreateUseSkill(GiftName, AgentId, numberOfSuccesses);
+            agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId);
+            var expected = agentWorkTracker.GetLastAgentWorkCountByGift(GiftName) + numberOfSuccesses;
 
-            // Act
-            Harmony_Patch.FinishWorkSuccessfully(_useSkill);
-            var actual = s_agentWorkTracker.GetLastAgentWorkCountByGift(GiftName);
+            UseSkillPatchFinishWorkSuccessfully.Prefix(useSkill);
+            var actual = agentWorkTracker.GetLastAgentWorkCountByGift(GiftName);
 
-            // Assert
             Assert.Equal(expected, actual);
         }
 
@@ -164,66 +171,71 @@ namespace LobotomyCorporationMods.Test
         [InlineData(0F)]
         [InlineData(0.1F)]
         [InlineData(1F)]
-        public void GetProb_NotWorkedOnYet_ShouldReturnBaseValue(float expected)
+        public void A_gift_that_has_not_been_worked_on_yet_displays_the_base_value(float expected)
         {
-            // Arrange
-            var instance = CreateCreatureEquipmentMakeInfo(GiftName);
+            var dataFileName = $"A_gift_that_has_not_been_worked_on_yet_displays_the_base_value_{expected}";
+            _ = CreateAgentWorkTracker(dataFileName);
+            var instance = TestExtensions.CreateCreatureEquipmentMakeInfo(GiftName);
             var actual = expected;
 
-            // Act
-            Harmony_Patch.GetProb(instance, ref actual);
+            CreatureEquipmentMakeInfoPatchGetProb.Postfix(instance, ref actual);
 
-            // Assert
             Assert.Equal(expected, actual);
         }
 
         [Fact]
-        public void OnClickNextDay_WhenCalled_CallsSaveTracker()
+        public void The_tracker_data_is_saved_when_going_to_the_next_day()
         {
-            // Arrange
-            var gameSceneController = Substitute.For<GameSceneController>();
+            const string DataFileName = "The_tracker_data_is_saved_when_going_to_the_next_day";
+            var agentWorkTracker = CreateAgentWorkTracker(DataFileName);
 
-            // Act
-            Harmony_Patch.OnClickNextDay(gameSceneController);
+            GameSceneControllerPatchOnClickNextDay.Postfix();
 
-            // Assert
-            AssertSaveTrackerCalled();
+            AssertSaveTrackerCalled(agentWorkTracker);
         }
 
+        [Theory]
+        [InlineData("Test^1;1", GiftName, AgentId, 1f)]
+        [InlineData("Test^1;1^2;2", GiftName, 2, 2f)]
+        [InlineData("Test^1;1^2;2|Second^1;3", "Second", 1, 3f)]
+        public void Restarting_the_day_reloads_the_saved_data_and_overwrites_the_progress_made_that_day([NotNull] string trackerData, [NotNull] string giftName, long agentId,
+            float numberOfTimes)
+        {
+            var dataFileName = $"Restarting_the_day_reloads_the_saved_data_and_overwrites_the_progress_made_that_day_{giftName}_{agentId}_{numberOfTimes}";
+            var agentWorkTracker = CreateAgentWorkTracker(dataFileName, trackerData);
+
+            agentWorkTracker.IncrementAgentWorkCount(giftName, agentId);
+            GameSceneControllerPatchOnStageStart.Postfix();
+
+            Assert.Equal(numberOfTimes, agentWorkTracker.GetLastAgentWorkCountByGift(giftName));
+        }
+
+        #region Test Helper Methods
+
+        private void AssertSaveTrackerCalled([NotNull] IAgentWorkTracker agentWorkTracker)
+        {
+            _fileManager.Received().WriteAllText(Arg.Any<string>(), agentWorkTracker.ToString());
+        }
+
+        /// <summary>
+        ///     Populates the Harmony Patch with an agent work tracker pointed to our specified test data file.
+        /// </summary>
         [NotNull]
-        private static CreatureEquipmentMakeInfo CreateCreatureEquipmentMakeInfo(string giftName)
+        private IAgentWorkTracker CreateAgentWorkTracker(string dataFileName, string trackerData = "")
         {
-            var info = Substitute.For<CreatureEquipmentMakeInfo>();
-            info.equipTypeInfo = new EquipmentTypeInfo
-            {
-                localizeData = new Dictionary<string, string> { { "name", giftName } },
-                type = EquipmentTypeInfo.EquipmentType.SPECIAL
-            };
+            dataFileName = dataFileName.InCurrentDirectory();
+            CreateTestTrackerFile(dataFileName, trackerData);
+            _ = new Harmony_Patch(_fileManager, dataFileName);
 
-            LocalizeTextDataModel.instance?.Init(new Dictionary<string, string> { { giftName, giftName } });
-
-            return info;
+            return Harmony_Patch.GetAgentWorkTracker();
         }
 
-        [NotNull]
-        private static UseSkill CreateUseSkill(string giftName, long agentId, int numberOfSuccesses)
+        private static void CreateTestTrackerFile([NotNull] string fileName, string trackerData)
         {
-            var useSkill = Substitute.For<UseSkill>();
-            useSkill.agent = TestExtensions.CreateUninitializedObject<AgentModel>();
-            useSkill.agent.instanceId = agentId;
-            useSkill.targetCreature = TestExtensions.CreateUninitializedObject<CreatureModel>();
-            useSkill.targetCreature.metaInfo = new CreatureTypeInfo
-            {
-                equipMakeInfos = new List<CreatureEquipmentMakeInfo> { CreateCreatureEquipmentMakeInfo(giftName) }
-            };
-            useSkill.successCount = numberOfSuccesses;
-
-            return useSkill;
+            var fileNameWithPath = Path.Combine(Directory.GetCurrentDirectory(), fileName);
+            File.WriteAllText(fileNameWithPath, trackerData);
         }
 
-        private void AssertSaveTrackerCalled()
-        {
-            _fileManager.Received().WriteAllText(Arg.Any<string>(), s_agentWorkTracker.ToString());
-        }
+        #endregion
     }
 }

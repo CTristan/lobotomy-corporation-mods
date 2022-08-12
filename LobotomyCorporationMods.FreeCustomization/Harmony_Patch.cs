@@ -46,12 +46,10 @@ namespace LobotomyCorporationMods.FreeCustomization
                 }
 
                 var harmonyMethod = new HarmonyMethod(typeof(Harmony_Patch).GetMethod("CloseWindowPrefix"));
-                harmonyInstance.Patch(typeof(AppearanceUI).GetMethod("CloseWindow", AccessTools.all), harmonyMethod,
-                    null);
+                harmonyInstance.Patch(typeof(AppearanceUI).GetMethod("CloseWindow", AccessTools.all), harmonyMethod, null);
 
                 harmonyMethod = new HarmonyMethod(typeof(Harmony_Patch).GetMethod("GenerateWindowPostfix"));
-                harmonyInstance.Patch(typeof(AgentInfoWindow).GetMethod("GenerateWindow", AccessTools.all), null,
-                    harmonyMethod);
+                harmonyInstance.Patch(typeof(AgentInfoWindow).GetMethod("GenerateWindow", AccessTools.all), null, harmonyMethod);
 
                 harmonyMethod = new HarmonyMethod(typeof(Harmony_Patch).GetMethod("OpenAppearanceWindowPostfix"));
                 harmonyInstance.Patch(typeof(CustomizingWindow).GetMethod("OpenAppearanceWindow"), null, harmonyMethod);
@@ -60,6 +58,7 @@ namespace LobotomyCorporationMods.FreeCustomization
             {
                 var message = ex.Message + Environment.NewLine + ex.StackTrace;
                 FileManager.WriteToLog(message);
+
                 throw;
             }
         }
@@ -88,6 +87,7 @@ namespace LobotomyCorporationMods.FreeCustomization
             {
                 var message = ex.Message + Environment.NewLine + ex.StackTrace;
                 FileManager.WriteToLog(message);
+
                 throw;
             }
         }

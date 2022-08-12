@@ -13,7 +13,7 @@ namespace LobotomyCorporationMods.Test
     {
         public FreeCustomizationTests()
         {
-            var fileManager = TestExtensions.GetFileManager();
+            var fileManager = TestExtensions.CreateFileManager();
             _ = new Harmony_Patch(fileManager);
         }
 

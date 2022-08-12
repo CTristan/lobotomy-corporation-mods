@@ -65,4 +65,7 @@
       <HintPath>..\..\..\..\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="TestExtensions.cs"/>
+  </ItemGroup>
 </Project>
