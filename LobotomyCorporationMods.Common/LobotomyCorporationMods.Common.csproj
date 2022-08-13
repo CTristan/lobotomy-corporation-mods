@@ -11,7 +11,13 @@
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
     <AnalysisLevel>latest-recommended</AnalysisLevel>
     <IsPackable>false</IsPackable>
-    <AssemblyName>LobotomyCorporationMods.Common.20220811</AssemblyName>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Deterministic>false</Deterministic>
+    <!--
+      Needed to prevent crashes. When Basemod loads the mods, if it finds two DLLs with the same assembly name then it
+      will try to re-use the first DLL even if the second DLL has a different assembly version.
+    -->
+    <AssemblyName>LobotomyCorporationMods.Common.$([System.DateTime]::Now.ToString(yyyyMMdd))</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
