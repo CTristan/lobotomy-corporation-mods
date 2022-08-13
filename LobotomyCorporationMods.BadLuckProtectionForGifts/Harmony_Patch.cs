@@ -2,11 +2,15 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using Harmony;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Interfaces;
+
+[assembly: AssemblyVersion("1.0.*")]
+[assembly: CLSCompliant(false)]
 
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts
 {

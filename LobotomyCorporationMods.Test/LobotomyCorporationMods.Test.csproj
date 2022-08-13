@@ -8,6 +8,7 @@
     <RuntimeIdentifiers>win</RuntimeIdentifiers>
     <TargetFramework>net40</TargetFramework>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="4.19.4"/>

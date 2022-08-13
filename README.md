@@ -49,15 +49,6 @@ LobotomyCorp_Data/BaseMods/LobotomyCorporationMods.BadLuckProtectionForGifts.
 If you're running Linux, you may need to install mono-devel. You should be able
 to open the solution in VSCode or VSCodium and build with xbuild.
 
-## Development Notes
-
-* Whenever we make ANY changes to the Common project in ANY way, we need to
-  change the Assembly Name for the Common library. This is because when Basemod
-  loads the mods, if it finds two DLLs with the same assembly name then it will
-  try to re-use the first DLL even if the second DLL is different, which causes
-  the game to crash spectacularly. Since the version number doesn't matter I've
-  been appending the date whenever I update the project.
-
 ## License
 
 This work is licensed under MIT.

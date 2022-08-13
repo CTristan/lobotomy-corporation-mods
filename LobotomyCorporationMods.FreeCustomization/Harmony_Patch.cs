@@ -2,11 +2,15 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using Customizing;
 using Harmony;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Interfaces;
+
+[assembly: AssemblyVersion("1.0.*")]
+[assembly: CLSCompliant(false)]
 
 namespace LobotomyCorporationMods.FreeCustomization
 {
