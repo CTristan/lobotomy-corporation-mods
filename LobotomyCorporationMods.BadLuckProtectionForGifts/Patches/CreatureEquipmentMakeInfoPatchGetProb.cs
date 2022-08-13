@@ -1,14 +1,17 @@
 // SPDX-License-Identifier: MIT
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using JetBrains.Annotations;
 
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
 {
     [HarmonyPatch(typeof(CreatureEquipmentMakeInfo), "GetProb")]
+    [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
     public static class CreatureEquipmentMakeInfoPatchGetProb
     {
+        // ReSharper disable InconsistentNaming
         public static void Postfix([CanBeNull] CreatureEquipmentMakeInfo __instance, ref float __result)
         {
             if (__instance == null)

@@ -8,6 +8,7 @@ using System.Security;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Interfaces;
 using NSubstitute;
+using UnityEngine;
 
 // ReSharper disable once CheckNamespace
 namespace LobotomyCorporationMods.Test
@@ -30,13 +31,16 @@ namespace LobotomyCorporationMods.Test
             return Path.Combine(Directory.GetCurrentDirectory(), fileName);
         }
 
-        /// <summary>
-        ///     Create an uninitialized object without calling a constructor. Needed because some of the classes we need
-        ///     to mock either don't have a public constructor or cause a Unity exception.
-        /// </summary>
-        public static TObject CreateUninitializedObject<TObject>()
+        private static void CreateUninitializedObject<TObject>(out TObject obj)
         {
-            return (TObject)FormatterServices.GetSafeUninitializedObject(typeof(TObject));
+            obj = (TObject)FormatterServices.GetSafeUninitializedObject(typeof(TObject));
+        }
+
+        public static GameObject CreateGameObject()
+        {
+            CreateUninitializedObject(out GameObject obj);
+
+            return obj;
         }
 
         /// <summary>
@@ -64,9 +68,9 @@ namespace LobotomyCorporationMods.Test
         public static UseSkill CreateUseSkill(string giftName, long agentId, int numberOfSuccesses)
         {
             var useSkill = Substitute.For<UseSkill>();
-            useSkill.agent = CreateUninitializedObject<AgentModel>();
+            CreateUninitializedObject(out useSkill.agent);
             useSkill.agent.instanceId = agentId;
-            useSkill.targetCreature = CreateUninitializedObject<CreatureModel>();
+            CreateUninitializedObject(out useSkill.targetCreature);
             useSkill.targetCreature.metaInfo = new CreatureTypeInfo { equipMakeInfos = new List<CreatureEquipmentMakeInfo> { CreateCreatureEquipmentMakeInfo(giftName) } };
             useSkill.successCount = numberOfSuccesses;
 

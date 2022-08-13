@@ -5,7 +5,6 @@ using Customizing;
 using FluentAssertions;
 using LobotomyCorporationMods.FreeCustomization;
 using NSubstitute;
-using UnityEngine;
 using Xunit;
 using Xunit.Extensions;
 
@@ -52,7 +51,7 @@ namespace LobotomyCorporationMods.Test
             // Arrange
             var agentInfoWindow = Substitute.For<AgentInfoWindow>();
             var customizingWindow = Substitute.For<CustomizingWindow>();
-            customizingWindow.appearanceBlock = TestExtensions.CreateUninitializedObject<GameObject>();
+            customizingWindow.appearanceBlock = TestExtensions.CreateGameObject();
             agentInfoWindow.customizingWindow = customizingWindow;
             AgentInfoWindow.currentWindow = agentInfoWindow;
 
