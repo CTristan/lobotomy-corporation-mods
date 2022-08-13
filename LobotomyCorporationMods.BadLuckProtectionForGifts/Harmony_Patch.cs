@@ -1,6 +1,7 @@
 ﻿// SPDX-License-Identifier: MIT
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
@@ -10,6 +11,7 @@ using LobotomyCorporationMods.Common.Interfaces;
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts
 {
     // ReSharper disable once InconsistentNaming
+    [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
     public sealed class Harmony_Patch
     {
         private const string ModFileName = "LobotomyCorporationMods.BadLuckProtectionForGifts.dll";

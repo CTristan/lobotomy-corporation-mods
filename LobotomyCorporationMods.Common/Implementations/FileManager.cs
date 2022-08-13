@@ -11,6 +11,7 @@ namespace LobotomyCorporationMods.Common.Implementations
 {
     public sealed class FileManager : IFileManager
     {
+        private const string DefaultLogFileName = "log.txt";
         private readonly DirectoryInfo _dataPath;
         [NotNull] private readonly object _fileLock = new object();
         [NotNull] private readonly Dictionary<string, string> _files = new Dictionary<string, string>();
@@ -36,12 +37,6 @@ namespace LobotomyCorporationMods.Common.Implementations
             _files.Add(fileName, fullFilePath);
 
             return _files[fileName];
-        }
-
-        [NotNull]
-        public string ReadAllText([NotNull] string path)
-        {
-            return ReadAllText(path, false);
         }
 
         [NotNull]
@@ -71,18 +66,34 @@ namespace LobotomyCorporationMods.Common.Implementations
             }
         }
 
-        public void WriteToLog([NotNull] string message, [NotNull] string logFileName = "log.txt")
+        public void WriteToLog([NotNull] string message)
+        {
+            WriteToLog(message, DefaultLogFileName);
+        }
+
+        public void WriteToLog([NotNull] string message, [NotNull] string logFileName)
         {
             var logFile = Path.Combine(_dataPath.FullName, logFileName);
             WriteAllText(logFile, message);
         }
 
-        public void WriteToLog([CanBeNull] Exception ex, [NotNull] string logFileName = "log.txt")
+        public void WriteToLog(Exception ex)
+        {
+            WriteToLog(ex, DefaultLogFileName);
+        }
+
+        public void WriteToLog([CanBeNull] Exception ex, [NotNull] string logFileName)
         {
             if (ex != null)
             {
                 WriteToLog(ex.ToString(), logFileName);
             }
+        }
+
+        [NotNull]
+        public string ReadAllText([NotNull] string path)
+        {
+            return ReadAllText(path, false);
         }
     }
 }
