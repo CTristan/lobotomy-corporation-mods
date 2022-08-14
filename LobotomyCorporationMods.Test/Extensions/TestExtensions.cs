@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Security;
-using Customizing;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Interfaces;
 using NSubstitute;
@@ -55,13 +54,6 @@ namespace LobotomyCorporationMods.Test
         }
 
         #region Unity Objects
-
-        public static CustomizingWindow CreateCustomizingWindow()
-        {
-            CreateUninitializedObject(out CustomizingWindow customizingWindow);
-
-            return customizingWindow;
-        }
 
         [NotNull]
         public static CreatureEquipmentMakeInfo CreateCreatureEquipmentMakeInfo(string giftName)
