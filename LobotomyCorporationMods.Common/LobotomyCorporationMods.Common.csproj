@@ -11,8 +11,6 @@
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
     <AnalysisLevel>latest-recommended</AnalysisLevel>
     <IsPackable>false</IsPackable>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <Deterministic>false</Deterministic>
     <!--
       Needed to prevent crashes. When Basemod loads the mods, if it finds two DLLs with the same assembly name then it
       will try to re-use the first DLL even if the second DLL has a different assembly version.

@@ -89,11 +89,5 @@ namespace LobotomyCorporationMods.Common.Implementations
                 WriteToLog(ex.ToString(), logFileName);
             }
         }
-
-        [NotNull]
-        public string ReadAllText([NotNull] string path)
-        {
-            return ReadAllText(path, false);
-        }
     }
 }
