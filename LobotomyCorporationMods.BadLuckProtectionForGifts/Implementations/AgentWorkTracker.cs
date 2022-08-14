@@ -94,7 +94,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         [NotNull]
         private IAgent GetAgent([NotNull] string giftName, long agentId)
         {
-            var gift = _gifts.FirstOrDefault(g => g?.GetName().Equals(giftName, StringComparison.Ordinal) == true);
+            var gift = _gifts.FirstOrDefault(g => g != null && g.GetName().Equals(giftName, StringComparison.Ordinal));
             if (gift != null)
             {
                 return gift.GetOrAddAgent(agentId);

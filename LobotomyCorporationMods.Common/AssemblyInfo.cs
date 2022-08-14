@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 
 using System;
-using System.Reflection;
+using System.Runtime.InteropServices;
 
-[assembly: AssemblyVersion("1.0.*")]
 [assembly: CLSCompliant(true)]
+[assembly: ComVisible(false)]
 
 namespace LobotomyCorporationMods.Common
 {
