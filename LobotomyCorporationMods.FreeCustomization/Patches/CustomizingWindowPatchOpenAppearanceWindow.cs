@@ -3,7 +3,8 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Customizing;
-using UnityEngine;
+using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Implementations;
 
 namespace LobotomyCorporationMods.FreeCustomization.Patches
 {
@@ -15,14 +16,13 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         ///     of the private methods to check for increasing the cost of custom agents.
         /// </summary>
         // ReSharper disable once InconsistentNaming
-        public static void Postfix(CustomizingWindow __instance)
+        public static void Postfix([NotNull] CustomizingWindow __instance)
         {
+            Guard.Against.Null(__instance, nameof(__instance));
+
             try
             {
-                if (!__instance.IsNullUnityObject())
-                {
-                    __instance.CurrentData.isCustomAppearance = false;
-                }
+                __instance.CurrentData.isCustomAppearance = false;
             }
             catch (Exception ex)
             {

@@ -45,7 +45,7 @@ namespace LobotomyCorporationMods.Test
         [InlineData(false)]
         public void Opening_the_customize_appearance_window_does_not_increase_the_cost_of_hiring_the_agent(bool isCustomAppearance)
         {
-            var customizingWindow = TestExtensions.CreateCustomizingWindow();
+            var customizingWindow = Substitute.For<CustomizingWindow>();
             customizingWindow.CurrentData = new AgentData { isCustomAppearance = true };
 
             CustomizingWindowPatchOpenAppearanceWindow.Postfix(customizingWindow);

@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
 using JetBrains.Annotations;
-using UnityEngine;
+using LobotomyCorporationMods.Common.Implementations;
 
 namespace LobotomyCorporationMods.FreeCustomization.Patches
 {
@@ -21,9 +21,15 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         // ReSharper disable once InconsistentNaming
         public static bool Prefix([NotNull] AppearanceUI __instance)
         {
+            // If the instance is null then don't do any checks and let processing continue
+            if (Guard.Against.IsNull(__instance))
+            {
+                return true;
+            }
+
             try
             {
-                return __instance.IsNullUnityObject() || __instance.closeAction != null;
+                return __instance.closeAction != null;
             }
             catch (Exception ex)
             {
