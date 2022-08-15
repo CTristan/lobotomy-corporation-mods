@@ -21,18 +21,21 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         // ReSharper disable once InconsistentNaming
         public static bool Prefix([NotNull] AppearanceUI __instance)
         {
-            // If the instance is null then don't do any checks and let processing continue
-            if (Guard.Against.IsNull(__instance))
-            {
-                return true;
-            }
-
             try
             {
+                Guard.Against.Null(__instance, nameof(__instance));
+
                 return __instance.closeAction != null;
             }
             catch (Exception ex)
             {
+                // Null argument exception only comes up during testing due to Unity operator overloading.
+                // https://github.com/JetBrains/resharper-unity/wiki/Possible-unintended-bypass-of-lifetime-check-of-underlying-Unity-engine-object
+                if (ex is ArgumentNullException)
+                {
+                    return true;
+                }
+
                 Harmony_Patch.Instance.FileManager.WriteToLog(ex);
 
                 throw;

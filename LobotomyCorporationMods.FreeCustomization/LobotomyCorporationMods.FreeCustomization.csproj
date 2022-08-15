@@ -271,4 +271,7 @@
   <ItemGroup>
     <ProjectReference Include="..\LobotomyCorporationMods.Common\LobotomyCorporationMods.Common.csproj"/>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Extensions"/>
+  </ItemGroup>
 </Project>
