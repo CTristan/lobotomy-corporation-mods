@@ -4,6 +4,8 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Implementations;
+using LobotomyCorporationMods.FreeCustomization;
 
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
 {
@@ -12,15 +14,12 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
     public static class UseSkillPatchFinishWorkSuccessfully
     {
         // ReSharper disable once InconsistentNaming
-        public static void Prefix([CanBeNull] UseSkill __instance)
+        public static void Prefix([NotNull] UseSkill __instance)
         {
-            if (__instance == null)
-            {
-                return;
-            }
-
             try
             {
+                Guard.Against.Null(__instance, nameof(__instance));
+
                 var equipmentMakeInfo = GetCreatureEquipmentMakeInfo(__instance);
 
                 // If the creature has no gift it returns null
@@ -37,6 +36,13 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             }
             catch (Exception ex)
             {
+                // Null argument exception only comes up during testing due to Unity operator overloading.
+                // https://github.com/JetBrains/resharper-unity/wiki/Possible-unintended-bypass-of-lifetime-check-of-underlying-Unity-engine-object
+                if (ex is ArgumentNullException)
+                {
+                    return;
+                }
+
                 Harmony_Patch.Instance.FileManager.WriteToLog(ex);
 
                 throw;

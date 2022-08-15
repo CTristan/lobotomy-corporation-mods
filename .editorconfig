@@ -200,3 +200,6 @@ csharp_preserve_single_line_statements = true
 
 # File Header
 file_header_template = SPDX-License-Identifier: MIT
+
+# Custom null validation method
+dotnet_code_quality.null_check_validation_methods = Null
