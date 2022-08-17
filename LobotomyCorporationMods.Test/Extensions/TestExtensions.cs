@@ -59,10 +59,11 @@ namespace LobotomyCorporationMods.Test
         [NotNull]
         public static AgentSlot CreateAgentSlot(AgentState agentState)
         {
-            var agentSlot = Substitute.For<AgentSlot>();
-            agentSlot.State = agentState;
+            CreateUninitializedObject<AgentSlot>(out var agentSlot);
+            var fields = GetUninitializedObjectFields(typeof(AgentSlot));
+            var newValues = new Dictionary<string, object> { { "_state", agentState } };
 
-            return agentSlot;
+            return GetPopulatedUninitializedObject(agentSlot, fields, newValues);
         }
 
         /// <summary>

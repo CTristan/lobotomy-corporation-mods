@@ -40,9 +40,9 @@ namespace LobotomyCorporationMods.Test
             var commandWindow = GetDefaultCommandWindow();
             var creatureOverloadManager = GetDefaultCreatureOverloadManager();
 
-            agentSlot.DisableIfMaxMeltdown(agentState, commandWindow, creatureOverloadManager);
+            var result = agentSlot.IsMaxMeltdown(agentState, commandWindow, creatureOverloadManager);
 
-            agentSlot.State.Should().Be(agentState);
+            result.Should().BeFalse();
         }
 
         [Fact]
@@ -52,9 +52,9 @@ namespace LobotomyCorporationMods.Test
             var commandWindow = TestExtensions.CreateCommandWindow(GetDefaultCreatureModel(), DefaultCommandType, null);
             var creatureOverloadManager = GetDefaultCreatureOverloadManager();
 
-            agentSlot.DisableIfMaxMeltdown(DefaultAgentState, commandWindow, creatureOverloadManager);
+            var result = agentSlot.IsMaxMeltdown(DefaultAgentState, commandWindow, creatureOverloadManager);
 
-            agentSlot.State.Should().Be(DefaultAgentState);
+            result.Should().BeFalse();
         }
 
         [Theory]
@@ -66,9 +66,9 @@ namespace LobotomyCorporationMods.Test
             var commandWindow = TestExtensions.CreateCommandWindow(GetDefaultCreatureModel(), windowType, DefaultSelectedWork);
             var creatureOverloadManager = GetDefaultCreatureOverloadManager();
 
-            agentSlot.DisableIfMaxMeltdown(DefaultAgentState, commandWindow, creatureOverloadManager);
+            var result = agentSlot.IsMaxMeltdown(DefaultAgentState, commandWindow, creatureOverloadManager);
 
-            agentSlot.State.Should().Be(DefaultAgentState);
+            result.Should().BeFalse();
         }
 
         [Fact]
@@ -80,9 +80,9 @@ namespace LobotomyCorporationMods.Test
             var commandWindow = TestExtensions.CreateCommandWindow(currentTarget, DefaultCommandType, DefaultSelectedWork);
             var creatureOverloadManager = GetDefaultCreatureOverloadManager();
 
-            agentSlot.DisableIfMaxMeltdown(DefaultAgentState, commandWindow, creatureOverloadManager);
+            var result = agentSlot.IsMaxMeltdown(DefaultAgentState, commandWindow, creatureOverloadManager);
 
-            agentSlot.State.Should().Be(DefaultAgentState);
+            result.Should().BeFalse();
         }
 
         [Theory]
@@ -95,9 +95,9 @@ namespace LobotomyCorporationMods.Test
             var commandWindow = GetDefaultCommandWindow();
             var creatureOverloadManager = TestExtensions.CreateCreatureOverloadManager(qliphothCounter);
 
-            agentSlot.DisableIfMaxMeltdown(DefaultAgentState, commandWindow, creatureOverloadManager);
+            var result = agentSlot.IsMaxMeltdown(DefaultAgentState, commandWindow, creatureOverloadManager);
 
-            agentSlot.State.Should().Be(DefaultAgentState);
+            result.Should().BeFalse();
         }
 
         [Fact]
@@ -111,9 +111,9 @@ namespace LobotomyCorporationMods.Test
             var commandWindow = TestExtensions.CreateCommandWindow(creatureModel, DefaultCommandType, DefaultSelectedWork);
             var creatureOverloadManager = TestExtensions.CreateCreatureOverloadManager(MaxMeltdownLevel);
 
-            agentSlot.DisableIfMaxMeltdown(DefaultAgentState, commandWindow, creatureOverloadManager);
+            var result = agentSlot.IsMaxMeltdown(DefaultAgentState, commandWindow, creatureOverloadManager);
 
-            agentSlot.State.Should().Be(DefaultAgentState);
+            result.Should().BeFalse();
         }
 
         [Fact]
@@ -123,9 +123,9 @@ namespace LobotomyCorporationMods.Test
             var commandWindow = GetDefaultCommandWindow();
             var creatureOverloadManager = TestExtensions.CreateCreatureOverloadManager(MaxMeltdownLevel);
 
-            agentSlot.DisableIfMaxMeltdown(DefaultAgentState, commandWindow, creatureOverloadManager);
+            var result = agentSlot.IsMaxMeltdown(DefaultAgentState, commandWindow, creatureOverloadManager);
 
-            agentSlot.State.Should().Be(AgentState.UNCONTROLLABLE);
+            result.Should().BeTrue();
         }
 
         [Theory]

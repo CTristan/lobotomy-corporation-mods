@@ -14,7 +14,47 @@ namespace LobotomyCorporationMods.ForceDayEndAfterMaxMeltdownLevel.Patches
     public static class AgentSlotPatchSetFilter
     {
         /// <summary>
-        ///     Runs after the SetFilter method runs to check if we should disallow working with this room.
+        ///     Runs before the SetFilter method runs to check if we should disable the agent slot.
+        /// </summary>
+        // ReSharper disable once InconsistentNaming
+        public static bool Prefix([NotNull] AgentSlot __instance, AgentState state)
+        {
+            try
+            {
+                Guard.Against.Null(__instance, nameof(__instance));
+
+                var commandWindow = CommandWindow.CommandWindow.CurrentWindow;
+                var creatureOverloadManager = CreatureOverloadManager.instance;
+
+                if (state != AgentState.UNCONTROLLABLE || !__instance.IsMaxMeltdown(commandWindow, creatureOverloadManager))
+                {
+                    return true;
+                }
+
+                __instance.FilterControl.SetActive(true);
+                __instance.FilterFill.color = CommandWindow.CommandWindow.CurrentWindow.UnconColor;
+                __instance.FilterText.text = LocalizeTextDataModel.instance.GetText("AgentState_EndOfDay");
+                __instance.SetColor(CommandWindow.CommandWindow.CurrentWindow.UnconColor);
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                // Null argument exception only comes up during testing due to Unity operator overloading.
+                // https://github.com/JetBrains/resharper-unity/wiki/Possible-unintended-bypass-of-lifetime-check-of-underlying-Unity-engine-object
+                if (ex is ArgumentNullException)
+                {
+                    return true;
+                }
+
+                Harmony_Patch.Instance.FileManager.WriteToLog(ex);
+
+                throw;
+            }
+        }
+
+        /// <summary>
+        ///     Runs after the SetFilter method runs to check if we should set the state as unworkable.
         /// </summary>
         // ReSharper disable once InconsistentNaming
         public static void Postfix([NotNull] AgentSlot __instance, AgentState state)
@@ -22,9 +62,14 @@ namespace LobotomyCorporationMods.ForceDayEndAfterMaxMeltdownLevel.Patches
             try
             {
                 Guard.Against.Null(__instance, nameof(__instance));
+
                 var commandWindow = CommandWindow.CommandWindow.CurrentWindow;
                 var creatureOverloadManager = CreatureOverloadManager.instance;
-                __instance.DisableIfMaxMeltdown(state, commandWindow, creatureOverloadManager);
+
+                if (__instance.IsMaxMeltdown(state, commandWindow, creatureOverloadManager))
+                {
+                    __instance.State = AgentState.UNCONTROLLABLE;
+                }
             }
             catch (Exception ex)
             {

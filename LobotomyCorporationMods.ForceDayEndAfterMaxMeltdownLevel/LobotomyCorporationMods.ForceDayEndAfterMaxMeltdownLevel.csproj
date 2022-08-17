@@ -269,4 +269,9 @@
   <ItemGroup>
     <ProjectReference Include="..\LobotomyCorporationMods.Common\LobotomyCorporationMods.Common.csproj"/>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Localize\en\AgentState_EndOfDay.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 </Project>
