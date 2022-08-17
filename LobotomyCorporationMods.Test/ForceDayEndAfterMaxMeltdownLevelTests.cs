@@ -6,6 +6,7 @@ using CommandWindow;
 using FluentAssertions;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.ForceDayEndAfterMaxMeltdownLevel;
+using LobotomyCorporationMods.ForceDayEndAfterMaxMeltdownLevel.Extensions;
 using Xunit;
 using Xunit.Extensions;
 
@@ -13,6 +14,7 @@ namespace LobotomyCorporationMods.Test
 {
     public sealed class ForceDayEndAfterMaxMeltdownLevelTests
     {
+        private const long DefaultAgentId = 1L;
         private const AgentState DefaultAgentState = AgentState.IDLE;
         private const CommandType DefaultCommandType = CommandType.Management;
         private const long DefaultCreatureId = 1L;
@@ -134,7 +136,53 @@ namespace LobotomyCorporationMods.Test
             agentSlot.State.Should().Be(AgentState.UNCONTROLLABLE);
         }
 
+        [Theory]
+        [InlineData(1)]
+        [InlineData(2)]
+        [InlineData(9)]
+        public void Do_not_prevent_agents_from_working_if_we_are_not_at_the_maximum_meltdown_level(int qliphothCounter)
+        {
+            var agentModel = GetDefaultAgentModel();
+            var creatureOverloadManager = TestExtensions.CreateCreatureOverloadManager(qliphothCounter);
+
+            var result = agentModel.CheckIfMaxMeltdown(creatureOverloadManager, GetDefaultCreatureModel());
+
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public void Do_not_prevent_agents_from_working_if_the_room_is_in_meltdown_even_when_at_maximum_meltdown_level()
+        {
+            var agentModel = GetDefaultAgentModel();
+            var creatureOverloadManager = TestExtensions.CreateCreatureOverloadManager(MaxMeltdownLevel);
+            var isolateOverload = TestExtensions.CreateIsolateOverload(true);
+            var isolateRoom = TestExtensions.CreateIsolateRoom(isolateOverload);
+            var creatureUnit = TestExtensions.CreateCreatureUnit(isolateRoom);
+            var creatureModel = TestExtensions.CreateCreatureModel(DefaultCreatureId, GetDefaultCreatureObserveInfoModel(), creatureUnit);
+
+            var result = agentModel.CheckIfMaxMeltdown(creatureOverloadManager, creatureModel);
+
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public void Prevent_agents_from_working_when_we_are_at_the_maximum_meltdown_level()
+        {
+            var agentModel = GetDefaultAgentModel();
+            var creatureOverloadManager = TestExtensions.CreateCreatureOverloadManager(MaxMeltdownLevel);
+
+            var result = agentModel.CheckIfMaxMeltdown(creatureOverloadManager, GetDefaultCreatureModel());
+
+            result.Should().BeTrue();
+        }
+
         #region Helper Methods
+
+        [NotNull]
+        private static AgentModel GetDefaultAgentModel()
+        {
+            return TestExtensions.CreateAgentModel(DefaultAgentId);
+        }
 
         [NotNull]
         private static AgentSlot GetDefaultAgentSlot()

@@ -47,6 +47,16 @@ namespace LobotomyCorporationMods.Test
         #region Unity Objects
 
         [NotNull]
+        public static AgentModel CreateAgentModel(long instanceId)
+        {
+            CreateUninitializedObject<AgentModel>(out var agentModel);
+            var fields = GetUninitializedObjectFields(typeof(AgentModel));
+            var newValues = new Dictionary<string, object> { { "instanceId", instanceId } };
+
+            return GetPopulatedUninitializedObject(agentModel, fields, newValues);
+        }
+
+        [NotNull]
         public static AgentSlot CreateAgentSlot(AgentState agentState)
         {
             var agentSlot = Substitute.For<AgentSlot>();
