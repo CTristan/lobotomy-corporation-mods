@@ -3,8 +3,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Security;
+using CommandWindow;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Interfaces;
 using NSubstitute;
@@ -31,18 +34,6 @@ namespace LobotomyCorporationMods.Test
             return Path.Combine(Directory.GetCurrentDirectory(), fileName);
         }
 
-        private static void CreateUninitializedObject<TObject>(out TObject obj)
-        {
-            obj = (TObject)FormatterServices.GetSafeUninitializedObject(typeof(TObject));
-        }
-
-        public static GameObject CreateGameObject()
-        {
-            CreateUninitializedObject(out GameObject obj);
-
-            return obj;
-        }
-
         /// <summary>
         ///     Depending on the environment, the same test may return a different exception. Both exception types appear for the
         ///     same reason (trying to use a Unity-specific method), so we'll check if the exception we get is either of those
@@ -56,6 +47,43 @@ namespace LobotomyCorporationMods.Test
         #region Unity Objects
 
         [NotNull]
+        public static AgentSlot CreateAgentSlot(AgentState agentState)
+        {
+            var agentSlot = Substitute.For<AgentSlot>();
+            agentSlot.State = agentState;
+
+            return agentSlot;
+        }
+
+        /// <summary>
+        ///     Creates a CommandWindow populated with necessary fields.
+        /// </summary>
+        /// <param name="currentTarget">The object we're interacting with, usually an abnormality or usable item.</param>
+        /// <param name="currentWindowType">What type of command we're issuing (Management, suppression, usable item)</param>
+        /// <param name="selectedWork">
+        ///     Can be either a work type or null if we want to test the command window before a work type
+        ///     is selected.
+        /// </param>
+        [NotNull]
+        public static CommandWindow.CommandWindow CreateCommandWindow(UnitModel currentTarget, CommandType currentWindowType, RwbpType? selectedWork)
+        {
+            var convertedSelectedWork = selectedWork != null ? (long)selectedWork : -1L;
+
+            // Need to populate an instance of SkillTypeList with our selected work because that's what the Command Window uses to check the work type.
+            if (convertedSelectedWork > -1L)
+            {
+                var skillTypeInfos = new List<SkillTypeInfo> { new SkillTypeInfo { id = convertedSelectedWork } };
+                _ = CreateSkillTypeList(skillTypeInfos);
+            }
+
+            CreateUninitializedObject<CommandWindow.CommandWindow>(out var commandWindow);
+            var fields = GetUninitializedObjectFields(typeof(CommandWindow.CommandWindow));
+            var newValues = new Dictionary<string, object> { { "_currentTarget", currentTarget }, { "_currentWindowType", currentWindowType }, { "_selectedWork", convertedSelectedWork } };
+
+            return GetPopulatedUninitializedObject(commandWindow, fields, newValues);
+        }
+
+        [NotNull]
         public static CreatureEquipmentMakeInfo CreateCreatureEquipmentMakeInfo(string giftName)
         {
             var info = Substitute.For<CreatureEquipmentMakeInfo>();
@@ -64,6 +92,104 @@ namespace LobotomyCorporationMods.Test
             LocalizeTextDataModel.instance?.Init(new Dictionary<string, string> { { giftName, giftName } });
 
             return info;
+        }
+
+        [NotNull]
+        public static CreatureModel CreateCreatureModel(long instanceId, CreatureObserveInfoModel observeInfo, CreatureUnit unit)
+        {
+            CreateUninitializedObject<CreatureModel>(out var creatureModel);
+            var fields = GetUninitializedObjectFields(typeof(CreatureModel));
+            var newValues = new Dictionary<string, object> { { "instanceId", instanceId }, { "observeInfo", observeInfo }, { "_unit", unit } };
+
+            return GetPopulatedUninitializedObject(creatureModel, fields, newValues);
+        }
+
+        [NotNull]
+        public static CreatureObserveInfoModel CreateCreatureObserveInfoModel(CreatureTypeInfo metaInfo, Dictionary<string, ObserveRegion> observeRegions)
+        {
+            CreateUninitializedObject<CreatureObserveInfoModel>(out var creatureObserveInfoModel);
+            var fields = GetUninitializedObjectFields(typeof(CreatureObserveInfoModel));
+            var newValues = new Dictionary<string, object> { { "_metaInfo", metaInfo }, { "observeRegions", observeRegions } };
+
+            return GetPopulatedUninitializedObject(creatureObserveInfoModel, fields, newValues);
+        }
+
+        [NotNull]
+        public static CreatureOverloadManager CreateCreatureOverloadManager(int qliphothOverloadLevel)
+        {
+            CreateUninitializedObject<CreatureOverloadManager>(out var creatureOverloadManager);
+            var fields = GetUninitializedObjectFields(typeof(CreatureOverloadManager));
+            var newValues = new Dictionary<string, object> { { "qliphothOverloadLevel", qliphothOverloadLevel } };
+
+            return GetPopulatedUninitializedObject(creatureOverloadManager, fields, newValues);
+        }
+
+        [NotNull]
+        public static CreatureTypeInfo CreateCreatureTypeInfo()
+        {
+            CreateUninitializedObject<CreatureTypeInfo>(out var creatureTypeInfo);
+
+            return creatureTypeInfo;
+        }
+
+        [NotNull]
+        public static CreatureUnit CreateCreatureUnit(IsolateRoom room)
+        {
+            CreateUninitializedObject<CreatureUnit>(out var creatureUnit);
+            var fields = GetUninitializedObjectFields(typeof(CreatureUnit));
+            var newValues = new Dictionary<string, object> { { "room", room } };
+
+            return GetPopulatedUninitializedObject(creatureUnit, fields, newValues);
+        }
+
+        [NotNull]
+        public static GameObject CreateGameObject()
+        {
+            CreateUninitializedObject(out GameObject obj);
+
+            return obj;
+        }
+
+        [NotNull]
+        public static IsolateRoom CreateIsolateRoom(IsolateOverload overloadUI)
+        {
+            CreateUninitializedObject<IsolateRoom>(out var isolateRoom);
+            var fields = GetUninitializedObjectFields(typeof(IsolateRoom));
+            var newValues = new Dictionary<string, object> { { "overloadUI", overloadUI } };
+
+            return GetPopulatedUninitializedObject(isolateRoom, fields, newValues);
+        }
+
+        [NotNull]
+        public static IsolateOverload CreateIsolateOverload(bool isActivated)
+        {
+            CreateUninitializedObject<IsolateOverload>(out var isolateOverload);
+            var fields = GetUninitializedObjectFields(typeof(IsolateOverload));
+            var newValues = new Dictionary<string, object> { { "_isActivated", isActivated } };
+
+            return GetPopulatedUninitializedObject(isolateOverload, fields, newValues);
+        }
+
+        [NotNull]
+        private static SkillTypeList CreateSkillTypeList(List<SkillTypeInfo> skillTypeInfos)
+        {
+            CreateUninitializedObject<SkillTypeList>(out var skillTypeList);
+            var fields = GetUninitializedObjectFields(typeof(SkillTypeList));
+            var newValues = new Dictionary<string, object> { { "_instance", skillTypeList }, { "_list", skillTypeInfos } };
+
+            var newSkillTypeList = GetPopulatedUninitializedObject(skillTypeList, fields, newValues);
+            newValues = new Dictionary<string, object> { { "_instance", newSkillTypeList } };
+
+            return GetPopulatedUninitializedObject(newSkillTypeList, fields, newValues);
+        }
+
+        [NotNull]
+        public static UnitModel CreateUnitModel(long unitId)
+        {
+            CreateUninitializedObject<UnitModel>(out var unitModel);
+            unitModel.instanceId = unitId;
+
+            return unitModel;
         }
 
         [NotNull]
@@ -77,6 +203,89 @@ namespace LobotomyCorporationMods.Test
             useSkill.successCount = numberOfSuccesses;
 
             return useSkill;
+        }
+
+        #endregion
+
+        #region Uninitialized Object Functions
+
+        /// <summary>
+        ///     Create an uninitialized object without calling a constructor. Needed because some of the classes we need
+        ///     to mock either don't have a public constructor or cause a Unity exception.
+        /// </summary>
+        private static void CreateUninitializedObject<TObject>(out TObject obj)
+        {
+            obj = (TObject)FormatterServices.GetSafeUninitializedObject(typeof(TObject));
+        }
+
+        /// <summary>
+        ///     Get the fields for an uninitialized object. Can be used to later initialize the individual fields as needed.
+        /// </summary>
+        [NotNull]
+        private static MemberInfo[] GetUninitializedObjectFields(Type type)
+        {
+            var fields = new List<MemberInfo>();
+
+            while (type != typeof(object))
+            {
+                if (type == null)
+                {
+                    continue;
+                }
+
+                var typeFields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Static);
+                fields.AddRange(typeFields.GetValidFields());
+                type = type.BaseType;
+            }
+
+            return fields.ToArray();
+        }
+
+        /// <summary>
+        ///     Returns the fields which are valid and can be used to populate an object.
+        /// </summary>
+        [NotNull]
+        private static IEnumerable<FieldInfo> GetValidFields([NotNull] this IEnumerable<FieldInfo> typeFields)
+        {
+            var goodFields = new List<FieldInfo>();
+            foreach (var typeField in typeFields)
+            {
+                try
+                {
+                    if (typeField.FieldHandle.Value != IntPtr.Zero)
+                    {
+                        goodFields.Add(typeField);
+                    }
+                }
+                catch
+                {
+                    // Some fields will give an exception when checked, so we won't be able to populate those fields
+                }
+            }
+
+            return goodFields;
+        }
+
+        /// <summary>
+        ///     Populate the fields of an uninitialized object with a provided list of objects.
+        /// </summary>
+        [NotNull]
+        private static TObject GetPopulatedUninitializedObject<TObject>([NotNull] TObject obj, [NotNull] MemberInfo[] fields, IDictionary<string, object> newValues)
+        {
+            CreateUninitializedObject<TObject>(out var newObj);
+            var values = FormatterServices.GetObjectData(obj, fields.ToArray());
+
+            for (var i = 0; i < fields.Length; i++)
+            {
+                if (newValues.ContainsKey(fields[i].Name))
+                {
+                    values[i] = newValues[fields[i].Name];
+                }
+            }
+
+            FormatterServices.PopulateObjectMembers(newObj, fields.ToArray(), values);
+
+            return newObj;
         }
 
         #endregion

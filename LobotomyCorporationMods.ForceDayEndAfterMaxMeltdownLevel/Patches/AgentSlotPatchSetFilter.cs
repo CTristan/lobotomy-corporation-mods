@@ -2,39 +2,30 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using CommandWindow;
 using Harmony;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Implementations;
 
-namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
+namespace LobotomyCorporationMods.ForceDayEndAfterMaxMeltdownLevel.Patches
 {
-    [HarmonyPatch(typeof(CreatureEquipmentMakeInfo), "GetProb")]
+    [HarmonyPatch(typeof(AgentSlot), "SetFilter", new[] { typeof(AgentState) })]
     [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
-    public static class CreatureEquipmentMakeInfoPatchGetProb
+    public static class AgentSlotPatchSetFilter
     {
-        // ReSharper disable InconsistentNaming
-        public static void Postfix([NotNull] CreatureEquipmentMakeInfo __instance, ref float __result)
+        /// <summary>
+        ///     Runs after the SetFilter method runs to check if we should disallow working with this room.
+        /// </summary>
+        // ReSharper disable once InconsistentNaming
+        // ReSharper disable once UnusedMember.Global
+        public static void Postfix([NotNull] AgentSlot __instance, AgentState state)
         {
             try
             {
                 Guard.Against.Null(__instance, nameof(__instance));
-
-                var giftName = __instance.equipTypeInfo?.Name;
-
-                // If creature has no gift then giftName will be null
-                if (giftName == null)
-                {
-                    return;
-                }
-
-                var probabilityBonus = Harmony_Patch.Instance.AgentWorkTracker.GetLastAgentWorkCountByGift(giftName) / 100f;
-                __result += probabilityBonus;
-
-                // Prevent potential overflow issues
-                if (__result > 1f)
-                {
-                    __result = 1f;
-                }
+                var commandWindow = CommandWindow.CommandWindow.CurrentWindow;
+                var creatureOverloadManager = CreatureOverloadManager.instance;
+                __instance.DisableIfMaxMeltdown(state, commandWindow, creatureOverloadManager);
             }
             catch (Exception ex)
             {
