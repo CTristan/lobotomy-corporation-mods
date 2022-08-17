@@ -4,9 +4,11 @@ using System;
 using System.Collections.Generic;
 using CommandWindow;
 using FluentAssertions;
+using Harmony;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.ForceDayEndAfterMaxMeltdownLevel;
 using LobotomyCorporationMods.ForceDayEndAfterMaxMeltdownLevel.Extensions;
+using LobotomyCorporationMods.ForceDayEndAfterMaxMeltdownLevel.Patches;
 using Xunit;
 using Xunit.Extensions;
 
@@ -27,16 +29,6 @@ namespace LobotomyCorporationMods.Test
             _ = new Harmony_Patch();
             var fileManager = TestExtensions.CreateFileManager();
             Harmony_Patch.Instance.LoadData(fileManager);
-        }
-
-        /// <summary>
-        ///     Harmony requires the constructor to be public.
-        /// </summary>
-        [Fact]
-        public void Constructor_is_public_and_externally_accessible()
-        {
-            Action act = () => _ = new Harmony_Patch();
-            act.ShouldNotThrow();
         }
 
         [Theory]
@@ -175,6 +167,50 @@ namespace LobotomyCorporationMods.Test
 
             result.Should().BeTrue();
         }
+
+        #region Harmony Tests
+
+        /// <summary>
+        ///     Harmony requires the constructor to be public.
+        /// </summary>
+        [Fact]
+        public void Constructor_is_public_and_externally_accessible()
+        {
+            Action action = () => _ = new Harmony_Patch();
+            action.ShouldNotThrow();
+        }
+
+        [Fact]
+        public void Class_AgentModel_Method_ManageCreature_is_patched_correctly_and_passes_control_by_default()
+        {
+            const string MethodName = "ManageCreature";
+
+            var attribute = Attribute.GetCustomAttribute(typeof(AgentModelPatchManageCreature), typeof(HarmonyPatch)) as HarmonyPatch;
+
+            attribute.Should().NotBeNull();
+            attribute?.info.originalType.Should().Be(typeof(AgentModel));
+            attribute?.info.methodName.Should().Be(MethodName);
+
+            var returnValue = AgentModelPatchManageCreature.Prefix(GetDefaultAgentModel(), GetDefaultCreatureModel(), null, null);
+            returnValue.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Class_AgentSlot_Method_SetFilter_is_patched_correctly_and_does_not_error()
+        {
+            const string MethodName = "SetFilter";
+
+            var attribute = Attribute.GetCustomAttribute(typeof(AgentSlotPatchSetFilter), typeof(HarmonyPatch)) as HarmonyPatch;
+
+            attribute.Should().NotBeNull();
+            attribute?.info.originalType.Should().Be(typeof(AgentSlot));
+            attribute?.info.methodName.Should().Be(MethodName);
+
+            Action action = () => AgentSlotPatchSetFilter.Postfix(GetDefaultAgentSlot(), DefaultAgentState);
+            action.ShouldNotThrow();
+        }
+
+        #endregion
 
         #region Helper Methods
 

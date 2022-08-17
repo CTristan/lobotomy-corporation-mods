@@ -22,7 +22,6 @@ namespace LobotomyCorporationMods.ForceDayEndAfterMaxMeltdownLevel.Patches
         ///     the agent work method directly.
         /// </summary>
         // ReSharper disable once InconsistentNaming
-        // ReSharper disable once UnusedMember.Global
         public static bool Prefix([NotNull] AgentModel __instance, CreatureModel target, SkillTypeInfo skill, Sprite skillSprite)
         {
             try

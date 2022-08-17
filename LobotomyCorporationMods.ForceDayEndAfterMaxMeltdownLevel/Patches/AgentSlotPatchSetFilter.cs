@@ -17,7 +17,6 @@ namespace LobotomyCorporationMods.ForceDayEndAfterMaxMeltdownLevel.Patches
         ///     Runs after the SetFilter method runs to check if we should disallow working with this room.
         /// </summary>
         // ReSharper disable once InconsistentNaming
-        // ReSharper disable once UnusedMember.Global
         public static void Postfix([NotNull] AgentSlot __instance, AgentState state)
         {
             try
