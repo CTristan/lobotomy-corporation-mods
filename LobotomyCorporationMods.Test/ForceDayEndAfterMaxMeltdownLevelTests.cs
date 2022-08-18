@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using CommandWindow;
 using FluentAssertions;
-using Harmony;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.ForceDayEndAfterMaxMeltdownLevel;
 using LobotomyCorporationMods.ForceDayEndAfterMaxMeltdownLevel.Extensions;
@@ -183,13 +182,11 @@ namespace LobotomyCorporationMods.Test
         [Fact]
         public void Class_AgentModel_Method_ManageCreature_is_patched_correctly_and_passes_control_by_default()
         {
+            var patch = typeof(AgentModelPatchManageCreature);
+            var originalClass = typeof(AgentModel);
             const string MethodName = "ManageCreature";
 
-            var attribute = Attribute.GetCustomAttribute(typeof(AgentModelPatchManageCreature), typeof(HarmonyPatch)) as HarmonyPatch;
-
-            attribute.Should().NotBeNull();
-            attribute?.info.originalType.Should().Be(typeof(AgentModel));
-            attribute?.info.methodName.Should().Be(MethodName);
+            patch.ValidateHarmonyPatch(originalClass, MethodName);
 
             var returnValue = AgentModelPatchManageCreature.Prefix(GetDefaultAgentModel(), GetDefaultCreatureModel(), null, null);
             returnValue.Should().BeTrue();
@@ -198,13 +195,11 @@ namespace LobotomyCorporationMods.Test
         [Fact]
         public void Class_AgentSlot_Method_SetFilter_is_patched_correctly_and_does_not_error()
         {
+            var patch = typeof(AgentSlotPatchSetFilter);
+            var originalClass = typeof(AgentSlot);
             const string MethodName = "SetFilter";
 
-            var attribute = Attribute.GetCustomAttribute(typeof(AgentSlotPatchSetFilter), typeof(HarmonyPatch)) as HarmonyPatch;
-
-            attribute.Should().NotBeNull();
-            attribute?.info.originalType.Should().Be(typeof(AgentSlot));
-            attribute?.info.methodName.Should().Be(MethodName);
+            patch.ValidateHarmonyPatch(originalClass, MethodName);
 
             Action action = () => AgentSlotPatchSetFilter.Postfix(GetDefaultAgentSlot(), DefaultAgentState);
             action.ShouldNotThrow();

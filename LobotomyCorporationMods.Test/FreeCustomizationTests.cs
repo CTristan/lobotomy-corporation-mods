@@ -20,16 +20,6 @@ namespace LobotomyCorporationMods.Test
             Harmony_Patch.Instance.LoadData(fileManager);
         }
 
-        /// <summary>
-        ///     Harmony requires the constructor to be public.
-        /// </summary>
-        [Fact]
-        public void Constructor_is_public_and_externally_accessible()
-        {
-            Action act = () => _ = new Harmony_Patch();
-            act.ShouldNotThrow();
-        }
-
         [Fact]
         public void The_Appearance_UI_does_not_close_itself_if_there_is_no_close_action()
         {
@@ -53,23 +43,48 @@ namespace LobotomyCorporationMods.Test
             customizingWindow.CurrentData.isCustomAppearance.Should().BeFalse();
         }
 
+        #region Harmony Tests
+
         /// <summary>
-        ///     The AgentInfoWindowPatchGenerateWindow patch is untestable because the OpenAppearanceWindow method calls a method
-        ///     in another window, and the original method is static which means that we are not able to get an instance to work
-        ///     with.
+        ///     Harmony requires the constructor to be public.
         /// </summary>
         [Fact]
-        public void AgentInfoWindowPatchGenerateWindow_IsUntestable()
+        public void Constructor_is_public_and_externally_accessible()
         {
-            var agentInfoWindow = Substitute.For<AgentInfoWindow>();
-            var customizingWindow = Substitute.For<CustomizingWindow>();
-            customizingWindow.appearanceBlock = TestExtensions.CreateGameObject();
-            agentInfoWindow.customizingWindow = customizingWindow;
-            AgentInfoWindow.currentWindow = agentInfoWindow;
-
-            var exception = Record.Exception(AgentInfoWindowPatchGenerateWindow.Postfix);
-
-            TestExtensions.AssertIsUnityException(exception).Should().BeTrue();
+            Action action = () => _ = new Harmony_Patch();
+            action.ShouldNotThrow();
         }
+
+        [Fact]
+        public void Class_AgentInfoWindow_Method_GenerateWindow_is_patched_correctly()
+        {
+            var patch = typeof(AgentInfoWindowPatchGenerateWindow);
+            var originalClass = typeof(AgentInfoWindow);
+            const string MethodName = "GenerateWindow";
+
+            patch.ValidateHarmonyPatch(originalClass, MethodName);
+        }
+
+        [Fact]
+        public void Class_AppearanceUI_Method_CloseWindow_is_patched_correctly()
+        {
+            var patch = typeof(AppearanceUIPatchCloseWindow);
+            var originalClass = typeof(AppearanceUI);
+            const string MethodName = "CloseWindow";
+
+            patch.ValidateHarmonyPatch(originalClass, MethodName);
+        }
+
+        [Fact]
+        public void Class_CustomizingWindow_Method_OpenAppearanceWindow_is_patched_correctly()
+        {
+            var patch = typeof(CustomizingWindowPatchOpenAppearanceWindow);
+            var originalClass = typeof(CustomizingWindow);
+            const string MethodName = "OpenAppearanceWindow";
+
+            patch.ValidateHarmonyPatch(originalClass, MethodName);
+        }
+
+        #endregion
     }
 }

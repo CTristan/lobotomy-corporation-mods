@@ -3,11 +3,13 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Customizing;
+using Harmony;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Implementations;
 
 namespace LobotomyCorporationMods.FreeCustomization.Patches
 {
+    [HarmonyPatch(typeof(CustomizingWindow), "OpenAppearanceWindow")]
     [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
     public static class CustomizingWindowPatchOpenAppearanceWindow
     {

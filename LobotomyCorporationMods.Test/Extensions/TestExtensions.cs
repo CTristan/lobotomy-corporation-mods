@@ -8,10 +8,12 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Security;
 using CommandWindow;
+using Customizing;
+using FluentAssertions;
+using Harmony;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Interfaces;
 using NSubstitute;
-using UnityEngine;
 
 // ReSharper disable once CheckNamespace
 namespace LobotomyCorporationMods.Test
@@ -44,6 +46,15 @@ namespace LobotomyCorporationMods.Test
             return exception is SecurityException || exception is MissingMethodException;
         }
 
+        public static void ValidateHarmonyPatch([NotNull] this MemberInfo patchClass, [NotNull] Type originalClass, string methodName)
+        {
+            var attribute = Attribute.GetCustomAttribute(patchClass, typeof(HarmonyPatch)) as HarmonyPatch;
+
+            attribute.Should().NotBeNull();
+            attribute?.info.originalType.Should().Be(originalClass);
+            attribute?.info.methodName.Should().Be(methodName);
+        }
+
         #region Unity Objects
 
         [NotNull]
@@ -64,6 +75,14 @@ namespace LobotomyCorporationMods.Test
             var newValues = new Dictionary<string, object> { { "_state", agentState } };
 
             return GetPopulatedUninitializedObject(agentSlot, fields, newValues);
+        }
+
+        [NotNull]
+        public static AppearanceUI CreateAppearanceUI()
+        {
+            CreateUninitializedObject<AppearanceUI>(out var appearanceUI);
+
+            return appearanceUI;
         }
 
         /// <summary>
@@ -154,11 +173,11 @@ namespace LobotomyCorporationMods.Test
         }
 
         [NotNull]
-        public static GameObject CreateGameObject()
+        public static CustomizingWindow CreateCustomizingWindow()
         {
-            CreateUninitializedObject(out GameObject obj);
+            CreateUninitializedObject<CustomizingWindow>(out var customizingWindow);
 
-            return obj;
+            return customizingWindow;
         }
 
         [NotNull]

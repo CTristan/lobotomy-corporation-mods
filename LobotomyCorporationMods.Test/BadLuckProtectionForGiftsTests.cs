@@ -19,16 +19,6 @@ namespace LobotomyCorporationMods.Test
         private const long AgentId = 1;
         private const string GiftName = "Test";
 
-        /// <summary>
-        ///     Harmony requires the constructor to be public.
-        /// </summary>
-        [Fact]
-        public void Constructor_is_public_and_externally_accessible()
-        {
-            Action act = () => _ = new Harmony_Patch();
-            act.ShouldNotThrow();
-        }
-
         [Fact]
         public void Converting_a_tracker_to_a_string_with_multiple_gifts_and_agents_contains_all_of_the_data_in_the_tracker()
         {
@@ -206,7 +196,71 @@ namespace LobotomyCorporationMods.Test
             Assert.Equal(numberOfTimes, agentWorkTracker.GetLastAgentWorkCountByGift(giftName));
         }
 
-        #region Test Helper Methods
+        #region Harmony Methods
+
+        /// <summary>
+        ///     Harmony requires the constructor to be public.
+        /// </summary>
+        [Fact]
+        public void Constructor_is_public_and_externally_accessible()
+        {
+            Action act = () => _ = new Harmony_Patch();
+            act.ShouldNotThrow();
+        }
+
+        [Fact]
+        public void Class_CreatureEquipmentMakeInfo_Method_GetProb_is_patched_correctly()
+        {
+            var patch = typeof(CreatureEquipmentMakeInfoPatchGetProb);
+            var originalClass = typeof(CreatureEquipmentMakeInfo);
+            const string MethodName = "GetProb";
+
+            patch.ValidateHarmonyPatch(originalClass, MethodName);
+        }
+
+        [Fact]
+        public void Class_GameSceneController_Method_OnClickNextDay_is_patched_correctly()
+        {
+            var patch = typeof(GameSceneControllerPatchOnClickNextDay);
+            var originalClass = typeof(GameSceneController);
+            const string MethodName = "OnClickNextDay";
+
+            patch.ValidateHarmonyPatch(originalClass, MethodName);
+        }
+
+        [Fact]
+        public void Class_GameSceneController_Method_OnStageStart_is_patched_correctly()
+        {
+            var patch = typeof(GameSceneControllerPatchOnStageStart);
+            var originalClass = typeof(GameSceneController);
+            const string MethodName = "OnStageStart";
+
+            patch.ValidateHarmonyPatch(originalClass, MethodName);
+        }
+
+        [Fact]
+        public void Class_NewTitleScript_Method_OnClickNewGame_is_patched_correctly()
+        {
+            var patch = typeof(NewTitleScriptPatchOnClickNewGame);
+            var originalClass = typeof(NewTitleScript);
+            const string MethodName = "OnClickNewGame";
+
+            patch.ValidateHarmonyPatch(originalClass, MethodName);
+        }
+
+        [Fact]
+        public void Class_UseSkill_Method_FinishWorkSuccessfully_is_patched_correctly()
+        {
+            var patch = typeof(UseSkillPatchFinishWorkSuccessfully);
+            var originalClass = typeof(UseSkill);
+            const string MethodName = "FinishWorkSuccessfully";
+
+            patch.ValidateHarmonyPatch(originalClass, MethodName);
+        }
+
+        #endregion
+
+        #region Helper Methods
 
         private static void AssertSaveTrackerCalled([NotNull] IAgentWorkTracker agentWorkTracker)
         {
