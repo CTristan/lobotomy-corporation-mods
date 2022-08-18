@@ -8,10 +8,10 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Security;
 using CommandWindow;
-using Customizing;
 using FluentAssertions;
 using Harmony;
 using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Interfaces;
 using NSubstitute;
 
@@ -61,7 +61,7 @@ namespace LobotomyCorporationMods.Test
         public static AgentModel CreateAgentModel(long instanceId)
         {
             CreateUninitializedObject<AgentModel>(out var agentModel);
-            var fields = GetUninitializedObjectFields(typeof(AgentModel));
+            var fields = GetUninitializedObjectFields(agentModel.GetType());
             var newValues = new Dictionary<string, object> { { "instanceId", instanceId } };
 
             return GetPopulatedUninitializedObject(agentModel, fields, newValues);
@@ -71,18 +71,10 @@ namespace LobotomyCorporationMods.Test
         public static AgentSlot CreateAgentSlot(AgentState agentState)
         {
             CreateUninitializedObject<AgentSlot>(out var agentSlot);
-            var fields = GetUninitializedObjectFields(typeof(AgentSlot));
+            var fields = GetUninitializedObjectFields(agentSlot.GetType());
             var newValues = new Dictionary<string, object> { { "_state", agentState } };
 
             return GetPopulatedUninitializedObject(agentSlot, fields, newValues);
-        }
-
-        [NotNull]
-        public static AppearanceUI CreateAppearanceUI()
-        {
-            CreateUninitializedObject<AppearanceUI>(out var appearanceUI);
-
-            return appearanceUI;
         }
 
         /// <summary>
@@ -107,7 +99,7 @@ namespace LobotomyCorporationMods.Test
             }
 
             CreateUninitializedObject<CommandWindow.CommandWindow>(out var commandWindow);
-            var fields = GetUninitializedObjectFields(typeof(CommandWindow.CommandWindow));
+            var fields = GetUninitializedObjectFields(commandWindow.GetType());
             var newValues = new Dictionary<string, object> { { "_currentTarget", currentTarget }, { "_currentWindowType", currentWindowType }, { "_selectedWork", convertedSelectedWork } };
 
             return GetPopulatedUninitializedObject(commandWindow, fields, newValues);
@@ -128,7 +120,7 @@ namespace LobotomyCorporationMods.Test
         public static CreatureModel CreateCreatureModel(long instanceId, CreatureObserveInfoModel observeInfo, CreatureUnit unit)
         {
             CreateUninitializedObject<CreatureModel>(out var creatureModel);
-            var fields = GetUninitializedObjectFields(typeof(CreatureModel));
+            var fields = GetUninitializedObjectFields(creatureModel.GetType());
             var newValues = new Dictionary<string, object> { { "instanceId", instanceId }, { "observeInfo", observeInfo }, { "_unit", unit } };
 
             return GetPopulatedUninitializedObject(creatureModel, fields, newValues);
@@ -138,7 +130,7 @@ namespace LobotomyCorporationMods.Test
         public static CreatureObserveInfoModel CreateCreatureObserveInfoModel(CreatureTypeInfo metaInfo, Dictionary<string, ObserveRegion> observeRegions)
         {
             CreateUninitializedObject<CreatureObserveInfoModel>(out var creatureObserveInfoModel);
-            var fields = GetUninitializedObjectFields(typeof(CreatureObserveInfoModel));
+            var fields = GetUninitializedObjectFields(creatureObserveInfoModel.GetType());
             var newValues = new Dictionary<string, object> { { "_metaInfo", metaInfo }, { "observeRegions", observeRegions } };
 
             return GetPopulatedUninitializedObject(creatureObserveInfoModel, fields, newValues);
@@ -148,7 +140,7 @@ namespace LobotomyCorporationMods.Test
         public static CreatureOverloadManager CreateCreatureOverloadManager(int qliphothOverloadLevel)
         {
             CreateUninitializedObject<CreatureOverloadManager>(out var creatureOverloadManager);
-            var fields = GetUninitializedObjectFields(typeof(CreatureOverloadManager));
+            var fields = GetUninitializedObjectFields(creatureOverloadManager.GetType());
             var newValues = new Dictionary<string, object> { { "qliphothOverloadLevel", qliphothOverloadLevel } };
 
             return GetPopulatedUninitializedObject(creatureOverloadManager, fields, newValues);
@@ -166,25 +158,44 @@ namespace LobotomyCorporationMods.Test
         public static CreatureUnit CreateCreatureUnit(IsolateRoom room)
         {
             CreateUninitializedObject<CreatureUnit>(out var creatureUnit);
-            var fields = GetUninitializedObjectFields(typeof(CreatureUnit));
+            var fields = GetUninitializedObjectFields(creatureUnit.GetType());
             var newValues = new Dictionary<string, object> { { "room", room } };
 
             return GetPopulatedUninitializedObject(creatureUnit, fields, newValues);
         }
 
         [NotNull]
-        public static CustomizingWindow CreateCustomizingWindow()
+        public static EnergyModel CreateEnergyModel(GlobalGameManager globalGameManager, float energy)
         {
-            CreateUninitializedObject<CustomizingWindow>(out var customizingWindow);
+            // Requires a GlobalGameManager instance
+            Guard.Against.Null(globalGameManager, nameof(globalGameManager));
 
-            return customizingWindow;
+            CreateUninitializedObject<EnergyModel>(out var energyModel);
+            var fields = GetUninitializedObjectFields(energyModel.GetType());
+            var newValues = new Dictionary<string, object> { { "energy", energy } };
+
+            return GetPopulatedUninitializedObject(energyModel, fields, newValues);
+        }
+
+        [NotNull]
+        public static GlobalGameManager CreateGlobalGameManager()
+        {
+            CreateUninitializedObject<GlobalGameManager>(out var globalGameManager);
+
+            var fields = GetUninitializedObjectFields(globalGameManager.GetType());
+            var newValues = new Dictionary<string, object> { { "_instance", globalGameManager } };
+
+            var newGlobalGameManager = GetPopulatedUninitializedObject(globalGameManager, fields, newValues);
+            newValues = new Dictionary<string, object> { { "_instance", newGlobalGameManager } };
+
+            return GetPopulatedUninitializedObject(newGlobalGameManager, fields, newValues);
         }
 
         [NotNull]
         public static IsolateRoom CreateIsolateRoom(IsolateOverload overloadUI)
         {
             CreateUninitializedObject<IsolateRoom>(out var isolateRoom);
-            var fields = GetUninitializedObjectFields(typeof(IsolateRoom));
+            var fields = GetUninitializedObjectFields(isolateRoom.GetType());
             var newValues = new Dictionary<string, object> { { "overloadUI", overloadUI } };
 
             return GetPopulatedUninitializedObject(isolateRoom, fields, newValues);
@@ -194,23 +205,40 @@ namespace LobotomyCorporationMods.Test
         public static IsolateOverload CreateIsolateOverload(bool isActivated)
         {
             CreateUninitializedObject<IsolateOverload>(out var isolateOverload);
-            var fields = GetUninitializedObjectFields(typeof(IsolateOverload));
+            var fields = GetUninitializedObjectFields(isolateOverload.GetType());
             var newValues = new Dictionary<string, object> { { "_isActivated", isActivated } };
 
             return GetPopulatedUninitializedObject(isolateOverload, fields, newValues);
         }
 
         [NotNull]
+        public static PlayerModel CreatePlayerModel()
+        {
+            CreateUninitializedObject<PlayerModel>(out var playerModel);
+
+            return playerModel;
+        }
+
+        [NotNull]
         private static SkillTypeList CreateSkillTypeList(List<SkillTypeInfo> skillTypeInfos)
         {
             CreateUninitializedObject<SkillTypeList>(out var skillTypeList);
-            var fields = GetUninitializedObjectFields(typeof(SkillTypeList));
+            var fields = GetUninitializedObjectFields(skillTypeList.GetType());
             var newValues = new Dictionary<string, object> { { "_instance", skillTypeList }, { "_list", skillTypeInfos } };
 
             var newSkillTypeList = GetPopulatedUninitializedObject(skillTypeList, fields, newValues);
             newValues = new Dictionary<string, object> { { "_instance", newSkillTypeList } };
 
             return GetPopulatedUninitializedObject(newSkillTypeList, fields, newValues);
+        }
+
+        [NotNull]
+        public static StageTypeInfo CreateStageTypeInfo(int[] energyVal)
+        {
+            CreateUninitializedObject<StageTypeInfo>(out var stageTypeInfo);
+            stageTypeInfo.energyVal = energyVal;
+
+            return stageTypeInfo;
         }
 
         [NotNull]

@@ -30,8 +30,11 @@ namespace LobotomyCorporationMods.ForceDayEndAfterMaxMeltdownLevel.Patches
                 Guard.Against.Null(target, nameof(target));
 
                 var creatureOverloadManager = CreatureOverloadManager.instance;
+                var playerModel = PlayerModel.instance;
+                var stageTypeInfo = StageTypeInfo.instnace;
+                var energyModel = EnergyModel.instance;
 
-                return !__instance.CheckIfMaxMeltdown(creatureOverloadManager, target);
+                return !__instance.CheckIfMaxMeltdown(creatureOverloadManager, target, playerModel, stageTypeInfo, energyModel);
             }
             catch (Exception ex)
             {

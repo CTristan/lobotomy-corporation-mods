@@ -19,9 +19,8 @@ namespace LobotomyCorporationMods.Test
         private const AgentState DefaultAgentState = AgentState.IDLE;
         private const CommandType DefaultCommandType = CommandType.Management;
         private const long DefaultCreatureId = 1L;
-        private const int DefaultQliphothOverloadCounter = 1;
+        private const int DefaultEnergyValue = 15;
         private const RwbpType DefaultSelectedWork = RwbpType.R;
-        private const int MaxMeltdownLevel = 10;
 
         public ForceDayEndAfterMaxMeltdownLevelTests()
         {
@@ -36,10 +35,9 @@ namespace LobotomyCorporationMods.Test
         public void Do_not_change_agent_work_slot_when_the_agent_cannot_be_controlled(AgentState agentState)
         {
             var agentSlot = TestExtensions.CreateAgentSlot(agentState);
-            var commandWindow = GetDefaultCommandWindow();
-            var creatureOverloadManager = GetDefaultCreatureOverloadManager();
 
-            var result = agentSlot.IsMaxMeltdown(agentState, commandWindow, creatureOverloadManager);
+            var result = agentSlot.IsMaxMeltdown(agentState, GetDefaultCommandWindow(), GetDefaultCreatureOverloadManager(), GetDefaultPlayerModel(), GetDefaultStageTypeInfo(),
+                GetDefaultEnergyModel());
 
             result.Should().BeFalse();
         }
@@ -47,11 +45,10 @@ namespace LobotomyCorporationMods.Test
         [Fact]
         public void Do_not_change_agent_work_slot_if_no_work_has_been_selected_yet()
         {
-            var agentSlot = GetDefaultAgentSlot();
             var commandWindow = TestExtensions.CreateCommandWindow(GetDefaultCreatureModel(), DefaultCommandType, null);
-            var creatureOverloadManager = GetDefaultCreatureOverloadManager();
 
-            var result = agentSlot.IsMaxMeltdown(DefaultAgentState, commandWindow, creatureOverloadManager);
+            var result = GetDefaultAgentSlot()
+                .IsMaxMeltdown(DefaultAgentState, commandWindow, GetDefaultCreatureOverloadManager(), GetDefaultPlayerModel(), GetDefaultStageTypeInfo(), GetDefaultEnergyModel());
 
             result.Should().BeFalse();
         }
@@ -61,11 +58,10 @@ namespace LobotomyCorporationMods.Test
         [InlineData(CommandType.Suppress)]
         public void Do_not_change_agent_work_slot_if_window_type_is_not_management(CommandType windowType)
         {
-            var agentSlot = GetDefaultAgentSlot();
             var commandWindow = TestExtensions.CreateCommandWindow(GetDefaultCreatureModel(), windowType, DefaultSelectedWork);
-            var creatureOverloadManager = GetDefaultCreatureOverloadManager();
 
-            var result = agentSlot.IsMaxMeltdown(DefaultAgentState, commandWindow, creatureOverloadManager);
+            var result = GetDefaultAgentSlot()
+                .IsMaxMeltdown(DefaultAgentState, commandWindow, GetDefaultCreatureOverloadManager(), GetDefaultPlayerModel(), GetDefaultStageTypeInfo(), GetDefaultEnergyModel());
 
             result.Should().BeFalse();
         }
@@ -74,12 +70,11 @@ namespace LobotomyCorporationMods.Test
         public void Do_not_change_work_agent_slot_if_command_window_is_not_for_an_abnormality()
         {
             const long UnitId = 1L;
-            var agentSlot = GetDefaultAgentSlot();
             var currentTarget = TestExtensions.CreateUnitModel(UnitId);
             var commandWindow = TestExtensions.CreateCommandWindow(currentTarget, DefaultCommandType, DefaultSelectedWork);
-            var creatureOverloadManager = GetDefaultCreatureOverloadManager();
 
-            var result = agentSlot.IsMaxMeltdown(DefaultAgentState, commandWindow, creatureOverloadManager);
+            var result = GetDefaultAgentSlot()
+                .IsMaxMeltdown(DefaultAgentState, commandWindow, GetDefaultCreatureOverloadManager(), GetDefaultPlayerModel(), GetDefaultStageTypeInfo(), GetDefaultEnergyModel());
 
             result.Should().BeFalse();
         }
@@ -90,11 +85,10 @@ namespace LobotomyCorporationMods.Test
         [InlineData(9)]
         public void Do_not_disable_the_agent_work_slot_if_we_are_not_at_the_maximum_meltdown_level(int qliphothCounter)
         {
-            var agentSlot = GetDefaultAgentSlot();
-            var commandWindow = GetDefaultCommandWindow();
             var creatureOverloadManager = TestExtensions.CreateCreatureOverloadManager(qliphothCounter);
 
-            var result = agentSlot.IsMaxMeltdown(DefaultAgentState, commandWindow, creatureOverloadManager);
+            var result = GetDefaultAgentSlot()
+                .IsMaxMeltdown(DefaultAgentState, GetDefaultCommandWindow(), creatureOverloadManager, GetDefaultPlayerModel(), GetDefaultStageTypeInfo(), GetDefaultEnergyModel());
 
             result.Should().BeFalse();
         }
@@ -102,15 +96,27 @@ namespace LobotomyCorporationMods.Test
         [Fact]
         public void Do_not_disable_the_agent_work_slot_if_the_room_is_in_meltdown_even_when_at_maximum_meltdown_level()
         {
-            var agentSlot = GetDefaultAgentSlot();
             var isolateOverload = TestExtensions.CreateIsolateOverload(true);
             var isolateRoom = TestExtensions.CreateIsolateRoom(isolateOverload);
             var creatureUnit = TestExtensions.CreateCreatureUnit(isolateRoom);
             var creatureModel = TestExtensions.CreateCreatureModel(DefaultCreatureId, GetDefaultCreatureObserveInfoModel(), creatureUnit);
             var commandWindow = TestExtensions.CreateCommandWindow(creatureModel, DefaultCommandType, DefaultSelectedWork);
-            var creatureOverloadManager = TestExtensions.CreateCreatureOverloadManager(MaxMeltdownLevel);
 
-            var result = agentSlot.IsMaxMeltdown(DefaultAgentState, commandWindow, creatureOverloadManager);
+            var result = GetDefaultAgentSlot()
+                .IsMaxMeltdown(DefaultAgentState, commandWindow, GetDefaultCreatureOverloadManager(), GetDefaultPlayerModel(), GetDefaultStageTypeInfo(), GetDefaultEnergyModel());
+
+            result.Should().BeFalse();
+        }
+
+        [Theory]
+        [InlineData(0f)]
+        [InlineData(1f)]
+        public void Do_not_disable_the_agent_work_slot_if_the_energy_need_has_not_yet_been_met(float energy)
+        {
+            var energyModel = TestExtensions.CreateEnergyModel(GetDefaultGlobalGameManager(), energy);
+
+            var result = GetDefaultAgentSlot()
+                .IsMaxMeltdown(DefaultAgentState, GetDefaultCommandWindow(), GetDefaultCreatureOverloadManager(), GetDefaultPlayerModel(), GetDefaultStageTypeInfo(), energyModel);
 
             result.Should().BeFalse();
         }
@@ -118,11 +124,8 @@ namespace LobotomyCorporationMods.Test
         [Fact]
         public void Disable_the_agent_work_slot_when_we_are_at_the_maximum_meltdown_level()
         {
-            var agentSlot = GetDefaultAgentSlot();
-            var commandWindow = GetDefaultCommandWindow();
-            var creatureOverloadManager = TestExtensions.CreateCreatureOverloadManager(MaxMeltdownLevel);
-
-            var result = agentSlot.IsMaxMeltdown(DefaultAgentState, commandWindow, creatureOverloadManager);
+            var result = GetDefaultAgentSlot()
+                .IsMaxMeltdown(DefaultAgentState, GetDefaultCommandWindow(), GetDefaultCreatureOverloadManager(), GetDefaultPlayerModel(), GetDefaultStageTypeInfo(), GetDefaultEnergyModel());
 
             result.Should().BeTrue();
         }
@@ -133,10 +136,9 @@ namespace LobotomyCorporationMods.Test
         [InlineData(9)]
         public void Do_not_prevent_agents_from_working_if_we_are_not_at_the_maximum_meltdown_level(int qliphothCounter)
         {
-            var agentModel = GetDefaultAgentModel();
             var creatureOverloadManager = TestExtensions.CreateCreatureOverloadManager(qliphothCounter);
 
-            var result = agentModel.CheckIfMaxMeltdown(creatureOverloadManager, GetDefaultCreatureModel());
+            var result = GetDefaultAgentModel().CheckIfMaxMeltdown(creatureOverloadManager, GetDefaultCreatureModel(), GetDefaultPlayerModel(), GetDefaultStageTypeInfo(), GetDefaultEnergyModel());
 
             result.Should().BeFalse();
         }
@@ -144,14 +146,24 @@ namespace LobotomyCorporationMods.Test
         [Fact]
         public void Do_not_prevent_agents_from_working_if_the_room_is_in_meltdown_even_when_at_maximum_meltdown_level()
         {
-            var agentModel = GetDefaultAgentModel();
-            var creatureOverloadManager = TestExtensions.CreateCreatureOverloadManager(MaxMeltdownLevel);
             var isolateOverload = TestExtensions.CreateIsolateOverload(true);
             var isolateRoom = TestExtensions.CreateIsolateRoom(isolateOverload);
             var creatureUnit = TestExtensions.CreateCreatureUnit(isolateRoom);
             var creatureModel = TestExtensions.CreateCreatureModel(DefaultCreatureId, GetDefaultCreatureObserveInfoModel(), creatureUnit);
 
-            var result = agentModel.CheckIfMaxMeltdown(creatureOverloadManager, creatureModel);
+            var result = GetDefaultAgentModel().CheckIfMaxMeltdown(GetDefaultCreatureOverloadManager(), creatureModel, GetDefaultPlayerModel(), GetDefaultStageTypeInfo(), GetDefaultEnergyModel());
+
+            result.Should().BeFalse();
+        }
+
+        [Theory]
+        [InlineData(0f)]
+        [InlineData(1f)]
+        public void Do_not_prevent_agents_from_working_if_the_energy_need_has_not_yet_been_met(float energy)
+        {
+            var energyModel = TestExtensions.CreateEnergyModel(GetDefaultGlobalGameManager(), energy);
+
+            var result = GetDefaultAgentModel().CheckIfMaxMeltdown(GetDefaultCreatureOverloadManager(), GetDefaultCreatureModel(), GetDefaultPlayerModel(), GetDefaultStageTypeInfo(), energyModel);
 
             result.Should().BeFalse();
         }
@@ -159,10 +171,8 @@ namespace LobotomyCorporationMods.Test
         [Fact]
         public void Prevent_agents_from_working_when_we_are_at_the_maximum_meltdown_level()
         {
-            var agentModel = GetDefaultAgentModel();
-            var creatureOverloadManager = TestExtensions.CreateCreatureOverloadManager(MaxMeltdownLevel);
-
-            var result = agentModel.CheckIfMaxMeltdown(creatureOverloadManager, GetDefaultCreatureModel());
+            var result = GetDefaultAgentModel()
+                .CheckIfMaxMeltdown(GetDefaultCreatureOverloadManager(), GetDefaultCreatureModel(), GetDefaultPlayerModel(), GetDefaultStageTypeInfo(), GetDefaultEnergyModel());
 
             result.Should().BeTrue();
         }
@@ -180,7 +190,7 @@ namespace LobotomyCorporationMods.Test
         }
 
         [Fact]
-        public void Class_AgentModel_Method_ManageCreature_is_patched_correctly_and_passes_control_by_default()
+        public void Class_AgentModel_Method_ManageCreature_is_patched_correctly()
         {
             var patch = typeof(AgentModelPatchManageCreature);
             var originalClass = typeof(AgentModel);
@@ -193,7 +203,7 @@ namespace LobotomyCorporationMods.Test
         }
 
         [Fact]
-        public void Class_AgentSlot_Method_SetFilter_is_patched_correctly_and_does_not_error()
+        public void Class_AgentSlot_Method_SetFilter_is_patched_correctly()
         {
             var patch = typeof(AgentSlotPatchSetFilter);
             var originalClass = typeof(AgentSlot);
@@ -203,6 +213,9 @@ namespace LobotomyCorporationMods.Test
 
             Action action = () => AgentSlotPatchSetFilter.Postfix(GetDefaultAgentSlot(), DefaultAgentState);
             action.ShouldNotThrow();
+
+            var exception = Record.Exception(() => AgentSlotPatchSetFilter.Prefix(GetDefaultAgentSlot(), DefaultAgentState));
+            TestExtensions.AssertIsUnityException(exception);
         }
 
         #endregion
@@ -242,7 +255,9 @@ namespace LobotomyCorporationMods.Test
         [NotNull]
         private static CreatureOverloadManager GetDefaultCreatureOverloadManager()
         {
-            return TestExtensions.CreateCreatureOverloadManager(DefaultQliphothOverloadCounter);
+            const int MaxMeltdownLevel = 10;
+
+            return TestExtensions.CreateCreatureOverloadManager(MaxMeltdownLevel);
         }
 
         [NotNull]
@@ -255,6 +270,18 @@ namespace LobotomyCorporationMods.Test
         private static CreatureUnit GetDefaultCreatureUnit()
         {
             return TestExtensions.CreateCreatureUnit(GetDefaultIsolateRoom());
+        }
+
+        [NotNull]
+        private static EnergyModel GetDefaultEnergyModel()
+        {
+            return TestExtensions.CreateEnergyModel(GetDefaultGlobalGameManager(), DefaultEnergyValue);
+        }
+
+        [NotNull]
+        private static GlobalGameManager GetDefaultGlobalGameManager()
+        {
+            return TestExtensions.CreateGlobalGameManager();
         }
 
         [NotNull]
@@ -287,6 +314,20 @@ namespace LobotomyCorporationMods.Test
                 { "work_b", GetDefaultObserveRegion() },
                 { "work_p", GetDefaultObserveRegion() }
             };
+        }
+
+        [NotNull]
+        private static PlayerModel GetDefaultPlayerModel()
+        {
+            return TestExtensions.CreatePlayerModel();
+        }
+
+        [NotNull]
+        private static StageTypeInfo GetDefaultStageTypeInfo()
+        {
+            var energyVal = new[] { DefaultEnergyValue };
+
+            return TestExtensions.CreateStageTypeInfo(energyVal);
         }
 
         #endregion

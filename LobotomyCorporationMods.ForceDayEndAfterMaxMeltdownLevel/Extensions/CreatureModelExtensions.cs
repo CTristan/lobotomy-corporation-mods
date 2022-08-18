@@ -6,7 +6,7 @@ namespace LobotomyCorporationMods.ForceDayEndAfterMaxMeltdownLevel.Extensions
 {
     internal static class CreatureModelExtensions
     {
-        internal static bool IsRoomInMeltdown([NotNull] this CreatureModel creature)
+        internal static bool MeltdownActivated([NotNull] this CreatureModel creature)
         {
             // If the abnormality is under meltdown, allow working so the player can take care of it
             var room = creature.Unit.room;

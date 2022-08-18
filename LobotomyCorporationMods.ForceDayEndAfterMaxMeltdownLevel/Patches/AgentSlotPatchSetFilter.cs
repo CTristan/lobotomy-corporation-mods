@@ -25,8 +25,11 @@ namespace LobotomyCorporationMods.ForceDayEndAfterMaxMeltdownLevel.Patches
 
                 var commandWindow = CommandWindow.CommandWindow.CurrentWindow;
                 var creatureOverloadManager = CreatureOverloadManager.instance;
+                var playerModel = PlayerModel.instance;
+                var stageTypeInfo = StageTypeInfo.instnace;
+                var energyModel = EnergyModel.instance;
 
-                if (state != AgentState.UNCONTROLLABLE || !__instance.IsMaxMeltdown(commandWindow, creatureOverloadManager))
+                if (state != AgentState.UNCONTROLLABLE || !__instance.IsMaxMeltdown(state, commandWindow, creatureOverloadManager, playerModel, stageTypeInfo, energyModel))
                 {
                     return true;
                 }
@@ -65,8 +68,11 @@ namespace LobotomyCorporationMods.ForceDayEndAfterMaxMeltdownLevel.Patches
 
                 var commandWindow = CommandWindow.CommandWindow.CurrentWindow;
                 var creatureOverloadManager = CreatureOverloadManager.instance;
+                var playerModel = PlayerModel.instance;
+                var stageTypeInfo = StageTypeInfo.instnace;
+                var energyModel = EnergyModel.instance;
 
-                if (__instance.IsMaxMeltdown(state, commandWindow, creatureOverloadManager))
+                if (__instance.IsMaxMeltdown(state, commandWindow, creatureOverloadManager, playerModel, stageTypeInfo, energyModel))
                 {
                     __instance.State = AgentState.UNCONTROLLABLE;
                 }
