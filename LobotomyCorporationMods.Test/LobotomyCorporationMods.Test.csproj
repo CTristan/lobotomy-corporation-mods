@@ -26,6 +26,7 @@
       <Project>{19D3E31B-FA1A-4C4C-A747-CD060FA9937F}</Project>
       <Name>LobotomyCorporationMods.BadLuckProtectionForGifts</Name>
     </ProjectReference>
+    <ProjectReference Include="..\LobotomyCorporationMods.BugFixes\LobotomyCorporationMods.BugFixes.csproj"/>
     <ProjectReference Include="..\LobotomyCorporationMods.FreeCustomization\LobotomyCorporationMods.FreeCustomization.csproj"/>
   </ItemGroup>
   <ItemGroup>

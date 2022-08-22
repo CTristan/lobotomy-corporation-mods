@@ -3,8 +3,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Security;
+using Customizing;
+using FluentAssertions;
+using Harmony;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Interfaces;
 using NSubstitute;
@@ -31,18 +35,6 @@ namespace LobotomyCorporationMods.Test
             return Path.Combine(Directory.GetCurrentDirectory(), fileName);
         }
 
-        private static void CreateUninitializedObject<TObject>(out TObject obj)
-        {
-            obj = (TObject)FormatterServices.GetSafeUninitializedObject(typeof(TObject));
-        }
-
-        public static GameObject CreateGameObject()
-        {
-            CreateUninitializedObject(out GameObject obj);
-
-            return obj;
-        }
-
         /// <summary>
         ///     Depending on the environment, the same test may return a different exception. Both exception types appear for the
         ///     same reason (trying to use a Unity-specific method), so we'll check if the exception we get is either of those
@@ -52,6 +44,28 @@ namespace LobotomyCorporationMods.Test
         {
             return exception is SecurityException || exception is MissingMethodException;
         }
+
+        public static void ValidateHarmonyPatch([NotNull] this MemberInfo patchClass, [NotNull] Type originalClass, string methodName)
+        {
+            var attribute = Attribute.GetCustomAttribute(patchClass, typeof(HarmonyPatch)) as HarmonyPatch;
+
+            attribute.Should().NotBeNull();
+            attribute?.info.originalType.Should().Be(originalClass);
+            attribute?.info.methodName.Should().Be(methodName);
+        }
+
+        #region Uninitialized Object Functions
+
+        /// <summary>
+        ///     Create an uninitialized object without calling a constructor. Needed because some of the classes we need
+        ///     to mock either don't have a public constructor or cause a Unity exception.
+        /// </summary>
+        private static void CreateUninitializedObject<TObject>(out TObject obj)
+        {
+            obj = (TObject)FormatterServices.GetSafeUninitializedObject(typeof(TObject));
+        }
+
+        #endregion
 
         #region Unity Objects
 
@@ -64,6 +78,22 @@ namespace LobotomyCorporationMods.Test
             LocalizeTextDataModel.instance?.Init(new Dictionary<string, string> { { giftName, giftName } });
 
             return info;
+        }
+
+        [NotNull]
+        public static CustomizingWindow CreateCustomizingWindow()
+        {
+            CreateUninitializedObject<CustomizingWindow>(out var customizingWindow);
+
+            return customizingWindow;
+        }
+
+        [NotNull]
+        public static GameObject CreateGameObject()
+        {
+            CreateUninitializedObject(out GameObject obj);
+
+            return obj;
         }
 
         [NotNull]
