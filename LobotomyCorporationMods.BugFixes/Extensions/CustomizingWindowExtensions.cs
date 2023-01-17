@@ -24,6 +24,11 @@ namespace LobotomyCorporationMods.BugFixes.Extensions
                 // Only happens during testing, so we'll just copy the original method and return the system's random method
                 HandleUnityError(originalStatLevel, currentStatLevel, statLevelIncrease, out upgradedStatValue);
             }
+            catch (MissingMemberException)
+            {
+                // Only happens during testing, so we'll just copy the original method and return the system's random method
+                HandleUnityError(originalStatLevel, currentStatLevel, statLevelIncrease, out upgradedStatValue);
+            }
         }
 
         /// <summary>
