@@ -7,9 +7,9 @@ pick and choose.
 
 Requires [Basemod](https://www.nexusmods.com/lobotomycorporation/mods/2).
 
-## List of mods
+# List of mods
 
-* ### Bad Luck Protection for Gifts
+## Bad Luck Protection for Gifts
 
 ![Bad Luck Protection for Gifts example](https://raw.githubusercontent.com/ctristan/lobotomy-corporation-mods/assets/bad-luck-protection.png)
 
@@ -27,7 +27,7 @@ counts incremented during that day will reset as well and will go back to the
 numbers they were when the day was started. It wouldn't make sense for an agent
 to remember what happened after the day is reset.
 
-* ### Free Customization
+## Free Customization
 
 ![Free Customization example](https://raw.githubusercontent.com/ctristan/lobotomy-corporation-mods/assets/free-customization.png)
 
@@ -38,7 +38,7 @@ improve stats. The fact that customizing an agent directly affects your gameplay
 bothers me, so this mod will make customizing agents not require any additional
 points.
 
-* ### Unofficial Bug Fixes
+## Unofficial Bug Fixes
 
 A collection of bug fixes to fix various minor issues in the original game code.
 
@@ -53,7 +53,7 @@ Bugs fixed:
   level 3 after the upgrade instead of increasing by 1 (base level 5, modified
   level 4).
 
-## Building
+# Building
 
 The original game files are required which are not provided. My current
 environment setup is a "src" folder in the BaseMods folder that I placed the
@@ -78,7 +78,7 @@ Framework DLLs in Linux like I can in Windows with dnSpy, especially since the
 game has to run in Proton. If you are able to get debugging working in Linux I
 would love to hear about it!
 
-## License
+# License
 
 This work is licensed under MIT.
 
