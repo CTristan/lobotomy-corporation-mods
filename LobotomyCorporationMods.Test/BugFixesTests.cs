@@ -19,6 +19,8 @@ namespace LobotomyCorporationMods.Test
             _ = new Harmony_Patch();
         }
 
+        #region BugFixStatUpgrades
+
         [Theory]
         [InlineData(1, 30, 37)]
         [InlineData(2, 45, 55)]
@@ -36,6 +38,8 @@ namespace LobotomyCorporationMods.Test
 
             result.Should().BeGreaterOrEqualTo(minNextStatValue).And.BeLessOrEqualTo(maxNextStatValue);
         }
+
+        #endregion
 
         #region Helper Methods
 
