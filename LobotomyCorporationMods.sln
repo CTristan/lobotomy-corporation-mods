@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LobotomyCorporationMods.Bad
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LobotomyCorporationMods.Test", "LobotomyCorporationMods.Test\LobotomyCorporationMods.Test.csproj", "{5186F30E-9617-4955-BE97-0E496DE2148B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LobotomyCorporationMods.Common", "LobotomyCorporationMods.Common\LobotomyCorporationMods.Common.csproj", "{D9BB018C-8BB3-4639-983C-F58969C8574E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LobotomyCorporationMods.Common", "LobotomyCorporationMods.Common\LobotomyCorporationMods.Common.csproj", "{D9BB018C-8BB3-4639-983C-F58969C8574E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LobotomyCorporationMods.FreeCustomization", "LobotomyCorporationMods.FreeCustomization\LobotomyCorporationMods.FreeCustomization.csproj", "{4D393EB4-5416-4B79-AFE2-7AE6695D0790}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LobotomyCorporationMods.FreeCustomization", "LobotomyCorporationMods.FreeCustomization\LobotomyCorporationMods.FreeCustomization.csproj", "{4D393EB4-5416-4B79-AFE2-7AE6695D0790}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{608ADAC7-1231-4E7C-9D86-269B0543D27B}"
 	ProjectSection(SolutionItems) = preProject
@@ -17,7 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LobotomyCorporationMods.BugFixes", "LobotomyCorporationMods.BugFixes\LobotomyCorporationMods.BugFixes.csproj", "{B4DFD7AE-4659-4FFB-866C-57487F6CDFB9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LobotomyCorporationMods.BugFixes", "LobotomyCorporationMods.BugFixes\LobotomyCorporationMods.BugFixes.csproj", "{B4DFD7AE-4659-4FFB-866C-57487F6CDFB9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
