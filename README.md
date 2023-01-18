@@ -80,6 +80,10 @@ Bugs fixed:
   started the day with Crumbling Armor's gift later replaced the gift with
   another one, they would still die when performing an Attachment work.
 
+## Warn When Agent Will Die From Working
+
+TODO
+
 ## Change Log
 
 * v3.2 - Added bug fix for Crumbling Armor
@@ -114,7 +118,16 @@ Framework DLLs in Linux like I can in Windows with dnSpy, especially since the
 game has to run in Proton. If you are able to get debugging working in Linux I
 would love to hear about it!
 
-## License
+## What the version numbers mean
+
+Major.minor.patch.0
+
+* Major version is the total number of mods created.
+* Minor version is if there are new additions to existing mods.
+* Patch version is for bug fixes.
+* Fourth value is for development purposes only.
+
+# License
 
 This work is licensed under MIT.
 
