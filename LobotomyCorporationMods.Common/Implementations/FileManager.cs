@@ -28,9 +28,9 @@ namespace LobotomyCorporationMods.Common.Implementations
 
         public string GetFile([NotNull] string fileName)
         {
-            if (_files.ContainsKey(fileName))
+            if (_files.TryGetValue(fileName, out var value))
             {
-                return _files[fileName];
+                return value;
             }
 
             var fullFilePath = Path.Combine(_dataPath.FullName, fileName);
