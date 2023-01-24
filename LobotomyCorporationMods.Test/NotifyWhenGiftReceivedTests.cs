@@ -14,6 +14,8 @@ namespace LobotomyCorporationMods.Test
 {
     public sealed class NotifyWhenGiftReceivedTests
     {
+        private const string ColorAgentString = "#66bfcd";
+        private const string ColorGiftString = "#84bd36";
         private const long DefaultAgentId = 1L;
         private const int DefaultEquipmentId = 1;
         private const long DefaultGiftId = 1L;
@@ -27,7 +29,8 @@ namespace LobotomyCorporationMods.Test
         }
 
         [Theory]
-        [InlineData("TestAgent", "TestGift", "<color=#66bfcd>TestAgent</color> has received the gift <color=#84bd36>TestGift</color>.")]
+        [InlineData("TestAgent", "TestGift", "<color=" + ColorAgentString + ">TestAgent</color> has received the gift <color=" + ColorGiftString + ">TestGift</color>.")]
+        [InlineData("Eke", "Our Galaxy", "<color=" + ColorAgentString + ">Eke</color> has received the gift <color=" + ColorGiftString + ">Our Galaxy</color>.")]
         public void Receiving_a_gift_causes_a_notification([NotNull] string agentName, [NotNull] string giftName, [NotNull] string expectedMessage)
         {
             // Arrange
@@ -78,9 +81,10 @@ namespace LobotomyCorporationMods.Test
         [Fact]
         public void Class_UnitModel_Method_AttachEgoGift_is_patched_correctly()
         {
+            // ReSharper disable once StringLiteralTypo
+            const string MethodName = "AttachEGOgift";
             var patch = typeof(UnitModelPatchAttachEgoGift);
             var originalClass = typeof(UnitModel);
-            const string MethodName = "AttachEGOgift";
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
         }
