@@ -49,6 +49,27 @@ namespace LobotomyCorporationMods.Test
             _noticeMessages[0].Should().BeEquivalentTo(expectedMessage);
         }
 
+        [Theory]
+        [InlineData("TestAgent", "TestGift")]
+        [InlineData("Eke", "Our Galaxy")]
+        public void Receiving_a_duplicate_gift_does_not_cause_a_notification([NotNull] string agentName, [NotNull] string giftName)
+        {
+            // Arrange
+            var textData = new Dictionary<string, string> { { giftName, giftName } };
+            TestExtensions.InitializeTextData(textData);
+            InitializeNotice();
+
+            var unitModel = TestExtensions.CreateAgentModel(DefaultAgentId, agentName);
+            var gift = TestExtensions.CreateEgoGiftModel(DefaultGiftId, DefaultEquipmentId, giftName);
+            unitModel.Equipment.gifts.addedGifts.Add(gift);
+
+            // Act
+            UnitModelPatchAttachEgoGift.Prefix(unitModel, gift);
+
+            // Assert
+            _noticeMessages.Count.Should().Be(0);
+        }
+
         #region Helper Methods
 
         /// <summary>
