@@ -29,7 +29,11 @@ namespace LobotomyCorporationMods.NotifyWhenGiftReceived.Patches
                     return;
                 }
 
-                // TODO: Check for locked gift
+                // Check if the gift's position already has a locked gift
+                if (__instance.PositionHasLockedGift(gift))
+                {
+                    return;
+                }
 
                 // Send notification that the agent acquired the gift
                 var message = $"<color=#66bfcd>{__instance.GetUnitName()}</color> has received the gift <color=#84bd36>{gift.metaInfo.Name}</color>.";
