@@ -4,8 +4,8 @@ using System;
 using System.Security;
 using Customizing;
 using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.FreeCustomization;
 
 namespace LobotomyCorporationMods.BugFixes.Extensions
 {

@@ -5,8 +5,7 @@ using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Implementations;
 
-// ReSharper disable once CheckNamespace
-namespace LobotomyCorporationMods.FreeCustomization
+namespace LobotomyCorporationMods.Common.Extensions
 {
     public static class GuardExtensions
     {
