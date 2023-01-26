@@ -56,6 +56,16 @@ namespace LobotomyCorporationMods.Test
         }
 
         [Fact]
+        public void Class_AgentInfoWindow_Method_EnforcementWindow_is_patched_correctly()
+        {
+            var patch = typeof(AgentInfoWindowPatchEnforcementWindow);
+            var originalClass = typeof(AgentInfoWindow);
+            const string MethodName = "EnforcementWindow";
+
+            patch.ValidateHarmonyPatch(originalClass, MethodName);
+        }
+
+        [Fact]
         public void Class_AgentInfoWindow_Method_GenerateWindow_is_patched_correctly()
         {
             var patch = typeof(AgentInfoWindowPatchGenerateWindow);
@@ -81,6 +91,16 @@ namespace LobotomyCorporationMods.Test
             var patch = typeof(CustomizingWindowPatchOpenAppearanceWindow);
             var originalClass = typeof(CustomizingWindow);
             const string MethodName = "OpenAppearanceWindow";
+
+            patch.ValidateHarmonyPatch(originalClass, MethodName);
+        }
+
+        [Fact]
+        public void Class_CustomizingWindow_Method_ReviseOpenAction_is_patched_correctly()
+        {
+            var patch = typeof(CustomizingWindowPatchReviseOpenAction);
+            var originalClass = typeof(CustomizingWindow);
+            const string MethodName = "ReviseOpenAction";
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
         }
