@@ -46,6 +46,17 @@ namespace LobotomyCorporationMods.Test
         #region Unity Objects
 
         [NotNull]
+        public static AgentModel CreateAgentModel(long instanceId, string name)
+        {
+            CreateUninitializedObject<AgentModel>(out var agentModel);
+
+            var fields = GetUninitializedObjectFields(agentModel.GetType());
+            var newValues = new Dictionary<string, object> { { "instanceId", instanceId }, { "name", name } };
+
+            return GetPopulatedUninitializedObject(agentModel, fields, newValues);
+        }
+
+        [NotNull]
         public static CreatureEquipmentMakeInfo CreateCreatureEquipmentMakeInfo(string giftName)
         {
             var info = Substitute.For<CreatureEquipmentMakeInfo>();

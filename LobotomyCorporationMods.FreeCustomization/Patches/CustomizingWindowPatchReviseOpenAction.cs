@@ -26,10 +26,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
                 Guard.Against.Null(__instance, nameof(__instance));
                 Guard.Against.Null(agent, nameof(agent));
 
-                __instance.CurrentData.agentName = agent._agentName;
-                __instance.CurrentData.appearance = agent.GetAppearanceData();
-                __instance.CurrentData.CustomName = agent.name;
-                AgentInfoWindow.currentWindow.UIComponents.SetData(CustomizingWindow.CurrentWindow.CurrentData);
+                __instance.SetAppearanceData(agent, AgentInfoWindow.currentWindow);
             }
             catch (Exception ex)
             {

@@ -1,9 +1,14 @@
 // SPDX-License-Identifier: MIT
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Security;
 using Customizing;
 using FluentAssertions;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.FreeCustomization;
+using LobotomyCorporationMods.FreeCustomization.Extensions;
 using LobotomyCorporationMods.FreeCustomization.Patches;
 using NSubstitute;
 using Xunit;
@@ -11,8 +16,12 @@ using Xunit.Extensions;
 
 namespace LobotomyCorporationMods.Test
 {
+    [SuppressMessage("ReSharper", "Unity.IncorrectMonoBehaviourInstantiation")]
     public sealed class FreeCustomizationTests
     {
+        private const long DefaultAgentId = 1L;
+        private const string DefaultAgentName = "DefaultAgentName";
+
         public FreeCustomizationTests()
         {
             _ = new Harmony_Patch();
@@ -42,6 +51,46 @@ namespace LobotomyCorporationMods.Test
 
             customizingWindow.CurrentData.isCustomAppearance.Should().BeFalse();
         }
+
+        [Theory]
+        [InlineData(DefaultAgentName)]
+        [InlineData("TestAgent")]
+        public void Opening_the_strengthen_employee_window_sets_appearance_data([NotNull] string agentName)
+        {
+            var customizingWindow = Substitute.For<CustomizingWindow>();
+            customizingWindow.CurrentData = new AgentData();
+            var agentModel = GetAgentModel(agentName);
+            agentModel._agentName = new AgentName(1) { nameDic = new Dictionary<string, string> { { agentName, agentName } } };
+            agentModel.spriteData = new WorkerSprite.WorkerSprite();
+            var agentInfoWindow = Substitute.For<AgentInfoWindow>();
+            agentInfoWindow.UIComponents = Substitute.For<AgentInfoWindow.UIComponent>();
+
+            customizingWindow.SetAppearanceData(agentModel, agentInfoWindow);
+
+            customizingWindow.CurrentData.CustomName.Should().Be(agentName);
+        }
+
+        #region Helper Methods
+
+        [NotNull]
+        private static AgentModel GetAgentModel(string agentName)
+        {
+            return TestExtensions.CreateAgentModel(DefaultAgentId, agentName);
+        }
+
+        #endregion
+
+        #region Code Coverage Tests
+
+        [Fact]
+        public void CustomizingWindowPatchReviseOpenAction_Is_Untestable()
+        {
+            Action action = () => CustomizingWindowPatchReviseOpenAction.Postfix(new CustomizingWindow(), new AgentModel(DefaultAgentId));
+
+            action.ShouldThrow<SecurityException>();
+        }
+
+        #endregion
 
         #region Harmony Tests
 

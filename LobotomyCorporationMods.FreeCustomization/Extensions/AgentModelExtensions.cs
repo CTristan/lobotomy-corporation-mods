@@ -7,10 +7,10 @@ using LobotomyCorporationMods.Common.Implementations;
 
 namespace LobotomyCorporationMods.FreeCustomization.Extensions
 {
-    public static class WorkerModelExtensions
+    internal static class WorkerModelExtensions
     {
         [NotNull]
-        public static Appearance GetAppearanceData([NotNull] this WorkerModel workerModel)
+        internal static Appearance GetAppearanceData([NotNull] this WorkerModel workerModel)
         {
             Guard.Against.Null(workerModel, nameof(workerModel));
 
