@@ -7,10 +7,24 @@ pick and choose.
 
 Requires [Basemod](https://www.nexusmods.com/lobotomycorporation/mods/2).
 
-# List of mods
+##### Table of Contents
 
-## Bad Luck Protection for Gifts
+* [Recent Changes](#recent-changes)
+* [List of mods](#list-of-mods)
+* [Change Log](#change-log)
+* [Building](#building)
+* [License](#license)
 
+## Recent Changes
+
+* 2023-01-29 (v3.1) - Added re-customization capability to Free Customization mod
+* 2023-01-18 (v3.0) - New mod: Unofficial Bug Fixes
+
+## List of mods
+
+### Bad Luck Protection for Gifts
+
+***
 ![Bad Luck Protection for Gifts example](https://raw.githubusercontent.com/ctristan/lobotomy-corporation-mods/assets/bad-luck-protection.png)
 
 A mod that provides increasing bad luck protection for agents that work on
@@ -27,9 +41,12 @@ counts incremented during that day will reset as well and will go back to the
 numbers they were when the day was started. It wouldn't make sense for an agent
 to remember what happened after the day is reset.
 
-## Free Customization
+### Free Customization
 
+***
 ![Free Customization example](https://raw.githubusercontent.com/ctristan/lobotomy-corporation-mods/assets/free-customization.png)
+
+Allows customizing (and re-customizing) agents without having to spend additional LOB points.
 
 I do not like when games require a cost for customizing a character in the first
 place, but in this game customizing requires spending an additional LOB point
@@ -38,8 +55,9 @@ improve stats. The fact that customizing an agent directly affects your gameplay
 bothers me, so this mod will make customizing agents not require any additional
 points.
 
-## Unofficial Bug Fixes
+### Unofficial Bug Fixes
 
+***
 A collection of bug fixes to fix various minor issues in the original game code.
 
 Bugs fixed:
@@ -53,7 +71,15 @@ Bugs fixed:
   level 3 after the upgrade instead of increasing by 1 (base level 5, modified
   level 4).
 
-# Building
+## Change Log
+
+* v3.1 - Added re-customization capability to Free Customization mod
+* v3.0 - New mod: Unofficial Bug Fixes
+* v2.0 - New mod: Free Customization
+* v1.0.1 - Fixed an issue with Bad Luck Protection for Gifts
+* v1.0 - First mod: Bad Luck Protection for Gifts
+
+## Building
 
 The original game files are required which are not provided. My current
 environment setup is a "src" folder in the BaseMods folder that I placed the
@@ -78,7 +104,7 @@ Framework DLLs in Linux like I can in Windows with dnSpy, especially since the
 game has to run in Proton. If you are able to get debugging working in Linux I
 would love to hear about it!
 
-# License
+## License
 
 This work is licensed under MIT.
 
