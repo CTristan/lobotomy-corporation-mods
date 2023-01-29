@@ -21,5 +21,32 @@ namespace LobotomyCorporationMods.FreeCustomization.Extensions
 
             customizingWindow.CurrentAgent.SetAppearanceData(customizingWindow.CurrentData.appearance);
         }
+
+        internal static void UpdateAgentModel([NotNull] this CustomizingWindow customizingWindow, [NotNull] AgentLayer agentLayer)
+        {
+            Guard.Against.Null(customizingWindow, nameof(customizingWindow));
+
+            var agentModel = customizingWindow.CurrentAgent;
+            agentLayer.RemoveAgent(agentModel);
+            agentLayer.AddAgent(agentModel);
+        }
+
+        public static void RenameAgent([NotNull] this CustomizingWindow customizingWindow)
+        {
+            Guard.Against.Null(customizingWindow, nameof(customizingWindow));
+
+            var customName = customizingWindow.CurrentData.CustomName;
+            customizingWindow.CurrentAgent.name = customName;
+            customizingWindow.CurrentAgent._agentName = customizingWindow.CurrentData.agentName;
+
+            customizingWindow.CurrentAgent._agentName.metaInfo.nameDic.Clear();
+            customizingWindow.CurrentAgent._agentName.nameDic.Clear();
+
+            foreach (var language in SupportedLanguage.GetSupprotedList())
+            {
+                customizingWindow.CurrentAgent._agentName.metaInfo.nameDic.Add(language, customName);
+                customizingWindow.CurrentAgent._agentName.nameDic.Add(language, customName);
+            }
+        }
     }
 }

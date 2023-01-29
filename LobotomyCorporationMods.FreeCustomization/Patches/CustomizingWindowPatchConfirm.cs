@@ -32,20 +32,12 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
                 }
 
                 __instance.SaveAgentAppearance();
+                __instance.RenameAgent();
 
                 __instance.CurrentData.appearance.SetResrouceData();
                 WorkerSpriteManager.instance.SetAgentBasicData(__instance.CurrentData.appearance.spriteSet, __instance.CurrentData.appearance);
 
-                var agentModel = __instance.CurrentAgent;
-                var agentUnit = AgentLayer.currentLayer.GetAgent(agentModel.instanceId);
-
-                if (agentUnit == null)
-                {
-                    return;
-                }
-
-                AgentLayer.currentLayer.RemoveAgent(agentModel);
-                AgentLayer.currentLayer.AddAgent(agentModel);
+                __instance.UpdateAgentModel(AgentLayer.currentLayer);
             }
             catch (Exception ex)
             {

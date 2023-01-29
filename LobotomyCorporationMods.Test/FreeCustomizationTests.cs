@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Security;
 using Customizing;
@@ -50,7 +51,7 @@ namespace LobotomyCorporationMods.Test
         }
 
         [Theory]
-        [InlineData(TestData.DefaultAgentName)]
+        [InlineData("DefaultAgent")]
         [InlineData("TestAgent")]
         public void Opening_the_strengthen_employee_window_gets_agent_appearance_data([NotNull] string agentName)
         {
@@ -103,6 +104,36 @@ namespace LobotomyCorporationMods.Test
             customizingWindow.CurrentAgent.spriteData.ShouldBeEquivalentTo(expectedAppearance.spriteSet);
             customizingWindow.CurrentAgent.spriteData.BattleEyeBrow.GetHashCode().ShouldBeEquivalentTo(expectedSprite.GetHashCode());
             customizingWindow.CurrentAgent.spriteData.HairColor.Should().Be(expectedColor);
+        }
+
+        [Theory]
+        [InlineData("CurrentName", "ExpectedName")]
+        [InlineData("OldName", "NewName")]
+        public static void Renaming_agent_changes_agent_name_successfully([NotNull] string currentName, [NotNull] string expectedName)
+        {
+            // Arrange
+            var currentAgent = TestData.DefaultAgentModel;
+            currentAgent.name = currentName;
+            currentAgent._agentName.nameDic = new Dictionary<string, string> { { currentName, currentName } };
+
+            var expectedAgentName = TestData.DefaultAgentName;
+            expectedAgentName.nameDic = new Dictionary<string, string> { { expectedName, expectedName } };
+
+            var expectedData = TestData.DefaultAgentData;
+            expectedData.CustomName = expectedName;
+            expectedData.agentName = expectedAgentName;
+
+
+            var customizingWindow = TestExtensions.CreateCustomizingWindow(TestData.DefaultAppearanceUI, currentAgent, TestData.DefaultAgentData, CustomizingType.REVISE);
+            customizingWindow.CurrentData = expectedData;
+
+            // Act
+            customizingWindow.RenameAgent();
+
+            // Assert
+            customizingWindow.CurrentAgent.name.Should().Be(expectedName);
+            customizingWindow.CurrentAgent._agentName.metaInfo.nameDic.Should().ContainValue(expectedName);
+            customizingWindow.CurrentAgent._agentName.nameDic.Should().ContainValue(expectedName);
         }
 
         #region Code Coverage Tests

@@ -51,20 +51,40 @@ namespace LobotomyCorporationMods.Test
         #region Unity Objects
 
         [NotNull]
-        public static AgentData CreateAgentData(Appearance appearance)
+        public static AgentData CreateAgentData(AgentName agentName, Appearance appearance)
         {
-            return new AgentData { appearance = appearance };
+            return new AgentData { agentName = agentName, appearance = appearance };
         }
 
         [NotNull]
-        public static AgentModel CreateAgentModel(long instanceId, string name, WorkerSprite.WorkerSprite spriteData)
+        public static AgentModel CreateAgentModel(AgentName agentName, long instanceId, string name, WorkerSprite.WorkerSprite spriteData)
         {
             CreateUninitializedObject<AgentModel>(out var agentModel);
 
             var fields = GetUninitializedObjectFields(agentModel.GetType());
-            var newValues = new Dictionary<string, object> { { "instanceId", instanceId }, { "name", name }, { "spriteData", spriteData } };
+            var newValues = new Dictionary<string, object> { { "_agentName", agentName }, { "instanceId", instanceId }, { "name", name }, { "spriteData", spriteData } };
 
             return GetPopulatedUninitializedObject(agentModel, fields, newValues);
+        }
+
+        [NotNull]
+        public static AgentName CreateAgentName([NotNull] GlobalGameManager globalGameManager, AgentNameTypeInfo metaInfo, Dictionary<string, string> nameDic)
+        {
+            // Requires an existing GlobalGameManager instance
+            Guard.Against.Null(globalGameManager, nameof(globalGameManager));
+
+            CreateUninitializedObject<AgentName>(out var agentName);
+
+            var fields = GetUninitializedObjectFields(agentName.GetType());
+            var newValues = new Dictionary<string, object> { { "metaInfo", metaInfo }, { "nameDic", nameDic } };
+
+            return GetPopulatedUninitializedObject(agentName, fields, newValues);
+        }
+
+        [NotNull]
+        public static AgentNameTypeInfo CreateAgentNameTypeInfo(Dictionary<string, string> nameDic)
+        {
+            return new AgentNameTypeInfo { nameDic = nameDic };
         }
 
         [NotNull]
@@ -105,6 +125,20 @@ namespace LobotomyCorporationMods.Test
             };
 
             return GetPopulatedUninitializedObject(customizingWindow, fields, newValues);
+        }
+
+        [NotNull]
+        public static GlobalGameManager CreateGlobalGameManager()
+        {
+            CreateUninitializedObject<GlobalGameManager>(out var globalGameManager);
+
+            var fields = GetUninitializedObjectFields(globalGameManager.GetType());
+            var newValues = new Dictionary<string, object> { { "_instance", globalGameManager } };
+
+            var newGlobalGameManager = GetPopulatedUninitializedObject(globalGameManager, fields, newValues);
+            newValues = new Dictionary<string, object> { { "_instance", newGlobalGameManager } };
+
+            return GetPopulatedUninitializedObject(newGlobalGameManager, fields, newValues);
         }
 
         [NotNull]

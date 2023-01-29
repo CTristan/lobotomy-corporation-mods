@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using JetBrains.Annotations;
@@ -13,17 +14,23 @@ namespace LobotomyCorporationMods.Test
     {
         internal const long DefaultAgentId = 1L;
 
-        internal const string DefaultAgentName = "DefaultAgentName";
+        internal const string DefaultAgentNameString = "DefaultAgentName";
 
         internal const CustomizingType DefaultCustomizingType = CustomizingType.GENERATE;
 
         internal const string DefaultSpriteName = "DefaultSpriteName";
 
         [NotNull]
-        internal static AgentData DefaultAgentData => TestExtensions.CreateAgentData(DefaultAppearance);
+        internal static AgentData DefaultAgentData => TestExtensions.CreateAgentData(DefaultAgentName, DefaultAppearance);
 
         [NotNull]
-        internal static AgentModel DefaultAgentModel => TestExtensions.CreateAgentModel(DefaultAgentId, DefaultAgentName, DefaultWorkerSprite);
+        internal static AgentModel DefaultAgentModel => TestExtensions.CreateAgentModel(DefaultAgentName, DefaultAgentId, DefaultAgentNameString, DefaultWorkerSprite);
+
+        [NotNull]
+        internal static AgentName DefaultAgentName => TestExtensions.CreateAgentName(DefaultGlobalGameManager, DefaultAgentNameTypeInfo, new Dictionary<string, string>());
+
+        [NotNull]
+        internal static AgentNameTypeInfo DefaultAgentNameTypeInfo => TestExtensions.CreateAgentNameTypeInfo(new Dictionary<string, string>());
 
         [NotNull]
         internal static Appearance DefaultAppearance => TestExtensions.CreateAppearance(DefaultWorkerSpriteManager, DefaultWorkerSprite);
@@ -33,6 +40,9 @@ namespace LobotomyCorporationMods.Test
 
         [NotNull]
         internal static CustomizingWindow DefaultCustomizingWindow => TestExtensions.CreateCustomizingWindow(DefaultAppearanceUI, DefaultAgentModel, DefaultAgentData, DefaultCustomizingType);
+
+        [NotNull]
+        internal static GlobalGameManager DefaultGlobalGameManager => TestExtensions.CreateGlobalGameManager();
 
         [NotNull]
         internal static Sprite DefaultSprite => TestExtensions.CreateSprite(DefaultSpriteName);
