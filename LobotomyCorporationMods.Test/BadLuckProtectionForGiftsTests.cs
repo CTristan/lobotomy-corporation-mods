@@ -16,7 +16,6 @@ namespace LobotomyCorporationMods.Test
 {
     public sealed class BadLuckProtectionForGiftsTests
     {
-        private const long AgentId = 1;
         private const string GiftName = "Test";
 
         /// <summary>
@@ -34,18 +33,18 @@ namespace LobotomyCorporationMods.Test
         {
             const string DataFileName = "Converting_a_tracker_to_a_string_with_multiple_gifts_and_agents_contains_all_of_the_data_in_the_tracker";
             const string SecondGiftName = "Second";
-            const long SecondAgentId = AgentId + 1;
+            const long SecondAgentId = TestData.DefaultAgentId + 1;
             var agentWorkTracker = CreateAgentWorkTracker(DataFileName);
 
             // First gift first agent
-            agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId);
+            agentWorkTracker.IncrementAgentWorkCount(GiftName, TestData.DefaultAgentId);
 
             // First gift second agent
             agentWorkTracker.IncrementAgentWorkCount(GiftName, SecondAgentId);
 
             // Second gift second agent
             agentWorkTracker.IncrementAgentWorkCount(SecondGiftName, SecondAgentId, 2f);
-            var expected = string.Format(CultureInfo.CurrentCulture, "{0}^{1};1^{2};1|{3}^{2};2", GiftName, AgentId.ToString(CultureInfo.CurrentCulture),
+            var expected = string.Format(CultureInfo.CurrentCulture, "{0}^{1};1^{2};1|{3}^{2};2", GiftName, TestData.DefaultAgentId.ToString(CultureInfo.CurrentCulture),
                 SecondAgentId.ToString(CultureInfo.CurrentCulture), SecondGiftName);
 
             var actual = agentWorkTracker.ToString();
@@ -58,8 +57,8 @@ namespace LobotomyCorporationMods.Test
         {
             const string DataFileName = "Converting_a_tracker_to_a_string_with_a_single_gift_and_a_single_agent_returns_the_correct_string";
             var agentWorkTracker = CreateAgentWorkTracker(DataFileName);
-            agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId);
-            var expected = $@"{GiftName}^{AgentId.ToString(CultureInfo.CurrentCulture)};1";
+            agentWorkTracker.IncrementAgentWorkCount(GiftName, TestData.DefaultAgentId);
+            var expected = $@"{GiftName}^{TestData.DefaultAgentId.ToString(CultureInfo.CurrentCulture)};1";
 
             var actual = agentWorkTracker.ToString();
 
@@ -67,7 +66,7 @@ namespace LobotomyCorporationMods.Test
         }
 
         [Theory]
-        [InlineData("Test^1;1", GiftName, AgentId, 1f)]
+        [InlineData("Test^1;1", GiftName, TestData.DefaultAgentId, 1f)]
         [InlineData("Test^1;1^2;2", GiftName, 2, 2f)]
         [InlineData("Test^1;1^2;2|Second^1;3", "Second", 1, 3f)]
         public void Loading_data_from_a_saved_tracker_file_populates_a_valid_tracker([NotNull] string trackerData, [NotNull] string giftName, long agentId, float numberOfTimes)
@@ -79,7 +78,7 @@ namespace LobotomyCorporationMods.Test
         }
 
         [Theory]
-        [InlineData("Test^1;1", GiftName, AgentId, 1f)]
+        [InlineData("Test^1;1", GiftName, TestData.DefaultAgentId, 1f)]
         [InlineData("Test^1;1^2;2", GiftName, 2, 2f)]
         [InlineData("Test^1;1^2;2|Second^1;3", "Second", 1, 3f)]
         public void Loading_data_multiple_times_from_a_saved_tracker_file_does_not_duplicate_work_progress([NotNull] string trackerData, [NotNull] string giftName, long agentId, float numberOfTimes)
@@ -101,7 +100,7 @@ namespace LobotomyCorporationMods.Test
             var creatureEquipmentMakeInfo = TestExtensions.CreateCreatureEquipmentMakeInfo(GiftName);
 
             // 101 times worked would equal 101% bonus normally
-            agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId, 101f);
+            agentWorkTracker.IncrementAgentWorkCount(GiftName, TestData.DefaultAgentId, 101f);
 
             // We should only get back 100% even with the 101% bonus
             const float Expected = 1f;
@@ -120,7 +119,7 @@ namespace LobotomyCorporationMods.Test
         {
             var dataFileName = $"The_gift_probability_increases_by_one_percent_for_every_success_the_agent_has_while_working_{numberOfSuccesses}";
             var agentWorkTracker = CreateAgentWorkTracker(dataFileName);
-            agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId, numberOfSuccesses);
+            agentWorkTracker.IncrementAgentWorkCount(GiftName, TestData.DefaultAgentId, numberOfSuccesses);
             var creatureEquipmentMakeInfo = TestExtensions.CreateCreatureEquipmentMakeInfo(GiftName);
             var expected = numberOfSuccesses / 100f;
 
@@ -136,7 +135,7 @@ namespace LobotomyCorporationMods.Test
             const int ExpectedWorkCount = 0;
             const string DataFileName = "Starting_a_new_game_reloads_the_last_saved_tracker_progress";
             var agentWorkTracker = CreateAgentWorkTracker(DataFileName);
-            agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId);
+            agentWorkTracker.IncrementAgentWorkCount(GiftName, TestData.DefaultAgentId);
 
             NewTitleScriptPatchOnClickNewGame.Postfix();
             agentWorkTracker = Harmony_Patch.Instance.AgentWorkTracker;
@@ -154,8 +153,8 @@ namespace LobotomyCorporationMods.Test
         {
             var dataFileName = $"Working_on_an_abnormality_increases_the_number_of_successes_for_that_agent_{numberOfSuccesses}";
             var agentWorkTracker = CreateAgentWorkTracker(dataFileName);
-            var useSkill = TestExtensions.CreateUseSkill(GiftName, AgentId, numberOfSuccesses);
-            agentWorkTracker.IncrementAgentWorkCount(GiftName, AgentId);
+            var useSkill = TestExtensions.CreateUseSkill(GiftName, TestData.DefaultAgentId, numberOfSuccesses);
+            agentWorkTracker.IncrementAgentWorkCount(GiftName, TestData.DefaultAgentId);
             var expected = agentWorkTracker.GetLastAgentWorkCountByGift(GiftName) + numberOfSuccesses;
 
             UseSkillPatchFinishWorkSuccessfully.Prefix(useSkill);
@@ -192,7 +191,7 @@ namespace LobotomyCorporationMods.Test
         }
 
         [Theory]
-        [InlineData("Test^1;1", GiftName, AgentId, 1f)]
+        [InlineData("Test^1;1", GiftName, TestData.DefaultAgentId, 1f)]
         [InlineData("Test^1;1^2;2", GiftName, 2, 2f)]
         [InlineData("Test^1;1^2;2|Second^1;3", "Second", 1, 3f)]
         public void Restarting_the_day_reloads_the_saved_data_and_overwrites_the_progress_made_that_day([NotNull] string trackerData, [NotNull] string giftName, long agentId, float numberOfTimes)

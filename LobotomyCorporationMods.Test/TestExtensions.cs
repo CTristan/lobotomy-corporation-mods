@@ -11,12 +11,13 @@ using Customizing;
 using FluentAssertions;
 using Harmony;
 using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Extensions;
+using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Interfaces;
 using NSubstitute;
 using UnityEngine;
 using WorkerSprite;
 
-// ReSharper disable once CheckNamespace
 namespace LobotomyCorporationMods.Test
 {
     [SuppressMessage("ReSharper", "Unity.IncorrectMonoBehaviourInstantiation")]
@@ -67,8 +68,11 @@ namespace LobotomyCorporationMods.Test
         }
 
         [NotNull]
-        public static Appearance CreateAppearance(WorkerSprite.WorkerSprite spriteSet)
+        public static Appearance CreateAppearance([NotNull] WorkerSpriteManager workerSpriteManager, WorkerSprite.WorkerSprite spriteSet)
         {
+            // Requires an existing WorkerSpriteManager instance
+            Guard.Against.Null(workerSpriteManager, nameof(workerSpriteManager));
+
             return new Appearance { spriteSet = spriteSet };
         }
 

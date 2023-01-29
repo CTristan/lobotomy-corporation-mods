@@ -66,7 +66,7 @@ namespace LobotomyCorporationMods.Test
         [Theory]
         [InlineData("Current", "Expected")]
         [InlineData("Old", "New")]
-        public void Recustomizing_agent_changes_agent_appearance_successfully(string currentAppearanceName, string expectedAppearanceName)
+        public void Customizing_existing_agent_changes_agent_appearance_successfully(string currentAppearanceName, string expectedAppearanceName)
         {
             // Arrange
             var currentAppearance = TestData.DefaultWorkerSprite;
@@ -102,6 +102,7 @@ namespace LobotomyCorporationMods.Test
             // Assert
             customizingWindow.CurrentAgent.spriteData.ShouldBeEquivalentTo(expectedAppearance.spriteSet);
             customizingWindow.CurrentAgent.spriteData.BattleEyeBrow.GetHashCode().ShouldBeEquivalentTo(expectedSprite.GetHashCode());
+            customizingWindow.CurrentAgent.spriteData.HairColor.Should().Be(expectedColor);
         }
 
         #region Code Coverage Tests
@@ -117,8 +118,6 @@ namespace LobotomyCorporationMods.Test
         [Fact]
         public void CustomizingWindowPatchConfirm_Is_Untestable()
         {
-            // WorkerSpriteManager needed for patch
-            TestExtensions.CreateWorkerSpriteManager(TestData.DefaultWorkerBasicSpriteController);
             var customizingWindow = TestExtensions.CreateCustomizingWindow(TestData.DefaultAppearanceUI, TestData.DefaultAgentModel, TestData.DefaultAgentData, CustomizingType.REVISE);
 
             Action action = () => CustomizingWindowPatchConfirm.Prefix(customizingWindow);
