@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Security;
 using Customizing;
@@ -11,6 +10,7 @@ using LobotomyCorporationMods.FreeCustomization;
 using LobotomyCorporationMods.FreeCustomization.Extensions;
 using LobotomyCorporationMods.FreeCustomization.Patches;
 using NSubstitute;
+using UnityEngine;
 using Xunit;
 using Xunit.Extensions;
 
@@ -19,9 +19,6 @@ namespace LobotomyCorporationMods.Test
     [SuppressMessage("ReSharper", "Unity.IncorrectMonoBehaviourInstantiation")]
     public sealed class FreeCustomizationTests
     {
-        private const long DefaultAgentId = 1L;
-        private const string DefaultAgentName = "DefaultAgentName";
-
         public FreeCustomizationTests()
         {
             _ = new Harmony_Patch();
@@ -44,7 +41,7 @@ namespace LobotomyCorporationMods.Test
         [InlineData(false)]
         public void Opening_the_customize_appearance_window_does_not_increase_the_cost_of_hiring_the_agent(bool isCustomAppearance)
         {
-            var customizingWindow = Substitute.For<CustomizingWindow>();
+            var customizingWindow = TestData.DefaultCustomizingWindow;
             customizingWindow.CurrentData = new AgentData { isCustomAppearance = true };
 
             CustomizingWindowPatchOpenAppearanceWindow.Postfix(customizingWindow);
@@ -53,40 +50,80 @@ namespace LobotomyCorporationMods.Test
         }
 
         [Theory]
-        [InlineData(DefaultAgentName)]
+        [InlineData(TestData.DefaultAgentName)]
         [InlineData("TestAgent")]
-        public void Opening_the_strengthen_employee_window_sets_appearance_data([NotNull] string agentName)
+        public void Opening_the_strengthen_employee_window_gets_agent_appearance_data([NotNull] string agentName)
         {
-            var customizingWindow = Substitute.For<CustomizingWindow>();
-            customizingWindow.CurrentData = new AgentData();
-            var agentModel = GetAgentModel(agentName);
-            agentModel._agentName = new AgentName(1) { nameDic = new Dictionary<string, string> { { agentName, agentName } } };
-            agentModel.spriteData = new WorkerSprite.WorkerSprite();
-            var agentInfoWindow = Substitute.For<AgentInfoWindow>();
-            agentInfoWindow.UIComponents = Substitute.For<AgentInfoWindow.UIComponent>();
+            var customizingWindow = TestData.DefaultCustomizingWindow;
+            var agentModel = TestData.DefaultAgentModel;
+            agentModel.name = agentName;
 
-            customizingWindow.SetAppearanceData(agentModel, agentInfoWindow);
+            CustomizingWindowPatchReviseOpenAction.Postfix(customizingWindow, agentModel);
 
             customizingWindow.CurrentData.CustomName.Should().Be(agentName);
         }
 
-        #region Helper Methods
-
-        [NotNull]
-        private static AgentModel GetAgentModel(string agentName)
+        [Theory]
+        [InlineData("Current", "Expected")]
+        [InlineData("Old", "New")]
+        public void Recustomizing_agent_changes_agent_appearance_successfully(string currentAppearanceName, string expectedAppearanceName)
         {
-            return TestExtensions.CreateAgentModel(DefaultAgentId, agentName);
-        }
+            // Arrange
+            var currentAppearance = TestData.DefaultWorkerSprite;
+            var expectedSprite = TestData.DefaultSprite;
+            var expectedColor = Color.black;
+            var expectedAppearance = new Appearance
+            {
+                spriteSet = TestData.DefaultWorkerSprite,
+                Eyebrow_Battle = expectedSprite,
+                FrontHair = expectedSprite,
+                RearHair = expectedSprite,
+                Eyebrow_Def = expectedSprite,
+                Eyebrow_Panic = expectedSprite,
+                Eye_Battle = expectedSprite,
+                Eye_Def = expectedSprite,
+                Eye_Panic = expectedSprite,
+                Eye_Dead = expectedSprite,
+                Mouth_Def = expectedSprite,
+                Mouth_Battle = expectedSprite,
+                HairColor = expectedColor,
+                EyeColor = expectedColor
+            };
 
-        #endregion
+            var currentAgent = TestData.DefaultAgentModel;
+            currentAgent.spriteData = currentAppearance;
+
+            var customizingWindow = TestExtensions.CreateCustomizingWindow(TestData.DefaultAppearanceUI, TestData.DefaultAgentModel, TestData.DefaultAgentData, CustomizingType.REVISE);
+            customizingWindow.CurrentData.appearance = expectedAppearance;
+
+            // Act
+            customizingWindow.SaveAgentAppearance();
+
+            // Assert
+            customizingWindow.CurrentAgent.spriteData.ShouldBeEquivalentTo(expectedAppearance.spriteSet);
+            customizingWindow.CurrentAgent.spriteData.BattleEyeBrow.GetHashCode().ShouldBeEquivalentTo(expectedSprite.GetHashCode());
+        }
 
         #region Code Coverage Tests
 
         [Fact]
         public void CustomizingWindowPatchReviseOpenAction_Is_Untestable()
         {
-            Action action = () => CustomizingWindowPatchReviseOpenAction.Postfix(new CustomizingWindow(), new AgentModel(DefaultAgentId));
+            Action action = () => CustomizingWindowPatchReviseOpenAction.Postfix(new CustomizingWindow(), new AgentModel(TestData.DefaultAgentId));
 
+            action.ShouldThrow<SecurityException>();
+        }
+
+        [Fact]
+        public void CustomizingWindowPatchConfirm_Is_Untestable()
+        {
+            // WorkerSpriteManager needed for patch
+            TestExtensions.CreateWorkerSpriteManager(TestData.DefaultWorkerBasicSpriteController);
+            var customizingWindow = TestExtensions.CreateCustomizingWindow(TestData.DefaultAppearanceUI, TestData.DefaultAgentModel, TestData.DefaultAgentData, CustomizingType.REVISE);
+
+            Action action = () => CustomizingWindowPatchConfirm.Prefix(customizingWindow);
+
+            // Gets a null reference trying to access the WorkerManager instance
             action.ShouldThrow<SecurityException>();
         }
 
@@ -130,6 +167,16 @@ namespace LobotomyCorporationMods.Test
             var patch = typeof(AppearanceUIPatchCloseWindow);
             var originalClass = typeof(AppearanceUI);
             const string MethodName = "CloseWindow";
+
+            patch.ValidateHarmonyPatch(originalClass, MethodName);
+        }
+
+        [Fact]
+        public void Class_CustomizingWindow_Method_Confirm_is_patched_correctly()
+        {
+            var patch = typeof(CustomizingWindowPatchConfirm);
+            var originalClass = typeof(CustomizingWindow);
+            const string MethodName = "Confirm";
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
         }

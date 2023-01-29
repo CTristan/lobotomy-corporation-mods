@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -12,10 +13,13 @@ using Harmony;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Interfaces;
 using NSubstitute;
+using UnityEngine;
+using WorkerSprite;
 
 // ReSharper disable once CheckNamespace
 namespace LobotomyCorporationMods.Test
 {
+    [SuppressMessage("ReSharper", "Unity.IncorrectMonoBehaviourInstantiation")]
     internal static class TestExtensions
     {
         [NotNull]
@@ -46,14 +50,32 @@ namespace LobotomyCorporationMods.Test
         #region Unity Objects
 
         [NotNull]
-        public static AgentModel CreateAgentModel(long instanceId, string name)
+        public static AgentData CreateAgentData(Appearance appearance)
+        {
+            return new AgentData { appearance = appearance };
+        }
+
+        [NotNull]
+        public static AgentModel CreateAgentModel(long instanceId, string name, WorkerSprite.WorkerSprite spriteData)
         {
             CreateUninitializedObject<AgentModel>(out var agentModel);
 
             var fields = GetUninitializedObjectFields(agentModel.GetType());
-            var newValues = new Dictionary<string, object> { { "instanceId", instanceId }, { "name", name } };
+            var newValues = new Dictionary<string, object> { { "instanceId", instanceId }, { "name", name }, { "spriteData", spriteData } };
 
             return GetPopulatedUninitializedObject(agentModel, fields, newValues);
+        }
+
+        [NotNull]
+        public static Appearance CreateAppearance(WorkerSprite.WorkerSprite spriteSet)
+        {
+            return new Appearance { spriteSet = spriteSet };
+        }
+
+        [NotNull]
+        public static AppearanceUI CreateAppearanceUI()
+        {
+            return new AppearanceUI();
         }
 
         [NotNull]
@@ -68,11 +90,28 @@ namespace LobotomyCorporationMods.Test
         }
 
         [NotNull]
-        public static CustomizingWindow CreateCustomizingWindow()
+        public static CustomizingWindow CreateCustomizingWindow(AppearanceUI appearanceUI, AgentModel currentAgent, AgentData currentData, CustomizingType currentWindowType)
         {
             CreateUninitializedObject<CustomizingWindow>(out var customizingWindow);
 
-            return customizingWindow;
+            var fields = GetUninitializedObjectFields(customizingWindow.GetType());
+            var newValues = new Dictionary<string, object>
+            {
+                { "appearanceUI", appearanceUI }, { "_currentAgent", currentAgent }, { "CurrentData", currentData }, { "_currentWindowType", currentWindowType }
+            };
+
+            return GetPopulatedUninitializedObject(customizingWindow, fields, newValues);
+        }
+
+        [NotNull]
+        public static Sprite CreateSprite(string name)
+        {
+            CreateUninitializedObject<Sprite>(out var sprite);
+
+            var fields = GetUninitializedObjectFields(sprite.GetType());
+            var newValues = new Dictionary<string, object> { { "name", name } };
+
+            return GetPopulatedUninitializedObject(sprite, fields, newValues);
         }
 
         [NotNull]
@@ -86,6 +125,32 @@ namespace LobotomyCorporationMods.Test
             useSkill.successCount = numberOfSuccesses;
 
             return useSkill;
+        }
+
+        [NotNull]
+        public static WorkerBasicSpriteController CreateWorkerBasicSpriteController()
+        {
+            return new WorkerBasicSpriteController();
+        }
+
+        [NotNull]
+        public static WorkerSprite.WorkerSprite CreateWorkerSprite()
+        {
+            return new WorkerSprite.WorkerSprite();
+        }
+
+        [NotNull]
+        public static WorkerSpriteManager CreateWorkerSpriteManager(WorkerBasicSpriteController basicData)
+        {
+            CreateUninitializedObject<WorkerSpriteManager>(out var workerSpriteManager);
+
+            var fields = GetUninitializedObjectFields(workerSpriteManager.GetType());
+            var newValues = new Dictionary<string, object> { { "_instance", workerSpriteManager }, { "basicData", basicData } };
+
+            var newWorkerSpriteManager = GetPopulatedUninitializedObject(workerSpriteManager, fields, newValues);
+            newValues = new Dictionary<string, object> { { "_instance", newWorkerSpriteManager }, { "basicData", basicData } };
+
+            return GetPopulatedUninitializedObject(newWorkerSpriteManager, fields, newValues);
         }
 
         #endregion

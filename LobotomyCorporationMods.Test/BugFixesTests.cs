@@ -14,6 +14,10 @@ namespace LobotomyCorporationMods.Test
 {
     public sealed class BugFixesTests
     {
+        private const long DefaultAgentId = 1L;
+        private const string DefaultAgentName = "DefaultAgentName";
+        private const CustomizingType DefaultCustomizingType = CustomizingType.GENERATE;
+
         public BugFixesTests()
         {
             _ = new Harmony_Patch();
@@ -44,9 +48,39 @@ namespace LobotomyCorporationMods.Test
         #region Helper Methods
 
         [NotNull]
+        private static AgentData GetDefaultAgentData()
+        {
+            return TestExtensions.CreateAgentData(GetDefaultAppearance());
+        }
+
+        [NotNull]
+        private static AgentModel GetDefaultAgentModel()
+        {
+            return TestExtensions.CreateAgentModel(DefaultAgentId, DefaultAgentName, GetDefaultWorkerSprite());
+        }
+
+        [NotNull]
+        private static Appearance GetDefaultAppearance()
+        {
+            return TestExtensions.CreateAppearance(GetDefaultWorkerSprite());
+        }
+
+        [NotNull]
+        private static AppearanceUI GetDefaultAppearanceUI()
+        {
+            return TestExtensions.CreateAppearanceUI();
+        }
+
+        [NotNull]
         private static CustomizingWindow GetDefaultCustomizingWindow()
         {
-            return TestExtensions.CreateCustomizingWindow();
+            return TestExtensions.CreateCustomizingWindow(GetDefaultAppearanceUI(), GetDefaultAgentModel(), GetDefaultAgentData(), DefaultCustomizingType);
+        }
+
+        [NotNull]
+        private static WorkerSprite.WorkerSprite GetDefaultWorkerSprite()
+        {
+            return TestExtensions.CreateWorkerSprite();
         }
 
         #endregion

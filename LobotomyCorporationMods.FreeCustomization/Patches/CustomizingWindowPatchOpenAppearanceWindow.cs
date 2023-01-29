@@ -18,6 +18,8 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         ///     Runs after opening the Appearance Window to make sure the IsCustomAppearance field is false, which is used by all
         ///     of the private methods to check for increasing the cost of custom agents.
         /// </summary>
+        [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
+        [SuppressMessage("Style", "IDE1006:Naming Styles")]
         // ReSharper disable once InconsistentNaming
         public static void Postfix([NotNull] CustomizingWindow __instance)
         {

@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: MIT
 
-using System;
-using System.Security;
 using Customizing;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 
@@ -10,28 +9,17 @@ namespace LobotomyCorporationMods.FreeCustomization.Extensions
 {
     public static class CustomizingWindowExtensions
     {
-        public static void SetAppearanceData(this CustomizingWindow customizingWindow, AgentModel agentModel, AgentInfoWindow agentInfoWindow)
+        public static void SaveAgentAppearance([NotNull] this CustomizingWindow customizingWindow)
         {
-            try
-            {
-                Guard.Against.Null(customizingWindow, nameof(customizingWindow));
-                Guard.Against.Null(agentModel, nameof(agentModel));
-                Guard.Against.Null(agentInfoWindow, nameof(agentInfoWindow));
+            Guard.Against.Null(customizingWindow, nameof(customizingWindow));
 
-                customizingWindow.CurrentData.agentName = agentModel._agentName;
-                customizingWindow.CurrentData.appearance = agentModel.GetAppearanceData();
-                customizingWindow.CurrentData.CustomName = agentModel.name;
-                agentInfoWindow.UIComponents.SetData(customizingWindow.CurrentData);
-            }
-            // Errors that only happen during testing, so we'll ignore them
-            catch (SecurityException)
+            if (customizingWindow.appearanceUI.copied != null)
             {
-                // Intentionally left blank
+                customizingWindow.CurrentData.AppearCopy(customizingWindow.appearanceUI.copied);
+                customizingWindow.appearanceUI.copied = null;
             }
-            catch (MissingMemberException)
-            {
-                // Intentionally left blank
-            }
+
+            customizingWindow.CurrentAgent.SetAppearanceData(customizingWindow.CurrentData.appearance);
         }
     }
 }

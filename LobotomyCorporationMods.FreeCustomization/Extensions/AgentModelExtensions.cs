@@ -32,5 +32,25 @@ namespace LobotomyCorporationMods.FreeCustomization.Extensions
                 EyeColor = workerModel.spriteData.EyeColor
             };
         }
+
+        internal static void SetAppearanceData([NotNull] this WorkerModel workerModel, [NotNull] Appearance appearance)
+        {
+            Guard.Against.Null(workerModel, nameof(workerModel));
+
+            workerModel.spriteData = appearance.spriteSet;
+            workerModel.spriteData.BattleEyeBrow = appearance.Eye_Battle;
+            workerModel.spriteData.FrontHair = appearance.FrontHair;
+            workerModel.spriteData.RearHair = appearance.RearHair;
+            workerModel.spriteData.EyeBrow = appearance.Eyebrow_Def;
+            workerModel.spriteData.PanicEyeBrow = appearance.Eyebrow_Panic;
+            workerModel.spriteData.BattleEyeBrow = appearance.Eye_Battle;
+            workerModel.spriteData.Eye = appearance.Eye_Def;
+            workerModel.spriteData.EyePanic = appearance.Eye_Panic;
+            workerModel.spriteData.EyeDead = appearance.Eye_Dead;
+            workerModel.spriteData.Mouth = appearance.Mouth_Def;
+            workerModel.spriteData.BattleMouth = appearance.Mouth_Battle;
+            workerModel.spriteData.HairColor = appearance.HairColor;
+            workerModel.spriteData.EyeColor = appearance.EyeColor;
+        }
     }
 }

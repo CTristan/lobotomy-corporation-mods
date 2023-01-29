@@ -2,6 +2,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Security;
 using Customizing;
 using Harmony;
 using JetBrains.Annotations;
@@ -18,6 +19,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         ///     Runs after opening the Strengthen Agent window to set the appearance data for the customization window.
         /// </summary>
         [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
+        [SuppressMessage("Style", "IDE1006:Naming Styles")]
         // ReSharper disable once InconsistentNaming
         public static void Postfix([NotNull] CustomizingWindow __instance, [NotNull] AgentModel agent)
         {
@@ -26,7 +28,19 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
                 Guard.Against.Null(__instance, nameof(__instance));
                 Guard.Against.Null(agent, nameof(agent));
 
-                __instance.SetAppearanceData(agent, AgentInfoWindow.currentWindow);
+                __instance.CurrentData.agentName = agent._agentName;
+                __instance.CurrentData.CustomName = agent.name;
+                __instance.CurrentData.appearance = agent.GetAppearanceData();
+            }
+            // Only occurs during unit tests
+            catch (SecurityException ex)
+            {
+                Harmony_Patch.Instance.FileManager.WriteToLog(ex);
+            }
+            // Only occurs during unit tests
+            catch (MissingMemberException ex)
+            {
+                Harmony_Patch.Instance.FileManager.WriteToLog(ex);
             }
             catch (Exception ex)
             {
