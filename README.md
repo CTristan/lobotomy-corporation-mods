@@ -7,7 +7,7 @@ pick and choose.
 
 Requires [Basemod](https://www.nexusmods.com/lobotomycorporation/mods/2).
 
-##### Table of Contents
+## Table of Contents
 
 * [Recent Changes](#recent-changes)
 * [List of mods](#list-of-mods)
@@ -17,7 +17,9 @@ Requires [Basemod](https://www.nexusmods.com/lobotomycorporation/mods/2).
 
 ## Recent Changes
 
-* 2023-01-29 (v3.1) - Added re-customization capability to Free Customization mod
+* 2023-01-29 (v3.1) - Added re-customization capability to Free Customization
+  mod
+
 * 2023-01-18 (v3.0) - New mod: Unofficial Bug Fixes
 
 ## List of mods
@@ -46,7 +48,8 @@ to remember what happened after the day is reset.
 ***
 ![Free Customization example](https://raw.githubusercontent.com/ctristan/lobotomy-corporation-mods/assets/free-customization.png)
 
-Allows customizing (and re-customizing) agents without having to spend additional LOB points.
+Allows customizing (and re-customizing) agents without having to spend
+additional LOB points.
 
 I do not like when games require a cost for customizing a character in the first
 place, but in this game customizing requires spending an additional LOB point
