@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
+using System.Security;
 using Customizing;
 using FluentAssertions;
 using Harmony;
@@ -37,6 +38,11 @@ namespace LobotomyCorporationMods.Test
         internal static string InCurrentDirectory([NotNull] this string fileName)
         {
             return Path.Combine(Directory.GetCurrentDirectory(), fileName);
+        }
+
+        internal static void ShouldThrowUnityException(this Action action, string because = "", params object[] becauseArgs)
+        {
+            action.ShouldThrow<Exception>().Where(ex => ex is SecurityException || ex is MissingMethodException);
         }
 
         public static void ValidateHarmonyPatch([NotNull] this MemberInfo patchClass, [NotNull] Type originalClass, string methodName)

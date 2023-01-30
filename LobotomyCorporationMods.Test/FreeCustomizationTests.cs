@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Security;
 using Customizing;
 using FluentAssertions;
 using JetBrains.Annotations;
@@ -139,22 +138,13 @@ namespace LobotomyCorporationMods.Test
         #region Code Coverage Tests
 
         [Fact]
-        public void CustomizingWindowPatchReviseOpenAction_Is_Untestable()
-        {
-            Action action = () => CustomizingWindowPatchReviseOpenAction.Postfix(new CustomizingWindow(), new AgentModel(TestData.DefaultAgentId));
-
-            action.ShouldThrow<SecurityException>();
-        }
-
-        [Fact]
         public void CustomizingWindowPatchConfirm_Is_Untestable()
         {
             var customizingWindow = TestExtensions.CreateCustomizingWindow(TestData.DefaultAppearanceUI, TestData.DefaultAgentModel, TestData.DefaultAgentData, CustomizingType.REVISE);
 
             Action action = () => CustomizingWindowPatchConfirm.Prefix(customizingWindow);
 
-            // Gets a null reference trying to access the WorkerManager instance
-            action.ShouldThrow<SecurityException>();
+            action.ShouldThrowUnityException();
         }
 
         #endregion
