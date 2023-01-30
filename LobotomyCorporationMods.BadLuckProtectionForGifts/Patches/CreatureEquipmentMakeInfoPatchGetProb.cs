@@ -4,8 +4,8 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.FreeCustomization;
 
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
 {

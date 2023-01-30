@@ -12,6 +12,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         ///     Runs after opening the Agent window to automatically open the appearance window, since there's no reason to hide it
         ///     behind a button.
         /// </summary>
+        // GenerateWindow is a static method, so we can't get an instance of it through Harmony.
         public static void Postfix()
         {
             try

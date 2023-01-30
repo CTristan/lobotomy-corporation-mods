@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
 using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 
 namespace LobotomyCorporationMods.FreeCustomization.Patches
@@ -18,6 +19,8 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         ///     The only reason we do this is because there's a hardcoded call to a private method (CustomizingWindow.Start()) that
         ///     closes the appearance window after the first agent window is generated.
         /// </summary>
+        [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
+        [SuppressMessage("Style", "IDE1006:Naming Styles")]
         // ReSharper disable once InconsistentNaming
         public static bool Prefix([NotNull] AppearanceUI __instance)
         {

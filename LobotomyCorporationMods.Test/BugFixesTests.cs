@@ -3,7 +3,6 @@
 using System;
 using Customizing;
 using FluentAssertions;
-using JetBrains.Annotations;
 using LobotomyCorporationMods.BugFixes;
 using LobotomyCorporationMods.BugFixes.Extensions;
 using LobotomyCorporationMods.BugFixes.Patches;
@@ -32,21 +31,11 @@ namespace LobotomyCorporationMods.Test
         {
             const int BonusStatLevelIncrease = 1;
             var priorStatValue = minNextStatValue - 1;
-            var customizingWindow = GetDefaultCustomizingWindow();
+            var customizingWindow = TestData.DefaultCustomizingWindow;
 
             customizingWindow.UpgradeStat(priorStatValue, currentStatLevel, BonusStatLevelIncrease, out var result);
 
             result.Should().BeGreaterOrEqualTo(minNextStatValue).And.BeLessOrEqualTo(maxNextStatValue);
-        }
-
-        #endregion
-
-        #region Helper Methods
-
-        [NotNull]
-        private static CustomizingWindow GetDefaultCustomizingWindow()
-        {
-            return TestExtensions.CreateCustomizingWindow();
         }
 
         #endregion
@@ -72,7 +61,7 @@ namespace LobotomyCorporationMods.Test
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
 
-            var result = CustomizingWindowPatchSetAgentStatBonus.Prefix(GetDefaultCustomizingWindow(), null, null);
+            var result = CustomizingWindowPatchSetAgentStatBonus.Prefix(TestData.DefaultCustomizingWindow, null, null);
             result.Should().BeTrue();
         }
 
