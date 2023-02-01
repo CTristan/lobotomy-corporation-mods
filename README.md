@@ -1,8 +1,8 @@
 # Lobotomy Corporation Mods
 
 Mods for the
-game [Lobotomy Corporation](https://store.steampowered.com/app/568220/Lobotomy_Corporation__Monster_Management_Simulation/)
-. They are designed to be used either together or individually, so feel free to
+game [Lobotomy Corporation](https://store.steampowered.com/app/568220/Lobotomy_Corporation__Monster_Management_Simulation/).
+They are designed to be used either together or individually, so feel free to
 pick and choose.
 
 Requires [Basemod](https://www.nexusmods.com/lobotomycorporation/mods/2).
@@ -16,6 +16,9 @@ Requires [Basemod](https://www.nexusmods.com/lobotomycorporation/mods/2).
 * [License](#license)
 
 ## Recent Changes
+
+* 2023-02-01 (v3.2) - Added bug fix for Crumbling Armor where replacing the gift
+  would still kill the agent.
 
 * 2023-01-29 (v3.1) - Added re-customization capability to Free Customization
   mod
@@ -73,9 +76,13 @@ Bugs fixed:
   use the modified level instead of the base level so Fortitude would remain
   level 3 after the upgrade instead of increasing by 1 (base level 5, modified
   level 4).
+* Crumbling Armor gift kills agents after being replaced - When an agent that
+  started the day with Crumbling Armor's gift later replaced the gift with
+  another one, they would still die when performing an Attachment work.
 
 ## Change Log
 
+* v3.2 - Added bug fix for Crumbling Armor
 * v3.1 - Added re-customization capability to Free Customization mod
 * v3.0 - New mod: Unofficial Bug Fixes
 * v2.0 - New mod: Free Customization

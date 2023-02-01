@@ -175,12 +175,11 @@ namespace LobotomyCorporationMods.Test
             CreateUninitializedObject<GlobalGameManager>(out var globalGameManager);
 
             var fields = GetUninitializedObjectFields(globalGameManager.GetType());
-            var newValues = new Dictionary<string, object> { { "_instance", globalGameManager } };
+            var newValues = new Dictionary<string, object>();
+            globalGameManager = GetPopulatedUninitializedObject(globalGameManager, fields, newValues);
+            newValues.Add("_instance", globalGameManager);
 
-            var newGlobalGameManager = GetPopulatedUninitializedObject(globalGameManager, fields, newValues);
-            newValues = new Dictionary<string, object> { { "_instance", newGlobalGameManager } };
-
-            return GetPopulatedUninitializedObject(newGlobalGameManager, fields, newValues);
+            return GetPopulatedUninitializedObject(globalGameManager, fields, newValues);
         }
 
         [NotNull]
@@ -239,12 +238,11 @@ namespace LobotomyCorporationMods.Test
             CreateUninitializedObject<WorkerSpriteManager>(out var workerSpriteManager);
 
             var fields = GetUninitializedObjectFields(workerSpriteManager.GetType());
-            var newValues = new Dictionary<string, object> { { "_instance", workerSpriteManager }, { "basicData", basicData } };
+            var newValues = new Dictionary<string, object> { { "basicData", basicData } };
+            workerSpriteManager = GetPopulatedUninitializedObject(workerSpriteManager, fields, newValues);
+            newValues.Add("_instance", workerSpriteManager);
 
-            var newWorkerSpriteManager = GetPopulatedUninitializedObject(workerSpriteManager, fields, newValues);
-            newValues = new Dictionary<string, object> { { "_instance", newWorkerSpriteManager }, { "basicData", basicData } };
-
-            return GetPopulatedUninitializedObject(newWorkerSpriteManager, fields, newValues);
+            return GetPopulatedUninitializedObject(workerSpriteManager, fields, newValues);
         }
 
         #endregion
@@ -299,7 +297,7 @@ namespace LobotomyCorporationMods.Test
                         goodFields.Add(typeField);
                     }
                 }
-                catch
+                catch (NotSupportedException)
                 {
                     // Some fields will give an exception when checked, so we won't be able to populate those fields
                 }
