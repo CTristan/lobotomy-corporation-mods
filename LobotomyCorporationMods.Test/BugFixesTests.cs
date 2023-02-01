@@ -99,11 +99,11 @@ namespace LobotomyCorporationMods.Test
         }
 
         [Fact]
-        public void Class_ArmorCreature_Method_OnNoticePrefix_is_patched_correctly()
+        public void Class_ArmorCreature_Method_OnNotice_is_patched_correctly()
         {
             var patch = typeof(ArmorCreaturePatchOnNotice);
             var originalClass = typeof(ArmorCreature);
-            const string MethodName = "OnNoticePrefix";
+            const string MethodName = "OnNotice";
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
         }

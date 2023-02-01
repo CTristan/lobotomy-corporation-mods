@@ -9,7 +9,7 @@ using LobotomyCorporationMods.Common.Implementations;
 
 namespace LobotomyCorporationMods.BugFixes.Patches
 {
-    [HarmonyPatch(typeof(ArmorCreature), "OnNoticePrefix")]
+    [HarmonyPatch(typeof(ArmorCreature), "OnNotice")]
     public static class ArmorCreaturePatchOnNotice
     {
         /// <summary>
