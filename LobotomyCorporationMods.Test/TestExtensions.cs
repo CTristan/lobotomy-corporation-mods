@@ -63,12 +63,19 @@ namespace LobotomyCorporationMods.Test
         }
 
         [NotNull]
-        public static AgentModel CreateAgentModel(AgentName agentName, long instanceId, string name, WorkerSprite.WorkerSprite spriteData)
+        public static AgentModel CreateAgentModel(AgentName agentName, UnitEquipSpace equipment, long instanceId, string name, WorkerSprite.WorkerSprite spriteData)
         {
             CreateUninitializedObject<AgentModel>(out var agentModel);
 
             var fields = GetUninitializedObjectFields(agentModel.GetType());
-            var newValues = new Dictionary<string, object> { { "_agentName", agentName }, { "instanceId", instanceId }, { "name", name }, { "spriteData", spriteData } };
+            var newValues = new Dictionary<string, object>
+            {
+                { "_agentName", agentName },
+                { "_equipment", equipment },
+                { "instanceId", instanceId },
+                { "name", name },
+                { "spriteData", spriteData }
+            };
 
             return GetPopulatedUninitializedObject(agentModel, fields, newValues);
         }
@@ -109,14 +116,31 @@ namespace LobotomyCorporationMods.Test
         }
 
         [NotNull]
-        public static CreatureEquipmentMakeInfo CreateCreatureEquipmentMakeInfo(string giftName)
+        public static CreatureEquipmentMakeInfo CreateCreatureEquipmentMakeInfo(EquipmentTypeInfo equipTypeInfo)
         {
-            var info = Substitute.For<CreatureEquipmentMakeInfo>();
-            info.equipTypeInfo = new EquipmentTypeInfo { localizeData = new Dictionary<string, string> { { "name", giftName } }, type = EquipmentTypeInfo.EquipmentType.SPECIAL };
+            return new CreatureEquipmentMakeInfo { equipTypeInfo = equipTypeInfo };
+        }
 
-            LocalizeTextDataModel.instance?.Init(new Dictionary<string, string> { { giftName, giftName } });
+        [NotNull]
+        public static CreatureModel CreateCreatureModel(AgentModel agent, SkillTypeInfo skillTypeInfo, CreatureTypeInfo metaInfo)
+        {
+            CreateUninitializedObject<CreatureModel>(out var creatureModel);
 
-            return info;
+            var fields = GetUninitializedObjectFields(creatureModel.GetType());
+            var newValues = new Dictionary<string, object> { { "metaInfo", metaInfo } };
+            var newCreatureModel = GetPopulatedUninitializedObject(creatureModel, fields, newValues);
+
+            // Needed to avoid a circular reference from currentSkill
+            var currentSkill = CreateUseSkill(agent, skillTypeInfo, newCreatureModel);
+            newValues.Add("_currentSkill", currentSkill);
+
+            return GetPopulatedUninitializedObject(newCreatureModel, fields, newValues);
+        }
+
+        [NotNull]
+        public static CreatureTypeInfo CreateCreatureTypeInfo(List<CreatureEquipmentMakeInfo> equipMakeInfos)
+        {
+            return new CreatureTypeInfo { equipMakeInfos = equipMakeInfos };
         }
 
         [NotNull]
@@ -134,6 +158,18 @@ namespace LobotomyCorporationMods.Test
         }
 
         [NotNull]
+        public static EGOgiftModel CreateEgoGiftModel(EquipmentTypeInfo metaInfo)
+        {
+            return new EGOgiftModel { metaInfo = metaInfo };
+        }
+
+        [NotNull]
+        public static EquipmentTypeInfo CreateEquipmentTypeInfo()
+        {
+            return new EquipmentTypeInfo();
+        }
+
+        [NotNull]
         public static GlobalGameManager CreateGlobalGameManager()
         {
             CreateUninitializedObject<GlobalGameManager>(out var globalGameManager);
@@ -148,6 +184,12 @@ namespace LobotomyCorporationMods.Test
         }
 
         [NotNull]
+        public static SkillTypeInfo CreateSkillTypeInfo()
+        {
+            return new SkillTypeInfo();
+        }
+
+        [NotNull]
         public static Sprite CreateSprite(string name)
         {
             CreateUninitializedObject<Sprite>(out var sprite);
@@ -159,14 +201,22 @@ namespace LobotomyCorporationMods.Test
         }
 
         [NotNull]
-        public static UseSkill CreateUseSkill(string giftName, long agentId, int numberOfSuccesses)
+        public static UnitEquipSpace CreateUnitEquipSpace()
         {
-            var useSkill = Substitute.For<UseSkill>();
-            CreateUninitializedObject(out useSkill.agent);
-            useSkill.agent.instanceId = agentId;
-            CreateUninitializedObject(out useSkill.targetCreature);
-            useSkill.targetCreature.metaInfo = new CreatureTypeInfo { equipMakeInfos = new List<CreatureEquipmentMakeInfo> { CreateCreatureEquipmentMakeInfo(giftName) } };
-            useSkill.successCount = numberOfSuccesses;
+            return new UnitEquipSpace();
+        }
+
+        [NotNull]
+        public static UseSkill CreateUseSkill(AgentModel agent, SkillTypeInfo skillTypeInfo, [NotNull] CreatureModel targetCreature)
+        {
+            // Needed to avoid circular reference
+            if (targetCreature.currentSkill != null)
+            {
+                return targetCreature.currentSkill;
+            }
+
+            var useSkill = new UseSkill { agent = agent, skillTypeInfo = skillTypeInfo, targetCreature = targetCreature };
+            targetCreature.currentSkill = useSkill;
 
             return useSkill;
         }
@@ -269,9 +319,9 @@ namespace LobotomyCorporationMods.Test
 
             for (var i = 0; i < fields.Length; i++)
             {
-                if (newValues.ContainsKey(fields[i].Name))
+                if (newValues.TryGetValue(fields[i].Name, out var value))
                 {
-                    values[i] = newValues[fields[i].Name];
+                    values[i] = value;
                 }
             }
 

@@ -1,6 +1,7 @@
 ﻿// SPDX-License-Identifier: MIT
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using FluentAssertions;
@@ -95,9 +96,10 @@ namespace LobotomyCorporationMods.Test
         [Fact]
         public void Our_probability_bonus_does_not_cause_the_gift_probability_to_go_over_100_percent()
         {
+            // Arrange
             const string DataFileName = "Our_probability_bonus_does_not_cause_the_gift_probability_to_go_over_100_percent";
             var agentWorkTracker = CreateAgentWorkTracker(DataFileName);
-            var creatureEquipmentMakeInfo = TestExtensions.CreateCreatureEquipmentMakeInfo(GiftName);
+            var creatureEquipmentMakeInfo = GetCreatureEquipmentMakeInfo(GiftName);
 
             // 101 times worked would equal 101% bonus normally
             agentWorkTracker.IncrementAgentWorkCount(GiftName, TestData.DefaultAgentId, 101f);
@@ -105,9 +107,11 @@ namespace LobotomyCorporationMods.Test
             // We should only get back 100% even with the 101% bonus
             const float Expected = 1f;
 
+            // Act
             var actual = 0f;
             CreatureEquipmentMakeInfoPatchGetProb.Postfix(creatureEquipmentMakeInfo, ref actual);
 
+            // Assert
             Assert.Equal(Expected, actual);
         }
 
@@ -120,7 +124,7 @@ namespace LobotomyCorporationMods.Test
             var dataFileName = $"The_gift_probability_increases_by_one_percent_for_every_success_the_agent_has_while_working_{numberOfSuccesses}";
             var agentWorkTracker = CreateAgentWorkTracker(dataFileName);
             agentWorkTracker.IncrementAgentWorkCount(GiftName, TestData.DefaultAgentId, numberOfSuccesses);
-            var creatureEquipmentMakeInfo = TestExtensions.CreateCreatureEquipmentMakeInfo(GiftName);
+            var creatureEquipmentMakeInfo = GetCreatureEquipmentMakeInfo(GiftName);
             var expected = numberOfSuccesses / 100f;
 
             var actual = 0f;
@@ -153,9 +157,12 @@ namespace LobotomyCorporationMods.Test
         {
             var dataFileName = $"Working_on_an_abnormality_increases_the_number_of_successes_for_that_agent_{numberOfSuccesses}";
             var agentWorkTracker = CreateAgentWorkTracker(dataFileName);
-            var useSkill = TestExtensions.CreateUseSkill(GiftName, TestData.DefaultAgentId, numberOfSuccesses);
             agentWorkTracker.IncrementAgentWorkCount(GiftName, TestData.DefaultAgentId);
             var expected = agentWorkTracker.GetLastAgentWorkCountByGift(GiftName) + numberOfSuccesses;
+            var useSkill = TestData.DefaultUseSkill;
+            var creatureEquipmentMakeInfo = GetCreatureEquipmentMakeInfo(GiftName);
+            useSkill.targetCreature.metaInfo.equipMakeInfos.Add(creatureEquipmentMakeInfo);
+            useSkill.successCount = numberOfSuccesses;
 
             UseSkillPatchFinishWorkSuccessfully.Prefix(useSkill);
             var actual = agentWorkTracker.GetLastAgentWorkCountByGift(GiftName);
@@ -171,7 +178,7 @@ namespace LobotomyCorporationMods.Test
         {
             var dataFileName = $"A_gift_that_has_not_been_worked_on_yet_displays_the_base_value_{expected}";
             _ = CreateAgentWorkTracker(dataFileName);
-            var instance = TestExtensions.CreateCreatureEquipmentMakeInfo(GiftName);
+            var instance = TestData.DefaultCreatureEquipmentMakeInfo;
             var actual = expected;
 
             CreatureEquipmentMakeInfoPatchGetProb.Postfix(instance, ref actual);
@@ -230,6 +237,17 @@ namespace LobotomyCorporationMods.Test
         {
             var fileNameWithPath = Path.Combine(Directory.GetCurrentDirectory(), fileName);
             File.WriteAllText(fileNameWithPath, trackerData);
+        }
+
+        [NotNull]
+        private static CreatureEquipmentMakeInfo GetCreatureEquipmentMakeInfo([NotNull] string giftName)
+        {
+            var creatureEquipmentMakeInfo = TestData.DefaultCreatureEquipmentMakeInfo;
+            creatureEquipmentMakeInfo.equipTypeInfo.type = EquipmentTypeInfo.EquipmentType.SPECIAL;
+            creatureEquipmentMakeInfo.equipTypeInfo.localizeData = new Dictionary<string, string> { { "name", giftName } };
+            LocalizeTextDataModel.instance.Init(new Dictionary<string, string> { { giftName, giftName } });
+
+            return creatureEquipmentMakeInfo;
         }
 
         #endregion
