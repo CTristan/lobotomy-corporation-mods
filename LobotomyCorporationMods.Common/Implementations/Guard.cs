@@ -8,6 +8,7 @@ namespace LobotomyCorporationMods.Common.Implementations
     {
         private Guard() { }
 
-        [GuardClause] public static Guard Against { get; } = new Guard();
+        [GuardClause]
+        public static Guard Against { get; } = new Guard();
     }
 }
