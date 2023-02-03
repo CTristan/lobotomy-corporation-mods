@@ -1,6 +1,8 @@
-namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking
+// SPDX-License-Identifier: MIT
+
+namespace LobotomyCorporationMods.Common.Enums
 {
-    internal enum CreatureIds
+    public enum CreatureIds
     {
         BeautyAndTheBeast = 100013,
         Bloodbath = 100027,
@@ -13,7 +15,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking
         RedShoes = 100003,
         SingingMachine = 100006,
         SpiderBud = 100012,
-        VoidMachine = 100060,
+        VoidDream = 100060,
         WarmHeartedWoodsman = 100051
     }
 }

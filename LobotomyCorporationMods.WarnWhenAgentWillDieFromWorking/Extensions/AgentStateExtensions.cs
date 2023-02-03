@@ -6,7 +6,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
 {
     internal static class AgentStateExtensions
     {
-        internal static bool IsInvalidState(this AgentState state)
+        internal static bool IsUncontrollable(this AgentState state)
         {
             return state == AgentState.DEAD || state == AgentState.PANIC || state == AgentState.UNCONTROLLABLE;
         }

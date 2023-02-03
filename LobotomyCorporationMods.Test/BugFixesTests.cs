@@ -73,7 +73,8 @@ namespace LobotomyCorporationMods.Test
             gift.metaInfo.id = giftId;
             var equipment = TestExtensions.CreateUnitEquipSpace();
             equipment.gifts.addedGifts.Add(gift);
-            skill.agent = TestExtensions.CreateAgentModel(TestData.DefaultAgentName, equipment, TestData.DefaultAgentId, TestData.DefaultAgentNameString, TestData.DefaultWorkerSprite);
+            skill.agent = TestExtensions.CreateAgentModel(TestData.DefaultAgentName, TestData.DefaultBuffList, equipment, TestData.DefaultAgentId, TestData.DefaultAgentNameString,
+                TestData.DefaultWorkerPrimaryStat, TestData.DefaultWorkerSprite, TestData.DefaultStatBuffList);
             skill.skillTypeInfo.id = SkillTypeInfo.Consensus;
             var param = new object[] { skill.targetCreature };
 

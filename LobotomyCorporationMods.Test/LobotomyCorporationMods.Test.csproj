@@ -43,6 +43,7 @@
     </ProjectReference>
     <ProjectReference Include="..\LobotomyCorporationMods.BugFixes\LobotomyCorporationMods.BugFixes.csproj"/>
     <ProjectReference Include="..\LobotomyCorporationMods.FreeCustomization\LobotomyCorporationMods.FreeCustomization.csproj"/>
+    <ProjectReference Include="..\LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking\LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.csproj"/>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony, Version=1.0.9.1, Culture=neutral, PublicKeyToken=null">
@@ -69,8 +70,14 @@
     <Reference Include="System.Xml, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
       <HintPath>..\..\..\..\Managed\System.Xml.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>..\..\..\..\Managed\UnityEngine.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>..\..\..\..\Managed\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>..\..\..\..\Managed\UnityEngine.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>

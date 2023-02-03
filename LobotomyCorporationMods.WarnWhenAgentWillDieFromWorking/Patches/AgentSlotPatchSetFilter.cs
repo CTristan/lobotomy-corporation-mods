@@ -12,7 +12,7 @@ using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions;
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
 {
     [HarmonyPatch(typeof(AgentSlot), "SetFilter")]
-    public class AgentSlotPatchSetFilter
+    public static class AgentSlotPatchSetFilter
     {
         [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
         [SuppressMessage("Style", "IDE1006:Naming Styles")]
@@ -24,22 +24,19 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
                 Guard.Against.Null(__instance, nameof(__instance));
                 Guard.Against.Null(state, nameof(state));
 
-                if (state.IsInvalidState()) { return; }
-
                 // Some initial Command Window checks to make sure we're in the right state
-                var commandWindow = GetCommandWindowIfValid();
-                if (commandWindow == null) { return; }
-
-                var agentWillDie = __instance.CurrentAgent.CheckIfWorkWillKillAgent(commandWindow);
-
-                if (!agentWillDie)
+                var commandWindow = CommandWindow.CommandWindow.CurrentWindow;
+                if (!(commandWindow is null) && commandWindow.IsAbnormalityWorkWindow() && !state.IsUncontrollable())
                 {
-                    return;
-                }
+                    var agentWillDie = __instance.CurrentAgent.CheckIfWorkWillKillAgent(commandWindow);
 
-                __instance.WorkFilterFill.color = commandWindow.DeadColor;
-                __instance.WorkFilterText.text = LocalizeTextDataModel.instance.GetText("AgentState_Dead");
-                __instance.SetColor(commandWindow.DeadColor);
+                    if (agentWillDie)
+                    {
+                        __instance.WorkFilterFill.color = commandWindow.DeadColor;
+                        __instance.WorkFilterText.text = LocalizeTextDataModel.instance.GetText("AgentState_Dead");
+                        __instance.SetColor(commandWindow.DeadColor);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -47,18 +44,6 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
 
                 throw;
             }
-        }
-
-        [CanBeNull]
-        private static CommandWindow.CommandWindow GetCommandWindowIfValid()
-        {
-            var commandWindow = CommandWindow.CommandWindow.CurrentWindow;
-            if (commandWindow == null) { return null; }
-
-            // Validation checks to confirm we have everything we need
-            if (commandWindow.CurrentSkill?.rwbpType == null) { return null; }
-
-            return commandWindow.CurrentWindowType != CommandType.Management ? null : commandWindow;
         }
     }
 }

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Security;
+using CommandWindow;
 using Customizing;
 using FluentAssertions;
 using Harmony;
@@ -17,6 +18,7 @@ using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Interfaces;
 using NSubstitute;
 using UnityEngine;
+using UnityEngine.UI;
 using WorkerSprite;
 
 namespace LobotomyCorporationMods.Test
@@ -63,7 +65,8 @@ namespace LobotomyCorporationMods.Test
         }
 
         [NotNull]
-        public static AgentModel CreateAgentModel(AgentName agentName, UnitEquipSpace equipment, long instanceId, string name, WorkerSprite.WorkerSprite spriteData)
+        public static AgentModel CreateAgentModel(AgentName agentName, List<UnitBuf> bufList, UnitEquipSpace equipment, long instanceId, string name, WorkerPrimaryStat primaryStat,
+            WorkerSprite.WorkerSprite spriteData, List<UnitStatBuf> statBufList)
         {
             CreateUninitializedObject<AgentModel>(out var agentModel);
 
@@ -71,10 +74,13 @@ namespace LobotomyCorporationMods.Test
             var newValues = new Dictionary<string, object>
             {
                 { "_agentName", agentName },
+                { "_bufList", bufList },
                 { "_equipment", equipment },
                 { "instanceId", instanceId },
                 { "name", name },
-                { "spriteData", spriteData }
+                { "primaryStat", primaryStat },
+                { "spriteData", spriteData },
+                { "_statBufList", statBufList }
             };
 
             return GetPopulatedUninitializedObject(agentModel, fields, newValues);
@@ -101,6 +107,17 @@ namespace LobotomyCorporationMods.Test
         }
 
         [NotNull]
+        public static AgentSlot CreateAgentSlot(AgentModel currentAgent, Image workFilterFill, Text workFilterText)
+        {
+            CreateUninitializedObject<AgentSlot>(out var agentSlot);
+
+            var fields = GetUninitializedObjectFields(agentSlot.GetType());
+            var newValues = new Dictionary<string, object> { { "_currentAgent", currentAgent }, { "WorkFilterFill", workFilterFill }, { "WorkFilterText", workFilterText } };
+
+            return GetPopulatedUninitializedObject(agentSlot, fields, newValues);
+        }
+
+        [NotNull]
         public static Appearance CreateAppearance([NotNull] WorkerSpriteManager workerSpriteManager, WorkerSprite.WorkerSprite spriteSet)
         {
             // Requires an existing WorkerSpriteManager instance
@@ -116,18 +133,34 @@ namespace LobotomyCorporationMods.Test
         }
 
         [NotNull]
+        public static CommandWindow.CommandWindow CreateCommandWindow(UnitModel currentTarget, CommandType currentWindowType, [NotNull] SkillTypeList skillTypeList)
+        {
+            // Requires an existing SkillTypeList instance
+            Guard.Against.Null(skillTypeList, nameof(skillTypeList));
+
+            CreateUninitializedObject<CommandWindow.CommandWindow>(out var commandWindow);
+
+            var fields = GetUninitializedObjectFields(commandWindow.GetType());
+            var newValues = new Dictionary<string, object> { { "_currentTarget", currentTarget }, { "_currentWindowType", currentWindowType } };
+            commandWindow = GetPopulatedUninitializedObject(commandWindow, fields, newValues);
+            newValues.Add("_currentWindow", commandWindow);
+
+            return GetPopulatedUninitializedObject(commandWindow, fields, newValues);
+        }
+
+        [NotNull]
         public static CreatureEquipmentMakeInfo CreateCreatureEquipmentMakeInfo(EquipmentTypeInfo equipTypeInfo)
         {
             return new CreatureEquipmentMakeInfo { equipTypeInfo = equipTypeInfo };
         }
 
         [NotNull]
-        public static CreatureModel CreateCreatureModel(AgentModel agent, SkillTypeInfo skillTypeInfo, CreatureTypeInfo metaInfo)
+        public static CreatureModel CreateCreatureModel(AgentModel agent, CreatureTypeInfo metaInfo, CreatureObserveInfoModel observeInfo, SkillTypeInfo skillTypeInfo)
         {
             CreateUninitializedObject<CreatureModel>(out var creatureModel);
 
             var fields = GetUninitializedObjectFields(creatureModel.GetType());
-            var newValues = new Dictionary<string, object> { { "metaInfo", metaInfo } };
+            var newValues = new Dictionary<string, object> { { "metaInfo", metaInfo }, { "observeInfo", observeInfo } };
             var newCreatureModel = GetPopulatedUninitializedObject(creatureModel, fields, newValues);
 
             // Needed to avoid a circular reference from currentSkill
@@ -135,6 +168,17 @@ namespace LobotomyCorporationMods.Test
             newValues.Add("_currentSkill", currentSkill);
 
             return GetPopulatedUninitializedObject(newCreatureModel, fields, newValues);
+        }
+
+        [NotNull]
+        public static CreatureObserveInfoModel CreateCreatureObserveInfoModel(CreatureTypeInfo metaInfo, Dictionary<string, ObserveRegion> observeRegions)
+        {
+            CreateUninitializedObject<CreatureObserveInfoModel>(out var creatureObserveInfoModel);
+
+            var fields = GetUninitializedObjectFields(creatureObserveInfoModel.GetType());
+            var newValues = new Dictionary<string, object> { { "_metaInfo", metaInfo }, { "observeRegions", observeRegions } };
+
+            return GetPopulatedUninitializedObject(creatureObserveInfoModel, fields, newValues);
         }
 
         [NotNull]
@@ -183,9 +227,26 @@ namespace LobotomyCorporationMods.Test
         }
 
         [NotNull]
+        public static Image CreateImage()
+        {
+            CreateUninitializedObject<Image>(out var image);
+
+            return image;
+        }
+
+        [NotNull]
         public static SkillTypeInfo CreateSkillTypeInfo()
         {
             return new SkillTypeInfo();
+        }
+
+        [NotNull]
+        public static SkillTypeList CreateSkillTypeList(SkillTypeInfo[] list)
+        {
+            var skillType = SkillTypeList.instance;
+            skillType.Init(list);
+
+            return skillType;
         }
 
         [NotNull]
@@ -200,9 +261,28 @@ namespace LobotomyCorporationMods.Test
         }
 
         [NotNull]
+        public static Text CreateText()
+        {
+            CreateUninitializedObject<Text>(out var text);
+
+            return text;
+        }
+
+        [NotNull]
         public static UnitEquipSpace CreateUnitEquipSpace()
         {
             return new UnitEquipSpace();
+        }
+
+        [NotNull]
+        public static UnitModel CreateUnitModel(List<UnitBuf> bufList, List<UnitStatBuf> statBufList)
+        {
+            CreateUninitializedObject<UnitModel>(out var unitModel);
+
+            var fields = GetUninitializedObjectFields(unitModel.GetType());
+            var newValues = new Dictionary<string, object> { { "_bufList", bufList }, { "_statBufList", statBufList } };
+
+            return GetPopulatedUninitializedObject(unitModel, fields, newValues);
         }
 
         [NotNull]
@@ -224,6 +304,12 @@ namespace LobotomyCorporationMods.Test
         public static WorkerBasicSpriteController CreateWorkerBasicSpriteController()
         {
             return new WorkerBasicSpriteController();
+        }
+
+        [NotNull]
+        public static WorkerPrimaryStat CreateWorkerPrimaryStat()
+        {
+            return new WorkerPrimaryStat();
         }
 
         [NotNull]

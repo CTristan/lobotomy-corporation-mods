@@ -122,7 +122,6 @@ namespace LobotomyCorporationMods.Test
             expectedData.CustomName = expectedName;
             expectedData.agentName = expectedAgentName;
 
-
             var customizingWindow = TestExtensions.CreateCustomizingWindow(TestData.DefaultAppearanceUI, currentAgent, TestData.DefaultAgentData, CustomizingType.REVISE);
             customizingWindow.CurrentData = expectedData;
 
