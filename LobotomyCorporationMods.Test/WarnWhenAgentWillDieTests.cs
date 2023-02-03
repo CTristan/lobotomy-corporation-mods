@@ -10,12 +10,18 @@ using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches;
 using UnityEngine;
 using Xunit;
+using Xunit.Extensions;
 
 namespace LobotomyCorporationMods.Test
 {
     public sealed class WarnWhenAgentWillDieTests
     {
         private const string DeadAgentString = "AgentState_Dead";
+        private const int StatLevelFive = 100;
+        private const int StatLevelFour = 84;
+        private const int StatLevelOne = 29;
+        private const int StatLevelThree = 64;
+        private const int StatLevelTwo = 44;
 
         public WarnWhenAgentWillDieTests()
         {
@@ -36,23 +42,6 @@ namespace LobotomyCorporationMods.Test
             agentSlot.WorkFilterText.text.Should().NotBe(DeadAgentString);
         }
 
-        #region Bloodbath Tests
-
-        [Fact]
-        public void Bloodbath_Will_Kill_Agent_With_Fortitude_Of_One()
-        {
-            var creature = GetCreature(CreatureIds.Bloodbath);
-            var commandWindow = InitializeCommandWindow(creature);
-            var agent = TestData.DefaultAgentModel;
-            agent.primaryStat.hp = 1;
-
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
-
-            result.Should().BeTrue();
-        }
-
-        #endregion
-
         #region Code Coverage Tests
 
         [Fact]
@@ -66,6 +55,74 @@ namespace LobotomyCorporationMods.Test
             Action action = () => AgentSlotPatchSetFilter.Postfix(agentSlot, AgentState.IDLE);
 
             action.ShouldThrowUnityException();
+        }
+
+        #endregion
+
+        #region Bloodbath Tests
+
+        [Fact]
+        public void Bloodbath_Will_Kill_Agent_With_Fortitude_Of_One_And_Temperance_Above_One()
+        {
+            var creature = GetCreature(CreatureIds.Bloodbath);
+            var commandWindow = InitializeCommandWindow(creature);
+            var agent = TestData.DefaultAgentModel;
+            agent.primaryStat.hp = StatLevelOne;
+            agent.primaryStat.work = StatLevelFive;
+
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+
+            result.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Bloodbath_Will_Kill_Agent_With_Temperance_Of_One_And_Fortitude_Above_One()
+        {
+            var creature = GetCreature(CreatureIds.Bloodbath);
+            var commandWindow = InitializeCommandWindow(creature);
+            var agent = TestData.DefaultAgentModel;
+            agent.primaryStat.hp = StatLevelFive;
+            agent.primaryStat.work = StatLevelOne;
+
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+
+            result.Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(StatLevelTwo)]
+        [InlineData(StatLevelThree)]
+        [InlineData(StatLevelFour)]
+        [InlineData(StatLevelFive)]
+        public void Bloodbath_Will_Not_Kill_Agent_With_Fortitude_Greater_Than_One(int fortitude)
+        {
+            var creature = GetCreature(CreatureIds.Bloodbath);
+            var commandWindow = InitializeCommandWindow(creature);
+            var agent = TestData.DefaultAgentModel;
+            agent.primaryStat.hp = fortitude;
+            agent.primaryStat.work = StatLevelFive;
+
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+
+            result.Should().BeFalse();
+        }
+
+        [Theory]
+        [InlineData(StatLevelTwo)]
+        [InlineData(StatLevelThree)]
+        [InlineData(StatLevelFour)]
+        [InlineData(StatLevelFive)]
+        public void Bloodbath_Will_Not_Kill_Agent_With_Temperance_Greater_Than_One(int temperance)
+        {
+            var creature = GetCreature(CreatureIds.Bloodbath);
+            var commandWindow = InitializeCommandWindow(creature);
+            var agent = TestData.DefaultAgentModel;
+            agent.primaryStat.hp = StatLevelFive;
+            agent.primaryStat.work = temperance;
+
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+
+            result.Should().BeFalse();
         }
 
         #endregion
