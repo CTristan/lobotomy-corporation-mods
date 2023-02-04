@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 using System;
+using System.Collections.Generic;
 using CommandWindow;
 using FluentAssertions;
 using JetBrains.Annotations;
@@ -26,8 +27,8 @@ namespace LobotomyCorporationMods.Test
         public WarnWhenAgentWillDieTests()
         {
             _ = new Harmony_Patch();
-            var fileManager = TestExtensions.CreateFileManager();
-            Harmony_Patch.Instance.LoadData(fileManager);
+            var fileManager = TestExtensions.GetMockFileManager();
+            Harmony_Patch.Instance.LoadData(fileManager.Object);
         }
 
         [Fact]
@@ -55,6 +56,38 @@ namespace LobotomyCorporationMods.Test
             Action action = () => AgentSlotPatchSetFilter.Postfix(agentSlot, AgentState.IDLE);
 
             action.ShouldThrowUnityException();
+        }
+
+        #endregion
+
+        #region Happy Teddy Bear Tests
+
+        [Fact]
+        public void HappyTeddyBear_Will_Kill_Agent_If_Same_Agent_Sent_Twice_In_A_Row()
+        {
+            var creature = GetCreature(CreatureIds.HappyTeddyBear);
+            var commandWindow = InitializeCommandWindow(creature);
+            var agent = TestData.DefaultAgentModel;
+            creature.script = new HappyTeddy { lastAgent = agent };
+
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+
+            result.Should().BeTrue();
+        }
+
+        [Fact]
+        public void HappyTeddyBear_Will_Not_Kill_Agent_If_Last_Agent_Was_Different()
+        {
+            var creature = GetCreature(CreatureIds.HappyTeddyBear);
+            var commandWindow = InitializeCommandWindow(creature);
+            var agent = TestData.DefaultAgentModel;
+            var lastAgent = TestData.DefaultAgentModel;
+            lastAgent.instanceId += 1L;
+            creature.script = new HappyTeddy { lastAgent = lastAgent };
+
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+
+            result.Should().BeFalse();
         }
 
         #endregion
@@ -241,11 +274,17 @@ namespace LobotomyCorporationMods.Test
             return agent;
         }
 
-        [CanBeNull]
+        [NotNull]
         private static CreatureModel GetCreature(CreatureIds creatureId)
         {
-            var creature = TestExtensions.CreateCreatureModel(TestData.DefaultAgentModel, TestData.DefaultCreatureTypeInfo, TestData.DefaultCreatureObserveInfoModel, TestData.DefaultSkillTypeInfo);
+            var creature = TestExtensions.CreateCreatureModel(TestData.DefaultAgentModel, TestData.DefaultCreatureLayer, TestData.DefaultCreatureTypeInfo, TestData.DefaultCreatureObserveInfoModel,
+                TestData.DefaultSkillTypeInfo);
+            creature.instanceId = (long)creatureId;
             creature.metadataId = (long)creatureId;
+
+            // Need to initialize the CreatureLayer with our new creature
+            var creatureUnit = TestExtensions.CreateCreatureUnit();
+            TestExtensions.CreateCreatureLayer(new Dictionary<long, CreatureUnit> { { (long)creatureId, creatureUnit } });
 
             return creature;
         }
