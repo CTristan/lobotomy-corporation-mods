@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: MIT
 
+using LobotomyCorporationMods.Common;
+
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators
 {
     internal sealed class CrumblingArmorEvaluator : CreatureEvaluator
@@ -10,7 +12,12 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 
         protected override bool WillAgentDieFromThisCreature()
         {
-            return Agent.fortitudeLevel == 1;
+            return Agent.fortitudeLevel == 1 || AgentHasGiftAndWillPerformAttachmentWork();
+        }
+
+        private bool AgentHasGiftAndWillPerformAttachmentWork()
+        {
+            return Agent.HasCrumblingArmor() && SkillType == RwbpType.B;
         }
     }
 }

@@ -127,24 +127,79 @@ namespace LobotomyCorporationMods.Test
 
         #endregion
 
-        #region Helper Methods
+        #region Crumbling Armor Tests
 
-        [CanBeNull]
-        private static CreatureModel GetCreature(CreatureIds creatureId)
+        [Fact]
+        public void CrumblingArmor_Will_Kill_Agent_With_Fortitude_Of_One()
         {
-            var creature = TestExtensions.CreateCreatureModel(TestData.DefaultAgentModel, TestData.DefaultCreatureTypeInfo, TestData.DefaultCreatureObserveInfoModel, TestData.DefaultSkillTypeInfo);
-            creature.metadataId = (long)creatureId;
+            var creature = GetCreature(CreatureIds.CrumblingArmor);
+            var commandWindow = InitializeCommandWindow(creature);
+            var agent = TestData.DefaultAgentModel;
+            agent.primaryStat.hp = StatLevelOne;
 
-            return creature;
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+
+            result.Should().BeTrue();
         }
 
-        [NotNull]
-        private static CommandWindow.CommandWindow InitializeCommandWindow(UnitModel currentTarget)
+        [Theory]
+        [InlineData(EquipmentId.CrumblingArmorGift1)]
+        [InlineData(EquipmentId.CrumblingArmorGift2)]
+        [InlineData(EquipmentId.CrumblingArmorGift3)]
+        [InlineData(EquipmentId.CrumblingArmorGift4)]
+        public void CrumblingArmor_Will_Kill_Agent_With_Gift_If_Performing_Attachment_Work(EquipmentId equipmentId)
         {
-            var commandWindow = TestExtensions.CreateCommandWindow(currentTarget, CommandType.Management, TestData.DefaultSkillTypeList);
-            commandWindow.DeadColor = Color.red;
+            var creature = GetCreature(CreatureIds.CrumblingArmor);
+            const RwbpType SkillType = RwbpType.B;
+            var commandWindow = InitializeCommandWindow(creature, SkillType);
+            var agent = GetAgentWithGift(equipmentId);
+            agent.primaryStat.hp = StatLevelFive;
 
-            return commandWindow;
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+
+            result.Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(StatLevelTwo)]
+        [InlineData(StatLevelThree)]
+        [InlineData(StatLevelFour)]
+        [InlineData(StatLevelFive)]
+        public void CrumblingArmor_Will_Not_Kill_Agent_With_Fortitude_Greater_Than_One(int fortitude)
+        {
+            var creature = GetCreature(CreatureIds.CrumblingArmor);
+            var commandWindow = InitializeCommandWindow(creature);
+            var agent = TestData.DefaultAgentModel;
+            agent.primaryStat.hp = fortitude;
+
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+
+            result.Should().BeFalse();
+        }
+
+        [Theory]
+        [InlineData(EquipmentId.CrumblingArmorGift1, RwbpType.R)]
+        [InlineData(EquipmentId.CrumblingArmorGift1, RwbpType.W)]
+        [InlineData(EquipmentId.CrumblingArmorGift1, RwbpType.P)]
+        [InlineData(EquipmentId.CrumblingArmorGift2, RwbpType.R)]
+        [InlineData(EquipmentId.CrumblingArmorGift2, RwbpType.W)]
+        [InlineData(EquipmentId.CrumblingArmorGift2, RwbpType.P)]
+        [InlineData(EquipmentId.CrumblingArmorGift3, RwbpType.R)]
+        [InlineData(EquipmentId.CrumblingArmorGift3, RwbpType.W)]
+        [InlineData(EquipmentId.CrumblingArmorGift3, RwbpType.P)]
+        [InlineData(EquipmentId.CrumblingArmorGift4, RwbpType.R)]
+        [InlineData(EquipmentId.CrumblingArmorGift4, RwbpType.W)]
+        [InlineData(EquipmentId.CrumblingArmorGift4, RwbpType.P)]
+        public void CrumblingArmor_Will_Not_Kill_Agent_With_Gift_If_Not_Performing_Attachment_Work(EquipmentId giftId, RwbpType skillType)
+        {
+            var creature = GetCreature(CreatureIds.CrumblingArmor);
+            var commandWindow = InitializeCommandWindow(creature, skillType);
+            var agent = GetAgentWithGift(giftId);
+            agent.primaryStat.hp = StatLevelFive;
+
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+
+            result.Should().BeFalse();
         }
 
         #endregion
@@ -169,6 +224,42 @@ namespace LobotomyCorporationMods.Test
             const string MethodName = "SetFilter";
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
+        }
+
+        #endregion
+
+        #region Helper Methods
+
+        [NotNull]
+        private static AgentModel GetAgentWithGift(EquipmentId giftId)
+        {
+            var agent = TestData.DefaultAgentModel;
+            var gift = TestData.DefaultEgoGiftModel;
+            gift.metaInfo.id = (int)giftId;
+            agent.Equipment.gifts.addedGifts.Add(gift);
+
+            return agent;
+        }
+
+        [CanBeNull]
+        private static CreatureModel GetCreature(CreatureIds creatureId)
+        {
+            var creature = TestExtensions.CreateCreatureModel(TestData.DefaultAgentModel, TestData.DefaultCreatureTypeInfo, TestData.DefaultCreatureObserveInfoModel, TestData.DefaultSkillTypeInfo);
+            creature.metadataId = (long)creatureId;
+
+            return creature;
+        }
+
+        [NotNull]
+        private static CommandWindow.CommandWindow InitializeCommandWindow(UnitModel currentTarget, RwbpType rwbpType = (RwbpType)1)
+        {
+            SkillTypeInfo[] skillTypeInfos = { new SkillTypeInfo { id = (long)rwbpType } };
+            var skillTypeList = TestExtensions.CreateSkillTypeList(skillTypeInfos);
+
+            var commandWindow = TestExtensions.CreateCommandWindow(currentTarget, CommandType.Management, (long)rwbpType, skillTypeList);
+            commandWindow.DeadColor = Color.red;
+
+            return commandWindow;
         }
 
         #endregion

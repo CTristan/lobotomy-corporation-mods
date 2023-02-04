@@ -133,7 +133,7 @@ namespace LobotomyCorporationMods.Test
         }
 
         [NotNull]
-        public static CommandWindow.CommandWindow CreateCommandWindow(UnitModel currentTarget, CommandType currentWindowType, [NotNull] SkillTypeList skillTypeList)
+        public static CommandWindow.CommandWindow CreateCommandWindow(UnitModel currentTarget, CommandType currentWindowType, long selectedWork, [NotNull] SkillTypeList skillTypeList)
         {
             // Requires an existing SkillTypeList instance
             Guard.Against.Null(skillTypeList, nameof(skillTypeList));
@@ -141,7 +141,7 @@ namespace LobotomyCorporationMods.Test
             CreateUninitializedObject<CommandWindow.CommandWindow>(out var commandWindow);
 
             var fields = GetUninitializedObjectFields(commandWindow.GetType());
-            var newValues = new Dictionary<string, object> { { "_currentTarget", currentTarget }, { "_currentWindowType", currentWindowType } };
+            var newValues = new Dictionary<string, object> { { "_currentTarget", currentTarget }, { "_currentWindowType", currentWindowType }, { "_selectedWork", selectedWork } };
             commandWindow = GetPopulatedUninitializedObject(commandWindow, fields, newValues);
             newValues.Add("_currentWindow", commandWindow);
 
@@ -202,9 +202,26 @@ namespace LobotomyCorporationMods.Test
         }
 
         [NotNull]
-        public static EGOgiftModel CreateEgoGiftModel(EquipmentTypeInfo metaInfo)
+        public static EGOgiftModel CreateEgoGiftModel(EquipmentTypeInfo metaInfo, EquipmentScriptBase script)
         {
-            return new EGOgiftModel { metaInfo = metaInfo };
+            return new EGOgiftModel { metaInfo = metaInfo, script = script };
+        }
+
+        [NotNull]
+        public static EquipmentModel CreateEquipmentModel(EquipmentTypeInfo metaInfo)
+        {
+            return new EquipmentModel { metaInfo = metaInfo };
+        }
+
+        [NotNull]
+        public static EquipmentScriptBase CreateEquipmentScriptBase(EquipmentModel model)
+        {
+            CreateUninitializedObject<EquipmentScriptBase>(out var equipmentScriptBase);
+
+            var fields = GetUninitializedObjectFields(equipmentScriptBase.GetType());
+            var newValues = new Dictionary<string, object> { { "_model", model } };
+
+            return GetPopulatedUninitializedObject(equipmentScriptBase, fields, newValues);
         }
 
         [NotNull]

@@ -51,7 +51,7 @@ namespace LobotomyCorporationMods.Test
         internal static AppearanceUI DefaultAppearanceUI => TestExtensions.CreateAppearanceUI();
 
         [NotNull]
-        internal static CommandWindow.CommandWindow DefaultCommandWindow => TestExtensions.CreateCommandWindow(DefaultUnitModel, DefaultCommandType, DefaultSkillTypeList);
+        internal static CommandWindow.CommandWindow DefaultCommandWindow => TestExtensions.CreateCommandWindow(DefaultUnitModel, DefaultCommandType, 1L, DefaultSkillTypeList);
 
         [NotNull]
         internal static CreatureEquipmentMakeInfo DefaultCreatureEquipmentMakeInfo => TestExtensions.CreateCreatureEquipmentMakeInfo(DefaultEquipmentTypeInfo);
@@ -69,7 +69,13 @@ namespace LobotomyCorporationMods.Test
         internal static CustomizingWindow DefaultCustomizingWindow => TestExtensions.CreateCustomizingWindow(DefaultAppearanceUI, DefaultAgentModel, DefaultAgentData, DefaultCustomizingType);
 
         [NotNull]
-        internal static EGOgiftModel DefaultEgoGiftModel => TestExtensions.CreateEgoGiftModel(DefaultEquipmentTypeInfo);
+        internal static EGOgiftModel DefaultEgoGiftModel => TestExtensions.CreateEgoGiftModel(DefaultEquipmentTypeInfo, DefaultEquipmentScriptBase);
+
+        [NotNull]
+        internal static EquipmentModel DefaultEquipmentModel => TestExtensions.CreateEquipmentModel(DefaultEquipmentTypeInfo);
+
+        [NotNull]
+        internal static EquipmentScriptBase DefaultEquipmentScriptBase => TestExtensions.CreateEquipmentScriptBase(DefaultEquipmentModel);
 
         [NotNull]
         internal static EquipmentTypeInfo DefaultEquipmentTypeInfo => TestExtensions.CreateEquipmentTypeInfo();
