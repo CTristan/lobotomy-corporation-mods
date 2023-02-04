@@ -237,6 +237,71 @@ namespace LobotomyCorporationMods.Test
 
         #endregion
 
+        #region Nothing There Tests
+
+        [Theory]
+        [InlineData(StatLevelOne)]
+        [InlineData(StatLevelTwo)]
+        [InlineData(StatLevelThree)]
+        public void NothingThere_Will_Kill_Agent_With_Fortitude_Less_Than_Four(int fortitude)
+        {
+            var creature = GetCreature(CreatureIds.NothingThere);
+            var commandWindow = InitializeCommandWindow(creature);
+            var agent = TestData.DefaultAgentModel;
+            agent.primaryStat.hp = fortitude;
+
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+
+            result.Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(StatLevelFour)]
+        [InlineData(StatLevelFive)]
+        public void NothingThere_Will_Not_Kill_Agent_With_Fortitude_Greater_Than_Three(int fortitude)
+        {
+            var creature = GetCreature(CreatureIds.NothingThere);
+            var commandWindow = InitializeCommandWindow(creature);
+            var agent = TestData.DefaultAgentModel;
+            agent.primaryStat.hp = fortitude;
+
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public void NothingThere_Will_Kill_Agent_If_Disguised()
+        {
+            var creature = GetCreature(CreatureIds.NothingThere);
+            creature.script = new Nothing();
+            (creature.script as Nothing).copiedWorker = TestData.DefaultAgentModel;
+            var commandWindow = InitializeCommandWindow(creature);
+            var agent = TestData.DefaultAgentModel;
+            agent.primaryStat.hp = StatLevelFive;
+
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+
+            result.Should().BeTrue();
+        }
+
+        [Fact]
+        public void NothingThere_Will_Not_Kill_Agent_If_Not_Disguised()
+        {
+            var creature = GetCreature(CreatureIds.NothingThere);
+            creature.script = new Nothing();
+            (creature.script as Nothing).copiedWorker = null;
+            var commandWindow = InitializeCommandWindow(creature);
+            var agent = TestData.DefaultAgentModel;
+            agent.primaryStat.hp = StatLevelFive;
+
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+
+            result.Should().BeFalse();
+        }
+
+        #endregion
+
         #region Harmony Tests
 
         /// <summary>

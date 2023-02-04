@@ -12,7 +12,24 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
         {
             const int MinFortitude = 4;
 
-            return Agent.fortitudeLevel < MinFortitude;
+            return Agent.fortitudeLevel < MinFortitude || IsDisguised();
+        }
+
+        private bool IsDisguised()
+        {
+            bool isDisguised;
+
+            if (Creature.script is Nothing nothing)
+            {
+                var notDisguised = nothing.copiedWorker is null;
+                isDisguised = !notDisguised;
+            }
+            else
+            {
+                isDisguised = false;
+            }
+
+            return isDisguised;
         }
     }
 }
