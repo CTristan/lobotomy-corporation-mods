@@ -60,38 +60,6 @@ namespace LobotomyCorporationMods.Test
 
         #endregion
 
-        #region Happy Teddy Bear Tests
-
-        [Fact]
-        public void HappyTeddyBear_Will_Kill_Agent_If_Same_Agent_Sent_Twice_In_A_Row()
-        {
-            var creature = GetCreature(CreatureIds.HappyTeddyBear);
-            var commandWindow = InitializeCommandWindow(creature);
-            var agent = TestData.DefaultAgentModel;
-            creature.script = new HappyTeddy { lastAgent = agent };
-
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
-
-            result.Should().BeTrue();
-        }
-
-        [Fact]
-        public void HappyTeddyBear_Will_Not_Kill_Agent_If_Last_Agent_Was_Different()
-        {
-            var creature = GetCreature(CreatureIds.HappyTeddyBear);
-            var commandWindow = InitializeCommandWindow(creature);
-            var agent = TestData.DefaultAgentModel;
-            var lastAgent = TestData.DefaultAgentModel;
-            lastAgent.instanceId += 1L;
-            creature.script = new HappyTeddy { lastAgent = lastAgent };
-
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
-
-            result.Should().BeFalse();
-        }
-
-        #endregion
-
         #region Bloodbath Tests
 
         [Fact]
@@ -229,6 +197,38 @@ namespace LobotomyCorporationMods.Test
             var commandWindow = InitializeCommandWindow(creature, skillType);
             var agent = GetAgentWithGift(giftId);
             agent.primaryStat.hp = StatLevelFive;
+
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+
+            result.Should().BeFalse();
+        }
+
+        #endregion
+
+        #region Happy Teddy Bear Tests
+
+        [Fact]
+        public void HappyTeddyBear_Will_Kill_Agent_If_Same_Agent_Sent_Twice_In_A_Row()
+        {
+            var creature = GetCreature(CreatureIds.HappyTeddyBear);
+            var commandWindow = InitializeCommandWindow(creature);
+            var agent = TestData.DefaultAgentModel;
+            creature.script = new HappyTeddy { lastAgent = agent };
+
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+
+            result.Should().BeTrue();
+        }
+
+        [Fact]
+        public void HappyTeddyBear_Will_Not_Kill_Agent_If_Last_Agent_Was_Different()
+        {
+            var creature = GetCreature(CreatureIds.HappyTeddyBear);
+            var commandWindow = InitializeCommandWindow(creature);
+            var agent = TestData.DefaultAgentModel;
+            var lastAgent = TestData.DefaultAgentModel;
+            lastAgent.instanceId += 1L;
+            creature.script = new HappyTeddy { lastAgent = lastAgent };
 
             var result = agent.CheckIfWorkWillKillAgent(commandWindow);
 
@@ -640,12 +640,28 @@ namespace LobotomyCorporationMods.Test
                 qliphothCounter, TestData.DefaultSkillTypeInfo);
             creature.instanceId = (long)creatureId;
             creature.metadataId = (long)creatureId;
+            SetMaxObservation(creature);
 
             // Need to initialize the CreatureLayer with our new creature
             var creatureUnit = TestExtensions.CreateCreatureUnit();
             TestExtensions.CreateCreatureLayer(new Dictionary<long, CreatureUnit> { { (long)creatureId, creatureUnit } });
 
             return creature;
+        }
+
+        private static void SetMaxObservation([NotNull] CreatureModel creature)
+        {
+            var observeRegions = new List<ObserveInfoData>
+            {
+                new ObserveInfoData { regionName = "stat" },
+                new ObserveInfoData { regionName = "defense" },
+                new ObserveInfoData { regionName = "work_r" },
+                new ObserveInfoData { regionName = "work_w" },
+                new ObserveInfoData { regionName = "work_b" },
+                new ObserveInfoData { regionName = "work_p" }
+            };
+            creature.observeInfo.InitObserveRegion(observeRegions);
+            creature.observeInfo.ObserveAll();
         }
 
         [NotNull]

@@ -24,7 +24,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
             var agentWillDie = false;
 
             // Make sure we have completed observation so we can't cheat
-            if (!Creature.observeInfo.IsMaxObserved())
+            if (Creature.observeInfo.IsMaxObserved())
             {
                 agentWillDie = WillAgentDieFromThisCreature() || WillAgentDieFromOtherCreatures();
             }
