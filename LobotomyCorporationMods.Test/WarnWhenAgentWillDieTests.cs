@@ -18,11 +18,11 @@ namespace LobotomyCorporationMods.Test
     public sealed class WarnWhenAgentWillDieTests
     {
         private const string DeadAgentString = "AgentState_Dead";
-        private const int StatLevelFive = 100;
-        private const int StatLevelFour = 84;
-        private const int StatLevelOne = 29;
-        private const int StatLevelThree = 64;
-        private const int StatLevelTwo = 44;
+        private const int StatLevelFive = 85;
+        private const int StatLevelFour = 65;
+        private const int StatLevelOne = 1;
+        private const int StatLevelThree = 45;
+        private const int StatLevelTwo = 30;
 
         public WarnWhenAgentWillDieTests()
         {
@@ -275,7 +275,7 @@ namespace LobotomyCorporationMods.Test
         {
             var creature = GetCreature(CreatureIds.NothingThere);
             creature.script = new Nothing();
-            (creature.script as Nothing).copiedWorker = TestData.DefaultAgentModel;
+            ((Nothing)creature.script).copiedWorker = TestData.DefaultAgentModel;
             var commandWindow = InitializeCommandWindow(creature);
             var agent = TestData.DefaultAgentModel;
             agent.primaryStat.hp = StatLevelFive;
@@ -290,7 +290,7 @@ namespace LobotomyCorporationMods.Test
         {
             var creature = GetCreature(CreatureIds.NothingThere);
             creature.script = new Nothing();
-            (creature.script as Nothing).copiedWorker = null;
+            ((Nothing)creature.script).copiedWorker = null;
             var commandWindow = InitializeCommandWindow(creature);
             var agent = TestData.DefaultAgentModel;
             agent.primaryStat.hp = StatLevelFive;
@@ -399,6 +399,140 @@ namespace LobotomyCorporationMods.Test
 
         #endregion
 
+        #region Singing Machine Tests
+
+        /// <summary>
+        ///     Agent dies due to high fortitude.
+        /// </summary>
+        [Theory]
+        [InlineData(StatLevelFour, StatLevelThree)]
+        [InlineData(StatLevelFour, StatLevelFour)]
+        [InlineData(StatLevelFour, StatLevelFive)]
+        [InlineData(StatLevelFive, StatLevelThree)]
+        [InlineData(StatLevelFive, StatLevelFour)]
+        [InlineData(StatLevelFive, StatLevelFive)]
+        public void SingingMachine_Will_Kill_Agent_At_Qliphoth_Greater_Than_Zero_With_Fortitude_Greater_Than_Three_And_Temperance_Greater_Than_Two(int fortitude, int temperance)
+        {
+            const int QliphothCounterOne = 1;
+            var creature = GetCreature(CreatureIds.SingingMachine, QliphothCounterOne);
+            var commandWindow = InitializeCommandWindow(creature);
+            var agent = TestData.DefaultAgentModel;
+            agent.primaryStat.hp = fortitude;
+            agent.primaryStat.work = temperance;
+
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+
+            result.Should().BeTrue();
+        }
+
+        /// <summary>
+        ///     Agent dies due to low temperance.
+        /// </summary>
+        [Theory]
+        [InlineData(StatLevelOne, StatLevelOne)]
+        [InlineData(StatLevelOne, StatLevelTwo)]
+        [InlineData(StatLevelTwo, StatLevelOne)]
+        [InlineData(StatLevelTwo, StatLevelTwo)]
+        [InlineData(StatLevelThree, StatLevelOne)]
+        [InlineData(StatLevelThree, StatLevelTwo)]
+        public void SingingMachine_Will_Kill_Agent_At_Qliphoth_Greater_Than_Zero_With_Fortitude_Less_Than_Four_And_Temperance_Less_Than_Three(int fortitude, int temperance)
+        {
+            // Same test as high fortitude
+            SingingMachine_Will_Kill_Agent_At_Qliphoth_Greater_Than_Zero_With_Fortitude_Greater_Than_Three_And_Temperance_Greater_Than_Two(fortitude, temperance);
+        }
+
+        /// <summary>
+        ///     Singing Machine's gift gives +8 fortitude, so we need to make sure that the gift won't push an agent's fortitude to
+        ///     4.
+        /// </summary>
+        [Theory]
+        [InlineData(StatLevelFour - 1)]
+        [InlineData(StatLevelFour - 2)]
+        [InlineData(StatLevelFour - 3)]
+        [InlineData(StatLevelFour - 4)]
+        [InlineData(StatLevelFour - 5)]
+        [InlineData(StatLevelFour - 6)]
+        [InlineData(StatLevelFour - 7)]
+        [InlineData(StatLevelFour - 8)]
+        public void SingingMachine_Will_Kill_Agent_At_Qliphoth_Greater_Than_Zero_With_Fortitude_Three_Because_Gift_Will_Make_Fortitude_Greater_Than_Three(int fortitude)
+        {
+            const int QliphothCounterOne = 1;
+            var creature = GetCreature(CreatureIds.SingingMachine, QliphothCounterOne);
+            var commandWindow = InitializeCommandWindow(creature);
+            var agent = TestData.DefaultAgentModel;
+            agent.primaryStat.hp = fortitude;
+            agent.primaryStat.work = StatLevelThree;
+
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+
+            result.Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(StatLevelOne, StatLevelThree)]
+        [InlineData(StatLevelOne, StatLevelFour)]
+        [InlineData(StatLevelOne, StatLevelFive)]
+        [InlineData(StatLevelTwo, StatLevelThree)]
+        [InlineData(StatLevelTwo, StatLevelFour)]
+        [InlineData(StatLevelTwo, StatLevelFive)]
+        [InlineData(StatLevelThree, StatLevelThree)]
+        [InlineData(StatLevelThree, StatLevelFour)]
+        [InlineData(StatLevelThree, StatLevelFive)]
+        public void SingingMachine_Will_Not_Kill_Agent_At_Qliphoth_Greater_Than_Zero_With_Fortitude_Less_Than_Four_And_Temperance_Greater_Than_Two(int fortitude, int temperance)
+        {
+            const int QliphothCounterOne = 1;
+            var creature = GetCreature(CreatureIds.SingingMachine, QliphothCounterOne);
+            var commandWindow = InitializeCommandWindow(creature);
+            var agent = TestData.DefaultAgentModel;
+            agent.primaryStat.hp = fortitude;
+            agent.primaryStat.work = temperance;
+
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+
+            result.Should().BeFalse();
+        }
+
+        [Theory]
+        [InlineData(StatLevelOne, StatLevelOne)]
+        [InlineData(StatLevelOne, StatLevelTwo)]
+        [InlineData(StatLevelOne, StatLevelThree)]
+        [InlineData(StatLevelOne, StatLevelFour)]
+        [InlineData(StatLevelOne, StatLevelFive)]
+        [InlineData(StatLevelTwo, StatLevelOne)]
+        [InlineData(StatLevelTwo, StatLevelTwo)]
+        [InlineData(StatLevelTwo, StatLevelThree)]
+        [InlineData(StatLevelTwo, StatLevelFour)]
+        [InlineData(StatLevelTwo, StatLevelFive)]
+        [InlineData(StatLevelThree, StatLevelOne)]
+        [InlineData(StatLevelThree, StatLevelTwo)]
+        [InlineData(StatLevelThree, StatLevelThree)]
+        [InlineData(StatLevelThree, StatLevelFour)]
+        [InlineData(StatLevelThree, StatLevelFive)]
+        [InlineData(StatLevelFour, StatLevelOne)]
+        [InlineData(StatLevelFour, StatLevelTwo)]
+        [InlineData(StatLevelFour, StatLevelThree)]
+        [InlineData(StatLevelFour, StatLevelFour)]
+        [InlineData(StatLevelFour, StatLevelFive)]
+        [InlineData(StatLevelFive, StatLevelOne)]
+        [InlineData(StatLevelFive, StatLevelTwo)]
+        [InlineData(StatLevelFive, StatLevelThree)]
+        [InlineData(StatLevelFive, StatLevelFour)]
+        [InlineData(StatLevelFive, StatLevelFive)]
+        public void SingingMachine_Will_Kill_Agent_At_Qliphoth_Zero_Regardless_Of_Fortitude_And_Temperance(int fortitude, int temperance)
+        {
+            var creature = GetCreature(CreatureIds.SingingMachine);
+            var commandWindow = InitializeCommandWindow(creature);
+            var agent = TestData.DefaultAgentModel;
+            agent.primaryStat.hp = fortitude;
+            agent.primaryStat.work = temperance;
+
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+
+            result.Should().BeTrue();
+        }
+
+        #endregion
+
         #region Void Dream Tests
 
         [Fact]
@@ -450,7 +584,8 @@ namespace LobotomyCorporationMods.Test
         [Fact]
         public void WarmHeartedWoodsman_Will_Not_Kill_Agent_If_Qliphoth_Counter_Is_Greater_Than_Zero()
         {
-            var creature = GetCreature(CreatureIds.WarmHeartedWoodsman, 1);
+            const int QliphothCounterOne = 1;
+            var creature = GetCreature(CreatureIds.WarmHeartedWoodsman, QliphothCounterOne);
             var commandWindow = InitializeCommandWindow(creature);
             var agent = TestData.DefaultAgentModel;
 
