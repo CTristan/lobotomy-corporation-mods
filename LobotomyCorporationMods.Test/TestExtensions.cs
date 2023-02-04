@@ -170,7 +170,7 @@ namespace LobotomyCorporationMods.Test
         }
 
         [NotNull]
-        public static CreatureModel CreateCreatureModel(AgentModel agent, [NotNull] CreatureLayer creatureLayer, CreatureTypeInfo metaInfo, CreatureObserveInfoModel observeInfo,
+        public static CreatureModel CreateCreatureModel(AgentModel agent, [NotNull] CreatureLayer creatureLayer, CreatureTypeInfo metaInfo, CreatureObserveInfoModel observeInfo, int qliphothCounter,
             SkillTypeInfo skillTypeInfo)
         {
             // Requires an existing CreatureLayer instance
@@ -179,7 +179,7 @@ namespace LobotomyCorporationMods.Test
             CreateUninitializedObject<CreatureModel>(out var creatureModel);
 
             var fields = GetUninitializedObjectFields(creatureModel.GetType());
-            var newValues = new Dictionary<string, object> { { "metaInfo", metaInfo }, { "observeInfo", observeInfo } };
+            var newValues = new Dictionary<string, object> { { "metaInfo", metaInfo }, { "observeInfo", observeInfo }, { "_qliphothCounter", qliphothCounter } };
             var newCreatureModel = GetPopulatedUninitializedObject(creatureModel, fields, newValues);
 
             // Needed to avoid a circular reference from currentSkill

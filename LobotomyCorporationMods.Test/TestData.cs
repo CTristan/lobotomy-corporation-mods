@@ -20,6 +20,7 @@ namespace LobotomyCorporationMods.Test
         internal const CommandType DefaultCommandType = (CommandType)1;
         internal const CustomizingType DefaultCustomizingType = (CustomizingType)1;
         internal const string DefaultGiftName = "DefaultGiftName";
+        internal const int DefaultQliphothCounter = 0;
         internal const string DefaultSpriteName = "DefaultSpriteName";
         internal const int None = 0;
 
@@ -62,7 +63,7 @@ namespace LobotomyCorporationMods.Test
 
         [NotNull]
         internal static CreatureModel DefaultCreatureModel => TestExtensions.CreateCreatureModel(DefaultAgentModel, DefaultCreatureLayer, DefaultCreatureTypeInfo, DefaultCreatureObserveInfoModel,
-            DefaultSkillTypeInfo);
+            DefaultQliphothCounter, DefaultSkillTypeInfo);
 
         [NotNull]
         internal static CreatureObserveInfoModel DefaultCreatureObserveInfoModel => TestExtensions.CreateCreatureObserveInfoModel(DefaultCreatureTypeInfo, DefaultObserveRegions);

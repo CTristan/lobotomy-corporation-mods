@@ -433,6 +433,34 @@ namespace LobotomyCorporationMods.Test
 
         #endregion
 
+        #region Warm-Hearted Woodsman Tests
+
+        [Fact]
+        public void WarmHeartedWoodsman_Will_Kill_Agent_If_Qliphoth_Counter_Is_Zero()
+        {
+            var creature = GetCreature(CreatureIds.WarmHeartedWoodsman);
+            var commandWindow = InitializeCommandWindow(creature);
+            var agent = TestData.DefaultAgentModel;
+
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+
+            result.Should().BeTrue();
+        }
+
+        [Fact]
+        public void WarmHeartedWoodsman_Will_Not_Kill_Agent_If_Qliphoth_Counter_Is_Greater_Than_Zero()
+        {
+            var creature = GetCreature(CreatureIds.WarmHeartedWoodsman, 1);
+            var commandWindow = InitializeCommandWindow(creature);
+            var agent = TestData.DefaultAgentModel;
+
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+
+            result.Should().BeFalse();
+        }
+
+        #endregion
+
         #region Harmony Tests
 
         /// <summary>
@@ -471,10 +499,10 @@ namespace LobotomyCorporationMods.Test
         }
 
         [NotNull]
-        private static CreatureModel GetCreature(CreatureIds creatureId)
+        private static CreatureModel GetCreature(CreatureIds creatureId, int qliphothCounter = 0)
         {
             var creature = TestExtensions.CreateCreatureModel(TestData.DefaultAgentModel, TestData.DefaultCreatureLayer, TestData.DefaultCreatureTypeInfo, TestData.DefaultCreatureObserveInfoModel,
-                TestData.DefaultSkillTypeInfo);
+                qliphothCounter, TestData.DefaultSkillTypeInfo);
             creature.instanceId = (long)creatureId;
             creature.metadataId = (long)creatureId;
 
