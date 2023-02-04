@@ -399,6 +399,40 @@ namespace LobotomyCorporationMods.Test
 
         #endregion
 
+        #region Void Dream Tests
+
+        [Fact]
+        public void VoidDream_Will_Kill_Agent_With_Temperance_Of_One()
+        {
+            var creature = GetCreature(CreatureIds.VoidDream);
+            var commandWindow = InitializeCommandWindow(creature);
+            var agent = TestData.DefaultAgentModel;
+            agent.primaryStat.work = StatLevelOne;
+
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+
+            result.Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(StatLevelTwo)]
+        [InlineData(StatLevelThree)]
+        [InlineData(StatLevelFour)]
+        [InlineData(StatLevelFive)]
+        public void VoidDream_Will_Not_Kill_Agent_With_Temperance_Greater_Than_One(int temperance)
+        {
+            var creature = GetCreature(CreatureIds.VoidDream);
+            var commandWindow = InitializeCommandWindow(creature);
+            var agent = TestData.DefaultAgentModel;
+            agent.primaryStat.work = temperance;
+
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+
+            result.Should().BeFalse();
+        }
+
+        #endregion
+
         #region Harmony Tests
 
         /// <summary>
