@@ -16,7 +16,7 @@ using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Interfaces;
-using NSubstitute;
+using Moq;
 using UnityEngine;
 using UnityEngine.UI;
 using WorkerSprite;
@@ -27,13 +27,13 @@ namespace LobotomyCorporationMods.Test
     internal static class TestExtensions
     {
         [NotNull]
-        public static IFileManager CreateFileManager()
+        public static Mock<IFileManager> GetMockFileManager()
         {
-            var fileManager = Substitute.For<IFileManager>(null);
-            fileManager.GetFile(default).ReturnsForAnyArgs(x => x.Arg<string>().InCurrentDirectory());
-            fileManager.ReadAllText(default, default).ReturnsForAnyArgs(x => File.ReadAllText(x.Arg<string>().InCurrentDirectory()));
+            var mockFileManager = new Mock<IFileManager>();
+            mockFileManager.Setup(fm => fm.GetFile(It.IsAny<string>())).Returns((string fileName) => fileName.InCurrentDirectory());
+            mockFileManager.Setup(fm => fm.ReadAllText(It.IsAny<string>(), It.IsAny<bool>())).Returns((string fileName, bool createIfNotExists) => File.ReadAllText(fileName.InCurrentDirectory()));
 
-            return fileManager;
+            return mockFileManager;
         }
 
         [NotNull]
@@ -155,8 +155,27 @@ namespace LobotomyCorporationMods.Test
         }
 
         [NotNull]
-        public static CreatureModel CreateCreatureModel(AgentModel agent, CreatureTypeInfo metaInfo, CreatureObserveInfoModel observeInfo, SkillTypeInfo skillTypeInfo)
+        public static CreatureLayer CreateCreatureLayer(Dictionary<long, CreatureUnit> creatureDic)
         {
+            CreateUninitializedObject<CreatureLayer>(out var creatureLayer);
+
+            var fields = GetUninitializedObjectFields(creatureLayer.GetType());
+            var newValues = new Dictionary<string, object> { { "creatureDic", creatureDic } };
+            creatureLayer = GetPopulatedUninitializedObject(creatureLayer, fields, newValues);
+            newValues.Add("<currentLayer>k__BackingField", creatureLayer);
+
+            creatureLayer = GetPopulatedUninitializedObject(creatureLayer, fields, newValues);
+
+            return creatureLayer;
+        }
+
+        [NotNull]
+        public static CreatureModel CreateCreatureModel(AgentModel agent, [NotNull] CreatureLayer creatureLayer, CreatureTypeInfo metaInfo, CreatureObserveInfoModel observeInfo,
+            SkillTypeInfo skillTypeInfo)
+        {
+            // Requires an existing CreatureLayer instance
+            Guard.Against.Null(creatureLayer, nameof(creatureLayer));
+
             CreateUninitializedObject<CreatureModel>(out var creatureModel);
 
             var fields = GetUninitializedObjectFields(creatureModel.GetType());
@@ -185,6 +204,12 @@ namespace LobotomyCorporationMods.Test
         public static CreatureTypeInfo CreateCreatureTypeInfo(List<CreatureEquipmentMakeInfo> equipMakeInfos)
         {
             return new CreatureTypeInfo { equipMakeInfos = equipMakeInfos };
+        }
+
+        [NotNull]
+        public static CreatureUnit CreateCreatureUnit()
+        {
+            return new CreatureUnit();
         }
 
         [NotNull]

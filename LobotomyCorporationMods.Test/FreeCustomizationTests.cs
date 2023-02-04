@@ -9,7 +9,6 @@ using JetBrains.Annotations;
 using LobotomyCorporationMods.FreeCustomization;
 using LobotomyCorporationMods.FreeCustomization.Extensions;
 using LobotomyCorporationMods.FreeCustomization.Patches;
-using NSubstitute;
 using UnityEngine;
 using Xunit;
 using Xunit.Extensions;
@@ -22,14 +21,14 @@ namespace LobotomyCorporationMods.Test
         public FreeCustomizationTests()
         {
             _ = new Harmony_Patch();
-            var fileManager = TestExtensions.CreateFileManager();
-            Harmony_Patch.Instance.LoadData(fileManager);
+            var mockFileManager = TestExtensions.GetMockFileManager();
+            Harmony_Patch.Instance.LoadData(mockFileManager.Object);
         }
 
         [Fact]
         public void The_Appearance_UI_does_not_close_itself_if_there_is_no_close_action()
         {
-            var appearanceUi = Substitute.For<AppearanceUI>();
+            var appearanceUi = new AppearanceUI();
 
             var result = AppearanceUIPatchCloseWindow.Prefix(appearanceUi);
 

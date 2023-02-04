@@ -9,7 +9,8 @@ using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Patches;
-using NSubstitute;
+using LobotomyCorporationMods.Common.Interfaces;
+using Moq;
 using Xunit;
 using Xunit.Extensions;
 
@@ -189,12 +190,13 @@ namespace LobotomyCorporationMods.Test
         [Fact]
         public void The_tracker_data_is_saved_when_going_to_the_next_day()
         {
+            var mockFileManager = TestExtensions.GetMockFileManager();
             const string DataFileName = "The_tracker_data_is_saved_when_going_to_the_next_day";
-            var agentWorkTracker = CreateAgentWorkTracker(DataFileName);
+            var agentWorkTracker = CreateAgentWorkTracker(DataFileName, fileManager: mockFileManager.Object);
 
             GameSceneControllerPatchOnClickNextDay.Postfix();
 
-            AssertSaveTrackerCalled(agentWorkTracker);
+            mockFileManager.Verify(mock => mock.WriteAllText(It.IsAny<string>(), agentWorkTracker.ToString()), Times.Once);
         }
 
         [Theory]
@@ -214,18 +216,13 @@ namespace LobotomyCorporationMods.Test
 
         #region Test Helper Methods
 
-        private static void AssertSaveTrackerCalled([NotNull] IAgentWorkTracker agentWorkTracker)
-        {
-            Harmony_Patch.Instance.FileManager.Received().WriteAllText(Arg.Any<string>(), agentWorkTracker.ToString());
-        }
-
         /// <summary>
         ///     Populates the Harmony Patch with an agent work tracker pointed to our specified test data file.
         /// </summary>
         [NotNull]
-        private IAgentWorkTracker CreateAgentWorkTracker(string dataFileName, string trackerData = "")
+        private IAgentWorkTracker CreateAgentWorkTracker(string dataFileName, string trackerData = "", IFileManager fileManager = null)
         {
-            var fileManager = TestExtensions.CreateFileManager();
+            fileManager = fileManager ?? TestExtensions.GetMockFileManager().Object;
             dataFileName = dataFileName.InCurrentDirectory();
             CreateTestTrackerFile(dataFileName, trackerData);
             Harmony_Patch.Instance.LoadData(fileManager, dataFileName);

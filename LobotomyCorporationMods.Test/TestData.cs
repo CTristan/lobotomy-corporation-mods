@@ -24,6 +24,7 @@ namespace LobotomyCorporationMods.Test
         internal const int None = 0;
 
         [NotNull] internal static readonly List<UnitBuf> DefaultBuffList = new List<UnitBuf>();
+        [NotNull] internal static readonly Dictionary<long, CreatureUnit> DefaultCreatureDictionary = new Dictionary<long, CreatureUnit>();
         [NotNull] internal static readonly Dictionary<string, ObserveRegion> DefaultObserveRegions = new Dictionary<string, ObserveRegion>();
         [NotNull] internal static readonly SkillTypeInfo[] DefaultSkillTypeInfoArray = { new SkillTypeInfo() };
         [NotNull] internal static readonly List<UnitStatBuf> DefaultStatBuffList = new List<UnitStatBuf>();
@@ -57,7 +58,11 @@ namespace LobotomyCorporationMods.Test
         internal static CreatureEquipmentMakeInfo DefaultCreatureEquipmentMakeInfo => TestExtensions.CreateCreatureEquipmentMakeInfo(DefaultEquipmentTypeInfo);
 
         [NotNull]
-        internal static CreatureModel DefaultCreatureModel => TestExtensions.CreateCreatureModel(DefaultAgentModel, DefaultCreatureTypeInfo, DefaultCreatureObserveInfoModel, DefaultSkillTypeInfo);
+        internal static CreatureLayer DefaultCreatureLayer => TestExtensions.CreateCreatureLayer(DefaultCreatureDictionary);
+
+        [NotNull]
+        internal static CreatureModel DefaultCreatureModel => TestExtensions.CreateCreatureModel(DefaultAgentModel, DefaultCreatureLayer, DefaultCreatureTypeInfo, DefaultCreatureObserveInfoModel,
+            DefaultSkillTypeInfo);
 
         [NotNull]
         internal static CreatureObserveInfoModel DefaultCreatureObserveInfoModel => TestExtensions.CreateCreatureObserveInfoModel(DefaultCreatureTypeInfo, DefaultObserveRegions);
