@@ -256,6 +256,17 @@ namespace LobotomyCorporationMods.Test
         }
 
         [NotNull]
+        public static GameObject CreateGameObject()
+        {
+            CreateUninitializedObject<GameObject>(out var gameObject);
+
+            var fields = GetUninitializedObjectFields(gameObject.GetType());
+            var newValues = new Dictionary<string, object> { { "activeSelf", true } };
+
+            return GetPopulatedUninitializedObject(gameObject, fields, newValues);
+        }
+
+        [NotNull]
         public static GlobalGameManager CreateGlobalGameManager()
         {
             CreateUninitializedObject<GlobalGameManager>(out var globalGameManager);

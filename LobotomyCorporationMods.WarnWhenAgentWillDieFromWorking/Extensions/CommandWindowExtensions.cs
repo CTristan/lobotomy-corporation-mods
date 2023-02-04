@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Enums;
+using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
@@ -24,7 +25,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
             return creature != null;
         }
 
-        internal static ICreatureEvaluator GetCreatureEvaluator([NotNull] this CommandWindow.CommandWindow commandWindow, AgentModel agent)
+        internal static ICreatureEvaluator GetCreatureEvaluator([NotNull] this CommandWindow.CommandWindow commandWindow, AgentModel agent, IAnimationScriptAdapter animationScriptAdapter)
         {
             ICreatureEvaluator evaluator;
 
@@ -36,7 +37,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
 
                 var evaluatorDictionary = new Dictionary<CreatureIds, CreatureEvaluator>
                 {
-                    { CreatureIds.BeautyAndTheBeast, new BeautyAndTheBeastEvaluator(agent, creature, skillType) },
+                    { CreatureIds.BeautyAndTheBeast, new BeautyAndTheBeastEvaluator(agent, creature, skillType, animationScriptAdapter) },
                     { CreatureIds.Bloodbath, new BloodbathEvaluator(agent, creature, skillType) },
                     { CreatureIds.CrumblingArmor, new CrumblingArmorEvaluator(agent, creature, skillType) },
                     { CreatureIds.HappyTeddyBear, new HappyTeddyBearEvaluator(agent, creature, skillType) },

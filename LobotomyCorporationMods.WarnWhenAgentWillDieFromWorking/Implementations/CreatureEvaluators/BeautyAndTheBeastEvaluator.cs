@@ -1,21 +1,27 @@
 // SPDX-License-Identifier: MIT
 
+using LobotomyCorporationMods.Common.Interfaces;
+
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators
 {
     internal sealed class BeautyAndTheBeastEvaluator : CreatureEvaluator
     {
-        internal BeautyAndTheBeastEvaluator(AgentModel agent, CreatureModel creature, RwbpType skillType) : base(agent, creature, skillType)
+        private readonly IAnimationScriptAdapter _animationScriptAdapter;
+
+        internal BeautyAndTheBeastEvaluator(AgentModel agent, CreatureModel creature, RwbpType skillType, IAnimationScriptAdapter animationScriptAdapter) : base(agent, creature, skillType)
         {
+            _animationScriptAdapter = animationScriptAdapter;
         }
 
         protected override bool WillAgentDieFromThisCreature()
         {
             var agentWillDie = false;
 
-            if (Creature.GetAnimScript() is BeautyBeastAnim animationScript)
+            var animationScript = _animationScriptAdapter.GetScript<BeautyBeastAnim>(Creature);
+            if (!(animationScript is null))
             {
                 const int WeakenedState = 1;
-                var animationState = animationScript.GetState();
+                var animationState = _animationScriptAdapter.BeautyAndTheBeastState;
                 var isWeakened = animationState == WeakenedState;
 
                 agentWillDie = isWeakened && SkillType == RwbpType.P;

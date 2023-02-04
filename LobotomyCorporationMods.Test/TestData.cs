@@ -87,6 +87,9 @@ namespace LobotomyCorporationMods.Test
         internal static EquipmentTypeInfo DefaultEquipmentTypeInfo => TestExtensions.CreateEquipmentTypeInfo();
 
         [NotNull]
+        internal static GameObject DefaultGameObject => TestExtensions.CreateGameObject();
+
+        [NotNull]
         internal static GlobalGameManager DefaultGlobalGameManager => TestExtensions.CreateGlobalGameManager();
 
         [NotNull]

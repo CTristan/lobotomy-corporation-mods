@@ -2,19 +2,23 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using CommandWindow;
 using FluentAssertions;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Enums;
+using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches;
+using Moq;
 using UnityEngine;
 using Xunit;
 using Xunit.Extensions;
 
 namespace LobotomyCorporationMods.Test
 {
+    [SuppressMessage("ReSharper", "Unity.IncorrectMonoBehaviourInstantiation")]
     public sealed class WarnWhenAgentWillDieTests
     {
         private const string DeadAgentString = "AgentState_Dead";
@@ -56,6 +60,76 @@ namespace LobotomyCorporationMods.Test
             Action action = () => AgentSlotPatchSetFilter.Postfix(agentSlot, AgentState.IDLE);
 
             action.ShouldThrowUnityException();
+        }
+
+        #endregion
+
+        #region Beauty and the Beast Tests
+
+        [Fact]
+        public void BeautyAndTheBeast_Will_Kill_Agent_If_Performing_Repression_Work_While_Weak()
+        {
+            // Arrange
+            var creature = GetCreature(CreatureIds.BeautyAndTheBeast);
+            var commandWindow = InitializeCommandWindow(creature, RwbpType.P);
+            var agent = TestData.DefaultAgentModel;
+
+            // Mock animation script helper to avoid Unity errors
+            const int WeakenedState = 1;
+            var mockAnimationScriptHelper = new Mock<IAnimationScriptAdapter>();
+            mockAnimationScriptHelper.Setup(ash => ash.GetScript<BeautyBeastAnim>(creature)).Returns(new BeautyBeastAnim());
+            mockAnimationScriptHelper.Setup(ash => ash.BeautyAndTheBeastState).Returns(WeakenedState);
+
+            // Act
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow, mockAnimationScriptHelper.Object);
+
+            // Assert
+            result.Should().BeTrue();
+        }
+
+        [Fact]
+        public void BeautyAndTheBeast_Will_Not_Kill_Agent_If_Performing_Repression_Work_While_Not_Weak()
+        {
+            // Arrange
+            var creature = GetCreature(CreatureIds.BeautyAndTheBeast);
+            var commandWindow = InitializeCommandWindow(creature, RwbpType.P);
+            var agent = TestData.DefaultAgentModel;
+
+            // Mock animation script helper to avoid Unity errors
+            const int NormalState = 0;
+            var mockAnimationScriptHelper = new Mock<IAnimationScriptAdapter>();
+            mockAnimationScriptHelper.Setup(ash => ash.GetScript<BeautyBeastAnim>(creature)).Returns(new BeautyBeastAnim());
+            mockAnimationScriptHelper.Setup(ash => ash.BeautyAndTheBeastState).Returns(NormalState);
+
+            // Act
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow, mockAnimationScriptHelper.Object);
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [Theory]
+        [InlineData(RwbpType.R)]
+        [InlineData(RwbpType.W)]
+        [InlineData(RwbpType.B)]
+        public void BeautyAndTheBeast_Will_Not_Kill_Agent_If_Not_Performing_Repression_Work_While_Weak(RwbpType skillType)
+        {
+            // Arrange
+            var creature = GetCreature(CreatureIds.BeautyAndTheBeast);
+            var commandWindow = InitializeCommandWindow(creature, skillType);
+            var agent = TestData.DefaultAgentModel;
+
+            // Mock animation script helper to avoid Unity errors
+            const int WeakenedState = 1;
+            var mockAnimationScriptHelper = new Mock<IAnimationScriptAdapter>();
+            mockAnimationScriptHelper.Setup(ash => ash.GetScript<BeautyBeastAnim>(creature)).Returns(new BeautyBeastAnim());
+            mockAnimationScriptHelper.Setup(ash => ash.BeautyAndTheBeastState).Returns(WeakenedState);
+
+            // Act
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow, mockAnimationScriptHelper.Object);
+
+            // Assert
+            result.Should().BeFalse();
         }
 
         #endregion
