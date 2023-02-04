@@ -322,7 +322,7 @@ namespace LobotomyCorporationMods.Test
         [Theory]
         [InlineData(StatLevelThree)]
         [InlineData(StatLevelFour)]
-        [InlineData(StatLevelFour)]
+        [InlineData(StatLevelFive)]
         public void RedShoes_Will_Kill_Not_Agent_With_Temperance_Greater_Than_Two(int temperance)
         {
             var creature = GetCreature(CreatureIds.RedShoes);
@@ -333,6 +333,68 @@ namespace LobotomyCorporationMods.Test
             var result = agent.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeFalse();
+        }
+
+        #endregion
+
+        #region Spider Bud Tests
+
+        [Theory]
+        [InlineData(RwbpType.R)]
+        [InlineData(RwbpType.B)]
+        [InlineData(RwbpType.P)]
+        public void SpiderBud_Will_Kill_Agent_With_Prudence_Of_One_And_Not_Performing_Insight_Work(RwbpType skillType)
+        {
+            var creature = GetCreature(CreatureIds.SpiderBud);
+            var commandWindow = InitializeCommandWindow(creature, skillType);
+            var agent = TestData.DefaultAgentModel;
+            agent.primaryStat.mental = StatLevelOne;
+
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+
+            result.Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(StatLevelTwo, RwbpType.R)]
+        [InlineData(StatLevelTwo, RwbpType.B)]
+        [InlineData(StatLevelTwo, RwbpType.P)]
+        [InlineData(StatLevelThree, RwbpType.R)]
+        [InlineData(StatLevelThree, RwbpType.B)]
+        [InlineData(StatLevelThree, RwbpType.P)]
+        [InlineData(StatLevelFour, RwbpType.R)]
+        [InlineData(StatLevelFour, RwbpType.B)]
+        [InlineData(StatLevelFour, RwbpType.P)]
+        [InlineData(StatLevelFive, RwbpType.R)]
+        [InlineData(StatLevelFive, RwbpType.B)]
+        [InlineData(StatLevelFive, RwbpType.P)]
+        public void SpiderBud_Will_Kill_Not_Agent_With_Prudence_Greater_Than_One_And_Not_Performing_Insight_Work(int prudence, RwbpType skillType)
+        {
+            var creature = GetCreature(CreatureIds.SpiderBud);
+            var commandWindow = InitializeCommandWindow(creature, skillType);
+            var agent = TestData.DefaultAgentModel;
+            agent.primaryStat.mental = prudence;
+
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+
+            result.Should().BeFalse();
+        }
+
+        [Theory]
+        [InlineData(StatLevelTwo)]
+        [InlineData(StatLevelThree)]
+        [InlineData(StatLevelFour)]
+        [InlineData(StatLevelFive)]
+        public void SpiderBud_Will_Kill_Agent_With_Prudence_Greater_Than_One_And_Performing_Insight_Work(int prudence)
+        {
+            var creature = GetCreature(CreatureIds.SpiderBud);
+            var commandWindow = InitializeCommandWindow(creature, RwbpType.W);
+            var agent = TestData.DefaultAgentModel;
+            agent.primaryStat.mental = prudence;
+
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+
+            result.Should().BeTrue();
         }
 
         #endregion

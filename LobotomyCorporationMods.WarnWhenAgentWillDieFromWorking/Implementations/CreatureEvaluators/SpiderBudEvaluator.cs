@@ -10,7 +10,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 
         protected override bool WillAgentDieFromThisCreature()
         {
-            return Agent.prudenceLevel == 1;
+            return Agent.prudenceLevel == 1 || SkillType == RwbpType.W;
         }
     }
 }
