@@ -302,6 +302,41 @@ namespace LobotomyCorporationMods.Test
 
         #endregion
 
+        #region Red Shoes Tests
+
+        [Theory]
+        [InlineData(StatLevelOne)]
+        [InlineData(StatLevelTwo)]
+        public void RedShoes_Will_Kill_Agent_With_Temperance_Less_Than_Three(int temperance)
+        {
+            var creature = GetCreature(CreatureIds.RedShoes);
+            var commandWindow = InitializeCommandWindow(creature);
+            var agent = TestData.DefaultAgentModel;
+            agent.primaryStat.work = temperance;
+
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+
+            result.Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(StatLevelThree)]
+        [InlineData(StatLevelFour)]
+        [InlineData(StatLevelFour)]
+        public void RedShoes_Will_Kill_Not_Agent_With_Temperance_Greater_Than_Two(int temperance)
+        {
+            var creature = GetCreature(CreatureIds.RedShoes);
+            var commandWindow = InitializeCommandWindow(creature);
+            var agent = TestData.DefaultAgentModel;
+            agent.primaryStat.work = temperance;
+
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+
+            result.Should().BeFalse();
+        }
+
+        #endregion
+
         #region Harmony Tests
 
         /// <summary>
