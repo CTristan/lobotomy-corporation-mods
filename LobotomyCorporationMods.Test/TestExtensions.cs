@@ -332,6 +332,14 @@ namespace LobotomyCorporationMods.Test
         }
 
         [NotNull]
+        public static LittleWitchBuf CreateLittleWitchBuf()
+        {
+            CreateUninitializedObject<LittleWitchBuf>(out var littleWitchBuf);
+
+            return littleWitchBuf;
+        }
+
+        [NotNull]
         public static SkillTypeInfo CreateSkillTypeInfo()
         {
             return new SkillTypeInfo();
