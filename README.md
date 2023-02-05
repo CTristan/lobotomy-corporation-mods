@@ -17,13 +17,15 @@ Requires [Basemod](https://www.nexusmods.com/lobotomycorporation/mods/2).
 
 ## Recent Changes
 
+* 2023-02-06 (v4.0) - New mod: Warn When Agent Will Die From Working
+
 * 2023-02-01 (v3.2) - Added bug fix for Crumbling Armor where replacing the gift
   would still kill the agent.
 
 * 2023-01-29 (v3.1) - Added re-customization capability to Free Customization
   mod
 
-* 2023-01-18 (v3.0) - New mod: Unofficial Bug Fixes
+See [Change Log](#change-log) for all changes.
 
 ## List of mods
 
@@ -82,10 +84,43 @@ Bugs fixed:
 
 ## Warn When Agent Will Die From Working
 
-TODO
+***
+![Free Customization example](https://raw.githubusercontent.com/ctristan/lobotomy-corporation-mods/assets/warn-when-agent-will-die-from-working.png)
+
+Provides a visual warning when an agent will die if assigned to work on an abnormality. The warning only appears when an
+abnormality has been fully observed to avoid spoiling newly-acquired abnormalities.
+
+Discovering how to deal with abnormalities is a major part of the game, however later on there are so many that have
+instant death abilities that are hard to keep track of. It's very annoying being almost done with a day with no deaths
+but then having an agent die because either I forgot about an instant death condition, the agent had a temporary
+condition that I wasn't aware was still affecting them, or it triggered because of a rare edge case.
+
+<details>
+<summary><b>List of abnormalities warned about with this mod (spoilers)</b></summary>
+Provides warnings for the following abnormalities:
+
+* Beauty and the Beast
+* Bloodbath
+* Blue Star
+* Crumbling Armor
+    * Includes gift
+* Fairy Festival
+* Happy Teddy Bear
+* Laetitia
+* Nothing There
+* Parasite Tree
+* Red Shoes
+* Singing Machine
+    * Includes when agent would die from receiving gift
+* Spider Bud
+* Void Dream
+* Warm-Hearted Woodsman
+
+</details>
 
 ## Change Log
 
+* v4.0 - New mod: Warn When Agent Will Die From Working
 * v3.2 - Added bug fix for Crumbling Armor
 * v3.1 - Added re-customization capability to Free Customization mod
 * v3.0 - New mod: Unofficial Bug Fixes
