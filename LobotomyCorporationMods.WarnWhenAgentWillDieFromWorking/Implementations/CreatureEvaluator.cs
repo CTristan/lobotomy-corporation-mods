@@ -8,16 +8,16 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 {
     internal abstract class CreatureEvaluator : ICreatureEvaluator
     {
-        protected readonly AgentModel Agent;
-        protected readonly CreatureModel Creature;
-        protected readonly RwbpType SkillType;
-
         protected CreatureEvaluator(AgentModel agent, CreatureModel creature, RwbpType skillType)
         {
             Agent = agent;
             Creature = creature;
             SkillType = skillType;
         }
+
+        protected AgentModel Agent { get; }
+        protected CreatureModel Creature { get; }
+        protected RwbpType SkillType { get; }
 
         public bool WillAgentDie()
         {

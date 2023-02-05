@@ -202,6 +202,65 @@ namespace LobotomyCorporationMods.Test
 
         #endregion
 
+        #region Blue Star Tests
+
+        [Theory]
+        [InlineData(StatLevelOne, StatLevelFour)]
+        [InlineData(StatLevelOne, StatLevelFive)]
+        [InlineData(StatLevelTwo, StatLevelFour)]
+        [InlineData(StatLevelTwo, StatLevelFive)]
+        [InlineData(StatLevelThree, StatLevelFour)]
+        [InlineData(StatLevelThree, StatLevelFive)]
+        [InlineData(StatLevelFour, StatLevelFour)]
+        [InlineData(StatLevelFour, StatLevelFive)]
+        public void BlueStar_Will_Kill_Agent_With_Prudence_Less_Than_Five_And_Temperance_Greater_Than_Three(int prudence, int temperance)
+        {
+            var creature = GetCreature(CreatureIds.BlueStar);
+            var commandWindow = InitializeCommandWindow(creature);
+            var agent = TestExtensions.CreateAgentModel();
+            agent.primaryStat.mental = prudence;
+            agent.primaryStat.work = temperance;
+
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+
+            result.Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(StatLevelOne)]
+        [InlineData(StatLevelTwo)]
+        [InlineData(StatLevelThree)]
+        public void BlueStar_Will_Kill_Agent_With_Prudence_Five_And_Temperance_Less_Than_Four(int temperance)
+        {
+            var creature = GetCreature(CreatureIds.BlueStar);
+            var commandWindow = InitializeCommandWindow(creature);
+            var agent = TestExtensions.CreateAgentModel();
+            agent.primaryStat.hp = StatLevelFive;
+            agent.primaryStat.work = temperance;
+
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+
+            result.Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(StatLevelFour)]
+        [InlineData(StatLevelFive)]
+        public void BlueStar_Will_Not_Kill_Agent_With_Prudence_Five_And_Temperance_Greater_Than_Three(int temperance)
+        {
+            var creature = GetCreature(CreatureIds.BlueStar);
+            var commandWindow = InitializeCommandWindow(creature);
+            var agent = TestExtensions.CreateAgentModel();
+            agent.primaryStat.mental = StatLevelFive;
+            agent.primaryStat.work = temperance;
+
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+
+            result.Should().BeFalse();
+        }
+
+        #endregion
+
         #region Crumbling Armor Tests
 
         [Fact]

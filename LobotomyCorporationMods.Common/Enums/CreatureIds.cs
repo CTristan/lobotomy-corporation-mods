@@ -6,6 +6,7 @@ namespace LobotomyCorporationMods.Common.Enums
     {
         BeautyAndTheBeast = 100013,
         Bloodbath = 100027,
+        BlueStar = 100058,
         CrumblingArmor = 100037,
         FairyFestival = 100053,
         HappyTeddyBear = 100002,

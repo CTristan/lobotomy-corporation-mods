@@ -39,6 +39,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
                 {
                     { CreatureIds.BeautyAndTheBeast, new BeautyAndTheBeastEvaluator(agent, creature, skillType, animationScriptAdapter) },
                     { CreatureIds.Bloodbath, new BloodbathEvaluator(agent, creature, skillType) },
+                    { CreatureIds.BlueStar, new BlueStarEvaluator(agent, creature, skillType) },
                     { CreatureIds.CrumblingArmor, new CrumblingArmorEvaluator(agent, creature, skillType) },
                     { CreatureIds.HappyTeddyBear, new HappyTeddyBearEvaluator(agent, creature, skillType) },
                     { CreatureIds.NothingThere, new NothingThereEvaluator(agent, creature, skillType) },
