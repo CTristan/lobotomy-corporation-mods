@@ -40,7 +40,7 @@ namespace LobotomyCorporationMods.Test
         [InlineData(false)]
         public void Opening_the_customize_appearance_window_does_not_increase_the_cost_of_hiring_the_agent(bool isCustomAppearance)
         {
-            var customizingWindow = TestData.DefaultCustomizingWindow;
+            var customizingWindow = GetCustomizingWindow();
             customizingWindow.CurrentData = new AgentData { isCustomAppearance = true };
 
             CustomizingWindowPatchOpenAppearanceWindow.Postfix(customizingWindow);
@@ -53,8 +53,8 @@ namespace LobotomyCorporationMods.Test
         [InlineData("TestAgent")]
         public void Opening_the_strengthen_employee_window_gets_agent_appearance_data([NotNull] string agentName)
         {
-            var customizingWindow = TestData.DefaultCustomizingWindow;
-            var agentModel = TestData.DefaultAgentModel;
+            var customizingWindow = GetCustomizingWindow();
+            var agentModel = TestExtensions.CreateAgentModel();
             agentModel.name = agentName;
 
             CustomizingWindowPatchReviseOpenAction.Postfix(customizingWindow, agentModel);
@@ -68,12 +68,12 @@ namespace LobotomyCorporationMods.Test
         public void Customizing_existing_agent_changes_agent_appearance_successfully(string currentAppearanceName, string expectedAppearanceName)
         {
             // Arrange
-            var currentAppearance = TestData.DefaultWorkerSprite;
-            var expectedSprite = TestData.DefaultSprite;
+            var currentAppearance = TestExtensions.CreateWorkerSprite();
+            var expectedSprite = TestExtensions.CreateSprite();
             var expectedColor = Color.black;
             var expectedAppearance = new Appearance
             {
-                spriteSet = TestData.DefaultWorkerSprite,
+                spriteSet = TestExtensions.CreateWorkerSprite(),
                 Eyebrow_Battle = expectedSprite,
                 FrontHair = expectedSprite,
                 RearHair = expectedSprite,
@@ -89,10 +89,10 @@ namespace LobotomyCorporationMods.Test
                 EyeColor = expectedColor
             };
 
-            var currentAgent = TestData.DefaultAgentModel;
+            var currentAgent = TestExtensions.CreateAgentModel();
             currentAgent.spriteData = currentAppearance;
 
-            var customizingWindow = TestExtensions.CreateCustomizingWindow(TestData.DefaultAppearanceUI, TestData.DefaultAgentModel, TestData.DefaultAgentData, CustomizingType.REVISE);
+            var customizingWindow = GetCustomizingWindow();
             customizingWindow.CurrentData.appearance = expectedAppearance;
 
             // Act
@@ -110,18 +110,18 @@ namespace LobotomyCorporationMods.Test
         public static void Renaming_agent_changes_agent_name_successfully([NotNull] string currentName, [NotNull] string expectedName)
         {
             // Arrange
-            var currentAgent = TestData.DefaultAgentModel;
+            var currentAgent = TestExtensions.CreateAgentModel();
             currentAgent.name = currentName;
             currentAgent._agentName.nameDic = new Dictionary<string, string> { { currentName, currentName } };
 
-            var expectedAgentName = TestData.DefaultAgentName;
+            var expectedAgentName = TestExtensions.CreateAgentName();
             expectedAgentName.nameDic = new Dictionary<string, string> { { expectedName, expectedName } };
 
-            var expectedData = TestData.DefaultAgentData;
+            var expectedData = TestExtensions.CreateAgentData();
             expectedData.CustomName = expectedName;
             expectedData.agentName = expectedAgentName;
 
-            var customizingWindow = TestExtensions.CreateCustomizingWindow(TestData.DefaultAppearanceUI, currentAgent, TestData.DefaultAgentData, CustomizingType.REVISE);
+            var customizingWindow = TestExtensions.CreateCustomizingWindow(currentAgent: currentAgent);
             customizingWindow.CurrentData = expectedData;
 
             // Act
@@ -138,7 +138,7 @@ namespace LobotomyCorporationMods.Test
         [Fact]
         public void CustomizingWindowPatchConfirm_Is_Untestable()
         {
-            var customizingWindow = TestExtensions.CreateCustomizingWindow(TestData.DefaultAppearanceUI, TestData.DefaultAgentModel, TestData.DefaultAgentData, CustomizingType.REVISE);
+            var customizingWindow = GetCustomizingWindow();
 
             Action action = () => CustomizingWindowPatchConfirm.Prefix(customizingWindow);
 
@@ -217,6 +217,24 @@ namespace LobotomyCorporationMods.Test
             const string MethodName = "ReviseOpenAction";
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
+        }
+
+        #endregion
+
+        #region Helper Methods
+
+        [NotNull]
+        private static CustomizingWindow GetCustomizingWindow()
+        {
+            // Need a WorkerSpriteManager instance
+            InitializeWorkerSpriteManager();
+
+            return TestExtensions.CreateCustomizingWindow();
+        }
+
+        private static void InitializeWorkerSpriteManager()
+        {
+            TestExtensions.CreateWorkerSpriteManager();
         }
 
         #endregion

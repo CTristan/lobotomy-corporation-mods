@@ -42,7 +42,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
                     { CreatureIds.CrumblingArmor, new CrumblingArmorEvaluator(agent, creature, skillType) },
                     { CreatureIds.HappyTeddyBear, new HappyTeddyBearEvaluator(agent, creature, skillType) },
                     { CreatureIds.NothingThere, new NothingThereEvaluator(agent, creature, skillType) },
-                    { CreatureIds.ParasiteTree, new ParasiteTreeEvaluator(agent, creature, skillType) },
+                    { CreatureIds.ParasiteTree, new ParasiteTreeEvaluator(agent, creature, skillType, animationScriptAdapter) },
                     { CreatureIds.RedShoes, new RedShoesEvaluator(agent, creature, skillType) },
                     { CreatureIds.SingingMachine, new SingingMachineEvaluator(agent, creature, skillType) },
                     { CreatureIds.SpiderBud, new SpiderBudEvaluator(agent, creature, skillType) },

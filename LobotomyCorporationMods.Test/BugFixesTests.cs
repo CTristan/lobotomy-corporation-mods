@@ -32,7 +32,7 @@ namespace LobotomyCorporationMods.Test
         {
             const int BonusStatLevelIncrease = 1;
             var priorStatValue = minNextStatValue - 1;
-            var customizingWindow = TestData.DefaultCustomizingWindow;
+            var customizingWindow = TestExtensions.CreateCustomizingWindow();
 
             customizingWindow.UpgradeStat(priorStatValue, currentStatLevel, BonusStatLevelIncrease, out var result);
 
@@ -48,7 +48,7 @@ namespace LobotomyCorporationMods.Test
         {
             // Arrange
             var notice = NoticeName.OnWorkStart;
-            var skill = TestData.DefaultUseSkill;
+            var skill = TestExtensions.CreateUseSkill();
             skill.skillTypeInfo.id = SkillTypeInfo.Consensus;
             var param = new object[] { skill.targetCreature };
 
@@ -68,13 +68,12 @@ namespace LobotomyCorporationMods.Test
         {
             // Arrange
             var notice = NoticeName.OnWorkStart;
-            var skill = TestData.DefaultUseSkill;
-            var gift = TestData.DefaultEgoGiftModel;
+            var skill = TestExtensions.CreateUseSkill();
+            var gift = TestExtensions.CreateEgoGiftModel();
             gift.metaInfo.id = giftId;
             var equipment = TestExtensions.CreateUnitEquipSpace();
             equipment.gifts.addedGifts.Add(gift);
-            skill.agent = TestExtensions.CreateAgentModel(TestData.DefaultAgentName, TestData.DefaultBuffList, equipment, TestData.DefaultAgentId, TestData.DefaultAgentNameString,
-                TestData.DefaultWorkerPrimaryStat, TestData.DefaultWorkerSprite, TestData.DefaultStatBuffList);
+            skill.agent = TestExtensions.CreateAgentModel(equipment: equipment);
             skill.skillTypeInfo.id = SkillTypeInfo.Consensus;
             var param = new object[] { skill.targetCreature };
 
@@ -118,7 +117,7 @@ namespace LobotomyCorporationMods.Test
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
 
-            var result = CustomizingWindowPatchSetAgentStatBonus.Prefix(TestData.DefaultCustomizingWindow, null, null);
+            var result = CustomizingWindowPatchSetAgentStatBonus.Prefix(TestExtensions.CreateCustomizingWindow(), null, null);
             result.Should().BeTrue();
         }
 

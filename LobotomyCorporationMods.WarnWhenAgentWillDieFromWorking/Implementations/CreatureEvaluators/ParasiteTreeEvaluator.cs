@@ -1,25 +1,30 @@
 // SPDX-License-Identifier: MIT
 
-using System.Linq;
 using LobotomyCorporationMods.Common;
+using LobotomyCorporationMods.Common.Interfaces;
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators
 {
     internal sealed class ParasiteTreeEvaluator : CreatureEvaluator
     {
-        internal ParasiteTreeEvaluator(AgentModel agent, CreatureModel creature, RwbpType skillType) : base(agent, creature, skillType)
+        private readonly IAnimationScriptAdapter _animationScriptAdapter;
+
+        internal ParasiteTreeEvaluator(AgentModel agent, CreatureModel creature, RwbpType skillType, IAnimationScriptAdapter animationScriptAdapter) : base(agent, creature, skillType)
         {
+            _animationScriptAdapter = animationScriptAdapter;
         }
 
         protected override bool WillAgentDieFromThisCreature()
         {
             var agentWillDie = false;
 
-            if (Creature.GetAnimScript() is YggdrasilAnim animationScript)
+            var animationScript = _animationScriptAdapter.GetScript<YggdrasilAnim>(Creature);
+            if (!(animationScript is null))
             {
-                var activeFlowers = animationScript.flowers.Where(flower => flower.activeSelf).ToList();
+                var numberOfFlowers = _animationScriptAdapter.ParasiteTreeNumberOfFlowers;
+                const int MaxNumberOfFlowers = 4;
 
-                agentWillDie = activeFlowers.Count == 4 && !Agent.HasBuffOfType<YggdrasilBlessBuf>();
+                agentWillDie = numberOfFlowers >= MaxNumberOfFlowers && !Agent.HasBuffOfType<YggdrasilBlessBuf>();
             }
 
             return agentWillDie;
