@@ -12,6 +12,7 @@ namespace LobotomyCorporationMods.Common.Enums
         HappyTeddyBear = 100002,
         Laetitia = 100041,
         NothingThere = 100005,
+        OneSin = 100009,
         ParasiteTree = 100062,
         RedShoes = 100003,
         SingingMachine = 100006,

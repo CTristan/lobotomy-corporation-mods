@@ -292,6 +292,14 @@ namespace LobotomyCorporationMods.Test
         }
 
         [NotNull]
+        public static FairyBuf CreateFairyBuf()
+        {
+            CreateUninitializedObject<FairyBuf>(out var fairyBuf);
+
+            return fairyBuf;
+        }
+
+        [NotNull]
         public static GameObject CreateGameObject()
         {
             CreateUninitializedObject<GameObject>(out var gameObject);

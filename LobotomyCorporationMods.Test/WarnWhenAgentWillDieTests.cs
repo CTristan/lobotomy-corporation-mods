@@ -338,6 +338,36 @@ namespace LobotomyCorporationMods.Test
 
         #endregion
 
+        #region Fairy Festival Tests
+
+        [Fact]
+        public void FairyFestival_Will_Kill_Agent_With_Buff_That_Works_On_Another_Creature()
+        {
+            var creature = GetCreature(CreatureIds.OneSin);
+            var commandWindow = InitializeCommandWindow(creature);
+            var buffList = new List<UnitBuf> { TestExtensions.CreateFairyBuf() };
+            var agent = TestExtensions.CreateAgentModel(bufList: buffList);
+
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+
+            result.Should().BeTrue();
+        }
+
+        [Fact]
+        public void FairyFestival_Will_Not_Kill_Agent_With_Buff_If_Working_On_FairyFestival()
+        {
+            var creature = GetCreature(CreatureIds.FairyFestival);
+            var commandWindow = InitializeCommandWindow(creature);
+            var buffList = new List<UnitBuf> { TestExtensions.CreateFairyBuf() };
+            var agent = TestExtensions.CreateAgentModel(bufList: buffList);
+
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+
+            result.Should().BeFalse();
+        }
+
+        #endregion
+
         #region Happy Teddy Bear Tests
 
         [Fact]
