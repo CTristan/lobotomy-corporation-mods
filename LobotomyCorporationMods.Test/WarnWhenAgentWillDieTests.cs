@@ -428,6 +428,19 @@ namespace LobotomyCorporationMods.Test
             result.Should().BeFalse();
         }
 
+        [Fact]
+        public void HappyTeddyBear_Will_Not_Kill_Agent_If_This_Is_The_First_Agent()
+        {
+            var creature = GetCreature(CreatureIds.HappyTeddyBear);
+            var commandWindow = InitializeCommandWindow(creature);
+            var agent = TestExtensions.CreateAgentModel();
+            creature.script = new HappyTeddy();
+
+            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+
+            result.Should().BeFalse();
+        }
+
         #endregion
 
         #region Nothing There Tests
