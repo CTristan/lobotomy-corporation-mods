@@ -22,7 +22,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         internal AgentWorkTracker(IFileManager fileManager, string dataFileName)
         {
             _fileManager = fileManager;
-            _trackerFile = _fileManager.GetFile(dataFileName);
+            _trackerFile = _fileManager.GetOrCreateFile(dataFileName);
             Load();
         }
 

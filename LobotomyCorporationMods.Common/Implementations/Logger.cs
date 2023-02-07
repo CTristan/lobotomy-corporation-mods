@@ -20,22 +20,33 @@ namespace LobotomyCorporationMods.Common.Implementations
             _fileManager = fileManager;
         }
 
-        public void WriteToLog(Exception ex)
+        public void WriteToLog(Exception exception)
         {
-            WriteToLog(ex, DefaultLogFileName);
+            WriteToLog(exception, DefaultLogFileName);
+        }
+
+        private static void WriteToDebug(string message)
+        {
+            Notice.instance.Send(NoticeName.AddSystemLog, message);
+            AngelaConversationUI.instance.AddAngelaMessage(message);
         }
 
         private void WriteToLog([NotNull] string message, [NotNull] string logFileName)
         {
-            var logFile = _fileManager.GetFile(logFileName);
+            var logFile = _fileManager.GetOrCreateFile(logFileName);
             _fileManager.WriteAllText(logFile, message);
         }
 
-        private void WriteToLog([CanBeNull] Exception ex, [NotNull] string logFileName)
+        private void WriteToLog([CanBeNull] Exception exception, [NotNull] string logFileName)
         {
-            if (ex != null)
+            if (exception != null)
             {
-                WriteToLog(ex.ToString(), logFileName);
+                var message = exception.ToString();
+                WriteToLog(message, logFileName);
+
+#if DEBUG
+                WriteToDebug(message);
+#endif
             }
         }
     }

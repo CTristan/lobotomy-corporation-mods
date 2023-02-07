@@ -25,7 +25,7 @@ namespace LobotomyCorporationMods.Common.Implementations
             _dataPath = directory ?? throw new InvalidOperationException("Data path was not found.");
         }
 
-        public string GetFile([NotNull] string fileName)
+        public string GetOrCreateFile([NotNull] string fileName)
         {
             if (_files.TryGetValue(fileName, out var value))
             {
@@ -36,6 +36,26 @@ namespace LobotomyCorporationMods.Common.Implementations
             _files.Add(fileName, fullFilePath);
 
             return _files[fileName];
+        }
+
+        public string GetFileIfExists([NotNull] string fileName)
+        {
+            if (_files.TryGetValue(fileName, out var value))
+            {
+                return value;
+            }
+
+            var fullFilePath = Path.Combine(_dataPath.FullName, fileName);
+            var fileIfExists = "";
+
+            if (File.Exists(fullFilePath))
+            {
+                _files.Add(fileName, fullFilePath);
+
+                fileIfExists = _files[fileName];
+            }
+
+            return fileIfExists;
         }
 
         [NotNull]
