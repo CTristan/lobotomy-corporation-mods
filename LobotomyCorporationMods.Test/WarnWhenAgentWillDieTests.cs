@@ -73,6 +73,7 @@ namespace LobotomyCorporationMods.Test
             var creature = GetCreature(CreatureIds.BeautyAndTheBeast);
             var commandWindow = InitializeCommandWindow(creature, RwbpType.P);
             var agent = TestExtensions.CreateAgentModel();
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
 
             // Mock animation script adapter to avoid Unity errors
             const int WeakenedState = 1;
@@ -81,7 +82,7 @@ namespace LobotomyCorporationMods.Test
             mockAnimationScriptAdapter.Setup(ash => ash.BeautyAndTheBeastState).Returns(WeakenedState);
 
             // Act
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow, mockAnimationScriptAdapter.Object);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow, mockAnimationScriptAdapter.Object);
 
             // Assert
             result.Should().BeTrue();
@@ -94,6 +95,7 @@ namespace LobotomyCorporationMods.Test
             var creature = GetCreature(CreatureIds.BeautyAndTheBeast);
             var commandWindow = InitializeCommandWindow(creature, RwbpType.P);
             var agent = TestExtensions.CreateAgentModel();
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
 
             // Mock animation script adapter to avoid Unity errors
             const int NormalState = 0;
@@ -102,7 +104,7 @@ namespace LobotomyCorporationMods.Test
             mockAnimationScriptAdapter.Setup(ash => ash.BeautyAndTheBeastState).Returns(NormalState);
 
             // Act
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow, mockAnimationScriptAdapter.Object);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow, mockAnimationScriptAdapter.Object);
 
             // Assert
             result.Should().BeFalse();
@@ -118,6 +120,7 @@ namespace LobotomyCorporationMods.Test
             var creature = GetCreature(CreatureIds.BeautyAndTheBeast);
             var commandWindow = InitializeCommandWindow(creature, skillType);
             var agent = TestExtensions.CreateAgentModel();
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
 
             // Mock animation script adapter to avoid Unity errors
             const int WeakenedState = 1;
@@ -126,7 +129,7 @@ namespace LobotomyCorporationMods.Test
             mockAnimationScriptAdapter.Setup(ash => ash.BeautyAndTheBeastState).Returns(WeakenedState);
 
             // Act
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow, mockAnimationScriptAdapter.Object);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow, mockAnimationScriptAdapter.Object);
 
             // Assert
             result.Should().BeFalse();
@@ -142,10 +145,11 @@ namespace LobotomyCorporationMods.Test
             var creature = GetCreature(CreatureIds.Bloodbath);
             var commandWindow = InitializeCommandWindow(creature);
             var agent = TestExtensions.CreateAgentModel();
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
             agent.primaryStat.hp = StatLevelOne;
             agent.primaryStat.work = StatLevelFive;
 
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeTrue();
         }
@@ -156,10 +160,11 @@ namespace LobotomyCorporationMods.Test
             var creature = GetCreature(CreatureIds.Bloodbath);
             var commandWindow = InitializeCommandWindow(creature);
             var agent = TestExtensions.CreateAgentModel();
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
             agent.primaryStat.hp = StatLevelFive;
             agent.primaryStat.work = StatLevelOne;
 
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeTrue();
         }
@@ -174,10 +179,11 @@ namespace LobotomyCorporationMods.Test
             var creature = GetCreature(CreatureIds.Bloodbath);
             var commandWindow = InitializeCommandWindow(creature);
             var agent = TestExtensions.CreateAgentModel();
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
             agent.primaryStat.hp = fortitude;
             agent.primaryStat.work = StatLevelFive;
 
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeFalse();
         }
@@ -192,10 +198,11 @@ namespace LobotomyCorporationMods.Test
             var creature = GetCreature(CreatureIds.Bloodbath);
             var commandWindow = InitializeCommandWindow(creature);
             var agent = TestExtensions.CreateAgentModel();
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
             agent.primaryStat.hp = StatLevelFive;
             agent.primaryStat.work = temperance;
 
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeFalse();
         }
@@ -218,10 +225,11 @@ namespace LobotomyCorporationMods.Test
             var creature = GetCreature(CreatureIds.BlueStar);
             var commandWindow = InitializeCommandWindow(creature);
             var agent = TestExtensions.CreateAgentModel();
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
             agent.primaryStat.mental = prudence;
             agent.primaryStat.work = temperance;
 
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeTrue();
         }
@@ -235,10 +243,11 @@ namespace LobotomyCorporationMods.Test
             var creature = GetCreature(CreatureIds.BlueStar);
             var commandWindow = InitializeCommandWindow(creature);
             var agent = TestExtensions.CreateAgentModel();
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
             agent.primaryStat.hp = StatLevelFive;
             agent.primaryStat.work = temperance;
 
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeTrue();
         }
@@ -251,10 +260,11 @@ namespace LobotomyCorporationMods.Test
             var creature = GetCreature(CreatureIds.BlueStar);
             var commandWindow = InitializeCommandWindow(creature);
             var agent = TestExtensions.CreateAgentModel();
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
             agent.primaryStat.mental = StatLevelFive;
             agent.primaryStat.work = temperance;
 
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeFalse();
         }
@@ -269,9 +279,10 @@ namespace LobotomyCorporationMods.Test
             var creature = GetCreature(CreatureIds.CrumblingArmor);
             var commandWindow = InitializeCommandWindow(creature);
             var agent = TestExtensions.CreateAgentModel();
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
             agent.primaryStat.hp = StatLevelOne;
 
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeTrue();
         }
@@ -288,8 +299,9 @@ namespace LobotomyCorporationMods.Test
             var commandWindow = InitializeCommandWindow(creature, SkillType);
             var agent = GetAgentWithGift(equipmentId);
             agent.primaryStat.hp = StatLevelFive;
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
 
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeTrue();
         }
@@ -304,9 +316,10 @@ namespace LobotomyCorporationMods.Test
             var creature = GetCreature(CreatureIds.CrumblingArmor);
             var commandWindow = InitializeCommandWindow(creature);
             var agent = TestExtensions.CreateAgentModel();
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
             agent.primaryStat.hp = fortitude;
 
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeFalse();
         }
@@ -330,8 +343,9 @@ namespace LobotomyCorporationMods.Test
             var commandWindow = InitializeCommandWindow(creature, skillType);
             var agent = GetAgentWithGift(giftId);
             agent.primaryStat.hp = StatLevelFive;
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
 
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeFalse();
         }
@@ -347,8 +361,9 @@ namespace LobotomyCorporationMods.Test
             var commandWindow = InitializeCommandWindow(creature);
             var buffList = new List<UnitBuf> { TestExtensions.CreateFairyBuf() };
             var agent = TestExtensions.CreateAgentModel(bufList: buffList);
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
 
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeTrue();
         }
@@ -360,8 +375,9 @@ namespace LobotomyCorporationMods.Test
             var commandWindow = InitializeCommandWindow(creature);
             var buffList = new List<UnitBuf> { TestExtensions.CreateFairyBuf() };
             var agent = TestExtensions.CreateAgentModel(bufList: buffList);
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
 
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeFalse();
         }
@@ -377,8 +393,9 @@ namespace LobotomyCorporationMods.Test
             var commandWindow = InitializeCommandWindow(creature);
             var buffList = new List<UnitBuf> { TestExtensions.CreateLittleWitchBuf() };
             var agent = TestExtensions.CreateAgentModel(bufList: buffList);
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
 
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeTrue();
         }
@@ -390,8 +407,9 @@ namespace LobotomyCorporationMods.Test
             var commandWindow = InitializeCommandWindow(creature);
             var buffList = new List<UnitBuf> { TestExtensions.CreateLittleWitchBuf() };
             var agent = TestExtensions.CreateAgentModel(bufList: buffList);
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
 
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeFalse();
         }
@@ -406,9 +424,10 @@ namespace LobotomyCorporationMods.Test
             var creature = GetCreature(CreatureIds.HappyTeddyBear);
             var commandWindow = InitializeCommandWindow(creature);
             var agent = TestExtensions.CreateAgentModel();
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
             creature.script = new HappyTeddy { lastAgent = agent };
 
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeTrue();
         }
@@ -419,11 +438,12 @@ namespace LobotomyCorporationMods.Test
             var creature = GetCreature(CreatureIds.HappyTeddyBear);
             var commandWindow = InitializeCommandWindow(creature);
             var agent = TestExtensions.CreateAgentModel();
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
             var lastAgent = TestExtensions.CreateAgentModel();
             lastAgent.instanceId += 1L;
             creature.script = new HappyTeddy { lastAgent = lastAgent };
 
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeFalse();
         }
@@ -434,9 +454,10 @@ namespace LobotomyCorporationMods.Test
             var creature = GetCreature(CreatureIds.HappyTeddyBear);
             var commandWindow = InitializeCommandWindow(creature);
             var agent = TestExtensions.CreateAgentModel();
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
             creature.script = new HappyTeddy();
 
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeFalse();
         }
@@ -454,9 +475,10 @@ namespace LobotomyCorporationMods.Test
             var creature = GetCreature(CreatureIds.NothingThere);
             var commandWindow = InitializeCommandWindow(creature);
             var agent = TestExtensions.CreateAgentModel();
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
             agent.primaryStat.hp = fortitude;
 
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeTrue();
         }
@@ -469,9 +491,10 @@ namespace LobotomyCorporationMods.Test
             var creature = GetCreature(CreatureIds.NothingThere);
             var commandWindow = InitializeCommandWindow(creature);
             var agent = TestExtensions.CreateAgentModel();
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
             agent.primaryStat.hp = fortitude;
 
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeFalse();
         }
@@ -484,9 +507,10 @@ namespace LobotomyCorporationMods.Test
             ((Nothing)creature.script).copiedWorker = TestExtensions.CreateAgentModel();
             var commandWindow = InitializeCommandWindow(creature);
             var agent = TestExtensions.CreateAgentModel();
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
             agent.primaryStat.hp = StatLevelFive;
 
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeTrue();
         }
@@ -499,9 +523,10 @@ namespace LobotomyCorporationMods.Test
             ((Nothing)creature.script).copiedWorker = null;
             var commandWindow = InitializeCommandWindow(creature);
             var agent = TestExtensions.CreateAgentModel();
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
             agent.primaryStat.hp = StatLevelFive;
 
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeFalse();
         }
@@ -517,6 +542,7 @@ namespace LobotomyCorporationMods.Test
             var creature = GetCreature(CreatureIds.ParasiteTree);
             var commandWindow = InitializeCommandWindow(creature);
             var agent = TestExtensions.CreateAgentModel();
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
 
             // Mock animation script adapter to avoid Unity errors
             const int FourFlowers = 4;
@@ -525,7 +551,7 @@ namespace LobotomyCorporationMods.Test
             mockAnimationScriptAdapter.Setup(ash => ash.ParasiteTreeNumberOfFlowers).Returns(FourFlowers);
 
             // Act
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow, mockAnimationScriptAdapter.Object);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow, mockAnimationScriptAdapter.Object);
 
             // Assert
             result.Should().BeTrue();
@@ -542,6 +568,7 @@ namespace LobotomyCorporationMods.Test
             parasiteTreeBlessing.type = UnitBufType.YGGDRASIL_BLESS;
             var buffList = new List<UnitBuf> { parasiteTreeBlessing };
             var agent = TestExtensions.CreateAgentModel(bufList: buffList);
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
 
             // Mock animation script adapter to avoid Unity errors
             const int FourFlowers = 4;
@@ -550,7 +577,7 @@ namespace LobotomyCorporationMods.Test
             mockAnimationScriptAdapter.Setup(ash => ash.ParasiteTreeNumberOfFlowers).Returns(FourFlowers);
 
             // Act
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow, mockAnimationScriptAdapter.Object);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow, mockAnimationScriptAdapter.Object);
 
             // Assert
             result.Should().BeFalse();
@@ -567,6 +594,7 @@ namespace LobotomyCorporationMods.Test
             var creature = GetCreature(CreatureIds.ParasiteTree);
             var commandWindow = InitializeCommandWindow(creature);
             var agent = TestExtensions.CreateAgentModel();
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
 
             // Mock animation script adapter to avoid Unity errors
             var mockAnimationScriptAdapter = new Mock<IAnimationScriptAdapter>();
@@ -574,7 +602,7 @@ namespace LobotomyCorporationMods.Test
             mockAnimationScriptAdapter.Setup(ash => ash.ParasiteTreeNumberOfFlowers).Returns(numberOfFlowers);
 
             // Act
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow, mockAnimationScriptAdapter.Object);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow, mockAnimationScriptAdapter.Object);
 
             // Assert
             result.Should().BeFalse();
@@ -592,9 +620,10 @@ namespace LobotomyCorporationMods.Test
             var creature = GetCreature(CreatureIds.RedShoes);
             var commandWindow = InitializeCommandWindow(creature);
             var agent = TestExtensions.CreateAgentModel();
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
             agent.primaryStat.work = temperance;
 
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeTrue();
         }
@@ -608,9 +637,10 @@ namespace LobotomyCorporationMods.Test
             var creature = GetCreature(CreatureIds.RedShoes);
             var commandWindow = InitializeCommandWindow(creature);
             var agent = TestExtensions.CreateAgentModel();
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
             agent.primaryStat.work = temperance;
 
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeFalse();
         }
@@ -628,9 +658,10 @@ namespace LobotomyCorporationMods.Test
             var creature = GetCreature(CreatureIds.SpiderBud);
             var commandWindow = InitializeCommandWindow(creature, skillType);
             var agent = TestExtensions.CreateAgentModel();
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
             agent.primaryStat.mental = StatLevelOne;
 
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeTrue();
         }
@@ -653,9 +684,10 @@ namespace LobotomyCorporationMods.Test
             var creature = GetCreature(CreatureIds.SpiderBud);
             var commandWindow = InitializeCommandWindow(creature, skillType);
             var agent = TestExtensions.CreateAgentModel();
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
             agent.primaryStat.mental = prudence;
 
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeFalse();
         }
@@ -670,9 +702,10 @@ namespace LobotomyCorporationMods.Test
             var creature = GetCreature(CreatureIds.SpiderBud);
             var commandWindow = InitializeCommandWindow(creature, RwbpType.W);
             var agent = TestExtensions.CreateAgentModel();
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
             agent.primaryStat.mental = prudence;
 
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeTrue();
         }
@@ -697,10 +730,11 @@ namespace LobotomyCorporationMods.Test
             var creature = GetCreature(CreatureIds.SingingMachine, QliphothCounterOne);
             var commandWindow = InitializeCommandWindow(creature);
             var agent = TestExtensions.CreateAgentModel();
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
             agent.primaryStat.hp = fortitude;
             agent.primaryStat.work = temperance;
 
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeTrue();
         }
@@ -740,10 +774,11 @@ namespace LobotomyCorporationMods.Test
             var creature = GetCreature(CreatureIds.SingingMachine, QliphothCounterOne);
             var commandWindow = InitializeCommandWindow(creature);
             var agent = TestExtensions.CreateAgentModel();
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
             agent.primaryStat.hp = fortitude;
             agent.primaryStat.work = StatLevelThree;
 
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeTrue();
         }
@@ -764,10 +799,11 @@ namespace LobotomyCorporationMods.Test
             var creature = GetCreature(CreatureIds.SingingMachine, QliphothCounterOne);
             var commandWindow = InitializeCommandWindow(creature);
             var agent = TestExtensions.CreateAgentModel();
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
             agent.primaryStat.hp = fortitude;
             agent.primaryStat.work = temperance;
 
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeFalse();
         }
@@ -803,10 +839,11 @@ namespace LobotomyCorporationMods.Test
             var creature = GetCreature(CreatureIds.SingingMachine);
             var commandWindow = InitializeCommandWindow(creature);
             var agent = TestExtensions.CreateAgentModel();
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
             agent.primaryStat.hp = fortitude;
             agent.primaryStat.work = temperance;
 
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeTrue();
         }
@@ -821,9 +858,10 @@ namespace LobotomyCorporationMods.Test
             var creature = GetCreature(CreatureIds.VoidDream);
             var commandWindow = InitializeCommandWindow(creature);
             var agent = TestExtensions.CreateAgentModel();
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
             agent.primaryStat.work = StatLevelOne;
 
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeTrue();
         }
@@ -838,9 +876,10 @@ namespace LobotomyCorporationMods.Test
             var creature = GetCreature(CreatureIds.VoidDream);
             var commandWindow = InitializeCommandWindow(creature);
             var agent = TestExtensions.CreateAgentModel();
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
             agent.primaryStat.work = temperance;
 
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeFalse();
         }
@@ -855,8 +894,9 @@ namespace LobotomyCorporationMods.Test
             var creature = GetCreature(CreatureIds.WarmHeartedWoodsman);
             var commandWindow = InitializeCommandWindow(creature);
             var agent = TestExtensions.CreateAgentModel();
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
 
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeTrue();
         }
@@ -868,8 +908,9 @@ namespace LobotomyCorporationMods.Test
             var creature = GetCreature(CreatureIds.WarmHeartedWoodsman, QliphothCounterOne);
             var commandWindow = InitializeCommandWindow(creature);
             var agent = TestExtensions.CreateAgentModel();
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
 
-            var result = agent.CheckIfWorkWillKillAgent(commandWindow);
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow);
 
             result.Should().BeFalse();
         }
