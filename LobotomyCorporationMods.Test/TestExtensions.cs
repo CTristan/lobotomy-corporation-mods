@@ -18,11 +18,13 @@ using Moq;
 using UnityEngine;
 using UnityEngine.UI;
 using WorkerSprite;
+using ILogger = LobotomyCorporationMods.Common.Interfaces.ILogger;
 
 namespace LobotomyCorporationMods.Test
 {
     [SuppressMessage("ReSharper", "Unity.IncorrectMonoBehaviourInstantiation")]
     [SuppressMessage("ReSharper", "Unity.NoNullCoalescing")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     internal static class TestExtensions
     {
         [NotNull]
@@ -33,6 +35,14 @@ namespace LobotomyCorporationMods.Test
             mockFileManager.Setup(fm => fm.ReadAllText(It.IsAny<string>(), It.IsAny<bool>())).Returns((string fileName, bool createIfNotExists) => File.ReadAllText(fileName.InCurrentDirectory()));
 
             return mockFileManager;
+        }
+
+        [NotNull]
+        public static Mock<ILogger> GetMockLogger()
+        {
+            var mockLogger = new Mock<ILogger>();
+
+            return mockLogger;
         }
 
         [NotNull]
@@ -297,30 +307,6 @@ namespace LobotomyCorporationMods.Test
             CreateUninitializedObject<FairyBuf>(out var fairyBuf);
 
             return fairyBuf;
-        }
-
-        [NotNull]
-        public static GameObject CreateGameObject()
-        {
-            CreateUninitializedObject<GameObject>(out var gameObject);
-
-            var fields = GetUninitializedObjectFields(gameObject.GetType());
-            var newValues = new Dictionary<string, object> { { "activeSelf", true } };
-
-            return GetPopulatedUninitializedObject(gameObject, fields, newValues);
-        }
-
-        [NotNull]
-        public static GlobalGameManager CreateGlobalGameManager()
-        {
-            CreateUninitializedObject<GlobalGameManager>(out var globalGameManager);
-
-            var fields = GetUninitializedObjectFields(globalGameManager.GetType());
-            var newValues = new Dictionary<string, object>();
-            globalGameManager = GetPopulatedUninitializedObject(globalGameManager, fields, newValues);
-            newValues.Add("_instance", globalGameManager);
-
-            return GetPopulatedUninitializedObject(globalGameManager, fields, newValues);
         }
 
         [NotNull]

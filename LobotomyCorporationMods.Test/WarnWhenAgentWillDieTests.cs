@@ -31,8 +31,8 @@ namespace LobotomyCorporationMods.Test
         public WarnWhenAgentWillDieTests()
         {
             _ = new Harmony_Patch();
-            var fileManager = TestExtensions.GetMockFileManager();
-            Harmony_Patch.Instance.LoadData(fileManager.Object);
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.LoadData(mockLogger.Object);
         }
 
         [Fact]

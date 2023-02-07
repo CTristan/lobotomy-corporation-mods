@@ -35,16 +35,16 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
             // Only occurs during unit tests
             catch (SecurityException ex)
             {
-                Harmony_Patch.Instance.FileManager.WriteToLog(ex);
+                Harmony_Patch.Instance.Logger.WriteToLog(ex);
             }
             // Only occurs during unit tests
             catch (MissingMemberException ex)
             {
-                Harmony_Patch.Instance.FileManager.WriteToLog(ex);
+                Harmony_Patch.Instance.Logger.WriteToLog(ex);
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.FileManager.WriteToLog(ex);
+                Harmony_Patch.Instance.Logger.WriteToLog(ex);
 
                 throw;
             }

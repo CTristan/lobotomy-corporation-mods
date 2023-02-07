@@ -57,7 +57,7 @@ namespace LobotomyCorporationMods.BugFixes.Patches
                     return true;
                 }
 
-                Harmony_Patch.Instance.FileManager.WriteToLog(ex);
+                Harmony_Patch.Instance.Logger.WriteToLog(ex);
 
                 throw;
             }

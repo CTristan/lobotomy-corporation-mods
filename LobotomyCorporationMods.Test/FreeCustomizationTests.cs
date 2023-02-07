@@ -21,8 +21,8 @@ namespace LobotomyCorporationMods.Test
         public FreeCustomizationTests()
         {
             _ = new Harmony_Patch();
-            var mockFileManager = TestExtensions.GetMockFileManager();
-            Harmony_Patch.Instance.LoadData(mockFileManager.Object);
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.LoadData(mockLogger.Object);
         }
 
         [Fact]
@@ -134,6 +134,14 @@ namespace LobotomyCorporationMods.Test
         }
 
         #region Code Coverage Tests
+
+        [Fact]
+        public void AgentInfoWindowPatchEnforcementWindow_Is_Untestable()
+        {
+            Action action = AgentInfoWindowPatchEnforcementWindow.Postfix;
+
+            action.ShouldThrowUnityException();
+        }
 
         [Fact]
         public void CustomizingWindowPatchConfirm_Is_Untestable()

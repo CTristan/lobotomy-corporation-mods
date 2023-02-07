@@ -42,6 +42,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
             try
             {
                 FileManager = new FileManager(ModFileName);
+                Logger = new Logger(FileManager);
 
                 try
                 {
@@ -51,7 +52,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
                 }
                 catch (Exception ex)
                 {
-                    FileManager.WriteToLog(ex);
+                    Logger.WriteToLog(ex);
 
                     throw;
                 }
@@ -63,7 +64,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         }
 
         public IAgentWorkTracker AgentWorkTracker { get; private set; }
-        public IFileManager FileManager { get; private set; }
+        private IFileManager FileManager { get; set; }
+        internal ILogger Logger { get; }
 
         /// <summary>
         ///     Entry point for testing.

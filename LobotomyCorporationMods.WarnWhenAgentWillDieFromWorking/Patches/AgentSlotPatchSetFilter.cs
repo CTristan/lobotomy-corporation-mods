@@ -40,7 +40,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.FileManager.WriteToLog(ex);
+                Harmony_Patch.Instance.Logger.WriteToLog(ex);
 
                 throw;
             }
