@@ -12,12 +12,14 @@ Requires [Basemod](https://www.nexusmods.com/lobotomycorporation/mods/2).
 * [Recent Changes](#recent-changes)
 * [List of mods](#list-of-mods)
 * [Change Log](#change-log)
+* [What the Version Numbers Mean](#what-the-version-numbers-mean)
 * [Building](#building)
+* [Debug Logging](#debug-logging)
 * [License](#license)
 
 ## Recent Changes
 
-* 2023-02-06 (v4.0) - New mod: Warn When Agent Will Die From Working
+* 2023-02-08 (v4.0) - New mod: Warn When Agent Will Die From Working
 
 * 2023-02-01 (v3.2) - Added bug fix for Crumbling Armor where replacing the gift
   would still kill the agent.
@@ -128,6 +130,15 @@ Provides warnings for the following abnormalities:
 * v1.0.1 - Fixed an issue with Bad Luck Protection for Gifts
 * v1.0 - First mod: Bad Luck Protection for Gifts
 
+## What the version numbers mean
+
+Major.minor.patch.0
+
+* Major version is the total number of mods created.
+* Minor version is if there are new additions to existing mods.
+* Patch version is for bug fixes.
+* Fourth value is for development purposes only.
+
 ## Building
 
 The original game files are required which are not provided. My current
@@ -153,14 +164,12 @@ Framework DLLs in Linux like I can in Windows with dnSpy, especially since the
 game has to run in Proton. If you are able to get debugging working in Linux I
 would love to hear about it!
 
-## What the version numbers mean
+## Debug Logging
 
-Major.minor.patch.0
+In the release versions errors are logged to a text file, but if you deploy as debug DLLs they will also appear in-game
+in both the system log and as an Angela notification:
 
-* Major version is the total number of mods created.
-* Minor version is if there are new additions to existing mods.
-* Patch version is for bug fixes.
-* Fourth value is for development purposes only.
+![Debug Logging example](https://raw.githubusercontent.com/ctristan/lobotomy-corporation-mods/assets/debug-logging.png)
 
 # License
 
