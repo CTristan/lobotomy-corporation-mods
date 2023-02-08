@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
-using LobotomyCorporationMods.Common;
 using LobotomyCorporationMods.Common.Enums;
+using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations

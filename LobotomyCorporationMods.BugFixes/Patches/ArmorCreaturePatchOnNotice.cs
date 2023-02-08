@@ -3,7 +3,6 @@
 using System;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.BugFixes.Extensions;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 

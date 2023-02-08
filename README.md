@@ -34,6 +34,7 @@ See [Change Log](#change-log) for all changes.
 ### Bad Luck Protection for Gifts
 
 ***
+
 ![Bad Luck Protection for Gifts example](https://raw.githubusercontent.com/ctristan/lobotomy-corporation-mods/assets/bad-luck-protection.png)
 
 A mod that provides increasing bad luck protection for agents that work on
@@ -53,6 +54,7 @@ to remember what happened after the day is reset.
 ### Free Customization
 
 ***
+
 ![Free Customization example](https://raw.githubusercontent.com/ctristan/lobotomy-corporation-mods/assets/free-customization.png)
 
 Allows customizing (and re-customizing) agents without having to spend
@@ -68,6 +70,7 @@ points.
 ### Unofficial Bug Fixes
 
 ***
+
 A collection of bug fixes to fix various minor issues in the original game code.
 
 Bugs fixed:
@@ -87,35 +90,52 @@ Bugs fixed:
 ## Warn When Agent Will Die From Working
 
 ***
+
 ![Free Customization example](https://raw.githubusercontent.com/ctristan/lobotomy-corporation-mods/assets/warn-when-agent-will-die-from-working.png)
 
-Provides a visual warning when an agent will die if assigned to work on an abnormality. The warning only appears when an
-abnormality has been fully observed to avoid spoiling newly-acquired abnormalities.
+Provides a visual warning when an agent will die if assigned to work on an
+abnormality. The warning only appears when an abnormality has been fully
+observed to avoid spoiling newly-acquired abnormalities.
 
-Discovering how to deal with abnormalities is a major part of the game, however later on there are so many that have
-instant death abilities that are hard to keep track of. It's very annoying being almost done with a day with no deaths
-but then having an agent die because either I forgot about an instant death condition, the agent had a temporary
-condition that I wasn't aware was still affecting them, or it triggered because of a rare edge case.
+Discovering how to deal with abnormalities is a major part of the game, however
+later on there are so many that have instant death abilities that are hard to
+keep track of. It's very annoying being almost done with a day with no deaths
+but then having an agent die because either I forgot about an instant death
+condition, the agent had a temporary condition that I wasn't aware was still
+affecting them, or it triggered because of a rare edge case.
 
 <details>
 <summary><b>List of abnormalities warned about with this mod (spoilers)</b></summary>
 Provides warnings for the following abnormalities:
 
 * Beauty and the Beast
+
 * Bloodbath
+
 * Blue Star
+
 * Crumbling Armor
-    * Includes gift
+  * Includes gift
+
 * Fairy Festival
+
 * Happy Teddy Bear
+
 * Laetitia
+
 * Nothing There
+
 * Parasite Tree
+
 * Red Shoes
+
 * Singing Machine
-    * Includes when agent would die from receiving gift
+  * Includes when agent would die from receiving gift
+
 * Spider Bud
+
 * Void Dream
+
 * Warm-Hearted Woodsman
 
 </details>
@@ -166,12 +186,13 @@ would love to hear about it!
 
 ## Debug Logging
 
-In the release versions errors are logged to a text file, but if you deploy as debug DLLs they will also appear in-game
-in both the system log and as an Angela notification:
+In the release versions errors are logged to a text file, but if you deploy as
+debug DLLs they will also appear in-game in both the system log and as an Angela
+notification:
 
 ![Debug Logging example](https://raw.githubusercontent.com/ctristan/lobotomy-corporation-mods/assets/debug-logging.png)
 
-# License
+## License
 
 This work is licensed under MIT.
 
