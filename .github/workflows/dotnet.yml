@@ -46,3 +46,6 @@ jobs:
     
     - name: Test
       run: dotnet test --no-build --verbosity normal BaseMods/src/lobotomy-corporation-mods/LobotomyCorporationMods.sln
+      
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v3
