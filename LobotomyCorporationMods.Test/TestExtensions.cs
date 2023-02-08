@@ -31,8 +31,8 @@ namespace LobotomyCorporationMods.Test
         public static Mock<IFileManager> GetMockFileManager()
         {
             var mockFileManager = new Mock<IFileManager>();
-            mockFileManager.Setup(fm => fm.GetFileIfExists(It.IsAny<string>())).Returns((string fileName) => fileName.InCurrentDirectory());
-            mockFileManager.Setup(fm => fm.ReadAllText(It.IsAny<string>(), It.IsAny<bool>())).Returns((string fileName, bool _) => File.ReadAllText(fileName.InCurrentDirectory()));
+            mockFileManager.Setup(fm => fm.GetOrCreateFile(It.IsAny<string>())).Returns((string fileName) => fileName.InCurrentDirectory());
+            mockFileManager.Setup(fm => fm.ReadAllText(It.IsAny<string>(), It.IsAny<bool>())).Returns((string fileName, bool createIfNotExists) => File.ReadAllText(fileName.InCurrentDirectory()));
 
             return mockFileManager;
         }
@@ -481,9 +481,9 @@ namespace LobotomyCorporationMods.Test
         ///     Returns the fields which are valid and can be used to populate an object.
         /// </summary>
         [NotNull]
-        private static IEnumerable<FieldInfo> GetValidFields([NotNull] this IEnumerable<FieldInfo> typeFields)
+        private static IEnumerable<MemberInfo> GetValidFields([NotNull] this IEnumerable<FieldInfo> typeFields)
         {
-            var goodFields = new List<FieldInfo>();
+            var goodFields = new List<MemberInfo>();
             foreach (var typeField in typeFields)
             {
                 try

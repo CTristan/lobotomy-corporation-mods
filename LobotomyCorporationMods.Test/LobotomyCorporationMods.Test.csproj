@@ -1,24 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
+    <IsTestProject>true</IsTestProject>
     <IsPackable>false</IsPackable>
     <OutputPath>bin\</OutputPath>
     <OutputType>Library</OutputType>
     <ProjectGuid>{5186F30E-9617-4955-BE97-0E496DE2148B}</ProjectGuid>
     <RuntimeIdentifiers>win</RuntimeIdentifiers>
-    <TargetFramework>net40</TargetFramework>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworks>net35;net461</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="coverlet.collector" Version="3.2.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="coverlet.msbuild" Version="3.2.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="FluentAssertions" Version="4.19.4"/>
+    <PackageReference Include="coverlet.collector" GeneratePathProperty="true" Version="3.2.0"/>
+    <PackageReference Include="coverlet.msbuild" Version="3.2.0"/>
+    <PackageReference Include="FluentAssertions" Version="2.2.0"/>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.1"/>
     <PackageReference Include="Moq" Version="4.2.1510.2205"/>
     <PackageReference Include="xunit" Version="1.9.2"/>
@@ -27,7 +21,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

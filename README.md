@@ -115,6 +115,7 @@ Provides warnings for the following abnormalities:
 * Blue Star
 
 * Crumbling Armor
+
   * Includes gift
 
 * Fairy Festival
@@ -130,6 +131,7 @@ Provides warnings for the following abnormalities:
 * Red Shoes
 
 * Singing Machine
+
   * Includes when agent would die from receiving gift
 
 * Spider Bud
