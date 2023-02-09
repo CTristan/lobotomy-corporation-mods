@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-namespace LobotomyCorporationMods.Common.Interfaces
+namespace LobotomyCorporationMods.Common.Interfaces.Adapters
 {
     public interface IAnimationScriptAdapter
     {

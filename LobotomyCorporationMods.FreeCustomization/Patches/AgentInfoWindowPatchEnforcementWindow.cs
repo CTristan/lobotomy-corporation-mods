@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 
 using System;
-using Customizing;
 using Harmony;
+using LobotomyCorporationMods.FreeCustomization.Extensions;
 
 namespace LobotomyCorporationMods.FreeCustomization.Patches
 {
@@ -12,20 +12,17 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         /// <summary>
         ///     Runs after opening the Strengthen Agent window to open the appearance window.
         /// </summary>
-        // EnforcementWindow is a static method, so we can't get an instance of it through Harmony.
+        // EnforcementWindow is a static method, so we can't get an instance of the AgentInfoWindow through Harmony.
         public static void Postfix()
         {
             try
             {
-                if (AgentInfoWindow.currentWindow.customizingWindow.CurrentData == null)
-                {
-                    return;
-                }
+                var agentInfoWindow = AgentInfoWindow.currentWindow;
 
-                AgentInfoWindow.currentWindow.customizingBlock.SetActive(true);
-                AgentInfoWindow.currentWindow.AppearanceActiveControl.SetActive(true);
-                AgentInfoWindow.currentWindow.UIComponents.SetData(CustomizingWindow.CurrentWindow.CurrentData);
-                AgentInfoWindow.currentWindow.customizingWindow.OpenAppearanceWindow();
+                if (agentInfoWindow.customizingWindow.CurrentData != null)
+                {
+                    agentInfoWindow.OpenAppearanceWindow();
+                }
             }
             catch (Exception ex)
             {

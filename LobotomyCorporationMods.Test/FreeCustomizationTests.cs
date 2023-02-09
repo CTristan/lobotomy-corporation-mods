@@ -6,9 +6,11 @@ using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using FluentAssertions;
 using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.FreeCustomization;
 using LobotomyCorporationMods.FreeCustomization.Extensions;
 using LobotomyCorporationMods.FreeCustomization.Patches;
+using Moq;
 using UnityEngine;
 using Xunit;
 using Xunit.Extensions;
@@ -46,6 +48,17 @@ namespace LobotomyCorporationMods.Test
             CustomizingWindowPatchOpenAppearanceWindow.Postfix(customizingWindow);
 
             customizingWindow.CurrentData.isCustomAppearance.Should().BeFalse();
+        }
+
+        [Fact]
+        public void Opening_the_strengthen_employee_window_opens_the_Appearance_UI()
+        {
+            var agentInfoWindow = TestExtensions.CreateAgentInfoWindow();
+            var mockAgentInfoWindowAdapter = new Mock<IAgentInfoWindowAdapter>();
+
+            agentInfoWindow.OpenAppearanceWindow(mockAgentInfoWindowAdapter.Object);
+
+            mockAgentInfoWindowAdapter.Verify(x => x.OpenAppearanceWindow(agentInfoWindow), Times.Once);
         }
 
         [Theory]
@@ -138,6 +151,9 @@ namespace LobotomyCorporationMods.Test
         [Fact]
         public void AgentInfoWindowPatchEnforcementWindow_Is_Untestable()
         {
+            // Requires an AgentInfoWindow instance
+            TestExtensions.CreateAgentInfoWindow();
+
             Action action = AgentInfoWindowPatchEnforcementWindow.Postfix;
 
             action.ShouldThrowUnityException();

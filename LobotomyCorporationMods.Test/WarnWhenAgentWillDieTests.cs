@@ -7,7 +7,7 @@ using CommandWindow;
 using FluentAssertions;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Enums;
-using LobotomyCorporationMods.Common.Interfaces;
+using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches;

@@ -4,9 +4,9 @@ using System;
 using System.Linq;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Interfaces;
+using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
-namespace LobotomyCorporationMods.Common.Implementations
+namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     public sealed class AnimationScriptAdapter : IAnimationScriptAdapter
     {

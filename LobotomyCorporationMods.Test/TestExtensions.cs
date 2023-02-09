@@ -77,6 +77,23 @@ namespace LobotomyCorporationMods.Test
         }
 
         [NotNull]
+        public static AgentInfoWindow CreateAgentInfoWindow(GameObject customizingBlock = null, CustomizingWindow customizingWindow = null, AgentInfoWindow.UIComponent uiComponents = null)
+        {
+            customizingBlock = customizingBlock ?? CreateGameObject();
+            customizingWindow = customizingWindow ?? CreateCustomizingWindow();
+            uiComponents = uiComponents ?? CreateUIComponent();
+
+            CreateUninitializedObject<AgentInfoWindow>(out var agentInfoWindow);
+
+            var fields = GetUninitializedObjectFields(agentInfoWindow.GetType());
+            var newValues = new Dictionary<string, object> { { "customizingBlock", customizingBlock }, { "customizingWindow", customizingWindow }, { "UIComponents", uiComponents } };
+            agentInfoWindow = GetPopulatedUninitializedObject(agentInfoWindow, fields, newValues);
+            newValues.Add("currentWindow", agentInfoWindow);
+
+            return GetPopulatedUninitializedObject(agentInfoWindow, fields, newValues);
+        }
+
+        [NotNull]
         public static AgentModel CreateAgentModel(AgentName agentName = null, List<UnitBuf> bufList = null, UnitEquipSpace equipment = null, long instanceId = 1L, string name = "",
             WorkerPrimaryStat primaryStat = null, WorkerSprite.WorkerSprite spriteData = null, List<UnitStatBuf> statBufList = null)
         {
@@ -309,6 +326,13 @@ namespace LobotomyCorporationMods.Test
             return fairyBuf;
         }
 
+        public static GameObject CreateGameObject()
+        {
+            CreateUninitializedObject<GameObject>(out var gameObject);
+
+            return gameObject;
+        }
+
         [NotNull]
         public static Image CreateImage()
         {
@@ -359,6 +383,12 @@ namespace LobotomyCorporationMods.Test
             CreateUninitializedObject<Text>(out var text);
 
             return text;
+        }
+
+        [NotNull]
+        public static AgentInfoWindow.UIComponent CreateUIComponent()
+        {
+            return new AgentInfoWindow.UIComponent();
         }
 
         [NotNull]
