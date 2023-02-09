@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,6 @@ namespace LobotomyCorporationMods.Common.Implementations
 {
     public sealed class FileManager : IFileManager
     {
-        private const string DefaultLogFileName = "log.txt";
         private readonly DirectoryInfo _dataPath;
         [NotNull] private readonly object _fileLock = new object();
         [NotNull] private readonly Dictionary<string, string> _files = new Dictionary<string, string>();
@@ -26,7 +25,7 @@ namespace LobotomyCorporationMods.Common.Implementations
             _dataPath = directory ?? throw new InvalidOperationException("Data path was not found.");
         }
 
-        public string GetFile([NotNull] string fileName)
+        public string GetOrCreateFile([NotNull] string fileName)
         {
             if (_files.TryGetValue(fileName, out var value))
             {
@@ -37,6 +36,26 @@ namespace LobotomyCorporationMods.Common.Implementations
             _files.Add(fileName, fullFilePath);
 
             return _files[fileName];
+        }
+
+        public string GetFileIfExists([NotNull] string fileName)
+        {
+            if (_files.TryGetValue(fileName, out var value))
+            {
+                return value;
+            }
+
+            var fullFilePath = Path.Combine(_dataPath.FullName, fileName);
+            var fileIfExists = "";
+
+            if (File.Exists(fullFilePath))
+            {
+                _files.Add(fileName, fullFilePath);
+
+                fileIfExists = _files[fileName];
+            }
+
+            return fileIfExists;
         }
 
         [NotNull]
@@ -63,30 +82,6 @@ namespace LobotomyCorporationMods.Common.Implementations
             lock (_fileLock)
             {
                 File.WriteAllText(path, contents);
-            }
-        }
-
-        public void WriteToLog([NotNull] string message)
-        {
-            WriteToLog(message, DefaultLogFileName);
-        }
-
-        public void WriteToLog([NotNull] string message, [NotNull] string logFileName)
-        {
-            var logFile = Path.Combine(_dataPath.FullName, logFileName);
-            WriteAllText(logFile, message);
-        }
-
-        public void WriteToLog(Exception ex)
-        {
-            WriteToLog(ex, DefaultLogFileName);
-        }
-
-        public void WriteToLog([CanBeNull] Exception ex, [NotNull] string logFileName)
-        {
-            if (ex != null)
-            {
-                WriteToLog(ex.ToString(), logFileName);
             }
         }
     }

@@ -12,37 +12,40 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout private references
-      uses: actions/checkout@v3.0.2
-      with:
-        repository: CTristan/lobotomy-corporation-mods-references
-        token: ${{ secrets.PRIVATE_REFERENCES_TOKEN }}
-        persist-credentials: false
-    
-    - name: Create project directories
-      run: |
-        mkdir BaseMods
-        cd BaseMods
-        mkdir src
-        cd src
-        mkdir lobotomy-corporation-mods
-        cd lobotomy-corporation-mods
-    
-    - name: Checkout main repository
-      uses: actions/checkout@v3.0.2
-      with:
-        path: BaseMods/src/lobotomy-corporation-mods
-      
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v2
-      with:
-        dotnet-version: 6.x
-    
-    - name: Restore dependencies
-      run: dotnet restore BaseMods/src/lobotomy-corporation-mods/LobotomyCorporationMods.sln
-    
-    - name: Build
-      run: dotnet build --no-restore BaseMods/src/lobotomy-corporation-mods/LobotomyCorporationMods.sln
-    
-    - name: Test
-      run: dotnet test --no-build --verbosity normal BaseMods/src/lobotomy-corporation-mods/LobotomyCorporationMods.sln
+      - name: Checkout private references
+        uses: actions/checkout@v3.0.2
+        with:
+          repository: CTristan/lobotomy-corporation-mods-references
+          token: ${{ secrets.PRIVATE_REFERENCES_TOKEN }}
+          persist-credentials: false
+
+      - name: Create project directories
+        run: |
+          mkdir BaseMods
+          cd BaseMods
+          mkdir src
+          cd src
+          mkdir lobotomy-corporation-mods
+          cd lobotomy-corporation-mods
+
+      - name: Checkout main repository
+        uses: actions/checkout@v3.0.2
+        with:
+          path: BaseMods/src/lobotomy-corporation-mods
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 6.x
+
+      - name: Restore dependencies
+        run: dotnet restore BaseMods/src/lobotomy-corporation-mods/LobotomyCorporationMods.sln
+
+      - name: Build
+        run: dotnet build --no-restore BaseMods/src/lobotomy-corporation-mods/LobotomyCorporationMods.sln
+
+      - name: Test
+        run: dotnet test --no-build --collect:"XPlat Code Coverage" --verbosity normal BaseMods/src/lobotomy-corporation-mods/LobotomyCorporationMods.sln
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3

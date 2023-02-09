@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
+    <IsTestProject>true</IsTestProject>
     <IsPackable>false</IsPackable>
     <OutputPath>bin\</OutputPath>
     <OutputType>Library</OutputType>
     <ProjectGuid>{5186F30E-9617-4955-BE97-0E496DE2148B}</ProjectGuid>
     <RuntimeIdentifiers>win</RuntimeIdentifiers>
-    <TargetFramework>net40</TargetFramework>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworks>net35;net48</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="3.2.0">
@@ -18,13 +18,9 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="FluentAssertions" Version="4.19.4"/>
+    <PackageReference Include="FluentAssertions" Version="2.2.0"/>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.1"/>
-    <PackageReference Include="NSubstitute" Version="2.0.3"/>
-    <PackageReference Include="NSubstitute.Analyzers.CSharp" Version="1.0.16">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="Moq" Version="4.2.1510.2205"/>
     <PackageReference Include="xunit" Version="1.9.2"/>
     <PackageReference Include="xunit.extensions" Version="1.9.2"/>
     <PackageReference Include="xunit.runner.console" Version="2.4.2">
@@ -43,6 +39,7 @@
     </ProjectReference>
     <ProjectReference Include="..\LobotomyCorporationMods.BugFixes\LobotomyCorporationMods.BugFixes.csproj"/>
     <ProjectReference Include="..\LobotomyCorporationMods.FreeCustomization\LobotomyCorporationMods.FreeCustomization.csproj"/>
+    <ProjectReference Include="..\LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking\LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.csproj"/>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony, Version=1.0.9.1, Culture=neutral, PublicKeyToken=null">
@@ -69,8 +66,23 @@
     <Reference Include="System.Xml, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
       <HintPath>..\..\..\..\Managed\System.Xml.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>..\..\..\..\Managed\UnityEngine.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>..\..\..\..\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>..\..\..\..\Managed\UnityEngine.UI.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="TestResults\**"/>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="TestResults\**"/>
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="TestResults\**"/>
   </ItemGroup>
 </Project>

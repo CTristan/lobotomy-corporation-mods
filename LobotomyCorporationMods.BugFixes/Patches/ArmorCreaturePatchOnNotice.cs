@@ -3,7 +3,6 @@
 using System;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.BugFixes.Extensions;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 
@@ -62,7 +61,7 @@ namespace LobotomyCorporationMods.BugFixes.Patches
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.FileManager.WriteToLog(ex);
+                Harmony_Patch.Instance.Logger.WriteToLog(ex);
 
                 throw;
             }

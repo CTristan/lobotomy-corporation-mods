@@ -18,7 +18,7 @@ namespace LobotomyCorporationMods.BugFixes
         ///     Singleton ensures thread safety across the patches.
         ///     https://csharpindepth.com/Articles/Singleton
         /// </summary>
-        public static readonly Harmony_Patch Instance = new Harmony_Patch(true);
+        internal static readonly Harmony_Patch Instance = new Harmony_Patch(true);
 
         public Harmony_Patch()
         {
@@ -33,7 +33,7 @@ namespace LobotomyCorporationMods.BugFixes
 
             try
             {
-                FileManager = new FileManager(ModFileName);
+                Logger = new Logger(ModFileName);
 
                 try
                 {
@@ -42,7 +42,7 @@ namespace LobotomyCorporationMods.BugFixes
                 }
                 catch (Exception ex)
                 {
-                    FileManager.WriteToLog(ex);
+                    Logger.WriteToLog(ex);
 
                     throw;
                 }
@@ -53,14 +53,6 @@ namespace LobotomyCorporationMods.BugFixes
             }
         }
 
-        internal IFileManager FileManager { get; private set; }
-
-        /// <summary>
-        ///     Entry point for testing.
-        /// </summary>
-        public void LoadData(IFileManager fileManager)
-        {
-            FileManager = fileManager;
-        }
+        internal ILogger Logger { get; }
     }
 }

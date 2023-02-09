@@ -43,7 +43,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
                     return;
                 }
 
-                Harmony_Patch.Instance.FileManager.WriteToLog(ex);
+                Harmony_Patch.Instance.Logger.WriteToLog(ex);
 
                 throw;
             }
