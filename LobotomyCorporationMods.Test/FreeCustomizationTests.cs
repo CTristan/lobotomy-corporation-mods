@@ -120,7 +120,7 @@ namespace LobotomyCorporationMods.Test
         [Theory]
         [InlineData("CurrentName", "ExpectedName")]
         [InlineData("OldName", "NewName")]
-        public static void Renaming_agent_changes_agent_name_successfully([NotNull] string currentName, [NotNull] string expectedName)
+        public void Renaming_agent_changes_agent_name_successfully([NotNull] string currentName, [NotNull] string expectedName)
         {
             // Arrange
             var currentAgent = TestExtensions.CreateAgentModel();
@@ -144,6 +144,18 @@ namespace LobotomyCorporationMods.Test
             customizingWindow.CurrentAgent.name.Should().Be(expectedName);
             customizingWindow.CurrentAgent._agentName.metaInfo.nameDic.Should().ContainValue(expectedName);
             customizingWindow.CurrentAgent._agentName.nameDic.Should().ContainValue(expectedName);
+        }
+
+        [Fact]
+        public void Changing_random_generated_agent_marks_them_as_custom()
+        {
+            var agent = TestExtensions.CreateAgentModel();
+            agent.iscustom = false;
+            var customizingWindow = TestExtensions.CreateCustomizingWindow(currentAgent: agent);
+
+            customizingWindow.RenameAgent();
+
+            customizingWindow.CurrentAgent.iscustom.Should().Be(true);
         }
 
         #region Code Coverage Tests
