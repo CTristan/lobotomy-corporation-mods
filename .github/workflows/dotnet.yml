@@ -12,6 +12,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v3.0.2
+      
       - name: Checkout private references
         uses: actions/checkout@v3.0.2
         with:
@@ -51,8 +53,6 @@ jobs:
         uses: codecov/codecov-action@v3
         
       - name: Run codacy-coverage-reporter
-        uses:
-          codacy/codacy-coverage-reporter-action@v1
-          actions/checkout@v3.0.2
+        uses: codacy/codacy-coverage-reporter-action@v1
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
