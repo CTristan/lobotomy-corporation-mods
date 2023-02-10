@@ -37,7 +37,7 @@ namespace LobotomyCorporationMods.NotifyWhenGiftReceived.Patches
 
                 // Send notification that the agent acquired the gift
                 var message = $"<color=#66bfcd>{__instance.GetUnitName()}</color> has received the gift <color=#84bd36>{gift.metaInfo.Name}</color>.";
-                Notice.instance.Send("AddSystemLog", message);
+                Notice.instance.Send(NoticeName.AddSystemLog, message);
             }
             catch (Exception ex)
             {
@@ -48,7 +48,7 @@ namespace LobotomyCorporationMods.NotifyWhenGiftReceived.Patches
                     return;
                 }
 
-                Harmony_Patch.Instance.FileManager.WriteToLog(ex);
+                Harmony_Patch.Instance.Logger.WriteToLog(ex);
 
                 throw;
             }

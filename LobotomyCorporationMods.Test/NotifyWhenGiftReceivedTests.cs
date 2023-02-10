@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using FluentAssertions;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.NotifyWhenGiftReceived;
 using LobotomyCorporationMods.NotifyWhenGiftReceived.Patches;
-using NSubstitute;
+using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking;
+using Moq;
 using Xunit;
 using Xunit.Extensions;
 
@@ -16,7 +16,6 @@ namespace LobotomyCorporationMods.Test
     {
         private const string ColorAgentString = "#66bfcd";
         private const string ColorGiftString = "#84bd36";
-        private const long DefaultAgentId = 1L;
         private const string DefaultAgentName = "DefaultAgentName";
         private const int DefaultEquipmentId = 1;
         private const EGOgiftAttachRegion DefaultGiftAttachRegion = EGOgiftAttachRegion.HEAD;
@@ -27,8 +26,10 @@ namespace LobotomyCorporationMods.Test
         public NotifyWhenGiftReceivedTests()
         {
             _ = new Harmony_Patch();
-            var fileManager = TestExtensions.CreateFileManager();
-            Harmony_Patch.Instance.LoadData(fileManager);
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+
+            SetLogObserver();
         }
 
         [Theory]
@@ -38,9 +39,8 @@ namespace LobotomyCorporationMods.Test
         public void Receiving_a_gift_causes_a_notification([NotNull] string agentName, [NotNull] string giftName, [NotNull] string expectedMessage)
         {
             // Arrange
-            AddGiftName(giftName);
-            var unitModel = CreateAgentModel(agentName);
-            var gift = CreateEgoGiftModel(giftName);
+            var gift = GetGift(giftName);
+            var unitModel = TestExtensions.CreateAgentModel(name: agentName);
 
             // Act
             UnitModelPatchAttachEgoGift.Prefix(unitModel, gift);
@@ -56,9 +56,8 @@ namespace LobotomyCorporationMods.Test
         public void Receiving_a_duplicate_gift_does_not_cause_a_notification([NotNull] string agentName, [NotNull] string giftName)
         {
             // Arrange
-            AddGiftName(giftName);
-            var unitModel = CreateAgentModel(agentName);
-            var gift = CreateEgoGiftModel(giftName);
+            var gift = GetGift(giftName);
+            var unitModel = TestExtensions.CreateAgentModel(name: agentName);
             unitModel.Equipment.gifts.addedGifts.Add(gift);
 
             // Act
@@ -74,14 +73,14 @@ namespace LobotomyCorporationMods.Test
         public void Attempting_to_replace_a_locked_gift_does_not_cause_a_notification([NotNull] string agentName, [NotNull] string giftName, EGOgiftAttachRegion attachRegion)
         {
             // Arrange
-            AddGiftName(giftName);
-            var unitModel = CreateAgentModel(agentName);
-            var oldGift = CreateEgoGiftModel(DefaultGiftId + 1, DefaultEquipmentId + 1, DefaultGiftName, attachRegion);
+            GetGift(giftName);
+            var unitModel = TestExtensions.CreateAgentModel(name: agentName);
+            var oldGift = GetGift(DefaultGiftId + 1, DefaultEquipmentId + 1, DefaultGiftName, attachRegion);
             unitModel.Equipment.gifts.addedGifts.Add(oldGift);
             var giftLockState = new UnitEGOgiftSpace.GiftLockState { id = DefaultGiftId + 1, state = true };
             unitModel.Equipment.gifts.lockState.Add(1, giftLockState);
 
-            var newGift = CreateEgoGiftModel(giftName, attachRegion);
+            var newGift = GetGift(giftName, attachRegion);
 
             // Act
             UnitModelPatchAttachEgoGift.Prefix(unitModel, newGift);
@@ -96,14 +95,14 @@ namespace LobotomyCorporationMods.Test
         public void Locked_gift_in_another_position_does_not_prevent_notification([NotNull] string agentName, [NotNull] string giftName, EGOgiftAttachRegion attachRegion)
         {
             // Arrange
-            AddGiftName(giftName);
-            var unitModel = CreateAgentModel(agentName);
-            var otherGift = CreateEgoGiftModel(DefaultGiftId + 1, DefaultEquipmentId + 1, DefaultGiftName, EGOgiftAttachRegion.HEADBACK);
+            GetGift(giftName);
+            var unitModel = TestExtensions.CreateAgentModel(name: agentName);
+            var otherGift = GetGift(DefaultGiftId + 1, DefaultEquipmentId + 1, DefaultGiftName, EGOgiftAttachRegion.HEADBACK);
             unitModel.Equipment.gifts.addedGifts.Add(otherGift);
             var giftLockState = new UnitEGOgiftSpace.GiftLockState { id = DefaultGiftId + 1, state = true };
             unitModel.Equipment.gifts.lockState.Add(1, giftLockState);
 
-            var newGift = CreateEgoGiftModel(giftName, attachRegion);
+            var newGift = GetGift(giftName, attachRegion);
 
             // Act
             UnitModelPatchAttachEgoGift.Prefix(unitModel, newGift);
@@ -118,43 +117,53 @@ namespace LobotomyCorporationMods.Test
         ///     Adds the gift name to the engine's localized text data and initializes an observer to store any messages sent as a
         ///     notice.
         /// </summary>
-        private void AddGiftName([NotNull] string giftName)
+        private static void InitializeTextData(Dictionary<string, string> textData)
+        {
+            TestExtensions.CreateLocalizeTextDataModel(textData);
+        }
+
+        /// <summary>
+        ///     Returns a gift object that can be used for tests.
+        /// </summary>
+        [NotNull]
+        private static EGOgiftModel GetGift([NotNull] string giftName)
+        {
+            return GetGift(DefaultGiftId, DefaultEquipmentId, giftName, DefaultGiftAttachRegion);
+        }
+
+        [NotNull]
+        private static EGOgiftModel GetGift([NotNull] string giftName, EGOgiftAttachRegion attachRegion)
+        {
+            return GetGift(DefaultGiftId, DefaultEquipmentId, giftName, attachRegion);
+        }
+
+        [NotNull]
+        private static EGOgiftModel GetGift(long giftId, int equipmentId, [NotNull] string giftName, EGOgiftAttachRegion attachRegion)
         {
             var textData = new Dictionary<string, string> { { giftName, giftName } };
-            TestExtensions.InitializeTextData(textData);
+            InitializeTextData(textData);
 
-            var observer = Substitute.For<IObserver>();
-            observer.When(x => x.OnNotice(Arg.Any<string>(), Arg.Any<object[]>())).Do(x => _noticeMessages.Add(x.ArgAt<object[]>(1)[0].ToString()));
+            var equipmentNameDictionary = new Dictionary<string, string> { { "name", giftName } };
+            var metaInfo = TestExtensions.CreateEquipmentTypeInfo(equipmentNameDictionary);
+            metaInfo.id = equipmentId;
+            metaInfo.attachPos = attachRegion.ToString();
 
-            const string NoticeString = "AddSystemLog";
-            Notice.instance.Observe(NoticeString, observer);
+            var gift = TestExtensions.CreateEgoGiftModel(metaInfo);
+            gift.instanceId = giftId;
+
+            return gift;
         }
 
-        [NotNull]
-        private static AgentModel CreateAgentModel(string agentName)
+        private void SetLogObserver()
         {
-            return TestExtensions.CreateAgentModel(DefaultAgentId, agentName);
-        }
+            var observer = new Mock<IObserver>();
+            observer.Setup(x => x.OnNotice(It.IsAny<string>(), It.IsAny<object[]>())).Callback((string _, object[] objectArray) => _noticeMessages.Add(objectArray[0].ToString()));
 
-        [NotNull]
-        private static EGOgiftModel CreateEgoGiftModel(string giftName)
-        {
-            return TestExtensions.CreateEgoGiftModel(DefaultGiftId, DefaultEquipmentId, giftName, DefaultGiftAttachRegion.ToString());
-        }
-
-        [NotNull]
-        private static EGOgiftModel CreateEgoGiftModel(string giftName, EGOgiftAttachRegion giftAttachRegion)
-        {
-            return TestExtensions.CreateEgoGiftModel(DefaultGiftId, DefaultEquipmentId, giftName, giftAttachRegion.ToString());
-        }
-
-        [NotNull]
-        private static EGOgiftModel CreateEgoGiftModel(long giftId, int equipmentId, string giftName, EGOgiftAttachRegion giftAttachRegion)
-        {
-            return TestExtensions.CreateEgoGiftModel(giftId, equipmentId, giftName, giftAttachRegion.ToString());
+            Notice.instance.Observe(NoticeName.AddSystemLog, observer.Object);
         }
 
         #endregion
+
 
         #region Harmony Tests
 
@@ -164,7 +173,7 @@ namespace LobotomyCorporationMods.Test
         [Fact]
         public void Constructor_is_public_and_externally_accessible()
         {
-            Action act = () => _ = new Harmony_Patch();
+            Action act = () => _ = new NotifyWhenGiftReceived.Harmony_Patch();
             act.ShouldNotThrow();
         }
 
