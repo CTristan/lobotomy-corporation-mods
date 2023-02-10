@@ -33,7 +33,7 @@ namespace LobotomyCorporationMods.NotifyWhenGiftReceived
 
             try
             {
-                FileManager = new FileManager(ModFileName);
+                Logger = new Logger(ModFileName);
 
                 try
                 {
@@ -42,7 +42,7 @@ namespace LobotomyCorporationMods.NotifyWhenGiftReceived
                 }
                 catch (Exception ex)
                 {
-                    FileManager.WriteToLog(ex);
+                    Logger.WriteToLog(ex);
 
                     throw;
                 }
@@ -53,14 +53,14 @@ namespace LobotomyCorporationMods.NotifyWhenGiftReceived
             }
         }
 
-        internal IFileManager FileManager { get; private set; }
+        internal ILogger Logger { get; private set; }
 
         /// <summary>
         ///     Entry point for testing.
         /// </summary>
-        public void LoadData(IFileManager fileManager)
+        public void LoadData(ILogger logger)
         {
-            FileManager = fileManager;
+            Logger = logger;
         }
     }
 }
