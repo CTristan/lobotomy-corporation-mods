@@ -35,7 +35,7 @@ jobs:
           path: BaseMods/src/lobotomy-corporation-mods
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v2
+        uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 6.x
 
