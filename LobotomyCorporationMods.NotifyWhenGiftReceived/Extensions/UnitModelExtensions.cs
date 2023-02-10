@@ -36,8 +36,19 @@ namespace LobotomyCorporationMods.NotifyWhenGiftReceived.Extensions
         /// </summary>
         private static IEnumerable<EGOgiftModel> GetEquippedGifts([NotNull] this UnitModel unitModel)
         {
-            var giftList = unitModel.Equipment.gifts.addedGifts;
-            giftList.AddRange(unitModel.Equipment.gifts.replacedGifts);
+            var giftList = new List<EGOgiftModel>();
+
+            var addedGifts = unitModel.Equipment.gifts.addedGifts;
+            if (!(addedGifts is null) && addedGifts.Count > 0)
+            {
+                giftList.AddRange(addedGifts);
+            }
+
+            var replacedGifts = unitModel.Equipment.gifts.replacedGifts;
+            if (!(replacedGifts is null) && replacedGifts.Count > 0)
+            {
+                giftList.AddRange(unitModel.Equipment.gifts.replacedGifts);
+            }
 
             return giftList;
         }
