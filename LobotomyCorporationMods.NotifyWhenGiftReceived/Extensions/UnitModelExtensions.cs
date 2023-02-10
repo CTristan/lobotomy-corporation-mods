@@ -6,13 +6,13 @@ using JetBrains.Annotations;
 
 namespace LobotomyCorporationMods.NotifyWhenGiftReceived.Extensions
 {
-    internal static class UnitModelExtensions
+    public static class UnitModelExtensions
     {
-        internal static bool HasGiftEquipped([NotNull] this UnitModel unitModel, int id)
+        public static bool HasGiftEquipped([NotNull] this UnitModel unitModel, int giftId)
         {
             var equippedGifts = unitModel.GetEquippedGifts();
 
-            return equippedGifts.Any(g => g.metaInfo.id == id);
+            return equippedGifts.Any(g => g.metaInfo.id == giftId);
         }
 
         internal static bool PositionHasLockedGift([NotNull] this UnitModel unitModel, [NotNull] EquipmentModel gift)
@@ -31,9 +31,15 @@ namespace LobotomyCorporationMods.NotifyWhenGiftReceived.Extensions
             return matchingGiftLockState != null && matchingGiftLockState.state;
         }
 
+        /// <summary>
+        ///     A unit's equipped gifts consists of both added and replaced gifts.
+        /// </summary>
         private static IEnumerable<EGOgiftModel> GetEquippedGifts([NotNull] this UnitModel unitModel)
         {
-            return unitModel.Equipment.gifts.addedGifts;
+            var giftList = unitModel.Equipment.gifts.addedGifts;
+            giftList.AddRange(unitModel.Equipment.gifts.replacedGifts);
+
+            return giftList;
         }
     }
 }
