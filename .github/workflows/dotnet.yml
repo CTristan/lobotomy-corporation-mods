@@ -45,10 +45,11 @@ jobs:
         run: dotnet build --no-restore BaseMods/src/lobotomy-corporation-mods/LobotomyCorporationMods.sln
 
       - name: Test
-        run: dotnet test /p:CollectCoverage=true --no-build --verbosity normal BaseMods/src/lobotomy-corporation-mods/LobotomyCorporationMods.sln
+        run: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --no-build --verbosity normal BaseMods/src/lobotomy-corporation-mods/LobotomyCorporationMods.sln
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
         with:
+          root_dir: BaseMods/src/lobotomy-corporation-mods
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
