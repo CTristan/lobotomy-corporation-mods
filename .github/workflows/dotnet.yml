@@ -52,3 +52,4 @@ jobs:
         with:
           directory: ./BaseMods/src/lobotomy-corporation-mods
           token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
