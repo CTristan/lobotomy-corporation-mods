@@ -15,7 +15,6 @@ jobs:
       - uses: actions/checkout@v3.0.2
       
       - name: Checkout private references
-        uses: actions/checkout@v3.0.2
         with:
           repository: CTristan/lobotomy-corporation-mods-references
           token: ${{ secrets.PRIVATE_REFERENCES_TOKEN }}
@@ -31,7 +30,6 @@ jobs:
           cd lobotomy-corporation-mods
 
       - name: Checkout main repository
-        uses: actions/checkout@v3.0.2
         with:
           path: BaseMods/src/lobotomy-corporation-mods
 
@@ -51,8 +49,3 @@ jobs:
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
-        
-      - name: Run codacy-coverage-reporter
-        uses: codacy/codacy-coverage-reporter-action@v1
-        with:
-          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
