@@ -10,9 +10,9 @@ Requires https://www.nexusmods.com/lobotomycorporation/mods/2[Basemod].
 
 == Recent Changes
 
+* 2023-02-10 (v4.0.1) - Fixed issue with Free Customization renames not working for the initial starting agent when starting from Day 1.
 * 2023-02-09 (v4.0) - New mod: Warn When Agent Will Die From Working
 * 2023-02-01 (v3.2) - Added bug fix for Crumbling Armor where replacing the gift would still kill the agent.
-* 2023-01-29 (v3.1) - Added re-customization capability to Free Customization mod
 
 See link:#change-log[Change Log] for all changes.
 
@@ -91,6 +91,7 @@ It’s very annoying being almost done with a day with no deaths but then having
 [#change-log]
 == Change Log
 
+* v4.0.1 - Fixed issue with Free Customization renames not working for the initial starting agent when starting from Day 1.
 * v4.0 - New mod: Warn When Agent Will Die From Working
 * v3.2 - Added bug fix for Crumbling Armor
 * v3.1 - Added re-customization capability to Free Customization mod

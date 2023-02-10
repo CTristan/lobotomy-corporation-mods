@@ -38,6 +38,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Extensions
             var customName = customizingWindow.CurrentData.CustomName;
             customizingWindow.CurrentAgent.name = customName;
             customizingWindow.CurrentAgent._agentName = customizingWindow.CurrentData.agentName;
+            customizingWindow.CurrentAgent.iscustom = true;
 
             customizingWindow.CurrentAgent._agentName.metaInfo.nameDic.Clear();
             customizingWindow.CurrentAgent._agentName.nameDic.Clear();
