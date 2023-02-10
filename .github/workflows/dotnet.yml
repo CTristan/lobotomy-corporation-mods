@@ -52,4 +52,8 @@ jobs:
         with:
           root_dir: BaseMods/src/lobotomy-corporation-mods
           token: ${{ secrets.CODECOV_TOKEN }}
-          verbose: true
+          
+      - name: Upload coverage reports to Codacy
+        uses: codacy/codacy-coverage-reporter-action@v1
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
