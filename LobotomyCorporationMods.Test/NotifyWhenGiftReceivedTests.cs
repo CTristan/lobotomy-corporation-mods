@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using FluentAssertions;
 using JetBrains.Annotations;
+using LobotomyCorporationMods.NotifyWhenGiftReceived.Extensions;
 using LobotomyCorporationMods.NotifyWhenGiftReceived.Patches;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking;
 using Moq;
@@ -17,9 +18,9 @@ namespace LobotomyCorporationMods.Test
         private const string ColorAgentString = "#66bfcd";
         private const string ColorGiftString = "#84bd36";
         private const string DefaultAgentName = "DefaultAgentName";
-        private const int DefaultEquipmentId = 1;
+        private const int DefaultGiftId = 1;
         private const EGOgiftAttachRegion DefaultGiftAttachRegion = EGOgiftAttachRegion.HEAD;
-        private const long DefaultGiftId = 1L;
+        private const long DefaultEquipmentId = 1L;
         private const string DefaultGiftName = "DefaultGiftName";
         private readonly List<string> _noticeMessages = new List<string>();
 
@@ -75,9 +76,9 @@ namespace LobotomyCorporationMods.Test
             // Arrange
             GetGift(giftName);
             var unitModel = TestExtensions.CreateAgentModel(name: agentName);
-            var oldGift = GetGift(DefaultGiftId + 1, DefaultEquipmentId + 1, DefaultGiftName, attachRegion);
+            var oldGift = GetGift(DefaultEquipmentId + 1, DefaultGiftId + 1, DefaultGiftName, attachRegion);
             unitModel.Equipment.gifts.addedGifts.Add(oldGift);
-            var giftLockState = new UnitEGOgiftSpace.GiftLockState { id = DefaultGiftId + 1, state = true };
+            var giftLockState = new UnitEGOgiftSpace.GiftLockState { id = DefaultEquipmentId + 1, state = true };
             unitModel.Equipment.gifts.lockState.Add(1, giftLockState);
 
             var newGift = GetGift(giftName, attachRegion);
@@ -97,9 +98,9 @@ namespace LobotomyCorporationMods.Test
             // Arrange
             GetGift(giftName);
             var unitModel = TestExtensions.CreateAgentModel(name: agentName);
-            var otherGift = GetGift(DefaultGiftId + 1, DefaultEquipmentId + 1, DefaultGiftName, EGOgiftAttachRegion.HEADBACK);
+            var otherGift = GetGift(DefaultEquipmentId + 1, DefaultGiftId + 1, DefaultGiftName, EGOgiftAttachRegion.HEADBACK);
             unitModel.Equipment.gifts.addedGifts.Add(otherGift);
-            var giftLockState = new UnitEGOgiftSpace.GiftLockState { id = DefaultGiftId + 1, state = true };
+            var giftLockState = new UnitEGOgiftSpace.GiftLockState { id = DefaultEquipmentId + 1, state = true };
             unitModel.Equipment.gifts.lockState.Add(1, giftLockState);
 
             var newGift = GetGift(giftName, attachRegion);
@@ -109,6 +110,34 @@ namespace LobotomyCorporationMods.Test
 
             // Assert
             _noticeMessages.Count.Should().BeGreaterThan(0);
+        }
+
+        [Theory]
+        [InlineData(1)]
+        [InlineData(int.MaxValue)]
+        public void Checking_for_equipped_gifts_finds_gift_in_added_gifts_list(int giftId)
+        {
+            var unitModel = TestExtensions.CreateAgentModel();
+            var gift = GetGift(DefaultEquipmentId, giftId, DefaultAgentName, DefaultGiftAttachRegion);
+            unitModel.Equipment.gifts.addedGifts.Add(gift);
+
+            var result = unitModel.HasGiftEquipped(giftId);
+
+            result.Should().Be(true);
+        }
+
+        [Theory]
+        [InlineData(1)]
+        [InlineData(int.MaxValue)]
+        public void Checking_for_equipped_gifts_finds_gift_in_replaced_gifts_list(int giftId)
+        {
+            var unitModel = TestExtensions.CreateAgentModel();
+            var gift = GetGift(DefaultEquipmentId, giftId, DefaultAgentName, DefaultGiftAttachRegion);
+            unitModel.Equipment.gifts.replacedGifts.Add(gift);
+
+            var result = unitModel.HasGiftEquipped(giftId);
+
+            result.Should().Be(true);
         }
 
         #region Helper Methods
@@ -128,28 +157,28 @@ namespace LobotomyCorporationMods.Test
         [NotNull]
         private static EGOgiftModel GetGift([NotNull] string giftName)
         {
-            return GetGift(DefaultGiftId, DefaultEquipmentId, giftName, DefaultGiftAttachRegion);
+            return GetGift(DefaultEquipmentId, DefaultGiftId, giftName, DefaultGiftAttachRegion);
         }
 
         [NotNull]
         private static EGOgiftModel GetGift([NotNull] string giftName, EGOgiftAttachRegion attachRegion)
         {
-            return GetGift(DefaultGiftId, DefaultEquipmentId, giftName, attachRegion);
+            return GetGift(DefaultEquipmentId, DefaultGiftId, giftName, attachRegion);
         }
 
         [NotNull]
-        private static EGOgiftModel GetGift(long giftId, int equipmentId, [NotNull] string giftName, EGOgiftAttachRegion attachRegion)
+        private static EGOgiftModel GetGift(long equipmentId, int giftId, [NotNull] string giftName, EGOgiftAttachRegion attachRegion)
         {
             var textData = new Dictionary<string, string> { { giftName, giftName } };
             InitializeTextData(textData);
 
             var equipmentNameDictionary = new Dictionary<string, string> { { "name", giftName } };
             var metaInfo = TestExtensions.CreateEquipmentTypeInfo(equipmentNameDictionary);
-            metaInfo.id = equipmentId;
+            metaInfo.id = giftId;
             metaInfo.attachPos = attachRegion.ToString();
 
             var gift = TestExtensions.CreateEgoGiftModel(metaInfo);
-            gift.instanceId = giftId;
+            gift.instanceId = equipmentId;
 
             return gift;
         }
