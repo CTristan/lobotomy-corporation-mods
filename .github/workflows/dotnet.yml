@@ -50,6 +50,6 @@ jobs:
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
         with:
-          directory: ./BaseMods/src/lobotomy-corporation-mods
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
+          working-directory: ./BaseMods/src/lobotomy-corporation-mods
