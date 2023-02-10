@@ -1,15 +1,16 @@
-name: Build and test
+name: .NET
 
 on:
   push:
     paths:
       - '**.cs'
+      - '**.csproj'
+      - '**.sln'
   pull_request:
     branches: [ "develop" ]
 
 jobs:
   build:
-    name: Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout private references
