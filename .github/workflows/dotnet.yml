@@ -4,10 +4,7 @@ name: .NET
 
 on:
   push:
-    paths:
-      - '**.cs'
-      - '**.csproj'
-      - '**.sln'
+    branches: [ "develop" ]
   pull_request:
     branches: [ "develop" ]
 
