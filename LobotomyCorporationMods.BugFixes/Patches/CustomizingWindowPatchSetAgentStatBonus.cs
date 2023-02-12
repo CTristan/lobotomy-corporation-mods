@@ -31,7 +31,7 @@ namespace LobotomyCorporationMods.BugFixes.Patches
         ///     causing the stat level to remain at Level 4.
         /// </summary>
         // ReSharper disable once InconsistentNaming
-        public static bool Prefix([NotNull] CustomizingWindow __instance, AgentModel agent, AgentData data)
+        public static bool Prefix([NotNull] CustomizingWindow __instance, [NotNull] AgentModel agent, [NotNull] AgentData data)
         {
             try
             {
@@ -39,24 +39,13 @@ namespace LobotomyCorporationMods.BugFixes.Patches
                 Guard.Against.Null(agent, nameof(agent));
                 Guard.Against.Null(data, nameof(data));
 
-                __instance.UpgradeStat(agent.primaryStat.hp, agent.originFortitudeLevel, data.statBonus.rBonus, out agent.primaryStat.hp);
-                __instance.UpgradeStat(agent.primaryStat.mental, agent.originPrudenceLevel, data.statBonus.wBonus, out agent.primaryStat.mental);
-                __instance.UpgradeStat(agent.primaryStat.work, agent.originTemperanceLevel, data.statBonus.bBonus, out agent.primaryStat.work);
-                __instance.UpgradeStat(agent.primaryStat.battle, agent.originJusticeLevel, data.statBonus.pBonus, out agent.primaryStat.battle);
-                agent.UpdateTitle(agent.level);
+                __instance.UpgradeAgentStats(agent, data);
 
                 // Since we're replacing the method we never want to call the original method
                 return false;
             }
             catch (Exception ex)
             {
-                // Null argument exception only comes up during testing due to Unity operator overloading.
-                // https://github.com/JetBrains/resharper-unity/wiki/Possible-unintended-bypass-of-lifetime-check-of-underlying-Unity-engine-object
-                if (ex is ArgumentNullException)
-                {
-                    return true;
-                }
-
                 Harmony_Patch.Instance.Logger.WriteToLog(ex);
 
                 throw;

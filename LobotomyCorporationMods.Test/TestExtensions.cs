@@ -68,12 +68,13 @@ namespace LobotomyCorporationMods.Test
         #region Unity Objects
 
         [NotNull]
-        public static AgentData CreateAgentData(AgentName agentName = null, Appearance appearance = null)
+        public static AgentData CreateAgentData(AgentName agentName = null, Appearance appearance = null, StatBonus statBonus = null)
         {
             agentName ??= CreateAgentName();
             appearance ??= CreateAppearance();
+            statBonus ??= CreateStatBonus();
 
-            return new AgentData { agentName = agentName, appearance = appearance };
+            return new AgentData { agentName = agentName, appearance = appearance, statBonus = statBonus };
         }
 
         [NotNull]
@@ -378,6 +379,12 @@ namespace LobotomyCorporationMods.Test
         }
 
         [NotNull]
+        public static StatBonus CreateStatBonus()
+        {
+            return new StatBonus();
+        }
+
+        [NotNull]
         public static Text CreateText()
         {
             CreateUninitializedObject<Text>(out var text);
@@ -412,6 +419,19 @@ namespace LobotomyCorporationMods.Test
         }
 
         [NotNull]
+        public static UnitStatBuf CreateUnitStatBuf(WorkerPrimaryStatBonus primaryStat = null)
+        {
+            primaryStat ??= CreateWorkerPrimaryStatBonus();
+
+            CreateUninitializedObject<UnitStatBuf>(out var unitStatBuf);
+
+            var fields = GetUninitializedObjectFields(unitStatBuf.GetType());
+            var newValues = new Dictionary<string, object> { { "primaryStat", primaryStat } };
+
+            return GetPopulatedUninitializedObject(unitStatBuf, fields, newValues);
+        }
+
+        [NotNull]
         public static UseSkill CreateUseSkill(AgentModel agent = null, SkillTypeInfo skillTypeInfo = null, CreatureModel targetCreature = null)
         {
             agent ??= CreateAgentModel();
@@ -440,6 +460,12 @@ namespace LobotomyCorporationMods.Test
         public static WorkerPrimaryStat CreateWorkerPrimaryStat()
         {
             return new WorkerPrimaryStat();
+        }
+
+        [NotNull]
+        public static WorkerPrimaryStatBonus CreateWorkerPrimaryStatBonus()
+        {
+            return new WorkerPrimaryStatBonus();
         }
 
         [NotNull]

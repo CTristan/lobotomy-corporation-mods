@@ -39,13 +39,6 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             }
             catch (Exception ex)
             {
-                // Null argument exception only comes up during testing due to Unity operator overloading.
-                // https://github.com/JetBrains/resharper-unity/wiki/Possible-unintended-bypass-of-lifetime-check-of-underlying-Unity-engine-object
-                if (ex is ArgumentNullException)
-                {
-                    return;
-                }
-
                 Harmony_Patch.Instance.Logger.WriteToLog(ex);
 
                 throw;

@@ -2,7 +2,6 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Security;
 using Customizing;
 using Harmony;
 using JetBrains.Annotations;
@@ -31,16 +30,6 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
                 __instance.CurrentData.agentName = agent._agentName;
                 __instance.CurrentData.CustomName = agent.name;
                 __instance.CurrentData.appearance = agent.GetAppearanceData();
-            }
-            // Only occurs during unit tests
-            catch (SecurityException ex)
-            {
-                Harmony_Patch.Instance.Logger.WriteToLog(ex);
-            }
-            // Only occurs during unit tests
-            catch (MissingMemberException ex)
-            {
-                Harmony_Patch.Instance.Logger.WriteToLog(ex);
             }
             catch (Exception ex)
             {
