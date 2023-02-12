@@ -12,14 +12,14 @@ using LobotomyCorporationMods.Common.Interfaces;
 // ReSharper disable CommentTypo
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
 {
-    internal sealed class AgentWorkTracker : IAgentWorkTracker
+    public sealed class AgentWorkTracker : IAgentWorkTracker
     {
         private readonly IFileManager _fileManager;
         [NotNull] private readonly List<IGift> _gifts = new();
         private readonly Dictionary<string, long> _mostRecentAgentIdByGift = new();
         private readonly string _trackerFile;
 
-        internal AgentWorkTracker([CanBeNull] IFileManager fileManager, string dataFileName)
+        public AgentWorkTracker([CanBeNull] IFileManager fileManager, string dataFileName)
         {
             if (fileManager is not null)
             {
@@ -28,6 +28,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
                 Load();
             }
         }
+
+        #region IAgentWorkTracker Members
 
         public float GetLastAgentWorkCountByGift(string giftName)
         {
@@ -72,6 +74,24 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
             _fileManager.WriteAllText(_trackerFile, ToString());
         }
 
+        #endregion
+
+        [NotNull]
+        private IAgent GetAgent([NotNull] string giftName, long agentId)
+        {
+            var gift = _gifts.FirstOrDefault(g => g is not null && g.GetName().Equals(giftName, StringComparison.Ordinal));
+            if (gift is not null)
+            {
+                return gift.GetOrAddAgent(agentId);
+            }
+
+            // Gift not found, start tracking the gift
+            gift = new Gift(giftName);
+            _gifts.Add(gift);
+
+            return gift.GetOrAddAgent(agentId);
+        }
+
         /// <summary>
         ///     Loads the tracker data from our custom text file.
         /// </summary>
@@ -92,22 +112,6 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
                     IncrementAgentWorkCount(giftName, long.Parse(agentData[0], CultureInfo.InvariantCulture), float.Parse(agentData[1], CultureInfo.InvariantCulture));
                 }
             }
-        }
-
-        [NotNull]
-        private IAgent GetAgent([NotNull] string giftName, long agentId)
-        {
-            var gift = _gifts.FirstOrDefault(g => g is not null && g.GetName().Equals(giftName, StringComparison.Ordinal));
-            if (gift is not null)
-            {
-                return gift.GetOrAddAgent(agentId);
-            }
-
-            // Gift not found, start tracking the gift
-            gift = new Gift(giftName);
-            _gifts.Add(gift);
-
-            return gift.GetOrAddAgent(agentId);
         }
 
         /// <summary>

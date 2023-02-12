@@ -28,51 +28,15 @@ namespace LobotomyCorporationMods.Test
         }
 
         [Fact]
-        public void The_Appearance_UI_does_not_close_itself_if_there_is_no_close_action()
+        public void Changing_random_generated_agent_marks_them_as_custom()
         {
-            var appearanceUi = new AppearanceUI();
+            var agent = TestExtensions.CreateAgentModel();
+            agent.iscustom = false;
+            var customizingWindow = TestExtensions.CreateCustomizingWindow(currentAgent: agent);
 
-            var result = AppearanceUIPatchCloseWindow.Prefix(appearanceUi);
+            customizingWindow.RenameAgent();
 
-            result.Should().BeFalse();
-        }
-
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void Opening_the_customize_appearance_window_does_not_increase_the_cost_of_hiring_the_agent(bool isCustomAppearance)
-        {
-            var customizingWindow = GetCustomizingWindow();
-            customizingWindow.CurrentData = new AgentData { isCustomAppearance = true };
-
-            CustomizingWindowPatchOpenAppearanceWindow.Postfix(customizingWindow);
-
-            customizingWindow.CurrentData.isCustomAppearance.Should().BeFalse();
-        }
-
-        [Fact]
-        public void Opening_the_strengthen_employee_window_opens_the_Appearance_UI()
-        {
-            var agentInfoWindow = TestExtensions.CreateAgentInfoWindow();
-            var mockAgentInfoWindowAdapter = new Mock<IAgentInfoWindowAdapter>();
-
-            agentInfoWindow.OpenAppearanceWindow(mockAgentInfoWindowAdapter.Object);
-
-            mockAgentInfoWindowAdapter.Verify(x => x.OpenAppearanceWindow(agentInfoWindow), Times.Once);
-        }
-
-        [Theory]
-        [InlineData("DefaultAgent")]
-        [InlineData("TestAgent")]
-        public void Opening_the_strengthen_employee_window_gets_agent_appearance_data([NotNull] string agentName)
-        {
-            var customizingWindow = GetCustomizingWindow();
-            var agentModel = TestExtensions.CreateAgentModel();
-            agentModel.name = agentName;
-
-            CustomizingWindowPatchReviseOpenAction.Postfix(customizingWindow, agentModel);
-
-            customizingWindow.CurrentData.CustomName.Should().Be(agentName);
+            customizingWindow.CurrentAgent.iscustom.Should().Be(true);
         }
 
         [Theory]
@@ -118,6 +82,44 @@ namespace LobotomyCorporationMods.Test
         }
 
         [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void Opening_the_customize_appearance_window_does_not_increase_the_cost_of_hiring_the_agent(bool isCustomAppearance)
+        {
+            var customizingWindow = GetCustomizingWindow();
+            customizingWindow.CurrentData = new AgentData { isCustomAppearance = true };
+
+            CustomizingWindowPatchOpenAppearanceWindow.Postfix(customizingWindow);
+
+            customizingWindow.CurrentData.isCustomAppearance.Should().BeFalse();
+        }
+
+        [Theory]
+        [InlineData("DefaultAgent")]
+        [InlineData("TestAgent")]
+        public void Opening_the_strengthen_employee_window_gets_agent_appearance_data([NotNull] string agentName)
+        {
+            var customizingWindow = GetCustomizingWindow();
+            var agentModel = TestExtensions.CreateAgentModel();
+            agentModel.name = agentName;
+
+            CustomizingWindowPatchReviseOpenAction.Postfix(customizingWindow, agentModel);
+
+            customizingWindow.CurrentData.CustomName.Should().Be(agentName);
+        }
+
+        [Fact]
+        public void Opening_the_strengthen_employee_window_opens_the_Appearance_UI()
+        {
+            var agentInfoWindow = TestExtensions.CreateAgentInfoWindow();
+            var mockAgentInfoWindowAdapter = new Mock<IAgentInfoWindowAdapter>();
+
+            agentInfoWindow.OpenAppearanceWindow(mockAgentInfoWindowAdapter.Object);
+
+            mockAgentInfoWindowAdapter.Verify(x => x.OpenAppearanceWindow(agentInfoWindow), Times.Once);
+        }
+
+        [Theory]
         [InlineData("CurrentName", "ExpectedName")]
         [InlineData("OldName", "NewName")]
         public void Renaming_agent_changes_agent_name_successfully([NotNull] string currentName, [NotNull] string expectedName)
@@ -147,15 +149,13 @@ namespace LobotomyCorporationMods.Test
         }
 
         [Fact]
-        public void Changing_random_generated_agent_marks_them_as_custom()
+        public void The_Appearance_UI_does_not_close_itself_if_there_is_no_close_action()
         {
-            var agent = TestExtensions.CreateAgentModel();
-            agent.iscustom = false;
-            var customizingWindow = TestExtensions.CreateCustomizingWindow(currentAgent: agent);
+            var appearanceUi = new AppearanceUI();
 
-            customizingWindow.RenameAgent();
+            var result = AppearanceUIPatchCloseWindow.Prefix(appearanceUi);
 
-            customizingWindow.CurrentAgent.iscustom.Should().Be(true);
+            result.Should().BeFalse();
         }
 
         #region Code Coverage Tests

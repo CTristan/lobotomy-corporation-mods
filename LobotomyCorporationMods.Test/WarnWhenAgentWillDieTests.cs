@@ -35,18 +35,6 @@ namespace LobotomyCorporationMods.Test
             Harmony_Patch.Instance.LoadData(mockLogger.Object);
         }
 
-        [Fact]
-        public void No_false_positives()
-        {
-            var commandWindow = InitializeCommandWindow(TestExtensions.CreateCreatureModel());
-            var agentSlot = TestExtensions.CreateAgentSlot();
-
-            AgentSlotPatchSetFilter.Postfix(agentSlot, AgentState.IDLE);
-
-            agentSlot.WorkFilterFill.color.Should().NotBe(commandWindow.DeadColor);
-            agentSlot.WorkFilterText.text.Should().NotBe(DeadAgentString);
-        }
-
         #region Code Coverage Tests
 
         [Fact]
@@ -64,29 +52,19 @@ namespace LobotomyCorporationMods.Test
 
         #endregion
 
-        #region Beauty and the Beast Tests
-
         [Fact]
-        public void BeautyAndTheBeast_Will_Kill_Agent_If_Performing_Repression_Work_While_Weak()
+        public void No_false_positives()
         {
-            // Arrange
-            var creature = GetCreature(CreatureIds.BeautyAndTheBeast);
-            var commandWindow = InitializeCommandWindow(creature, RwbpType.P);
-            var agent = TestExtensions.CreateAgentModel();
-            var agentSlot = TestExtensions.CreateAgentSlot(agent);
+            var commandWindow = InitializeCommandWindow(TestExtensions.CreateCreatureModel());
+            var agentSlot = TestExtensions.CreateAgentSlot();
 
-            // Mock animation script adapter to avoid Unity errors
-            const int WeakenedState = 1;
-            var mockAnimationScriptAdapter = new Mock<IAnimationScriptAdapter>();
-            mockAnimationScriptAdapter.Setup(ash => ash.GetScript<BeautyBeastAnim>(creature)).Returns(new BeautyBeastAnim());
-            mockAnimationScriptAdapter.Setup(static ash => ash.BeautyAndTheBeastState).Returns(WeakenedState);
+            AgentSlotPatchSetFilter.Postfix(agentSlot, AgentState.IDLE);
 
-            // Act
-            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow, mockAnimationScriptAdapter.Object);
-
-            // Assert
-            result.Should().BeTrue();
+            agentSlot.WorkFilterFill.color.Should().NotBe(commandWindow.DeadColor);
+            agentSlot.WorkFilterText.text.Should().NotBe(DeadAgentString);
         }
+
+        #region Beauty and the Beast Tests
 
         [Fact]
         public void BeautyAndTheBeast_Will_Not_Kill_Agent_If_Performing_Repression_Work_While_Not_Weak()
@@ -108,6 +86,28 @@ namespace LobotomyCorporationMods.Test
 
             // Assert
             result.Should().BeFalse();
+        }
+
+        [Fact]
+        public void BeautyAndTheBeast_Will_Kill_Agent_If_Performing_Repression_Work_While_Weak()
+        {
+            // Arrange
+            var creature = GetCreature(CreatureIds.BeautyAndTheBeast);
+            var commandWindow = InitializeCommandWindow(creature, RwbpType.P);
+            var agent = TestExtensions.CreateAgentModel();
+            var agentSlot = TestExtensions.CreateAgentSlot(agent);
+
+            // Mock animation script adapter to avoid Unity errors
+            const int WeakenedState = 1;
+            var mockAnimationScriptAdapter = new Mock<IAnimationScriptAdapter>();
+            mockAnimationScriptAdapter.Setup(ash => ash.GetScript<BeautyBeastAnim>(creature)).Returns(new BeautyBeastAnim());
+            mockAnimationScriptAdapter.Setup(static ash => ash.BeautyAndTheBeastState).Returns(WeakenedState);
+
+            // Act
+            var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow, mockAnimationScriptAdapter.Object);
+
+            // Assert
+            result.Should().BeTrue();
         }
 
         [Theory]
