@@ -35,7 +35,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 
                 if (_animationScript is YggdrasilAnim animationScript)
                 {
-                    return animationScript.flowers.Count(flower => flower.activeSelf);
+                    return animationScript.flowers.Count(static flower => flower.activeSelf);
                 }
 
                 throw new InvalidOperationException("Could not cast animation script as YggdrasilAnim");

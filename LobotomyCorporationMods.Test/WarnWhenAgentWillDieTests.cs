@@ -79,7 +79,7 @@ namespace LobotomyCorporationMods.Test
             const int WeakenedState = 1;
             var mockAnimationScriptAdapter = new Mock<IAnimationScriptAdapter>();
             mockAnimationScriptAdapter.Setup(ash => ash.GetScript<BeautyBeastAnim>(creature)).Returns(new BeautyBeastAnim());
-            mockAnimationScriptAdapter.Setup(ash => ash.BeautyAndTheBeastState).Returns(WeakenedState);
+            mockAnimationScriptAdapter.Setup(static ash => ash.BeautyAndTheBeastState).Returns(WeakenedState);
 
             // Act
             var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow, mockAnimationScriptAdapter.Object);
@@ -101,7 +101,7 @@ namespace LobotomyCorporationMods.Test
             const int NormalState = 0;
             var mockAnimationScriptAdapter = new Mock<IAnimationScriptAdapter>();
             mockAnimationScriptAdapter.Setup(ash => ash.GetScript<BeautyBeastAnim>(creature)).Returns(new BeautyBeastAnim());
-            mockAnimationScriptAdapter.Setup(ash => ash.BeautyAndTheBeastState).Returns(NormalState);
+            mockAnimationScriptAdapter.Setup(static ash => ash.BeautyAndTheBeastState).Returns(NormalState);
 
             // Act
             var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow, mockAnimationScriptAdapter.Object);
@@ -126,7 +126,7 @@ namespace LobotomyCorporationMods.Test
             const int WeakenedState = 1;
             var mockAnimationScriptAdapter = new Mock<IAnimationScriptAdapter>();
             mockAnimationScriptAdapter.Setup(ash => ash.GetScript<BeautyBeastAnim>(creature)).Returns(new BeautyBeastAnim());
-            mockAnimationScriptAdapter.Setup(ash => ash.BeautyAndTheBeastState).Returns(WeakenedState);
+            mockAnimationScriptAdapter.Setup(static ash => ash.BeautyAndTheBeastState).Returns(WeakenedState);
 
             // Act
             var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow, mockAnimationScriptAdapter.Object);
@@ -548,7 +548,7 @@ namespace LobotomyCorporationMods.Test
             const int FourFlowers = 4;
             var mockAnimationScriptAdapter = new Mock<IAnimationScriptAdapter>();
             mockAnimationScriptAdapter.Setup(ash => ash.GetScript<YggdrasilAnim>(creature)).Returns(new YggdrasilAnim());
-            mockAnimationScriptAdapter.Setup(ash => ash.ParasiteTreeNumberOfFlowers).Returns(FourFlowers);
+            mockAnimationScriptAdapter.Setup(static ash => ash.ParasiteTreeNumberOfFlowers).Returns(FourFlowers);
 
             // Act
             var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow, mockAnimationScriptAdapter.Object);
@@ -574,7 +574,7 @@ namespace LobotomyCorporationMods.Test
             const int FourFlowers = 4;
             var mockAnimationScriptAdapter = new Mock<IAnimationScriptAdapter>();
             mockAnimationScriptAdapter.Setup(ash => ash.GetScript<YggdrasilAnim>(creature)).Returns(new YggdrasilAnim());
-            mockAnimationScriptAdapter.Setup(ash => ash.ParasiteTreeNumberOfFlowers).Returns(FourFlowers);
+            mockAnimationScriptAdapter.Setup(static ash => ash.ParasiteTreeNumberOfFlowers).Returns(FourFlowers);
 
             // Act
             var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow, mockAnimationScriptAdapter.Object);
@@ -599,7 +599,7 @@ namespace LobotomyCorporationMods.Test
             // Mock animation script adapter to avoid Unity errors
             var mockAnimationScriptAdapter = new Mock<IAnimationScriptAdapter>();
             mockAnimationScriptAdapter.Setup(ash => ash.GetScript<YggdrasilAnim>(creature)).Returns(new YggdrasilAnim());
-            mockAnimationScriptAdapter.Setup(ash => ash.ParasiteTreeNumberOfFlowers).Returns(numberOfFlowers);
+            mockAnimationScriptAdapter.Setup(static ash => ash.ParasiteTreeNumberOfFlowers).Returns(numberOfFlowers);
 
             // Act
             var result = agentSlot.CheckIfWorkWillKillAgent(commandWindow, mockAnimationScriptAdapter.Object);
@@ -973,12 +973,12 @@ namespace LobotomyCorporationMods.Test
         {
             var observeRegions = new List<ObserveInfoData>
             {
-                new ObserveInfoData { regionName = "stat" },
-                new ObserveInfoData { regionName = "defense" },
-                new ObserveInfoData { regionName = "work_r" },
-                new ObserveInfoData { regionName = "work_w" },
-                new ObserveInfoData { regionName = "work_b" },
-                new ObserveInfoData { regionName = "work_p" }
+                new() { regionName = "stat" },
+                new() { regionName = "defense" },
+                new() { regionName = "work_r" },
+                new() { regionName = "work_w" },
+                new() { regionName = "work_b" },
+                new() { regionName = "work_p" }
             };
             creature.observeInfo.InitObserveRegion(observeRegions);
             creature.observeInfo.ObserveAll();
@@ -997,7 +997,7 @@ namespace LobotomyCorporationMods.Test
 
         private static void InitializeSkillTypeList(RwbpType rwbpType)
         {
-            SkillTypeInfo[] skillTypeInfos = { new SkillTypeInfo { id = (long)rwbpType } };
+            SkillTypeInfo[] skillTypeInfos = { new() { id = (long)rwbpType } };
             TestExtensions.CreateSkillTypeList(skillTypeInfos);
         }
 

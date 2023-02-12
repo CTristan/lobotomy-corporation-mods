@@ -12,8 +12,8 @@ namespace LobotomyCorporationMods.Common.Implementations
     internal sealed class FileManager : IFileManager
     {
         private readonly DirectoryInfo _dataPath;
-        [NotNull] private readonly object _fileLock = new object();
-        [NotNull] private readonly Dictionary<string, string> _files = new Dictionary<string, string>();
+        private readonly object _fileLock = new();
+        private readonly Dictionary<string, string> _files = new();
 
         internal FileManager([NotNull] string modFileName, [NotNull] IEnumerable<DirectoryInfo> directories)
         {
