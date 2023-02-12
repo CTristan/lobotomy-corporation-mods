@@ -19,11 +19,14 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         private readonly Dictionary<string, long> _mostRecentAgentIdByGift = new Dictionary<string, long>();
         private readonly string _trackerFile;
 
-        internal AgentWorkTracker(IFileManager fileManager, string dataFileName)
+        internal AgentWorkTracker([CanBeNull] IFileManager fileManager, string dataFileName)
         {
-            _fileManager = fileManager;
-            _trackerFile = _fileManager.GetOrCreateFile(dataFileName);
-            Load();
+            if (!(fileManager is null))
+            {
+                _fileManager = fileManager;
+                _trackerFile = _fileManager.GetOrCreateFile(dataFileName);
+                Load();
+            }
         }
 
         public float GetLastAgentWorkCountByGift(string giftName)

@@ -9,17 +9,13 @@ using LobotomyCorporationMods.Common.Interfaces;
 
 namespace LobotomyCorporationMods.Common.Implementations
 {
-    public sealed class FileManager : IFileManager
+    internal sealed class FileManager : IFileManager
     {
         private readonly DirectoryInfo _dataPath;
         [NotNull] private readonly object _fileLock = new object();
         [NotNull] private readonly Dictionary<string, string> _files = new Dictionary<string, string>();
 
-        public FileManager([NotNull] string modFileName) : this(modFileName, Add_On.instance.DirList)
-        {
-        }
-
-        private FileManager([NotNull] string modFileName, [NotNull] IEnumerable<DirectoryInfo> directories)
+        internal FileManager([NotNull] string modFileName, [NotNull] IEnumerable<DirectoryInfo> directories)
         {
             var directory = directories.FirstOrDefault(directoryInfo => File.Exists(Path.Combine(directoryInfo.FullName, modFileName)));
             _dataPath = directory ?? throw new InvalidOperationException("Data path was not found.");
