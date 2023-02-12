@@ -13,7 +13,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Extensions
         {
             Guard.Against.Null(customizingWindow, nameof(customizingWindow));
 
-            if (customizingWindow.appearanceUI.copied != null)
+            if (customizingWindow.appearanceUI.copied is not null)
             {
                 customizingWindow.CurrentData.AppearCopy(customizingWindow.appearanceUI.copied);
                 customizingWindow.appearanceUI.copied = null;

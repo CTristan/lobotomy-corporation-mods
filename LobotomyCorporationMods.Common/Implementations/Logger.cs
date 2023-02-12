@@ -35,7 +35,7 @@ namespace LobotomyCorporationMods.Common.Implementations
 
         private void WriteToLog([CanBeNull] Exception exception, [NotNull] string logFileName)
         {
-            if (exception != null)
+            if (exception is not null)
             {
                 var message = exception.ToString();
                 WriteToLog(message, logFileName);

@@ -23,7 +23,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
                 var giftName = __instance.equipTypeInfo?.Name;
 
                 // If creature has no gift then giftName will be null
-                if (giftName == null)
+                if (giftName is null)
                 {
                     return;
                 }

@@ -8,6 +8,7 @@
     <ProjectGuid>{5186F30E-9617-4955-BE97-0E496DE2148B}</ProjectGuid>
     <RuntimeIdentifiers>win</RuntimeIdentifiers>
     <TargetFrameworks>net35;net48</TargetFrameworks>
+    <LangVersion>9</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="3.2.0">

@@ -19,7 +19,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
             {
                 var agentInfoWindow = AgentInfoWindow.currentWindow;
 
-                if (agentInfoWindow.customizingWindow.CurrentData != null)
+                if (agentInfoWindow.customizingWindow.CurrentData is not null)
                 {
                     agentInfoWindow.OpenAppearanceWindow();
                 }

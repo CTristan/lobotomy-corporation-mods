@@ -23,7 +23,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
                 var equipmentMakeInfo = GetCreatureEquipmentMakeInfo(__instance);
 
                 // If the creature has no gift it returns null
-                if (equipmentMakeInfo?.equipTypeInfo?.Name == null)
+                if (equipmentMakeInfo?.equipTypeInfo?.Name is null)
                 {
                     return;
                 }
@@ -52,7 +52,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
         [CanBeNull]
         private static CreatureEquipmentMakeInfo GetCreatureEquipmentMakeInfo([NotNull] UseSkill instance)
         {
-            var equipmentMakeInfo = instance.targetCreature?.metaInfo?.equipMakeInfos?.Find(x => x?.equipTypeInfo?.type == EquipmentTypeInfo.EquipmentType.SPECIAL);
+            var equipmentMakeInfo = instance.targetCreature?.metaInfo?.equipMakeInfos?.Find(static x => x?.equipTypeInfo?.type == EquipmentTypeInfo.EquipmentType.SPECIAL);
 
             return equipmentMakeInfo;
         }

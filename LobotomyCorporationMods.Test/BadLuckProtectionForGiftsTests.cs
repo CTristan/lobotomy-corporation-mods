@@ -222,7 +222,7 @@ namespace LobotomyCorporationMods.Test
         [NotNull]
         private IAgentWorkTracker CreateAgentWorkTracker(string dataFileName, string trackerData = "", IFileManager fileManager = null)
         {
-            fileManager = fileManager ?? TestExtensions.GetMockFileManager().Object;
+            fileManager ??= TestExtensions.GetMockFileManager().Object;
             dataFileName = dataFileName.InCurrentDirectory();
             CreateTestTrackerFile(dataFileName, trackerData);
             Harmony_Patch.Instance.LoadData(fileManager, dataFileName);

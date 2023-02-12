@@ -28,7 +28,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
             {
                 Guard.Against.Null(__instance, nameof(__instance));
 
-                return __instance.closeAction != null;
+                return __instance.closeAction is not null;
             }
             catch (Exception ex)
             {

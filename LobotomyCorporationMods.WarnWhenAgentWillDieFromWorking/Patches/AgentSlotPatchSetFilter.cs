@@ -26,7 +26,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
 
                 // Some initial Command Window checks to make sure we're in the right state
                 var commandWindow = CommandWindow.CommandWindow.CurrentWindow;
-                if (!(commandWindow is null) && commandWindow.IsAbnormalityWorkWindow() && !state.IsUncontrollable())
+                if (commandWindow is not null && commandWindow.IsAbnormalityWorkWindow() && !state.IsUncontrollable())
                 {
                     var agentWillDie = __instance.CheckIfWorkWillKillAgent(commandWindow);
 

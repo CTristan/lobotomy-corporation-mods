@@ -23,7 +23,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
             bool willAgentDie;
             var agent = agentSlot.CurrentAgent;
 
-            if (!(agent is null))
+            if (agent is not null)
             {
                 var evaluator = commandWindow.GetCreatureEvaluator(agent, animationScriptAdapter);
 

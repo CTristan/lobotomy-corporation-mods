@@ -15,13 +15,13 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
     internal sealed class AgentWorkTracker : IAgentWorkTracker
     {
         private readonly IFileManager _fileManager;
-        [NotNull] private readonly List<IGift> _gifts = new List<IGift>();
-        private readonly Dictionary<string, long> _mostRecentAgentIdByGift = new Dictionary<string, long>();
+        [NotNull] private readonly List<IGift> _gifts = new();
+        private readonly Dictionary<string, long> _mostRecentAgentIdByGift = new();
         private readonly string _trackerFile;
 
         internal AgentWorkTracker([CanBeNull] IFileManager fileManager, string dataFileName)
         {
-            if (!(fileManager is null))
+            if (fileManager is not null)
             {
                 _fileManager = fileManager;
                 _trackerFile = _fileManager.GetOrCreateFile(dataFileName);
@@ -97,8 +97,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         [NotNull]
         private IAgent GetAgent([NotNull] string giftName, long agentId)
         {
-            var gift = _gifts.FirstOrDefault(g => g != null && g.GetName().Equals(giftName, StringComparison.Ordinal));
-            if (gift != null)
+            var gift = _gifts.FirstOrDefault(g => g is not null && g.GetName().Equals(giftName, StringComparison.Ordinal));
+            if (gift is not null)
             {
                 return gift.GetOrAddAgent(agentId);
             }

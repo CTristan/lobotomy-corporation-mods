@@ -22,7 +22,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
                 creature = creatureModel;
             }
 
-            return creature != null;
+            return creature is not null;
         }
 
         internal static ICreatureEvaluator GetCreatureEvaluator([NotNull] this CommandWindow.CommandWindow commandWindow, AgentModel agent, IAnimationScriptAdapter animationScriptAdapter)
@@ -30,7 +30,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
             ICreatureEvaluator evaluator;
 
             // Make sure we actually have an abnormality in our work window
-            if (commandWindow.TryGetCreature(out var creature) && creature != null)
+            if (commandWindow.TryGetCreature(out var creature) && creature is not null)
             {
                 // Need to use the command window's skill type since the agent isn't using a skill yet
                 var skillType = commandWindow.CurrentSkill.rwbpType;
@@ -66,7 +66,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
             bool isAbnormalityWorkWindow;
 
             // Validation checks to confirm we have everything we need
-            if (commandWindow.CurrentSkill?.rwbpType == null)
+            if (commandWindow.CurrentSkill?.rwbpType is null)
             {
                 isAbnormalityWorkWindow = false;
             }

@@ -31,8 +31,8 @@ namespace LobotomyCorporationMods.Test
         public static Mock<IFileManager> GetMockFileManager()
         {
             var mockFileManager = new Mock<IFileManager>();
-            mockFileManager.Setup(fm => fm.GetOrCreateFile(It.IsAny<string>())).Returns((string fileName) => fileName.InCurrentDirectory());
-            mockFileManager.Setup(fm => fm.ReadAllText(It.IsAny<string>(), It.IsAny<bool>())).Returns((string fileName, bool _) => File.ReadAllText(fileName.InCurrentDirectory()));
+            mockFileManager.Setup(static fm => fm.GetOrCreateFile(It.IsAny<string>())).Returns(static (string fileName) => fileName.InCurrentDirectory());
+            mockFileManager.Setup(static fm => fm.ReadAllText(It.IsAny<string>(), It.IsAny<bool>())).Returns(static (string fileName, bool _) => File.ReadAllText(fileName.InCurrentDirectory()));
 
             return mockFileManager;
         }
@@ -53,7 +53,7 @@ namespace LobotomyCorporationMods.Test
 
         internal static void ShouldThrowUnityException(this Action action, string because = "", params object[] becauseArgs)
         {
-            action.ShouldThrow<Exception>().Where(ex => ex is SecurityException || ex is MissingMethodException);
+            action.ShouldThrow<Exception>().Where(static ex => ex is SecurityException || ex is MissingMethodException);
         }
 
         public static void ValidateHarmonyPatch([NotNull] this MemberInfo patchClass, [NotNull] Type originalClass, string methodName)
@@ -70,8 +70,8 @@ namespace LobotomyCorporationMods.Test
         [NotNull]
         public static AgentData CreateAgentData(AgentName agentName = null, Appearance appearance = null)
         {
-            agentName = agentName ?? CreateAgentName();
-            appearance = appearance ?? CreateAppearance();
+            agentName ??= CreateAgentName();
+            appearance ??= CreateAppearance();
 
             return new AgentData { agentName = agentName, appearance = appearance };
         }
@@ -79,9 +79,9 @@ namespace LobotomyCorporationMods.Test
         [NotNull]
         public static AgentInfoWindow CreateAgentInfoWindow(GameObject customizingBlock = null, CustomizingWindow customizingWindow = null, AgentInfoWindow.UIComponent uiComponents = null)
         {
-            customizingBlock = customizingBlock ?? CreateGameObject();
-            customizingWindow = customizingWindow ?? CreateCustomizingWindow();
-            uiComponents = uiComponents ?? CreateUIComponent();
+            customizingBlock ??= CreateGameObject();
+            customizingWindow ??= CreateCustomizingWindow();
+            uiComponents ??= CreateUIComponent();
 
             CreateUninitializedObject<AgentInfoWindow>(out var agentInfoWindow);
 
@@ -97,12 +97,12 @@ namespace LobotomyCorporationMods.Test
         public static AgentModel CreateAgentModel(AgentName agentName = null, List<UnitBuf> bufList = null, UnitEquipSpace equipment = null, long instanceId = 1L, string name = "",
             WorkerPrimaryStat primaryStat = null, WorkerSprite.WorkerSprite spriteData = null, List<UnitStatBuf> statBufList = null)
         {
-            agentName = agentName ?? CreateAgentName();
-            bufList = bufList ?? new List<UnitBuf>();
-            equipment = equipment ?? CreateUnitEquipSpace();
-            primaryStat = primaryStat ?? CreateWorkerPrimaryStat();
-            spriteData = spriteData ?? CreateWorkerSprite();
-            statBufList = statBufList ?? new List<UnitStatBuf>();
+            agentName ??= CreateAgentName();
+            bufList ??= new List<UnitBuf>();
+            equipment ??= CreateUnitEquipSpace();
+            primaryStat ??= CreateWorkerPrimaryStat();
+            spriteData ??= CreateWorkerSprite();
+            statBufList ??= new List<UnitStatBuf>();
 
             CreateUninitializedObject<AgentModel>(out var agentModel);
 
@@ -125,8 +125,8 @@ namespace LobotomyCorporationMods.Test
         [NotNull]
         public static AgentName CreateAgentName(AgentNameTypeInfo metaInfo = null, Dictionary<string, string> nameDic = null)
         {
-            metaInfo = metaInfo ?? CreateAgentNameTypeInfo();
-            nameDic = nameDic ?? new Dictionary<string, string>();
+            metaInfo ??= CreateAgentNameTypeInfo();
+            nameDic ??= new Dictionary<string, string>();
 
             CreateUninitializedObject<AgentName>(out var agentName);
 
@@ -139,7 +139,7 @@ namespace LobotomyCorporationMods.Test
         [NotNull]
         public static AgentNameTypeInfo CreateAgentNameTypeInfo(Dictionary<string, string> nameDic = null)
         {
-            nameDic = nameDic ?? new Dictionary<string, string>();
+            nameDic ??= new Dictionary<string, string>();
 
             return new AgentNameTypeInfo { nameDic = nameDic };
         }
@@ -147,9 +147,9 @@ namespace LobotomyCorporationMods.Test
         [NotNull]
         public static AgentSlot CreateAgentSlot(AgentModel currentAgent = null, Image workFilterFill = null, Text workFilterText = null)
         {
-            currentAgent = currentAgent ?? CreateAgentModel();
-            workFilterFill = workFilterFill ?? CreateImage();
-            workFilterText = workFilterText ?? CreateText();
+            currentAgent ??= CreateAgentModel();
+            workFilterFill ??= CreateImage();
+            workFilterText ??= CreateText();
 
             CreateUninitializedObject<AgentSlot>(out var agentSlot);
 
@@ -162,7 +162,7 @@ namespace LobotomyCorporationMods.Test
         [NotNull]
         public static Appearance CreateAppearance(WorkerSprite.WorkerSprite spriteSet = null)
         {
-            spriteSet = spriteSet ?? CreateWorkerSprite();
+            spriteSet ??= CreateWorkerSprite();
 
             return new Appearance { spriteSet = spriteSet };
         }
@@ -176,7 +176,7 @@ namespace LobotomyCorporationMods.Test
         [NotNull]
         public static CommandWindow.CommandWindow CreateCommandWindow(UnitModel currentTarget = null, CommandType currentWindowType = (CommandType)1, long selectedWork = 0L)
         {
-            currentTarget = currentTarget ?? CreateUnitModel();
+            currentTarget ??= CreateUnitModel();
 
             CreateUninitializedObject<CommandWindow.CommandWindow>(out var commandWindow);
 
@@ -191,7 +191,7 @@ namespace LobotomyCorporationMods.Test
         [NotNull]
         public static CreatureEquipmentMakeInfo CreateCreatureEquipmentMakeInfo(EquipmentTypeInfo equipTypeInfo = null)
         {
-            equipTypeInfo = equipTypeInfo ?? CreateEquipmentTypeInfo();
+            equipTypeInfo ??= CreateEquipmentTypeInfo();
 
             return new CreatureEquipmentMakeInfo { equipTypeInfo = equipTypeInfo };
         }
@@ -199,7 +199,7 @@ namespace LobotomyCorporationMods.Test
         [NotNull]
         public static CreatureLayer CreateCreatureLayer(Dictionary<long, CreatureUnit> creatureDic = null)
         {
-            creatureDic = creatureDic ?? new Dictionary<long, CreatureUnit>();
+            creatureDic ??= new Dictionary<long, CreatureUnit>();
 
             CreateUninitializedObject<CreatureLayer>(out var creatureLayer);
 
@@ -217,10 +217,10 @@ namespace LobotomyCorporationMods.Test
         public static CreatureModel CreateCreatureModel(AgentModel agent = null, CreatureTypeInfo metaInfo = null, CreatureObserveInfoModel observeInfo = null, int qliphothCounter = 1,
             SkillTypeInfo skillTypeInfo = null)
         {
-            agent = agent ?? CreateAgentModel();
-            metaInfo = metaInfo ?? CreateCreatureTypeInfo();
-            observeInfo = observeInfo ?? CreateCreatureObserveInfoModel();
-            skillTypeInfo = skillTypeInfo ?? CreateSkillTypeInfo();
+            agent ??= CreateAgentModel();
+            metaInfo ??= CreateCreatureTypeInfo();
+            observeInfo ??= CreateCreatureObserveInfoModel();
+            skillTypeInfo ??= CreateSkillTypeInfo();
 
             CreateUninitializedObject<CreatureModel>(out var creatureModel);
 
@@ -238,8 +238,8 @@ namespace LobotomyCorporationMods.Test
         [NotNull]
         public static CreatureObserveInfoModel CreateCreatureObserveInfoModel(CreatureTypeInfo metaInfo = null, Dictionary<string, ObserveRegion> observeRegions = null)
         {
-            metaInfo = metaInfo ?? CreateCreatureTypeInfo();
-            observeRegions = observeRegions ?? new Dictionary<string, ObserveRegion>();
+            metaInfo ??= CreateCreatureTypeInfo();
+            observeRegions ??= new Dictionary<string, ObserveRegion>();
 
             CreateUninitializedObject<CreatureObserveInfoModel>(out var creatureObserveInfoModel);
 
@@ -252,7 +252,7 @@ namespace LobotomyCorporationMods.Test
         [NotNull]
         public static CreatureTypeInfo CreateCreatureTypeInfo(List<CreatureEquipmentMakeInfo> equipMakeInfos = null)
         {
-            equipMakeInfos = equipMakeInfos ?? new List<CreatureEquipmentMakeInfo>();
+            equipMakeInfos ??= new List<CreatureEquipmentMakeInfo>();
 
             return new CreatureTypeInfo { equipMakeInfos = equipMakeInfos };
         }
@@ -267,9 +267,9 @@ namespace LobotomyCorporationMods.Test
         public static CustomizingWindow CreateCustomizingWindow(AppearanceUI appearanceUI = null, AgentModel currentAgent = null, AgentData currentData = null,
             CustomizingType currentWindowType = (CustomizingType)1)
         {
-            appearanceUI = appearanceUI ?? CreateAppearanceUI();
-            currentAgent = currentAgent ?? CreateAgentModel();
-            currentData = currentData ?? CreateAgentData();
+            appearanceUI ??= CreateAppearanceUI();
+            currentAgent ??= CreateAgentModel();
+            currentData ??= CreateAgentData();
 
             CreateUninitializedObject<CustomizingWindow>(out var customizingWindow);
 
@@ -285,8 +285,8 @@ namespace LobotomyCorporationMods.Test
         [NotNull]
         public static EGOgiftModel CreateEgoGiftModel(EquipmentTypeInfo metaInfo = null, EquipmentScriptBase script = null)
         {
-            metaInfo = metaInfo ?? CreateEquipmentTypeInfo();
-            script = script ?? CreateEquipmentScriptBase();
+            metaInfo ??= CreateEquipmentTypeInfo();
+            script ??= CreateEquipmentScriptBase();
 
             return new EGOgiftModel { metaInfo = metaInfo, script = script };
         }
@@ -294,7 +294,7 @@ namespace LobotomyCorporationMods.Test
         [NotNull]
         public static EquipmentModel CreateEquipmentModel(EquipmentTypeInfo metaInfo = null)
         {
-            metaInfo = metaInfo ?? CreateEquipmentTypeInfo();
+            metaInfo ??= CreateEquipmentTypeInfo();
 
             return new EquipmentModel { metaInfo = metaInfo };
         }
@@ -302,7 +302,7 @@ namespace LobotomyCorporationMods.Test
         [NotNull]
         public static EquipmentScriptBase CreateEquipmentScriptBase(EquipmentModel model = null)
         {
-            model = model ?? CreateEquipmentModel();
+            model ??= CreateEquipmentModel();
 
             CreateUninitializedObject<EquipmentScriptBase>(out var equipmentScriptBase);
 
@@ -358,7 +358,7 @@ namespace LobotomyCorporationMods.Test
         [NotNull]
         public static SkillTypeList CreateSkillTypeList(SkillTypeInfo[] list = null)
         {
-            list = list ?? new SkillTypeInfo[0];
+            list ??= new SkillTypeInfo[0];
 
             var skillType = SkillTypeList.instance;
             skillType.Init(list);
@@ -400,8 +400,8 @@ namespace LobotomyCorporationMods.Test
         [NotNull]
         public static UnitModel CreateUnitModel(List<UnitBuf> bufList = null, List<UnitStatBuf> statBufList = null)
         {
-            bufList = bufList ?? new List<UnitBuf>();
-            statBufList = statBufList ?? new List<UnitStatBuf>();
+            bufList ??= new List<UnitBuf>();
+            statBufList ??= new List<UnitStatBuf>();
 
             CreateUninitializedObject<UnitModel>(out var unitModel);
 
@@ -414,12 +414,12 @@ namespace LobotomyCorporationMods.Test
         [NotNull]
         public static UseSkill CreateUseSkill(AgentModel agent = null, SkillTypeInfo skillTypeInfo = null, CreatureModel targetCreature = null)
         {
-            agent = agent ?? CreateAgentModel();
-            skillTypeInfo = skillTypeInfo ?? CreateSkillTypeInfo();
-            targetCreature = targetCreature ?? CreateCreatureModel();
+            agent ??= CreateAgentModel();
+            skillTypeInfo ??= CreateSkillTypeInfo();
+            targetCreature ??= CreateCreatureModel();
 
             // Needed to avoid circular reference
-            if (targetCreature.currentSkill != null)
+            if (targetCreature.currentSkill is not null)
             {
                 return targetCreature.currentSkill;
             }
@@ -451,7 +451,7 @@ namespace LobotomyCorporationMods.Test
         [NotNull]
         public static WorkerSpriteManager CreateWorkerSpriteManager(WorkerBasicSpriteController basicData = null)
         {
-            basicData = basicData ?? CreateWorkerBasicSpriteController();
+            basicData ??= CreateWorkerBasicSpriteController();
 
             CreateUninitializedObject<WorkerSpriteManager>(out var workerSpriteManager);
 
@@ -494,7 +494,7 @@ namespace LobotomyCorporationMods.Test
 
             while (type != typeof(object))
             {
-                if (type == null)
+                if (type is null)
                 {
                     continue;
                 }

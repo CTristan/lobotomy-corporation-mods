@@ -12,7 +12,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
         {
             var agentWillDie = false;
 
-            if (Creature.script is HappyTeddy script && !(script.lastAgent is null))
+            if (Creature.script is HappyTeddy script && script.lastAgent is not null)
             {
                 agentWillDie = Agent.instanceId == script.lastAgent.instanceId;
             }
