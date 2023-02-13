@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using FluentAssertions;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts;
+using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Patches;
 using Moq;
 using Xunit;
@@ -45,25 +46,6 @@ namespace LobotomyCorporationMods.Test.BadLuckProtectionForGiftsTests
             act.ShouldNotThrow();
         }
 
-        #region Helper Methods
-
-        [NotNull]
-        private static CreatureEquipmentMakeInfo GetCreatureEquipmentMakeInfo([NotNull] string giftName)
-        {
-            var equipTypeInfo = TestExtensions.CreateEquipmentTypeInfo();
-            equipTypeInfo.type = EquipmentTypeInfo.EquipmentType.SPECIAL;
-            equipTypeInfo.localizeData = new Dictionary<string, string> { { "name", giftName } };
-
-            var creatureEquipmentMakeInfo = TestExtensions.CreateCreatureEquipmentMakeInfo();
-            creatureEquipmentMakeInfo.equipTypeInfo = equipTypeInfo;
-
-            LocalizeTextDataModel.instance.Init(new Dictionary<string, string> { { giftName, giftName } });
-
-            return creatureEquipmentMakeInfo;
-        }
-
-        #endregion
-
         [Theory]
         [InlineData(GiftName + "^1;1", GiftName, 1L, 1f)]
         [InlineData(GiftName + "^1;1^2;2", GiftName, 2L, 2f)]
@@ -71,12 +53,11 @@ namespace LobotomyCorporationMods.Test.BadLuckProtectionForGiftsTests
         public void Restarting_the_day_reloads_the_saved_data_and_overwrites_the_progress_made_that_day([NotNull] string trackerData, [NotNull] string giftName, long agentId, float numberOfTimes)
         {
             var dataFileName = $"Restarting_the_day_reloads_the_saved_data_and_overwrites_the_progress_made_that_day_{giftName}_{agentId}_{numberOfTimes}";
-            var agentWorkTracker = CreateAgentWorkTracker(dataFileName, trackerData);
+            var mockAgentWorkTracker = CreateMockAgentWorkTracker();
 
-            agentWorkTracker.IncrementAgentWorkCount(giftName, agentId);
             GameSceneControllerPatchOnStageStart.Postfix();
 
-            Assert.Equal(numberOfTimes, agentWorkTracker.GetLastAgentWorkCountByGift(giftName));
+            agentWorkTracker
         }
 
         [Fact]
@@ -146,5 +127,26 @@ namespace LobotomyCorporationMods.Test.BadLuckProtectionForGiftsTests
 
             Assert.Equal(expected, actual);
         }
+        
+        
+        #region Helper Methods
+
+        [NotNull]
+        private static CreatureEquipmentMakeInfo GetCreatureEquipmentMakeInfo([NotNull] string giftName)
+        {
+            var equipTypeInfo = TestExtensions.CreateEquipmentTypeInfo();
+            equipTypeInfo.type = EquipmentTypeInfo.EquipmentType.SPECIAL;
+            equipTypeInfo.localizeData = new Dictionary<string, string> { { "name", giftName } };
+
+            var creatureEquipmentMakeInfo = TestExtensions.CreateCreatureEquipmentMakeInfo();
+            creatureEquipmentMakeInfo.equipTypeInfo = equipTypeInfo;
+
+            LocalizeTextDataModel.instance.Init(new Dictionary<string, string> { { giftName, giftName } });
+
+            return creatureEquipmentMakeInfo;
+        }
+
+        #endregion
+
     }
 }
