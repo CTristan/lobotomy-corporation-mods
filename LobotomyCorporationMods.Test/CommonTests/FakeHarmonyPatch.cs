@@ -21,7 +21,7 @@ namespace LobotomyCorporationMods.Test.CommonTests
 
         internal void TestInitializePatchData(List<DirectoryInfo> directoryList)
         {
-            InitializePatchData(typeof(FakeHarmonyPatch), "LobotomyCorporationMods.Test.Dll", directoryList);
+            InitializePatchData(typeof(FakeHarmonyPatch), "LobotomyCorporationMods.Test.dll", directoryList);
         }
 
         internal void ApplyHarmonyPatch([NotNull] Type harmonyPatchType, string modFileName, [NotNull] ILogger logger)

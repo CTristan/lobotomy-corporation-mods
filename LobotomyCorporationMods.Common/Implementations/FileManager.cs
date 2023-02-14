@@ -30,7 +30,8 @@ namespace LobotomyCorporationMods.Common.Implementations
             }
             else
             {
-                var sb = new StringBuilder($"Data path was not found, unable to find {modFileName} in the following directories:/n");
+                var sb = new StringBuilder();
+                sb.AppendLine($"Data path was not found, unable to find {modFileName} in the following directories:");
                 foreach (var directoryInfo in directories)
                 {
                     sb.AppendLine(directoryInfo.ToString());
