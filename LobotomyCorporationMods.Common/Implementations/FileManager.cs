@@ -1,11 +1,16 @@
 // SPDX-License-Identifier: MIT
 
+#region
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Interfaces;
+
+#endregion
 
 namespace LobotomyCorporationMods.Common.Implementations
 {
@@ -18,7 +23,21 @@ namespace LobotomyCorporationMods.Common.Implementations
         internal FileManager([NotNull] string modFileName, [NotNull] IEnumerable<DirectoryInfo> directories)
         {
             var directory = directories.FirstOrDefault(directoryInfo => File.Exists(Path.Combine(directoryInfo.FullName, modFileName)));
-            _dataPath = directory ?? throw new InvalidOperationException("Data path was not found.");
+
+            if (directory is not null)
+            {
+                _dataPath = directory;
+            }
+            else
+            {
+                var sb = new StringBuilder($"Data path was not found, unable to find {modFileName} in the following directories:/n");
+                foreach (var directoryInfo in directories)
+                {
+                    sb.AppendLine(directoryInfo.ToString());
+                }
+
+                throw new InvalidOperationException(sb.ToString());
+            }
         }
 
         public string GetOrCreateFile([NotNull] string fileName)
