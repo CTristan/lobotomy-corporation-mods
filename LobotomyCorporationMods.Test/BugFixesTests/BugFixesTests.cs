@@ -3,6 +3,7 @@
 #region
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using FluentAssertions;
 using LobotomyCorporationMods.BugFixes;
@@ -58,7 +59,20 @@ namespace LobotomyCorporationMods.Test.BugFixesTests
         }
 
         [Fact]
-        public void Class_CustomizingWindow_Method_SetAgentStatBonus_Always_Returns_False()
+        [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
+        public void Class_CustomizingWindow_Method_SetAgentStatBonus_logs_exceptions()
+        {
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+
+            Action action = static () => CustomizingWindowPatchSetAgentStatBonus.Prefix(null, null, null);
+
+            action.ShouldThrow<ArgumentNullException>();
+            mockLogger.Verify(static logger => logger.WriteToLog(It.IsAny<ArgumentNullException>()), Times.Once);
+        }
+
+        [Fact]
+        public void Class_CustomizingWindow_Method_SetAgentStatBonus_returns_false()
         {
             // Arrange
             var customizingWindow = TestExtensions.CreateCustomizingWindow();

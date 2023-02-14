@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: MIT
 
+#region
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,19 +10,21 @@ using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces;
 
+#endregion
+
 namespace LobotomyCorporationMods.Common.Implementations
 {
     public class HarmonyPatchBase
     {
         private const string DuplicateErrorMessage = "Please create a separate static instance for your mod.";
-        private static readonly object s_locker = new object();
-        private static readonly HashSet<object> s_registeredTypes = new HashSet<object>();
+        private static readonly object s_locker = new();
+        private static readonly HashSet<object> s_registeredTypes = new();
 
         /// <summary>
         ///     Singleton ensures thread safety across Harmony patches.
         ///     https://csharpindepth.com/Articles/Singleton
         /// </summary>
-        public static readonly HarmonyPatchBase Instance = new HarmonyPatchBase();
+        protected static readonly HarmonyPatchBase Instance = new();
 
         /// <summary>
         ///     Validate that each mod is using their own Singleton instance.
@@ -38,7 +42,8 @@ namespace LobotomyCorporationMods.Common.Implementations
         {
         }
 
-        protected IFileManager FileManager { get; set; }
+        protected IFileManager FileManager { get; private set; }
+
         public ILogger Logger { get; private set; }
 
         private void ValidateThatStaticInstanceIsNotDuplicated()
@@ -54,18 +59,16 @@ namespace LobotomyCorporationMods.Common.Implementations
             }
         }
 
-        protected void InitializePatchData([NotNull] Type harmonyPatchType, [NotNull] string modFileName)
+        protected void InitializePatchData([NotNull] Type harmonyPatchType, [NotNull] string modFileName, List<DirectoryInfo> directoryList = null)
         {
             Guard.Against.Null(harmonyPatchType, nameof(harmonyPatchType));
 
             if (harmonyPatchType.IsHarmonyPatch())
             {
-                List<DirectoryInfo> directoryList;
-
                 try
                 {
-                    // Try to get Basemod's directory list
-                    directoryList = Add_On.instance.DirList;
+                    // Try to get Basemod directory list if we don't have one
+                    directoryList ??= Add_On.instance.DirList;
                 }
                 catch (SystemException)
                 {
@@ -76,17 +79,24 @@ namespace LobotomyCorporationMods.Common.Implementations
                 FileManager = new FileManager(modFileName, directoryList);
                 Logger = new Logger(FileManager);
 
-                try
-                {
-                    var harmony = HarmonyInstance.Create(modFileName);
-                    harmony.PatchAll(harmonyPatchType.Assembly);
-                }
-                catch (Exception ex)
-                {
-                    Logger.WriteToLog(ex);
+                ApplyHarmonyPatch(harmonyPatchType, modFileName);
+            }
+        }
 
-                    throw;
-                }
+        protected void ApplyHarmonyPatch([NotNull] Type harmonyPatchType, string modFileName)
+        {
+            try
+            {
+                Guard.Against.Null(harmonyPatchType, nameof(harmonyPatchType));
+
+                var harmony = HarmonyInstance.Create(modFileName);
+                harmony.PatchAll(harmonyPatchType.Assembly);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteToLog(ex);
+
+                throw;
             }
         }
 
