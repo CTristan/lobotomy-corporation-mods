@@ -1,13 +1,18 @@
 // SPDX-License-Identifier: MIT
 
+#region
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.BugFixes.Extensions;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
+using LobotomyCorporationMods.Common.Implementations.Adapters;
+using LobotomyCorporationMods.Common.Interfaces.Adapters;
+
+#endregion
 
 namespace LobotomyCorporationMods.BugFixes.Patches
 {
@@ -16,6 +21,8 @@ namespace LobotomyCorporationMods.BugFixes.Patches
     // ReSharper disable once IdentifierTypo
     public static class CustomizingWindowPatchSetAgentStatBonus
     {
+        public static ICustomizingWindowAdapter CustomizingWindowAdapter { get; set; }
+
         /// <summary>
         ///     Runs before SetAgentStatBonus to use the original stat levels instead of the modified stat levels.
         ///     Bug Fixed: If an agent has gifts that decrease a stat level to a lower level, then leveling up the agent with LOB
@@ -39,7 +46,12 @@ namespace LobotomyCorporationMods.BugFixes.Patches
                 Guard.Against.Null(agent, nameof(agent));
                 Guard.Against.Null(data, nameof(data));
 
-                __instance.UpgradeAgentStats(agent, data);
+                CustomizingWindowAdapter ??= new CustomizingWindowAdapter(__instance);
+                agent.primaryStat.hp = CustomizingWindowAdapter.UpgradeAgentStat(agent.primaryStat.hp, agent.originFortitudeLevel, data.statBonus.rBonus);
+                agent.primaryStat.mental = CustomizingWindowAdapter.UpgradeAgentStat(agent.primaryStat.mental, agent.originPrudenceLevel, data.statBonus.wBonus);
+                agent.primaryStat.work = CustomizingWindowAdapter.UpgradeAgentStat(agent.primaryStat.work, agent.originTemperanceLevel, data.statBonus.bBonus);
+                agent.primaryStat.battle = CustomizingWindowAdapter.UpgradeAgentStat(agent.primaryStat.battle, agent.originJusticeLevel, data.statBonus.pBonus);
+                agent.UpdateTitle(agent.level);
 
                 // Since we're replacing the method we never want to call the original method
                 return false;
