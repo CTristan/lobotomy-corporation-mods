@@ -42,7 +42,7 @@ namespace LobotomyCorporationMods.Test.BadLuckProtectionForGiftsTests
 
             GameSceneControllerPatchOnStageStart.Postfix();
 
-            mockAgentWorkTracker.Verify(tracker => tracker.Load(), Times.Once);
+            mockAgentWorkTracker.Verify(static tracker => tracker.Load(), Times.Once);
         }
 
         [Fact]
@@ -52,7 +52,7 @@ namespace LobotomyCorporationMods.Test.BadLuckProtectionForGiftsTests
 
             NewTitleScriptPatchOnClickNewGame.Postfix();
 
-            mockAgentWorkTracker.Verify(tracker => tracker.Reset(), Times.Once);
+            mockAgentWorkTracker.Verify(static tracker => tracker.Reset(), Times.Once);
         }
 
 
@@ -64,7 +64,7 @@ namespace LobotomyCorporationMods.Test.BadLuckProtectionForGiftsTests
         {
             // Arrange
             var mockAgentWorkTracker = CreateMockAgentWorkTracker();
-            mockAgentWorkTracker.Setup(tracker => tracker.GetLastAgentWorkCountByGift(GiftName)).Returns(numberOfSuccesses);
+            mockAgentWorkTracker.Setup(static tracker => tracker.GetLastAgentWorkCountByGift(GiftName)).Returns(numberOfSuccesses);
 
             var creatureEquipmentMakeInfo = GetCreatureEquipmentMakeInfo(GiftName);
             var expected = numberOfSuccesses / 100f;
@@ -85,7 +85,7 @@ namespace LobotomyCorporationMods.Test.BadLuckProtectionForGiftsTests
             var creatureEquipmentMakeInfo = GetCreatureEquipmentMakeInfo(GiftName);
 
             // 101 times worked would equal 101% bonus normally
-            mockAgentWorkTracker.Setup(tracker => tracker.GetLastAgentWorkCountByGift(GiftName)).Returns(101);
+            mockAgentWorkTracker.Setup(static tracker => tracker.GetLastAgentWorkCountByGift(GiftName)).Returns(101);
 
             // Act
             var actual = 0f;
@@ -104,7 +104,7 @@ namespace LobotomyCorporationMods.Test.BadLuckProtectionForGiftsTests
 
             GameSceneControllerPatchOnClickNextDay.Postfix();
 
-            mockAgentWorkTracker.Verify(tracker => tracker.Save(), Times.Once);
+            mockAgentWorkTracker.Verify(static tracker => tracker.Save(), Times.Once);
         }
 
 
