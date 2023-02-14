@@ -1,5 +1,7 @@
 ﻿// SPDX-License-Identifier: MIT
 
+#region
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
@@ -7,7 +9,8 @@ using System.Runtime.InteropServices;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Interfaces;
+
+#endregion
 
 [assembly: AssemblyVersion("1.0.*")]
 [assembly: CLSCompliant(false)]
@@ -21,7 +24,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
     {
         private const string ModFileName = "LobotomyCorporationMods.BadLuckProtectionForGifts.dll";
 
-        public new static readonly Harmony_Patch Instance = new Harmony_Patch(true);
+        public new static readonly Harmony_Patch Instance = new(true);
 
         public Harmony_Patch() : this(false)
         {
@@ -41,10 +44,9 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         /// <summary>
         ///     Entry point for testing.
         /// </summary>
-        public void LoadData(IFileManager fileManager, string dataFileName)
+        public void LoadTracker(IAgentWorkTracker agentWorkTracker)
         {
-            FileManager = fileManager;
-            AgentWorkTracker = new AgentWorkTracker(fileManager, dataFileName);
+            AgentWorkTracker = agentWorkTracker;
         }
     }
 }

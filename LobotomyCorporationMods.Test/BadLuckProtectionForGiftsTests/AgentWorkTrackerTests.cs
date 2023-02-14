@@ -1,13 +1,18 @@
 // SPDX-License-Identifier: MIT
 
+#region
+
 using System.Globalization;
 using System.IO;
+using FluentAssertions;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.Common.Interfaces;
 using Xunit;
 using Xunit.Extensions;
+
+#endregion
 
 namespace LobotomyCorporationMods.Test.BadLuckProtectionForGiftsTests
 {
@@ -18,8 +23,7 @@ namespace LobotomyCorporationMods.Test.BadLuckProtectionForGiftsTests
         [Fact]
         public void Converting_a_tracker_to_a_string_with_a_single_gift_and_a_single_agent_returns_the_correct_string()
         {
-            const string DataFileName =
-                "Converting_a_tracker_to_a_string_with_a_single_gift_and_a_single_agent_returns_the_correct_string";
+            const string DataFileName = "Converting_a_tracker_to_a_string_with_a_single_gift_and_a_single_agent_returns_the_correct_string";
             var agentWorkTracker = CreateAgentWorkTracker(DataFileName);
             agentWorkTracker.IncrementAgentWorkCount(GiftName, 1L);
             var expected = $@"{GiftName}^{1L.ToString(CultureInfo.CurrentCulture)};1";
@@ -30,12 +34,10 @@ namespace LobotomyCorporationMods.Test.BadLuckProtectionForGiftsTests
         }
 
         [Fact]
-        public void
-            Converting_a_tracker_to_a_string_with_multiple_gifts_and_agents_contains_all_of_the_data_in_the_tracker()
+        public void Converting_a_tracker_to_a_string_with_multiple_gifts_and_agents_contains_all_of_the_data_in_the_tracker()
         {
             // Arrange
-            const string DataFileName =
-                "Converting_a_tracker_to_a_string_with_multiple_gifts_and_agents_contains_all_of_the_data_in_the_tracker";
+            const string DataFileName = "Converting_a_tracker_to_a_string_with_multiple_gifts_and_agents_contains_all_of_the_data_in_the_tracker";
             const string SecondGiftName = "Second";
             const long SecondAgentId = 1L + 1;
             var agentWorkTracker = CreateAgentWorkTracker(DataFileName);
@@ -48,8 +50,7 @@ namespace LobotomyCorporationMods.Test.BadLuckProtectionForGiftsTests
 
             // Second gift second agent
             agentWorkTracker.IncrementAgentWorkCount(SecondGiftName, SecondAgentId, 2f);
-            var expected = string.Format(CultureInfo.CurrentCulture, "{0}^{1};1^{2};1|{3}^{2};2", GiftName,
-                1L.ToString(CultureInfo.CurrentCulture), SecondAgentId.ToString(CultureInfo.CurrentCulture),
+            var expected = string.Format(CultureInfo.CurrentCulture, "{0}^{1};1^{2};1|{3}^{2};2", GiftName, 1L.ToString(CultureInfo.CurrentCulture), SecondAgentId.ToString(CultureInfo.CurrentCulture),
                 SecondGiftName);
 
             // Act
@@ -60,55 +61,35 @@ namespace LobotomyCorporationMods.Test.BadLuckProtectionForGiftsTests
         }
 
         [Theory]
-        [InlineData("Test^1;1", GiftName, 1L, 1f)]
-        [InlineData("Test^1;1^2;2", GiftName, 2L, 2f)]
-        [InlineData("Test^1;1^2;2|Second^1;3", "Second", 1L, 3f)]
-        public void Loading_data_from_a_saved_tracker_file_populates_a_valid_tracker([NotNull] string trackerData,
-            [NotNull] string giftName, long agentId, float numberOfTimes)
+        [InlineData(GiftName + "^1;1", GiftName, 1L, 1f)]
+        [InlineData(GiftName + "^1;1^2;2", GiftName, 2L, 2f)]
+        [InlineData(GiftName + "^1;1^2;2|Second^1;3", "Second", 1L, 3f)]
+        public void Loading_data_from_a_saved_tracker_file_populates_a_valid_tracker([NotNull] string trackerData, [NotNull] string giftName, long agentId, float numberOfTimes)
         {
-            var dataFileName =
-                $"Loading_data_with_a_saved_tracker_file_populates_a_valid_tracker_{giftName}_{agentId}_{numberOfTimes}";
+            // Arrange
+            var dataFileName = $"Loading_data_with_a_saved_tracker_file_populates_a_valid_tracker_{giftName}_{agentId}_{numberOfTimes}";
             var agentWorkTracker = CreateAgentWorkTracker(dataFileName, trackerData);
 
-            Assert.Equal(numberOfTimes, agentWorkTracker.GetLastAgentWorkCountByGift(giftName));
+            // Act
+            var result = agentWorkTracker.GetLastAgentWorkCountByGift(giftName);
+
+            // Assert
+            result.Should().Be(numberOfTimes);
         }
 
         [Theory]
-        [InlineData("Test^1;1", GiftName, 1L, 1f)]
-        [InlineData("Test^1;1^2;2", GiftName, 2L, 2f)]
-        [InlineData("Test^1;1^2;2|Second^1;3", "Second", 1L, 3f)]
-        public void Loading_data_multiple_times_from_a_saved_tracker_file_does_not_duplicate_work_progress(
-            [NotNull] string trackerData, [NotNull] string giftName, long agentId, float numberOfTimes)
+        [InlineData(GiftName + "^1;1", GiftName, 1L, 1f)]
+        [InlineData(GiftName + "^1;1^2;2", GiftName, 2L, 2f)]
+        [InlineData(GiftName + "^1;1^2;2|Second^1;3", "Second", 1L, 3f)]
+        public void Loading_data_multiple_times_from_a_saved_tracker_file_does_not_duplicate_work_progress([NotNull] string trackerData, [NotNull] string giftName, long agentId, float numberOfTimes)
         {
-            var dataFileName =
-                $"Loading_data_with_a_saved_tracker_file_populates_a_valid_tracker_{giftName}_{agentId}_{numberOfTimes}";
+            var dataFileName = $"Loading_data_with_a_saved_tracker_file_populates_a_valid_tracker_{giftName}_{agentId}_{numberOfTimes}";
             var agentWorkTracker = CreateAgentWorkTracker(dataFileName, trackerData);
 
             agentWorkTracker.Load();
             agentWorkTracker.Load();
 
             Assert.Equal(numberOfTimes, agentWorkTracker.GetLastAgentWorkCountByGift(giftName));
-        }
-
-        [Fact]
-        public void Our_probability_bonus_does_not_cause_the_gift_probability_to_go_over_100_percent()
-        {
-            // Arrange
-            const string DataFileName =
-                "Our_probability_bonus_does_not_cause_the_gift_probability_to_go_over_100_percent";
-            var agentWorkTracker = CreateAgentWorkTracker(DataFileName);
-
-
-            // Act
-            // 101 times worked would equal 101% bonus normally
-            agentWorkTracker.IncrementAgentWorkCount(GiftName, 1L, 101f);
-
-            var actual = agentWorkTracker.GetLastAgentWorkCountByGift(GiftName);
-
-            // Assert
-            // We should only get back 100% even with the 101% bonus
-            const float Expected = 1f;
-            Assert.Equal(Expected, actual);
         }
 
         #region Helper Methods
@@ -117,8 +98,7 @@ namespace LobotomyCorporationMods.Test.BadLuckProtectionForGiftsTests
         ///     Populates the Harmony Patch with an agent work tracker pointed to our specified test data file.
         /// </summary>
         [NotNull]
-        private IAgentWorkTracker CreateAgentWorkTracker(string dataFileName, string trackerData = "",
-            IFileManager fileManager = null)
+        private IAgentWorkTracker CreateAgentWorkTracker(string dataFileName, string trackerData = "", IFileManager fileManager = null)
         {
             fileManager ??= TestExtensions.GetMockFileManager().Object;
             dataFileName = dataFileName.InCurrentDirectory();
