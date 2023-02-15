@@ -98,6 +98,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             return GetPopulatedUninitializedObject(agentInfoWindow, fields, newValues);
         }
 
+
         [NotNull]
         public static AgentModel CreateAgentModel(AgentName agentName = null, List<UnitBuf> bufList = null, UnitEquipSpace equipment = null, long instanceId = 1L, string name = "",
             WorkerPrimaryStat primaryStat = null, WorkerSprite.WorkerSprite spriteData = null, List<UnitStatBuf> statBufList = null)
@@ -165,12 +166,14 @@ namespace LobotomyCorporationMods.Test.Extensions
         }
 
         [NotNull]
-        public static AngelaConversationUI CreateAngelaConversationUI()
+        public static AngelaConversationUI CreateAngelaConversationUI(Outline messageOutline = null)
         {
+            messageOutline ??= CreateOutline();
+
             CreateUninitializedObject<AngelaConversationUI>(out var angelaConversationUI);
 
             var fields = GetUninitializedObjectFields(angelaConversationUI.GetType());
-            var newValues = new Dictionary<string, object>();
+            var newValues = new Dictionary<string, object> { { "messageOutline", messageOutline } };
             angelaConversationUI = GetPopulatedUninitializedObject(angelaConversationUI, fields, newValues);
             newValues.Add("_instance", angelaConversationUI);
 
@@ -373,6 +376,19 @@ namespace LobotomyCorporationMods.Test.Extensions
         }
 
         [NotNull]
+        public static GlobalGameManager CreateGlobalGameManager(GameMode gameMode = (GameMode)1)
+        {
+            CreateUninitializedObject<GlobalGameManager>(out var globalGameManager);
+
+            var fields = GetUninitializedObjectFields(globalGameManager.GetType());
+            var newValues = new Dictionary<string, object> { { "gameMode", gameMode } };
+            globalGameManager = GetPopulatedUninitializedObject(globalGameManager, fields, newValues);
+            newValues.Add("_instance", globalGameManager);
+
+            return GetPopulatedUninitializedObject(globalGameManager, fields, newValues);
+        }
+
+        [NotNull]
         public static Image CreateImage()
         {
             CreateUninitializedObject<Image>(out var image);
@@ -386,6 +402,27 @@ namespace LobotomyCorporationMods.Test.Extensions
             CreateUninitializedObject<LittleWitchBuf>(out var littleWitchBuf);
 
             return littleWitchBuf;
+        }
+
+        [NotNull]
+        private static Outline CreateOutline()
+        {
+            CreateUninitializedObject<Outline>(out var outline);
+
+            return outline;
+        }
+
+        [NotNull]
+        public static SefiraBossManager CreateSefiraBossManager(SefiraEnum currentActivated = (SefiraEnum)1)
+        {
+            CreateUninitializedObject<SefiraBossManager>(out var sefiraBossManager);
+
+            var fields = GetUninitializedObjectFields(sefiraBossManager.GetType());
+            var newValues = new Dictionary<string, object> { { "currentActivated", currentActivated } };
+            sefiraBossManager = GetPopulatedUninitializedObject(sefiraBossManager, fields, newValues);
+            newValues.Add("_instance", sefiraBossManager);
+
+            return GetPopulatedUninitializedObject(sefiraBossManager, fields, newValues);
         }
 
         [NotNull]

@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: MIT
 
+#region
+
 using System;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Interfaces;
@@ -7,21 +9,47 @@ using LobotomyCorporationMods.Test.Extensions;
 using Moq;
 using Xunit;
 
+#endregion
+
 namespace LobotomyCorporationMods.Test.CommonTests
 {
     public sealed class LoggerTests
     {
         [Fact]
-        public void Logging_exception_throws_Unity_exception_due_to_Debug_mode()
+        public void Logging_exception_writes_to_log()
         {
-            // Needs an existing AngelaConversationUI instance because we're also logging to debug
-            _ = TestExtensions.CreateAngelaConversationUI();
             var mockFileManager = new Mock<IFileManager>();
-            var logger = new Logger(mockFileManager.Object);
+            var logger = new Logger(mockFileManager.Object) { DebugLoggingEnabled = false };
+
+            logger.WriteToLog(new Exception());
+
+            mockFileManager.Verify(static manager => manager.WriteAllText(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+        }
+
+        [Fact]
+        public void Debug_logging_throws_Unity_exception()
+        {
+            CreateNeededGameInstances();
+            var mockFileManager = new Mock<IFileManager>();
+            var logger = new Logger(mockFileManager.Object) { DebugLoggingEnabled = true };
 
             Action action = () => logger.WriteToLog(new Exception());
 
             action.ShouldThrowUnityException();
         }
+
+        #region Helper Methods
+
+        private static void CreateNeededGameInstances()
+        {
+            // Needs an existing AngelaConversationUI instance
+            _ = TestExtensions.CreateAngelaConversationUI();
+
+            // ...which needs additional existing instances
+            _ = TestExtensions.CreateGlobalGameManager();
+            _ = TestExtensions.CreateSefiraBossManager(SefiraEnum.DUMMY);
+        }
+
+        #endregion
     }
 }

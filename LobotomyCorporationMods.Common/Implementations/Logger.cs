@@ -1,8 +1,12 @@
 // SPDX-License-Identifier: MIT
 
+#region
+
 using System;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Interfaces;
+
+#endregion
 
 namespace LobotomyCorporationMods.Common.Implementations
 {
@@ -14,7 +18,14 @@ namespace LobotomyCorporationMods.Common.Implementations
         public Logger(IFileManager fileManager)
         {
             _fileManager = fileManager;
+
+#if DEBUG
+            DebugLoggingEnabled = true;
+#endif
         }
+
+        public bool DebugLoggingEnabled { get; set; }
+
 
         public void WriteToLog(Exception exception)
         {
@@ -40,9 +51,10 @@ namespace LobotomyCorporationMods.Common.Implementations
                 var message = exception.ToString();
                 WriteToLog(message, logFileName);
 
-#if DEBUG
-                WriteToDebug(message);
-#endif
+                if (DebugLoggingEnabled)
+                {
+                    WriteToDebug(message);
+                }
             }
         }
     }

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using FluentAssertions;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Implementations;
@@ -61,13 +62,19 @@ namespace LobotomyCorporationMods.Test.CommonTests
     /// </summary>
     internal sealed class FakeHarmonyPatch : HarmonyPatchBase
     {
+        private const string FileNameThatExists = "FileNameThatExists.txt";
+
         internal FakeHarmonyPatch(bool isNotDuplicating) : base(isNotDuplicating)
         {
         }
 
-        internal void TestInitializePatchData(ICollection<DirectoryInfo> directoryList)
+        internal void TestInitializePatchData([NotNull] ICollection<DirectoryInfo> directoryList)
         {
-            InitializePatchData(typeof(FakeHarmonyPatch), "LobotomyCorporationMods.Test.dll", directoryList);
+            var directory = directoryList.First();
+            var testFileWithPath = Path.Combine(directory.FullName, FileNameThatExists);
+            File.WriteAllText(testFileWithPath, string.Empty);
+
+            InitializePatchData(typeof(FakeHarmonyPatch), FileNameThatExists, directoryList);
         }
 
         internal void ApplyHarmonyPatch([NotNull] Type harmonyPatchType, string modFileName, [NotNull] ILogger logger)
