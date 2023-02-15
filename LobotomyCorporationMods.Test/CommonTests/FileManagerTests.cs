@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using FluentAssertions;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Implementations;
 using Xunit;
 using Xunit.Extensions;
@@ -41,7 +42,7 @@ namespace LobotomyCorporationMods.Test.CommonTests
         [Theory]
         [InlineData("NonExistentFile.txt")]
         [InlineData("DoesNotExist")]
-        public void Reading_a_nonexistent_file_with_flag_not_set_does_not_create_the_file(string fileName)
+        public void Reading_a_nonexistent_file_with_flag_not_set_does_not_create_the_file([NotNull] string fileName)
         {
             var fileManager = new FileManager(DefaultModFileName, GetDirectories());
             var fileWithPath = fileManager.GetOrCreateFile(fileName);
@@ -55,13 +56,13 @@ namespace LobotomyCorporationMods.Test.CommonTests
         [Theory]
         [InlineData("NowIExist.txt")]
         [InlineData("CreateThenDeleteMe")]
-        public void Reading_a_nonexistent_file_with_flag_set_creates_the_file(string fileName)
+        public void Reading_a_nonexistent_file_with_flag_set_creates_the_file([NotNull] string fileName)
         {
             var fileManager = new FileManager(DefaultModFileName, GetDirectories());
             var fileWithPath = fileManager.GetOrCreateFile(fileName);
             DeleteFileIfExists(fileWithPath);
 
-            var result = fileManager.ReadAllText(fileWithPath, true);
+            _ = fileManager.ReadAllText(fileWithPath, true);
 
             File.Exists(fileWithPath).Should().BeTrue();
         }
@@ -76,6 +77,7 @@ namespace LobotomyCorporationMods.Test.CommonTests
 
         #region Helper Methods
 
+        [NotNull]
         private static ICollection<DirectoryInfo> GetDirectories()
         {
             var currentDirectory = Directory.GetCurrentDirectory();
@@ -83,7 +85,7 @@ namespace LobotomyCorporationMods.Test.CommonTests
             return new List<DirectoryInfo> { new(currentDirectory) };
         }
 
-        private void DeleteFileIfExists(string fileWithPath)
+        private static void DeleteFileIfExists(string fileWithPath)
         {
             if (File.Exists(fileWithPath))
             {
