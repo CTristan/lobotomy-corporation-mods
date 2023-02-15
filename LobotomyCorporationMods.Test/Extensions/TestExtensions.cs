@@ -165,6 +165,12 @@ namespace LobotomyCorporationMods.Test.Extensions
         }
 
         [NotNull]
+        public static Animator CreateAnimator()
+        {
+            return new Animator();
+        }
+
+        [NotNull]
         public static Appearance CreateAppearance(WorkerSprite.WorkerSprite spriteSet = null)
         {
             spriteSet ??= CreateWorkerSprite();
@@ -179,9 +185,11 @@ namespace LobotomyCorporationMods.Test.Extensions
         }
 
         [NotNull]
-        public static BeautyBeastAnim CreateBeautyBeastAnim()
+        public static BeautyBeastAnim CreateBeautyBeastAnim(Animator animator = null)
         {
-            return new BeautyBeastAnim();
+            animator ??= CreateAnimator();
+
+            return new BeautyBeastAnim { animator = animator };
         }
 
         [NotNull]

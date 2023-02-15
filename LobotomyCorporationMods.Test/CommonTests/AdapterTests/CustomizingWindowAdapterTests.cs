@@ -23,7 +23,7 @@ namespace LobotomyCorporationMods.Test.CommonTests.AdapterTests
             var customizingWindow = TestExtensions.CreateCustomizingWindow();
             var adapter = new CustomizingWindowAdapter(customizingWindow);
 
-            Action action = () => adapter.UpgradeAgentStat(0, 0, 0);
+            Action action = () => adapter.UpgradeAgentStat(1, 1, 1);
 
             action.ShouldThrowUnityException();
         }
