@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: MIT
 
+#region
+
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Enums;
@@ -8,11 +10,13 @@ using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
 
+#endregion
+
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
 {
     internal static class CommandWindowExtensions
     {
-        private static bool TryGetCreature([NotNull] this CommandWindow.CommandWindow commandWindow, [CanBeNull] out CreatureModel creature)
+        internal static bool TryGetCreature([NotNull] this CommandWindow.CommandWindow commandWindow, [CanBeNull] out CreatureModel creature)
         {
             creature = null;
 

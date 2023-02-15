@@ -83,7 +83,7 @@ namespace LobotomyCorporationMods.Test
             // Mock animation script adapter to avoid Unity errors
             const int NormalState = 0;
             var mockAnimationScriptAdapter = new Mock<IAnimationScriptAdapter>();
-            mockAnimationScriptAdapter.Setup(ash => ash.GetScript<BeautyBeastAnim>(creature)).Returns(new BeautyBeastAnim());
+            mockAnimationScriptAdapter.Setup(static ash => ash.UnpackScriptAsType<BeautyBeastAnim>()).Returns(new BeautyBeastAnim());
             mockAnimationScriptAdapter.Setup(static ash => ash.BeautyAndTheBeastState).Returns(NormalState);
 
             // Act
@@ -105,7 +105,7 @@ namespace LobotomyCorporationMods.Test
             // Mock animation script adapter to avoid Unity errors
             const int WeakenedState = 1;
             var mockAnimationScriptAdapter = new Mock<IAnimationScriptAdapter>();
-            mockAnimationScriptAdapter.Setup(ash => ash.GetScript<BeautyBeastAnim>(creature)).Returns(new BeautyBeastAnim());
+            mockAnimationScriptAdapter.Setup(static ash => ash.UnpackScriptAsType<BeautyBeastAnim>()).Returns(new BeautyBeastAnim());
             mockAnimationScriptAdapter.Setup(static ash => ash.BeautyAndTheBeastState).Returns(WeakenedState);
 
             // Act
@@ -130,7 +130,7 @@ namespace LobotomyCorporationMods.Test
             // Mock animation script adapter to avoid Unity errors
             const int WeakenedState = 1;
             var mockAnimationScriptAdapter = new Mock<IAnimationScriptAdapter>();
-            mockAnimationScriptAdapter.Setup(ash => ash.GetScript<BeautyBeastAnim>(creature)).Returns(new BeautyBeastAnim());
+            mockAnimationScriptAdapter.Setup(static ash => ash.UnpackScriptAsType<BeautyBeastAnim>()).Returns(new BeautyBeastAnim());
             mockAnimationScriptAdapter.Setup(static ash => ash.BeautyAndTheBeastState).Returns(WeakenedState);
 
             // Act
@@ -552,7 +552,7 @@ namespace LobotomyCorporationMods.Test
             // Mock animation script adapter to avoid Unity errors
             const int FourFlowers = 4;
             var mockAnimationScriptAdapter = new Mock<IAnimationScriptAdapter>();
-            mockAnimationScriptAdapter.Setup(ash => ash.GetScript<YggdrasilAnim>(creature)).Returns(new YggdrasilAnim());
+            mockAnimationScriptAdapter.Setup(static ash => ash.UnpackScriptAsType<YggdrasilAnim>()).Returns(new YggdrasilAnim());
             mockAnimationScriptAdapter.Setup(static ash => ash.ParasiteTreeNumberOfFlowers).Returns(FourFlowers);
 
             // Act
@@ -578,7 +578,7 @@ namespace LobotomyCorporationMods.Test
             // Mock animation script adapter to avoid Unity errors
             const int FourFlowers = 4;
             var mockAnimationScriptAdapter = new Mock<IAnimationScriptAdapter>();
-            mockAnimationScriptAdapter.Setup(ash => ash.GetScript<YggdrasilAnim>(creature)).Returns(new YggdrasilAnim());
+            mockAnimationScriptAdapter.Setup(static ash => ash.UnpackScriptAsType<YggdrasilAnim>()).Returns(new YggdrasilAnim());
             mockAnimationScriptAdapter.Setup(static ash => ash.ParasiteTreeNumberOfFlowers).Returns(FourFlowers);
 
             // Act
@@ -603,7 +603,7 @@ namespace LobotomyCorporationMods.Test
 
             // Mock animation script adapter to avoid Unity errors
             var mockAnimationScriptAdapter = new Mock<IAnimationScriptAdapter>();
-            mockAnimationScriptAdapter.Setup(ash => ash.GetScript<YggdrasilAnim>(creature)).Returns(new YggdrasilAnim());
+            mockAnimationScriptAdapter.Setup(static ash => ash.UnpackScriptAsType<YggdrasilAnim>()).Returns(new YggdrasilAnim());
             mockAnimationScriptAdapter.Setup(static ash => ash.ParasiteTreeNumberOfFlowers).Returns(numberOfFlowers);
 
             // Act

@@ -1,7 +1,11 @@
 // SPDX-License-Identifier: MIT
 
+#region
+
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
+
+#endregion
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators
 {
@@ -18,7 +22,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
         {
             var agentWillDie = false;
 
-            var animationScript = _animationScriptAdapter.GetScript<YggdrasilAnim>(Creature);
+            var animationScript = _animationScriptAdapter.UnpackScriptAsType<YggdrasilAnim>();
             if (!(animationScript is null))
             {
                 var numberOfFlowers = _animationScriptAdapter.ParasiteTreeNumberOfFlowers;

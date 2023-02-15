@@ -179,6 +179,12 @@ namespace LobotomyCorporationMods.Test.Extensions
         }
 
         [NotNull]
+        public static BeautyBeastAnim CreateBeautyBeastAnim()
+        {
+            return new BeautyBeastAnim();
+        }
+
+        [NotNull]
         public static CommandWindow.CommandWindow CreateCommandWindow(UnitModel currentTarget = null, CommandType currentWindowType = (CommandType)1, long selectedWork = 0L)
         {
             currentTarget ??= CreateUnitModel();
@@ -191,6 +197,12 @@ namespace LobotomyCorporationMods.Test.Extensions
             newValues.Add("_currentWindow", commandWindow);
 
             return GetPopulatedUninitializedObject(commandWindow, fields, newValues);
+        }
+
+        [NotNull]
+        public static CreatureAnimScript CreateCreatureAnimScript()
+        {
+            return new CreatureAnimScript();
         }
 
         [NotNull]
@@ -491,6 +503,14 @@ namespace LobotomyCorporationMods.Test.Extensions
             newValues.Add("_instance", workerSpriteManager);
 
             return GetPopulatedUninitializedObject(workerSpriteManager, fields, newValues);
+        }
+
+        [NotNull]
+        public static CreatureAnimScript CreateYggdrasilAnim(GameObject[] flowers = null)
+        {
+            flowers ??= new GameObject[0];
+
+            return new YggdrasilAnim { flowers = flowers };
         }
 
         [NotNull]

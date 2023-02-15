@@ -1,16 +1,30 @@
 // SPDX-License-Identifier: MIT
 
+#region
+
 using System;
 using System.Linq;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
+using UnityEngine;
+
+#endregion
 
 namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     public sealed class AnimationScriptAdapter : IAnimationScriptAdapter
     {
-        private CreatureAnimScript _animationScript;
+        private readonly CreatureAnimScript _animationScript;
+        private readonly IGameObjectAdapter _gameObjectAdapter;
+
+        public AnimationScriptAdapter(CreatureAnimScript animationScript) : this(animationScript, new GameObjectAdapter()) { }
+
+        public AnimationScriptAdapter(CreatureAnimScript animationScript, IGameObjectAdapter gameObjectAdapter)
+        {
+            _animationScript = animationScript;
+            _gameObjectAdapter = gameObjectAdapter;
+        }
 
         public int BeautyAndTheBeastState
         {
@@ -35,7 +49,9 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 
                 if (_animationScript is YggdrasilAnim animationScript)
                 {
-                    return animationScript.flowers.Count(static flower => flower.activeSelf);
+                    var flowers = animationScript.flowers ?? new GameObject[0];
+
+                    return flowers.Count(flower => _gameObjectAdapter.GameObjectIsActive(flower));
                 }
 
                 throw new InvalidOperationException("Could not cast animation script as YggdrasilAnim");
@@ -43,12 +59,8 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
         }
 
         [CanBeNull]
-        public TScript GetScript<TScript>([NotNull] CreatureModel creature) where TScript : CreatureAnimScript
+        public TScript UnpackScriptAsType<TScript>() where TScript : CreatureAnimScript
         {
-            Guard.Against.Null(creature, nameof(creature));
-
-            _animationScript = creature.GetAnimScript() as TScript;
-
             return _animationScript as TScript;
         }
     }

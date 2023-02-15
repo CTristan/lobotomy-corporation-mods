@@ -86,7 +86,4 @@
   <ItemGroup>
     <None Remove="TestResults\**"/>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="CommonTests\AdapterTests"/>
-  </ItemGroup>
 </Project>
