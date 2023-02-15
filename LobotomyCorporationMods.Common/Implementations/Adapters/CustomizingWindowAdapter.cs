@@ -2,7 +2,9 @@
 
 #region
 
+using System;
 using Customizing;
+using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 #endregion
@@ -20,7 +22,14 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 
         public int UpgradeAgentStat(int originalStatLevel, int currentStatLevel, int statLevelIncrease)
         {
-            return _customizingWindow.SetRandomStatValue(originalStatLevel, currentStatLevel, statLevelIncrease);
+            try
+            {
+                return _customizingWindow.SetRandomStatValue(originalStatLevel, currentStatLevel, statLevelIncrease);
+            }
+            catch (Exception ex) when (ex.IsUnityException())
+            {
+                return 0;
+            }
         }
     }
 }

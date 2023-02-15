@@ -30,14 +30,14 @@ namespace LobotomyCorporationMods.Test.CommonTests.AdapterTests
         }
 
         [Fact]
-        public void Valid_BeautyBeastAnim_throws_Unity_exception_when_checking_state()
+        public void Valid_BeautyBeastAnim_does_not_error()
         {
             var animationScript = TestExtensions.CreateBeautyBeastAnim();
             var adapter = new AnimationScriptAdapter(animationScript);
 
             Action action = () => _ = adapter.BeautyAndTheBeastState;
 
-            action.ShouldThrowUnityException();
+            action.ShouldNotThrow();
         }
 
         [Fact]

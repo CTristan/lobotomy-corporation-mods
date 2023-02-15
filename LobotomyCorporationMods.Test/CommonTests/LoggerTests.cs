@@ -3,8 +3,10 @@
 #region
 
 using System;
+using FluentAssertions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Interfaces;
+using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.Test.Extensions;
 using Moq;
 using Xunit;
@@ -19,7 +21,8 @@ namespace LobotomyCorporationMods.Test.CommonTests
         public void Logging_exception_writes_to_log()
         {
             var mockFileManager = new Mock<IFileManager>();
-            var logger = new Logger(mockFileManager.Object) { DebugLoggingEnabled = false };
+            var mockAngelaConversationUiAdapter = new Mock<IAngelaConversationUiAdapter>();
+            var logger = new Logger(mockFileManager.Object, mockAngelaConversationUiAdapter.Object);
 
             logger.WriteToLog(new Exception());
 
@@ -29,27 +32,16 @@ namespace LobotomyCorporationMods.Test.CommonTests
         [Fact]
         public void Debug_logging_throws_Unity_exception()
         {
-            CreateNeededGameInstances();
+            // Needs existing game instances
+            _ = TestExtensions.CreateAngelaConversationUI();
+            _ = TestExtensions.CreateGlobalGameManager();
+            _ = TestExtensions.CreateSefiraBossManager(SefiraEnum.DUMMY);
             var mockFileManager = new Mock<IFileManager>();
             var logger = new Logger(mockFileManager.Object) { DebugLoggingEnabled = true };
 
             Action action = () => logger.WriteToLog(new Exception());
 
-            action.ShouldThrowUnityException();
+            action.ShouldNotThrow();
         }
-
-        #region Helper Methods
-
-        private static void CreateNeededGameInstances()
-        {
-            // Needs an existing AngelaConversationUI instance
-            _ = TestExtensions.CreateAngelaConversationUI();
-
-            // ...which needs additional existing instances
-            _ = TestExtensions.CreateGlobalGameManager();
-            _ = TestExtensions.CreateSefiraBossManager(SefiraEnum.DUMMY);
-        }
-
-        #endregion
     }
 }

@@ -1,9 +1,14 @@
 // SPDX-License-Identifier: MIT
 
+#region
+
+using System;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using UnityEngine;
+
+#endregion
 
 namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
@@ -11,9 +16,16 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
     {
         public bool GameObjectIsActive([NotNull] GameObject gameObject)
         {
-            Guard.Against.Null(gameObject, nameof(gameObject));
+            try
+            {
+                Guard.Against.Null(gameObject, nameof(gameObject));
 
-            return gameObject.activeSelf;
+                return gameObject.activeSelf;
+            }
+            catch (Exception exception) when (exception.IsUnityException())
+            {
+                return false;
+            }
         }
     }
 }

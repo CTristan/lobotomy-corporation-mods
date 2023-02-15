@@ -4,7 +4,9 @@
 
 using System;
 using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Common.Interfaces;
+using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 #endregion
 
@@ -13,11 +15,15 @@ namespace LobotomyCorporationMods.Common.Implementations
     public sealed class Logger : ILogger
     {
         private const string DefaultLogFileName = "log.txt";
+        private readonly IAngelaConversationUiAdapter _angelaConversationUiAdapter;
         private readonly IFileManager _fileManager;
 
-        public Logger(IFileManager fileManager)
+        public Logger(IFileManager fileManager) : this(fileManager, new AngelaConversationUiAdapter()) { }
+
+        public Logger(IFileManager fileManager, IAngelaConversationUiAdapter angelaConversationUiAdapter)
         {
             _fileManager = fileManager;
+            _angelaConversationUiAdapter = angelaConversationUiAdapter;
 
 #if DEBUG
             DebugLoggingEnabled = true;
@@ -26,16 +32,15 @@ namespace LobotomyCorporationMods.Common.Implementations
 
         public bool DebugLoggingEnabled { get; set; }
 
-
         public void WriteToLog(Exception exception)
         {
             WriteToLog(exception, DefaultLogFileName);
         }
 
-        private static void WriteToDebug(string message)
+        private void WriteToDebug(string message)
         {
             Notice.instance.Send(NoticeName.AddSystemLog, message);
-            AngelaConversationUI.instance.AddAngelaMessage(message);
+            _angelaConversationUiAdapter.AddMessage(message);
         }
 
         private void WriteToLog([NotNull] string message, [NotNull] string logFileName)

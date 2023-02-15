@@ -34,7 +34,14 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 
                 if (_animationScript is BeautyBeastAnim animationScript)
                 {
-                    return animationScript.GetState();
+                    try
+                    {
+                        return animationScript.GetState();
+                    }
+                    catch (Exception exception) when (exception.IsUnityException())
+                    {
+                        return 0;
+                    }
                 }
 
                 throw new InvalidOperationException("Could not cast animation script as BeautyBeastAnim");

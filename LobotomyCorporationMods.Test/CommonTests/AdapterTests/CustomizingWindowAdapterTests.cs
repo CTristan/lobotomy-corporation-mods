@@ -3,6 +3,7 @@
 #region
 
 using System;
+using FluentAssertions;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Test.Extensions;
 using Xunit;
@@ -25,7 +26,7 @@ namespace LobotomyCorporationMods.Test.CommonTests.AdapterTests
 
             Action action = () => adapter.UpgradeAgentStat(1, 1, 1);
 
-            action.ShouldThrowUnityException();
+            action.ShouldNotThrow();
         }
     }
 }
