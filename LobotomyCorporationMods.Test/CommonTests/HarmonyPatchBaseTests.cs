@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using FluentAssertions;
+using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Interfaces;
 using Moq;
 using Xunit;
@@ -51,6 +53,29 @@ namespace LobotomyCorporationMods.Test.CommonTests
 
             action.ShouldThrow<ArgumentNullException>();
             mockLogger.Verify(static logger => logger.WriteToLog(It.IsAny<ArgumentNullException>()), Times.Once);
+        }
+    }
+
+    /// <summary>
+    ///     Only to be used for HarmonyPatchBase tests.
+    /// </summary>
+    internal sealed class FakeHarmonyPatch : HarmonyPatchBase
+    {
+        internal FakeHarmonyPatch(bool isNotDuplicating) : base(isNotDuplicating)
+        {
+        }
+
+        internal void TestInitializePatchData(ICollection<DirectoryInfo> directoryList)
+        {
+            InitializePatchData(typeof(FakeHarmonyPatch), "LobotomyCorporationMods.Test.dll", directoryList);
+        }
+
+        internal void ApplyHarmonyPatch([NotNull] Type harmonyPatchType, string modFileName, [NotNull] ILogger logger)
+        {
+            LoadData(logger);
+            Instance.LoadData(logger);
+
+            base.ApplyHarmonyPatch(harmonyPatchType, modFileName);
         }
     }
 }
