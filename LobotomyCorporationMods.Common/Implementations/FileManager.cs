@@ -20,7 +20,7 @@ namespace LobotomyCorporationMods.Common.Implementations
         private readonly object _fileLock = new();
         private readonly Dictionary<string, string> _files = new();
 
-        internal FileManager([NotNull] string modFileName, [NotNull] IEnumerable<DirectoryInfo> directories)
+        internal FileManager([NotNull] string modFileName, [NotNull] ICollection<DirectoryInfo> directories)
         {
             var directory = directories.FirstOrDefault(directoryInfo => File.Exists(Path.Combine(directoryInfo.FullName, modFileName)));
 

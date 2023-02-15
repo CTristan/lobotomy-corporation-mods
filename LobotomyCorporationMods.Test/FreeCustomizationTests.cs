@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: MIT
 
+#region
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -10,10 +12,13 @@ using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.FreeCustomization;
 using LobotomyCorporationMods.FreeCustomization.Extensions;
 using LobotomyCorporationMods.FreeCustomization.Patches;
+using LobotomyCorporationMods.Test.Extensions;
 using Moq;
 using UnityEngine;
 using Xunit;
 using Xunit.Extensions;
+
+#endregion
 
 namespace LobotomyCorporationMods.Test
 {

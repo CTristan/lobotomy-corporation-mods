@@ -59,7 +59,12 @@ namespace LobotomyCorporationMods.Common.Implementations
             }
         }
 
-        protected void InitializePatchData([NotNull] Type harmonyPatchType, [NotNull] string modFileName, List<DirectoryInfo> directoryList = null)
+        protected void InitializePatchData([NotNull] Type harmonyPatchType, [NotNull] string modFileName)
+        {
+            InitializePatchData(harmonyPatchType, modFileName, null);
+        }
+
+        protected void InitializePatchData([NotNull] Type harmonyPatchType, [NotNull] string modFileName, ICollection<DirectoryInfo> directoryList)
         {
             Guard.Against.Null(harmonyPatchType, nameof(harmonyPatchType));
 

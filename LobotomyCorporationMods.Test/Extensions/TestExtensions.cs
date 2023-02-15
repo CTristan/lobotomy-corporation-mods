@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: MIT
 
+#region
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -20,7 +22,9 @@ using UnityEngine.UI;
 using WorkerSprite;
 using ILogger = LobotomyCorporationMods.Common.Interfaces.ILogger;
 
-namespace LobotomyCorporationMods.Test
+#endregion
+
+namespace LobotomyCorporationMods.Test.Extensions
 {
     [SuppressMessage("ReSharper", "Unity.IncorrectMonoBehaviourInstantiation")]
     [SuppressMessage("ReSharper", "Unity.NoNullCoalescing")]

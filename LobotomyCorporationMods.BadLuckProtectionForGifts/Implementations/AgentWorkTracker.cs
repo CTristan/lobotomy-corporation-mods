@@ -1,5 +1,7 @@
 ﻿// SPDX-License-Identifier: MIT
 
+#region
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -9,7 +11,8 @@ using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.Common.Interfaces;
 
-// ReSharper disable CommentTypo
+#endregion
+
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
 {
     public sealed class AgentWorkTracker : IAgentWorkTracker
@@ -28,8 +31,6 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
                 Load();
             }
         }
-
-        #region IAgentWorkTracker Members
 
         public float GetLastAgentWorkCountByGift(string giftName)
         {
@@ -74,8 +75,6 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
             _fileManager.WriteAllText(_trackerFile, ToString());
         }
 
-        #endregion
-
         [NotNull]
         private IAgent GetAgent([NotNull] string giftName, long agentId)
         {
@@ -118,7 +117,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         ///     Converts the AgentWorkTracker object to a custom string format. The format delimits gifts by '|', agents for each
         ///     gift by '^', and agent id and work count are separated by ';'. A gift can have multiple agents and we don't
         ///     duplicate the gift names.
-        ///     Example: (gift1)^(agent1);(workcount1)^(agent2);(workcount2)|(gift2)^(agent1);(workcount2)
+        ///     Example: (gift1)^(agent1);(work-count1)^(agent2);(work-count2)|(gift2)^(agent1);(work-count2)
         ///     I would have preferred to use json, but the Unity json support is very minimal and does not support nested
         ///     objects, so I had to make my own format.
         /// </summary>
