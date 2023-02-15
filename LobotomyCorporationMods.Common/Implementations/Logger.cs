@@ -6,12 +6,12 @@ using LobotomyCorporationMods.Common.Interfaces;
 
 namespace LobotomyCorporationMods.Common.Implementations
 {
-    internal sealed class Logger : ILogger
+    public sealed class Logger : ILogger
     {
         private const string DefaultLogFileName = "log.txt";
         private readonly IFileManager _fileManager;
 
-        internal Logger(IFileManager fileManager)
+        public Logger(IFileManager fileManager)
         {
             _fileManager = fileManager;
         }

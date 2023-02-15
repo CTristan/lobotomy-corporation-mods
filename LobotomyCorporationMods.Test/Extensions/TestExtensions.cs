@@ -165,6 +165,19 @@ namespace LobotomyCorporationMods.Test.Extensions
         }
 
         [NotNull]
+        public static AngelaConversationUI CreateAngelaConversationUI()
+        {
+            CreateUninitializedObject<AngelaConversationUI>(out var angelaConversationUI);
+
+            var fields = GetUninitializedObjectFields(angelaConversationUI.GetType());
+            var newValues = new Dictionary<string, object>();
+            angelaConversationUI = GetPopulatedUninitializedObject(angelaConversationUI, fields, newValues);
+            newValues.Add("_instance", angelaConversationUI);
+
+            return GetPopulatedUninitializedObject(angelaConversationUI, fields, newValues);
+        }
+
+        [NotNull]
         public static Animator CreateAnimator()
         {
             return new Animator();
@@ -350,6 +363,7 @@ namespace LobotomyCorporationMods.Test.Extensions
 
             return fairyBuf;
         }
+
 
         public static GameObject CreateGameObject()
         {
