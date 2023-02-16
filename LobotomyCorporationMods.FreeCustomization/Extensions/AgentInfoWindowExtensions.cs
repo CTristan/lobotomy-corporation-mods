@@ -1,10 +1,13 @@
 // SPDX-License-Identifier: MIT
 
+#region
+
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
+
+#endregion
 
 namespace LobotomyCorporationMods.FreeCustomization.Extensions
 {
@@ -17,7 +20,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Extensions
 
         public static void OpenAppearanceWindow(this AgentInfoWindow agentInfoWindow, [NotNull] IAgentInfoWindowAdapter agentInfoWindowAdapter)
         {
-            Guard.Against.Null(agentInfoWindowAdapter, nameof(agentInfoWindowAdapter));
+            agentInfoWindowAdapter.NotNull(nameof(agentInfoWindowAdapter));
 
             agentInfoWindowAdapter.OpenAppearanceWindow(agentInfoWindow);
         }

@@ -30,7 +30,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
         {
             get
             {
-                Guard.Against.Null(_animationScript, nameof(_animationScript));
+                _animationScript.NotNull(nameof(_animationScript));
 
                 if (_animationScript is BeautyBeastAnim animationScript)
                 {
@@ -52,7 +52,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
         {
             get
             {
-                Guard.Against.Null(_animationScript, nameof(_animationScript));
+                _animationScript.NotNull(nameof(_animationScript));
 
                 if (_animationScript is YggdrasilAnim animationScript)
                 {

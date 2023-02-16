@@ -1,13 +1,16 @@
 // SPDX-License-Identifier: MIT
 
+#region
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using CommandWindow;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions;
+
+#endregion
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
 {
@@ -21,8 +24,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
         {
             try
             {
-                Guard.Against.Null(__instance, nameof(__instance));
-                Guard.Against.Null(state, nameof(state));
+                __instance.NotNull(nameof(__instance));
 
                 // Some initial Command Window checks to make sure we're in the right state
                 var commandWindow = CommandWindow.CommandWindow.CurrentWindow;

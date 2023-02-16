@@ -1,10 +1,14 @@
 // SPDX-License-Identifier: MIT
 
+#region
+
 using System;
 using Harmony;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
+
+#endregion
 
 namespace LobotomyCorporationMods.BugFixes.Patches
 {
@@ -33,8 +37,8 @@ namespace LobotomyCorporationMods.BugFixes.Patches
         {
             try
             {
-                Guard.Against.Null(notice, nameof(notice));
-                Guard.Against.Null(param, nameof(param));
+                notice.NotNull(nameof(notice));
+                param.NotNull(nameof(param));
 
                 if (notice != NoticeName.OnWorkStart)
                 {

@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: MIT
 
+#region
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
+
+#endregion
 
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
 {
@@ -18,7 +21,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
         {
             try
             {
-                Guard.Against.Null(__instance, nameof(__instance));
+                __instance.NotNull(nameof(__instance));
 
                 var giftName = __instance.equipTypeInfo?.Name;
 

@@ -1,9 +1,12 @@
 // SPDX-License-Identifier: MIT
 
+#region
+
 using Customizing;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
+
+#endregion
 
 namespace LobotomyCorporationMods.FreeCustomization.Extensions
 {
@@ -11,7 +14,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Extensions
     {
         public static void SaveAgentAppearance([NotNull] this CustomizingWindow customizingWindow)
         {
-            Guard.Against.Null(customizingWindow, nameof(customizingWindow));
+            customizingWindow.NotNull(nameof(customizingWindow));
 
             if (customizingWindow.appearanceUI.copied is not null)
             {
@@ -24,7 +27,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Extensions
 
         internal static void UpdateAgentModel([NotNull] this CustomizingWindow customizingWindow, [NotNull] AgentLayer agentLayer)
         {
-            Guard.Against.Null(customizingWindow, nameof(customizingWindow));
+            customizingWindow.NotNull(nameof(customizingWindow));
 
             var agentModel = customizingWindow.CurrentAgent;
             agentLayer.RemoveAgent(agentModel);
@@ -33,7 +36,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Extensions
 
         public static void RenameAgent([NotNull] this CustomizingWindow customizingWindow)
         {
-            Guard.Against.Null(customizingWindow, nameof(customizingWindow));
+            customizingWindow.NotNull(nameof(customizingWindow));
 
             var customName = customizingWindow.CurrentData.CustomName;
             customizingWindow.CurrentAgent.name = customName;

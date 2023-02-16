@@ -66,7 +66,7 @@ namespace LobotomyCorporationMods.Common.Implementations
 
         protected void InitializePatchData([NotNull] Type harmonyPatchType, [NotNull] string modFileName, ICollection<DirectoryInfo> directoryList)
         {
-            Guard.Against.Null(harmonyPatchType, nameof(harmonyPatchType));
+            harmonyPatchType.NotNull(nameof(harmonyPatchType));
 
             if (harmonyPatchType.IsHarmonyPatch())
             {
@@ -92,7 +92,7 @@ namespace LobotomyCorporationMods.Common.Implementations
         {
             try
             {
-                Guard.Against.Null(harmonyPatchType, nameof(harmonyPatchType));
+                harmonyPatchType.NotNull(nameof(harmonyPatchType));
 
                 var harmony = HarmonyInstance.Create(modFileName);
                 harmony.PatchAll(harmonyPatchType.Assembly);

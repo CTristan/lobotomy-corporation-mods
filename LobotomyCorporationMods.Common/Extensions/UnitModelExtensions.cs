@@ -1,9 +1,13 @@
 // SPDX-License-Identifier: MIT
 
+#region
+
 using System.Linq;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Enums;
 using LobotomyCorporationMods.Common.Implementations;
+
+#endregion
 
 namespace LobotomyCorporationMods.Common.Extensions
 {
@@ -11,7 +15,7 @@ namespace LobotomyCorporationMods.Common.Extensions
     {
         public static bool HasBuffOfType<TBuff>([NotNull] this AgentModel agent) where TBuff : UnitBuf
         {
-            Guard.Against.Null(agent, nameof(agent));
+            agent.NotNull(nameof(agent));
 
             var buffs = agent.GetUnitBufList();
 
@@ -20,7 +24,7 @@ namespace LobotomyCorporationMods.Common.Extensions
 
         public static bool HasCrumblingArmor([NotNull] this AgentModel agent)
         {
-            Guard.Against.Null(agent, nameof(agent));
+            agent.NotNull(nameof(agent));
 
             return agent.HasEquipment((int)EquipmentId.CrumblingArmorGift1) || agent.HasEquipment((int)EquipmentId.CrumblingArmorGift2) || agent.HasEquipment((int)EquipmentId.CrumblingArmorGift3) ||
                    agent.HasEquipment((int)EquipmentId.CrumblingArmorGift4);
@@ -28,8 +32,7 @@ namespace LobotomyCorporationMods.Common.Extensions
 
         public static bool HasEquipment([NotNull] this UnitModel agent, EquipmentId equipmentId)
         {
-            Guard.Against.Null(agent, nameof(agent));
-            Guard.Against.Null(equipmentId, nameof(equipmentId));
+            agent.NotNull(nameof(agent));
 
             return agent.HasEquipment((int)equipmentId);
         }

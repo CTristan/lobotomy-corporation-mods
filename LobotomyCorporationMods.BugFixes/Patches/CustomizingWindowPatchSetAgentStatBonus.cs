@@ -7,7 +7,6 @@ using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
@@ -42,9 +41,9 @@ namespace LobotomyCorporationMods.BugFixes.Patches
         {
             try
             {
-                Guard.Against.Null(__instance, nameof(__instance));
-                Guard.Against.Null(agent, nameof(agent));
-                Guard.Against.Null(data, nameof(data));
+                __instance.NotNull(nameof(__instance));
+                agent.NotNull(nameof(agent));
+                data.NotNull(nameof(data));
 
                 CustomizingWindowAdapter ??= new CustomizingWindowAdapter(__instance);
                 agent.primaryStat.hp = CustomizingWindowAdapter.UpgradeAgentStat(agent.primaryStat.hp, agent.originFortitudeLevel, data.statBonus.rBonus);

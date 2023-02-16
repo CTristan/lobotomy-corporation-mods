@@ -18,7 +18,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
         {
             try
             {
-                Guard.Against.Null(gameObject, nameof(gameObject));
+                gameObject.NotNull(nameof(gameObject));
 
                 return gameObject.activeSelf;
             }
