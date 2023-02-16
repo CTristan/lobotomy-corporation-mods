@@ -3,6 +3,7 @@
 #region
 
 using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 
 #endregion
@@ -14,7 +15,7 @@ namespace LobotomyCorporationMods.Test.Extensions
         [NotNull]
         internal static string ShortenBy([NotNull] this string value, int lengthToRemove)
         {
-            value.NotNull(nameof(value));
+            Guard.Against.Null(value, nameof(value));
 
             var length = value.Length;
 

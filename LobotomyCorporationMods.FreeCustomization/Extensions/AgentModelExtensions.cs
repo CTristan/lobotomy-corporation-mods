@@ -1,12 +1,9 @@
 // SPDX-License-Identifier: MIT
 
-#region
-
 using Customizing;
 using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
-
-#endregion
 
 namespace LobotomyCorporationMods.FreeCustomization.Extensions
 {
@@ -15,7 +12,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Extensions
         [NotNull]
         internal static Appearance GetAppearanceData([NotNull] this WorkerModel workerModel)
         {
-            workerModel.NotNull(nameof(workerModel));
+            Guard.Against.Null(workerModel, nameof(workerModel));
 
             return new Appearance
             {
@@ -38,7 +35,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Extensions
 
         internal static void SetAppearanceData([NotNull] this WorkerModel workerModel, [NotNull] Appearance appearance)
         {
-            workerModel.NotNull(nameof(workerModel));
+            Guard.Against.Null(workerModel, nameof(workerModel));
 
             workerModel.spriteData = appearance.spriteSet;
             workerModel.spriteData.BattleEyeBrow = appearance.Eye_Battle;

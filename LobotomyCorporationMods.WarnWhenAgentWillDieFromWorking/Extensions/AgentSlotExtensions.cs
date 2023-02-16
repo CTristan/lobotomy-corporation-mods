@@ -4,6 +4,7 @@
 
 using CommandWindow;
 using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
@@ -28,7 +29,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
 
         public static bool CheckIfWorkWillKillAgent([NotNull] this AgentSlot agentSlot, [NotNull] CommandWindow.CommandWindow commandWindow, [NotNull] IAnimationScriptAdapter animationScriptAdapter)
         {
-            agentSlot.NotNull(nameof(agentSlot));
+            Guard.Against.Null(agentSlot, nameof(agentSlot));
 
             bool willAgentDie;
             var agent = agentSlot.CurrentAgent;

@@ -1,16 +1,13 @@
 // SPDX-License-Identifier: MIT
 
-#region
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
 using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.FreeCustomization.Extensions;
-
-#endregion
 
 namespace LobotomyCorporationMods.FreeCustomization.Patches
 {
@@ -27,7 +24,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         {
             try
             {
-                __instance.NotNull(nameof(__instance));
+                Guard.Against.Null(__instance, nameof(__instance));
 
                 if (__instance.CurrentWindowType == CustomizingType.GENERATE)
                 {
