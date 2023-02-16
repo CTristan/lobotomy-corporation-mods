@@ -60,7 +60,7 @@ namespace LobotomyCorporationMods.Test.CommonTests.AdapterTests
             var flowers = new[] { TestExtensions.CreateGameObject() };
             var animationScript = TestExtensions.CreateYggdrasilAnim(flowers);
             var mockGameObjectAdapter = new Mock<IGameObjectAdapter>();
-            mockGameObjectAdapter.Setup(objectAdapter => objectAdapter.GameObjectIsActive(It.IsAny<GameObject>())).Returns(true);
+            mockGameObjectAdapter.Setup(static objectAdapter => objectAdapter.GameObjectIsActive(It.IsAny<GameObject>())).Returns(true);
             var adapter = new AnimationScriptAdapter(animationScript, mockGameObjectAdapter.Object);
 
             var result = adapter.ParasiteTreeNumberOfFlowers;

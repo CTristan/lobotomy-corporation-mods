@@ -2,8 +2,8 @@
 
 #region
 
-using System;
 using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using UnityEngine;
@@ -12,20 +12,14 @@ using UnityEngine;
 
 namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
-    public sealed class GameObjectAdapter : IGameObjectAdapter
+    internal sealed class GameObjectAdapter : IGameObjectAdapter
     {
+        [ExcludeFromCodeCoverage("Will always throw a Unity exception when calling this method, so no lines of code are ever covered.")]
         public bool GameObjectIsActive([NotNull] GameObject gameObject)
         {
-            try
-            {
-                Guard.Against.Null(gameObject, nameof(gameObject));
+            Guard.Against.Null(gameObject, nameof(gameObject));
 
-                return gameObject.activeSelf;
-            }
-            catch (Exception exception) when (exception.IsUnityException())
-            {
-                return false;
-            }
+            return gameObject.activeSelf;
         }
     }
 }

@@ -52,7 +52,11 @@ namespace LobotomyCorporationMods.Test.BadLuckProtectionForGiftsTests
 
             // Second gift second agent
             agentWorkTracker.IncrementAgentWorkCount(SecondGiftName, SecondAgentId, 2f);
-            var expected = string.Format(CultureInfo.CurrentCulture, "{0}^{1};1^{2};1|{3}^{2};2", GiftName, 1L.ToString(CultureInfo.CurrentCulture), SecondAgentId.ToString(CultureInfo.CurrentCulture),
+            var expected = string.Format(CultureInfo.CurrentCulture,
+                "{0}^{1};1^{2};1|{3}^{2};2",
+                GiftName,
+                1L.ToString(CultureInfo.CurrentCulture),
+                SecondAgentId.ToString(CultureInfo.CurrentCulture),
                 SecondGiftName);
 
             // Act
