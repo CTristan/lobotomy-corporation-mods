@@ -1,23 +1,27 @@
 // SPDX-License-Identifier: MIT
 
-using System;
+#region
+
+using FluentAssertions;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Test.Extensions;
 using Xunit;
+
+#endregion
 
 namespace LobotomyCorporationMods.Test.CommonTests.AdapterTests
 {
     public sealed class GameObjectAdapterTests
     {
         [Fact]
-        public void Checking_if_game_object_is_active_throws_Unity_exception()
+        public void Checking_if_game_object_is_active_returns_status()
         {
             var adapter = new GameObjectAdapter();
             var gameObject = TestExtensions.CreateGameObject();
 
-            Action action = () => _ = adapter.GameObjectIsActive(gameObject);
+            var result = adapter.GameObjectIsActive(gameObject);
 
-            action.ShouldThrowUnityException();
+            result.Should().BeFalse();
         }
     }
 }

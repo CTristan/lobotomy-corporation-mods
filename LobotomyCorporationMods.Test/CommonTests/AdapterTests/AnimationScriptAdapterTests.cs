@@ -5,7 +5,10 @@
 using System;
 using FluentAssertions;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
+using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.Test.Extensions;
+using Moq;
+using UnityEngine;
 using Xunit;
 
 #endregion
@@ -52,15 +55,17 @@ namespace LobotomyCorporationMods.Test.CommonTests.AdapterTests
         }
 
         [Fact]
-        public void Valid_YggdrasilAnim_with_flowers_throws_Unity_exception_when_checking_flowers()
+        public void Valid_YggdrasilAnim_with_flowers_returns_number_of_flowers()
         {
             var flowers = new[] { TestExtensions.CreateGameObject() };
             var animationScript = TestExtensions.CreateYggdrasilAnim(flowers);
-            var adapter = new AnimationScriptAdapter(animationScript);
+            var mockGameObjectAdapter = new Mock<IGameObjectAdapter>();
+            mockGameObjectAdapter.Setup(objectAdapter => objectAdapter.GameObjectIsActive(It.IsAny<GameObject>())).Returns(true);
+            var adapter = new AnimationScriptAdapter(animationScript, mockGameObjectAdapter.Object);
 
-            Action action = () => _ = adapter.ParasiteTreeNumberOfFlowers;
+            var result = adapter.ParasiteTreeNumberOfFlowers;
 
-            action.ShouldThrowUnityException();
+            result.Should().Be(1);
         }
 
         [Fact]
