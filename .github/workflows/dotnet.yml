@@ -45,7 +45,7 @@ jobs:
         run: dotnet build --no-restore BaseMods/src/lobotomy-corporation-mods/LobotomyCorporationMods.sln
 
       - name: Test
-        run: dotnet test /p:CollectCoverage=true /p:ExcludeByAttribute="ExcludeFromCodeCoverageAttribute" /p:CoverletOutput="./coverage.opencover.xml" /p:CoverletOutputFormat=opencover --no-build --verbosity normal BaseMods/src/lobotomy-corporation-mods/LobotomyCorporationMods.sln
+        run: dotnet test /p:CollectCoverage=true /p:CoverletOutput="./coverage.opencover.xml" /p:CoverletOutputFormat=opencover --no-build --verbosity normal BaseMods/src/lobotomy-corporation-mods/LobotomyCorporationMods.sln
 
       # Coverage reports specify the .NET Framework 4.8 file since the test runner doesn't work with .NET Framework 3.5
 

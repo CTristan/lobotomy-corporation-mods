@@ -2,29 +2,19 @@
 
 #region
 
-using System;
-using JetBrains.Annotations;
-
 #endregion
 
-namespace LobotomyCorporationMods.Common.Attributes
+// ReSharper disable once CheckNamespace
+namespace System.Diagnostics.CodeAnalysis
 {
-    /// <inheritdoc />
-    /// <summary>
-    ///     Should only be used for adapter classes that will always throw a Unity exception when called.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property |
-                    AttributeTargets.Event,
+    [AttributeUsageAttribute(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property |
+                             AttributeTargets.Event,
         Inherited = false)]
-    internal sealed class ExcludeFromCodeCoverageAttribute : Attribute
+    // ReSharper disable once MemberCanBeInternal
+    public sealed class ExcludeFromCodeCoverageAttribute : Attribute
     {
-        // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
-        internal ExcludeFromCodeCoverageAttribute([NotNull] string justification)
-        {
-            if (string.IsNullOrEmpty(justification))
-            {
-                throw new InvalidOperationException("Code excluded from coverage must have a valid reason.");
-            }
-        }
+        /// <summary>Gets or sets the justification for excluding the member from code coverage.</summary>
+        // ReSharper disable once UnusedMember.Global
+        public string Justification { get; set; }
     }
 }
