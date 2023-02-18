@@ -29,13 +29,5 @@ namespace LobotomyCorporationMods.Common.Extensions
             return agent.HasEquipment((int)EquipmentId.CrumblingArmorGift1) || agent.HasEquipment((int)EquipmentId.CrumblingArmorGift2) || agent.HasEquipment((int)EquipmentId.CrumblingArmorGift3) ||
                    agent.HasEquipment((int)EquipmentId.CrumblingArmorGift4);
         }
-
-        public static bool HasEquipment([NotNull] this UnitModel agent, EquipmentId equipmentId)
-        {
-            Guard.Against.Null(agent, nameof(agent));
-            Guard.Against.Null(equipmentId, nameof(equipmentId));
-
-            return agent.HasEquipment((int)equipmentId);
-        }
     }
 }
