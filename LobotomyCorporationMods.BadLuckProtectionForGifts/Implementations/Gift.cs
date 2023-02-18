@@ -1,8 +1,12 @@
 ﻿// SPDX-License-Identifier: MIT
 
+#region
+
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
+
+#endregion
 
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
 {

@@ -1,7 +1,11 @@
 // SPDX-License-Identifier: MIT
 
+#region
+
 using System;
 using Harmony;
+
+#endregion
 
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
 {

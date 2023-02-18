@@ -11,9 +11,9 @@ using Xunit;
 
 #endregion
 
-namespace LobotomyCorporationMods.Test.BugFixesTests
+namespace LobotomyCorporationMods.Test.BugFixesTests.Patches
 {
-    public sealed class BugFixStatUpgradeTests
+    public sealed class CustomizingWindowPatchSetAgentStatBonusTests : BugFixesTests
     {
         /// <summary>
         ///     The original method uses the current stat level instead of the base stat level, so we just need to check that the
@@ -57,7 +57,7 @@ namespace LobotomyCorporationMods.Test.BugFixesTests
             // Assert
             // Even though our current stat level is way above 1 due to our buff, we should still only send as our original un-buffed level.
             const int ExpectedStatLevelSent = 1;
-            mockAdapter.Verify(static adapter => adapter.UpgradeAgentStat(It.IsAny<int>(), ExpectedStatLevelSent, It.IsAny<int>()), Times.Exactly(4));
+            mockAdapter.Verify(static adapter => adapter.SetRandomStatValue(It.IsAny<int>(), ExpectedStatLevelSent, It.IsAny<int>()), Times.Exactly(4));
         }
     }
 }

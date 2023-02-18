@@ -47,10 +47,10 @@ namespace LobotomyCorporationMods.BugFixes.Patches
                 Guard.Against.Null(data, nameof(data));
 
                 CustomizingWindowAdapter ??= new CustomizingWindowAdapter(__instance);
-                agent.primaryStat.hp = CustomizingWindowAdapter.UpgradeAgentStat(agent.primaryStat.hp, agent.originFortitudeLevel, data.statBonus.rBonus);
-                agent.primaryStat.mental = CustomizingWindowAdapter.UpgradeAgentStat(agent.primaryStat.mental, agent.originPrudenceLevel, data.statBonus.wBonus);
-                agent.primaryStat.work = CustomizingWindowAdapter.UpgradeAgentStat(agent.primaryStat.work, agent.originTemperanceLevel, data.statBonus.bBonus);
-                agent.primaryStat.battle = CustomizingWindowAdapter.UpgradeAgentStat(agent.primaryStat.battle, agent.originJusticeLevel, data.statBonus.pBonus);
+                agent.primaryStat.hp = CustomizingWindowAdapter.SetRandomStatValue(agent.primaryStat.hp, agent.originFortitudeLevel, data.statBonus.rBonus);
+                agent.primaryStat.mental = CustomizingWindowAdapter.SetRandomStatValue(agent.primaryStat.mental, agent.originPrudenceLevel, data.statBonus.wBonus);
+                agent.primaryStat.work = CustomizingWindowAdapter.SetRandomStatValue(agent.primaryStat.work, agent.originTemperanceLevel, data.statBonus.bBonus);
+                agent.primaryStat.battle = CustomizingWindowAdapter.SetRandomStatValue(agent.primaryStat.battle, agent.originJusticeLevel, data.statBonus.pBonus);
                 agent.UpdateTitle(agent.level);
 
                 // Since we're replacing the method we never want to call the original method

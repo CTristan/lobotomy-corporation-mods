@@ -8,6 +8,7 @@ namespace LobotomyCorporationMods.Common.Interfaces.Adapters
 {
     public interface ICustomizingWindowAdapter
     {
-        int UpgradeAgentStat(int originalStatLevel, int currentStatLevel, int statLevelIncrease);
+        void OpenAppearanceWindow();
+        int SetRandomStatValue(int original, int currentLevel, int bonusLevel);
     }
 }

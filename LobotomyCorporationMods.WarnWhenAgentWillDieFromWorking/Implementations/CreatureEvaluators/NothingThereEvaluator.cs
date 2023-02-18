@@ -4,15 +4,9 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 {
     internal sealed class NothingThereEvaluator : CreatureEvaluator
     {
-        internal NothingThereEvaluator(AgentModel agent, CreatureModel creature, RwbpType skillType) : base(agent, creature, skillType)
+        internal NothingThereEvaluator(AgentModel agent, CreatureModel creature, RwbpType skillType)
+            : base(agent, creature, skillType)
         {
-        }
-
-        protected override bool WillAgentDieFromThisCreature()
-        {
-            const int MinFortitude = 4;
-
-            return Agent.fortitudeLevel < MinFortitude || IsDisguised();
         }
 
         private bool IsDisguised()
@@ -30,6 +24,13 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
             }
 
             return isDisguised;
+        }
+
+        protected override bool WillAgentDieFromThisCreature()
+        {
+            const int MinFortitude = 4;
+
+            return Agent.fortitudeLevel < MinFortitude || IsDisguised();
         }
     }
 }

@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: MIT
 
+#region
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
@@ -7,12 +9,22 @@ using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 
+#endregion
+
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
 {
     [HarmonyPatch(typeof(UseSkill), "FinishWorkSuccessfully")]
     [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
     public static class UseSkillPatchFinishWorkSuccessfully
     {
+        [CanBeNull]
+        private static CreatureEquipmentMakeInfo GetCreatureEquipmentMakeInfo([NotNull] UseSkill instance)
+        {
+            var equipmentMakeInfo = instance.targetCreature?.metaInfo?.equipMakeInfos?.Find(static x => x?.equipTypeInfo?.type == EquipmentTypeInfo.EquipmentType.SPECIAL);
+
+            return equipmentMakeInfo;
+        }
+
         // ReSharper disable once InconsistentNaming
         public static void Prefix([NotNull] UseSkill __instance)
         {
@@ -40,14 +52,6 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
 
                 throw;
             }
-        }
-
-        [CanBeNull]
-        private static CreatureEquipmentMakeInfo GetCreatureEquipmentMakeInfo([NotNull] UseSkill instance)
-        {
-            var equipmentMakeInfo = instance.targetCreature?.metaInfo?.equipMakeInfos?.Find(static x => x?.equipTypeInfo?.type == EquipmentTypeInfo.EquipmentType.SPECIAL);
-
-            return equipmentMakeInfo;
         }
     }
 }

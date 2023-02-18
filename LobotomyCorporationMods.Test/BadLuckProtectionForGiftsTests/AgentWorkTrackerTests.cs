@@ -66,6 +66,17 @@ namespace LobotomyCorporationMods.Test.BadLuckProtectionForGiftsTests
             Assert.Equal(expected, actual);
         }
 
+        [Fact]
+        public void Getting_last_agent_work_count_when_gift_not_yet_worked_on_returns_zero()
+        {
+            const string DataFileName = nameof(Getting_last_agent_work_count_when_gift_not_yet_worked_on_returns_zero);
+            var agentWorkTracker = CreateAgentWorkTracker(DataFileName);
+
+            var result = agentWorkTracker.GetLastAgentWorkCountByGift(GiftName);
+
+            result.Should().Be(0f);
+        }
+
         [Theory]
         [InlineData(GiftName + "^1;1", GiftName, 1L, 1f)]
         [InlineData(GiftName + "^1;1^2;2", GiftName, 2L, 2f)]
@@ -98,17 +109,6 @@ namespace LobotomyCorporationMods.Test.BadLuckProtectionForGiftsTests
             agentWorkTracker.Load();
 
             Assert.Equal(numberOfTimes, agentWorkTracker.GetLastAgentWorkCountByGift(giftName));
-        }
-
-        [Fact]
-        public void Getting_last_agent_work_count_when_gift_not_yet_worked_on_returns_zero()
-        {
-            const string DataFileName = nameof(Getting_last_agent_work_count_when_gift_not_yet_worked_on_returns_zero);
-            var agentWorkTracker = CreateAgentWorkTracker(DataFileName);
-
-            var result = agentWorkTracker.GetLastAgentWorkCountByGift(GiftName);
-
-            result.Should().Be(0f);
         }
 
         [Fact]

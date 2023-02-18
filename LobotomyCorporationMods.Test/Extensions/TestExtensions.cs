@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier:MIT
 
 #region
 
@@ -9,7 +9,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
-using System.Security;
 using CommandWindow;
 using Customizing;
 using FluentAssertions;
@@ -55,11 +54,6 @@ namespace LobotomyCorporationMods.Test.Extensions
             return Path.Combine(Directory.GetCurrentDirectory(), fileName);
         }
 
-        internal static void ShouldThrowUnityException(this Action action, string because = "", params object[] becauseArgs)
-        {
-            action.ShouldThrow<Exception>().Where(static ex => ex is SecurityException || ex is MissingMethodException);
-        }
-
         public static void ValidateHarmonyPatch([NotNull] this MemberInfo patchClass, [NotNull] Type originalClass, string methodName)
         {
             var attribute = Attribute.GetCustomAttribute(patchClass, typeof(HarmonyPatch)) as HarmonyPatch;
@@ -97,7 +91,6 @@ namespace LobotomyCorporationMods.Test.Extensions
 
             return GetPopulatedUninitializedObject(agentInfoWindow, fields, newValues);
         }
-
 
         [NotNull]
         public static AgentModel CreateAgentModel(AgentName agentName = null, List<UnitBuf> bufList = null, UnitEquipSpace equipment = null, long instanceId = 1L, string name = "",
@@ -151,8 +144,9 @@ namespace LobotomyCorporationMods.Test.Extensions
         }
 
         [NotNull]
-        public static AgentSlot CreateAgentSlot(AgentModel currentAgent = null, Image workFilterFill = null, Text workFilterText = null)
+        public static AgentSlot CreateAgentSlot(List<MaskableGraphic> coloredTargets = null, AgentModel currentAgent = null, Image workFilterFill = null, Text workFilterText = null)
         {
+            coloredTargets ??= new List<MaskableGraphic>();
             currentAgent ??= CreateAgentModel();
             workFilterFill ??= CreateImage();
             workFilterText ??= CreateText();
@@ -160,30 +154,12 @@ namespace LobotomyCorporationMods.Test.Extensions
             CreateUninitializedObject<AgentSlot>(out var agentSlot);
 
             var fields = GetUninitializedObjectFields(agentSlot.GetType());
-            var newValues = new Dictionary<string, object> { { "_currentAgent", currentAgent }, { "WorkFilterFill", workFilterFill }, { "WorkFilterText", workFilterText } };
+            var newValues = new Dictionary<string, object>
+            {
+                { "coloredTargets", coloredTargets }, { "_currentAgent", currentAgent }, { "WorkFilterFill", workFilterFill }, { "WorkFilterText", workFilterText }
+            };
 
             return GetPopulatedUninitializedObject(agentSlot, fields, newValues);
-        }
-
-        [NotNull]
-        public static AngelaConversationUI CreateAngelaConversationUI(Outline messageOutline = null)
-        {
-            messageOutline ??= CreateOutline();
-
-            CreateUninitializedObject<AngelaConversationUI>(out var angelaConversationUI);
-
-            var fields = GetUninitializedObjectFields(angelaConversationUI.GetType());
-            var newValues = new Dictionary<string, object> { { "messageOutline", messageOutline } };
-            angelaConversationUI = GetPopulatedUninitializedObject(angelaConversationUI, fields, newValues);
-            newValues.Add("_instance", angelaConversationUI);
-
-            return GetPopulatedUninitializedObject(angelaConversationUI, fields, newValues);
-        }
-
-        [NotNull]
-        public static Animator CreateAnimator()
-        {
-            return new Animator();
         }
 
         [NotNull]
@@ -201,14 +177,6 @@ namespace LobotomyCorporationMods.Test.Extensions
         }
 
         [NotNull]
-        public static BeautyBeastAnim CreateBeautyBeastAnim(Animator animator = null)
-        {
-            animator ??= CreateAnimator();
-
-            return new BeautyBeastAnim { animator = animator };
-        }
-
-        [NotNull]
         public static CommandWindow.CommandWindow CreateCommandWindow(UnitModel currentTarget = null, CommandType currentWindowType = (CommandType)1, long selectedWork = 0L)
         {
             currentTarget ??= CreateUnitModel();
@@ -221,12 +189,6 @@ namespace LobotomyCorporationMods.Test.Extensions
             newValues.Add("_currentWindow", commandWindow);
 
             return GetPopulatedUninitializedObject(commandWindow, fields, newValues);
-        }
-
-        [NotNull]
-        public static CreatureAnimScript CreateCreatureAnimScript()
-        {
-            return new CreatureAnimScript();
         }
 
         [NotNull]
@@ -319,6 +281,8 @@ namespace LobotomyCorporationMods.Test.Extensions
             {
                 { "appearanceUI", appearanceUI }, { "_currentAgent", currentAgent }, { "CurrentData", currentData }, { "_currentWindowType", currentWindowType }
             };
+            customizingWindow = GetPopulatedUninitializedObject(customizingWindow, fields, newValues);
+            newValues.Add("_currentWindow", customizingWindow);
 
             return GetPopulatedUninitializedObject(customizingWindow, fields, newValues);
         }
@@ -376,19 +340,6 @@ namespace LobotomyCorporationMods.Test.Extensions
         }
 
         [NotNull]
-        public static GlobalGameManager CreateGlobalGameManager(GameMode gameMode = (GameMode)1)
-        {
-            CreateUninitializedObject<GlobalGameManager>(out var globalGameManager);
-
-            var fields = GetUninitializedObjectFields(globalGameManager.GetType());
-            var newValues = new Dictionary<string, object> { { "gameMode", gameMode } };
-            globalGameManager = GetPopulatedUninitializedObject(globalGameManager, fields, newValues);
-            newValues.Add("_instance", globalGameManager);
-
-            return GetPopulatedUninitializedObject(globalGameManager, fields, newValues);
-        }
-
-        [NotNull]
         public static Image CreateImage()
         {
             CreateUninitializedObject<Image>(out var image);
@@ -405,24 +356,18 @@ namespace LobotomyCorporationMods.Test.Extensions
         }
 
         [NotNull]
-        private static Outline CreateOutline()
+        public static LocalizeTextDataModel CreateLocalizeTextDataModel(Dictionary<string, string> list = null)
         {
-            CreateUninitializedObject<Outline>(out var outline);
+            list ??= new Dictionary<string, string>();
 
-            return outline;
-        }
+            CreateUninitializedObject<LocalizeTextDataModel>(out var localizeTextDataModel);
 
-        [NotNull]
-        public static SefiraBossManager CreateSefiraBossManager(SefiraEnum currentActivated = (SefiraEnum)1)
-        {
-            CreateUninitializedObject<SefiraBossManager>(out var sefiraBossManager);
+            var fields = GetUninitializedObjectFields(localizeTextDataModel.GetType());
+            var newValues = new Dictionary<string, object> { { "_list", list } };
+            localizeTextDataModel = GetPopulatedUninitializedObject(localizeTextDataModel, fields, newValues);
+            newValues.Add("_instance", localizeTextDataModel);
 
-            var fields = GetUninitializedObjectFields(sefiraBossManager.GetType());
-            var newValues = new Dictionary<string, object> { { "currentActivated", currentActivated } };
-            sefiraBossManager = GetPopulatedUninitializedObject(sefiraBossManager, fields, newValues);
-            newValues.Add("_instance", sefiraBossManager);
-
-            return GetPopulatedUninitializedObject(sefiraBossManager, fields, newValues);
+            return GetPopulatedUninitializedObject(localizeTextDataModel, fields, newValues);
         }
 
         [NotNull]
@@ -562,14 +507,6 @@ namespace LobotomyCorporationMods.Test.Extensions
             newValues.Add("_instance", workerSpriteManager);
 
             return GetPopulatedUninitializedObject(workerSpriteManager, fields, newValues);
-        }
-
-        [NotNull]
-        public static CreatureAnimScript CreateYggdrasilAnim(GameObject[] flowers = null)
-        {
-            flowers ??= new GameObject[0];
-
-            return new YggdrasilAnim { flowers = flowers };
         }
 
         [NotNull]

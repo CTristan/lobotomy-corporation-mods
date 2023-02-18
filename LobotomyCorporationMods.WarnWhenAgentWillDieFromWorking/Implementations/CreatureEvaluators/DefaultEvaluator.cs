@@ -8,7 +8,8 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
     /// </summary>
     internal sealed class DefaultEvaluator : CreatureEvaluator
     {
-        internal DefaultEvaluator(AgentModel agent, CreatureModel creature, RwbpType skillType) : base(agent, creature, skillType)
+        internal DefaultEvaluator(AgentModel agent, CreatureModel creature, RwbpType skillType)
+            : base(agent, creature, skillType)
         {
         }
 

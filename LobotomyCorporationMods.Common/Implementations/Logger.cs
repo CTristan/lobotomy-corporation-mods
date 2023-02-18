@@ -18,7 +18,10 @@ namespace LobotomyCorporationMods.Common.Implementations
         private readonly IAngelaConversationUiAdapter _angelaConversationUiAdapter;
         private readonly IFileManager _fileManager;
 
-        public Logger(IFileManager fileManager) : this(fileManager, new AngelaConversationUiAdapter()) { }
+        public Logger(IFileManager fileManager)
+            : this(fileManager, new AngelaConversationUiAdapter(AngelaConversationUI.instance))
+        {
+        }
 
         public Logger(IFileManager fileManager, IAngelaConversationUiAdapter angelaConversationUiAdapter)
         {

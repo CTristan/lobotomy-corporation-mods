@@ -2,20 +2,26 @@
 
 #region
 
-using System;
+using System.Diagnostics.CodeAnalysis;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 #endregion
 
 namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
+    [ExcludeFromCodeCoverage]
     public sealed class AngelaConversationUiAdapter : IAngelaConversationUiAdapter
     {
+        private readonly AngelaConversationUI _angelaConversationUI;
+
+        public AngelaConversationUiAdapter(AngelaConversationUI angelaConversationUI)
+        {
+            _angelaConversationUI = angelaConversationUI;
+        }
+
         public void AddMessage(string message)
         {
-            // Asynchronously send the message so we don't hold up anything else
-            Action action = () => AngelaConversationUI.instance.AddAngelaMessage(message);
-            action.BeginInvoke(ar => action.EndInvoke(ar), null);
+            _angelaConversationUI.AddAngelaMessage(message);
         }
     }
 }

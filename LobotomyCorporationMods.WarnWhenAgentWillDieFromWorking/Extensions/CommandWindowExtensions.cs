@@ -16,20 +16,8 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
 {
     internal static class CommandWindowExtensions
     {
-        internal static bool TryGetCreature([NotNull] this CommandWindow.CommandWindow commandWindow, [CanBeNull] out CreatureModel creature)
-        {
-            creature = null;
-
-            var unitModel = commandWindow.CurrentTarget;
-            if (unitModel is CreatureModel creatureModel)
-            {
-                creature = creatureModel;
-            }
-
-            return creature is not null;
-        }
-
-        internal static ICreatureEvaluator GetCreatureEvaluator([NotNull] this CommandWindow.CommandWindow commandWindow, AgentModel agent, IAnimationScriptAdapter animationScriptAdapter)
+        internal static ICreatureEvaluator GetCreatureEvaluator([NotNull] this CommandWindow.CommandWindow commandWindow, AgentModel agent, IBeautyBeastAnimAdapter beautyBeastAnimAdapter,
+            IYggdrasilAnimAdapter yggdrasilAnimAdapter)
         {
             ICreatureEvaluator evaluator;
 
@@ -41,13 +29,13 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
 
                 var evaluatorDictionary = new Dictionary<CreatureIds, CreatureEvaluator>
                 {
-                    { CreatureIds.BeautyAndTheBeast, new BeautyAndTheBeastEvaluator(agent, creature, skillType, animationScriptAdapter) },
+                    { CreatureIds.BeautyAndTheBeast, new BeautyAndTheBeastEvaluator(agent, creature, skillType, beautyBeastAnimAdapter) },
                     { CreatureIds.Bloodbath, new BloodbathEvaluator(agent, creature, skillType) },
                     { CreatureIds.BlueStar, new BlueStarEvaluator(agent, creature, skillType) },
                     { CreatureIds.CrumblingArmor, new CrumblingArmorEvaluator(agent, creature, skillType) },
                     { CreatureIds.HappyTeddyBear, new HappyTeddyBearEvaluator(agent, creature, skillType) },
                     { CreatureIds.NothingThere, new NothingThereEvaluator(agent, creature, skillType) },
-                    { CreatureIds.ParasiteTree, new ParasiteTreeEvaluator(agent, creature, skillType, animationScriptAdapter) },
+                    { CreatureIds.ParasiteTree, new ParasiteTreeEvaluator(agent, creature, skillType, yggdrasilAnimAdapter) },
                     { CreatureIds.RedShoes, new RedShoesEvaluator(agent, creature, skillType) },
                     { CreatureIds.SingingMachine, new SingingMachineEvaluator(agent, creature, skillType) },
                     { CreatureIds.SpiderBud, new SpiderBudEvaluator(agent, creature, skillType) },
@@ -84,6 +72,19 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
             }
 
             return isAbnormalityWorkWindow;
+        }
+
+        private static bool TryGetCreature([NotNull] this CommandWindow.CommandWindow commandWindow, [CanBeNull] out CreatureModel creature)
+        {
+            creature = null;
+
+            var unitModel = commandWindow.CurrentTarget;
+            if (unitModel is CreatureModel creatureModel)
+            {
+                creature = creatureModel;
+            }
+
+            return creature is not null;
         }
     }
 }

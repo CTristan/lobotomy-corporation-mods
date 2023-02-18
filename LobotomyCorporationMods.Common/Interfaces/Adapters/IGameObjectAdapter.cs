@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: MIT
 
-using UnityEngine;
+#region
+
+#endregion
 
 namespace LobotomyCorporationMods.Common.Interfaces.Adapters
 {
     public interface IGameObjectAdapter
     {
-        bool GameObjectIsActive(GameObject gameObject);
+        bool ActiveSelf { get; }
+        void SetActive(bool value);
     }
 }

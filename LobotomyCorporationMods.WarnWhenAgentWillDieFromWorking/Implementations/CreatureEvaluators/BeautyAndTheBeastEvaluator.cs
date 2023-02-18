@@ -1,7 +1,9 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier:MIT
 
 #region
 
+using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 #endregion
@@ -10,26 +12,21 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 {
     internal sealed class BeautyAndTheBeastEvaluator : CreatureEvaluator
     {
-        private readonly IAnimationScriptAdapter _animationScriptAdapter;
+        private readonly IBeautyBeastAnimAdapter _adapter;
 
-        internal BeautyAndTheBeastEvaluator(AgentModel agent, CreatureModel creature, RwbpType skillType, IAnimationScriptAdapter animationScriptAdapter) : base(agent, creature, skillType)
+        internal BeautyAndTheBeastEvaluator([NotNull] AgentModel agent, [NotNull] CreatureModel creature, RwbpType skillType, [CanBeNull] IBeautyBeastAnimAdapter animationScriptAdapter)
+            : base(agent, creature, skillType)
         {
-            _animationScriptAdapter = animationScriptAdapter;
+            _adapter = animationScriptAdapter ?? new BeautyBeastAnimAdapter(creature.GetAnimScript() as BeautyBeastAnim);
         }
 
         protected override bool WillAgentDieFromThisCreature()
         {
-            var agentWillDie = false;
+            const int WeakenedState = 1;
+            var animationState = _adapter.GetState();
+            var isWeakened = animationState == WeakenedState;
 
-            var animationScript = _animationScriptAdapter.UnpackScriptAsType<BeautyBeastAnim>();
-            if (!(animationScript is null))
-            {
-                const int WeakenedState = 1;
-                var animationState = _animationScriptAdapter.BeautyAndTheBeastState;
-                var isWeakened = animationState == WeakenedState;
-
-                agentWillDie = isWeakened && SkillType == RwbpType.P;
-            }
+            var agentWillDie = isWeakened && SkillType == RwbpType.P;
 
             return agentWillDie;
         }

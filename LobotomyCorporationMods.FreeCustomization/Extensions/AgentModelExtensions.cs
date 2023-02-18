@@ -1,9 +1,13 @@
 // SPDX-License-Identifier: MIT
 
+#region
+
 using Customizing;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
+
+#endregion
 
 namespace LobotomyCorporationMods.FreeCustomization.Extensions
 {

@@ -17,14 +17,15 @@ namespace LobotomyCorporationMods.Common.Implementations
     public class HarmonyPatchBase
     {
         private const string DuplicateErrorMessage = "Please create a separate static instance for your mod.";
-        private static readonly object s_locker = new();
-        private static readonly HashSet<object> s_registeredTypes = new();
 
         /// <summary>
         ///     Singleton ensures thread safety across Harmony patches.
         ///     https://csharpindepth.com/Articles/Singleton
         /// </summary>
         protected static readonly HarmonyPatchBase Instance = new();
+
+        private static readonly object s_locker = new();
+        private static readonly HashSet<object> s_registeredTypes = new();
 
         /// <summary>
         ///     Validate that each mod is using their own Singleton instance.
@@ -46,16 +47,20 @@ namespace LobotomyCorporationMods.Common.Implementations
 
         public ILogger Logger { get; private set; }
 
-        private void ValidateThatStaticInstanceIsNotDuplicated()
+        protected void ApplyHarmonyPatch([NotNull] Type harmonyPatchType, string modFileName)
         {
-            lock (s_locker)
+            try
             {
-                if (s_registeredTypes.Contains(GetType()))
-                {
-                    throw new InvalidOperationException(DuplicateErrorMessage);
-                }
+                Guard.Against.Null(harmonyPatchType, nameof(harmonyPatchType));
 
-                s_registeredTypes.Add(GetType());
+                var harmony = HarmonyInstance.Create(modFileName);
+                harmony.PatchAll(harmonyPatchType.Assembly);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteToLog(ex);
+
+                throw;
             }
         }
 
@@ -88,29 +93,25 @@ namespace LobotomyCorporationMods.Common.Implementations
             }
         }
 
-        protected void ApplyHarmonyPatch([NotNull] Type harmonyPatchType, string modFileName)
-        {
-            try
-            {
-                Guard.Against.Null(harmonyPatchType, nameof(harmonyPatchType));
-
-                var harmony = HarmonyInstance.Create(modFileName);
-                harmony.PatchAll(harmonyPatchType.Assembly);
-            }
-            catch (Exception ex)
-            {
-                Logger.WriteToLog(ex);
-
-                throw;
-            }
-        }
-
         /// <summary>
         ///     Entry point for testing.
         /// </summary>
         public void LoadData(ILogger logger)
         {
             Logger = logger;
+        }
+
+        private void ValidateThatStaticInstanceIsNotDuplicated()
+        {
+            lock (s_locker)
+            {
+                if (s_registeredTypes.Contains(GetType()))
+                {
+                    throw new InvalidOperationException(DuplicateErrorMessage);
+                }
+
+                s_registeredTypes.Add(GetType());
+            }
         }
     }
 }

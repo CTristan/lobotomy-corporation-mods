@@ -1,10 +1,14 @@
 ﻿// SPDX-License-Identifier: MIT
 
+#region
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using LobotomyCorporationMods.Common.Implementations;
+
+#endregion
 
 [assembly: AssemblyVersion("1.0.*")]
 [assembly: CLSCompliant(false)]
@@ -18,13 +22,15 @@ namespace LobotomyCorporationMods.FreeCustomization
     {
         private const string ModFileName = "LobotomyCorporationMods.FreeCustomization.dll";
 
-        public new static readonly Harmony_Patch Instance = new Harmony_Patch(true);
+        public new static readonly Harmony_Patch Instance = new(true);
 
-        public Harmony_Patch() : this(false)
+        public Harmony_Patch()
+            : this(false)
         {
         }
 
-        private Harmony_Patch(bool initialize) : base(initialize)
+        private Harmony_Patch(bool initialize)
+            : base(initialize)
         {
             if (initialize)
             {

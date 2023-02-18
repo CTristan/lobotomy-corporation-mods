@@ -23,14 +23,15 @@ namespace LobotomyCorporationMods.Test.CommonTests
         private static readonly FakeHarmonyPatch s_fakeHarmonyPatch = new(true);
 
         [Fact]
-        public void Instantiating_a_duplicate_static_instance_throws_an_exception()
+        [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
+        public void Harmony_patch_exceptions_are_logged()
         {
-            Action action = static () =>
-            {
-                _ = new FakeHarmonyPatch(true);
-            };
+            var mockLogger = new Mock<ILogger>();
 
-            action.ShouldThrow<InvalidOperationException>();
+            Action action = () => s_fakeHarmonyPatch.ApplyHarmonyPatch(null, null, mockLogger.Object);
+
+            action.ShouldThrow<ArgumentNullException>();
+            mockLogger.Verify(static logger => logger.WriteToLog(It.IsAny<ArgumentNullException>()), Times.Once);
         }
 
         [Fact]
@@ -45,15 +46,14 @@ namespace LobotomyCorporationMods.Test.CommonTests
         }
 
         [Fact]
-        [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
-        public void Harmony_patch_exceptions_are_logged()
+        public void Instantiating_a_duplicate_static_instance_throws_an_exception()
         {
-            var mockLogger = new Mock<ILogger>();
+            Action action = static () =>
+            {
+                _ = new FakeHarmonyPatch(true);
+            };
 
-            Action action = () => s_fakeHarmonyPatch.ApplyHarmonyPatch(null, null, mockLogger.Object);
-
-            action.ShouldThrow<ArgumentNullException>();
-            mockLogger.Verify(static logger => logger.WriteToLog(It.IsAny<ArgumentNullException>()), Times.Once);
+            action.ShouldThrow<InvalidOperationException>();
         }
     }
 
@@ -64,8 +64,17 @@ namespace LobotomyCorporationMods.Test.CommonTests
     {
         private const string FileNameThatExists = "FileNameThatExists.txt";
 
-        internal FakeHarmonyPatch(bool isNotDuplicating) : base(isNotDuplicating)
+        internal FakeHarmonyPatch(bool isNotDuplicating)
+            : base(isNotDuplicating)
         {
+        }
+
+        internal void ApplyHarmonyPatch([NotNull] Type harmonyPatchType, string modFileName, [NotNull] ILogger logger)
+        {
+            LoadData(logger);
+            Instance.LoadData(logger);
+
+            base.ApplyHarmonyPatch(harmonyPatchType, modFileName);
         }
 
         internal void TestInitializePatchData([NotNull] ICollection<DirectoryInfo> directoryList)
@@ -75,14 +84,6 @@ namespace LobotomyCorporationMods.Test.CommonTests
             File.WriteAllText(testFileWithPath, string.Empty);
 
             InitializePatchData(typeof(FakeHarmonyPatch), FileNameThatExists, directoryList);
-        }
-
-        internal void ApplyHarmonyPatch([NotNull] Type harmonyPatchType, string modFileName, [NotNull] ILogger logger)
-        {
-            LoadData(logger);
-            Instance.LoadData(logger);
-
-            base.ApplyHarmonyPatch(harmonyPatchType, modFileName);
         }
     }
 }

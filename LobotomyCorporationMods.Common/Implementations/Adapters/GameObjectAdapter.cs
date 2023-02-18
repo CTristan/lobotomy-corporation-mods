@@ -3,8 +3,6 @@
 #region
 
 using System.Diagnostics.CodeAnalysis;
-using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using UnityEngine;
 
@@ -12,14 +10,21 @@ using UnityEngine;
 
 namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
-    internal sealed class GameObjectAdapter : IGameObjectAdapter
+    [ExcludeFromCodeCoverage]
+    public class GameObjectAdapter : IGameObjectAdapter
     {
-        [ExcludeFromCodeCoverage(Justification = "Will always throw a Unity exception when calling this method, so no lines of code are ever covered.")]
-        public bool GameObjectIsActive([NotNull] GameObject gameObject)
-        {
-            Guard.Against.Null(gameObject, nameof(gameObject));
+        private readonly GameObject _gameObject;
 
-            return gameObject.activeSelf;
+        public GameObjectAdapter(GameObject gameObject)
+        {
+            _gameObject = gameObject;
+        }
+
+        public bool ActiveSelf => _gameObject.activeSelf;
+
+        public void SetActive(bool value)
+        {
+            _gameObject.SetActive(value);
         }
     }
 }

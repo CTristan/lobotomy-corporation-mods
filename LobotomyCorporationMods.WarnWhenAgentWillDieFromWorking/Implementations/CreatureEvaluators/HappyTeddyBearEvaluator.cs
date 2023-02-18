@@ -4,7 +4,8 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 {
     internal sealed class HappyTeddyBearEvaluator : CreatureEvaluator
     {
-        internal HappyTeddyBearEvaluator(AgentModel agent, CreatureModel creature, RwbpType skillType) : base(agent, creature, skillType)
+        internal HappyTeddyBearEvaluator(AgentModel agent, CreatureModel creature, RwbpType skillType)
+            : base(agent, creature, skillType)
         {
         }
 

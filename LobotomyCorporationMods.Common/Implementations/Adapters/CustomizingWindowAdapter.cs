@@ -2,15 +2,15 @@
 
 #region
 
-using System;
+using System.Diagnostics.CodeAnalysis;
 using Customizing;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 #endregion
 
 namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
+    [ExcludeFromCodeCoverage]
     public sealed class CustomizingWindowAdapter : ICustomizingWindowAdapter
     {
         private readonly CustomizingWindow _customizingWindow;
@@ -20,16 +20,14 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
             _customizingWindow = customizingWindow;
         }
 
-        public int UpgradeAgentStat(int originalStatLevel, int currentStatLevel, int statLevelIncrease)
+        public void OpenAppearanceWindow()
         {
-            try
-            {
-                return _customizingWindow.SetRandomStatValue(originalStatLevel, currentStatLevel, statLevelIncrease);
-            }
-            catch (Exception ex) when (ex.IsUnityException())
-            {
-                return 0;
-            }
+            _customizingWindow.OpenAppearanceWindow();
+        }
+
+        public int SetRandomStatValue(int original, int currentLevel, int bonusLevel)
+        {
+            return _customizingWindow.SetRandomStatValue(original, currentLevel, bonusLevel);
         }
     }
 }

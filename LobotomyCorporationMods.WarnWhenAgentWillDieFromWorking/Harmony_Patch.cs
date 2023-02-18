@@ -1,7 +1,11 @@
 ﻿// SPDX-License-Identifier: MIT
 
+#region
+
 using System.Diagnostics.CodeAnalysis;
 using LobotomyCorporationMods.Common.Implementations;
+
+#endregion
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking
 {
@@ -11,13 +15,15 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking
     {
         private const string ModFileName = "LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.dll";
 
-        public new static readonly Harmony_Patch Instance = new Harmony_Patch(true);
+        public new static readonly Harmony_Patch Instance = new(true);
 
-        public Harmony_Patch() : this(false)
+        public Harmony_Patch()
+            : this(false)
         {
         }
 
-        private Harmony_Patch(bool initialize) : base(initialize)
+        private Harmony_Patch(bool initialize)
+            : base(initialize)
         {
             if (initialize)
             {

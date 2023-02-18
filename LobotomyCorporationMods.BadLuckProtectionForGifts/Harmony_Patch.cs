@@ -26,11 +26,13 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
 
         public new static readonly Harmony_Patch Instance = new(true);
 
-        public Harmony_Patch() : this(false)
+        public Harmony_Patch()
+            : this(false)
         {
         }
 
-        private Harmony_Patch(bool initialize) : base(initialize)
+        private Harmony_Patch(bool initialize)
+            : base(initialize)
         {
             if (initialize)
             {

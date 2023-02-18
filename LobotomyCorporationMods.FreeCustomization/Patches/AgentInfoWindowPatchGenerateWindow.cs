@@ -1,13 +1,21 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier:MIT
+
+#region
 
 using System;
 using Harmony;
+using LobotomyCorporationMods.Common.Implementations.Adapters;
+using LobotomyCorporationMods.Common.Interfaces.Adapters;
+
+#endregion
 
 namespace LobotomyCorporationMods.FreeCustomization.Patches
 {
     [HarmonyPatch(typeof(AgentInfoWindow), "GenerateWindow")]
     public static class AgentInfoWindowPatchGenerateWindow
     {
+        public static ICustomizingWindowAdapter WindowAdapter { private get; set; }
+
         /// <summary>
         ///     Runs after opening the Agent window to automatically open the appearance window, since there's no reason to hide it
         ///     behind a button.
@@ -17,7 +25,10 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         {
             try
             {
-                AgentInfoWindow.currentWindow.customizingWindow.OpenAppearanceWindow();
+                var customizingWindow = AgentInfoWindow.currentWindow.customizingWindow;
+                WindowAdapter ??= new CustomizingWindowAdapter(customizingWindow);
+
+                WindowAdapter.OpenAppearanceWindow();
             }
             catch (Exception ex)
             {

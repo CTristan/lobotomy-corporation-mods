@@ -11,12 +11,10 @@ using Xunit.Extensions;
 
 #endregion
 
-namespace LobotomyCorporationMods.Test.BugFixesTests
+namespace LobotomyCorporationMods.Test.BugFixesTests.Patches
 {
-    public sealed class BugFixCrumblingArmorTests
+    public sealed class ArmorCreaturePatchOnNoticeTests : BugFixesTests
     {
-        #region BugFixCrumblingArmor
-
         [Fact]
         public void Performing_attachment_work_after_replacing_gift_does_not_kill_agent()
         {
@@ -57,7 +55,5 @@ namespace LobotomyCorporationMods.Test.BugFixesTests
             // Assert
             result.Should().BeTrue();
         }
-
-        #endregion
     }
 }

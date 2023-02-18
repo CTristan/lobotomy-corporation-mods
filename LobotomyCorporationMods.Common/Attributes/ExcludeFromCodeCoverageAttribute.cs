@@ -1,20 +1,17 @@
 // SPDX-License-Identifier: MIT
 
-#region
+// ReSharper disable CheckNamespace
 
-#endregion
-
-// ReSharper disable once CheckNamespace
 namespace System.Diagnostics.CodeAnalysis
 {
-    [AttributeUsageAttribute(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property |
-                             AttributeTargets.Event,
-        Inherited = false)]
-    // ReSharper disable once MemberCanBeInternal
+    /// <inheritdoc />
+    /// <summary>
+    ///     ONLY to be used for Adapter classes since they are just wrappers for Unity methods and properties.
+    /// </summary>
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [AttributeUsage(AttributeTargets.Class, Inherited = false)]
     public sealed class ExcludeFromCodeCoverageAttribute : Attribute
     {
-        /// <summary>Gets or sets the justification for excluding the member from code coverage.</summary>
-        // ReSharper disable once UnusedMember.Global
-        public string Justification { get; set; }
     }
 }
