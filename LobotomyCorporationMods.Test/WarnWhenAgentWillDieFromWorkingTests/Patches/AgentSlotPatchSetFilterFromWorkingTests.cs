@@ -1,4 +1,4 @@
-// SPDX-License-Identifier:MIT
+// SPDX-License-Identifier: MIT
 
 #region
 
@@ -59,7 +59,7 @@ namespace LobotomyCorporationMods.Test.WarnWhenAgentWillDieFromWorkingTests.Patc
             // Mock animation script adapter to avoid Unity errors
             const int NormalState = 0;
             var mockAnimAdapter = new Mock<IBeautyBeastAnimAdapter>();
-            mockAnimAdapter.Setup(static adapter => adapter.GetState()).Returns(NormalState);
+            mockAnimAdapter.Setup(static adapter => adapter.State).Returns(NormalState);
             AgentSlotPatchSetFilter.BeastAnimAdapter = mockAnimAdapter.Object;
 
             // Act
@@ -81,7 +81,7 @@ namespace LobotomyCorporationMods.Test.WarnWhenAgentWillDieFromWorkingTests.Patc
             // Mock animation script adapter to avoid Unity errors
             const int WeakenedState = 1;
             var mockAnimAdapter = new Mock<IBeautyBeastAnimAdapter>();
-            mockAnimAdapter.Setup(static adapter => adapter.GetState()).Returns(WeakenedState);
+            mockAnimAdapter.Setup(static adapter => adapter.State).Returns(WeakenedState);
             AgentSlotPatchSetFilter.BeastAnimAdapter = mockAnimAdapter.Object;
 
             // Act
@@ -106,7 +106,7 @@ namespace LobotomyCorporationMods.Test.WarnWhenAgentWillDieFromWorkingTests.Patc
             // Mock animation script adapter to avoid Unity errors
             const int WeakenedState = 1;
             var mockAnimAdapter = new Mock<IBeautyBeastAnimAdapter>();
-            mockAnimAdapter.Setup(static adapter => adapter.GetState()).Returns(WeakenedState);
+            mockAnimAdapter.Setup(static adapter => adapter.State).Returns(WeakenedState);
             AgentSlotPatchSetFilter.BeastAnimAdapter = mockAnimAdapter.Object;
 
             // Act

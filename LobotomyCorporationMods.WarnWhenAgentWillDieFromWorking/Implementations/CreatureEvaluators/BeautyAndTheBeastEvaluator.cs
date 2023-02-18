@@ -1,4 +1,4 @@
-// SPDX-License-Identifier:MIT
+// SPDX-License-Identifier: MIT
 
 #region
 
@@ -23,7 +23,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
         protected override bool WillAgentDieFromThisCreature()
         {
             const int WeakenedState = 1;
-            var animationState = _adapter.GetState();
+            var animationState = _adapter.State;
             var isWeakened = animationState == WeakenedState;
 
             var agentWillDie = isWeakened && SkillType == RwbpType.P;

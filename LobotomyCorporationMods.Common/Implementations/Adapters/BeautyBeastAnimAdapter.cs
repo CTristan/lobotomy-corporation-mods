@@ -19,9 +19,6 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
             _animationScript = animationScript;
         }
 
-        public int GetState()
-        {
-            return _animationScript.GetState();
-        }
+        public int State => _animationScript.GetState();
     }
 }

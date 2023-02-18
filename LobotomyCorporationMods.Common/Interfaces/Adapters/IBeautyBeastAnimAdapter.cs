@@ -4,6 +4,6 @@ namespace LobotomyCorporationMods.Common.Interfaces.Adapters
 {
     public interface IBeautyBeastAnimAdapter
     {
-        int GetState();
+        int State { get; }
     }
 }

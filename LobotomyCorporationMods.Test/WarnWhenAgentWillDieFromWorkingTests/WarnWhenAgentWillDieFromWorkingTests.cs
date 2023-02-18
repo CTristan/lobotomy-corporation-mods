@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Enums;
+using LobotomyCorporationMods.Common.Extensions;
+using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.Test.Extensions;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking;
@@ -35,6 +37,9 @@ namespace LobotomyCorporationMods.Test.WarnWhenAgentWillDieFromWorkingTests
 
         protected bool AgentWillDie([NotNull] IImageAdapter workFilterFill, [NotNull] ITextAdapter workFilterText)
         {
+            Guard.Against.Null(workFilterFill, nameof(workFilterFill));
+            Guard.Against.Null(workFilterText, nameof(workFilterText));
+
             return workFilterFill.Color == _deadAgentColor && workFilterText.Text == DeadAgentString;
         }
 
@@ -50,7 +55,13 @@ namespace LobotomyCorporationMods.Test.WarnWhenAgentWillDieFromWorkingTests
         }
 
         [NotNull]
-        protected static CreatureModel GetCreature(CreatureIds creatureId, int qliphothCounter = 0)
+        protected static CreatureModel GetCreature(CreatureIds creatureId)
+        {
+            return GetCreature(creatureId, 0);
+        }
+
+        [NotNull]
+        protected static CreatureModel GetCreature(CreatureIds creatureId, int qliphothCounter)
         {
             var creature = TestExtensions.CreateCreatureModel(qliphothCounter: qliphothCounter);
             creature.instanceId = (long)creatureId;
@@ -65,7 +76,13 @@ namespace LobotomyCorporationMods.Test.WarnWhenAgentWillDieFromWorkingTests
         }
 
         [NotNull]
-        protected CommandWindow.CommandWindow InitializeCommandWindow(UnitModel currentTarget, RwbpType rwbpType = (RwbpType)1)
+        protected CommandWindow.CommandWindow InitializeCommandWindow(UnitModel currentTarget)
+        {
+            return InitializeCommandWindow(currentTarget, (RwbpType)1);
+        }
+
+        [NotNull]
+        protected CommandWindow.CommandWindow InitializeCommandWindow(UnitModel currentTarget, RwbpType rwbpType)
         {
             // Need existing game instances
             InitializeLocalizeTextDataModel();
