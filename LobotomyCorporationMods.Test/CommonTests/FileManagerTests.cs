@@ -80,7 +80,7 @@ namespace LobotomyCorporationMods.Test.CommonTests
         [NotNull]
         private static ICollection<DirectoryInfo> GetDirectories()
         {
-            var currentDirectory = Directory.GetCurrentDirectory();
+            var currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
             return new List<DirectoryInfo> { new(currentDirectory) };
         }
