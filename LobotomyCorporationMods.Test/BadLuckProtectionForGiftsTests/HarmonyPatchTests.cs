@@ -3,16 +3,19 @@
 #region
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
 using LobotomyCorporationMods.BadLuckProtectionForGifts;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Patches;
 using LobotomyCorporationMods.Test.Extensions;
+using Moq;
 using Xunit;
 
 #endregion
 
 namespace LobotomyCorporationMods.Test.BadLuckProtectionForGiftsTests
 {
+    [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
     public sealed class HarmonyPatchTests
     {
         /// <summary>
@@ -36,6 +39,19 @@ namespace LobotomyCorporationMods.Test.BadLuckProtectionForGiftsTests
         }
 
         [Fact]
+        public void Class_CreatureEquipmentMakeInfo_Method_GetProb_logs_exceptions()
+        {
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+            var result = 0f;
+
+            Action action = () => CreatureEquipmentMakeInfoPatchGetProb.Postfix(null, ref result);
+
+            action.ShouldThrow<ArgumentNullException>();
+            mockLogger.Verify(static logger => logger.WriteToLog(It.IsAny<ArgumentNullException>()), Times.Once);
+        }
+
+        [Fact]
         public void Class_GameSceneController_Method_OnClickNextDay_is_patched_correctly()
         {
             var patch = typeof(GameSceneControllerPatchOnClickNextDay);
@@ -43,6 +59,18 @@ namespace LobotomyCorporationMods.Test.BadLuckProtectionForGiftsTests
             const string MethodName = nameof(GameSceneController.OnClickNextDay);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
+        }
+
+        [Fact]
+        public void Class_GameSceneController_Method_OnClickNextDay_logs_exceptions()
+        {
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+
+            Action action = GameSceneControllerPatchOnClickNextDay.Postfix;
+
+            action.ShouldThrow<NullReferenceException>();
+            mockLogger.Verify(static logger => logger.WriteToLog(It.IsAny<NullReferenceException>()), Times.Once);
         }
 
         [Fact]
@@ -56,6 +84,18 @@ namespace LobotomyCorporationMods.Test.BadLuckProtectionForGiftsTests
         }
 
         [Fact]
+        public void Class_GameSceneController_Method_OnStageStart_logs_exceptions()
+        {
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+
+            Action action = GameSceneControllerPatchOnStageStart.Postfix;
+
+            action.ShouldThrow<NullReferenceException>();
+            mockLogger.Verify(static logger => logger.WriteToLog(It.IsAny<NullReferenceException>()), Times.Once);
+        }
+
+        [Fact]
         public void Class_NewTitleScript_Method_OnClickNewGame_is_patched_correctly()
         {
             var patch = typeof(NewTitleScriptPatchOnClickNewGame);
@@ -66,6 +106,18 @@ namespace LobotomyCorporationMods.Test.BadLuckProtectionForGiftsTests
         }
 
         [Fact]
+        public void Class_NewTitleScript_Method_OnClickNewGame_logs_exceptions()
+        {
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+
+            Action action = NewTitleScriptPatchOnClickNewGame.Postfix;
+
+            action.ShouldThrow<NullReferenceException>();
+            mockLogger.Verify(static logger => logger.WriteToLog(It.IsAny<NullReferenceException>()), Times.Once);
+        }
+
+        [Fact]
         public void Class_UseSkill_Method_FinishWorkSuccessfully_is_patched_correctly()
         {
             var patch = typeof(UseSkillPatchFinishWorkSuccessfully);
@@ -73,6 +125,18 @@ namespace LobotomyCorporationMods.Test.BadLuckProtectionForGiftsTests
             const string MethodName = "FinishWorkSuccessfully";
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
+        }
+
+        [Fact]
+        public void Class_UseSkill_Method_FinishWorkSuccessfully_logs_exceptions()
+        {
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+
+            Action action = static () => UseSkillPatchFinishWorkSuccessfully.Prefix(null);
+
+            action.ShouldThrow<ArgumentNullException>();
+            mockLogger.Verify(static logger => logger.WriteToLog(It.IsAny<ArgumentNullException>()), Times.Once);
         }
     }
 }

@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using JetBrains.Annotations;
+using LobotomyCorporationMods.BadLuckProtectionForGifts.Extensions;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 
@@ -15,24 +16,17 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
 {
     [HarmonyPatch(typeof(UseSkill), "FinishWorkSuccessfully")]
     [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
+    [SuppressMessage("Style", "IDE1006:Naming Styles")]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public static class UseSkillPatchFinishWorkSuccessfully
     {
-        [CanBeNull]
-        private static CreatureEquipmentMakeInfo GetCreatureEquipmentMakeInfo([NotNull] UseSkill instance)
-        {
-            var equipmentMakeInfo = instance.targetCreature?.metaInfo?.equipMakeInfos?.Find(static x => x?.equipTypeInfo?.type == EquipmentTypeInfo.EquipmentType.SPECIAL);
-
-            return equipmentMakeInfo;
-        }
-
-        // ReSharper disable once InconsistentNaming
         public static void Prefix([NotNull] UseSkill __instance)
         {
             try
             {
                 Guard.Against.Null(__instance, nameof(__instance));
 
-                var equipmentMakeInfo = GetCreatureEquipmentMakeInfo(__instance);
+                var equipmentMakeInfo = __instance.GetCreatureEquipmentMakeInfo();
 
                 // If the creature has no gift it returns null
                 if (equipmentMakeInfo?.equipTypeInfo?.Name is null)

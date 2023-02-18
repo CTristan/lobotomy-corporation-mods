@@ -29,6 +29,22 @@ namespace LobotomyCorporationMods.Test.BadLuckProtectionForGiftsTests.Patches
         }
 
         [Fact]
+        public void An_abnormality_with_no_gift_does_not_increase_probability_chance()
+        {
+            // Arrange
+            const float Expected = 0f;
+            var creatureEquipMakeInfo = TestExtensions.CreateCreatureEquipmentMakeInfo();
+            creatureEquipMakeInfo.equipTypeInfo = null;
+
+            // Act
+            var actual = 0f;
+            CreatureEquipmentMakeInfoPatchGetProb.Postfix(creatureEquipMakeInfo, ref actual);
+
+            // Assert
+            actual.Should().Be(Expected);
+        }
+
+        [Fact]
         public void Our_probability_bonus_does_not_cause_the_gift_probability_to_go_over_100_percent()
         {
             // Arrange

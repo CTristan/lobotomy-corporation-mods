@@ -5,6 +5,7 @@
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Patches;
 using LobotomyCorporationMods.Test.Extensions;
 using Moq;
+using Xunit;
 using Xunit.Extensions;
 
 #endregion
@@ -28,6 +29,17 @@ namespace LobotomyCorporationMods.Test.BadLuckProtectionForGiftsTests.Patches
             UseSkillPatchFinishWorkSuccessfully.Prefix(useSkill);
 
             mockAgentWorkTracker.Verify(tracker => tracker.IncrementAgentWorkCount(GiftName, It.IsAny<long>(), numberOfSuccesses), Times.Once);
+        }
+
+        [Fact]
+        public void Working_on_an_abnormality_with_no_gift_does_not_increase_the_number_of_successes()
+        {
+            var mockAgentWorkTracker = CreateMockAgentWorkTracker();
+            var useSkill = TestExtensions.CreateUseSkill();
+
+            UseSkillPatchFinishWorkSuccessfully.Prefix(useSkill);
+
+            mockAgentWorkTracker.Verify(static tracker => tracker.IncrementAgentWorkCount(GiftName, It.IsAny<long>(), It.IsAny<int>()), Times.Never);
         }
     }
 }
