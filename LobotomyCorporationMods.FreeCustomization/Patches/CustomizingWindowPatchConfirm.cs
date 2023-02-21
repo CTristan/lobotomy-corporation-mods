@@ -3,7 +3,6 @@
 #region
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
@@ -23,9 +22,6 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         /// <summary>
         ///     Runs before confirming the Strengthen Employee window to save appearance data.
         /// </summary>
-        [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
-        [SuppressMessage("Style", "IDE1006:Naming Styles")]
-        // ReSharper disable once InconsistentNaming
         public static void Prefix(CustomizingWindow __instance)
         {
             try

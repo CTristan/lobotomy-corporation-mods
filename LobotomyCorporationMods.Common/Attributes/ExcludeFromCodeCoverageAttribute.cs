@@ -8,10 +8,8 @@ namespace System.Diagnostics.CodeAnalysis
     /// <summary>
     ///     ONLY to be used for Adapter classes since they are just wrappers for Unity methods and properties.
     /// </summary>
-    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-    public sealed class ExcludeFromCodeCoverageAttribute : Attribute
+    internal sealed class ExcludeFromCodeCoverageAttribute : Attribute
     {
     }
 }

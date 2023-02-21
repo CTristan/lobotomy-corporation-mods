@@ -2,15 +2,19 @@
 
 #region
 
-using System.Diagnostics.CodeAnalysis;
+using System;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using LobotomyCorporationMods.Common.Implementations;
 
 #endregion
 
+[assembly: AssemblyVersion("1.0.*")]
+[assembly: CLSCompliant(false)]
+[assembly: ComVisible(false)]
+
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking
 {
-    [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public sealed class Harmony_Patch : HarmonyPatchBase
     {
         private const string ModFileName = "LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.dll";

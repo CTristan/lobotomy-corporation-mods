@@ -3,7 +3,6 @@
 #region
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using LobotomyCorporationMods.Common.Implementations;
@@ -16,8 +15,6 @@ using LobotomyCorporationMods.Common.Implementations;
 
 namespace LobotomyCorporationMods.FreeCustomization
 {
-    [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public sealed class Harmony_Patch : HarmonyPatchBase
     {
         private const string ModFileName = "LobotomyCorporationMods.FreeCustomization.dll";

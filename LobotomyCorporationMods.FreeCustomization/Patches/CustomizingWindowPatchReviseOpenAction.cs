@@ -3,7 +3,6 @@
 #region
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
 using LobotomyCorporationMods.FreeCustomization.Extensions;
@@ -18,9 +17,6 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         /// <summary>
         ///     Runs after opening the Strengthen Agent window to set the appearance data for the customization window.
         /// </summary>
-        [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
-        [SuppressMessage("Style", "IDE1006:Naming Styles")]
-        // ReSharper disable once InconsistentNaming
         public static void Postfix(CustomizingWindow __instance, AgentModel agent)
         {
             try

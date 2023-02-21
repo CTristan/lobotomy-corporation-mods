@@ -7,34 +7,21 @@
       will try to re-use the first DLL even if the second DLL has a different assembly version.
     -->
     <AssemblyName>LobotomyCorporationMods.Common.$(AssemblyVersion)</AssemblyName>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <ProjectGuid>{D9BB018C-8BB3-4639-983C-F58969C8574E}</ProjectGuid>
+    <AnalysisLevel>latest-all</AnalysisLevel>
+    <Deterministic>false</Deterministic>
+    <EnableNETAnalyzers>True</EnableNETAnalyzers>
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+    <IsPackable>false</IsPackable>
+    <LangVersion>9</LangVersion>
+    <Nullable>enable</Nullable>
     <OutputPath>bin\</OutputPath>
     <OutputType>Library</OutputType>
     <RuntimeIdentifiers>win</RuntimeIdentifiers>
     <TargetFramework>net35</TargetFramework>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
-    <EnableNETAnalyzers>True</EnableNETAnalyzers>
-    <AnalysisLevel>latest-recommended</AnalysisLevel>
-    <IsPackable>false</IsPackable>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <Deterministic>false</Deterministic>
-    <LangVersion>9</LangVersion>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AnalysisLevelDesign>latest-all</AnalysisLevelDesign>
-    <AnalysisLevelDocumentation>latest-all</AnalysisLevelDocumentation>
-    <AnalysisLevelGlobalization>latest-all</AnalysisLevelGlobalization>
-    <AnalysisLevelInteroperability>latest-all</AnalysisLevelInteroperability>
-    <AnalysisLevelMaintainability>latest-all</AnalysisLevelMaintainability>
-    <AnalysisLevelNaming>latest-all</AnalysisLevelNaming>
-    <AnalysisLevelPerformance>latest-all</AnalysisLevelPerformance>
-    <AnalysisLevelSingleFile>latest-all</AnalysisLevelSingleFile>
-    <AnalysisLevelReliability>latest-all</AnalysisLevelReliability>
-    <AnalysisLevelSecurity>latest-all</AnalysisLevelSecurity>
-    <AnalysisLevelStyle>latest-recommended</AnalysisLevelStyle>
-    <AnalysisLevelUsage>latest-all</AnalysisLevelUsage>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>

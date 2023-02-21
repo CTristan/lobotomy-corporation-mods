@@ -16,7 +16,9 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
 {
     public sealed class AgentWorkTracker : IAgentWorkTracker
     {
-        private readonly IFileManager _fileManager;
+        // ReSharper disable once NullableWarningSuppressionIsUsed
+        // We load the FileManager later when applying the patch, so this will be null in the constructor
+        private readonly IFileManager _fileManager = default!;
         private readonly List<IGift> _gifts = new();
         private readonly Dictionary<string, long> _mostRecentAgentIdByGift = new();
         private readonly string _trackerFile = string.Empty;

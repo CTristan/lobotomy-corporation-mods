@@ -3,7 +3,6 @@
 #region
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Extensions;
 
@@ -12,9 +11,6 @@ using LobotomyCorporationMods.BadLuckProtectionForGifts.Extensions;
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
 {
     [HarmonyPatch(typeof(UseSkill), "FinishWorkSuccessfully")]
-    [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
-    [SuppressMessage("Style", "IDE1006:Naming Styles")]
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public static class UseSkillPatchFinishWorkSuccessfully
     {
         public static void Prefix(UseSkill? __instance)

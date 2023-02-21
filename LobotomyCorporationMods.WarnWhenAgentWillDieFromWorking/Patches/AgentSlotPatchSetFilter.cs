@@ -3,7 +3,6 @@
 #region
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using CommandWindow;
 using Harmony;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
@@ -22,9 +21,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
         public static IImageAdapter? WorkFilterFillAdapter { get; set; }
         public static ITextAdapter? WorkFilterTextAdapter { get; set; }
 
-        [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
-        [SuppressMessage("Style", "IDE1006:Naming Styles")]
-        // ReSharper disable once InconsistentNaming
+
         public static void Postfix(AgentSlot? __instance, AgentState state)
         {
             try

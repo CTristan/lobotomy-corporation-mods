@@ -3,7 +3,6 @@
 #region
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using Harmony;
 
 #endregion
@@ -11,9 +10,6 @@ using Harmony;
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
 {
     [HarmonyPatch(typeof(CreatureEquipmentMakeInfo), "GetProb")]
-    [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    [SuppressMessage("Style", "IDE1006:Naming Styles")]
     public static class CreatureEquipmentMakeInfoPatchGetProb
     {
         public static void Postfix(CreatureEquipmentMakeInfo? __instance, ref float __result)

@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -22,11 +21,9 @@ using ILogger = LobotomyCorporationMods.Common.Interfaces.ILogger;
 
 #endregion
 
+// ReSharper disable MemberCanBePrivate.Global
 namespace LobotomyCorporationMods.Test.Extensions
 {
-    [SuppressMessage("ReSharper", "Unity.IncorrectMonoBehaviourInstantiation")]
-    [SuppressMessage("ReSharper", "Unity.NoNullCoalescing")]
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     internal static class TestExtensions
     {
         public static Mock<IFileManager> GetMockFileManager()
@@ -161,7 +158,9 @@ namespace LobotomyCorporationMods.Test.Extensions
 
         public static AppearanceUI CreateAppearanceUI()
         {
-            return new AppearanceUI();
+            CreateUninitializedObject<AppearanceUI>(out var appearanceUi);
+
+            return appearanceUi;
         }
 
         public static CommandWindow.CommandWindow CreateCommandWindow(UnitModel? currentTarget = null, CommandType currentWindowType = (CommandType)1, long selectedWork = 0L)
@@ -244,7 +243,9 @@ namespace LobotomyCorporationMods.Test.Extensions
 
         public static CreatureUnit CreateCreatureUnit()
         {
-            return new CreatureUnit();
+            CreateUninitializedObject<CreatureUnit>(out var creatureUnit);
+
+            return creatureUnit;
         }
 
         public static CustomizingWindow CreateCustomizingWindow(AppearanceUI? appearanceUI = null, AgentModel? currentAgent = null, AgentData? currentData = null,

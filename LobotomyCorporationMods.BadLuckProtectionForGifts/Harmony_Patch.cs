@@ -3,7 +3,6 @@
 #region
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations;
@@ -18,8 +17,6 @@ using LobotomyCorporationMods.Common.Implementations;
 
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts
 {
-    // ReSharper disable once InconsistentNaming
-    [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
     public sealed class Harmony_Patch : HarmonyPatchBase
     {
         private const string ModFileName = "LobotomyCorporationMods.BadLuckProtectionForGifts.dll";
@@ -41,7 +38,9 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
             }
         }
 
-        internal IAgentWorkTracker AgentWorkTracker { get; private set; }
+        // ReSharper disable once NullableWarningSuppressionIsUsed
+        // We load the tracker later on when needed, so this should never be actually null
+        internal IAgentWorkTracker AgentWorkTracker { get; private set; } = default!;
 
         /// <summary>
         ///     Entry point for testing.

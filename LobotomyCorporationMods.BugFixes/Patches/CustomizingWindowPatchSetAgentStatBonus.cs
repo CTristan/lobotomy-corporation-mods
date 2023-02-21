@@ -3,7 +3,6 @@
 #region
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
@@ -14,9 +13,6 @@ using LobotomyCorporationMods.Common.Interfaces.Adapters;
 namespace LobotomyCorporationMods.BugFixes.Patches
 {
     [HarmonyPatch(typeof(CustomizingWindow), "SetAgentStatBonus")]
-    [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
-    [SuppressMessage("Style", "IDE1006:Naming Styles")]
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public static class CustomizingWindowPatchSetAgentStatBonus
     {
         public static ICustomizingWindowAdapter? CustomizingWindowAdapter { get; set; }
