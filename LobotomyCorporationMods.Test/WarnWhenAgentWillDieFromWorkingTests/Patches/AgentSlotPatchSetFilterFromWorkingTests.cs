@@ -41,7 +41,7 @@ namespace LobotomyCorporationMods.Test.WarnWhenAgentWillDieFromWorkingTests.Patc
 
             AgentSlotPatchSetFilter.Postfix(agentSlot, AgentState.IDLE);
 
-            agentSlot.WorkFilterFill.color.Should().NotBe(_deadAgentColor);
+            agentSlot.WorkFilterFill.color.Should().NotBe(DeadAgentColor);
             agentSlot.WorkFilterText.text.Should().NotBe(DeadAgentString);
         }
 
@@ -589,8 +589,13 @@ namespace LobotomyCorporationMods.Test.WarnWhenAgentWillDieFromWorkingTests.Patc
             var agentSlot = TestExtensions.CreateAgentSlot(currentAgent: agent);
 
             // Mock animation script adapter to avoid Unity errors
-            var mockFlower = new Mock<IGameObjectAdapter>();
-            var mockFlowers = new List<IGameObjectAdapter> { mockFlower.Object };
+            var mockFlowers = new List<IGameObjectAdapter>();
+
+            for (var i = 0; i < numberOfFlowers; i++)
+            {
+                mockFlowers.Add(new Mock<IGameObjectAdapter>().Object);
+            }
+
             var mockAnimAdapter = new Mock<IYggdrasilAnimAdapter>();
             mockAnimAdapter.Setup(static adapter => adapter.Flowers).Returns(mockFlowers);
             AgentSlotPatchSetFilter.AnimAdapter = mockAnimAdapter.Object;

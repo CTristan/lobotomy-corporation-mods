@@ -6,9 +6,6 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
-using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
@@ -18,10 +15,11 @@ namespace LobotomyCorporationMods.BugFixes.Patches
 {
     [HarmonyPatch(typeof(CustomizingWindow), "SetAgentStatBonus")]
     [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
-    // ReSharper disable once IdentifierTypo
+    [SuppressMessage("Style", "IDE1006:Naming Styles")]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public static class CustomizingWindowPatchSetAgentStatBonus
     {
-        public static ICustomizingWindowAdapter CustomizingWindowAdapter { get; set; }
+        public static ICustomizingWindowAdapter? CustomizingWindowAdapter { get; set; }
 
         /// <summary>
         ///     Runs before SetAgentStatBonus to use the original stat levels instead of the modified stat levels.
@@ -37,14 +35,24 @@ namespace LobotomyCorporationMods.BugFixes.Patches
         ///     Actual result: Upgrading the agent's stat Fortitude level used the Level 3 bonus instead of the Level 4 bonus,
         ///     causing the stat level to remain at Level 4.
         /// </summary>
-        // ReSharper disable once InconsistentNaming
-        public static bool Prefix([NotNull] CustomizingWindow __instance, [NotNull] AgentModel agent, [NotNull] AgentData data)
+        public static bool Prefix(CustomizingWindow? __instance, AgentModel? agent, AgentData? data)
         {
             try
             {
-                Guard.Against.Null(__instance, nameof(__instance));
-                Guard.Against.Null(agent, nameof(agent));
-                Guard.Against.Null(data, nameof(data));
+                if (__instance is null)
+                {
+                    throw new ArgumentNullException(nameof(__instance));
+                }
+
+                if (agent is null)
+                {
+                    throw new ArgumentNullException(nameof(agent));
+                }
+
+                if (data is null)
+                {
+                    throw new ArgumentNullException(nameof(data));
+                }
 
                 CustomizingWindowAdapter ??= new CustomizingWindowAdapter(__instance);
                 agent.primaryStat.hp = CustomizingWindowAdapter.SetRandomStatValue(agent.primaryStat.hp, agent.originFortitudeLevel, data.statBonus.rBonus);

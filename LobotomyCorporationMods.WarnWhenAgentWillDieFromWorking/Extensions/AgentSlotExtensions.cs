@@ -3,9 +3,6 @@
 #region
 
 using CommandWindow;
-using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 #endregion
@@ -14,11 +11,9 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
 {
     internal static class AgentSlotExtensions
     {
-        internal static bool CheckIfWorkWillKillAgent([NotNull] this AgentSlot agentSlot, [NotNull] CommandWindow.CommandWindow commandWindow, IBeautyBeastAnimAdapter beautyBeastAnimAdapter,
-            IYggdrasilAnimAdapter yggdrasilAnimAdapter)
+        internal static bool CheckIfWorkWillKillAgent(this AgentSlot agentSlot, CommandWindow.CommandWindow commandWindow, IBeautyBeastAnimAdapter? beautyBeastAnimAdapter,
+            IYggdrasilAnimAdapter? yggdrasilAnimAdapter)
         {
-            Guard.Against.Null(agentSlot, nameof(agentSlot));
-
             bool willAgentDie;
             var agent = agentSlot.CurrentAgent;
 

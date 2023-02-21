@@ -6,9 +6,6 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
-using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
 
 #endregion
 
@@ -26,13 +23,11 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
         [SuppressMessage("Style", "IDE1006:Naming Styles")]
         // ReSharper disable once InconsistentNaming
-        public static bool Prefix([NotNull] AppearanceUI __instance)
+        public static bool Prefix(AppearanceUI? __instance)
         {
             try
             {
-                Guard.Against.Null(__instance, nameof(__instance));
-
-                return __instance.closeAction is not null;
+                return __instance is not null ? __instance.closeAction is not null : throw new ArgumentNullException(nameof(__instance));
             }
             catch (Exception ex)
             {

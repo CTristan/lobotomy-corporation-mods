@@ -13,7 +13,6 @@ using CommandWindow;
 using Customizing;
 using FluentAssertions;
 using Harmony;
-using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Interfaces;
 using Moq;
 using UnityEngine;
@@ -30,17 +29,15 @@ namespace LobotomyCorporationMods.Test.Extensions
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     internal static class TestExtensions
     {
-        [NotNull]
         public static Mock<IFileManager> GetMockFileManager()
         {
             var mockFileManager = new Mock<IFileManager>();
-            mockFileManager.Setup(static fm => fm.GetOrCreateFile(It.IsAny<string>())).Returns(static (string fileName) => fileName.InCurrentDirectory());
-            mockFileManager.Setup(static fm => fm.ReadAllText(It.IsAny<string>(), It.IsAny<bool>())).Returns(static (string fileName, bool _) => File.ReadAllText(fileName.InCurrentDirectory()));
+            _ = mockFileManager.Setup(static fm => fm.GetOrCreateFile(It.IsAny<string>())).Returns(static (string fileName) => fileName.InCurrentDirectory());
+            _ = mockFileManager.Setup(static fm => fm.ReadAllText(It.IsAny<string>(), It.IsAny<bool>())).Returns(static (string fileName, bool _) => File.ReadAllText(fileName.InCurrentDirectory()));
 
             return mockFileManager;
         }
 
-        [NotNull]
         public static Mock<ILogger> GetMockLogger()
         {
             var mockLogger = new Mock<ILogger>();
@@ -48,13 +45,12 @@ namespace LobotomyCorporationMods.Test.Extensions
             return mockLogger;
         }
 
-        [NotNull]
-        internal static string InCurrentDirectory([NotNull] this string fileName)
+        internal static string InCurrentDirectory(this string fileName)
         {
             return Path.Combine(Directory.GetCurrentDirectory(), fileName);
         }
 
-        public static void ValidateHarmonyPatch([NotNull] this MemberInfo patchClass, [NotNull] Type originalClass, string methodName)
+        public static void ValidateHarmonyPatch(this MemberInfo patchClass, Type originalClass, string methodName)
         {
             var attribute = Attribute.GetCustomAttribute(patchClass, typeof(HarmonyPatch)) as HarmonyPatch;
 
@@ -65,8 +61,7 @@ namespace LobotomyCorporationMods.Test.Extensions
 
         #region Unity Objects
 
-        [NotNull]
-        public static AgentData CreateAgentData(AgentName agentName = null, Appearance appearance = null, StatBonus statBonus = null)
+        public static AgentData CreateAgentData(AgentName? agentName = null, Appearance? appearance = null, StatBonus? statBonus = null)
         {
             agentName ??= CreateAgentName();
             appearance ??= CreateAppearance();
@@ -75,8 +70,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             return new AgentData { agentName = agentName, appearance = appearance, statBonus = statBonus };
         }
 
-        [NotNull]
-        public static AgentInfoWindow CreateAgentInfoWindow(GameObject customizingBlock = null, CustomizingWindow customizingWindow = null, AgentInfoWindow.UIComponent uiComponents = null)
+        public static AgentInfoWindow CreateAgentInfoWindow(GameObject? customizingBlock = null, CustomizingWindow? customizingWindow = null, AgentInfoWindow.UIComponent? uiComponents = null)
         {
             customizingBlock ??= CreateGameObject();
             customizingWindow ??= CreateCustomizingWindow();
@@ -92,9 +86,8 @@ namespace LobotomyCorporationMods.Test.Extensions
             return GetPopulatedUninitializedObject(agentInfoWindow, fields, newValues);
         }
 
-        [NotNull]
-        public static AgentModel CreateAgentModel(AgentName agentName = null, List<UnitBuf> bufList = null, UnitEquipSpace equipment = null, long instanceId = 1L, string name = "",
-            WorkerPrimaryStat primaryStat = null, WorkerSprite.WorkerSprite spriteData = null, List<UnitStatBuf> statBufList = null)
+        public static AgentModel CreateAgentModel(AgentName? agentName = null, List<UnitBuf>? bufList = null, UnitEquipSpace? equipment = null, long instanceId = 1L, string name = "",
+            WorkerPrimaryStat? primaryStat = null, WorkerSprite.WorkerSprite? spriteData = null, List<UnitStatBuf>? statBufList = null)
         {
             agentName ??= CreateAgentName();
             bufList ??= new List<UnitBuf>();
@@ -121,8 +114,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             return GetPopulatedUninitializedObject(agentModel, fields, newValues);
         }
 
-        [NotNull]
-        public static AgentName CreateAgentName(AgentNameTypeInfo metaInfo = null, Dictionary<string, string> nameDic = null)
+        public static AgentName CreateAgentName(AgentNameTypeInfo? metaInfo = null, Dictionary<string, string>? nameDic = null)
         {
             metaInfo ??= CreateAgentNameTypeInfo();
             nameDic ??= new Dictionary<string, string>();
@@ -135,16 +127,14 @@ namespace LobotomyCorporationMods.Test.Extensions
             return GetPopulatedUninitializedObject(agentName, fields, newValues);
         }
 
-        [NotNull]
-        public static AgentNameTypeInfo CreateAgentNameTypeInfo(Dictionary<string, string> nameDic = null)
+        public static AgentNameTypeInfo CreateAgentNameTypeInfo(Dictionary<string, string>? nameDic = null)
         {
             nameDic ??= new Dictionary<string, string>();
 
             return new AgentNameTypeInfo { nameDic = nameDic };
         }
 
-        [NotNull]
-        public static AgentSlot CreateAgentSlot(List<MaskableGraphic> coloredTargets = null, AgentModel currentAgent = null, Image workFilterFill = null, Text workFilterText = null)
+        public static AgentSlot CreateAgentSlot(List<MaskableGraphic>? coloredTargets = null, AgentModel? currentAgent = null, Image? workFilterFill = null, Text? workFilterText = null)
         {
             coloredTargets ??= new List<MaskableGraphic>();
             currentAgent ??= CreateAgentModel();
@@ -162,22 +152,19 @@ namespace LobotomyCorporationMods.Test.Extensions
             return GetPopulatedUninitializedObject(agentSlot, fields, newValues);
         }
 
-        [NotNull]
-        public static Appearance CreateAppearance(WorkerSprite.WorkerSprite spriteSet = null)
+        public static Appearance CreateAppearance(WorkerSprite.WorkerSprite? spriteSet = null)
         {
             spriteSet ??= CreateWorkerSprite();
 
             return new Appearance { spriteSet = spriteSet };
         }
 
-        [NotNull]
         public static AppearanceUI CreateAppearanceUI()
         {
             return new AppearanceUI();
         }
 
-        [NotNull]
-        public static CommandWindow.CommandWindow CreateCommandWindow(UnitModel currentTarget = null, CommandType currentWindowType = (CommandType)1, long selectedWork = 0L)
+        public static CommandWindow.CommandWindow CreateCommandWindow(UnitModel? currentTarget = null, CommandType currentWindowType = (CommandType)1, long selectedWork = 0L)
         {
             currentTarget ??= CreateUnitModel();
 
@@ -191,16 +178,14 @@ namespace LobotomyCorporationMods.Test.Extensions
             return GetPopulatedUninitializedObject(commandWindow, fields, newValues);
         }
 
-        [NotNull]
-        public static CreatureEquipmentMakeInfo CreateCreatureEquipmentMakeInfo(EquipmentTypeInfo equipTypeInfo = null)
+        public static CreatureEquipmentMakeInfo CreateCreatureEquipmentMakeInfo(EquipmentTypeInfo? equipTypeInfo = null)
         {
             equipTypeInfo ??= CreateEquipmentTypeInfo();
 
             return new CreatureEquipmentMakeInfo { equipTypeInfo = equipTypeInfo };
         }
 
-        [NotNull]
-        public static CreatureLayer CreateCreatureLayer(Dictionary<long, CreatureUnit> creatureDic = null)
+        public static CreatureLayer CreateCreatureLayer(Dictionary<long, CreatureUnit>? creatureDic = null)
         {
             creatureDic ??= new Dictionary<long, CreatureUnit>();
 
@@ -216,9 +201,8 @@ namespace LobotomyCorporationMods.Test.Extensions
             return creatureLayer;
         }
 
-        [NotNull]
-        public static CreatureModel CreateCreatureModel(AgentModel agent = null, CreatureTypeInfo metaInfo = null, CreatureObserveInfoModel observeInfo = null, int qliphothCounter = 1,
-            SkillTypeInfo skillTypeInfo = null)
+        public static CreatureModel CreateCreatureModel(AgentModel? agent = null, CreatureTypeInfo? metaInfo = null, CreatureObserveInfoModel? observeInfo = null, int qliphothCounter = 1,
+            SkillTypeInfo? skillTypeInfo = null)
         {
             agent ??= CreateAgentModel();
             metaInfo ??= CreateCreatureTypeInfo();
@@ -238,8 +222,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             return GetPopulatedUninitializedObject(newCreatureModel, fields, newValues);
         }
 
-        [NotNull]
-        public static CreatureObserveInfoModel CreateCreatureObserveInfoModel(CreatureTypeInfo metaInfo = null, Dictionary<string, ObserveRegion> observeRegions = null)
+        public static CreatureObserveInfoModel CreateCreatureObserveInfoModel(CreatureTypeInfo? metaInfo = null, Dictionary<string, ObserveRegion>? observeRegions = null)
         {
             metaInfo ??= CreateCreatureTypeInfo();
             observeRegions ??= new Dictionary<string, ObserveRegion>();
@@ -252,22 +235,19 @@ namespace LobotomyCorporationMods.Test.Extensions
             return GetPopulatedUninitializedObject(creatureObserveInfoModel, fields, newValues);
         }
 
-        [NotNull]
-        public static CreatureTypeInfo CreateCreatureTypeInfo(List<CreatureEquipmentMakeInfo> equipMakeInfos = null)
+        public static CreatureTypeInfo CreateCreatureTypeInfo(List<CreatureEquipmentMakeInfo>? equipMakeInfos = null)
         {
             equipMakeInfos ??= new List<CreatureEquipmentMakeInfo>();
 
             return new CreatureTypeInfo { equipMakeInfos = equipMakeInfos };
         }
 
-        [NotNull]
         public static CreatureUnit CreateCreatureUnit()
         {
             return new CreatureUnit();
         }
 
-        [NotNull]
-        public static CustomizingWindow CreateCustomizingWindow(AppearanceUI appearanceUI = null, AgentModel currentAgent = null, AgentData currentData = null,
+        public static CustomizingWindow CreateCustomizingWindow(AppearanceUI? appearanceUI = null, AgentModel? currentAgent = null, AgentData? currentData = null,
             CustomizingType currentWindowType = (CustomizingType)1)
         {
             appearanceUI ??= CreateAppearanceUI();
@@ -287,8 +267,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             return GetPopulatedUninitializedObject(customizingWindow, fields, newValues);
         }
 
-        [NotNull]
-        public static EGOgiftModel CreateEgoGiftModel(EquipmentTypeInfo metaInfo = null, EquipmentScriptBase script = null)
+        public static EGOgiftModel CreateEgoGiftModel(EquipmentTypeInfo? metaInfo = null, EquipmentScriptBase? script = null)
         {
             metaInfo ??= CreateEquipmentTypeInfo();
             script ??= CreateEquipmentScriptBase();
@@ -296,16 +275,14 @@ namespace LobotomyCorporationMods.Test.Extensions
             return new EGOgiftModel { metaInfo = metaInfo, script = script };
         }
 
-        [NotNull]
-        public static EquipmentModel CreateEquipmentModel(EquipmentTypeInfo metaInfo = null)
+        public static EquipmentModel CreateEquipmentModel(EquipmentTypeInfo? metaInfo = null)
         {
             metaInfo ??= CreateEquipmentTypeInfo();
 
             return new EquipmentModel { metaInfo = metaInfo };
         }
 
-        [NotNull]
-        public static EquipmentScriptBase CreateEquipmentScriptBase(EquipmentModel model = null)
+        public static EquipmentScriptBase CreateEquipmentScriptBase(EquipmentModel? model = null)
         {
             model ??= CreateEquipmentModel();
 
@@ -317,13 +294,11 @@ namespace LobotomyCorporationMods.Test.Extensions
             return GetPopulatedUninitializedObject(equipmentScriptBase, fields, newValues);
         }
 
-        [NotNull]
         public static EquipmentTypeInfo CreateEquipmentTypeInfo()
         {
             return new EquipmentTypeInfo();
         }
 
-        [NotNull]
         public static FairyBuf CreateFairyBuf()
         {
             CreateUninitializedObject<FairyBuf>(out var fairyBuf);
@@ -339,7 +314,6 @@ namespace LobotomyCorporationMods.Test.Extensions
             return gameObject;
         }
 
-        [NotNull]
         public static Image CreateImage()
         {
             CreateUninitializedObject<Image>(out var image);
@@ -347,7 +321,6 @@ namespace LobotomyCorporationMods.Test.Extensions
             return image;
         }
 
-        [NotNull]
         public static LittleWitchBuf CreateLittleWitchBuf()
         {
             CreateUninitializedObject<LittleWitchBuf>(out var littleWitchBuf);
@@ -355,8 +328,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             return littleWitchBuf;
         }
 
-        [NotNull]
-        public static LocalizeTextDataModel CreateLocalizeTextDataModel(Dictionary<string, string> list = null)
+        public static LocalizeTextDataModel CreateLocalizeTextDataModel(Dictionary<string, string>? list = null)
         {
             list ??= new Dictionary<string, string>();
 
@@ -370,14 +342,12 @@ namespace LobotomyCorporationMods.Test.Extensions
             return GetPopulatedUninitializedObject(localizeTextDataModel, fields, newValues);
         }
 
-        [NotNull]
         public static SkillTypeInfo CreateSkillTypeInfo()
         {
             return new SkillTypeInfo();
         }
 
-        [NotNull]
-        public static SkillTypeList CreateSkillTypeList(SkillTypeInfo[] list = null)
+        public static SkillTypeList CreateSkillTypeList(SkillTypeInfo[]? list = null)
         {
             list ??= new SkillTypeInfo[0];
 
@@ -387,7 +357,6 @@ namespace LobotomyCorporationMods.Test.Extensions
             return skillType;
         }
 
-        [NotNull]
         public static Sprite CreateSprite(string name = "")
         {
             CreateUninitializedObject<Sprite>(out var sprite);
@@ -398,13 +367,11 @@ namespace LobotomyCorporationMods.Test.Extensions
             return GetPopulatedUninitializedObject(sprite, fields, newValues);
         }
 
-        [NotNull]
         public static StatBonus CreateStatBonus()
         {
             return new StatBonus();
         }
 
-        [NotNull]
         public static Text CreateText()
         {
             CreateUninitializedObject<Text>(out var text);
@@ -412,20 +379,17 @@ namespace LobotomyCorporationMods.Test.Extensions
             return text;
         }
 
-        [NotNull]
         public static AgentInfoWindow.UIComponent CreateUIComponent()
         {
             return new AgentInfoWindow.UIComponent();
         }
 
-        [NotNull]
         public static UnitEquipSpace CreateUnitEquipSpace()
         {
             return new UnitEquipSpace();
         }
 
-        [NotNull]
-        public static UnitModel CreateUnitModel(List<UnitBuf> bufList = null, List<UnitStatBuf> statBufList = null)
+        public static UnitModel CreateUnitModel(List<UnitBuf>? bufList = null, List<UnitStatBuf>? statBufList = null)
         {
             bufList ??= new List<UnitBuf>();
             statBufList ??= new List<UnitStatBuf>();
@@ -438,8 +402,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             return GetPopulatedUninitializedObject(unitModel, fields, newValues);
         }
 
-        [NotNull]
-        public static UnitStatBuf CreateUnitStatBuf(WorkerPrimaryStatBonus primaryStat = null)
+        public static UnitStatBuf CreateUnitStatBuf(WorkerPrimaryStatBonus? primaryStat = null)
         {
             primaryStat ??= CreateWorkerPrimaryStatBonus();
 
@@ -451,8 +414,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             return GetPopulatedUninitializedObject(unitStatBuf, fields, newValues);
         }
 
-        [NotNull]
-        public static UseSkill CreateUseSkill(AgentModel agent = null, SkillTypeInfo skillTypeInfo = null, CreatureModel targetCreature = null)
+        public static UseSkill CreateUseSkill(AgentModel? agent = null, SkillTypeInfo? skillTypeInfo = null, CreatureModel? targetCreature = null)
         {
             agent ??= CreateAgentModel();
             skillTypeInfo ??= CreateSkillTypeInfo();
@@ -470,32 +432,27 @@ namespace LobotomyCorporationMods.Test.Extensions
             return useSkill;
         }
 
-        [NotNull]
         public static WorkerBasicSpriteController CreateWorkerBasicSpriteController()
         {
             return new WorkerBasicSpriteController();
         }
 
-        [NotNull]
         public static WorkerPrimaryStat CreateWorkerPrimaryStat()
         {
             return new WorkerPrimaryStat();
         }
 
-        [NotNull]
         public static WorkerPrimaryStatBonus CreateWorkerPrimaryStatBonus()
         {
             return new WorkerPrimaryStatBonus();
         }
 
-        [NotNull]
         public static WorkerSprite.WorkerSprite CreateWorkerSprite()
         {
             return new WorkerSprite.WorkerSprite();
         }
 
-        [NotNull]
-        public static WorkerSpriteManager CreateWorkerSpriteManager(WorkerBasicSpriteController basicData = null)
+        public static WorkerSpriteManager CreateWorkerSpriteManager(WorkerBasicSpriteController? basicData = null)
         {
             basicData ??= CreateWorkerBasicSpriteController();
 
@@ -509,7 +466,6 @@ namespace LobotomyCorporationMods.Test.Extensions
             return GetPopulatedUninitializedObject(workerSpriteManager, fields, newValues);
         }
 
-        [NotNull]
         public static YggdrasilBlessBuf CreateYggdrasilBlessBuf()
         {
             CreateUninitializedObject<YggdrasilBlessBuf>(out var yggdrasilBlessBuf);
@@ -533,7 +489,6 @@ namespace LobotomyCorporationMods.Test.Extensions
         /// <summary>
         ///     Get the fields for an uninitialized object. Can be used to later initialize the individual fields as needed.
         /// </summary>
-        [NotNull]
         private static MemberInfo[] GetUninitializedObjectFields(Type type)
         {
             var fields = new List<MemberInfo>();
@@ -547,7 +502,11 @@ namespace LobotomyCorporationMods.Test.Extensions
 
                 var typeFields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Static);
                 fields.AddRange(typeFields.GetValidFields());
-                type = type.BaseType;
+
+                if (type.BaseType != null)
+                {
+                    type = type.BaseType;
+                }
             }
 
             return fields.ToArray();
@@ -556,8 +515,7 @@ namespace LobotomyCorporationMods.Test.Extensions
         /// <summary>
         ///     Returns the fields which are valid and can be used to populate an object.
         /// </summary>
-        [NotNull]
-        private static IEnumerable<MemberInfo> GetValidFields([NotNull] this IEnumerable<FieldInfo> typeFields)
+        private static IEnumerable<MemberInfo> GetValidFields(this IEnumerable<FieldInfo> typeFields)
         {
             var goodFields = new List<MemberInfo>();
             foreach (var typeField in typeFields)
@@ -581,8 +539,7 @@ namespace LobotomyCorporationMods.Test.Extensions
         /// <summary>
         ///     Populate the fields of an uninitialized object with a provided list of objects.
         /// </summary>
-        [NotNull]
-        private static TObject GetPopulatedUninitializedObject<TObject>([NotNull] TObject obj, [NotNull] MemberInfo[] fields, IDictionary<string, object> newValues)
+        private static TObject GetPopulatedUninitializedObject<TObject>(TObject obj, MemberInfo[] fields, IDictionary<string, object> newValues) where TObject : class
         {
             CreateUninitializedObject<TObject>(out var newObj);
             var values = FormatterServices.GetObjectData(obj, fields.ToArray());

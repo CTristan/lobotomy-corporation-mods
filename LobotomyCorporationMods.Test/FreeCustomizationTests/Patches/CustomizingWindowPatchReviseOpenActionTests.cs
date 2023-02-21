@@ -3,7 +3,6 @@
 #region
 
 using FluentAssertions;
-using JetBrains.Annotations;
 using LobotomyCorporationMods.FreeCustomization.Patches;
 using LobotomyCorporationMods.Test.Extensions;
 using Xunit.Extensions;
@@ -17,7 +16,7 @@ namespace LobotomyCorporationMods.Test.FreeCustomizationTests.Patches
         [Theory]
         [InlineData("DefaultAgent")]
         [InlineData("TestAgent")]
-        public void Opening_the_strengthen_employee_window_gets_agent_appearance_data([NotNull] string agentName)
+        public void Opening_the_strengthen_employee_window_gets_agent_appearance_data(string agentName)
         {
             var customizingWindow = GetCustomizingWindow();
             var agentModel = TestExtensions.CreateAgentModel();

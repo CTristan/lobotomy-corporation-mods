@@ -3,9 +3,6 @@
 #region
 
 using Customizing;
-using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
 
 #endregion
 
@@ -13,11 +10,8 @@ namespace LobotomyCorporationMods.FreeCustomization.Extensions
 {
     internal static class WorkerModelExtensions
     {
-        [NotNull]
-        internal static Appearance GetAppearanceData([NotNull] this WorkerModel workerModel)
+        internal static Appearance GetAppearanceData(this WorkerModel workerModel)
         {
-            Guard.Against.Null(workerModel, nameof(workerModel));
-
             return new Appearance
             {
                 spriteSet = workerModel.spriteData,
@@ -37,10 +31,8 @@ namespace LobotomyCorporationMods.FreeCustomization.Extensions
             };
         }
 
-        internal static void SetAppearanceData([NotNull] this WorkerModel workerModel, [NotNull] Appearance appearance)
+        internal static void SetAppearanceData(this WorkerModel workerModel, Appearance appearance)
         {
-            Guard.Against.Null(workerModel, nameof(workerModel));
-
             workerModel.spriteData = appearance.spriteSet;
             workerModel.spriteData.BattleEyeBrow = appearance.Eye_Battle;
             workerModel.spriteData.FrontHair = appearance.FrontHair;

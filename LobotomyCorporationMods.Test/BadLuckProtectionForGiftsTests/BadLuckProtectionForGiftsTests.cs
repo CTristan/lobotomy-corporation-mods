@@ -3,7 +3,6 @@
 #region
 
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.Test.Extensions;
@@ -21,7 +20,6 @@ namespace LobotomyCorporationMods.Test.BadLuckProtectionForGiftsTests
         {
         }
 
-        [NotNull]
         protected static Mock<IAgentWorkTracker> CreateMockAgentWorkTracker()
         {
             var mockAgentTracker = new Mock<IAgentWorkTracker>();
@@ -30,8 +28,7 @@ namespace LobotomyCorporationMods.Test.BadLuckProtectionForGiftsTests
             return mockAgentTracker;
         }
 
-        [NotNull]
-        protected static CreatureEquipmentMakeInfo GetCreatureEquipmentMakeInfo([NotNull] string giftName)
+        protected static CreatureEquipmentMakeInfo GetCreatureEquipmentMakeInfo(string giftName)
         {
             var equipTypeInfo = TestExtensions.CreateEquipmentTypeInfo();
             equipTypeInfo.type = EquipmentTypeInfo.EquipmentType.SPECIAL;

@@ -15,10 +15,10 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
     [HarmonyPatch(typeof(AgentInfoWindow), "EnforcementWindow")]
     public static class AgentInfoWindowPatchEnforcementWindow
     {
-        public static ICustomizingWindowAdapter AgentInfoWindowCustomizingWindowAdapter { private get; set; }
-        public static IGameObjectAdapter GameObjectAppearanceActiveControlAdapter { private get; set; }
-        public static IGameObjectAdapter GameObjectCustomizingBlockAdapter { private get; set; }
-        public static IAgentInfoWindowUiComponentsAdapter InfoWindowUiComponentsAdapter { private get; set; }
+        public static ICustomizingWindowAdapter? AgentInfoWindowCustomizingWindowAdapter { get; set; }
+        public static IGameObjectAdapter? GameObjectAppearanceActiveControlAdapter { get; set; }
+        public static IGameObjectAdapter? GameObjectCustomizingBlockAdapter { get; set; }
+        public static IAgentInfoWindowUiComponentsAdapter? InfoWindowUiComponentsAdapter { get; set; }
 
         /// <summary>
         ///     Runs after opening the Strengthen Agent window to open the appearance window.

@@ -24,7 +24,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
     {
         private const string ModFileName = "LobotomyCorporationMods.BadLuckProtectionForGifts.dll";
 
-        public new static readonly Harmony_Patch Instance = new(true);
+        public static new readonly Harmony_Patch Instance = new(true);
 
         public Harmony_Patch()
             : this(false)
@@ -41,7 +41,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
             }
         }
 
-        public IAgentWorkTracker AgentWorkTracker { get; private set; }
+        internal IAgentWorkTracker AgentWorkTracker { get; private set; }
 
         /// <summary>
         ///     Entry point for testing.

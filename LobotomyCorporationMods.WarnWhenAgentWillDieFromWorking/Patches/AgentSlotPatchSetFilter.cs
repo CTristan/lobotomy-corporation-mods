@@ -6,9 +6,6 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using CommandWindow;
 using Harmony;
-using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions;
@@ -20,20 +17,22 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
     [HarmonyPatch(typeof(AgentSlot), "SetFilter")]
     public static class AgentSlotPatchSetFilter
     {
-        public static IYggdrasilAnimAdapter AnimAdapter { private get; set; }
-        public static IBeautyBeastAnimAdapter BeastAnimAdapter { private get; set; }
-        public static IImageAdapter WorkFilterFillAdapter { private get; set; }
-        public static ITextAdapter WorkFilterTextAdapter { private get; set; }
+        public static IYggdrasilAnimAdapter? AnimAdapter { get; set; }
+        public static IBeautyBeastAnimAdapter? BeastAnimAdapter { get; set; }
+        public static IImageAdapter? WorkFilterFillAdapter { get; set; }
+        public static ITextAdapter? WorkFilterTextAdapter { get; set; }
 
         [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
         [SuppressMessage("Style", "IDE1006:Naming Styles")]
         // ReSharper disable once InconsistentNaming
-        public static void Postfix([NotNull] AgentSlot __instance, AgentState state)
+        public static void Postfix(AgentSlot? __instance, AgentState state)
         {
             try
             {
-                Guard.Against.Null(__instance, nameof(__instance));
-                Guard.Against.Null(state, nameof(state));
+                if (__instance is null)
+                {
+                    throw new ArgumentNullException(nameof(__instance));
+                }
 
                 // Some initial Command Window checks to make sure we're in the right state
                 var commandWindow = CommandWindow.CommandWindow.CurrentWindow;

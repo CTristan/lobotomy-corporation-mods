@@ -6,9 +6,6 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
-using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.FreeCustomization.Extensions;
 
 #endregion
@@ -24,12 +21,19 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
         [SuppressMessage("Style", "IDE1006:Naming Styles")]
         // ReSharper disable once InconsistentNaming
-        public static void Postfix([NotNull] CustomizingWindow __instance, [NotNull] AgentModel agent)
+        public static void Postfix(CustomizingWindow __instance, AgentModel agent)
         {
             try
             {
-                Guard.Against.Null(__instance, nameof(__instance));
-                Guard.Against.Null(agent, nameof(agent));
+                if (__instance is null)
+                {
+                    throw new ArgumentNullException(nameof(__instance));
+                }
+
+                if (agent is null)
+                {
+                    throw new ArgumentNullException(nameof(agent));
+                }
 
                 __instance.CurrentData.agentName = agent._agentName;
                 __instance.CurrentData.CustomName = agent.name;

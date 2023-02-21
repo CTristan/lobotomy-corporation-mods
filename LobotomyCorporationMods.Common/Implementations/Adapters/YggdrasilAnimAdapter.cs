@@ -5,7 +5,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
-using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 #endregion
@@ -15,7 +14,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
     [ExcludeFromCodeCoverage]
     public sealed class YggdrasilAnimAdapter : IYggdrasilAnimAdapter
     {
-        public YggdrasilAnimAdapter([CanBeNull] YggdrasilAnim animationScript)
+        public YggdrasilAnimAdapter(YggdrasilAnim? animationScript)
         {
             if (animationScript is not null)
             {

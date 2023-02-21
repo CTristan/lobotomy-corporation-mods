@@ -5,10 +5,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
-using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Extensions;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
 
 #endregion
 
@@ -20,11 +17,14 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public static class UseSkillPatchFinishWorkSuccessfully
     {
-        public static void Prefix([NotNull] UseSkill __instance)
+        public static void Prefix(UseSkill? __instance)
         {
             try
             {
-                Guard.Against.Null(__instance, nameof(__instance));
+                if (__instance is null)
+                {
+                    throw new ArgumentNullException(nameof(__instance));
+                }
 
                 var equipmentMakeInfo = __instance.GetCreatureEquipmentMakeInfo();
 

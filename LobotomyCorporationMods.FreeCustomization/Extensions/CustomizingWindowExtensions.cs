@@ -3,9 +3,6 @@
 #region
 
 using Customizing;
-using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 #endregion
@@ -14,10 +11,8 @@ namespace LobotomyCorporationMods.FreeCustomization.Extensions
 {
     internal static class CustomizingWindowExtensions
     {
-        internal static void RenameAgent([NotNull] this CustomizingWindow customizingWindow)
+        internal static void RenameAgent(this CustomizingWindow customizingWindow)
         {
-            Guard.Against.Null(customizingWindow, nameof(customizingWindow));
-
             var customName = customizingWindow.CurrentData.CustomName;
             customizingWindow.CurrentAgent.name = customName;
             customizingWindow.CurrentAgent._agentName = customizingWindow.CurrentData.agentName;
@@ -33,10 +28,8 @@ namespace LobotomyCorporationMods.FreeCustomization.Extensions
             }
         }
 
-        internal static void SaveAgentAppearance([NotNull] this CustomizingWindow customizingWindow)
+        internal static void SaveAgentAppearance(this CustomizingWindow customizingWindow)
         {
-            Guard.Against.Null(customizingWindow, nameof(customizingWindow));
-
             if (customizingWindow.appearanceUI.copied is not null)
             {
                 customizingWindow.CurrentData.AppearCopy(customizingWindow.appearanceUI.copied);
@@ -46,10 +39,8 @@ namespace LobotomyCorporationMods.FreeCustomization.Extensions
             customizingWindow.CurrentAgent.SetAppearanceData(customizingWindow.CurrentData.appearance);
         }
 
-        internal static void UpdateAgentModel([NotNull] this CustomizingWindow customizingWindow, [NotNull] IAgentLayerAdapter agentLayerAdapter)
+        internal static void UpdateAgentModel(this CustomizingWindow customizingWindow, IAgentLayerAdapter agentLayerAdapter)
         {
-            Guard.Against.Null(customizingWindow, nameof(customizingWindow));
-
             var agentModel = customizingWindow.CurrentAgent;
             agentLayerAdapter.RemoveAgent(agentModel);
             agentLayerAdapter.AddAgent(agentModel);

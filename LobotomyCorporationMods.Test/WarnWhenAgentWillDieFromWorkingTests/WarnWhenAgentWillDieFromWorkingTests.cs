@@ -2,12 +2,10 @@
 
 #region
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Enums;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.Test.Extensions;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking;
@@ -26,7 +24,6 @@ namespace LobotomyCorporationMods.Test.WarnWhenAgentWillDieFromWorkingTests
         protected const int StatLevelOne = 1;
         protected const int StatLevelThree = 45;
         protected const int StatLevelTwo = 30;
-        protected Color _deadAgentColor = Color.red;
 
         protected WarnWhenAgentWillDieFromWorkingTests()
         {
@@ -35,15 +32,25 @@ namespace LobotomyCorporationMods.Test.WarnWhenAgentWillDieFromWorkingTests
             Harmony_Patch.Instance.LoadData(mockLogger.Object);
         }
 
-        protected bool AgentWillDie([NotNull] IImageAdapter workFilterFill, [NotNull] ITextAdapter workFilterText)
-        {
-            Guard.Against.Null(workFilterFill, nameof(workFilterFill));
-            Guard.Against.Null(workFilterText, nameof(workFilterText));
+        protected Color DeadAgentColor { get; } = Color.red;
 
-            return workFilterFill.Color == _deadAgentColor && workFilterText.Text == DeadAgentString;
+        protected bool AgentWillDie(IImageAdapter workFilterFill, ITextAdapter workFilterText)
+        {
+            if (workFilterFill is null)
+            {
+                throw new ArgumentNullException(nameof(workFilterFill));
+            }
+
+            if (workFilterText is null)
+            {
+                throw new ArgumentNullException(nameof(workFilterText));
+            }
+
+            var agentWillDie = workFilterFill.Color == DeadAgentColor && workFilterText.Text == DeadAgentString;
+
+            return agentWillDie;
         }
 
-        [NotNull]
         protected static AgentModel GetAgentWithGift(EquipmentId giftId)
         {
             var agent = TestExtensions.CreateAgentModel();
@@ -54,13 +61,11 @@ namespace LobotomyCorporationMods.Test.WarnWhenAgentWillDieFromWorkingTests
             return agent;
         }
 
-        [NotNull]
         protected static CreatureModel GetCreature(CreatureIds creatureId)
         {
             return GetCreature(creatureId, 0);
         }
 
-        [NotNull]
         protected static CreatureModel GetCreature(CreatureIds creatureId, int qliphothCounter)
         {
             var creature = TestExtensions.CreateCreatureModel(qliphothCounter: qliphothCounter);
@@ -75,13 +80,11 @@ namespace LobotomyCorporationMods.Test.WarnWhenAgentWillDieFromWorkingTests
             return creature;
         }
 
-        [NotNull]
         protected CommandWindow.CommandWindow InitializeCommandWindow(UnitModel currentTarget)
         {
             return InitializeCommandWindow(currentTarget, (RwbpType)1);
         }
 
-        [NotNull]
         protected CommandWindow.CommandWindow InitializeCommandWindow(UnitModel currentTarget, RwbpType rwbpType)
         {
             // Need existing game instances
@@ -89,8 +92,8 @@ namespace LobotomyCorporationMods.Test.WarnWhenAgentWillDieFromWorkingTests
             InitializeSkillTypeList(rwbpType);
 
             var commandWindow = TestExtensions.CreateCommandWindow(currentTarget, CommandType.Management, (long)rwbpType);
-            commandWindow.DeadColor = _deadAgentColor;
-            CommandWindow.CommandWindow.CurrentWindow.DeadColor = _deadAgentColor;
+            commandWindow.DeadColor = DeadAgentColor;
+            CommandWindow.CommandWindow.CurrentWindow.DeadColor = DeadAgentColor;
 
             return commandWindow;
         }
@@ -108,7 +111,7 @@ namespace LobotomyCorporationMods.Test.WarnWhenAgentWillDieFromWorkingTests
             _ = TestExtensions.CreateSkillTypeList(skillTypeInfos);
         }
 
-        private static void SetMaxObservation([NotNull] CreatureModel creature)
+        private static void SetMaxObservation(CreatureModel creature)
         {
             var observeRegions = new List<ObserveInfoData>
             {

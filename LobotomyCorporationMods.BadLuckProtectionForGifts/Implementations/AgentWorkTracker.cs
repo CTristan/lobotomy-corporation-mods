@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.Common.Interfaces;
 
@@ -18,11 +17,11 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
     public sealed class AgentWorkTracker : IAgentWorkTracker
     {
         private readonly IFileManager _fileManager;
-        [NotNull] private readonly List<IGift> _gifts = new();
+        private readonly List<IGift> _gifts = new();
         private readonly Dictionary<string, long> _mostRecentAgentIdByGift = new();
-        private readonly string _trackerFile;
+        private readonly string _trackerFile = string.Empty;
 
-        public AgentWorkTracker([CanBeNull] IFileManager fileManager, string dataFileName)
+        public AgentWorkTracker(IFileManager? fileManager, string dataFileName)
         {
             if (fileManager is not null)
             {
@@ -75,8 +74,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
             _fileManager.WriteAllText(_trackerFile, ToString());
         }
 
-        [NotNull]
-        private IAgent GetAgent([NotNull] string giftName, long agentId)
+        private IAgent GetAgent(string giftName, long agentId)
         {
             var gift = _gifts.FirstOrDefault(g => g is not null && g.GetName().Equals(giftName, StringComparison.Ordinal));
             if (gift is not null)
@@ -94,7 +92,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         /// <summary>
         ///     Loads the tracker data from our custom text file.
         /// </summary>
-        private void LoadFromString([NotNull] string trackerData)
+        private void LoadFromString(string trackerData)
         {
             // Clear any existing data so we aren't duplicating work progress
             _gifts.Clear();
@@ -127,7 +125,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
             var builder = new StringBuilder();
             for (var i = 0; i < _gifts.Count; i++)
             {
-                var gift = _gifts[i] ?? throw new InvalidOperationException(nameof(_gifts));
+                var gift = _gifts[i];
                 if (i > 0)
                 {
                     builder.Append('|');

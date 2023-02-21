@@ -5,9 +5,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
-using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
 
 #endregion
 
@@ -15,14 +12,18 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
 {
     [HarmonyPatch(typeof(CreatureEquipmentMakeInfo), "GetProb")]
     [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("Style", "IDE1006:Naming Styles")]
     public static class CreatureEquipmentMakeInfoPatchGetProb
     {
-        // ReSharper disable InconsistentNaming
-        public static void Postfix([NotNull] CreatureEquipmentMakeInfo __instance, ref float __result)
+        public static void Postfix(CreatureEquipmentMakeInfo? __instance, ref float __result)
         {
             try
             {
-                Guard.Against.Null(__instance, nameof(__instance));
+                if (__instance is null)
+                {
+                    throw new ArgumentNullException(nameof(__instance));
+                }
 
                 var giftName = __instance.equipTypeInfo?.Name;
 

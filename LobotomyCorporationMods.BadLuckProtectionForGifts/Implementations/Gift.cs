@@ -3,7 +3,6 @@
 #region
 
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 
 #endregion
@@ -12,21 +11,19 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
 {
     internal sealed class Gift : IGift
     {
-        [NotNull] private readonly List<IAgent> _agents = new();
-        [NotNull] private readonly string _name;
+        private readonly List<IAgent> _agents = new();
+        private readonly string _name;
 
-        internal Gift([NotNull] string giftName)
+        internal Gift(string giftName)
         {
             _name = giftName;
         }
 
-        [NotNull]
         public List<IAgent> GetAgents()
         {
             return _agents;
         }
 
-        [NotNull]
         public string GetName()
         {
             return _name;
@@ -37,7 +34,6 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         /// </summary>
         /// <param name="agentId">Agent Id</param>
         /// <returns>A new or existing agent.</returns>
-        [NotNull]
         public IAgent GetOrAddAgent(long agentId)
         {
             var agent = _agents.Find(a => a?.GetId() == agentId);

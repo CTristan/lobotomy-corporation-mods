@@ -22,7 +22,7 @@ namespace LobotomyCorporationMods.FreeCustomization
     {
         private const string ModFileName = "LobotomyCorporationMods.FreeCustomization.dll";
 
-        public new static readonly Harmony_Patch Instance = new(true);
+        public static new readonly Harmony_Patch Instance = new(true);
 
         public Harmony_Patch()
             : this(false)

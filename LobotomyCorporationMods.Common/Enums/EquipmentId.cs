@@ -4,6 +4,8 @@ namespace LobotomyCorporationMods.Common.Enums
 {
     public enum EquipmentId
     {
+        None = 0,
+
         #region Gifts
 
         CrumblingArmorGift1 = 4_000_371,

@@ -4,7 +4,6 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Customizing;
-using JetBrains.Annotations;
 using LobotomyCorporationMods.FreeCustomization;
 using LobotomyCorporationMods.Test.Extensions;
 
@@ -22,7 +21,6 @@ namespace LobotomyCorporationMods.Test.FreeCustomizationTests
             Harmony_Patch.Instance.LoadData(mockLogger.Object);
         }
 
-        [NotNull]
         protected static CustomizingWindow GetCustomizingWindow()
         {
             // Need a WorkerSpriteManager instance

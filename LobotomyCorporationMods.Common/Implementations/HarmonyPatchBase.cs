@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Harmony;
-using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces;
 
@@ -47,11 +46,15 @@ namespace LobotomyCorporationMods.Common.Implementations
 
         public ILogger Logger { get; private set; }
 
-        protected void ApplyHarmonyPatch([NotNull] Type harmonyPatchType, string modFileName)
+
+        protected void ApplyHarmonyPatch(Type? harmonyPatchType, string modFileName)
         {
             try
             {
-                Guard.Against.Null(harmonyPatchType, nameof(harmonyPatchType));
+                if (harmonyPatchType is null)
+                {
+                    throw new ArgumentNullException(nameof(harmonyPatchType));
+                }
 
                 var harmony = HarmonyInstance.Create(modFileName);
                 harmony.PatchAll(harmonyPatchType.Assembly);
@@ -64,15 +67,13 @@ namespace LobotomyCorporationMods.Common.Implementations
             }
         }
 
-        protected void InitializePatchData([NotNull] Type harmonyPatchType, [NotNull] string modFileName)
+        protected void InitializePatchData(Type harmonyPatchType, string modFileName)
         {
             InitializePatchData(harmonyPatchType, modFileName, null);
         }
 
-        protected void InitializePatchData([NotNull] Type harmonyPatchType, [NotNull] string modFileName, ICollection<DirectoryInfo> directoryList)
+        protected void InitializePatchData(Type harmonyPatchType, string modFileName, ICollection<DirectoryInfo>? directoryList)
         {
-            Guard.Against.Null(harmonyPatchType, nameof(harmonyPatchType));
-
             if (harmonyPatchType.IsHarmonyPatch())
             {
                 try
@@ -80,9 +81,9 @@ namespace LobotomyCorporationMods.Common.Implementations
                     // Try to get Basemod directory list if we don't have one
                     directoryList ??= Add_On.instance.DirList;
                 }
-                catch (SystemException)
+                catch (Exception exception) when (exception is SystemException or MissingMethodException)
                 {
-                    // If we get a SystemException then that means we're running this outside of Unity (i.e. unit tests), so we'll just gracefully exit
+                    // If we get a Unity exception then that means we're running this outside of Unity (i.e. unit tests), so we'll just gracefully exit
                     return;
                 }
 

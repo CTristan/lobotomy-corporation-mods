@@ -7,17 +7,34 @@
       will try to re-use the first DLL even if the second DLL has a different assembly version.
     -->
     <AssemblyName>LobotomyCorporationMods.Common.$(AssemblyVersion)</AssemblyName>
+    <ProjectGuid>{D9BB018C-8BB3-4639-983C-F58969C8574E}</ProjectGuid>
     <OutputPath>bin\</OutputPath>
     <OutputType>Library</OutputType>
-    <ProjectGuid>{D9BB018C-8BB3-4639-983C-F58969C8574E}</ProjectGuid>
     <RuntimeIdentifiers>win</RuntimeIdentifiers>
     <TargetFramework>net35</TargetFramework>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <LangVersion>9</LangVersion>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
     <AnalysisLevel>latest-recommended</AnalysisLevel>
     <IsPackable>false</IsPackable>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Deterministic>false</Deterministic>
+    <LangVersion>9</LangVersion>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AnalysisLevelDesign>latest-all</AnalysisLevelDesign>
+    <AnalysisLevelDocumentation>latest-all</AnalysisLevelDocumentation>
+    <AnalysisLevelGlobalization>latest-all</AnalysisLevelGlobalization>
+    <AnalysisLevelInteroperability>latest-all</AnalysisLevelInteroperability>
+    <AnalysisLevelMaintainability>latest-all</AnalysisLevelMaintainability>
+    <AnalysisLevelNaming>latest-all</AnalysisLevelNaming>
+    <AnalysisLevelPerformance>latest-all</AnalysisLevelPerformance>
+    <AnalysisLevelSingleFile>latest-all</AnalysisLevelSingleFile>
+    <AnalysisLevelReliability>latest-all</AnalysisLevelReliability>
+    <AnalysisLevelSecurity>latest-all</AnalysisLevelSecurity>
+    <AnalysisLevelStyle>latest-recommended</AnalysisLevelStyle>
+    <AnalysisLevelUsage>latest-all</AnalysisLevelUsage>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>

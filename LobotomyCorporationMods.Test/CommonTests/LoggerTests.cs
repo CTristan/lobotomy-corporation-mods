@@ -22,7 +22,7 @@ namespace LobotomyCorporationMods.Test.CommonTests
             var mockAngelaConversationUiAdapter = new Mock<IAngelaConversationUiAdapter>();
             var logger = new Logger(mockFileManager.Object, mockAngelaConversationUiAdapter.Object);
 
-            logger.WriteToLog(new Exception());
+            logger.WriteToLog(new InvalidOperationException());
 
             mockFileManager.Verify(static manager => manager.WriteAllText(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         }

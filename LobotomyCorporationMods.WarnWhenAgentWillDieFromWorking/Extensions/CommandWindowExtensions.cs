@@ -3,7 +3,6 @@
 #region
 
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Enums;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations;
@@ -16,8 +15,8 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
 {
     internal static class CommandWindowExtensions
     {
-        internal static ICreatureEvaluator GetCreatureEvaluator([NotNull] this CommandWindow.CommandWindow commandWindow, AgentModel agent, IBeautyBeastAnimAdapter beautyBeastAnimAdapter,
-            IYggdrasilAnimAdapter yggdrasilAnimAdapter)
+        internal static ICreatureEvaluator GetCreatureEvaluator(this CommandWindow.CommandWindow commandWindow, AgentModel agent, IBeautyBeastAnimAdapter? beautyBeastAnimAdapter,
+            IYggdrasilAnimAdapter? yggdrasilAnimAdapter)
         {
             ICreatureEvaluator evaluator;
 
@@ -53,28 +52,16 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
             return evaluator;
         }
 
-        internal static bool IsAbnormalityWorkWindow([NotNull] this CommandWindow.CommandWindow commandWindow)
+        internal static bool IsAbnormalityWorkWindow(this CommandWindow.CommandWindow commandWindow)
         {
-            bool isAbnormalityWorkWindow;
+            var isAbnormalityWorkWindow = commandWindow.CurrentSkill?.rwbpType is not null && commandWindow.CurrentWindowType == CommandType.Management;
 
             // Validation checks to confirm we have everything we need
-            if (commandWindow.CurrentSkill?.rwbpType is null)
-            {
-                isAbnormalityWorkWindow = false;
-            }
-            else if (commandWindow.CurrentWindowType != CommandType.Management)
-            {
-                isAbnormalityWorkWindow = false;
-            }
-            else
-            {
-                isAbnormalityWorkWindow = true;
-            }
 
             return isAbnormalityWorkWindow;
         }
 
-        private static bool TryGetCreature([NotNull] this CommandWindow.CommandWindow commandWindow, [CanBeNull] out CreatureModel creature)
+        private static bool TryGetCreature(this CommandWindow.CommandWindow commandWindow, out CreatureModel? creature)
         {
             creature = null;
 

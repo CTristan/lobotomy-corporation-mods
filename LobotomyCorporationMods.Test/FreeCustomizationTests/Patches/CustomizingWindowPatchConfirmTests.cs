@@ -5,7 +5,6 @@
 using System.Collections.Generic;
 using Customizing;
 using FluentAssertions;
-using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.FreeCustomization.Patches;
 using LobotomyCorporationMods.Test.Extensions;
@@ -42,10 +41,8 @@ namespace LobotomyCorporationMods.Test.FreeCustomizationTests.Patches
             customizingWindow.CurrentAgent.iscustom.Should().Be(true);
         }
 
-        [Theory]
-        [InlineData("Current", "Expected")]
-        [InlineData("Old", "New")]
-        public void Customizing_existing_agent_changes_agent_appearance_successfully(string currentAppearanceName, string expectedAppearanceName)
+        [Fact]
+        public void Customizing_existing_agent_changes_agent_appearance_successfully()
         {
             // Arrange
             var currentAppearance = TestExtensions.CreateWorkerSprite();
@@ -87,7 +84,7 @@ namespace LobotomyCorporationMods.Test.FreeCustomizationTests.Patches
         [Theory]
         [InlineData("CurrentName", "ExpectedName")]
         [InlineData("OldName", "NewName")]
-        public void Renaming_agent_changes_agent_name_successfully([NotNull] string currentName, [NotNull] string expectedName)
+        public void Renaming_agent_changes_agent_name_successfully(string currentName, string expectedName)
         {
             // Arrange
             var currentAgent = TestExtensions.CreateAgentModel();

@@ -14,7 +14,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
     [HarmonyPatch(typeof(AgentInfoWindow), "GenerateWindow")]
     public static class AgentInfoWindowPatchGenerateWindow
     {
-        public static ICustomizingWindowAdapter WindowAdapter { private get; set; }
+        public static ICustomizingWindowAdapter? WindowAdapter { get; set; }
 
         /// <summary>
         ///     Runs after opening the Agent window to automatically open the appearance window, since there's no reason to hide it

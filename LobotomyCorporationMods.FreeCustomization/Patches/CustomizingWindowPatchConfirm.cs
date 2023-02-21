@@ -6,9 +6,6 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
-using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.FreeCustomization.Extensions;
@@ -20,8 +17,8 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
     [HarmonyPatch(typeof(CustomizingWindow), "Confirm")]
     public static class CustomizingWindowPatchConfirm
     {
-        public static IAgentLayerAdapter LayerAdapter { private get; set; }
-        public static IWorkerSpriteManagerAdapter SpriteManagerAdapter { private get; set; }
+        public static IAgentLayerAdapter? LayerAdapter { get; set; }
+        public static IWorkerSpriteManagerAdapter? SpriteManagerAdapter { get; set; }
 
         /// <summary>
         ///     Runs before confirming the Strengthen Employee window to save appearance data.
@@ -29,11 +26,14 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
         [SuppressMessage("Style", "IDE1006:Naming Styles")]
         // ReSharper disable once InconsistentNaming
-        public static void Prefix([NotNull] CustomizingWindow __instance)
+        public static void Prefix(CustomizingWindow __instance)
         {
             try
             {
-                Guard.Against.Null(__instance, nameof(__instance));
+                if (__instance is null)
+                {
+                    throw new ArgumentNullException(nameof(__instance));
+                }
 
                 if (__instance.CurrentWindowType == CustomizingType.GENERATE)
                 {

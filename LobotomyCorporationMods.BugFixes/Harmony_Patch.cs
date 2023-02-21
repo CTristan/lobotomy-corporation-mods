@@ -15,7 +15,7 @@ namespace LobotomyCorporationMods.BugFixes
     {
         private const string ModFileName = "LobotomyCorporationMods.BugFixes.dll";
 
-        public new static readonly Harmony_Patch Instance = new(true);
+        public static new readonly Harmony_Patch Instance = new(true);
 
         public Harmony_Patch()
             : this(false)

@@ -2,7 +2,6 @@
 
 #region
 
-using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
@@ -14,7 +13,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
     {
         private readonly IBeautyBeastAnimAdapter _adapter;
 
-        internal BeautyAndTheBeastEvaluator([NotNull] AgentModel agent, [NotNull] CreatureModel creature, RwbpType skillType, [CanBeNull] IBeautyBeastAnimAdapter animationScriptAdapter)
+        internal BeautyAndTheBeastEvaluator(AgentModel agent, CreatureModel creature, RwbpType skillType, IBeautyBeastAnimAdapter? animationScriptAdapter)
             : base(agent, creature, skillType)
         {
             _adapter = animationScriptAdapter ?? new BeautyBeastAnimAdapter(creature.GetAnimScript() as BeautyBeastAnim);

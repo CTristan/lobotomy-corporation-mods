@@ -4,6 +4,7 @@ namespace LobotomyCorporationMods.Common.Enums
 {
     public enum CreatureIds
     {
+        None = 0,
         BeautyAndTheBeast = 100013,
         Bloodbath = 100027,
         BlueStar = 100058,

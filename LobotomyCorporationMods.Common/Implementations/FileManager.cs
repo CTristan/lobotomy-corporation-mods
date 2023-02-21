@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Interfaces;
 
 #endregion
@@ -20,8 +19,13 @@ namespace LobotomyCorporationMods.Common.Implementations
         private readonly object _fileLock = new();
         private readonly IDictionary<string, string> _filesCache;
 
-        public FileManager([NotNull] string modFileName, [NotNull] ICollection<DirectoryInfo> directories)
+        public FileManager(string modFileName, ICollection<DirectoryInfo> directories)
         {
+            if (directories is null)
+            {
+                throw new ArgumentNullException(nameof(directories));
+            }
+
             var directory = directories.FirstOrDefault(directoryInfo => File.Exists(Path.Combine(directoryInfo.FullName, modFileName)));
 
             if (directory is not null)
@@ -44,7 +48,7 @@ namespace LobotomyCorporationMods.Common.Implementations
             }
         }
 
-        public string GetOrCreateFile([NotNull] string fileName)
+        public string GetOrCreateFile(string fileName)
         {
             if (_filesCache.TryGetValue(fileName, out var value))
             {
@@ -57,8 +61,7 @@ namespace LobotomyCorporationMods.Common.Implementations
             return _filesCache[fileName];
         }
 
-        [NotNull]
-        public string ReadAllText([NotNull] string fileWithPath, bool createIfNotExists)
+        public string ReadAllText(string fileWithPath, bool createIfNotExists)
         {
             if (!File.Exists(fileWithPath))
             {
@@ -76,7 +79,7 @@ namespace LobotomyCorporationMods.Common.Implementations
             }
         }
 
-        public void WriteAllText([NotNull] string fileWithPath, [NotNull] string contents)
+        public void WriteAllText(string fileWithPath, string contents)
         {
             lock (_fileLock)
             {

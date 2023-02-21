@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
+    <ProjectGuid>{4D393EB4-5416-4B79-AFE2-7AE6695D0790}</ProjectGuid>
     <OutputPath>bin\</OutputPath>
     <OutputType>Library</OutputType>
-    <ProjectGuid>{4D393EB4-5416-4B79-AFE2-7AE6695D0790}</ProjectGuid>
     <RuntimeIdentifiers>win</RuntimeIdentifiers>
     <TargetFramework>net35</TargetFramework>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
@@ -14,6 +14,21 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Deterministic>false</Deterministic>
     <LangVersion>9</LangVersion>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AnalysisLevelDesign>latest-all</AnalysisLevelDesign>
+    <AnalysisLevelDocumentation>latest-all</AnalysisLevelDocumentation>
+    <AnalysisLevelGlobalization>latest-all</AnalysisLevelGlobalization>
+    <AnalysisLevelInteroperability>latest-all</AnalysisLevelInteroperability>
+    <AnalysisLevelMaintainability>latest-all</AnalysisLevelMaintainability>
+    <AnalysisLevelNaming>latest-all</AnalysisLevelNaming>
+    <AnalysisLevelPerformance>latest-all</AnalysisLevelPerformance>
+    <AnalysisLevelSingleFile>latest-all</AnalysisLevelSingleFile>
+    <AnalysisLevelReliability>latest-all</AnalysisLevelReliability>
+    <AnalysisLevelSecurity>latest-all</AnalysisLevelSecurity>
+    <AnalysisLevelStyle>latest-recommended</AnalysisLevelStyle>
+    <AnalysisLevelUsage>latest-all</AnalysisLevelUsage>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>

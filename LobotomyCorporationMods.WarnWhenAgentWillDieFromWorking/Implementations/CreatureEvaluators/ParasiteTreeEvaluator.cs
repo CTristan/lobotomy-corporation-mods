@@ -3,7 +3,6 @@
 #region
 
 using System.Linq;
-using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
@@ -16,7 +15,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
     {
         private readonly IYggdrasilAnimAdapter _yggdrasilAnimAdapter;
 
-        internal ParasiteTreeEvaluator([NotNull] AgentModel agent, [NotNull] CreatureModel creature, RwbpType skillType, [CanBeNull] IYggdrasilAnimAdapter yggdrasilAnimAdapter)
+        internal ParasiteTreeEvaluator(AgentModel agent, CreatureModel creature, RwbpType skillType, IYggdrasilAnimAdapter? yggdrasilAnimAdapter)
             : base(agent, creature, skillType)
         {
             _yggdrasilAnimAdapter = yggdrasilAnimAdapter ?? new YggdrasilAnimAdapter(creature.GetAnimScript() as YggdrasilAnim);

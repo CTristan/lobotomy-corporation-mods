@@ -4,9 +4,7 @@
 
 using System;
 using Harmony;
-using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
 
 #endregion
 
@@ -33,20 +31,17 @@ namespace LobotomyCorporationMods.BugFixes.Patches
         /// <param name="notice"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        public static bool Prefix([NotNull] string notice, [NotNull] params object[] param)
+        public static bool Prefix(string notice, params object[]? param)
         {
             try
             {
-                Guard.Against.Null(notice, nameof(notice));
-                Guard.Against.Null(param, nameof(param));
-
                 if (notice != NoticeName.OnWorkStart)
                 {
                     return true;
                 }
 
                 // If we're working on a tool or other non-creature then we don't need to verify
-                if (!(param[0] is CreatureModel creatureModel))
+                if (param?[0] is not CreatureModel creatureModel)
                 {
                     return true;
                 }

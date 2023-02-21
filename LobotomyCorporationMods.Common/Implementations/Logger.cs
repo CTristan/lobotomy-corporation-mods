@@ -3,7 +3,6 @@
 #region
 
 using System;
-using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
@@ -46,13 +45,13 @@ namespace LobotomyCorporationMods.Common.Implementations
             _angelaConversationUiAdapter.AddMessage(message);
         }
 
-        private void WriteToLog([NotNull] string message, [NotNull] string logFileName)
+        private void WriteToLog(string message, string logFileName)
         {
             var logFile = _fileManager.GetOrCreateFile(logFileName);
             _fileManager.WriteAllText(logFile, message);
         }
 
-        private void WriteToLog([CanBeNull] Exception exception, [NotNull] string logFileName)
+        private void WriteToLog(Exception? exception, string logFileName)
         {
             if (exception is not null)
             {

@@ -8,7 +8,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using FluentAssertions;
-using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Interfaces;
 using Moq;
@@ -28,7 +27,7 @@ namespace LobotomyCorporationMods.Test.CommonTests
         {
             var mockLogger = new Mock<ILogger>();
 
-            Action action = () => s_fakeHarmonyPatch.ApplyHarmonyPatch(null, null, mockLogger.Object);
+            Action action = () => s_fakeHarmonyPatch.ApplyHarmonyPatch(null, string.Empty, mockLogger.Object);
 
             action.ShouldThrow<ArgumentNullException>();
             mockLogger.Verify(static logger => logger.WriteToLog(It.IsAny<ArgumentNullException>()), Times.Once);
@@ -69,15 +68,15 @@ namespace LobotomyCorporationMods.Test.CommonTests
         {
         }
 
-        internal void ApplyHarmonyPatch([NotNull] Type harmonyPatchType, string modFileName, [NotNull] ILogger logger)
+        internal void ApplyHarmonyPatch(Type? harmonyPatchType, string modFileName, ILogger logger)
         {
             LoadData(logger);
             Instance.LoadData(logger);
 
-            base.ApplyHarmonyPatch(harmonyPatchType, modFileName);
+            ApplyHarmonyPatch(harmonyPatchType, modFileName);
         }
 
-        internal void TestInitializePatchData([NotNull] ICollection<DirectoryInfo> directoryList)
+        internal void TestInitializePatchData(ICollection<DirectoryInfo> directoryList)
         {
             var directory = directoryList.First();
             var testFileWithPath = Path.Combine(directory.FullName, FileNameThatExists);

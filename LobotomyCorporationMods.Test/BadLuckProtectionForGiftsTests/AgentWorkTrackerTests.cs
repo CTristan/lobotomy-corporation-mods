@@ -5,7 +5,6 @@
 using System.Globalization;
 using System.IO;
 using FluentAssertions;
-using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.Common.Interfaces;
@@ -81,7 +80,7 @@ namespace LobotomyCorporationMods.Test.BadLuckProtectionForGiftsTests
         [InlineData(GiftName + "^1;1", GiftName, 1L, 1f)]
         [InlineData(GiftName + "^1;1^2;2", GiftName, 2L, 2f)]
         [InlineData(GiftName + "^1;1^2;2|Second^1;3", "Second", 1L, 3f)]
-        public void Loading_data_from_a_saved_tracker_file_populates_a_valid_tracker([NotNull] string trackerData, [NotNull] string giftName, long agentId, float numberOfTimes)
+        public void Loading_data_from_a_saved_tracker_file_populates_a_valid_tracker(string trackerData, string giftName, long agentId, float numberOfTimes)
         {
             // Arrange
             var dataFileName = $"{nameof(Loading_data_from_a_saved_tracker_file_populates_a_valid_tracker)}_{giftName}_{agentId}_{numberOfTimes}";
@@ -98,7 +97,7 @@ namespace LobotomyCorporationMods.Test.BadLuckProtectionForGiftsTests
         [InlineData(GiftName + "^1;1", GiftName, 1L, 1f)]
         [InlineData(GiftName + "^1;1^2;2", GiftName, 2L, 2f)]
         [InlineData(GiftName + "^1;1^2;2|Second^1;3", "Second", 1L, 3f)]
-        public void Loading_data_multiple_times_from_a_saved_tracker_file_does_not_duplicate_work_progress([NotNull] string trackerData, [NotNull] string giftName, long agentId, float numberOfTimes)
+        public void Loading_data_multiple_times_from_a_saved_tracker_file_does_not_duplicate_work_progress(string trackerData, string giftName, long agentId, float numberOfTimes)
         {
             var appendText = $"_{giftName}_{agentId}_{numberOfTimes}";
             var dataFileName = nameof(Loading_data_multiple_times_from_a_saved_tracker_file_does_not_duplicate_work_progress).ShortenBy(appendText.Length);
@@ -138,8 +137,7 @@ namespace LobotomyCorporationMods.Test.BadLuckProtectionForGiftsTests
         /// <summary>
         ///     Populates the Harmony Patch with an agent work tracker pointed to our specified test data file.
         /// </summary>
-        [NotNull]
-        private IAgentWorkTracker CreateAgentWorkTracker(string dataFileName, string trackerData = "", IFileManager fileManager = null)
+        private static IAgentWorkTracker CreateAgentWorkTracker(string dataFileName, string trackerData = "", IFileManager? fileManager = null)
         {
             fileManager ??= TestExtensions.GetMockFileManager().Object;
             dataFileName = dataFileName.InCurrentDirectory();
@@ -148,7 +146,7 @@ namespace LobotomyCorporationMods.Test.BadLuckProtectionForGiftsTests
             return new AgentWorkTracker(fileManager, dataFileName);
         }
 
-        private static void CreateTestTrackerFile([NotNull] string fileName, string trackerData)
+        private static void CreateTestTrackerFile(string fileName, string trackerData)
         {
             var fileNameWithPath = Path.Combine(Directory.GetCurrentDirectory(), fileName);
             File.WriteAllText(fileNameWithPath, trackerData);
