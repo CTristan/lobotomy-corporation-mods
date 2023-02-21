@@ -39,6 +39,18 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes
         }
 
         [Fact]
+        public void Class_ArmorCreature_Method_OnNotice_logs_exceptions()
+        {
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+
+            Action action = static () => ArmorCreaturePatchOnNotice.Prefix(string.Empty, null);
+
+            action.ShouldThrow<ArgumentNullException>();
+            mockLogger.Verify(static logger => logger.WriteToLog(It.IsAny<ArgumentNullException>()), Times.Once);
+        }
+
+        [Fact]
         public void Class_CustomizingWindow_Method_SetAgentStatBonus_is_patched_correctly()
         {
             var patch = typeof(CustomizingWindowPatchSetAgentStatBonus);

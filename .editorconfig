@@ -34,11 +34,13 @@ charset = utf-8
 # Dotnet code style settings:
 
 # Disable naming checks for underscores since every patch has to be named Harmony_Patch
-# noinspection EditorConfigKeyCorrectness
 dotnet_diagnostic.CA1707.severity = none
 
 # Disable array initialization method for newer .NET versions
 dotnet_diagnostic.CA1825.severity = none
+
+# Allow for Harmony-patch-named arguments (such as __instance)
+dotnet_diagnostic.IDE1006.severity = none
 
 # Sort using and Import directives with System.* appearing first
 dotnet_sort_system_directives_first = true

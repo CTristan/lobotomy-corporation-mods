@@ -22,7 +22,8 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         /// <summary>
         ///     Runs before confirming the Strengthen Employee window to save appearance data.
         /// </summary>
-        public static void Prefix(CustomizingWindow __instance)
+        // ReSharper disable once InconsistentNaming
+        public static void Prefix(CustomizingWindow? __instance)
         {
             try
             {

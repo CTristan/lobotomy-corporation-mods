@@ -8,6 +8,7 @@ using FluentAssertions;
 using LobotomyCorporationMods.Test.Extensions;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches;
+using Moq;
 using Xunit;
 
 #endregion
@@ -24,6 +25,18 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
             const string MethodName = "SetFilter";
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
+        }
+
+        [Fact]
+        public void Class_AgentSlot_Method_SetFilter_logs_exceptions()
+        {
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+
+            Action action = static () => AgentSlotPatchSetFilter.Postfix(null, (AgentState)1);
+
+            action.ShouldThrow<ArgumentNullException>();
+            mockLogger.Verify(static logger => logger.WriteToLog(It.IsAny<ArgumentNullException>()), Times.Once);
         }
 
         /// <summary>

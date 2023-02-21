@@ -8,6 +8,7 @@ using FluentAssertions;
 using LobotomyCorporationMods.FreeCustomization;
 using LobotomyCorporationMods.FreeCustomization.Patches;
 using LobotomyCorporationMods.Test.Extensions;
+using Moq;
 using Xunit;
 
 #endregion
@@ -27,6 +28,18 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
         }
 
         [Fact]
+        public void Class_AgentInfoWindow_Method_EnforcementWindow_logs_exceptions()
+        {
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+
+            Action action = static () => AgentInfoWindowPatchEnforcementWindow.Postfix();
+
+            action.ShouldThrow<NullReferenceException>();
+            mockLogger.Verify(static logger => logger.WriteToLog(It.IsAny<NullReferenceException>()), Times.Once);
+        }
+
+        [Fact]
         public void Class_AgentInfoWindow_Method_GenerateWindow_is_patched_correctly()
         {
             var patch = typeof(AgentInfoWindowPatchGenerateWindow);
@@ -34,6 +47,18 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
             const string MethodName = "GenerateWindow";
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
+        }
+
+        [Fact]
+        public void Class_AgentInfoWindow_Method_GenerateWindow_logs_exceptions()
+        {
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+
+            Action action = static () => AgentInfoWindowPatchGenerateWindow.Postfix();
+
+            action.ShouldThrow<NullReferenceException>();
+            mockLogger.Verify(static logger => logger.WriteToLog(It.IsAny<NullReferenceException>()), Times.Once);
         }
 
         [Fact]
@@ -47,6 +72,18 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
         }
 
         [Fact]
+        public void Class_AppearanceUI_Method_CloseWindow_logs_exceptions()
+        {
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+
+            Action action = static () => AppearanceUIPatchCloseWindow.Prefix(null);
+
+            action.ShouldThrow<ArgumentNullException>();
+            mockLogger.Verify(static logger => logger.WriteToLog(It.IsAny<ArgumentNullException>()), Times.Once);
+        }
+
+        [Fact]
         public void Class_CustomizingWindow_Method_Confirm_is_patched_correctly()
         {
             var patch = typeof(CustomizingWindowPatchConfirm);
@@ -54,6 +91,18 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
             const string MethodName = "Confirm";
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
+        }
+
+        [Fact]
+        public void Class_CustomizingWindow_Method_Confirm_logs_exceptions()
+        {
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+
+            Action action = static () => CustomizingWindowPatchConfirm.Prefix(null);
+
+            action.ShouldThrow<ArgumentNullException>();
+            mockLogger.Verify(static logger => logger.WriteToLog(It.IsAny<ArgumentNullException>()), Times.Once);
         }
 
         [Fact]
@@ -67,6 +116,18 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
         }
 
         [Fact]
+        public void Class_CustomizingWindow_Method_OpenAppearanceWindow_logs_exceptions()
+        {
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+
+            Action action = static () => CustomizingWindowPatchOpenAppearanceWindow.Postfix(null);
+
+            action.ShouldThrow<ArgumentNullException>();
+            mockLogger.Verify(static logger => logger.WriteToLog(It.IsAny<ArgumentNullException>()), Times.Once);
+        }
+
+        [Fact]
         public void Class_CustomizingWindow_Method_ReviseOpenAction_is_patched_correctly()
         {
             var patch = typeof(CustomizingWindowPatchReviseOpenAction);
@@ -74,6 +135,18 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
             const string MethodName = "ReviseOpenAction";
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
+        }
+
+        [Fact]
+        public void Class_CustomizingWindow_Method_ReviseOpenAction_logs_exceptions()
+        {
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+
+            Action action = static () => CustomizingWindowPatchReviseOpenAction.Postfix(null, null);
+
+            action.ShouldThrow<ArgumentNullException>();
+            mockLogger.Verify(static logger => logger.WriteToLog(It.IsAny<ArgumentNullException>()), Times.Once);
         }
 
         /// <summary>

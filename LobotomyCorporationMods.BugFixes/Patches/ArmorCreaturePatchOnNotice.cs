@@ -35,13 +35,18 @@ namespace LobotomyCorporationMods.BugFixes.Patches
         {
             try
             {
+                if (param is null)
+                {
+                    throw new ArgumentNullException(nameof(param));
+                }
+
                 if (notice != NoticeName.OnWorkStart)
                 {
                     return true;
                 }
 
                 // If we're working on a tool or other non-creature then we don't need to verify
-                if (param?[0] is not CreatureModel creatureModel)
+                if (param[0] is not CreatureModel creatureModel)
                 {
                     return true;
                 }

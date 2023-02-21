@@ -16,12 +16,13 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
     [HarmonyPatch(typeof(AgentSlot), "SetFilter")]
     public static class AgentSlotPatchSetFilter
     {
-        public static IYggdrasilAnimAdapter? AnimAdapter { get; set; }
         public static IBeautyBeastAnimAdapter? BeastAnimAdapter { get; set; }
         public static IImageAdapter? WorkFilterFillAdapter { get; set; }
         public static ITextAdapter? WorkFilterTextAdapter { get; set; }
+        public static IYggdrasilAnimAdapter? YggdrasilAnimAdapter { get; set; }
 
 
+        // ReSharper disable once InconsistentNaming
         public static void Postfix(AgentSlot? __instance, AgentState state)
         {
             try
@@ -35,7 +36,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
                 var commandWindow = CommandWindow.CommandWindow.CurrentWindow;
                 if (commandWindow is not null && commandWindow.IsAbnormalityWorkWindow() && !state.IsUncontrollable())
                 {
-                    var agentWillDie = __instance.CheckIfWorkWillKillAgent(commandWindow, BeastAnimAdapter, AnimAdapter);
+                    var agentWillDie = __instance.CheckIfWorkWillKillAgent(commandWindow, BeastAnimAdapter, YggdrasilAnimAdapter);
 
                     if (agentWillDie)
                     {

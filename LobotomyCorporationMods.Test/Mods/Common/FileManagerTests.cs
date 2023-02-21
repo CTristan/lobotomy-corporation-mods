@@ -67,6 +67,15 @@ namespace LobotomyCorporationMods.Test.Mods.Common
         }
 
         [Fact]
+        public void Throws_exception_when_sent_null_list_of_directories()
+        {
+            // ReSharper disable once NullableWarningSuppressionIsUsed
+            Action action = () => _ = new FileManager(string.Empty, null!);
+
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
         public void Throws_exception_when_unable_to_find_mod_folder()
         {
             Action action = () => _ = new FileManager(string.Empty, GetDirectories());

@@ -13,6 +13,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
     [HarmonyPatch(typeof(UseSkill), "FinishWorkSuccessfully")]
     public static class UseSkillPatchFinishWorkSuccessfully
     {
+        // ReSharper disable once InconsistentNaming
         public static void Prefix(UseSkill? __instance)
         {
             try
@@ -25,13 +26,13 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
                 var equipmentMakeInfo = __instance.GetCreatureEquipmentMakeInfo();
 
                 // If the creature has no gift it returns null
-                if (equipmentMakeInfo?.equipTypeInfo?.Name is null)
+                if (equipmentMakeInfo is null)
                 {
                     return;
                 }
 
                 var giftName = equipmentMakeInfo.equipTypeInfo.Name;
-                var agentId = __instance.agent?.instanceId ?? 0;
+                var agentId = __instance.agent.instanceId;
                 var numberOfSuccesses = __instance.successCount;
 
                 Harmony_Patch.Instance.AgentWorkTracker.IncrementAgentWorkCount(giftName, agentId, numberOfSuccesses);

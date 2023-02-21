@@ -17,7 +17,8 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         ///     Runs after opening the Appearance Window to make sure the IsCustomAppearance field is false, which is used by all
         ///     of the private methods to check for increasing the cost of custom agents.
         /// </summary>
-        public static void Postfix(CustomizingWindow __instance)
+        // ReSharper disable once InconsistentNaming
+        public static void Postfix(CustomizingWindow? __instance)
         {
             try
             {

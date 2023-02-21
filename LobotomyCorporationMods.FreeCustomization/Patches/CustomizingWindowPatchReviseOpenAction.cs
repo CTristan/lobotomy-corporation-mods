@@ -17,7 +17,8 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         /// <summary>
         ///     Runs after opening the Strengthen Agent window to set the appearance data for the customization window.
         /// </summary>
-        public static void Postfix(CustomizingWindow __instance, AgentModel agent)
+        // ReSharper disable once InconsistentNaming
+        public static void Postfix(CustomizingWindow? __instance, AgentModel? agent)
         {
             try
             {
