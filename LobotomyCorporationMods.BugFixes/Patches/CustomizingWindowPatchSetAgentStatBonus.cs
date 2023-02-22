@@ -15,7 +15,7 @@ namespace LobotomyCorporationMods.BugFixes.Patches
     [HarmonyPatch(typeof(CustomizingWindow), "SetAgentStatBonus")]
     public static class CustomizingWindowPatchSetAgentStatBonus
     {
-        public static ICustomizingWindowAdapter? CustomizingWindowAdapter { get; set; }
+        public static ICustomizingWindowAdapter CustomizingWindowAdapter { get; set; } = new CustomizingWindowAdapter();
 
         /// <summary>
         ///     Runs before SetAgentStatBonus to use the original stat levels instead of the modified stat levels.
@@ -31,6 +31,7 @@ namespace LobotomyCorporationMods.BugFixes.Patches
         ///     Actual result: Upgrading the agent's stat Fortitude level used the Level 3 bonus instead of the Level 4 bonus,
         ///     causing the stat level to remain at Level 4.
         /// </summary>
+        // ReSharper disable once InconsistentNaming
         public static bool Prefix(CustomizingWindow? __instance, AgentModel? agent, AgentData? data)
         {
             try
@@ -50,7 +51,7 @@ namespace LobotomyCorporationMods.BugFixes.Patches
                     throw new ArgumentNullException(nameof(data));
                 }
 
-                CustomizingWindowAdapter ??= new CustomizingWindowAdapter(__instance);
+                CustomizingWindowAdapter.GameObject = __instance;
                 agent.primaryStat.hp = CustomizingWindowAdapter.SetRandomStatValue(agent.primaryStat.hp, agent.originFortitudeLevel, data.statBonus.rBonus);
                 agent.primaryStat.mental = CustomizingWindowAdapter.SetRandomStatValue(agent.primaryStat.mental, agent.originPrudenceLevel, data.statBonus.wBonus);
                 agent.primaryStat.work = CustomizingWindowAdapter.SetRandomStatValue(agent.primaryStat.work, agent.originTemperanceLevel, data.statBonus.bBonus);

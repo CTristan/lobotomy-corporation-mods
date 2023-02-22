@@ -3,6 +3,7 @@
 #region
 
 using System.Diagnostics.CodeAnalysis;
+using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 #endregion
@@ -10,23 +11,17 @@ using LobotomyCorporationMods.Common.Interfaces.Adapters;
 namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [ExcludeFromCodeCoverage]
-    public sealed class AgentLayerAdapter : IAgentLayerAdapter
+    [AdapterClass]
+    public sealed class AgentLayerAdapter : Adapter<AgentLayer>, IAgentLayerAdapter
     {
-        private readonly AgentLayer _agentLayer;
-
-        public AgentLayerAdapter(AgentLayer agentLayer)
-        {
-            _agentLayer = agentLayer;
-        }
-
         public void AddAgent(AgentModel model)
         {
-            _agentLayer.AddAgent(model);
+            GameObject.AddAgent(model);
         }
 
         public void RemoveAgent(AgentModel model)
         {
-            _agentLayer.RemoveAgent(model);
+            GameObject.RemoveAgent(model);
         }
     }
 }

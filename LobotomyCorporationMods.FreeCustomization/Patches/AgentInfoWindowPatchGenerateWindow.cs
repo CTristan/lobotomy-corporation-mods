@@ -14,7 +14,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
     [HarmonyPatch(typeof(AgentInfoWindow), "GenerateWindow")]
     public static class AgentInfoWindowPatchGenerateWindow
     {
-        public static ICustomizingWindowAdapter? WindowAdapter { get; set; }
+        public static ICustomizingWindowAdapter Adapter { get; set; } = new CustomizingWindowAdapter();
 
         /// <summary>
         ///     Runs after opening the Agent window to automatically open the appearance window, since there's no reason to hide it
@@ -26,9 +26,9 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
             try
             {
                 var customizingWindow = AgentInfoWindow.currentWindow.customizingWindow;
-                WindowAdapter ??= new CustomizingWindowAdapter(customizingWindow);
 
-                WindowAdapter.OpenAppearanceWindow();
+                Adapter.GameObject = customizingWindow;
+                Adapter.OpenAppearanceWindow();
             }
             catch (Exception ex)
             {

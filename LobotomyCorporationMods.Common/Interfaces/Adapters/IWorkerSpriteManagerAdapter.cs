@@ -8,7 +8,7 @@ using Customizing;
 
 namespace LobotomyCorporationMods.Common.Interfaces.Adapters
 {
-    public interface IWorkerSpriteManagerAdapter
+    public interface IWorkerSpriteManagerAdapter : IAdapter<WorkerSpriteManager>
     {
         void SetAgentBasicData(WorkerSprite.WorkerSprite workerSprite, Appearance appear);
     }

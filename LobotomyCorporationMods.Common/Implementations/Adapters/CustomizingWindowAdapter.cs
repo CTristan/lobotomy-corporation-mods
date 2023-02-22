@@ -4,6 +4,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Customizing;
+using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 #endregion
@@ -11,23 +12,17 @@ using LobotomyCorporationMods.Common.Interfaces.Adapters;
 namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [ExcludeFromCodeCoverage]
-    public sealed class CustomizingWindowAdapter : ICustomizingWindowAdapter
+    [AdapterClass]
+    public sealed class CustomizingWindowAdapter : Adapter<CustomizingWindow>, ICustomizingWindowAdapter
     {
-        private readonly CustomizingWindow _customizingWindow;
-
-        public CustomizingWindowAdapter(CustomizingWindow customizingWindow)
-        {
-            _customizingWindow = customizingWindow;
-        }
-
         public void OpenAppearanceWindow()
         {
-            _customizingWindow.OpenAppearanceWindow();
+            GameObject.OpenAppearanceWindow();
         }
 
         public int SetRandomStatValue(int original, int currentLevel, int bonusLevel)
         {
-            return _customizingWindow.SetRandomStatValue(original, currentLevel, bonusLevel);
+            return GameObject.SetRandomStatValue(original, currentLevel, bonusLevel);
         }
     }
 }

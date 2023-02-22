@@ -3,6 +3,7 @@
 #region
 
 using System.Diagnostics.CodeAnalysis;
+using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 #endregion
@@ -10,18 +11,12 @@ using LobotomyCorporationMods.Common.Interfaces.Adapters;
 namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [ExcludeFromCodeCoverage]
-    public sealed class AngelaConversationUiAdapter : IAngelaConversationUiAdapter
+    [AdapterClass]
+    public sealed class AngelaConversationUiAdapter : Adapter<AngelaConversationUI>, IAngelaConversationUiAdapter
     {
-        private readonly AngelaConversationUI _angelaConversationUI;
-
-        public AngelaConversationUiAdapter(AngelaConversationUI angelaConversationUI)
-        {
-            _angelaConversationUI = angelaConversationUI;
-        }
-
         public void AddMessage(string message)
         {
-            _angelaConversationUI.AddAngelaMessage(message);
+            GameObject.AddAngelaMessage(message);
         }
     }
 }

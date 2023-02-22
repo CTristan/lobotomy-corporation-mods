@@ -18,7 +18,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
         {
             InitializeAgentInfoWindow();
             var mockCustomizingWindowAdapter = new Mock<ICustomizingWindowAdapter>();
-            AgentInfoWindowPatchGenerateWindow.WindowAdapter = mockCustomizingWindowAdapter.Object;
+            AgentInfoWindowPatchGenerateWindow.Adapter = mockCustomizingWindowAdapter.Object;
 
             AgentInfoWindowPatchGenerateWindow.Postfix();
 

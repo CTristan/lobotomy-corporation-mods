@@ -22,14 +22,13 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
             InitializeAgentInfoWindow();
 
             var mockAgentInfoWindowUiComponentsAdapter = new Mock<IAgentInfoWindowUiComponentsAdapter>();
-            AgentInfoWindowPatchEnforcementWindow.InfoWindowUiComponentsAdapter = mockAgentInfoWindowUiComponentsAdapter.Object;
+            AgentInfoWindowPatchEnforcementWindow.UiComponentsAdapter = mockAgentInfoWindowUiComponentsAdapter.Object;
 
             var mockAgentInfoWindowCustomizingWindowAdapter = new Mock<ICustomizingWindowAdapter>();
-            AgentInfoWindowPatchEnforcementWindow.AgentInfoWindowCustomizingWindowAdapter = mockAgentInfoWindowCustomizingWindowAdapter.Object;
+            AgentInfoWindowPatchEnforcementWindow.CustomizingWindowAdapter = mockAgentInfoWindowCustomizingWindowAdapter.Object;
 
             var mockGameObjectAdapter = new Mock<IGameObjectAdapter>();
-            AgentInfoWindowPatchEnforcementWindow.GameObjectAppearanceActiveControlAdapter = mockGameObjectAdapter.Object;
-            AgentInfoWindowPatchEnforcementWindow.GameObjectCustomizingBlockAdapter = mockGameObjectAdapter.Object;
+            AgentInfoWindowPatchEnforcementWindow.GameObjectAdapter = mockGameObjectAdapter.Object;
 
             // Act
             AgentInfoWindowPatchEnforcementWindow.Postfix();

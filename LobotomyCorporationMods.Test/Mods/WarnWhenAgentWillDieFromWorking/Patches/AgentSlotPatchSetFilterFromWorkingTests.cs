@@ -40,7 +40,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             _ = InitializeCommandWindow(creature);
             var agentSlot = TestExtensions.CreateAgentSlot();
             AgentSlotPatchSetFilter.BeastAnimAdapter = new Mock<IBeautyBeastAnimAdapter>().Object;
-            AgentSlotPatchSetFilter.YggdrasilAnimAdapter = new Mock<IYggdrasilAnimAdapter>().Object;
+            AgentSlotPatchSetFilter.GameObjectAdapter = new Mock<IGameObjectAdapter>().Object;
 
             AgentSlotPatchSetFilter.Postfix(agentSlot, AgentState.IDLE);
 
@@ -541,16 +541,14 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             var agent = TestExtensions.CreateAgentModel();
             var agentSlot = TestExtensions.CreateAgentSlot(currentAgent: agent);
 
-            // Mock animation script adapter to avoid Unity errors
+            // Mock game object adapter to avoid Unity errors
             var mockFlower = new Mock<IGameObjectAdapter>();
             mockFlower.Setup(static adapter => adapter.ActiveSelf).Returns(true);
 
-            var mockFlowers = new List<IGameObjectAdapter> { mockFlower.Object, mockFlower.Object, mockFlower.Object, mockFlower.Object };
+            var mockGameAdapter = new Mock<IGameObjectAdapter>();
+            mockGameAdapter.Setup(static adapter => adapter.ActiveSelf).Returns(true);
 
-            var mockAnimAdapter = new Mock<IYggdrasilAnimAdapter>();
-            mockAnimAdapter.Setup(static adapter => adapter.Flowers).Returns(mockFlowers);
-
-            AgentSlotPatchSetFilter.YggdrasilAnimAdapter = mockAnimAdapter.Object;
+            AgentSlotPatchSetFilter.GameObjectAdapter = mockGameAdapter.Object;
 
             // Act
             AgentSlotPatchSetFilter.Postfix(agentSlot, AgentState.IDLE);
@@ -573,16 +571,11 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             var agent = TestExtensions.CreateAgentModel(bufList: buffList);
             var agentSlot = TestExtensions.CreateAgentSlot(currentAgent: agent);
 
-            // Mock animation script adapter to avoid Unity errors
-            var mockFlower = new Mock<IGameObjectAdapter>();
-            mockFlower.Setup(static adapter => adapter.ActiveSelf).Returns(true);
+            // Mock game object adapter to avoid Unity errors
+            var mockGameObjectAdapter = new Mock<IGameObjectAdapter>();
+            mockGameObjectAdapter.Setup(static adapter => adapter.ActiveSelf).Returns(true);
 
-            var mockFlowers = new List<IGameObjectAdapter> { mockFlower.Object, mockFlower.Object, mockFlower.Object, mockFlower.Object };
-
-            var mockAnimAdapter = new Mock<IYggdrasilAnimAdapter>();
-            mockAnimAdapter.Setup(static adapter => adapter.Flowers).Returns(mockFlowers);
-
-            AgentSlotPatchSetFilter.YggdrasilAnimAdapter = mockAnimAdapter.Object;
+            AgentSlotPatchSetFilter.GameObjectAdapter = mockGameObjectAdapter.Object;
 
             // Act
             AgentSlotPatchSetFilter.Postfix(agentSlot, AgentState.IDLE);
@@ -604,17 +597,10 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             var agent = TestExtensions.CreateAgentModel();
             var agentSlot = TestExtensions.CreateAgentSlot(currentAgent: agent);
 
-            // Mock animation script adapter to avoid Unity errors
-            var mockFlowers = new List<IGameObjectAdapter>();
-
-            for (var i = 0; i < numberOfFlowers; i++)
-            {
-                mockFlowers.Add(new Mock<IGameObjectAdapter>().Object);
-            }
-
-            var mockAnimAdapter = new Mock<IYggdrasilAnimAdapter>();
-            mockAnimAdapter.Setup(static adapter => adapter.Flowers).Returns(mockFlowers);
-            AgentSlotPatchSetFilter.YggdrasilAnimAdapter = mockAnimAdapter.Object;
+            // Mock game object adapter to avoid Unity errors
+            var mockGameObjectAdapter = new Mock<IGameObjectAdapter>();
+            mockGameObjectAdapter.Setup(static adapter => adapter.ActiveSelf).Returns(true);
+            AgentSlotPatchSetFilter.GameObjectAdapter = mockGameObjectAdapter.Object;
 
             // Act
             AgentSlotPatchSetFilter.Postfix(agentSlot, AgentState.IDLE);

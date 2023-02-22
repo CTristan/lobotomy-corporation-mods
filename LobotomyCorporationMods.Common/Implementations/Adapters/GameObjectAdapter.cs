@@ -3,6 +3,7 @@
 #region
 
 using System.Diagnostics.CodeAnalysis;
+using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using UnityEngine;
 
@@ -11,20 +12,14 @@ using UnityEngine;
 namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [ExcludeFromCodeCoverage]
-    public class GameObjectAdapter : IGameObjectAdapter
+    [AdapterClass]
+    public class GameObjectAdapter : Adapter<GameObject>, IGameObjectAdapter
     {
-        private readonly GameObject _gameObject;
-
-        public GameObjectAdapter(GameObject gameObject)
-        {
-            _gameObject = gameObject;
-        }
-
-        public bool ActiveSelf => _gameObject.activeSelf;
+        public bool ActiveSelf => GameObject.activeSelf;
 
         public void SetActive(bool value)
         {
-            _gameObject.SetActive(value);
+            GameObject.SetActive(value);
         }
     }
 }

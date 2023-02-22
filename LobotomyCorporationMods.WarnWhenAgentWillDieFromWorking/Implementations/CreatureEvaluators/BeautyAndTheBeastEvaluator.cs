@@ -2,7 +2,6 @@
 
 #region
 
-using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 #endregion
@@ -13,15 +12,17 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
     {
         private readonly IBeautyBeastAnimAdapter _adapter;
 
-        internal BeautyAndTheBeastEvaluator(AgentModel agent, CreatureModel creature, RwbpType skillType, IBeautyBeastAnimAdapter? animationScriptAdapter)
+        internal BeautyAndTheBeastEvaluator(AgentModel agent, CreatureModel creature, RwbpType skillType, IBeautyBeastAnimAdapter animationScriptAdapter)
             : base(agent, creature, skillType)
         {
-            _adapter = animationScriptAdapter ?? new BeautyBeastAnimAdapter(creature.GetAnimScript() as BeautyBeastAnim);
+            _adapter = animationScriptAdapter;
         }
 
         protected override bool WillAgentDieFromThisCreature()
         {
             const int WeakenedState = 1;
+
+            _adapter.GameObject = (BeautyBeastAnim)Creature.GetAnimScript();
             var animationState = _adapter.State;
             var isWeakened = animationState == WeakenedState;
 

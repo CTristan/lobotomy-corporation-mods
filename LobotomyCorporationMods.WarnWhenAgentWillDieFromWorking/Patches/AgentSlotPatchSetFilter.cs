@@ -16,10 +16,10 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
     [HarmonyPatch(typeof(AgentSlot), "SetFilter")]
     public static class AgentSlotPatchSetFilter
     {
-        public static IBeautyBeastAnimAdapter? BeastAnimAdapter { get; set; }
-        public static IImageAdapter? WorkFilterFillAdapter { get; set; }
-        public static ITextAdapter? WorkFilterTextAdapter { get; set; }
-        public static IYggdrasilAnimAdapter? YggdrasilAnimAdapter { get; set; }
+        public static IBeautyBeastAnimAdapter BeastAnimAdapter { get; set; } = new BeautyBeastAnimAdapter();
+        public static IGameObjectAdapter GameObjectAdapter { get; set; } = new GameObjectAdapter();
+        public static IImageAdapter WorkFilterFillAdapter { get; set; } = new ImageAdapter();
+        public static ITextAdapter WorkFilterTextAdapter { get; set; } = new TextAdapter();
 
 
         // ReSharper disable once InconsistentNaming
@@ -36,14 +36,14 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
                 var commandWindow = CommandWindow.CommandWindow.CurrentWindow;
                 if (commandWindow is not null && commandWindow.IsAbnormalityWorkWindow() && !state.IsUncontrollable())
                 {
-                    var agentWillDie = __instance.CheckIfWorkWillKillAgent(commandWindow, BeastAnimAdapter, YggdrasilAnimAdapter);
+                    var agentWillDie = __instance.CheckIfWorkWillKillAgent(commandWindow, BeastAnimAdapter, GameObjectAdapter);
 
                     if (agentWillDie)
                     {
-                        WorkFilterFillAdapter ??= new ImageAdapter(__instance.WorkFilterFill);
+                        WorkFilterFillAdapter.GameObject = __instance.WorkFilterFill;
                         WorkFilterFillAdapter.Color = commandWindow.DeadColor;
 
-                        WorkFilterTextAdapter ??= new TextAdapter(__instance.WorkFilterText);
+                        WorkFilterTextAdapter.GameObject = __instance.WorkFilterText;
                         WorkFilterTextAdapter.Text = LocalizeTextDataModel.instance.GetText("AgentState_Dead");
 
                         __instance.SetColor(commandWindow.DeadColor);

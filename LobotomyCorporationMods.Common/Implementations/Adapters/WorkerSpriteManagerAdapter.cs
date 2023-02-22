@@ -4,6 +4,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Customizing;
+using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 #endregion
@@ -11,18 +12,12 @@ using LobotomyCorporationMods.Common.Interfaces.Adapters;
 namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [ExcludeFromCodeCoverage]
-    public sealed class WorkerSpriteManagerAdapter : IWorkerSpriteManagerAdapter
+    [AdapterClass]
+    public sealed class WorkerSpriteManagerAdapter : Adapter<WorkerSpriteManager>, IWorkerSpriteManagerAdapter
     {
-        private readonly WorkerSpriteManager _manager;
-
-        public WorkerSpriteManagerAdapter(WorkerSpriteManager manager)
-        {
-            _manager = manager;
-        }
-
         public void SetAgentBasicData(WorkerSprite.WorkerSprite workerSprite, Appearance appear)
         {
-            _manager.SetAgentBasicData(workerSprite, appear);
+            GameObject.SetAgentBasicData(workerSprite, appear);
         }
     }
 }

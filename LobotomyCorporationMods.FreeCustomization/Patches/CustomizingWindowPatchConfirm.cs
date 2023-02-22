@@ -16,8 +16,8 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
     [HarmonyPatch(typeof(CustomizingWindow), "Confirm")]
     public static class CustomizingWindowPatchConfirm
     {
-        public static IAgentLayerAdapter? LayerAdapter { get; set; }
-        public static IWorkerSpriteManagerAdapter? SpriteManagerAdapter { get; set; }
+        public static IAgentLayerAdapter LayerAdapter { get; set; } = new AgentLayerAdapter();
+        public static IWorkerSpriteManagerAdapter SpriteManagerAdapter { get; set; } = new WorkerSpriteManagerAdapter();
 
         /// <summary>
         ///     Runs before confirming the Strengthen Employee window to save appearance data.
@@ -41,10 +41,10 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
                 __instance.RenameAgent();
                 __instance.CurrentData.appearance.SetResrouceData();
 
-                SpriteManagerAdapter ??= new WorkerSpriteManagerAdapter(WorkerSpriteManager.instance);
+                SpriteManagerAdapter.GameObject = WorkerSpriteManager.instance;
                 SpriteManagerAdapter.SetAgentBasicData(__instance.CurrentData.appearance.spriteSet, __instance.CurrentData.appearance);
 
-                LayerAdapter ??= new AgentLayerAdapter(AgentLayer.currentLayer);
+                LayerAdapter.GameObject = AgentLayer.currentLayer;
                 __instance.UpdateAgentModel(LayerAdapter);
             }
             catch (Exception ex)

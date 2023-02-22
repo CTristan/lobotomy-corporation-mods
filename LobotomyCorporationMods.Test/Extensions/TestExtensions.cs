@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
+using System.Security;
 using CommandWindow;
 using Customizing;
 using FluentAssertions;
@@ -45,6 +46,11 @@ namespace LobotomyCorporationMods.Test.Extensions
         internal static string InCurrentDirectory(this string fileName)
         {
             return Path.Combine(Directory.GetCurrentDirectory(), fileName);
+        }
+
+        internal static void ShouldThrowUnityException(this Action action, string because = "", params object[] becauseArgs)
+        {
+            action.ShouldThrow<Exception>().Where(static ex => ex is SecurityException || ex is MissingMethodException);
         }
 
         public static void ValidateHarmonyPatch(this MemberInfo patchClass, Type originalClass, string methodName)
@@ -248,9 +254,10 @@ namespace LobotomyCorporationMods.Test.Extensions
             return creatureUnit;
         }
 
-        public static CustomizingWindow CreateCustomizingWindow(AppearanceUI? appearanceUI = null, AgentModel? currentAgent = null, AgentData? currentData = null,
+        public static CustomizingWindow CreateCustomizingWindow(GameObject? appearanceBlock = null, AppearanceUI? appearanceUI = null, AgentModel? currentAgent = null, AgentData? currentData = null,
             CustomizingType currentWindowType = (CustomizingType)1)
         {
+            appearanceBlock ??= CreateGameObject();
             appearanceUI ??= CreateAppearanceUI();
             currentAgent ??= CreateAgentModel();
             currentData ??= CreateAgentData();
@@ -260,7 +267,11 @@ namespace LobotomyCorporationMods.Test.Extensions
             var fields = GetUninitializedObjectFields(customizingWindow.GetType());
             var newValues = new Dictionary<string, object>
             {
-                { "appearanceUI", appearanceUI }, { "_currentAgent", currentAgent }, { "CurrentData", currentData }, { "_currentWindowType", currentWindowType }
+                { "appearanceBlock", appearanceBlock },
+                { "appearanceUI", appearanceUI },
+                { "_currentAgent", currentAgent },
+                { "CurrentData", currentData },
+                { "_currentWindowType", currentWindowType }
             };
             customizingWindow = GetPopulatedUninitializedObject(customizingWindow, fields, newValues);
             newValues.Add("_currentWindow", customizingWindow);

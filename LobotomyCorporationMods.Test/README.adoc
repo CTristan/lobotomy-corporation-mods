@@ -6,63 +6,11 @@ These guidelines will help ensure that our tests remain consistent across enviro
 
 == What Methods to Test
 
-We will only directly test the patch method itself, and through that the extension methods will be tested as they are used by the patch methods.
+The entry points themselves should be as simple as possible with no logic.
+They should only get the necessary objects and pass them to a single extension method, all wrapped in a try/catch that logs any exceptions.
+The only test we use for these entry point methods are that they are correctly marked with the appropriate Harmony attributes.
 
-You may run into a situation where you need to use an adapter class either inside a patch or inside an extension method.
-In those instances, rather than opening a public extension method, we should add a public property to the patch class and set the property to our mock.
-
-Here is a simplified example.
-Suppose you have an extension method that requires an adapter:
-
-[source,c#]
-----
-public static class GameObjectExtensions
-{
-    public static void DoStuff(this GameObject gameObject, IGameObjectAdapter adapter)
-    {
-        gameObject.DoSomethingSafe();
-        adapter.DoSomethingUnsafe();
-    }
-}
-----
-
-Then in the patch class you would create the public property:
-
-[source,c#]
-----
-public static class PatchExample
-{
-    // Use this property to inject an adapter in unit tests
-    public static IGameObjectAdapter GameObjectAdapter { get; set; }
-
-    public static void Prefix(GameObject __instance)
-    {
-        // Check if we have an injected adapter or if we need to create a new one
-        GameObjectAdapter ??= new GameObjectAdapter(__instance);
-        __instance.DoStuff(GameObjectAdapter);
-    }
-}
-----
-
-And then in the unit test:
-
-[source,c#]
-----
-public class PatchExampleTests
-{
-    public void Test()
-    {
-        var gameObject = TestExtensions.CreateGameObject();
-        // Create and inject our mock adapter into the public property
-        var mockAdapter = new Mock<IGameObjectAdapter>();
-        PatchExample.GameObjectAdapter = mockAdapter.Object;
-
-        PatchExample.Prefix(gameObject);
-
-        mockAdapter.Verify(adapter => adapter.DoSomethingUnsafe(), Times.Once);
-    }
-}
-----
+We will only directly test the main patch method that the entry point uses, and through that any other extension methods will be tested as they are used.
 
 [#adapter-pattern]
 == Adapter Pattern
@@ -71,18 +19,21 @@ We use the Adapter pattern to create wrapper classes to provide an interface for
 The constructor takes in the Unity object we're wrapping and then the class provides a one-to-one set of methods that we need to call.
 
 Adapter methods should be a strict one-to-one method call to the relevant Unity method and not implement any additional logic.
-All logic should be handled by the patch or extension method and only use the adapters to allow for unit testing.
+All logic should be handled by the extension method and only use the adapters to allow for unit testing.
 
 These classes all have the ExcludeFromCodeCoverage attribute since we can't test against these classes.
 At best we would just be calling the method and using a try/catch to gracefully exit; at worst we won't be able to cover the method anyway because it accesses a Unity property and prevents us from even calling the wrapper method.
 
 == ExcludeFromCodeCoverage Attribute
 
-ONLY use the ExcludeFromCodeCoverage attribute for Adapter classes.
+ONLY use the ExcludeFromCodeCoverage attribute for Entry Points and Adapter classes.
 Any other classes should be fully testable with complete code coverage.
 The attribute is provided only because of the reality that Unity does not allow us to unit test methods outside of the Unity editor.
 
-For more information, see link:#adapter-pattern[Adapter Pattern].
+Entry Points are the initial Prefix/Postfix methods Harmony uses to load the patches.
+These entry points must not have any logic and are just used to gather the objects needed for the actual method that will run.
+
+For information on Adapter classes, see link:#adapter-pattern[Adapter Pattern].
 
 [#game-objects]
 == Game Objects

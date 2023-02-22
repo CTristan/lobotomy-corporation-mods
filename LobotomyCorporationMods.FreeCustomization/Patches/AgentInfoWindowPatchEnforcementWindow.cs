@@ -15,10 +15,9 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
     [HarmonyPatch(typeof(AgentInfoWindow), "EnforcementWindow")]
     public static class AgentInfoWindowPatchEnforcementWindow
     {
-        public static ICustomizingWindowAdapter? AgentInfoWindowCustomizingWindowAdapter { get; set; }
-        public static IGameObjectAdapter? GameObjectAppearanceActiveControlAdapter { get; set; }
-        public static IGameObjectAdapter? GameObjectCustomizingBlockAdapter { get; set; }
-        public static IAgentInfoWindowUiComponentsAdapter? InfoWindowUiComponentsAdapter { get; set; }
+        public static ICustomizingWindowAdapter CustomizingWindowAdapter { get; set; } = new CustomizingWindowAdapter();
+        public static IGameObjectAdapter GameObjectAdapter { get; set; } = new GameObjectAdapter();
+        public static IAgentInfoWindowUiComponentsAdapter UiComponentsAdapter { get; set; } = new AgentInfoWindowUiComponentsAdapter();
 
         /// <summary>
         ///     Runs after opening the Strengthen Agent window to open the appearance window.
@@ -34,17 +33,19 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
                 {
                     var customizingWindow = CustomizingWindow.CurrentWindow;
 
-                    GameObjectCustomizingBlockAdapter ??= new GameObjectAdapter(agentInfoWindow.customizingBlock);
-                    GameObjectCustomizingBlockAdapter.SetActive(true);
+                    // Make sure the customizing block is active so we can customize the agent
+                    GameObjectAdapter.GameObject = agentInfoWindow.customizingBlock;
+                    GameObjectAdapter.SetActive(true);
 
-                    GameObjectAppearanceActiveControlAdapter ??= new GameObjectAdapter(agentInfoWindow.AppearanceActiveControl);
-                    GameObjectAppearanceActiveControlAdapter.SetActive(true);
+                    // Make the appearance control active
+                    GameObjectAdapter.GameObject = agentInfoWindow.AppearanceActiveControl;
+                    GameObjectAdapter.SetActive(true);
 
-                    InfoWindowUiComponentsAdapter ??= new AgentInfoWindowUiComponentsAdapter(agentInfoWindow.UIComponents);
-                    InfoWindowUiComponentsAdapter.SetData(customizingWindow.CurrentData);
+                    UiComponentsAdapter.GameObject = agentInfoWindow.UIComponents;
+                    UiComponentsAdapter.SetData(customizingWindow.CurrentData);
 
-                    AgentInfoWindowCustomizingWindowAdapter ??= new CustomizingWindowAdapter(agentInfoWindow.customizingWindow);
-                    AgentInfoWindowCustomizingWindowAdapter.OpenAppearanceWindow();
+                    CustomizingWindowAdapter.GameObject = agentInfoWindow.customizingWindow;
+                    CustomizingWindowAdapter.OpenAppearanceWindow();
                 }
             }
             catch (Exception ex)

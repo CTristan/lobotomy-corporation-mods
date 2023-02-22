@@ -3,6 +3,7 @@
 #region
 
 using System.Diagnostics.CodeAnalysis;
+using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using UnityEngine.UI;
 
@@ -11,19 +12,13 @@ using UnityEngine.UI;
 namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [ExcludeFromCodeCoverage]
-    public sealed class TextAdapter : ITextAdapter
+    [AdapterClass]
+    public sealed class TextAdapter : Adapter<Text>, ITextAdapter
     {
-        private readonly Text _text;
-
-        public TextAdapter(Text text)
-        {
-            _text = text;
-        }
-
         public string Text
         {
-            get => _text.text;
-            set => _text.text = value;
+            get => GameObject.text;
+            set => GameObject.text = value;
         }
     }
 }

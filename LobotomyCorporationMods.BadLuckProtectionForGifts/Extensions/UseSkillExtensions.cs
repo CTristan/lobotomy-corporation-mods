@@ -6,7 +6,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Extensions
     {
         internal static CreatureEquipmentMakeInfo? GetCreatureEquipmentMakeInfo(this UseSkill instance)
         {
-            var equipmentMakeInfo = instance.targetCreature?.metaInfo?.equipMakeInfos?.Find(static x => x?.equipTypeInfo?.type == EquipmentTypeInfo.EquipmentType.SPECIAL);
+            var equipmentMakeInfo = instance.targetCreature.metaInfo.equipMakeInfos.Find(static x => x.equipTypeInfo.type == EquipmentTypeInfo.EquipmentType.SPECIAL);
 
             return equipmentMakeInfo;
         }

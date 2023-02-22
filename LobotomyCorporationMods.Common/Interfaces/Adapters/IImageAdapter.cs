@@ -3,12 +3,13 @@
 #region
 
 using UnityEngine;
+using UnityEngine.UI;
 
 #endregion
 
 namespace LobotomyCorporationMods.Common.Interfaces.Adapters
 {
-    public interface IImageAdapter
+    public interface IImageAdapter : IAdapter<Image>
     {
         Color Color { get; set; }
     }

@@ -4,6 +4,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Customizing;
+using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 #endregion
@@ -11,18 +12,12 @@ using LobotomyCorporationMods.Common.Interfaces.Adapters;
 namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [ExcludeFromCodeCoverage]
-    public sealed class AgentInfoWindowUiComponentsAdapter : IAgentInfoWindowUiComponentsAdapter
+    [AdapterClass]
+    public sealed class AgentInfoWindowUiComponentsAdapter : Adapter<AgentInfoWindow.UIComponent>, IAgentInfoWindowUiComponentsAdapter
     {
-        private readonly AgentInfoWindow.UIComponent _uiComponent;
-
-        public AgentInfoWindowUiComponentsAdapter(AgentInfoWindow.UIComponent uiComponent)
-        {
-            _uiComponent = uiComponent;
-        }
-
         public void SetData(AgentData agentData)
         {
-            _uiComponent.SetData(agentData);
+            GameObject.SetData(agentData);
         }
     }
 }
