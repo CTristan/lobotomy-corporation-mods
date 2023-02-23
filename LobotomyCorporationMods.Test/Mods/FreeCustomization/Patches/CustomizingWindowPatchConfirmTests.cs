@@ -23,7 +23,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
         public void Changing_random_generated_agent_marks_them_as_custom()
         {
             // Arrange
-            var sut = GetCustomizingWindow();
+            var sut = InitializeCustomizingWindow();
             var agent = TestExtensions.CreateAgentModel();
             agent.iscustom = false;
 
@@ -68,7 +68,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
             var agentData = TestExtensions.CreateAgentData();
             agentData.appearance = expectedAppearance;
 
-            var sut = GetCustomizingWindow();
+            var sut = InitializeCustomizingWindow();
             sut.appearanceUI.copied = agentData;
             sut.CurrentData.appearance = expectedAppearance;
 
@@ -101,7 +101,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
             expectedData.CustomName = expectedName;
             expectedData.agentName = expectedAgentName;
 
-            var sut = GetCustomizingWindow(currentAgent);
+            var sut = InitializeCustomizingWindow(currentAgent);
             sut.CurrentData = expectedData;
 
             var mockAgentLayerAdapter = new Mock<IAgentLayerAdapter>();

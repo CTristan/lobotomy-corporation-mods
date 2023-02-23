@@ -36,9 +36,8 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
             }
         }
 
-        public static void PatchAfterSetFilter(this AgentSlot instance, AgentState state, GameManager currentGameManager, IBeautyBeastAnimAdapter beautyBeastAnimAdapter, IImageAdapter imageAdapter,
-            ITextAdapter textAdapter,
-            IYggdrasilAnimAdapter yggdrasilAnimAdapter)
+        public static void PatchAfterSetFilter(this AgentSlot instance, AgentState state, GameManager? currentGameManager, IBeautyBeastAnimAdapter beautyBeastAnimAdapter, IImageAdapter imageAdapter,
+            ITextAdapter textAdapter, IYggdrasilAnimAdapter yggdrasilAnimAdapter)
         {
             if (instance is null)
             {

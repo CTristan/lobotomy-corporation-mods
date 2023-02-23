@@ -19,17 +19,17 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
             Harmony_Patch.Instance.LoadData(mockLogger.Object);
         }
 
-        protected static AgentInfoWindow GetAgentInfoWindow()
+        protected static AgentInfoWindow InitializeAgentInfoWindow()
         {
             return TestExtensions.CreateAgentInfoWindow();
         }
 
-        protected static CustomizingWindow GetCustomizingWindow()
+        protected static CustomizingWindow InitializeCustomizingWindow()
         {
-            return GetCustomizingWindow(null);
+            return InitializeCustomizingWindow(null);
         }
 
-        protected static CustomizingWindow GetCustomizingWindow(AgentModel? currentAgent)
+        protected static CustomizingWindow InitializeCustomizingWindow(AgentModel? currentAgent)
         {
             // Need a WorkerSpriteManager instance
             InitializeWorkerSpriteManager();

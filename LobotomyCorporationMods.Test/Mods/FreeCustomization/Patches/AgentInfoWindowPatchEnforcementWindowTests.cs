@@ -18,8 +18,8 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
         public void Opening_the_strengthen_employee_window_opens_the_Appearance_UI()
         {
             // Arrange
-            var sut = GetAgentInfoWindow();
-            _ = GetCustomizingWindow();
+            var sut = InitializeAgentInfoWindow();
+            _ = InitializeCustomizingWindow();
 
             var mockCustomizingWindowAdapter = new Mock<ICustomizingWindowAdapter>();
             var mockGameObjectAdapter = new Mock<IGameObjectAdapter>();
