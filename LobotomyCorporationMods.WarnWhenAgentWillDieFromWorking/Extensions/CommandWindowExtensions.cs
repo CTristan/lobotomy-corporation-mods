@@ -54,9 +54,8 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
 
         internal static bool IsAbnormalityWorkWindow(this CommandWindow.CommandWindow commandWindow)
         {
-            var isAbnormalityWorkWindow = commandWindow.CurrentSkill?.rwbpType is not null && commandWindow.CurrentWindowType == CommandType.Management;
-
             // Validation checks to confirm we have everything we need
+            var isAbnormalityWorkWindow = commandWindow.CurrentSkill?.rwbpType is not null && commandWindow.CurrentWindowType == CommandType.Management;
 
             return isAbnormalityWorkWindow;
         }

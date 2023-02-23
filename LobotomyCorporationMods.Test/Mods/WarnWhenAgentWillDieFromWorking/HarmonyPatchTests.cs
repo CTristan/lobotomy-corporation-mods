@@ -11,8 +11,6 @@ using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches;
 using Moq;
 using Xunit;
 
-// ReSharper disable NullableWarningSuppressionIsUsed
-
 #endregion
 
 namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking

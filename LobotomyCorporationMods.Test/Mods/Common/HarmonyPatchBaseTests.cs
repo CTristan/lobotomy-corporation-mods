@@ -12,8 +12,6 @@ using LobotomyCorporationMods.Common.Interfaces;
 using Moq;
 using Xunit;
 
-// ReSharper disable NullableWarningSuppressionIsUsed
-
 #endregion
 
 namespace LobotomyCorporationMods.Test.Mods.Common

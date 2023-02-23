@@ -2,6 +2,7 @@
 
 #region
 
+using System;
 using System.Collections.Generic;
 using CommandWindow;
 using FluentAssertions;
@@ -31,12 +32,24 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
         }
 
         [Fact]
+        public void Does_not_error_if_we_are_not_in_Management_phase()
+        {
+            var creature = TestExtensions.CreateCreatureModel();
+            _ = TestExtensions.CreateCommandWindow(creature, CommandType.Suppress);
+            var agentSlot = TestExtensions.CreateAgentSlot();
+
+            Action action = () =>
+                agentSlot.PatchAfterSetFilter(AgentState.IDLE, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
+
+            action.ShouldNotThrow();
+        }
+
+        [Fact]
         public void No_false_positives()
         {
             var creature = TestExtensions.CreateCreatureModel();
             _ = InitializeCommandWindow(creature);
             var agentSlot = TestExtensions.CreateAgentSlot();
-
 
             agentSlot.PatchAfterSetFilter(AgentState.IDLE, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
 
