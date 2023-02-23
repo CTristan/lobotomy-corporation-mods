@@ -69,6 +69,12 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes
 
             action.ShouldThrow<ArgumentNullException>();
             mockLogger.Verify(static logger => logger.WriteToLog(It.IsAny<ArgumentNullException>()), Times.Once);
+
+            // Verify other arguments throw exception when null
+            action = static () => CustomizingWindowPatchSetAgentStatBonus.Prefix(TestExtensions.CreateCustomizingWindow(), null!, TestExtensions.CreateAgentData());
+            action.ShouldThrow<ArgumentNullException>();
+            action = static () => CustomizingWindowPatchSetAgentStatBonus.Prefix(TestExtensions.CreateCustomizingWindow(), TestExtensions.CreateAgentModel(), null!);
+            action.ShouldThrow<ArgumentNullException>();
         }
     }
 }

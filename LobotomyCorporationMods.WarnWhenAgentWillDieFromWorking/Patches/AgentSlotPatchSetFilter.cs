@@ -43,6 +43,12 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
                 throw new ArgumentNullException(nameof(instance));
             }
 
+            // If we're not in Management phase then we don't need to check anything
+            if (!GameManager.currentGameManager.ManageStarted)
+            {
+                return;
+            }
+
             // Some initial Command Window checks to make sure we're in the right state
             var commandWindow = CommandWindow.CommandWindow.CurrentWindow;
             if (commandWindow is not null && commandWindow.IsAbnormalityWorkWindow() && !state.IsUncontrollable())

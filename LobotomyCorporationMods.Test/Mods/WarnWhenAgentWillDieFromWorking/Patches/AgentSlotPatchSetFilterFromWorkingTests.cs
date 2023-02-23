@@ -29,14 +29,31 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
         {
             _mockImageAdapter.SetupProperty(static adapter => adapter.Color);
             _mockTextAdapter.SetupProperty(static adapter => adapter.Text);
+
+            _ = TestExtensions.CreateGameManager();
+            GameManager.currentGameManager.ManageStarted = true;
+        }
+
+        [Fact]
+        public void Does_not_error_if_command_window_is_not_Management_window()
+        {
+            var creature = TestExtensions.CreateCreatureModel();
+            _ = TestExtensions.CreateCommandWindow(creature, CommandType.Suppress);
+            var agentSlot = TestExtensions.CreateAgentSlot();
+
+            Action action = () =>
+                agentSlot.PatchAfterSetFilter(AgentState.IDLE, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
+
+            action.ShouldNotThrow();
         }
 
         [Fact]
         public void Does_not_error_if_we_are_not_in_Management_phase()
         {
             var creature = TestExtensions.CreateCreatureModel();
-            _ = TestExtensions.CreateCommandWindow(creature, CommandType.Suppress);
+            _ = InitializeCommandWindow(creature);
             var agentSlot = TestExtensions.CreateAgentSlot();
+            GameManager.currentGameManager.ManageStarted = false;
 
             Action action = () =>
                 agentSlot.PatchAfterSetFilter(AgentState.IDLE, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);

@@ -312,6 +312,18 @@ namespace LobotomyCorporationMods.Test.Extensions
             return fairyBuf;
         }
 
+        public static GameManager CreateGameManager()
+        {
+            CreateUninitializedObject<GameManager>(out var gameManager);
+
+            var fields = GetUninitializedObjectFields(gameManager.GetType());
+            var newValues = new Dictionary<string, object>();
+            gameManager = GetPopulatedUninitializedObject(gameManager, fields, newValues);
+            newValues.Add("_currentGameManager", gameManager);
+
+            return GetPopulatedUninitializedObject(gameManager, fields, newValues);
+        }
+
 
         public static GameObject CreateGameObject()
         {

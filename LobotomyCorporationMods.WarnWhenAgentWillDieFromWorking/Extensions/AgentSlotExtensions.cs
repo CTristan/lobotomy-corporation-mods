@@ -14,21 +14,10 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
         internal static bool CheckIfWorkWillKillAgent(this AgentSlot agentSlot, CommandWindow.CommandWindow commandWindow, IBeautyBeastAnimAdapter beautyBeastAnimAdapter,
             IYggdrasilAnimAdapter yggdrasilAnimAdapter)
         {
-            bool willAgentDie;
             var agent = agentSlot.CurrentAgent;
+            var evaluator = commandWindow.GetCreatureEvaluator(agent, beautyBeastAnimAdapter, yggdrasilAnimAdapter);
 
-            if (agent is not null)
-            {
-                var evaluator = commandWindow.GetCreatureEvaluator(agent, beautyBeastAnimAdapter, yggdrasilAnimAdapter);
-
-                willAgentDie = evaluator.WillAgentDie();
-            }
-            else
-            {
-                willAgentDie = false;
-            }
-
-            return willAgentDie;
+            return evaluator.WillAgentDie();
         }
     }
 }

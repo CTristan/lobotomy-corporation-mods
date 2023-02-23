@@ -55,5 +55,66 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes.Patches
             // Assert
             result.Should().BeTrue();
         }
+
+        [Theory]
+        [InlineData((int)EquipmentId.CrumblingArmorGift1, SkillTypeInfo.Amusements)]
+        [InlineData((int)EquipmentId.CrumblingArmorGift1, SkillTypeInfo.Cleanliness)]
+        [InlineData((int)EquipmentId.CrumblingArmorGift1, SkillTypeInfo.Nutrition)]
+        [InlineData((int)EquipmentId.CrumblingArmorGift1, SkillTypeInfo.Violence)]
+        [InlineData((int)EquipmentId.CrumblingArmorGift2, SkillTypeInfo.Amusements)]
+        [InlineData((int)EquipmentId.CrumblingArmorGift2, SkillTypeInfo.Cleanliness)]
+        [InlineData((int)EquipmentId.CrumblingArmorGift2, SkillTypeInfo.Nutrition)]
+        [InlineData((int)EquipmentId.CrumblingArmorGift2, SkillTypeInfo.Violence)]
+        [InlineData((int)EquipmentId.CrumblingArmorGift3, SkillTypeInfo.Amusements)]
+        [InlineData((int)EquipmentId.CrumblingArmorGift3, SkillTypeInfo.Cleanliness)]
+        [InlineData((int)EquipmentId.CrumblingArmorGift3, SkillTypeInfo.Nutrition)]
+        [InlineData((int)EquipmentId.CrumblingArmorGift3, SkillTypeInfo.Violence)]
+        [InlineData((int)EquipmentId.CrumblingArmorGift4, SkillTypeInfo.Amusements)]
+        [InlineData((int)EquipmentId.CrumblingArmorGift4, SkillTypeInfo.Cleanliness)]
+        [InlineData((int)EquipmentId.CrumblingArmorGift4, SkillTypeInfo.Nutrition)]
+        [InlineData((int)EquipmentId.CrumblingArmorGift4, SkillTypeInfo.Violence)]
+        public void Performing_non_attachment_work_with_crumbling_armor_gift_will_not_kill_agent(int giftId, long workTypeId)
+        {
+            // Arrange
+            var notice = NoticeName.OnWorkStart;
+            var skill = TestExtensions.CreateUseSkill();
+            var gift = TestExtensions.CreateEgoGiftModel();
+            gift.metaInfo.id = giftId;
+            var equipment = TestExtensions.CreateUnitEquipSpace();
+            equipment.gifts.addedGifts.Add(gift);
+            skill.agent = TestExtensions.CreateAgentModel(equipment: equipment);
+            skill.skillTypeInfo.id = workTypeId;
+            var param = new object[] { skill.targetCreature };
+
+            // Act
+            var result = ArmorCreaturePatchOnNotice.PatchBeforeOnNotice(notice, param);
+
+            // Assert
+            result.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Skip_if_agent_will_work_on_tool()
+        {
+            // Arrange
+            var notice = NoticeName.OnWorkStart;
+            var param = new object[] { TestExtensions.CreateUnitModel() };
+
+            // Act
+            var result = ArmorCreaturePatchOnNotice.PatchBeforeOnNotice(notice, param);
+
+            // Assert
+            result.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Skip_if_not_starting_work_on_an_abnormality()
+        {
+            var notice = NoticeName.Update;
+
+            var result = ArmorCreaturePatchOnNotice.PatchBeforeOnNotice(notice);
+
+            result.Should().BeTrue();
+        }
     }
 }

@@ -65,7 +65,11 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
             var currentAgent = TestExtensions.CreateAgentModel();
             currentAgent.spriteData = currentAppearance;
 
+            var agentData = TestExtensions.CreateAgentData();
+            agentData.appearance = expectedAppearance;
+
             var sut = GetCustomizingWindow();
+            sut.appearanceUI.copied = agentData;
             sut.CurrentData.appearance = expectedAppearance;
 
             var mockAgentLayerAdapter = new Mock<IAgentLayerAdapter>();

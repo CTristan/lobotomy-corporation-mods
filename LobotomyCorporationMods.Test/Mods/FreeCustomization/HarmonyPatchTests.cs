@@ -147,6 +147,10 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
 
             action.ShouldThrow<ArgumentNullException>();
             mockLogger.Verify(static logger => logger.WriteToLog(It.IsAny<ArgumentNullException>()), Times.Once);
+
+            // Verify other arguments throw an exception if null
+            action = static () => CustomizingWindowPatchReviseOpenAction.Postfix(TestExtensions.CreateCustomizingWindow(), null!);
+            action.ShouldThrow<ArgumentNullException>();
         }
 
         /// <summary>
