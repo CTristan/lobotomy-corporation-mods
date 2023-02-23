@@ -25,7 +25,7 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes.Patches
             var param = new object[] { skill.targetCreature };
 
             // Act
-            var result = ArmorCreaturePatchOnNotice.Prefix(notice, param);
+            var result = ArmorCreaturePatchOnNotice.PatchBeforeOnNotice(notice, param);
 
             // Assert
             result.Should().BeFalse();
@@ -50,7 +50,7 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes.Patches
             var param = new object[] { skill.targetCreature };
 
             // Act
-            var result = ArmorCreaturePatchOnNotice.Prefix(notice, param);
+            var result = ArmorCreaturePatchOnNotice.PatchBeforeOnNotice(notice, param);
 
             // Assert
             result.Should().BeTrue();

@@ -11,8 +11,8 @@ using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
-    [ExcludeFromCodeCoverage]
     [AdapterClass]
+    [ExcludeFromCodeCoverage]
     public sealed class AgentInfoWindowUiComponentsAdapter : Adapter<AgentInfoWindow.UIComponent>, IAgentInfoWindowUiComponentsAdapter
     {
         public void SetData(AgentData agentData)

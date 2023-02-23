@@ -2,6 +2,7 @@
 
 #region
 
+using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Patches;
 using Moq;
 using Xunit;
@@ -15,9 +16,9 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts.Patches
         [Fact]
         public void The_tracker_data_is_saved_when_going_to_the_next_day()
         {
-            var mockAgentWorkTracker = CreateMockAgentWorkTracker();
+            var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
 
-            GameSceneControllerPatchOnClickNextDay.Postfix();
+            GameSceneControllerPatchOnClickNextDay.PatchAfterOnClickNextDay(mockAgentWorkTracker.Object);
 
             mockAgentWorkTracker.Verify(static tracker => tracker.Save(), Times.Once);
         }

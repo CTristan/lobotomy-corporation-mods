@@ -18,13 +18,13 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
         [InlineData("TestAgent")]
         public void Opening_the_strengthen_employee_window_gets_agent_appearance_data(string agentName)
         {
-            var customizingWindow = GetCustomizingWindow();
+            var sut = GetCustomizingWindow();
             var agentModel = TestExtensions.CreateAgentModel();
             agentModel.name = agentName;
 
-            CustomizingWindowPatchReviseOpenAction.Postfix(customizingWindow, agentModel);
+            sut.PatchAfterReviseOpenAction(agentModel);
 
-            customizingWindow.CurrentData.CustomName.Should().Be(agentName);
+            sut.CurrentData.CustomName.Should().Be(agentName);
         }
     }
 }

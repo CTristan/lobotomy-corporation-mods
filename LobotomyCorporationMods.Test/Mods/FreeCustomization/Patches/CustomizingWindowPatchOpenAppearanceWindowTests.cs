@@ -18,12 +18,12 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
         [InlineData(false)]
         public void Opening_the_customize_appearance_window_does_not_increase_the_cost_of_hiring_the_agent(bool isCustomAppearance)
         {
-            var customizingWindow = GetCustomizingWindow();
-            customizingWindow.CurrentData = new AgentData { isCustomAppearance = isCustomAppearance };
+            var sut = GetCustomizingWindow();
+            sut.CurrentData = new AgentData { isCustomAppearance = isCustomAppearance };
 
-            CustomizingWindowPatchOpenAppearanceWindow.Postfix(customizingWindow);
+            sut.PatchAfterOpenAppearanceWindow();
 
-            customizingWindow.CurrentData.isCustomAppearance.Should().BeFalse();
+            sut.CurrentData.isCustomAppearance.Should().BeFalse();
         }
     }
 }

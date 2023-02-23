@@ -12,8 +12,8 @@ using UnityEngine.UI;
 
 namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
-    [ExcludeFromCodeCoverage]
     [AdapterClass]
+    [ExcludeFromCodeCoverage]
     public sealed class ImageAdapter : Adapter<Image>, IImageAdapter
     {
         public Color Color

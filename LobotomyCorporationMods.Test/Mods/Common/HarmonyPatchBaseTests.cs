@@ -12,6 +12,8 @@ using LobotomyCorporationMods.Common.Interfaces;
 using Moq;
 using Xunit;
 
+// ReSharper disable NullableWarningSuppressionIsUsed
+
 #endregion
 
 namespace LobotomyCorporationMods.Test.Mods.Common
@@ -21,11 +23,21 @@ namespace LobotomyCorporationMods.Test.Mods.Common
         private static readonly FakeHarmonyPatch s_fakeHarmonyPatch = new(true);
 
         [Fact]
+        public void Applying_a_Harmony_patch_does_not_error()
+        {
+            var mockLogger = new Mock<ILogger>();
+
+            Action action = () => s_fakeHarmonyPatch.ApplyHarmonyPatch(typeof(HarmonyPatchBase), string.Empty, mockLogger.Object);
+
+            action.ShouldNotThrow();
+        }
+
+        [Fact]
         public void Harmony_patch_exceptions_are_logged()
         {
             var mockLogger = new Mock<ILogger>();
 
-            Action action = () => s_fakeHarmonyPatch.ApplyHarmonyPatch(null, string.Empty, mockLogger.Object);
+            Action action = () => s_fakeHarmonyPatch.ApplyHarmonyPatch(null!, string.Empty, mockLogger.Object);
 
             action.ShouldThrow<ArgumentNullException>();
             mockLogger.Verify(static logger => logger.WriteToLog(It.IsAny<ArgumentNullException>()), Times.Once);
@@ -45,10 +57,7 @@ namespace LobotomyCorporationMods.Test.Mods.Common
         [Fact]
         public void Instantiating_a_duplicate_static_instance_throws_an_exception()
         {
-            Action action = static () =>
-            {
-                _ = new FakeHarmonyPatch(true);
-            };
+            Action action = static () => _ = new FakeHarmonyPatch(true);
 
             action.ShouldThrow<InvalidOperationException>();
         }
@@ -66,7 +75,7 @@ namespace LobotomyCorporationMods.Test.Mods.Common
         {
         }
 
-        internal void ApplyHarmonyPatch(Type? harmonyPatchType, string modFileName, ILogger logger)
+        internal void ApplyHarmonyPatch(Type harmonyPatchType, string modFileName, ILogger logger)
         {
             LoadData(logger);
             Instance.LoadData(logger);

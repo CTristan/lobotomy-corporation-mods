@@ -10,8 +10,8 @@ using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
-    [ExcludeFromCodeCoverage]
     [AdapterClass]
+    [ExcludeFromCodeCoverage]
     public sealed class AngelaConversationUiAdapter : Adapter<AngelaConversationUI>, IAngelaConversationUiAdapter
     {
         public void AddMessage(string message)

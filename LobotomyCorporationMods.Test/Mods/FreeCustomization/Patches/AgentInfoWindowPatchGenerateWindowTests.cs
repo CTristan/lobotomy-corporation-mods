@@ -16,11 +16,10 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
         [Fact]
         public void Opening_the_agent_window_automatically_opens_the_appearance_window()
         {
-            InitializeAgentInfoWindow();
+            var agentInfoWindow = GetAgentInfoWindow();
             var mockCustomizingWindowAdapter = new Mock<ICustomizingWindowAdapter>();
-            AgentInfoWindowPatchGenerateWindow.Adapter = mockCustomizingWindowAdapter.Object;
 
-            AgentInfoWindowPatchGenerateWindow.Postfix();
+            agentInfoWindow.PatchAfterGenerateWindow(mockCustomizingWindowAdapter.Object);
 
             mockCustomizingWindowAdapter.Verify(static adapter => adapter.OpenAppearanceWindow(), Times.Once);
         }

@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
-using System.Security;
 using CommandWindow;
 using Customizing;
 using FluentAssertions;
@@ -46,11 +45,6 @@ namespace LobotomyCorporationMods.Test.Extensions
         internal static string InCurrentDirectory(this string fileName)
         {
             return Path.Combine(Directory.GetCurrentDirectory(), fileName);
-        }
-
-        internal static void ShouldThrowUnityException(this Action action, string because = "", params object[] becauseArgs)
-        {
-            action.ShouldThrow<Exception>().Where(static ex => ex is SecurityException || ex is MissingMethodException);
         }
 
         public static void ValidateHarmonyPatch(this MemberInfo patchClass, Type originalClass, string methodName)
@@ -507,11 +501,6 @@ namespace LobotomyCorporationMods.Test.Extensions
 
             while (type != typeof(object))
             {
-                if (type is null)
-                {
-                    continue;
-                }
-
                 var typeFields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Static);
                 fields.AddRange(typeFields.GetValidFields());
 

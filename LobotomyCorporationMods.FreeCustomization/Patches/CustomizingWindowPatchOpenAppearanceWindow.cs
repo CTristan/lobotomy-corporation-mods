@@ -3,8 +3,10 @@
 #region
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
+using LobotomyCorporationMods.Common.Attributes;
 
 #endregion
 
@@ -17,17 +19,14 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         ///     Runs after opening the Appearance Window to make sure the IsCustomAppearance field is false, which is used by all
         ///     of the private methods to check for increasing the cost of custom agents.
         /// </summary>
-        // ReSharper disable once InconsistentNaming
-        public static void Postfix(CustomizingWindow? __instance)
+        // ReSharper disable InconsistentNaming
+        [EntryPoint]
+        [ExcludeFromCodeCoverage]
+        public static void Postfix(CustomizingWindow __instance)
         {
             try
             {
-                if (__instance is null)
-                {
-                    throw new ArgumentNullException(nameof(__instance));
-                }
-
-                __instance.CurrentData.isCustomAppearance = false;
+                __instance.PatchAfterOpenAppearanceWindow();
             }
             catch (Exception ex)
             {
@@ -35,6 +34,16 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
 
                 throw;
             }
+        }
+
+        public static void PatchAfterOpenAppearanceWindow(this CustomizingWindow instance)
+        {
+            if (instance is null)
+            {
+                throw new ArgumentNullException(nameof(instance));
+            }
+
+            instance.CurrentData.isCustomAppearance = false;
         }
     }
 }

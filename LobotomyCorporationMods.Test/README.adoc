@@ -8,7 +8,7 @@ These guidelines will help ensure that our tests remain consistent across enviro
 
 The entry points themselves should be as simple as possible with no logic.
 They should only get the necessary objects and pass them to a single extension method, all wrapped in a try/catch that logs any exceptions.
-The only test we use for these entry point methods are that they are correctly marked with the appropriate Harmony attributes.
+The only tests we use for these entry point methods are that they are correctly marked with the appropriate Harmony attributes and that any exceptions are logged.
 
 We will only directly test the main patch method that the entry point uses, and through that any other extension methods will be tested as they are used.
 
@@ -32,6 +32,7 @@ The attribute is provided only because of the reality that Unity does not allow 
 
 Entry Points are the initial Prefix/Postfix methods Harmony uses to load the patches.
 These entry points must not have any logic and are just used to gather the objects needed for the actual method that will run.
+Even though we are excluding code coverage, we still need to write two tests for each entry point: that it's patched correctly for Harmony and that it logs exceptions.
 
 For information on Adapter classes, see link:#adapter-pattern[Adapter Pattern].
 

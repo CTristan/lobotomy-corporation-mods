@@ -19,26 +19,22 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
 {
     public sealed class CustomizingWindowPatchConfirmTests : FreeCustomizationTests
     {
-        public CustomizingWindowPatchConfirmTests()
-        {
-            CustomizingWindowPatchConfirm.SpriteManagerAdapter = new Mock<IWorkerSpriteManagerAdapter>().Object;
-            CustomizingWindowPatchConfirm.LayerAdapter = new Mock<IAgentLayerAdapter>().Object;
-        }
-
         [Fact]
         public void Changing_random_generated_agent_marks_them_as_custom()
         {
             // Arrange
+            var sut = GetCustomizingWindow();
             var agent = TestExtensions.CreateAgentModel();
             agent.iscustom = false;
 
-            var customizingWindow = GetCustomizingWindow();
+            var mockAgentLayerAdapter = new Mock<IAgentLayerAdapter>();
+            var mockWorkerSpriteManager = new Mock<IWorkerSpriteManagerAdapter>();
 
             // Act
-            CustomizingWindowPatchConfirm.Prefix(customizingWindow);
+            sut.PatchAfterConfirm(mockAgentLayerAdapter.Object, mockWorkerSpriteManager.Object);
 
             // Assert
-            customizingWindow.CurrentAgent.iscustom.Should().Be(true);
+            sut.CurrentAgent.iscustom.Should().Be(true);
         }
 
         [Fact]
@@ -69,16 +65,19 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
             var currentAgent = TestExtensions.CreateAgentModel();
             currentAgent.spriteData = currentAppearance;
 
-            var customizingWindow = GetCustomizingWindow();
-            customizingWindow.CurrentData.appearance = expectedAppearance;
+            var sut = GetCustomizingWindow();
+            sut.CurrentData.appearance = expectedAppearance;
+
+            var mockAgentLayerAdapter = new Mock<IAgentLayerAdapter>();
+            var mockWorkerSpriteManager = new Mock<IWorkerSpriteManagerAdapter>();
 
             // Act
-            CustomizingWindowPatchConfirm.Prefix(customizingWindow);
+            sut.PatchAfterConfirm(mockAgentLayerAdapter.Object, mockWorkerSpriteManager.Object);
 
             // Assert
-            customizingWindow.CurrentAgent.spriteData.ShouldBeEquivalentTo(expectedAppearance.spriteSet);
-            customizingWindow.CurrentAgent.spriteData.BattleEyeBrow.GetHashCode().ShouldBeEquivalentTo(expectedSprite.GetHashCode());
-            customizingWindow.CurrentAgent.spriteData.HairColor.Should().Be(expectedColor);
+            sut.CurrentAgent.spriteData.ShouldBeEquivalentTo(expectedAppearance.spriteSet);
+            sut.CurrentAgent.spriteData.BattleEyeBrow.GetHashCode().ShouldBeEquivalentTo(expectedSprite.GetHashCode());
+            sut.CurrentAgent.spriteData.HairColor.Should().Be(expectedColor);
         }
 
         [Theory]
@@ -98,16 +97,19 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
             expectedData.CustomName = expectedName;
             expectedData.agentName = expectedAgentName;
 
-            var customizingWindow = GetCustomizingWindow(currentAgent);
-            customizingWindow.CurrentData = expectedData;
+            var sut = GetCustomizingWindow(currentAgent);
+            sut.CurrentData = expectedData;
+
+            var mockAgentLayerAdapter = new Mock<IAgentLayerAdapter>();
+            var mockWorkerSpriteManager = new Mock<IWorkerSpriteManagerAdapter>();
 
             // Act
-            CustomizingWindowPatchConfirm.Prefix(customizingWindow);
+            sut.PatchAfterConfirm(mockAgentLayerAdapter.Object, mockWorkerSpriteManager.Object);
 
             // Assert
-            customizingWindow.CurrentAgent.name.Should().Be(expectedName);
-            customizingWindow.CurrentAgent._agentName.metaInfo.nameDic.Should().ContainValue(expectedName);
-            customizingWindow.CurrentAgent._agentName.nameDic.Should().ContainValue(expectedName);
+            sut.CurrentAgent.name.Should().Be(expectedName);
+            sut.CurrentAgent._agentName.metaInfo.nameDic.Should().ContainValue(expectedName);
+            sut.CurrentAgent._agentName.nameDic.Should().ContainValue(expectedName);
         }
     }
 }

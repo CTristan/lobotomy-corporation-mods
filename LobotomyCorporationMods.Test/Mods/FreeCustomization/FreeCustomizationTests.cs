@@ -19,6 +19,11 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
             Harmony_Patch.Instance.LoadData(mockLogger.Object);
         }
 
+        protected static AgentInfoWindow GetAgentInfoWindow()
+        {
+            return TestExtensions.CreateAgentInfoWindow();
+        }
+
         protected static CustomizingWindow GetCustomizingWindow()
         {
             return GetCustomizingWindow(null);
@@ -30,11 +35,6 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
             InitializeWorkerSpriteManager();
 
             return TestExtensions.CreateCustomizingWindow(currentAgent: currentAgent);
-        }
-
-        protected static void InitializeAgentInfoWindow()
-        {
-            _ = TestExtensions.CreateAgentInfoWindow();
         }
 
         private static void InitializeWorkerSpriteManager()

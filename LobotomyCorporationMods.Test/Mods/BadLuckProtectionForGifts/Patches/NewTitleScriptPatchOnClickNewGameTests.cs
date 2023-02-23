@@ -2,6 +2,7 @@
 
 #region
 
+using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Patches;
 using Moq;
 using Xunit;
@@ -15,9 +16,9 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts.Patches
         [Fact]
         public void Starting_a_new_game_resets_the_tracker()
         {
-            var mockAgentWorkTracker = CreateMockAgentWorkTracker();
+            var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
 
-            NewTitleScriptPatchOnClickNewGame.Postfix();
+            NewTitleScriptPatchOnClickNewGame.PatchAfterOnClickNewGame(mockAgentWorkTracker.Object);
 
             mockAgentWorkTracker.Verify(static tracker => tracker.Reset(), Times.Once);
         }

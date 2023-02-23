@@ -10,6 +10,8 @@ using LobotomyCorporationMods.Test.Extensions;
 using Moq;
 using Xunit;
 
+// ReSharper disable NullableWarningSuppressionIsUsed
+
 #endregion
 
 namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
@@ -43,7 +45,7 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
             Harmony_Patch.Instance.LoadData(mockLogger.Object);
             var result = 0f;
 
-            Action action = () => CreatureEquipmentMakeInfoPatchGetProb.Postfix(null, ref result);
+            Action action = () => CreatureEquipmentMakeInfoPatchGetProb.Postfix(null!, ref result);
 
             action.ShouldThrow<ArgumentNullException>();
             mockLogger.Verify(static logger => logger.WriteToLog(It.IsAny<ArgumentNullException>()), Times.Once);
@@ -131,7 +133,7 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.LoadData(mockLogger.Object);
 
-            Action action = static () => UseSkillPatchFinishWorkSuccessfully.Prefix(null);
+            Action action = static () => UseSkillPatchFinishWorkSuccessfully.Postfix(null!);
 
             action.ShouldThrow<ArgumentNullException>();
             mockLogger.Verify(static logger => logger.WriteToLog(It.IsAny<ArgumentNullException>()), Times.Once);

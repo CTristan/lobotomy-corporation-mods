@@ -5,6 +5,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
+using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.Common.Attributes;
 
 #endregion
@@ -14,19 +15,24 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
     [HarmonyPatch(typeof(CreatureEquipmentMakeInfo), "GetProb")]
     public static class CreatureEquipmentMakeInfoPatchGetProb
     {
-        public static float PatchedGetProb(this CreatureEquipmentMakeInfo creatureEquipmentMakeInfo, float probability)
+        public static float PatchAfterGetProb(this CreatureEquipmentMakeInfo instance, float probability, IAgentWorkTracker agentWorkTracker)
         {
-            if (creatureEquipmentMakeInfo is null)
+            if (instance is null)
             {
-                throw new ArgumentNullException(nameof(creatureEquipmentMakeInfo));
+                throw new ArgumentNullException(nameof(instance));
             }
 
-            var giftName = creatureEquipmentMakeInfo.equipTypeInfo?.Name;
+            if (agentWorkTracker is null)
+            {
+                throw new ArgumentNullException(nameof(agentWorkTracker));
+            }
+
+            var giftName = instance.equipTypeInfo?.Name;
 
             // If creature has no gift then giftName will be null
             if (giftName is not null)
             {
-                var probabilityBonus = Harmony_Patch.Instance.AgentWorkTracker.GetLastAgentWorkCountByGift(giftName) / 100f;
+                var probabilityBonus = agentWorkTracker.GetLastAgentWorkCountByGift(giftName) / 100f;
                 probability += probabilityBonus;
 
                 // Prevent potential overflow issues
@@ -37,20 +43,14 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             }
 
             return probability;
-        }
-
-        [ExcludeFromCodeCoverage]
+        } // ReSharper disable InconsistentNaming
         [EntryPoint]
-        public static void Postfix(CreatureEquipmentMakeInfo? __instance, ref float __result)
+        [ExcludeFromCodeCoverage]
+        public static void Postfix(CreatureEquipmentMakeInfo __instance, ref float __result)
         {
             try
             {
-                if (__instance is null)
-                {
-                    throw new ArgumentNullException(nameof(__instance));
-                }
-
-                __result = __instance.PatchedGetProb(__result);
+                __result = __instance.PatchAfterGetProb(__result, Harmony_Patch.Instance.AgentWorkTracker);
             }
             catch (Exception ex)
             {

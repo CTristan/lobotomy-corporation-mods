@@ -11,8 +11,8 @@ using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
-    [ExcludeFromCodeCoverage]
     [AdapterClass]
+    [ExcludeFromCodeCoverage]
     public sealed class WorkerSpriteManagerAdapter : Adapter<WorkerSpriteManager>, IWorkerSpriteManagerAdapter
     {
         public void SetAgentBasicData(WorkerSprite.WorkerSprite workerSprite, Appearance appear)

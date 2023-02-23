@@ -3,7 +3,9 @@
 #region
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Harmony;
+using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Extensions;
 
 #endregion
@@ -13,6 +15,37 @@ namespace LobotomyCorporationMods.BugFixes.Patches
     [HarmonyPatch(typeof(ArmorCreature), "OnNotice")]
     public static class ArmorCreaturePatchOnNotice
     {
+        public static bool PatchBeforeOnNotice(string notice, params object[] param)
+        {
+            if (param is null)
+            {
+                throw new ArgumentNullException(nameof(param));
+            }
+
+            if (notice != NoticeName.OnWorkStart)
+            {
+                return true;
+            }
+
+            // If we're working on a tool or other non-creature then we don't need to verify
+            if (param[0] is not CreatureModel creatureModel)
+            {
+                return true;
+            }
+
+            // We only care if we're doing Attachment work
+            var skillId = creatureModel.currentSkill.skillTypeInfo.id;
+            if (skillId != SkillTypeInfo.Consensus)
+            {
+                return true;
+            }
+
+            var agent = creatureModel.currentSkill.agent;
+
+            // If the agent doesn't actually have Crumbling Armor's gift then we won't continue.
+            return agent.HasCrumblingArmor();
+        }
+
         /// <summary>
         ///     Bug Fixed: When an agent that started the day with Crumbling Armor's gift but later replaced the gift with another
         ///     one, they would still die when performing an Attachment work.
@@ -28,40 +61,13 @@ namespace LobotomyCorporationMods.BugFixes.Patches
         ///     perform Attachment work. This fix will force the trigger to check if the agent actually has the gift, and if they
         ///     do then we stop the armor from checking its private list for the agent.
         /// </summary>
-        /// <param name="notice"></param>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        public static bool Prefix(string notice, params object[]? param)
+        [EntryPoint]
+        [ExcludeFromCodeCoverage]
+        public static bool Prefix(string notice, params object[] param)
         {
             try
             {
-                if (param is null)
-                {
-                    throw new ArgumentNullException(nameof(param));
-                }
-
-                if (notice != NoticeName.OnWorkStart)
-                {
-                    return true;
-                }
-
-                // If we're working on a tool or other non-creature then we don't need to verify
-                if (param[0] is not CreatureModel creatureModel)
-                {
-                    return true;
-                }
-
-                // We only care if we're doing Attachment work
-                var skillId = creatureModel.currentSkill.skillTypeInfo.id;
-                if (skillId != SkillTypeInfo.Consensus)
-                {
-                    return true;
-                }
-
-                var agent = creatureModel.currentSkill.agent;
-
-                // If the agent doesn't actually have Crumbling Armor's gift then we won't continue.
-                return agent.HasCrumblingArmor();
+                return PatchBeforeOnNotice(notice, param);
             }
             catch (Exception ex)
             {

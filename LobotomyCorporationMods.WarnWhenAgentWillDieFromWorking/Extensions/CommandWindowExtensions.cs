@@ -16,7 +16,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
     internal static class CommandWindowExtensions
     {
         internal static ICreatureEvaluator GetCreatureEvaluator(this CommandWindow.CommandWindow commandWindow, AgentModel agent, IBeautyBeastAnimAdapter beautyBeastAnimAdapter,
-            IGameObjectAdapter gameObjectAdapter)
+            IYggdrasilAnimAdapter yggdrasilAnimAdapter)
         {
             ICreatureEvaluator evaluator;
 
@@ -34,7 +34,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
                     { CreatureIds.CrumblingArmor, new CrumblingArmorEvaluator(agent, creature, skillType) },
                     { CreatureIds.HappyTeddyBear, new HappyTeddyBearEvaluator(agent, creature, skillType) },
                     { CreatureIds.NothingThere, new NothingThereEvaluator(agent, creature, skillType) },
-                    { CreatureIds.ParasiteTree, new ParasiteTreeEvaluator(agent, creature, skillType, gameObjectAdapter) },
+                    { CreatureIds.ParasiteTree, new ParasiteTreeEvaluator(agent, creature, skillType, yggdrasilAnimAdapter) },
                     { CreatureIds.RedShoes, new RedShoesEvaluator(agent, creature, skillType) },
                     { CreatureIds.SingingMachine, new SingingMachineEvaluator(agent, creature, skillType) },
                     { CreatureIds.SpiderBud, new SpiderBudEvaluator(agent, creature, skillType) },

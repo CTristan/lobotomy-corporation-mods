@@ -11,8 +11,8 @@ using UnityEngine.UI;
 
 namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
-    [ExcludeFromCodeCoverage]
     [AdapterClass]
+    [ExcludeFromCodeCoverage]
     public sealed class TextAdapter : Adapter<Text>, ITextAdapter
     {
         public string Text

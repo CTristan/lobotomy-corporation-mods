@@ -11,8 +11,8 @@ using UnityEngine;
 
 namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
-    [ExcludeFromCodeCoverage]
     [AdapterClass]
+    [ExcludeFromCodeCoverage]
     public class GameObjectAdapter : Adapter<GameObject>, IGameObjectAdapter
     {
         public bool ActiveSelf => GameObject.activeSelf;

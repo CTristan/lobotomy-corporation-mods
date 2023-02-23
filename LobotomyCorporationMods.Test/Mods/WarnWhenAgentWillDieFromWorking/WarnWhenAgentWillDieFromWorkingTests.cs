@@ -2,7 +2,6 @@
 
 #region
 
-using System;
 using System.Collections.Generic;
 using LobotomyCorporationMods.Common.Enums;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
@@ -32,18 +31,8 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
 
         protected Color DeadAgentColor { get; } = Color.red;
 
-        protected bool AgentWillDie(IImageAdapter workFilterFill, ITextAdapter workFilterText)
+        internal bool AgentWillDie(IImageAdapter workFilterFill, ITextAdapter workFilterText)
         {
-            if (workFilterFill is null)
-            {
-                throw new ArgumentNullException(nameof(workFilterFill));
-            }
-
-            if (workFilterText is null)
-            {
-                throw new ArgumentNullException(nameof(workFilterText));
-            }
-
             var agentWillDie = workFilterFill.Color == DeadAgentColor && workFilterText.Text == DeadAgentString;
 
             return agentWillDie;

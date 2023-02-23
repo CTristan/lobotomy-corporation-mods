@@ -7,10 +7,11 @@ using Customizing;
 using FluentAssertions;
 using LobotomyCorporationMods.BugFixes;
 using LobotomyCorporationMods.BugFixes.Patches;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.Test.Extensions;
 using Moq;
 using Xunit;
+
+// ReSharper disable NullableWarningSuppressionIsUsed
 
 #endregion
 
@@ -44,7 +45,7 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.LoadData(mockLogger.Object);
 
-            Action action = static () => ArmorCreaturePatchOnNotice.Prefix(string.Empty, null);
+            Action action = static () => ArmorCreaturePatchOnNotice.Prefix(string.Empty, null!);
 
             action.ShouldThrow<ArgumentNullException>();
             mockLogger.Verify(static logger => logger.WriteToLog(It.IsAny<ArgumentNullException>()), Times.Once);
@@ -66,31 +67,10 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.LoadData(mockLogger.Object);
 
-            Action action = static () => CustomizingWindowPatchSetAgentStatBonus.Prefix(null, null, null);
+            Action action = static () => CustomizingWindowPatchSetAgentStatBonus.Prefix(null!, null!, null!);
 
             action.ShouldThrow<ArgumentNullException>();
             mockLogger.Verify(static logger => logger.WriteToLog(It.IsAny<ArgumentNullException>()), Times.Once);
-        }
-
-        /// <summary>
-        ///     We're overriding the method entirely, so we should always return false
-        /// </summary>
-        [Fact]
-        public void Class_CustomizingWindow_Method_SetAgentStatBonus_returns_false()
-        {
-            // Arrange
-            var customizingWindow = TestExtensions.CreateCustomizingWindow();
-            var agentModel = TestExtensions.CreateAgentModel();
-            var agentData = TestExtensions.CreateAgentData();
-
-            var mockCustomizingWindowAdapter = new Mock<ICustomizingWindowAdapter>();
-            CustomizingWindowPatchSetAgentStatBonus.CustomizingWindowAdapter = mockCustomizingWindowAdapter.Object;
-
-            // Act
-            var result = CustomizingWindowPatchSetAgentStatBonus.Prefix(customizingWindow, agentModel, agentData);
-
-            // Assert
-            result.Should().BeFalse();
         }
     }
 }

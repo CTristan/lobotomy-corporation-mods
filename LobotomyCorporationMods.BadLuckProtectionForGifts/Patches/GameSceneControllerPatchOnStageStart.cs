@@ -3,7 +3,10 @@
 #region
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Harmony;
+using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
+using LobotomyCorporationMods.Common.Attributes;
 
 #endregion
 
@@ -12,15 +15,27 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
     [HarmonyPatch(typeof(GameSceneController), "OnStageStart")]
     public static class GameSceneControllerPatchOnStageStart
     {
+        public static void PatchAfterOnStageStart(IAgentWorkTracker agentWorkTracker)
+        {
+            if (agentWorkTracker is null)
+            {
+                throw new ArgumentNullException(nameof(agentWorkTracker));
+            }
+
+            agentWorkTracker.Load();
+        }
+
         /// <summary>
         ///     Runs after the original OnStageStart method to reset our tracker progress. We reset the progress on restart
         ///     because it doesn't make sense that an agent would remember their creature experience if the day is reset.
         /// </summary>
+        [EntryPoint]
+        [ExcludeFromCodeCoverage]
         public static void Postfix()
         {
             try
             {
-                Harmony_Patch.Instance.AgentWorkTracker.Load();
+                PatchAfterOnStageStart(Harmony_Patch.Instance.AgentWorkTracker);
             }
             catch (Exception ex)
             {

@@ -18,25 +18,20 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
         public void Opening_the_strengthen_employee_window_opens_the_Appearance_UI()
         {
             // Arrange
+            var sut = GetAgentInfoWindow();
             _ = GetCustomizingWindow();
-            InitializeAgentInfoWindow();
 
-            var mockAgentInfoWindowUiComponentsAdapter = new Mock<IAgentInfoWindowUiComponentsAdapter>();
-            AgentInfoWindowPatchEnforcementWindow.UiComponentsAdapter = mockAgentInfoWindowUiComponentsAdapter.Object;
-
-            var mockAgentInfoWindowCustomizingWindowAdapter = new Mock<ICustomizingWindowAdapter>();
-            AgentInfoWindowPatchEnforcementWindow.CustomizingWindowAdapter = mockAgentInfoWindowCustomizingWindowAdapter.Object;
-
+            var mockCustomizingWindowAdapter = new Mock<ICustomizingWindowAdapter>();
             var mockGameObjectAdapter = new Mock<IGameObjectAdapter>();
-            AgentInfoWindowPatchEnforcementWindow.GameObjectAdapter = mockGameObjectAdapter.Object;
+            var mockUiComponentsAdapter = new Mock<IAgentInfoWindowUiComponentsAdapter>();
 
             // Act
-            AgentInfoWindowPatchEnforcementWindow.Postfix();
+            sut.PatchAfterEnforcementWindow(mockCustomizingWindowAdapter.Object, mockGameObjectAdapter.Object, mockUiComponentsAdapter.Object);
 
             // Assert
+            mockCustomizingWindowAdapter.Verify(static adapter => adapter.OpenAppearanceWindow(), Times.Once);
             mockGameObjectAdapter.Verify(static adapter => adapter.SetActive(true), Times.Exactly(2));
-            mockAgentInfoWindowCustomizingWindowAdapter.Verify(static adapter => adapter.OpenAppearanceWindow(), Times.Once);
-            mockAgentInfoWindowUiComponentsAdapter.Verify(static adapter => adapter.SetData(It.IsAny<AgentData>()), Times.Once);
+            mockUiComponentsAdapter.Verify(static adapter => adapter.SetData(It.IsAny<AgentData>()), Times.Once);
         }
     }
 }

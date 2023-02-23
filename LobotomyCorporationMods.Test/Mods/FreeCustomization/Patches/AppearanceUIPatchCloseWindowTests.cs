@@ -18,7 +18,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
         {
             var appearanceUi = TestExtensions.CreateAppearanceUI();
 
-            var result = AppearanceUIPatchCloseWindow.Prefix(appearanceUi);
+            var result = appearanceUi.PatchBeforeCloseWindow();
 
             result.Should().BeFalse();
         }

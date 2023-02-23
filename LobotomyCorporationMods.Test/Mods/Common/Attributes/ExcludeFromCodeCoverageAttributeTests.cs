@@ -17,8 +17,6 @@ namespace LobotomyCorporationMods.Test.Mods.Common.Attributes
     public sealed class ExcludeFromCodeCoverageAttributeTests
     {
         private const string ExcludeFromCodeCoverageAttributeTypeName = "System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute";
-        private const string ModsNamespace = "LobotomyCorporationMods.";
-        private static readonly int s_namespaceMinLength = ModsNamespace.Length;
 
         /// <summary>
         ///     Uses reflection to get every mod being referenced by the Tests projects, then iterates through all of the classes
@@ -29,8 +27,7 @@ namespace LobotomyCorporationMods.Test.Mods.Common.Attributes
         public void Verify_that_code_coverage_exclusions_are_only_on_appropriately_attributed_classes_and_methods()
         {
             var currentAssembly = typeof(ExcludeFromCodeCoverageAttributeTests).Assembly;
-            var referencedAssemblies = currentAssembly.GetReferencedAssemblies()
-                .Where(static name => name.Name.Length >= s_namespaceMinLength && name.Name.Substring(0, s_namespaceMinLength) == ModsNamespace);
+            var referencedAssemblies = currentAssembly.GetReferencedAssemblies().Where(static name => IsInModsNamespace(name.Name));
 
             var invalidAttributeFound = AnyModIsIncorrectlyExcludedFromCodeCoverage(referencedAssemblies);
 
@@ -39,13 +36,18 @@ namespace LobotomyCorporationMods.Test.Mods.Common.Attributes
 
         #region Helper Methods
 
+        private static bool IsInModsNamespace(string? name)
+        {
+            const string ModsNamespace = "LobotomyCorporationMods.";
+            var namespaceMinLength = ModsNamespace.Length;
+
+            return name is not null && name.Length >= namespaceMinLength && name.Substring(0, namespaceMinLength) == ModsNamespace;
+        }
+
         private static string AnyModIsIncorrectlyExcludedFromCodeCoverage(IEnumerable<AssemblyName> referencedAssemblies)
         {
             var invalidClasses = referencedAssemblies.Select(static assemblyName => Assembly.Load(assemblyName.Name))
-                .Select(static assembly =>
-                    assembly.GetTypes()
-                        .Where(static type => type.IsClass && type.Namespace is not null && type.Namespace.Length >= s_namespaceMinLength &&
-                                              type.Namespace.Substring(0, s_namespaceMinLength) == ModsNamespace))
+                .Select(static assembly => assembly.GetTypes().Where(static type => type.IsClass && IsInModsNamespace(type.Namespace)))
                 .Select(static classes => AnyClassIsIncorrectlyExcludedFromCodeCoverage(classes))
                 .Where(static className => !string.IsNullOrEmpty(className))
                 .ToList();
@@ -89,6 +91,7 @@ namespace LobotomyCorporationMods.Test.Mods.Common.Attributes
             var attributes = method.GetCustomAttributes(false);
             foreach (var attribute in attributes)
             {
+                // Only Entry Point methods can have code coverage excluded
                 if (attribute.ToString() == ExcludeFromCodeCoverageAttributeTypeName && !attributes.Any(static o => o is EntryPointAttribute))
                 {
                     return method.ToString();

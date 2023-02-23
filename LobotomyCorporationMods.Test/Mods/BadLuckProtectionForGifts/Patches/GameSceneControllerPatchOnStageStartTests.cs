@@ -2,6 +2,7 @@
 
 #region
 
+using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Patches;
 using Moq;
 using Xunit;
@@ -15,9 +16,9 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts.Patches
         [Fact]
         public void Restarting_the_day_reloads_the_saved_data_and_overwrites_the_progress_made_that_day()
         {
-            var mockAgentWorkTracker = CreateMockAgentWorkTracker();
+            var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
 
-            GameSceneControllerPatchOnStageStart.Postfix();
+            GameSceneControllerPatchOnStageStart.PatchAfterOnStageStart(mockAgentWorkTracker.Object);
 
             mockAgentWorkTracker.Verify(static tracker => tracker.Load(), Times.Once);
         }

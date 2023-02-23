@@ -3,8 +3,10 @@
 #region
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
+using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.FreeCustomization.Extensions;
@@ -16,36 +18,50 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
     [HarmonyPatch(typeof(CustomizingWindow), "Confirm")]
     public static class CustomizingWindowPatchConfirm
     {
-        public static IAgentLayerAdapter LayerAdapter { get; set; } = new AgentLayerAdapter();
-        public static IWorkerSpriteManagerAdapter SpriteManagerAdapter { get; set; } = new WorkerSpriteManagerAdapter();
+        public static void PatchAfterConfirm(this CustomizingWindow instance, IAgentLayerAdapter agentLayerAdapter, IWorkerSpriteManagerAdapter workerSpriteManagerAdapter)
+        {
+            if (instance is null)
+            {
+                throw new ArgumentNullException(nameof(instance));
+            }
+
+            if (agentLayerAdapter is null)
+            {
+                throw new ArgumentNullException(nameof(agentLayerAdapter));
+            }
+
+            if (workerSpriteManagerAdapter is null)
+            {
+                throw new ArgumentNullException(nameof(workerSpriteManagerAdapter));
+            }
+
+            if (instance.CurrentWindowType == CustomizingType.GENERATE)
+            {
+                return;
+            }
+
+            instance.SaveAgentAppearance();
+            instance.RenameAgent();
+            instance.CurrentData.appearance.SetResrouceData();
+
+            workerSpriteManagerAdapter.GameObject = WorkerSpriteManager.instance;
+            workerSpriteManagerAdapter.SetAgentBasicData(instance.CurrentData.appearance.spriteSet, instance.CurrentData.appearance);
+
+            agentLayerAdapter.GameObject = AgentLayer.currentLayer;
+            instance.UpdateAgentModel(agentLayerAdapter);
+        }
 
         /// <summary>
-        ///     Runs before confirming the Strengthen Employee window to save appearance data.
+        ///     Runs after confirming the Strengthen Employee window to save appearance data.
         /// </summary>
-        // ReSharper disable once InconsistentNaming
-        public static void Prefix(CustomizingWindow? __instance)
+        // ReSharper disable InconsistentNaming
+        [EntryPoint]
+        [ExcludeFromCodeCoverage]
+        public static void Postfix(CustomizingWindow __instance)
         {
             try
             {
-                if (__instance is null)
-                {
-                    throw new ArgumentNullException(nameof(__instance));
-                }
-
-                if (__instance.CurrentWindowType == CustomizingType.GENERATE)
-                {
-                    return;
-                }
-
-                __instance.SaveAgentAppearance();
-                __instance.RenameAgent();
-                __instance.CurrentData.appearance.SetResrouceData();
-
-                SpriteManagerAdapter.GameObject = WorkerSpriteManager.instance;
-                SpriteManagerAdapter.SetAgentBasicData(__instance.CurrentData.appearance.spriteSet, __instance.CurrentData.appearance);
-
-                LayerAdapter.GameObject = AgentLayer.currentLayer;
-                __instance.UpdateAgentModel(LayerAdapter);
+                __instance.PatchAfterConfirm(new AgentLayerAdapter(), new WorkerSpriteManagerAdapter());
             }
             catch (Exception ex)
             {

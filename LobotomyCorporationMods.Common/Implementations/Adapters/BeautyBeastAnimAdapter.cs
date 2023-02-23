@@ -10,8 +10,8 @@ using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
-    [ExcludeFromCodeCoverage]
     [AdapterClass]
+    [ExcludeFromCodeCoverage]
     public sealed class BeautyBeastAnimAdapter : Adapter<BeautyBeastAnim>, IBeautyBeastAnimAdapter
     {
         public int State => GameObject.GetState();

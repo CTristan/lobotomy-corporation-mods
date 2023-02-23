@@ -51,8 +51,7 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes.Patches
 
 
             // Act
-            CustomizingWindowPatchSetAgentStatBonus.CustomizingWindowAdapter = mockAdapter.Object;
-            CustomizingWindowPatchSetAgentStatBonus.Prefix(customizingWindow, agent, data);
+            customizingWindow.PatchBeforeSetAgentStatBonus(agent, data, mockAdapter.Object);
 
             // Assert
             // Even though our current stat level is way above 1 due to our buff, we should still only send as our original un-buffed level.

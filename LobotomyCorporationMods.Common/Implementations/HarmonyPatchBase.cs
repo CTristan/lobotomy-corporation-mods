@@ -50,7 +50,7 @@ namespace LobotomyCorporationMods.Common.Implementations
         public ILogger Logger { get; private set; } = default!;
 
 
-        protected void ApplyHarmonyPatch(Type? harmonyPatchType, string modFileName)
+        protected void ApplyHarmonyPatch(Type harmonyPatchType, string modFileName)
         {
             try
             {

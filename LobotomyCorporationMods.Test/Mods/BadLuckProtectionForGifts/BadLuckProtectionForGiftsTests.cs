@@ -3,10 +3,7 @@
 #region
 
 using System.Collections.Generic;
-using LobotomyCorporationMods.BadLuckProtectionForGifts;
-using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.Test.Extensions;
-using Moq;
 
 #endregion
 
@@ -18,14 +15,6 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
 
         protected BadLuckProtectionForGiftsTests()
         {
-        }
-
-        protected static Mock<IAgentWorkTracker> CreateMockAgentWorkTracker()
-        {
-            var mockAgentTracker = new Mock<IAgentWorkTracker>();
-            Harmony_Patch.Instance.LoadTracker(mockAgentTracker.Object);
-
-            return mockAgentTracker;
         }
 
         protected static CreatureEquipmentMakeInfo GetCreatureEquipmentMakeInfo(string giftName)
