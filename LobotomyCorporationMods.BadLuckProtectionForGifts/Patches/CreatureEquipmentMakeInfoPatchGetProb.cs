@@ -22,11 +22,6 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
                 throw new ArgumentNullException(nameof(instance));
             }
 
-            if (agentWorkTracker is null)
-            {
-                throw new ArgumentNullException(nameof(agentWorkTracker));
-            }
-
             var giftName = instance.equipTypeInfo?.Name;
 
             // If creature has no gift then giftName will be null

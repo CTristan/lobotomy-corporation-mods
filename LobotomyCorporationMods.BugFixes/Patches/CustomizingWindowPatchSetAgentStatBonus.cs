@@ -29,11 +29,6 @@ namespace LobotomyCorporationMods.BugFixes.Patches
                 throw new ArgumentNullException(nameof(data));
             }
 
-            if (customizingWindowAdapter is null)
-            {
-                throw new ArgumentNullException(nameof(customizingWindowAdapter));
-            }
-
             customizingWindowAdapter.GameObject = instance;
             agent.primaryStat.hp = customizingWindowAdapter.SetRandomStatValue(agent.primaryStat.hp, agent.originFortitudeLevel, data.statBonus.rBonus);
             agent.primaryStat.mental = customizingWindowAdapter.SetRandomStatValue(agent.primaryStat.mental, agent.originPrudenceLevel, data.statBonus.wBonus);

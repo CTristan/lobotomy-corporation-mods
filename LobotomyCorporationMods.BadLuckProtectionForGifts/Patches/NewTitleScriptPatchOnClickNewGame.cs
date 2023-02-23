@@ -17,11 +17,6 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
     {
         public static void PatchAfterOnClickNewGame(IAgentWorkTracker agentWorkTracker)
         {
-            if (agentWorkTracker is null)
-            {
-                throw new ArgumentNullException(nameof(agentWorkTracker));
-            }
-
             agentWorkTracker.Reset();
         }
 

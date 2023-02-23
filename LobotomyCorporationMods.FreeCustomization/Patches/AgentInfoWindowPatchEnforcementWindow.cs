@@ -25,21 +25,6 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
                 throw new ArgumentNullException(nameof(instance));
             }
 
-            if (customizingWindowAdapter is null)
-            {
-                throw new ArgumentNullException(nameof(customizingWindowAdapter));
-            }
-
-            if (gameObjectAdapter is null)
-            {
-                throw new ArgumentNullException(nameof(gameObjectAdapter));
-            }
-
-            if (uiComponentsAdapter is null)
-            {
-                throw new ArgumentNullException(nameof(uiComponentsAdapter));
-            }
-
             if (instance.customizingWindow.CurrentData is not null)
             {
                 var customizingWindow = CustomizingWindow.CurrentWindow;

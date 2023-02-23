@@ -25,21 +25,6 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
                 throw new ArgumentNullException(nameof(instance));
             }
 
-            if (agentLayerAdapter is null)
-            {
-                throw new ArgumentNullException(nameof(agentLayerAdapter));
-            }
-
-            if (workerSpriteManagerAdapter is null)
-            {
-                throw new ArgumentNullException(nameof(workerSpriteManagerAdapter));
-            }
-
-            if (instance.CurrentWindowType == CustomizingType.GENERATE)
-            {
-                return;
-            }
-
             instance.SaveAgentAppearance();
             instance.RenameAgent();
             instance.CurrentData.appearance.SetResrouceData();

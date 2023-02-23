@@ -21,11 +21,6 @@ namespace LobotomyCorporationMods.Common.Implementations
 
         public FileManager(string modFileName, ICollection<DirectoryInfo> directories)
         {
-            if (directories is null)
-            {
-                throw new ArgumentNullException(nameof(directories));
-            }
-
             var directory = directories.FirstOrDefault(directoryInfo => File.Exists(Path.Combine(directoryInfo.FullName, modFileName)));
 
             if (directory is not null)
