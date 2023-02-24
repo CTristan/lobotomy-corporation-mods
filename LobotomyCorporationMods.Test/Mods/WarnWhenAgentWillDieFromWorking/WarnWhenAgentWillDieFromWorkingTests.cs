@@ -3,6 +3,7 @@
 #region
 
 using System.Collections.Generic;
+using System.Linq;
 using LobotomyCorporationMods.Common.Enums;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.Test.Extensions;
@@ -38,19 +39,14 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
             return agentWillDie;
         }
 
-        protected static AgentModel GetAgentWithGift(EquipmentId giftId)
+        protected static AgentModel GetAgentWithGift(EquipmentId giftId, IEnumerable<UnitBuf> unitBuffs)
         {
-            var agent = TestExtensions.CreateAgentModel();
+            var agent = TestExtensions.CreateAgentModel(bufList: unitBuffs.ToList());
             var gift = TestExtensions.CreateEgoGiftModel();
             gift.metaInfo.id = (int)giftId;
             agent.Equipment.gifts.addedGifts.Add(gift);
 
             return agent;
-        }
-
-        protected static CreatureModel GetCreature(CreatureIds creatureId)
-        {
-            return GetCreature(creatureId, 0);
         }
 
         protected static CreatureModel GetCreature(CreatureIds creatureId, int qliphothCounter)
