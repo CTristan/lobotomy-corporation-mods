@@ -20,6 +20,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
 {
     public sealed class AgentSlotPatchSetFilterTests : WarnWhenAgentWillDieFromWorkingTests
     {
+        private const AgentState IdleAgentState = AgentState.IDLE;
         private const RwbpType SkillTypeAttachment = RwbpType.B;
         private const RwbpType SkillTypeInsight = RwbpType.W;
         private const RwbpType SkillTypeRepression = RwbpType.P;
@@ -45,7 +46,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             var agentSlot = TestExtensions.CreateAgentSlot();
 
             Action action = () =>
-                agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
+                agentSlot.PatchAfterSetFilter(IdleAgentState, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
 
             action.ShouldNotThrow();
         }
@@ -59,7 +60,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             _gameManager.ManageStarted = false;
 
             Action action = () =>
-                agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
+                agentSlot.PatchAfterSetFilter(IdleAgentState, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
 
             action.ShouldNotThrow();
         }
@@ -73,32 +74,9 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
 
             // Send a null game manager to indicate this is our first game load
             Action action = () =>
-                agentSlot.PatchAfterSetFilter(AgentState.IDLE, null!, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
+                agentSlot.PatchAfterSetFilter(IdleAgentState, null!, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
 
             action.ShouldNotThrow();
-        }
-
-        [Fact]
-        public void No_false_positives()
-        {
-            _ = InitializeCommandWindow(TestExtensions.CreateCreatureModel());
-            var agentSlot = TestExtensions.CreateAgentSlot();
-
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeFalse();
-        }
-
-        [Fact]
-        public void Tool_does_not_show_if_agent_will_die()
-        {
-            var tool = TestExtensions.CreateUnitModel();
-            _ = InitializeCommandWindow(tool);
-            var agentSlot = TestExtensions.CreateAgentSlot();
-
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeFalse();
         }
 
         #region Helper Methods
@@ -116,6 +94,43 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
 
         #endregion
 
+        [Fact]
+        public void No_false_positives()
+        {
+            _ = InitializeCommandWindow(TestExtensions.CreateCreatureModel());
+            var agentSlot = TestExtensions.CreateAgentSlot();
+
+            VerifyAgentWillNotDie(agentSlot);
+        }
+
+        [Fact]
+        public void Tool_does_not_show_if_agent_will_die()
+        {
+            var tool = TestExtensions.CreateUnitModel();
+            _ = InitializeCommandWindow(tool);
+            var agentSlot = TestExtensions.CreateAgentSlot();
+
+            VerifyAgentWillNotDie(agentSlot);
+        }
+
+        #region Helper Methods
+
+        private void VerifyAgentWillDie(AgentSlot agentSlot)
+        {
+            agentSlot.PatchAfterSetFilter(IdleAgentState, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
+
+            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeTrue();
+        }
+
+        private void VerifyAgentWillNotDie(AgentSlot agentSlot)
+        {
+            agentSlot.PatchAfterSetFilter(IdleAgentState, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
+
+            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeFalse();
+        }
+
+        #endregion
+
         #region Beauty and the Beast Tests
 
         [Fact]
@@ -128,11 +143,8 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             const int NormalState = 0;
             _mockBeautyBeastAnimAdapter.Setup(static adapter => adapter.State).Returns(NormalState);
 
-            // Act
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
             // Assert
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeFalse();
+            VerifyAgentWillNotDie(agentSlot);
         }
 
         [Fact]
@@ -145,11 +157,8 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             const int WeakenedState = 1;
             _mockBeautyBeastAnimAdapter.Setup(static adapter => adapter.State).Returns(WeakenedState);
 
-            // Act
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
             // Assert
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeTrue();
+            VerifyAgentWillDie(agentSlot);
         }
 
         [Theory]
@@ -165,11 +174,8 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             const int WeakenedState = 1;
             _mockBeautyBeastAnimAdapter.Setup(static adapter => adapter.State).Returns(WeakenedState);
 
-            // Act
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
             // Assert
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeFalse();
+            VerifyAgentWillNotDie(agentSlot);
         }
 
         #endregion
@@ -183,9 +189,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             agentSlot.CurrentAgent.primaryStat.hp = StatLevelOne;
             agentSlot.CurrentAgent.primaryStat.work = StatLevelFive;
 
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeTrue();
+            VerifyAgentWillDie(agentSlot);
         }
 
         [Fact]
@@ -195,9 +199,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             agentSlot.CurrentAgent.primaryStat.hp = StatLevelFive;
             agentSlot.CurrentAgent.primaryStat.work = StatLevelOne;
 
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeTrue();
+            VerifyAgentWillDie(agentSlot);
         }
 
         [Theory]
@@ -211,9 +213,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             agentSlot.CurrentAgent.primaryStat.hp = fortitude;
             agentSlot.CurrentAgent.primaryStat.work = StatLevelFive;
 
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeFalse();
+            VerifyAgentWillNotDie(agentSlot);
         }
 
         [Theory]
@@ -227,9 +227,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             agentSlot.CurrentAgent.primaryStat.hp = StatLevelFive;
             agentSlot.CurrentAgent.primaryStat.work = temperance;
 
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeFalse();
+            VerifyAgentWillNotDie(agentSlot);
         }
 
         #endregion
@@ -251,9 +249,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             agentSlot.CurrentAgent.primaryStat.mental = prudence;
             agentSlot.CurrentAgent.primaryStat.work = temperance;
 
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeTrue();
+            VerifyAgentWillDie(agentSlot);
         }
 
         [Theory]
@@ -266,9 +262,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             agentSlot.CurrentAgent.primaryStat.hp = StatLevelFive;
             agentSlot.CurrentAgent.primaryStat.work = temperance;
 
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeTrue();
+            VerifyAgentWillDie(agentSlot);
         }
 
         [Theory]
@@ -280,9 +274,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             agentSlot.CurrentAgent.primaryStat.mental = StatLevelFive;
             agentSlot.CurrentAgent.primaryStat.work = temperance;
 
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeFalse();
+            VerifyAgentWillNotDie(agentSlot);
         }
 
         #endregion
@@ -295,9 +287,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             var agentSlot = InitializeAgentSlot(CreatureIds.CrumblingArmor);
             agentSlot.CurrentAgent.primaryStat.hp = StatLevelOne;
 
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeTrue();
+            VerifyAgentWillDie(agentSlot);
         }
 
         [Theory]
@@ -310,9 +300,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             var agentSlot = InitializeAgentSlot(CreatureIds.CrumblingArmor, giftId: equipmentId, skillType: SkillTypeAttachment);
             agentSlot.CurrentAgent.primaryStat.hp = StatLevelFive;
 
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeTrue();
+            VerifyAgentWillDie(agentSlot);
         }
 
         [Theory]
@@ -325,9 +313,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             var agentSlot = InitializeAgentSlot(CreatureIds.CrumblingArmor);
             agentSlot.CurrentAgent.primaryStat.hp = fortitude;
 
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeFalse();
+            VerifyAgentWillNotDie(agentSlot);
         }
 
         [Theory]
@@ -348,9 +334,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             var agentSlot = InitializeAgentSlot(CreatureIds.CrumblingArmor, giftId: giftId, skillType: skillType);
             agentSlot.CurrentAgent.primaryStat.hp = StatLevelFive;
 
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeFalse();
+            VerifyAgentWillNotDie(agentSlot);
         }
 
         #endregion
@@ -363,9 +347,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             var buffList = new List<UnitBuf> { TestExtensions.CreateFairyBuf() };
             var agentSlot = InitializeAgentSlot(CreatureIds.OneSin, buffList);
 
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeTrue();
+            VerifyAgentWillDie(agentSlot);
         }
 
         [Fact]
@@ -374,9 +356,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             var buffList = new List<UnitBuf> { TestExtensions.CreateFairyBuf() };
             var agentSlot = InitializeAgentSlot(CreatureIds.FairyFestival, buffList);
 
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeFalse();
+            VerifyAgentWillNotDie(agentSlot);
         }
 
         #endregion
@@ -389,9 +369,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             var buffList = new List<UnitBuf> { TestExtensions.CreateLittleWitchBuf() };
             var agentSlot = InitializeAgentSlot(CreatureIds.OneSin, buffList);
 
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeTrue();
+            VerifyAgentWillDie(agentSlot);
         }
 
         [Fact]
@@ -400,9 +378,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             var buffList = new List<UnitBuf> { TestExtensions.CreateLittleWitchBuf() };
             var agentSlot = InitializeAgentSlot(CreatureIds.Laetitia, buffList);
 
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeFalse();
+            VerifyAgentWillNotDie(agentSlot);
         }
 
         #endregion
@@ -415,9 +391,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             var agentSlot = InitializeAgentSlot(CreatureIds.HappyTeddyBear);
             ((CreatureModel)CommandWindow.CommandWindow.CurrentWindow.CurrentTarget).script = new HappyTeddy { lastAgent = agentSlot.CurrentAgent };
 
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeTrue();
+            VerifyAgentWillDie(agentSlot);
         }
 
         [Fact]
@@ -428,9 +402,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             lastAgent.instanceId += 1L;
             ((CreatureModel)CommandWindow.CommandWindow.CurrentWindow.CurrentTarget).script = new HappyTeddy { lastAgent = lastAgent };
 
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeFalse();
+            VerifyAgentWillNotDie(agentSlot);
         }
 
         [Fact]
@@ -439,9 +411,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             var agentSlot = InitializeAgentSlot(CreatureIds.HappyTeddyBear);
             ((CreatureModel)CommandWindow.CommandWindow.CurrentWindow.CurrentTarget).script = new HappyTeddy();
 
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeFalse();
+            VerifyAgentWillNotDie(agentSlot);
         }
 
         #endregion
@@ -457,9 +427,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             var agentSlot = InitializeAgentSlot(CreatureIds.NothingThere);
             agentSlot.CurrentAgent.primaryStat.hp = fortitude;
 
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeTrue();
+            VerifyAgentWillDie(agentSlot);
         }
 
         [Theory]
@@ -470,9 +438,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             var agentSlot = InitializeAgentSlot(CreatureIds.NothingThere);
             agentSlot.CurrentAgent.primaryStat.hp = fortitude;
 
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeFalse();
+            VerifyAgentWillNotDie(agentSlot);
         }
 
         [Fact]
@@ -484,9 +450,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             creature.script = new Nothing();
             ((Nothing)creature.script).copiedWorker = TestExtensions.CreateAgentModel();
 
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeTrue();
+            VerifyAgentWillDie(agentSlot);
         }
 
         [Fact]
@@ -498,9 +462,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             creature.script = new Nothing();
             ((Nothing)creature.script).copiedWorker = null;
 
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeFalse();
+            VerifyAgentWillNotDie(agentSlot);
         }
 
         #endregion
@@ -518,11 +480,8 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
 
             _mockYggdrasilAnimAdapter.Setup(static adapter => adapter.Flowers).Returns(new List<IGameObjectAdapter> { mockFlower.Object, mockFlower.Object, mockFlower.Object, mockFlower.Object });
 
-            // Act
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
             // Assert
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeTrue();
+            VerifyAgentWillDie(agentSlot);
         }
 
         [Fact]
@@ -539,11 +498,8 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
 
             _mockYggdrasilAnimAdapter.Setup(static adapter => adapter.Flowers).Returns(new List<IGameObjectAdapter> { mockFlower.Object, mockFlower.Object, mockFlower.Object, mockFlower.Object });
 
-            // Act
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
             // Assert
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeFalse();
+            VerifyAgentWillNotDie(agentSlot);
         }
 
         [Theory]
@@ -561,11 +517,8 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
 
             _mockYggdrasilAnimAdapter.Setup(static adapter => adapter.Flowers).Returns(new List<IGameObjectAdapter> { mockFlower.Object });
 
-            // Act
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
             // Assert
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeFalse();
+            VerifyAgentWillNotDie(agentSlot);
         }
 
         #endregion
@@ -580,9 +533,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             var agentSlot = InitializeAgentSlot(CreatureIds.RedShoes);
             agentSlot.CurrentAgent.primaryStat.work = temperance;
 
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeTrue();
+            VerifyAgentWillDie(agentSlot);
         }
 
         [Theory]
@@ -594,9 +545,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             var agentSlot = InitializeAgentSlot(CreatureIds.RedShoes);
             agentSlot.CurrentAgent.primaryStat.work = temperance;
 
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeFalse();
+            VerifyAgentWillNotDie(agentSlot);
         }
 
         #endregion
@@ -612,9 +561,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             var agentSlot = InitializeAgentSlot(CreatureIds.SpiderBud, skillType: skillType);
             agentSlot.CurrentAgent.primaryStat.mental = StatLevelOne;
 
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeTrue();
+            VerifyAgentWillDie(agentSlot);
         }
 
         [Theory]
@@ -635,9 +582,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             var agentSlot = InitializeAgentSlot(CreatureIds.SpiderBud, skillType: skillType);
             agentSlot.CurrentAgent.primaryStat.mental = prudence;
 
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeFalse();
+            VerifyAgentWillNotDie(agentSlot);
         }
 
         [Theory]
@@ -650,9 +595,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             var agentSlot = InitializeAgentSlot(CreatureIds.SpiderBud, skillType: SkillTypeInsight);
             agentSlot.CurrentAgent.primaryStat.mental = prudence;
 
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeTrue();
+            VerifyAgentWillDie(agentSlot);
         }
 
         #endregion
@@ -676,9 +619,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             agentSlot.CurrentAgent.primaryStat.hp = fortitude;
             agentSlot.CurrentAgent.primaryStat.work = temperance;
 
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeTrue();
+            VerifyAgentWillDie(agentSlot);
         }
 
         /// <summary>
@@ -717,9 +658,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             agentSlot.CurrentAgent.primaryStat.hp = fortitude;
             agentSlot.CurrentAgent.primaryStat.work = StatLevelThree;
 
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeTrue();
+            VerifyAgentWillDie(agentSlot);
         }
 
         [Theory]
@@ -739,9 +678,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             agentSlot.CurrentAgent.primaryStat.hp = fortitude;
             agentSlot.CurrentAgent.primaryStat.work = temperance;
 
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeFalse();
+            VerifyAgentWillNotDie(agentSlot);
         }
 
         [Theory]
@@ -776,9 +713,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             agentSlot.CurrentAgent.primaryStat.hp = fortitude;
             agentSlot.CurrentAgent.primaryStat.work = temperance;
 
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeTrue();
+            VerifyAgentWillDie(agentSlot);
         }
 
         #endregion
@@ -791,9 +726,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             var agentSlot = InitializeAgentSlot(CreatureIds.VoidDream);
             agentSlot.CurrentAgent.primaryStat.work = StatLevelOne;
 
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeTrue();
+            VerifyAgentWillDie(agentSlot);
         }
 
         [Theory]
@@ -806,9 +739,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             var agentSlot = InitializeAgentSlot(CreatureIds.VoidDream);
             agentSlot.CurrentAgent.primaryStat.work = temperance;
 
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeFalse();
+            VerifyAgentWillNotDie(agentSlot);
         }
 
         #endregion
@@ -820,9 +751,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
         {
             var agentSlot = InitializeAgentSlot(CreatureIds.WarmHeartedWoodsman);
 
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeTrue();
+            VerifyAgentWillDie(agentSlot);
         }
 
         [Fact]
@@ -831,9 +760,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             const int QliphothCounterOne = 1;
             var agentSlot = InitializeAgentSlot(CreatureIds.WarmHeartedWoodsman, qliphothCounter: QliphothCounterOne);
 
-            agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeFalse();
+            VerifyAgentWillNotDie(agentSlot);
         }
 
         #endregion
