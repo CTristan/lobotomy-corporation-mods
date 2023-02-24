@@ -9,6 +9,7 @@ using System.Linq;
 using FluentAssertions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Interfaces;
+using LobotomyCorporationMods.Test.Extensions;
 using Moq;
 using Xunit;
 
@@ -35,10 +36,9 @@ namespace LobotomyCorporationMods.Test.Mods.Common
         {
             var mockLogger = new Mock<ILogger>();
 
-            Action action = () => s_fakeHarmonyPatch.ApplyHarmonyPatch(null!, string.Empty, mockLogger.Object);
+            void Action() => s_fakeHarmonyPatch.ApplyHarmonyPatch(null!, string.Empty, mockLogger.Object);
 
-            action.ShouldThrow<ArgumentNullException>();
-            mockLogger.Verify(static logger => logger.WriteToLog(It.IsAny<ArgumentNullException>()), Times.Once);
+            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
         }
 
         [Fact]

@@ -8,7 +8,6 @@ using FluentAssertions;
 using LobotomyCorporationMods.BugFixes;
 using LobotomyCorporationMods.BugFixes.Patches;
 using LobotomyCorporationMods.Test.Extensions;
-using Moq;
 using Xunit;
 
 #endregion
@@ -43,10 +42,9 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.LoadData(mockLogger.Object);
 
-            Action action = static () => ArmorCreaturePatchOnNotice.Prefix(string.Empty, null!);
+            static void Action() => ArmorCreaturePatchOnNotice.Prefix(string.Empty, null!);
 
-            action.ShouldThrow<ArgumentNullException>();
-            mockLogger.Verify(static logger => logger.WriteToLog(It.IsAny<ArgumentNullException>()), Times.Once);
+            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
         }
 
         [Fact]
@@ -67,14 +65,13 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes
 
             Action action = static () => CustomizingWindowPatchSetAgentStatBonus.Prefix(null!, null!, null!);
 
-            action.ShouldThrow<ArgumentNullException>();
-            mockLogger.Verify(static logger => logger.WriteToLog(It.IsAny<ArgumentNullException>()), Times.Once);
+            mockLogger.VerifyExceptionLogged<ArgumentNullException>(action);
 
             // Verify other arguments throw exception when null
             action = static () => CustomizingWindowPatchSetAgentStatBonus.Prefix(TestExtensions.CreateCustomizingWindow(), null!, TestExtensions.CreateAgentData());
-            action.ShouldThrow<ArgumentNullException>();
+            mockLogger.VerifyExceptionLogged<ArgumentNullException>(action, 2);
             action = static () => CustomizingWindowPatchSetAgentStatBonus.Prefix(TestExtensions.CreateCustomizingWindow(), TestExtensions.CreateAgentModel(), null!);
-            action.ShouldThrow<ArgumentNullException>();
+            mockLogger.VerifyExceptionLogged<ArgumentNullException>(action, 3);
         }
     }
 }

@@ -7,7 +7,6 @@ using FluentAssertions;
 using LobotomyCorporationMods.BadLuckProtectionForGifts;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Patches;
 using LobotomyCorporationMods.Test.Extensions;
-using Moq;
 using Xunit;
 
 #endregion
@@ -43,10 +42,9 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
             Harmony_Patch.Instance.LoadData(mockLogger.Object);
             var result = 0f;
 
-            Action action = () => CreatureEquipmentMakeInfoPatchGetProb.Postfix(null!, ref result);
+            void Action() => CreatureEquipmentMakeInfoPatchGetProb.Postfix(null!, ref result);
 
-            action.ShouldThrow<ArgumentNullException>();
-            mockLogger.Verify(static logger => logger.WriteToLog(It.IsAny<ArgumentNullException>()), Times.Once);
+            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
         }
 
         [Fact]
@@ -67,8 +65,7 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
 
             Action action = GameSceneControllerPatchOnClickNextDay.Postfix;
 
-            action.ShouldThrow<NullReferenceException>();
-            mockLogger.Verify(static logger => logger.WriteToLog(It.IsAny<NullReferenceException>()), Times.Once);
+            mockLogger.VerifyExceptionLogged<NullReferenceException>(action);
         }
 
         [Fact]
@@ -89,8 +86,7 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
 
             Action action = GameSceneControllerPatchOnStageStart.Postfix;
 
-            action.ShouldThrow<NullReferenceException>();
-            mockLogger.Verify(static logger => logger.WriteToLog(It.IsAny<NullReferenceException>()), Times.Once);
+            mockLogger.VerifyExceptionLogged<NullReferenceException>(action);
         }
 
         [Fact]
@@ -111,8 +107,7 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
 
             Action action = NewTitleScriptPatchOnClickNewGame.Postfix;
 
-            action.ShouldThrow<NullReferenceException>();
-            mockLogger.Verify(static logger => logger.WriteToLog(It.IsAny<NullReferenceException>()), Times.Once);
+            mockLogger.VerifyExceptionLogged<NullReferenceException>(action);
         }
 
         [Fact]
@@ -131,10 +126,9 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.LoadData(mockLogger.Object);
 
-            Action action = static () => UseSkillPatchFinishWorkSuccessfully.Postfix(null!);
+            static void Action() => UseSkillPatchFinishWorkSuccessfully.Postfix(null!);
 
-            action.ShouldThrow<ArgumentNullException>();
-            mockLogger.Verify(static logger => logger.WriteToLog(It.IsAny<ArgumentNullException>()), Times.Once);
+            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
         }
     }
 }

@@ -56,6 +56,12 @@ namespace LobotomyCorporationMods.Test.Extensions
             attribute?.info.methodName.Should().Be(methodName);
         }
 
+        internal static void VerifyExceptionLogged<TException>(this Mock<ILogger> mockLogger, Action action, int numberOfTimes = 1) where TException : Exception
+        {
+            action.ShouldThrow<TException>();
+            mockLogger.Verify(static logger => logger.WriteToLog(It.IsAny<TException>()), Times.Exactly(numberOfTimes));
+        }
+
         #region Unity Objects
 
         internal static AgentData CreateAgentData(AgentName? agentName = null, Appearance? appearance = null, StatBonus? statBonus = null)
