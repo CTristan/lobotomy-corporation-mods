@@ -100,6 +100,15 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
 
         #region Helper Methods
 
+        private static void SetupNothingThere(AgentSlot agentSlot, int fortitude, bool isDisguised = false)
+        {
+            agentSlot.CurrentAgent.primaryStat.hp = fortitude;
+
+            var creature = (CreatureModel)CommandWindow.CommandWindow.CurrentWindow.CurrentTarget;
+            creature.script = new Nothing();
+            ((Nothing)creature.script).copiedWorker = isDisguised ? TestExtensions.CreateAgentModel() : null;
+        }
+
         private void SetupParasiteTree(int numberOfFlowers)
         {
             var mockFlower = new Mock<IGameObjectAdapter>();
@@ -439,7 +448,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
         public void NothingThere_Will_Kill_Agent_With_Fortitude_Less_Than_Four(int fortitude)
         {
             var agentSlot = InitializeAgentSlot(CreatureIds.NothingThere);
-            agentSlot.CurrentAgent.primaryStat.hp = fortitude;
+            SetupNothingThere(agentSlot, fortitude);
 
             VerifyAgentWillDie(agentSlot);
         }
@@ -450,7 +459,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
         public void NothingThere_Will_Not_Kill_Agent_With_Fortitude_Greater_Than_Three(int fortitude)
         {
             var agentSlot = InitializeAgentSlot(CreatureIds.NothingThere);
-            agentSlot.CurrentAgent.primaryStat.hp = fortitude;
+            SetupNothingThere(agentSlot, fortitude);
 
             VerifyAgentWillNotDie(agentSlot);
         }
@@ -459,10 +468,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
         public void NothingThere_Will_Kill_Agent_If_Disguised()
         {
             var agentSlot = InitializeAgentSlot(CreatureIds.NothingThere);
-            agentSlot.CurrentAgent.primaryStat.hp = StatLevelFive;
-            var creature = (CreatureModel)CommandWindow.CommandWindow.CurrentWindow.CurrentTarget;
-            creature.script = new Nothing();
-            ((Nothing)creature.script).copiedWorker = TestExtensions.CreateAgentModel();
+            SetupNothingThere(agentSlot, StatLevelFive, true);
 
             VerifyAgentWillDie(agentSlot);
         }
@@ -471,10 +477,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
         public void NothingThere_Will_Not_Kill_Agent_If_Not_Disguised()
         {
             var agentSlot = InitializeAgentSlot(CreatureIds.NothingThere);
-            agentSlot.CurrentAgent.primaryStat.hp = StatLevelFive;
-            var creature = (CreatureModel)CommandWindow.CommandWindow.CurrentWindow.CurrentTarget;
-            creature.script = new Nothing();
-            ((Nothing)creature.script).copiedWorker = null;
+            SetupNothingThere(agentSlot, StatLevelFive);
 
             VerifyAgentWillNotDie(agentSlot);
         }
