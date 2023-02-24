@@ -1,52 +1,67 @@
 // SPDX-License-Identifier: MIT
 
+#region
+
 using System;
-using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Common.Interfaces;
+using LobotomyCorporationMods.Common.Interfaces.Adapters;
+
+#endregion
 
 namespace LobotomyCorporationMods.Common.Implementations
 {
     public sealed class Logger : ILogger
     {
         private const string DefaultLogFileName = "log.txt";
+        private readonly IAngelaConversationUiAdapter _angelaConversationUiAdapter;
         private readonly IFileManager _fileManager;
 
-        public Logger([NotNull] string modFileName) : this(new FileManager(modFileName))
+        public Logger(IFileManager fileManager)
+            : this(fileManager, new AngelaConversationUiAdapter())
         {
         }
 
-        public Logger(IFileManager fileManager)
+        public Logger(IFileManager fileManager, IAngelaConversationUiAdapter angelaConversationUiAdapter)
         {
             _fileManager = fileManager;
+            _angelaConversationUiAdapter = angelaConversationUiAdapter;
+
+#if DEBUG
+            DebugLoggingEnabled = true;
+#endif
         }
+
+        public bool DebugLoggingEnabled { get; set; }
 
         public void WriteToLog(Exception exception)
         {
             WriteToLog(exception, DefaultLogFileName);
         }
 
-        private static void WriteToDebug(string message)
+        private void WriteToDebug(string message)
         {
             Notice.instance.Send(NoticeName.AddSystemLog, message);
-            AngelaConversationUI.instance.AddAngelaMessage(message);
+            _angelaConversationUiAdapter.AddMessage(message);
         }
 
-        private void WriteToLog([NotNull] string message, [NotNull] string logFileName)
+        private void WriteToLog(string message, string logFileName)
         {
             var logFile = _fileManager.GetOrCreateFile(logFileName);
             _fileManager.WriteAllText(logFile, message);
         }
 
-        private void WriteToLog([CanBeNull] Exception exception, [NotNull] string logFileName)
+        private void WriteToLog(Exception? exception, string logFileName)
         {
-            if (exception != null)
+            if (exception is not null)
             {
                 var message = exception.ToString();
                 WriteToLog(message, logFileName);
 
-#if DEBUG
-                WriteToDebug(message);
-#endif
+                if (DebugLoggingEnabled)
+                {
+                    WriteToDebug(message);
+                }
             }
         }
     }

@@ -1,21 +1,42 @@
 // SPDX-License-Identifier: MIT
 
+#region
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
-using JetBrains.Annotations;
-using LobotomyCorporationMods.BugFixes.Extensions;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
+using LobotomyCorporationMods.Common.Attributes;
+using LobotomyCorporationMods.Common.Implementations.Adapters;
+using LobotomyCorporationMods.Common.Interfaces.Adapters;
+
+#endregion
 
 namespace LobotomyCorporationMods.BugFixes.Patches
 {
     [HarmonyPatch(typeof(CustomizingWindow), "SetAgentStatBonus")]
-    [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
-    // ReSharper disable once IdentifierTypo
     public static class CustomizingWindowPatchSetAgentStatBonus
     {
+        public static void PatchBeforeSetAgentStatBonus(this CustomizingWindow instance, AgentModel agent, AgentData data, ICustomizingWindowAdapter customizingWindowAdapter)
+        {
+            if (agent is null)
+            {
+                throw new ArgumentNullException(nameof(agent));
+            }
+
+            if (data is null)
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
+
+            customizingWindowAdapter.GameObject = instance;
+            agent.primaryStat.hp = customizingWindowAdapter.SetRandomStatValue(agent.primaryStat.hp, agent.originFortitudeLevel, data.statBonus.rBonus);
+            agent.primaryStat.mental = customizingWindowAdapter.SetRandomStatValue(agent.primaryStat.mental, agent.originPrudenceLevel, data.statBonus.wBonus);
+            agent.primaryStat.work = customizingWindowAdapter.SetRandomStatValue(agent.primaryStat.work, agent.originTemperanceLevel, data.statBonus.bBonus);
+            agent.primaryStat.battle = customizingWindowAdapter.SetRandomStatValue(agent.primaryStat.battle, agent.originJusticeLevel, data.statBonus.pBonus);
+            agent.UpdateTitle(agent.level);
+        }
+
         /// <summary>
         ///     Runs before SetAgentStatBonus to use the original stat levels instead of the modified stat levels.
         ///     Bug Fixed: If an agent has gifts that decrease a stat level to a lower level, then leveling up the agent with LOB
@@ -30,33 +51,20 @@ namespace LobotomyCorporationMods.BugFixes.Patches
         ///     Actual result: Upgrading the agent's stat Fortitude level used the Level 3 bonus instead of the Level 4 bonus,
         ///     causing the stat level to remain at Level 4.
         /// </summary>
-        // ReSharper disable once InconsistentNaming
-        public static bool Prefix([NotNull] CustomizingWindow __instance, AgentModel agent, AgentData data)
+        // ReSharper disable InconsistentNaming
+        [EntryPoint]
+        [ExcludeFromCodeCoverage]
+        public static bool Prefix(CustomizingWindow __instance, AgentModel agent, AgentData data)
         {
             try
             {
-                Guard.Against.Null(__instance, nameof(__instance));
-                Guard.Against.Null(agent, nameof(agent));
-                Guard.Against.Null(data, nameof(data));
-
-                __instance.UpgradeStat(agent.primaryStat.hp, agent.originFortitudeLevel, data.statBonus.rBonus, out agent.primaryStat.hp);
-                __instance.UpgradeStat(agent.primaryStat.mental, agent.originPrudenceLevel, data.statBonus.wBonus, out agent.primaryStat.mental);
-                __instance.UpgradeStat(agent.primaryStat.work, agent.originTemperanceLevel, data.statBonus.bBonus, out agent.primaryStat.work);
-                __instance.UpgradeStat(agent.primaryStat.battle, agent.originJusticeLevel, data.statBonus.pBonus, out agent.primaryStat.battle);
-                agent.UpdateTitle(agent.level);
+                __instance.PatchBeforeSetAgentStatBonus(agent, data, new CustomizingWindowAdapter());
 
                 // Since we're replacing the method we never want to call the original method
                 return false;
             }
             catch (Exception ex)
             {
-                // Null argument exception only comes up during testing due to Unity operator overloading.
-                // https://github.com/JetBrains/resharper-unity/wiki/Possible-unintended-bypass-of-lifetime-check-of-underlying-Unity-engine-object
-                if (ex is ArgumentNullException)
-                {
-                    return true;
-                }
-
                 Harmony_Patch.Instance.Logger.WriteToLog(ex);
 
                 throw;

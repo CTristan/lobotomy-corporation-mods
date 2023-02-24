@@ -1,31 +1,31 @@
 // SPDX-License-Identifier: MIT
 
+#region
+
+using System.Linq;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
+
+#endregion
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators
 {
     internal sealed class ParasiteTreeEvaluator : CreatureEvaluator
     {
-        private readonly IAnimationScriptAdapter _animationScriptAdapter;
+        private readonly IYggdrasilAnimAdapter _yggdrasilAnimAdapter;
 
-        internal ParasiteTreeEvaluator(AgentModel agent, CreatureModel creature, RwbpType skillType, IAnimationScriptAdapter animationScriptAdapter) : base(agent, creature, skillType)
+        internal ParasiteTreeEvaluator(AgentModel agent, CreatureModel creature, RwbpType skillType, IYggdrasilAnimAdapter yggdrasilAnimAdapter)
+            : base(agent, creature, skillType)
         {
-            _animationScriptAdapter = animationScriptAdapter;
+            _yggdrasilAnimAdapter = yggdrasilAnimAdapter;
         }
 
         protected override bool WillAgentDieFromThisCreature()
         {
-            var agentWillDie = false;
+            const int MaxNumberOfFlowers = 4;
 
-            var animationScript = _animationScriptAdapter.GetScript<YggdrasilAnim>(Creature);
-            if (!(animationScript is null))
-            {
-                var numberOfFlowers = _animationScriptAdapter.ParasiteTreeNumberOfFlowers;
-                const int MaxNumberOfFlowers = 4;
-
-                agentWillDie = numberOfFlowers >= MaxNumberOfFlowers && !Agent.HasBuffOfType<YggdrasilBlessBuf>();
-            }
+            var numberOfFlowers = _yggdrasilAnimAdapter.Flowers.Count(static flower => flower.ActiveSelf);
+            var agentWillDie = numberOfFlowers >= MaxNumberOfFlowers && !Agent.HasBuffOfType<YggdrasilBlessBuf>();
 
             return agentWillDie;
         }

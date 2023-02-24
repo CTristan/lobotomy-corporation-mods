@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 
+#region
+
 using CommandWindow;
+
+#endregion
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
 {

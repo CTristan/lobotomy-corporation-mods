@@ -1,43 +1,52 @@
 // SPDX-License-Identifier: MIT
 
+#region
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
-using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
+using LobotomyCorporationMods.Common.Attributes;
+using LobotomyCorporationMods.Common.Implementations.Adapters;
+using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.FreeCustomization.Extensions;
+
+#endregion
 
 namespace LobotomyCorporationMods.FreeCustomization.Patches
 {
     [HarmonyPatch(typeof(CustomizingWindow), "Confirm")]
     public static class CustomizingWindowPatchConfirm
     {
+        public static void PatchAfterConfirm(this CustomizingWindow instance, IAgentLayerAdapter agentLayerAdapter, IWorkerSpriteManagerAdapter workerSpriteManagerAdapter)
+        {
+            if (instance is null)
+            {
+                throw new ArgumentNullException(nameof(instance));
+            }
+
+            instance.SaveAgentAppearance();
+            instance.RenameAgent();
+            instance.CurrentData.appearance.SetResrouceData();
+
+            workerSpriteManagerAdapter.GameObject = WorkerSpriteManager.instance;
+            workerSpriteManagerAdapter.SetAgentBasicData(instance.CurrentData.appearance.spriteSet, instance.CurrentData.appearance);
+
+            agentLayerAdapter.GameObject = AgentLayer.currentLayer;
+            instance.UpdateAgentModel(agentLayerAdapter);
+        }
+
         /// <summary>
-        ///     Runs before confirming the Strengthen Employee window to save appearance data.
+        ///     Runs after confirming the Strengthen Employee window to save appearance data.
         /// </summary>
-        [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
-        [SuppressMessage("Style", "IDE1006:Naming Styles")]
-        // ReSharper disable once InconsistentNaming
-        public static void Prefix([NotNull] CustomizingWindow __instance)
+        // ReSharper disable InconsistentNaming
+        [EntryPoint]
+        [ExcludeFromCodeCoverage]
+        public static void Postfix(CustomizingWindow __instance)
         {
             try
             {
-                Guard.Against.Null(__instance, nameof(__instance));
-
-                if (__instance.CurrentWindowType == CustomizingType.GENERATE)
-                {
-                    return;
-                }
-
-                __instance.SaveAgentAppearance();
-                __instance.RenameAgent();
-
-                __instance.CurrentData.appearance.SetResrouceData();
-                WorkerSpriteManager.instance.SetAgentBasicData(__instance.CurrentData.appearance.spriteSet, __instance.CurrentData.appearance);
-
-                __instance.UpdateAgentModel(AgentLayer.currentLayer);
+                __instance.PatchAfterConfirm(new AgentLayerAdapter(), new WorkerSpriteManagerAdapter());
             }
             catch (Exception ex)
             {

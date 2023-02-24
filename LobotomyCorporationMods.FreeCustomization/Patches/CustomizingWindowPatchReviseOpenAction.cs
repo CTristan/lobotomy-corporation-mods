@@ -1,14 +1,15 @@
 // SPDX-License-Identifier: MIT
 
+#region
+
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Security;
 using Customizing;
 using Harmony;
-using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
+using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.FreeCustomization.Extensions;
+
+#endregion
 
 namespace LobotomyCorporationMods.FreeCustomization.Patches
 {
@@ -18,29 +19,14 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         /// <summary>
         ///     Runs after opening the Strengthen Agent window to set the appearance data for the customization window.
         /// </summary>
-        [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
-        [SuppressMessage("Style", "IDE1006:Naming Styles")]
-        // ReSharper disable once InconsistentNaming
-        public static void Postfix([NotNull] CustomizingWindow __instance, [NotNull] AgentModel agent)
+        // ReSharper disable InconsistentNaming
+        [EntryPoint]
+        [ExcludeFromCodeCoverage]
+        public static void Postfix(CustomizingWindow __instance, AgentModel agent)
         {
             try
             {
-                Guard.Against.Null(__instance, nameof(__instance));
-                Guard.Against.Null(agent, nameof(agent));
-
-                __instance.CurrentData.agentName = agent._agentName;
-                __instance.CurrentData.CustomName = agent.name;
-                __instance.CurrentData.appearance = agent.GetAppearanceData();
-            }
-            // Only occurs during unit tests
-            catch (SecurityException ex)
-            {
-                Harmony_Patch.Instance.Logger.WriteToLog(ex);
-            }
-            // Only occurs during unit tests
-            catch (MissingMemberException ex)
-            {
-                Harmony_Patch.Instance.Logger.WriteToLog(ex);
+                __instance.PatchAfterReviseOpenAction(agent);
             }
             catch (Exception ex)
             {
@@ -48,6 +34,23 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
 
                 throw;
             }
+        }
+
+        public static void PatchAfterReviseOpenAction(this CustomizingWindow instance, AgentModel agent)
+        {
+            if (instance is null)
+            {
+                throw new ArgumentNullException(nameof(instance));
+            }
+
+            if (agent is null)
+            {
+                throw new ArgumentNullException(nameof(agent));
+            }
+
+            instance.CurrentData.agentName = agent._agentName;
+            instance.CurrentData.CustomName = agent.name;
+            instance.CurrentData.appearance = agent.GetAppearanceData();
         }
     }
 }

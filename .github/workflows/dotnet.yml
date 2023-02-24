@@ -55,7 +55,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           root_dir: BaseMods/src/lobotomy-corporation-mods
           files: LobotomyCorporationMods.Test/coverage.opencover.net48.xml
-          
+
       - name: Upload coverage reports to Codacy
         uses: codacy/codacy-coverage-reporter-action@v1
         with:

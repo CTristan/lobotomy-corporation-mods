@@ -1,40 +1,18 @@
 // SPDX-License-Identifier: MIT
 
+#region
+
 using Customizing;
-using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
+using LobotomyCorporationMods.Common.Interfaces.Adapters;
+
+#endregion
 
 namespace LobotomyCorporationMods.FreeCustomization.Extensions
 {
-    public static class CustomizingWindowExtensions
+    internal static class CustomizingWindowExtensions
     {
-        public static void SaveAgentAppearance([NotNull] this CustomizingWindow customizingWindow)
+        internal static void RenameAgent(this CustomizingWindow customizingWindow)
         {
-            Guard.Against.Null(customizingWindow, nameof(customizingWindow));
-
-            if (customizingWindow.appearanceUI.copied != null)
-            {
-                customizingWindow.CurrentData.AppearCopy(customizingWindow.appearanceUI.copied);
-                customizingWindow.appearanceUI.copied = null;
-            }
-
-            customizingWindow.CurrentAgent.SetAppearanceData(customizingWindow.CurrentData.appearance);
-        }
-
-        internal static void UpdateAgentModel([NotNull] this CustomizingWindow customizingWindow, [NotNull] AgentLayer agentLayer)
-        {
-            Guard.Against.Null(customizingWindow, nameof(customizingWindow));
-
-            var agentModel = customizingWindow.CurrentAgent;
-            agentLayer.RemoveAgent(agentModel);
-            agentLayer.AddAgent(agentModel);
-        }
-
-        public static void RenameAgent([NotNull] this CustomizingWindow customizingWindow)
-        {
-            Guard.Against.Null(customizingWindow, nameof(customizingWindow));
-
             var customName = customizingWindow.CurrentData.CustomName;
             customizingWindow.CurrentAgent.name = customName;
             customizingWindow.CurrentAgent._agentName = customizingWindow.CurrentData.agentName;
@@ -48,6 +26,24 @@ namespace LobotomyCorporationMods.FreeCustomization.Extensions
                 customizingWindow.CurrentAgent._agentName.metaInfo.nameDic.Add(language, customName);
                 customizingWindow.CurrentAgent._agentName.nameDic.Add(language, customName);
             }
+        }
+
+        internal static void SaveAgentAppearance(this CustomizingWindow customizingWindow)
+        {
+            if (customizingWindow.appearanceUI.copied is not null)
+            {
+                customizingWindow.CurrentData.AppearCopy(customizingWindow.appearanceUI.copied);
+                customizingWindow.appearanceUI.copied = null;
+            }
+
+            customizingWindow.CurrentAgent.SetAppearanceData(customizingWindow.CurrentData.appearance);
+        }
+
+        internal static void UpdateAgentModel(this CustomizingWindow customizingWindow, IAgentLayerAdapter agentLayerAdapter)
+        {
+            var agentModel = customizingWindow.CurrentAgent;
+            agentLayerAdapter.RemoveAgent(agentModel);
+            agentLayerAdapter.AddAgent(agentModel);
         }
     }
 }

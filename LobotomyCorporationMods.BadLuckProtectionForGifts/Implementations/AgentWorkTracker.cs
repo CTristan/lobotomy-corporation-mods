@@ -1,29 +1,36 @@
 ﻿// SPDX-License-Identifier: MIT
 
+#region
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.Common.Interfaces;
 
-// ReSharper disable CommentTypo
+#endregion
+
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
 {
-    internal sealed class AgentWorkTracker : IAgentWorkTracker
+    public sealed class AgentWorkTracker : IAgentWorkTracker
     {
-        private readonly IFileManager _fileManager;
-        [NotNull] private readonly List<IGift> _gifts = new List<IGift>();
-        private readonly Dictionary<string, long> _mostRecentAgentIdByGift = new Dictionary<string, long>();
-        private readonly string _trackerFile;
+        // ReSharper disable once NullableWarningSuppressionIsUsed
+        // We load the FileManager later when applying the patch, so this will be null in the constructor
+        private readonly IFileManager _fileManager = default!;
+        private readonly List<IGift> _gifts = new();
+        private readonly Dictionary<string, long> _mostRecentAgentIdByGift = new();
+        private readonly string _trackerFile = string.Empty;
 
-        internal AgentWorkTracker(IFileManager fileManager, string dataFileName)
+        public AgentWorkTracker(IFileManager? fileManager, string dataFileName)
         {
-            _fileManager = fileManager;
-            _trackerFile = _fileManager.GetOrCreateFile(dataFileName);
-            Load();
+            if (fileManager is not null)
+            {
+                _fileManager = fileManager;
+                _trackerFile = _fileManager.GetOrCreateFile(dataFileName);
+                Load();
+            }
         }
 
         public float GetLastAgentWorkCountByGift(string giftName)
@@ -69,10 +76,25 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
             _fileManager.WriteAllText(_trackerFile, ToString());
         }
 
+        private IAgent GetAgent(string giftName, long agentId)
+        {
+            var gift = _gifts.FirstOrDefault(g => g.GetName().Equals(giftName, StringComparison.Ordinal));
+            if (gift is not null)
+            {
+                return gift.GetOrAddAgent(agentId);
+            }
+
+            // Gift not found, start tracking the gift
+            gift = new Gift(giftName);
+            _gifts.Add(gift);
+
+            return gift.GetOrAddAgent(agentId);
+        }
+
         /// <summary>
         ///     Loads the tracker data from our custom text file.
         /// </summary>
-        private void LoadFromString([NotNull] string trackerData)
+        private void LoadFromString(string trackerData)
         {
             // Clear any existing data so we aren't duplicating work progress
             _gifts.Clear();
@@ -91,27 +113,11 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
             }
         }
 
-        [NotNull]
-        private IAgent GetAgent([NotNull] string giftName, long agentId)
-        {
-            var gift = _gifts.FirstOrDefault(g => g != null && g.GetName().Equals(giftName, StringComparison.Ordinal));
-            if (gift != null)
-            {
-                return gift.GetOrAddAgent(agentId);
-            }
-
-            // Gift not found, start tracking the gift
-            gift = new Gift(giftName);
-            _gifts.Add(gift);
-
-            return gift.GetOrAddAgent(agentId);
-        }
-
         /// <summary>
         ///     Converts the AgentWorkTracker object to a custom string format. The format delimits gifts by '|', agents for each
         ///     gift by '^', and agent id and work count are separated by ';'. A gift can have multiple agents and we don't
         ///     duplicate the gift names.
-        ///     Example: (gift1)^(agent1);(workcount1)^(agent2);(workcount2)|(gift2)^(agent1);(workcount2)
+        ///     Example: (gift1)^(agent1);(work-count1)^(agent2);(work-count2)|(gift2)^(agent1);(work-count2)
         ///     I would have preferred to use json, but the Unity json support is very minimal and does not support nested
         ///     objects, so I had to make my own format.
         /// </summary>
@@ -121,7 +127,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
             var builder = new StringBuilder();
             for (var i = 0; i < _gifts.Count; i++)
             {
-                var gift = _gifts[i] ?? throw new InvalidOperationException(nameof(_gifts));
+                var gift = _gifts[i];
                 if (i > 0)
                 {
                     builder.Append('|');

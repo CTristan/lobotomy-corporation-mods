@@ -70,7 +70,6 @@ msbuild.binlog
 *.vssscc
 .builds
 *.pidb
-*.log
 *.scc
 
 # Visual Studio cache files

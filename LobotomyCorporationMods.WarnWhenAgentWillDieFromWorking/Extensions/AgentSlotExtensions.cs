@@ -1,40 +1,23 @@
 // SPDX-License-Identifier: MIT
 
+#region
+
 using CommandWindow;
-using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
+
+#endregion
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
 {
-    public static class AgentSlotExtensions
+    internal static class AgentSlotExtensions
     {
-        public static bool CheckIfWorkWillKillAgent([NotNull] this AgentSlot agentSlot, [NotNull] CommandWindow.CommandWindow commandWindow)
+        internal static bool CheckIfWorkWillKillAgent(this AgentSlot agentSlot, CommandWindow.CommandWindow commandWindow, IBeautyBeastAnimAdapter beautyBeastAnimAdapter,
+            IYggdrasilAnimAdapter yggdrasilAnimAdapter)
         {
-            return CheckIfWorkWillKillAgent(agentSlot, commandWindow, new AnimationScriptAdapter());
-        }
-
-        public static bool CheckIfWorkWillKillAgent([NotNull] this AgentSlot agentSlot, [NotNull] CommandWindow.CommandWindow commandWindow, [NotNull] IAnimationScriptAdapter animationScriptAdapter)
-        {
-            Guard.Against.Null(agentSlot, nameof(agentSlot));
-
-            bool willAgentDie;
             var agent = agentSlot.CurrentAgent;
+            var evaluator = commandWindow.GetCreatureEvaluator(agent, beautyBeastAnimAdapter, yggdrasilAnimAdapter);
 
-            if (!(agent is null))
-            {
-                var evaluator = commandWindow.GetCreatureEvaluator(agent, animationScriptAdapter);
-
-                willAgentDie = evaluator.WillAgentDie();
-            }
-            else
-            {
-                willAgentDie = false;
-            }
-
-            return willAgentDie;
+            return evaluator.WillAgentDie();
         }
     }
 }

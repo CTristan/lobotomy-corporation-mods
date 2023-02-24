@@ -1,8 +1,12 @@
 // SPDX-License-Identifier: MIT
 
+#region
+
 using LobotomyCorporationMods.Common.Enums;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
+
+#endregion
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations
 {
@@ -31,8 +35,6 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 
             return agentWillDie;
         }
-
-        protected abstract bool WillAgentDieFromThisCreature();
 
         /// <summary>
         ///     Some abnormalities don't kill from working on them directly but due to other conditions such as gifts or buffs.
@@ -63,5 +65,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 
             return agentWillDie;
         }
+
+        protected abstract bool WillAgentDieFromThisCreature();
     }
 }

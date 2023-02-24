@@ -4,7 +4,8 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 {
     internal sealed class HappyTeddyBearEvaluator : CreatureEvaluator
     {
-        internal HappyTeddyBearEvaluator(AgentModel agent, CreatureModel creature, RwbpType skillType) : base(agent, creature, skillType)
+        internal HappyTeddyBearEvaluator(AgentModel agent, CreatureModel creature, RwbpType skillType)
+            : base(agent, creature, skillType)
         {
         }
 
@@ -12,7 +13,8 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
         {
             var agentWillDie = false;
 
-            if (Creature.script is HappyTeddy script && !(script.lastAgent is null))
+            var script = (HappyTeddy)Creature.script;
+            if (script.lastAgent is not null)
             {
                 agentWillDie = Agent.instanceId == script.lastAgent.instanceId;
             }

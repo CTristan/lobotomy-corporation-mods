@@ -1,14 +1,15 @@
 ﻿// SPDX-License-Identifier: MIT
 
+#region
+
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using Harmony;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Interfaces;
+
+#endregion
 
 [assembly: AssemblyVersion("1.0.*")]
 [assembly: CLSCompliant(false)]
@@ -17,63 +18,29 @@ using LobotomyCorporationMods.Common.Interfaces;
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts
 {
     // ReSharper disable once InconsistentNaming
-    [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
-    public sealed class Harmony_Patch
+    public sealed class Harmony_Patch : HarmonyPatchBase
     {
         private const string ModFileName = "LobotomyCorporationMods.BadLuckProtectionForGifts.dll";
 
-        /// <summary>
-        ///     Singleton ensures thread safety across the patches.
-        ///     https://csharpindepth.com/Articles/Singleton
-        /// </summary>
-        public static readonly Harmony_Patch Instance = new Harmony_Patch(true);
+        public static new readonly Harmony_Patch Instance = new(true);
 
         public Harmony_Patch()
+            : this(false)
         {
         }
 
         private Harmony_Patch(bool initialize)
+            : base(initialize)
         {
-            if (!initialize)
+            if (initialize)
             {
-                return;
-            }
-
-            try
-            {
-                FileManager = new FileManager(ModFileName);
-                Logger = new Logger(FileManager);
-
-                try
-                {
-                    var harmony = HarmonyInstance.Create(ModFileName);
-                    AgentWorkTracker = new AgentWorkTracker(FileManager, "BadLuckProtectionForGifts.dat");
-                    harmony.PatchAll(typeof(Harmony_Patch).Assembly);
-                }
-                catch (Exception ex)
-                {
-                    Logger.WriteToLog(ex);
-
-                    throw;
-                }
-            }
-            catch (TypeInitializationException)
-            {
-                // This exception only comes up in testing, so we ignore it
+                InitializePatchData(typeof(Harmony_Patch), ModFileName);
+                AgentWorkTracker = new AgentWorkTracker(FileManager, "BadLuckProtectionForGifts.dat");
             }
         }
 
-        public IAgentWorkTracker AgentWorkTracker { get; private set; }
-        private IFileManager FileManager { get; set; }
-        internal ILogger Logger { get; }
-
-        /// <summary>
-        ///     Entry point for testing.
-        /// </summary>
-        public void LoadData(IFileManager fileManager, string dataFileName)
-        {
-            FileManager = fileManager;
-            AgentWorkTracker = new AgentWorkTracker(fileManager, dataFileName);
-        }
+        // ReSharper disable once NullableWarningSuppressionIsUsed
+        // We load the tracker later on when needed, so this should never be actually null
+        internal IAgentWorkTracker AgentWorkTracker { get; } = default!;
     }
 }

@@ -13,12 +13,6 @@ resharper_place_expr_property_on_single_line = true
 resharper_use_heuristics_for_body_style = true
 # (Please don't specify an indent_size here; that has too many unintended consequences.)
 
-# Code files
-[*.{cs,csx,vb,vbx}]
-indent_size = 4
-insert_final_newline = true
-charset = utf-8
-
 # XML project files
 [*.{csproj,vbproj,vcxproj,vcxproj.filters,proj,projitems,shproj}]
 indent_size = 2
@@ -31,8 +25,25 @@ indent_size = 2
 [*.json]
 indent_size = 2
 
+# Code files
+[*.{cs,csx,vb,vbx}]
+indent_size = 4
+insert_final_newline = true
+charset = utf-8
+
 # Dotnet code style settings:
-[*.{cs,vb}]
+
+# Don't need to validate arguments since we have nullable enabled
+dotnet_diagnostic.CA1062.severity = none
+
+# Disable naming checks for underscores since every patch has to be named Harmony_Patch
+dotnet_diagnostic.CA1707.severity = none
+
+# Disable array initialization method for newer .NET versions
+dotnet_diagnostic.CA1825.severity = none
+
+# Allow for Harmony-patch-named arguments (such as __instance)
+dotnet_diagnostic.IDE1006.severity = none
 
 # Sort using and Import directives with System.* appearing first
 dotnet_sort_system_directives_first = true
@@ -134,8 +145,6 @@ dotnet_naming_symbols.all_members.applicable_kinds = *
 
 dotnet_naming_style.pascal_case_style.capitalization = pascal_case
 
-# CSharp code style settings:
-[*.cs]
 # Newline settings
 csharp_new_line_before_open_brace = all
 csharp_new_line_before_else = true
@@ -205,6 +214,3 @@ csharp_preserve_single_line_statements = true
 
 # File Header
 file_header_template = SPDX-License-Identifier: MIT
-
-# Custom null validation method
-dotnet_code_quality.null_check_validation_methods = Null

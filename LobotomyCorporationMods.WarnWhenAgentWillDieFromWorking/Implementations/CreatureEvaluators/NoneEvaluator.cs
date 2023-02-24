@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 
+#region
+
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
+
+#endregion
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators
 {
