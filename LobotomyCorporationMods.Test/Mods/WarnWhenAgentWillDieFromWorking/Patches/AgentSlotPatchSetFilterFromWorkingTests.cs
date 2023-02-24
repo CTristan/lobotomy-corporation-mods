@@ -81,14 +81,12 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
         [Fact]
         public void No_false_positives()
         {
-            var creature = TestExtensions.CreateCreatureModel();
-            _ = InitializeCommandWindow(creature);
+            _ = InitializeCommandWindow(TestExtensions.CreateCreatureModel());
             var agentSlot = TestExtensions.CreateAgentSlot();
 
             agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
 
-            agentSlot.WorkFilterFill.color.Should().NotBe(DeadAgentColor);
-            agentSlot.WorkFilterText.text.Should().NotBe(DeadAgentString);
+            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeFalse();
         }
 
         [Fact]
@@ -100,8 +98,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
 
             agentSlot.PatchAfterSetFilter(AgentState.IDLE, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
 
-            agentSlot.WorkFilterFill.color.Should().NotBe(DeadAgentColor);
-            agentSlot.WorkFilterText.text.Should().NotBe(DeadAgentString);
+            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeFalse();
         }
 
         #region Helper Methods
