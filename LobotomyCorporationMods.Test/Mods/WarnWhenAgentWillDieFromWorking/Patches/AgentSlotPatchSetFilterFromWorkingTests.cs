@@ -79,21 +79,6 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             action.ShouldNotThrow();
         }
 
-        #region Helper Methods
-
-        private AgentSlot InitializeAgentSlot(CreatureIds creatureId, IEnumerable<UnitBuf>? buffList = null, EquipmentId giftId = (EquipmentId)1, RwbpType skillType = (RwbpType)1,
-            int qliphothCounter = 0)
-        {
-            buffList ??= new List<UnitBuf>();
-            var creature = GetCreature(creatureId, qliphothCounter);
-            _ = InitializeCommandWindow(creature, skillType);
-            var agent = GetAgentWithGift(giftId, buffList);
-
-            return TestExtensions.CreateAgentSlot(currentAgent: agent);
-        }
-
-        #endregion
-
         [Fact]
         public void No_false_positives()
         {
@@ -112,6 +97,35 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
 
             VerifyAgentWillNotDie(agentSlot);
         }
+
+        #region Helper Methods
+
+        private void SetupParasiteTree(int numberOfFlowers)
+        {
+            var mockFlower = new Mock<IGameObjectAdapter>();
+            mockFlower.Setup(static adapter => adapter.ActiveSelf).Returns(true);
+
+            var mockFlowers = new List<IGameObjectAdapter>();
+            for (var i = 0; i < numberOfFlowers; i++)
+            {
+                mockFlowers.Add(mockFlower.Object);
+            }
+
+            _mockYggdrasilAnimAdapter.Setup(static adapter => adapter.Flowers).Returns(mockFlowers);
+        }
+
+        private AgentSlot InitializeAgentSlot(CreatureIds creatureId, IEnumerable<UnitBuf>? buffList = null, EquipmentId giftId = (EquipmentId)1, RwbpType skillType = (RwbpType)1,
+            int qliphothCounter = 0)
+        {
+            buffList ??= new List<UnitBuf>();
+            var creature = GetCreature(creatureId, qliphothCounter);
+            _ = InitializeCommandWindow(creature, skillType);
+            var agent = GetAgentWithGift(giftId, buffList);
+
+            return TestExtensions.CreateAgentSlot(currentAgent: agent);
+        }
+
+        #endregion
 
         #region Helper Methods
 
@@ -473,12 +487,9 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
         public void ParasiteTree_Will_Kill_Agent_If_Tree_Has_Four_Flowers_And_Agent_Is_Not_Blessed()
         {
             // Arrange
+            const int NumberOfFlowers = 4;
             var agentSlot = InitializeAgentSlot(CreatureIds.ParasiteTree);
-
-            var mockFlower = new Mock<IGameObjectAdapter>();
-            mockFlower.Setup(static adapter => adapter.ActiveSelf).Returns(true);
-
-            _mockYggdrasilAnimAdapter.Setup(static adapter => adapter.Flowers).Returns(new List<IGameObjectAdapter> { mockFlower.Object, mockFlower.Object, mockFlower.Object, mockFlower.Object });
+            SetupParasiteTree(NumberOfFlowers);
 
             // Assert
             VerifyAgentWillDie(agentSlot);
@@ -488,15 +499,12 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
         public void ParasiteTree_Will_Not_Kill_Agent_If_Tree_Has_Four_Flowers_And_Agent_Is_Blessed()
         {
             // Arrange
+            const int NumberOfFlowers = 4;
             var parasiteTreeBlessing = TestExtensions.CreateYggdrasilBlessBuf();
             parasiteTreeBlessing.type = UnitBufType.YGGDRASIL_BLESS;
             var buffList = new List<UnitBuf> { parasiteTreeBlessing };
             var agentSlot = InitializeAgentSlot(CreatureIds.ParasiteTree, buffList);
-
-            var mockFlower = new Mock<IGameObjectAdapter>();
-            mockFlower.Setup(static adapter => adapter.ActiveSelf).Returns(true);
-
-            _mockYggdrasilAnimAdapter.Setup(static adapter => adapter.Flowers).Returns(new List<IGameObjectAdapter> { mockFlower.Object, mockFlower.Object, mockFlower.Object, mockFlower.Object });
+            SetupParasiteTree(NumberOfFlowers);
 
             // Assert
             VerifyAgentWillNotDie(agentSlot);
@@ -511,11 +519,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
         {
             // Arrange
             var agentSlot = InitializeAgentSlot(CreatureIds.ParasiteTree);
-
-            var mockFlower = new Mock<IGameObjectAdapter>();
-            mockFlower.Setup(static adapter => adapter.ActiveSelf).Returns(true);
-
-            _mockYggdrasilAnimAdapter.Setup(static adapter => adapter.Flowers).Returns(new List<IGameObjectAdapter> { mockFlower.Object });
+            SetupParasiteTree(numberOfFlowers);
 
             // Assert
             VerifyAgentWillNotDie(agentSlot);
