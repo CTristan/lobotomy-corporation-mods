@@ -2,6 +2,7 @@
 
 #region
 
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using FluentAssertions;
@@ -20,6 +21,11 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
     public sealed class AgentWorkTrackerTests
     {
         private const string GiftName = "DefaultGiftName";
+
+        public static IEnumerable<object[]> TrackerTestData => new List<object[]>
+        {
+            new object[] { GiftName + "^1;1", GiftName, 1L, 1f }, new object[] { GiftName + "^1;1^2;2", GiftName, 2L, 2f }, new object[] { GiftName + "^1;1^2;2|Second^1;3", "Second", 1L, 3f }
+        };
 
         [Fact]
         public void Converting_a_tracker_to_a_string_with_a_single_gift_and_a_single_agent_returns_the_correct_string()
@@ -77,9 +83,7 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
         }
 
         [Theory]
-        [InlineData(GiftName + "^1;1", GiftName, 1L, 1f)]
-        [InlineData(GiftName + "^1;1^2;2", GiftName, 2L, 2f)]
-        [InlineData(GiftName + "^1;1^2;2|Second^1;3", "Second", 1L, 3f)]
+        [PropertyData(nameof(TrackerTestData))]
         public void Loading_data_from_a_saved_tracker_file_populates_a_valid_tracker(string trackerData, string giftName, long agentId, float numberOfTimes)
         {
             // Arrange
@@ -94,9 +98,7 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
         }
 
         [Theory]
-        [InlineData(GiftName + "^1;1", GiftName, 1L, 1f)]
-        [InlineData(GiftName + "^1;1^2;2", GiftName, 2L, 2f)]
-        [InlineData(GiftName + "^1;1^2;2|Second^1;3", "Second", 1L, 3f)]
+        [PropertyData(nameof(TrackerTestData))]
         public void Loading_data_multiple_times_from_a_saved_tracker_file_does_not_duplicate_work_progress(string trackerData, string giftName, long agentId, float numberOfTimes)
         {
             var appendText = $"_{giftName}_{agentId}_{numberOfTimes}";
