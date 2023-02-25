@@ -1,66 +1,38 @@
 ﻿// SPDX-License-Identifier: MIT
 
+#region
+
 using System;
-using System.Diagnostics.CodeAnalysis;
-using Harmony;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Interfaces;
+
+#endregion
+
+[assembly: AssemblyVersion("1.0.*")]
+[assembly: CLSCompliant(false)]
+[assembly: ComVisible(false)]
 
 namespace LobotomyCorporationMods.NotifyWhenGiftReceived
 {
-    // ReSharper disable once InconsistentNaming
-    [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
-    public sealed class Harmony_Patch
+    public sealed class Harmony_Patch : HarmonyPatchBase
     {
         private const string ModFileName = "LobotomyCorporationMods.NotifyWhenGiftReceived.dll";
 
-        /// <summary>
-        ///     Singleton ensures thread safety across all of the patches in this mod.
-        ///     https://csharpindepth.com/Articles/Singleton
-        /// </summary>
-        public static readonly Harmony_Patch Instance = new Harmony_Patch(true);
+        public static new readonly Harmony_Patch Instance = new(true);
 
         public Harmony_Patch()
+            : this(false)
         {
         }
 
         private Harmony_Patch(bool initialize)
+            : base(initialize)
         {
-            if (!initialize)
+            if (initialize)
             {
-                return;
+                InitializePatchData(typeof(Harmony_Patch), ModFileName);
             }
-
-            try
-            {
-                Logger = new Logger(ModFileName);
-
-                try
-                {
-                    var harmony = HarmonyInstance.Create(ModFileName);
-                    harmony.PatchAll(typeof(Harmony_Patch).Assembly);
-                }
-                catch (Exception ex)
-                {
-                    Logger.WriteToLog(ex);
-
-                    throw;
-                }
-            }
-            catch (TypeInitializationException)
-            {
-                // This exception only comes up in testing, so we ignore it
-            }
-        }
-
-        internal ILogger Logger { get; private set; }
-
-        /// <summary>
-        ///     Entry point for testing.
-        /// </summary>
-        public void LoadData(ILogger logger)
-        {
-            Logger = logger;
         }
     }
 }
