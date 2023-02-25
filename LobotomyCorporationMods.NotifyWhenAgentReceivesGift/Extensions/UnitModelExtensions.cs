@@ -7,7 +7,7 @@ using System.Linq;
 
 #endregion
 
-namespace LobotomyCorporationMods.NotifyWhenGiftReceived.Extensions
+namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Extensions
 {
     internal static class UnitModelExtensions
     {
