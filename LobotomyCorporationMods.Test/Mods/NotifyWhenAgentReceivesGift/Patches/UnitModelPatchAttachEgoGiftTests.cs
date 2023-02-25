@@ -5,14 +5,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
-using LobotomyCorporationMods.NotifyWhenGiftReceived.Patches;
+using LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches;
 using LobotomyCorporationMods.Test.Extensions;
 using Moq;
 using Xunit.Extensions;
 
 #endregion
 
-namespace LobotomyCorporationMods.Test.Mods.NotifyWhenGiftReceived.Patches
+namespace LobotomyCorporationMods.Test.Mods.NotifyWhenAgentReceivesGift.Patches
 {
     public sealed class UnitModelPatchAttachEgoGiftTests : NotifyWhenGiftReceivedTests
     {

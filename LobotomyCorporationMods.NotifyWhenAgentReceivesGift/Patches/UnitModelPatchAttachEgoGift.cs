@@ -8,11 +8,11 @@ using Harmony;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
-using LobotomyCorporationMods.NotifyWhenGiftReceived.Extensions;
+using LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Extensions;
 
 #endregion
 
-namespace LobotomyCorporationMods.NotifyWhenGiftReceived.Patches
+namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches
 {
     [HarmonyPatch(typeof(UnitModel), "AttachEGOgift")]
     public static class UnitModelPatchAttachEgoGift

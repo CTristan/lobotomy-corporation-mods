@@ -4,14 +4,14 @@
 
 using System;
 using FluentAssertions;
-using LobotomyCorporationMods.NotifyWhenGiftReceived;
-using LobotomyCorporationMods.NotifyWhenGiftReceived.Patches;
+using LobotomyCorporationMods.NotifyWhenAgentReceivesGift;
+using LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches;
 using LobotomyCorporationMods.Test.Extensions;
 using Xunit;
 
 #endregion
 
-namespace LobotomyCorporationMods.Test.Mods.NotifyWhenGiftReceived
+namespace LobotomyCorporationMods.Test.Mods.NotifyWhenAgentReceivesGift
 {
     public sealed class HarmonyPatchTests
     {

@@ -13,11 +13,11 @@ using LobotomyCorporationMods.Common.Implementations;
 [assembly: CLSCompliant(false)]
 [assembly: ComVisible(false)]
 
-namespace LobotomyCorporationMods.NotifyWhenGiftReceived
+namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift
 {
     public sealed class Harmony_Patch : HarmonyPatchBase
     {
-        private const string ModFileName = "LobotomyCorporationMods.NotifyWhenGiftReceived.dll";
+        private const string ModFileName = "LobotomyCorporationMods.NotifyWhenAgentReceivesGift.dll";
 
         public static new readonly Harmony_Patch Instance = new(true);
 

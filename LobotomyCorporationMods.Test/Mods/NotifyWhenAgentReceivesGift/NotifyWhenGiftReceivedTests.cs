@@ -10,7 +10,7 @@ using Moq;
 
 #endregion
 
-namespace LobotomyCorporationMods.Test.Mods.NotifyWhenGiftReceived
+namespace LobotomyCorporationMods.Test.Mods.NotifyWhenAgentReceivesGift
 {
     public class NotifyWhenGiftReceivedTests
     {
