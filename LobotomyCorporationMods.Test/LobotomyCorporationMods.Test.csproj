@@ -48,6 +48,7 @@
     </ProjectReference>
     <ProjectReference Include="..\LobotomyCorporationMods.BugFixes\LobotomyCorporationMods.BugFixes.csproj"/>
     <ProjectReference Include="..\LobotomyCorporationMods.FreeCustomization\LobotomyCorporationMods.FreeCustomization.csproj"/>
+    <ProjectReference Include="..\LobotomyCorporationMods.NotifyWhenGiftReceived\LobotomyCorporationMods.NotifyWhenGiftReceived.csproj"/>
     <ProjectReference Include="..\LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking\LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.csproj"/>
   </ItemGroup>
   <ItemGroup>
@@ -74,9 +75,6 @@
     <None Remove="TestResults\**"/>
     <None Remove="coverage.opencover.net35.xml"/>
     <None Remove="coverage.opencover.net48.xml"/>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Mods"/>
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
     <PackageReference Include="Microsoft.CodeCoverage" Version="17.5.0"/>
