@@ -95,7 +95,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.LoadData(mockLogger.Object);
 
-            static void Action() => CustomizingWindowPatchConfirm.Postfix(null!);
+            static void Action() => CustomizingWindowPatchConfirm.Prefix(null!);
 
             mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
         }

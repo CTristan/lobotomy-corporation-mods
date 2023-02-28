@@ -18,7 +18,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
     [HarmonyPatch(typeof(CustomizingWindow), "Confirm")]
     public static class CustomizingWindowPatchConfirm
     {
-        public static void PatchAfterConfirm(this CustomizingWindow instance, IAgentLayerAdapter agentLayerAdapter, IWorkerSpriteManagerAdapter workerSpriteManagerAdapter)
+        public static void PatchBeforeConfirm(this CustomizingWindow instance, IAgentLayerAdapter agentLayerAdapter, IWorkerSpriteManagerAdapter workerSpriteManagerAdapter)
         {
             if (instance is null)
             {
@@ -42,11 +42,11 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         // ReSharper disable InconsistentNaming
         [EntryPoint]
         [ExcludeFromCodeCoverage]
-        public static void Postfix(CustomizingWindow __instance)
+        public static void Prefix(CustomizingWindow __instance)
         {
             try
             {
-                __instance.PatchAfterConfirm(new AgentLayerAdapter(), new WorkerSpriteManagerAdapter());
+                __instance.PatchBeforeConfirm(new AgentLayerAdapter(), new WorkerSpriteManagerAdapter());
             }
             catch (Exception ex)
             {
