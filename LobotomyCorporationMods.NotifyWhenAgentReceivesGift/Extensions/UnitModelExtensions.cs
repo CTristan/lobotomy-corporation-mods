@@ -2,8 +2,8 @@
 
 #region
 
-using System.Collections.Generic;
 using System.Linq;
+using LobotomyCorporationMods.Common.Extensions;
 
 #endregion
 
@@ -11,28 +11,6 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Extensions
 {
     internal static class UnitModelExtensions
     {
-        /// <summary>
-        ///     A unit's equipped gifts consists of both added and replaced gifts.
-        /// </summary>
-        private static IEnumerable<EGOgiftModel> GetEquippedGifts(this UnitModel unitModel)
-        {
-            var giftList = new List<EGOgiftModel>();
-
-            var addedGifts = unitModel.Equipment.gifts.addedGifts;
-            if (!(addedGifts is null) && addedGifts.Count > 0)
-            {
-                giftList.AddRange(addedGifts);
-            }
-
-            var replacedGifts = unitModel.Equipment.gifts.replacedGifts;
-            if (!(replacedGifts is null) && replacedGifts.Count > 0)
-            {
-                giftList.AddRange(unitModel.Equipment.gifts.replacedGifts);
-            }
-
-            return giftList;
-        }
-
         internal static bool HasGiftEquipped(this UnitModel unitModel, int giftId)
         {
             var equippedGifts = unitModel.GetEquippedGifts();
