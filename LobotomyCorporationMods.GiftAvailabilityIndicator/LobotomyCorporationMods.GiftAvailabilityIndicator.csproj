@@ -1,14 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
-    <AssemblyVersion>6.0.0.0</AssemblyVersion>
-    <!--
-      Needed to prevent crashes. When Basemod loads the mods, if it finds two DLLs with the same assembly name then it
-      will try to re-use the first DLL even if the second DLL has a different assembly version.
-    -->
-    <AssemblyName>LobotomyCorporationMods.Common.$(AssemblyVersion)</AssemblyName>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <ProjectGuid>{D9BB018C-8BB3-4639-983C-F58969C8574E}</ProjectGuid>
+    <ProjectGuid>{0B066766-A14E-48C8-93CD-9813C22549F8}</ProjectGuid>
     <AnalysisLevel>latest-all</AnalysisLevel>
     <Deterministic>false</Deterministic>
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
@@ -277,9 +271,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-  <Target Name="CompleteClean" AfterTargets="Clean">
-    <!-- common vars https://msdn.microsoft.com/en-us/library/c02as0cs.aspx?f=255&MSPPError=-2147217396 -->
-    <!-- bin -->
-    <RemoveDir Directories="$(TargetDir)"/>
-  </Target>
+  <ItemGroup>
+    <ProjectReference Include="..\LobotomyCorporationMods.Common\LobotomyCorporationMods.Common.csproj"/>
+  </ItemGroup>
 </Project>

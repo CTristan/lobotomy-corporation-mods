@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using LobotomyCorporationMods.Common.Enums;
+using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators;
@@ -50,27 +51,6 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
             }
 
             return evaluator;
-        }
-
-        internal static bool IsAbnormalityWorkWindow(this CommandWindow.CommandWindow commandWindow)
-        {
-            // Validation checks to confirm we have everything we need
-            var isAbnormalityWorkWindow = commandWindow.CurrentSkill?.rwbpType is not null && commandWindow.CurrentWindowType == CommandType.Management;
-
-            return isAbnormalityWorkWindow;
-        }
-
-        private static bool TryGetCreature(this CommandWindow.CommandWindow commandWindow, out CreatureModel? creature)
-        {
-            creature = null;
-
-            var unitModel = commandWindow.CurrentTarget;
-            if (unitModel is CreatureModel creatureModel)
-            {
-                creature = creatureModel;
-            }
-
-            return creature is not null;
         }
     }
 }
