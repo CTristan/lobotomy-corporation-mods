@@ -30,6 +30,7 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Patches
         private static Image? s_slotOneImage;
         private static Image? s_slotThreeImage;
         private static Image? s_slotTwoImage; // ReSharper disable InconsistentNaming
+
         [EntryPoint]
         [ExcludeFromCodeCoverage]
         public static void Prefix(AgentSlot __instance, AgentModel agent)
@@ -83,7 +84,7 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Patches
 
             var commandWindow = CommandWindow.CommandWindow.CurrentWindow;
 
-            if (commandWindow is not null && commandWindow.IsAbnormalityWorkWindow())
+            if (commandWindow is not null)
             {
                 var abnormalityGift = commandWindow.GetCreatureGiftIfExists();
 
