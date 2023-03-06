@@ -291,12 +291,28 @@ namespace LobotomyCorporationMods.Test.Extensions
         {
             metaInfo ??= CreateEquipmentTypeInfo();
 
-            return new EquipmentModel { metaInfo = metaInfo };
+            CreateUninitializedObject<EquipmentModel>(out var equipmentModel);
+
+            var fields = GetUninitializedObjectFields(equipmentModel.GetType());
+            var newValues = new Dictionary<string, object> { { "metaInfo", metaInfo } };
+            equipmentModel = GetPopulatedUninitializedObject(equipmentModel, fields, newValues);
+
+            // Needed to avoid a circular reference from script
+            var script = CreateEquipmentScriptBase(equipmentModel);
+            newValues.Add("script", script);
+
+            return GetPopulatedUninitializedObject(equipmentModel, fields, newValues);
         }
 
         internal static EquipmentScriptBase CreateEquipmentScriptBase(EquipmentModel? model = null)
         {
             model ??= CreateEquipmentModel();
+
+            // Needed to avoid a circular reference
+            if (model.script is not null)
+            {
+                return model.script;
+            }
 
             CreateUninitializedObject<EquipmentScriptBase>(out var equipmentScriptBase);
 
@@ -306,9 +322,27 @@ namespace LobotomyCorporationMods.Test.Extensions
             return GetPopulatedUninitializedObject(equipmentScriptBase, fields, newValues);
         }
 
-        internal static EquipmentTypeInfo CreateEquipmentTypeInfo()
+        internal static EquipmentTypeInfo CreateEquipmentTypeInfo(EGObonusInfo? bonus = null, Dictionary<string, string>? localizeData = null)
         {
-            return new EquipmentTypeInfo();
+            bonus ??= CreateEgoBonusInfo();
+            localizeData ??= new Dictionary<string, string>();
+
+            CreateUninitializedObject<EquipmentTypeInfo>(out var equipmentTypeInfo);
+
+            var fields = GetUninitializedObjectFields(equipmentTypeInfo.GetType());
+            var newValues = new Dictionary<string, object> { { "bonus", bonus }, { "localizeData", localizeData } };
+
+            return GetPopulatedUninitializedObject(equipmentTypeInfo, fields, newValues);
+        }
+
+        internal static EGObonusInfo CreateEgoBonusInfo()
+        {
+            CreateUninitializedObject<EGObonusInfo>(out var egoBonusInfo);
+
+            var fields = GetUninitializedObjectFields(egoBonusInfo.GetType());
+            var newValues = new Dictionary<string, object>();
+
+            return GetPopulatedUninitializedObject(egoBonusInfo, fields, newValues);
         }
 
         internal static FairyBuf CreateFairyBuf()

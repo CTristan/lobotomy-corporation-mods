@@ -11,17 +11,8 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 
         private bool IsDisguised()
         {
-            bool isDisguised;
-
-            if (Creature.script is Nothing nothing)
-            {
-                var notDisguised = nothing.copiedWorker is null;
-                isDisguised = !notDisguised;
-            }
-            else
-            {
-                isDisguised = false;
-            }
+            var script = (Nothing)Creature.script;
+            var isDisguised = script.copiedWorker is not null;
 
             return isDisguised;
         }

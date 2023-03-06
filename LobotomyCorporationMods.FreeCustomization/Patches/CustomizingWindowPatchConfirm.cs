@@ -18,22 +18,26 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
     [HarmonyPatch(typeof(CustomizingWindow), "Confirm")]
     public static class CustomizingWindowPatchConfirm
     {
-        public static void PatchAfterConfirm(this CustomizingWindow instance, IAgentLayerAdapter agentLayerAdapter, IWorkerSpriteManagerAdapter workerSpriteManagerAdapter)
+        public static void PatchBeforeConfirm(this CustomizingWindow instance, IAgentLayerAdapter agentLayerAdapter, IWorkerSpriteManagerAdapter workerSpriteManagerAdapter)
         {
             if (instance is null)
             {
                 throw new ArgumentNullException(nameof(instance));
             }
 
-            instance.SaveAgentAppearance();
-            instance.RenameAgent();
-            instance.CurrentData.appearance.SetResrouceData();
+            // We only want to save the appearance data if this is an existing agent, otherwise we'll let the game generate it as usual
+            if (instance.CurrentWindowType != CustomizingType.GENERATE)
+            {
+                instance.SaveAgentAppearance();
+                instance.RenameAgent();
+                instance.CurrentData.appearance.SetResrouceData();
 
-            workerSpriteManagerAdapter.GameObject = WorkerSpriteManager.instance;
-            workerSpriteManagerAdapter.SetAgentBasicData(instance.CurrentData.appearance.spriteSet, instance.CurrentData.appearance);
+                workerSpriteManagerAdapter.GameObject = WorkerSpriteManager.instance;
+                workerSpriteManagerAdapter.SetAgentBasicData(instance.CurrentData.appearance.spriteSet, instance.CurrentData.appearance);
 
-            agentLayerAdapter.GameObject = AgentLayer.currentLayer;
-            instance.UpdateAgentModel(agentLayerAdapter);
+                agentLayerAdapter.GameObject = AgentLayer.currentLayer;
+                instance.UpdateAgentModel(agentLayerAdapter);
+            }
         }
 
         /// <summary>
@@ -42,11 +46,11 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         // ReSharper disable InconsistentNaming
         [EntryPoint]
         [ExcludeFromCodeCoverage]
-        public static void Postfix(CustomizingWindow __instance)
+        public static void Prefix(CustomizingWindow __instance)
         {
             try
             {
-                __instance.PatchAfterConfirm(new AgentLayerAdapter(), new WorkerSpriteManagerAdapter());
+                __instance.PatchBeforeConfirm(new AgentLayerAdapter(), new WorkerSpriteManagerAdapter());
             }
             catch (Exception ex)
             {

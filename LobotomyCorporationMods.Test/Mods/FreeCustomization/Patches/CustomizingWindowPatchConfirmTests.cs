@@ -31,7 +31,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
             var mockWorkerSpriteManager = new Mock<IWorkerSpriteManagerAdapter>();
 
             // Act
-            sut.PatchAfterConfirm(mockAgentLayerAdapter.Object, mockWorkerSpriteManager.Object);
+            sut.PatchBeforeConfirm(mockAgentLayerAdapter.Object, mockWorkerSpriteManager.Object);
 
             // Assert
             sut.CurrentAgent.iscustom.Should().Be(true);
@@ -76,7 +76,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
             var mockWorkerSpriteManager = new Mock<IWorkerSpriteManagerAdapter>();
 
             // Act
-            sut.PatchAfterConfirm(mockAgentLayerAdapter.Object, mockWorkerSpriteManager.Object);
+            sut.PatchBeforeConfirm(mockAgentLayerAdapter.Object, mockWorkerSpriteManager.Object);
 
             // Assert
             sut.CurrentAgent.spriteData.ShouldBeEquivalentTo(expectedAppearance.spriteSet);
@@ -108,7 +108,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
             var mockWorkerSpriteManager = new Mock<IWorkerSpriteManagerAdapter>();
 
             // Act
-            sut.PatchAfterConfirm(mockAgentLayerAdapter.Object, mockWorkerSpriteManager.Object);
+            sut.PatchBeforeConfirm(mockAgentLayerAdapter.Object, mockWorkerSpriteManager.Object);
 
             // Assert
             sut.CurrentAgent.name.Should().Be(expectedName);
