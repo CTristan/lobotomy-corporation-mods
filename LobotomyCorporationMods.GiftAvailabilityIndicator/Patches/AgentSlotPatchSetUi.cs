@@ -3,6 +3,7 @@
 #region
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using CommandWindow;
@@ -11,7 +12,6 @@ using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.GiftAvailabilityIndicator.Extensions;
 using UnityEngine;
-using UnityEngine.UI;
 
 #endregion
 
@@ -25,14 +25,11 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Patches
         private const string SlotOneName = "Slot";
         private const string SlotThreeName = "Slot (6)";
         private const string SlotTwoName = "Slot (5)";
-        private static Image? s_slotFiveImage;
-        private static Image? s_slotFourImage;
-        private static Image? s_slotOneImage;
-        private static Image? s_slotThreeImage;
-        private static Image? s_slotTwoImage; // ReSharper disable InconsistentNaming
+        private static readonly List<GameObject> SlotImages = new();
 
         [EntryPoint]
         [ExcludeFromCodeCoverage]
+        // ReSharper disable InconsistentNaming
         public static void Prefix(AgentSlot __instance, AgentModel agent)
         {
             try
@@ -49,42 +46,31 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Patches
 
         public static void PatchBeforeSetUi(this AgentSlot instance, UnitModel agent)
         {
-            Image image;
-
             var commandWindow = CommandWindow.CommandWindow.CurrentWindow;
 
             if (commandWindow is not null && commandWindow.CurrentWindowType == CommandType.Management)
             {
-                switch (instance.name)
+                var slotNumber = instance.name switch
                 {
-                    case SlotOneName:
-                        s_slotOneImage ??= instance.CreateGiftAvailabilityImage();
-                        image = s_slotOneImage;
+                    SlotOneName => 0,
+                    SlotTwoName => 1,
+                    SlotThreeName => 2,
+                    SlotFourName => 3,
+                    SlotFiveName => 4,
+                    _ => throw new InvalidOperationException(instance.name + " is not a valid slot name")
+                };
 
-                        break;
-                    case SlotTwoName:
-                        s_slotTwoImage ??= instance.CreateGiftAvailabilityImage();
-                        image = s_slotTwoImage;
-
-                        break;
-                    case SlotThreeName:
-                        s_slotThreeImage ??= instance.CreateGiftAvailabilityImage();
-                        image = s_slotThreeImage;
-
-                        break;
-                    case SlotFourName:
-                        s_slotFourImage ??= instance.CreateGiftAvailabilityImage();
-                        image = s_slotFourImage;
-
-                        break;
-                    case SlotFiveName:
-                        s_slotFiveImage ??= instance.CreateGiftAvailabilityImage();
-                        image = s_slotFiveImage;
-
-                        break;
-                    default:
-                        throw new InvalidOperationException(instance.name + " is not a valid slot name");
+                if (SlotImages.Count < slotNumber + 1)
+                {
+                    SlotImages.Add(instance.CreateGiftAvailabilityImage());
                 }
+
+                if (SlotImages[slotNumber] == null)
+                {
+                    SlotImages[slotNumber] = instance.CreateGiftAvailabilityImage();
+                }
+
+                var image = instance.GetGiftAvailabilityImage(SlotImages[slotNumber]);
 
                 var abnormalityGift = commandWindow.GetCreatureGiftIfExists();
 

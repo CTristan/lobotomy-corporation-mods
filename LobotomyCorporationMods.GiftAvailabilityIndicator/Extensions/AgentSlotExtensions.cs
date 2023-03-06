@@ -12,7 +12,7 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Extensions
 {
     internal static class AgentSlotExtensions
     {
-        internal static Image CreateGiftAvailabilityImage(this AgentSlot agentSlot)
+        internal static GameObject CreateGiftAvailabilityImage(this AgentSlot agentSlot)
         {
             const float localPositionX = -1f;
             const float localPositionY = 1f;
@@ -27,7 +27,12 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Extensions
             gameObject.transform.localPosition = new Vector3(localPositionX, localPositionY, localPositionZ);
             gameObject.SetActive(true);
 
-            return image;
+            return gameObject;
+        }
+
+        internal static Image GetGiftAvailabilityImage(this AgentSlot instance, GameObject slotImage)
+        {
+            return slotImage.GetComponent<Image>();
         }
     }
 }
