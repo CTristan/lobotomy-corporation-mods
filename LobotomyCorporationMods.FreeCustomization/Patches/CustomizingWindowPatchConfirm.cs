@@ -25,15 +25,19 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
                 throw new ArgumentNullException(nameof(instance));
             }
 
-            instance.SaveAgentAppearance();
-            instance.RenameAgent();
-            instance.CurrentData.appearance.SetResrouceData();
+            // We only want to save the appearance data if this is an existing agent, otherwise we'll let the game generate it as usual
+            if (instance.CurrentWindowType != CustomizingType.GENERATE)
+            {
+                instance.SaveAgentAppearance();
+                instance.RenameAgent();
+                instance.CurrentData.appearance.SetResrouceData();
 
-            workerSpriteManagerAdapter.GameObject = WorkerSpriteManager.instance;
-            workerSpriteManagerAdapter.SetAgentBasicData(instance.CurrentData.appearance.spriteSet, instance.CurrentData.appearance);
+                workerSpriteManagerAdapter.GameObject = WorkerSpriteManager.instance;
+                workerSpriteManagerAdapter.SetAgentBasicData(instance.CurrentData.appearance.spriteSet, instance.CurrentData.appearance);
 
-            agentLayerAdapter.GameObject = AgentLayer.currentLayer;
-            instance.UpdateAgentModel(agentLayerAdapter);
+                agentLayerAdapter.GameObject = AgentLayer.currentLayer;
+                instance.UpdateAgentModel(agentLayerAdapter);
+            }
         }
 
         /// <summary>
