@@ -17,8 +17,8 @@ using UnityEngine;
 
 namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Patches
 {
-    [HarmonyPatch(typeof(AgentSlot), "SetUI")]
-    public static class AgentSlotPatchSetUi
+    [HarmonyPatch(typeof(ManagementSlot), "SetUI")]
+    public static class ManagementSlotPatchSetUi
     {
         private const string SlotFiveName = "Slot (8)";
         private const string SlotFourName = "Slot (7)";
@@ -30,7 +30,7 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Patches
         [EntryPoint]
         [ExcludeFromCodeCoverage]
         // ReSharper disable InconsistentNaming
-        public static void Prefix(AgentSlot __instance, AgentModel agent)
+        public static void Prefix(ManagementSlot __instance, AgentModel agent)
         {
             try
             {
@@ -44,11 +44,11 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Patches
             }
         }
 
-        public static void PatchBeforeSetUi(this AgentSlot instance, UnitModel agent)
+        public static void PatchBeforeSetUi(this ManagementSlot instance, UnitModel agent)
         {
             var commandWindow = CommandWindow.CommandWindow.CurrentWindow;
 
-            if (commandWindow is not null && commandWindow.CurrentWindowType == CommandType.Management)
+            if (commandWindow is not null)
             {
                 var slotNumber = instance.name switch
                 {
@@ -84,11 +84,18 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Patches
 
                     if (giftsInSameSlot.Any())
                     {
-                        image.color = giftsInSameSlot.Any(model => model.metaInfo.Name == giftName) ? Color.clear : Color.gray;
+                        if (giftsInSameSlot.Any(model => model.metaInfo.Name == giftName))
+                        {
+                            image.Hide();
+                        }
+                        else
+                        {
+                            image.ShowAsReplacementGift();
+                        }
                     }
                     else
                     {
-                        image.color = Color.green;
+                        image.ShowAsNewGift();
                     }
                 }
             }

@@ -6,6 +6,7 @@ using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using LobotomyCorporationMods.Common.Implementations;
+using LobotomyCorporationMods.Common.Interfaces;
 
 #endregion
 
@@ -33,6 +34,10 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator
             {
                 InitializePatchData(typeof(Harmony_Patch), ModFileName);
             }
+
+            PublicFileManager = FileManager;
         }
+
+        public IFileManager PublicFileManager { get; }
     }
 }
