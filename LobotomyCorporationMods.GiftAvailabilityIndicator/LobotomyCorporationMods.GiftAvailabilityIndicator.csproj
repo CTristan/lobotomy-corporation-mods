@@ -274,4 +274,9 @@
   <ItemGroup>
     <ProjectReference Include="..\LobotomyCorporationMods.Common\LobotomyCorporationMods.Common.csproj"/>
   </ItemGroup>
+  <ItemGroup>
+    <None Update="Assets\gift.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
