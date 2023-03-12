@@ -8,7 +8,7 @@ using FluentAssertions;
 using LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches;
 using LobotomyCorporationMods.Test.Extensions;
 using Moq;
-using Xunit.Extensions;
+using Xunit;
 
 #endregion
 

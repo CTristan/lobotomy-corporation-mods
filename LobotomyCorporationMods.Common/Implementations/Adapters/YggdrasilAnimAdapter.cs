@@ -2,6 +2,7 @@
 
 #region
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -14,8 +15,10 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage]
-    public sealed class YggdrasilAnimAdapter : Adapter<YggdrasilAnim>, IYggdrasilAnimAdapter
+    public sealed class YggdrasilAnimAdapter : ComponentAdapter, IYggdrasilAnimAdapter
     {
+        private YggdrasilAnim? _yggdrasilAnim;
+
         public IEnumerable<IGameObjectAdapter> Flowers
         {
             get
@@ -24,6 +27,20 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 
                 return flowers.Select(static flower => new GameObjectAdapter { GameObject = flower }).Cast<IGameObjectAdapter>();
             }
+        }
+
+        public new YggdrasilAnim GameObject
+        {
+            get
+            {
+                if (_yggdrasilAnim is null)
+                {
+                    throw new InvalidOperationException(UninitializedGameObjectErrorMessage);
+                }
+
+                return _yggdrasilAnim;
+            }
+            set => _yggdrasilAnim = value;
         }
     }
 }

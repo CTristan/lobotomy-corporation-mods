@@ -5,7 +5,7 @@
 using Customizing;
 using FluentAssertions;
 using LobotomyCorporationMods.FreeCustomization.Patches;
-using Xunit.Extensions;
+using Xunit;
 
 #endregion
 

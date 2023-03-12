@@ -45,7 +45,7 @@ namespace LobotomyCorporationMods.Test.Mods.NotifyWhenAgentReceivesGift
         public void Constructor_is_public_and_externally_accessible()
         {
             Action action = () => _ = new Harmony_Patch();
-            action.ShouldNotThrow();
+            action.Should().NotThrow();
         }
     }
 }

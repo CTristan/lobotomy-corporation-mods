@@ -32,6 +32,8 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.LoadData(mockLogger.Object);
 
+            // No arguments passed in, so we need to make one of the instances null
+            AgentInfoWindow.currentWindow = null;
             static void Action() => AgentInfoWindowPatchEnforcementWindow.Postfix();
 
             mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
@@ -53,6 +55,8 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.LoadData(mockLogger.Object);
 
+            // No arguments passed in, so we need to make one of the instances null
+            AgentInfoWindow.currentWindow = null;
             static void Action() => AgentInfoWindowPatchGenerateWindow.Postfix();
 
             mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
@@ -153,7 +157,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
         public void Constructor_is_public_and_externally_accessible()
         {
             Action action = () => _ = new Harmony_Patch();
-            action.ShouldNotThrow();
+            action.Should().NotThrow();
         }
     }
 }

@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace LobotomyCorporationMods.Common.Interfaces.Adapters
 {
-    public interface IYggdrasilAnimAdapter : IAdapter<YggdrasilAnim>
+    public interface IYggdrasilAnimAdapter : IAdapter<YggdrasilAnim>, IComponentAdapter
     {
         IEnumerable<IGameObjectAdapter> Flowers { get; }
     }

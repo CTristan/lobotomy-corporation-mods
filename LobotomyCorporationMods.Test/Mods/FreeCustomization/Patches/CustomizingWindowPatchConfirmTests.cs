@@ -11,7 +11,6 @@ using LobotomyCorporationMods.Test.Extensions;
 using Moq;
 using UnityEngine;
 using Xunit;
-using Xunit.Extensions;
 
 #endregion
 
@@ -79,8 +78,8 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
             sut.PatchBeforeConfirm(mockAgentLayerAdapter.Object, mockWorkerSpriteManager.Object);
 
             // Assert
-            sut.CurrentAgent.spriteData.ShouldBeEquivalentTo(expectedAppearance.spriteSet);
-            sut.CurrentAgent.spriteData.BattleEyeBrow.GetHashCode().ShouldBeEquivalentTo(expectedSprite.GetHashCode());
+            sut.CurrentAgent.spriteData.Should().BeEquivalentTo(expectedAppearance.spriteSet);
+            sut.CurrentAgent.spriteData.BattleEyeBrow.GetHashCode().Should().Be(expectedSprite.GetHashCode());
             sut.CurrentAgent.spriteData.HairColor.Should().Be(expectedColor);
         }
 

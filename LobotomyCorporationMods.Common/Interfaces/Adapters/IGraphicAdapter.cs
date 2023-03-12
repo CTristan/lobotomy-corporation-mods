@@ -8,10 +8,9 @@ using UnityEngine.UI;
 
 namespace LobotomyCorporationMods.Common.Interfaces.Adapters
 {
-    public interface ITextAdapter : IAdapter<Text>, IGraphicAdapter
+    public interface IGraphicAdapter : IAdapter<Graphic>, IComponentAdapter
     {
-        new Text GameObject { get; set; }
+        new Graphic GameObject { get; set; }
         new IGameObjectAdapter GameObjectAdapter { get; }
-        string Text { get; set; }
     }
 }

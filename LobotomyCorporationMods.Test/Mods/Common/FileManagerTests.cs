@@ -8,7 +8,6 @@ using System.IO;
 using FluentAssertions;
 using LobotomyCorporationMods.Common.Implementations;
 using Xunit;
-using Xunit.Extensions;
 
 #endregion
 
@@ -71,7 +70,7 @@ namespace LobotomyCorporationMods.Test.Mods.Common
         {
             Action action = () => _ = new FileManager(string.Empty, GetDirectories());
 
-            action.ShouldThrow<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
 
         #region Helper Methods

@@ -47,7 +47,7 @@ namespace LobotomyCorporationMods.Test.Mods.GiftAvailabilityIndicator.Patches
                 mockImageAdapter.Object);
 
             // Assert
-            action.ShouldNotThrow();
+            action.Should().NotThrow();
         }
 
         [Fact]

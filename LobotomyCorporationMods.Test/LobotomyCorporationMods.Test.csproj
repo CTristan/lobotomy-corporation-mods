@@ -14,7 +14,7 @@
     <OutputPath>bin\</OutputPath>
     <OutputType>Library</OutputType>
     <RuntimeIdentifiers>win</RuntimeIdentifiers>
-    <TargetFrameworks>net35;net48</TargetFrameworks>
+    <TargetFrameworks>net48</TargetFrameworks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
@@ -26,20 +26,20 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="FluentAssertions" Version="2.2.0"/>
+    <PackageReference Include="FluentAssertions" Version="6.10.0"/>
+    <PackageReference Include="Microsoft.CodeAnalysis" Version="4.5.0"/>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0"/>
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net35" Version="1.0.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Moq" Version="4.2.1510.2205"/>
-    <PackageReference Include="xunit" Version="1.9.2"/>
-    <PackageReference Include="xunit.extensions" Version="1.9.2"/>
+    <PackageReference Include="Moq" Version="4.18.4"/>
+    <PackageReference Include="xunit" Version="2.4.2"/>
     <PackageReference Include="xunit.runner.console" Version="2.4.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

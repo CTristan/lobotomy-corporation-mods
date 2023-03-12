@@ -18,7 +18,7 @@ namespace LobotomyCorporationMods.Common.Implementations
     [ExcludeFromCodeCoverage]
     public class Adapter<T> : IAdapter<T>
     {
-        private const string UninitializedGameObjectErrorMessage = "Please load the game object into the adapter before trying to use it.";
+        protected const string UninitializedGameObjectErrorMessage = "Please load the game object into the adapter before trying to use it.";
         private T? _gameObject;
 
         protected Adapter()

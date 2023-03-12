@@ -2,6 +2,7 @@
 
 #region
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using LobotomyCorporationMods.Common.Attributes;
@@ -13,8 +14,24 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage]
-    public sealed class CustomizingWindowAdapter : Adapter<CustomizingWindow>, ICustomizingWindowAdapter
+    public sealed class CustomizingWindowAdapter : ComponentAdapter, ICustomizingWindowAdapter
     {
+        private CustomizingWindow? _customizingWindow;
+
+        public new CustomizingWindow GameObject
+        {
+            get
+            {
+                if (_customizingWindow is null)
+                {
+                    throw new InvalidOperationException(UninitializedGameObjectErrorMessage);
+                }
+
+                return _customizingWindow;
+            }
+            set => _customizingWindow = value;
+        }
+
         public void OpenAppearanceWindow()
         {
             GameObject.OpenAppearanceWindow();
