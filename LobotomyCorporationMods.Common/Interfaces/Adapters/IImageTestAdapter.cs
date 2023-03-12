@@ -12,5 +12,6 @@ namespace LobotomyCorporationMods.Common.Interfaces.Adapters
     public interface IImageTestAdapter : ITestAdapter<Image>
     {
         Color Color { get; set; }
+        Sprite Sprite { get; set; }
     }
 }

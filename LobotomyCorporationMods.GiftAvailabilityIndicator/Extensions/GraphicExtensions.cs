@@ -10,9 +10,9 @@ using UnityEngine.UI;
 
 namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Extensions
 {
-    internal static class ImageExtensions
+    internal static class GraphicExtensions
     {
-        internal static void Hide(this Image image)
+        internal static void Hide(this Graphic image)
         {
             image.color = Color.clear;
 
@@ -20,7 +20,7 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Extensions
             tooltip.gameObject.SetActive(false);
         }
 
-        internal static void ShowAsNewGift(this Image image)
+        internal static void ShowAsNewGift(this Graphic image)
         {
             image.color = Color.green;
 
@@ -33,7 +33,7 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Extensions
             tooltip.SetDynamicTooltip(tooltipMessage.ToString());
         }
 
-        internal static void ShowAsReplacementGift(this Image image)
+        internal static void ShowAsReplacementGift(this Graphic image)
         {
             image.color = Color.grey;
 
