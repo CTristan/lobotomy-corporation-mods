@@ -2,6 +2,7 @@
 
 #region
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
@@ -13,8 +14,24 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage]
-    public sealed class TransformAdapter : Adapter<Transform>, ITransformAdapter
+    public sealed class TransformAdapter : ComponentAdapter, ITransformAdapter
     {
+        private Transform? _transform;
+
+        public new Transform GameObject
+        {
+            get
+            {
+                if (_transform is null)
+                {
+                    throw new InvalidOperationException(UninitializedGameObjectErrorMessage);
+                }
+
+                return _transform;
+            }
+            set => _transform = value;
+        }
+
         public Transform GetChild(int index)
         {
             return GameObject.GetChild(index);

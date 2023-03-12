@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
-    public class SpriteAdapter : Adapter<Sprite>, ISpriteAdapter
+    public sealed class SpriteAdapter : Adapter<Sprite>, ISpriteAdapter
     {
         public Sprite Create(Texture2D texture, Rect rect, Vector2 pivot)
         {
