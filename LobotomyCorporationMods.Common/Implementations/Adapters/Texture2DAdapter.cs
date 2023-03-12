@@ -6,7 +6,6 @@ using System.Diagnostics.CodeAnalysis;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using UnityEngine;
-using UnityEngine.UI;
 
 #endregion
 
@@ -14,18 +13,15 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage]
-    public sealed class ImageAdapter : Adapter<Image>, IImageAdapter
+    public sealed class Texture2DAdapter : Adapter<Texture2D>, ITexture2DAdapter
     {
-        public Color Color
+        public int Height => GameObject.height;
+
+        public bool LoadImage(byte[] data)
         {
-            get => GameObject.color;
-            set => GameObject.color = value;
+            return GameObject.LoadImage(data);
         }
 
-        public Sprite Sprite
-        {
-            get => GameObject.sprite;
-            set => GameObject.sprite = value;
-        }
+        public int Width => GameObject.width;
     }
 }

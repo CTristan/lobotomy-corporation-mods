@@ -7,7 +7,6 @@ using System.Diagnostics.CodeAnalysis;
 using CommandWindow;
 using Harmony;
 using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions;

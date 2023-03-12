@@ -19,11 +19,11 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
 
         protected static CreatureEquipmentMakeInfo GetCreatureEquipmentMakeInfo(string giftName)
         {
-            var equipTypeInfo = TestExtensions.CreateEquipmentTypeInfo();
+            var equipTypeInfo = TestUnityExtensions.CreateEquipmentTypeInfo();
             equipTypeInfo.type = EquipmentTypeInfo.EquipmentType.SPECIAL;
             equipTypeInfo.localizeData = new Dictionary<string, string> { { "name", giftName } };
 
-            var creatureEquipmentMakeInfo = TestExtensions.CreateCreatureEquipmentMakeInfo();
+            var creatureEquipmentMakeInfo = TestUnityExtensions.CreateCreatureEquipmentMakeInfo();
             creatureEquipmentMakeInfo.equipTypeInfo = equipTypeInfo;
 
             LocalizeTextDataModel.instance.Init(new Dictionary<string, string> { { giftName, giftName } });

@@ -21,7 +21,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
 
         protected static AgentInfoWindow InitializeAgentInfoWindow()
         {
-            return TestExtensions.CreateAgentInfoWindow();
+            return TestUnityExtensions.CreateAgentInfoWindow();
         }
 
         protected static CustomizingWindow InitializeCustomizingWindow()
@@ -34,12 +34,12 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
             // Need a WorkerSpriteManager instance
             InitializeWorkerSpriteManager();
 
-            return TestExtensions.CreateCustomizingWindow(currentAgent: currentAgent);
+            return TestUnityExtensions.CreateCustomizingWindow(currentAgent: currentAgent);
         }
 
         private static void InitializeWorkerSpriteManager()
         {
-            _ = TestExtensions.CreateWorkerSpriteManager();
+            _ = TestUnityExtensions.CreateWorkerSpriteManager();
         }
     }
 }

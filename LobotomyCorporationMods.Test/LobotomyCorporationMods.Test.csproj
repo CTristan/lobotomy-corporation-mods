@@ -51,6 +51,7 @@
     </ProjectReference>
     <ProjectReference Include="..\LobotomyCorporationMods.BugFixes\LobotomyCorporationMods.BugFixes.csproj"/>
     <ProjectReference Include="..\LobotomyCorporationMods.FreeCustomization\LobotomyCorporationMods.FreeCustomization.csproj"/>
+    <ProjectReference Include="..\LobotomyCorporationMods.GiftAvailabilityIndicator\LobotomyCorporationMods.GiftAvailabilityIndicator.csproj"/>
     <ProjectReference Include="..\LobotomyCorporationMods.NotifyWhenAgentReceivesGift\LobotomyCorporationMods.NotifyWhenAgentReceivesGift.csproj"/>
     <ProjectReference Include="..\LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking\LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.csproj"/>
   </ItemGroup>

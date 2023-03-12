@@ -20,7 +20,7 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes.Patches
         {
             // Arrange
             var notice = NoticeName.OnWorkStart;
-            var skill = TestExtensions.CreateUseSkill();
+            var skill = TestUnityExtensions.CreateUseSkill();
             skill.skillTypeInfo.id = SkillTypeInfo.Consensus;
             var param = new object[] { skill.targetCreature };
 
@@ -79,6 +79,38 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes.Patches
             result.Should().BeTrue();
         }
 
+        #region Helper Methods
+
+        private static object[] SetupCrumblingArmorGifts(int giftId, long skillTypeId)
+        {
+            var skill = TestUnityExtensions.CreateUseSkill();
+            var gift = TestUnityExtensions.CreateEgoGiftModel();
+            gift.metaInfo.id = giftId;
+            var equipment = TestUnityExtensions.CreateUnitEquipSpace();
+            equipment.gifts.addedGifts.Add(gift);
+            skill.agent = TestUnityExtensions.CreateAgentModel(equipment: equipment);
+            skill.skillTypeInfo.id = skillTypeId;
+            var param = new object[] { skill.targetCreature };
+
+            return param;
+        }
+
+        #endregion
+
+        [Fact]
+        public void Skip_if_agent_will_work_on_tool()
+        {
+            // Arrange
+            var notice = NoticeName.OnWorkStart;
+            var param = new object[] { TestUnityExtensions.CreateUnitModel() };
+
+            // Act
+            var result = ArmorCreaturePatchOnNotice.PatchBeforeOnNotice(notice, param);
+
+            // Assert
+            result.Should().BeTrue();
+        }
+
         [Fact]
         public void Skip_if_not_starting_work_on_an_abnormality()
         {
@@ -88,37 +120,5 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes.Patches
 
             result.Should().BeTrue();
         }
-
-        [Fact]
-        public void Skip_if_agent_will_work_on_tool()
-        {
-            // Arrange
-            var notice = NoticeName.OnWorkStart;
-            var param = new object[] { TestExtensions.CreateUnitModel() };
-
-            // Act
-            var result = ArmorCreaturePatchOnNotice.PatchBeforeOnNotice(notice, param);
-
-            // Assert
-            result.Should().BeTrue();
-        }
-
-        #region Helper Methods
-
-        private static object[] SetupCrumblingArmorGifts(int giftId, long skillTypeId)
-        {
-            var skill = TestExtensions.CreateUseSkill();
-            var gift = TestExtensions.CreateEgoGiftModel();
-            gift.metaInfo.id = giftId;
-            var equipment = TestExtensions.CreateUnitEquipSpace();
-            equipment.gifts.addedGifts.Add(gift);
-            skill.agent = TestExtensions.CreateAgentModel(equipment: equipment);
-            skill.skillTypeInfo.id = skillTypeId;
-            var param = new object[] { skill.targetCreature };
-
-            return param;
-        }
-
-        #endregion
     }
 }

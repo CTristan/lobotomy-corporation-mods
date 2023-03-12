@@ -142,7 +142,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
             mockLogger.VerifyExceptionLogged<ArgumentNullException>(action);
 
             // Verify other arguments throw an exception if null
-            action = static () => CustomizingWindowPatchReviseOpenAction.Postfix(TestExtensions.CreateCustomizingWindow(), null!);
+            action = static () => CustomizingWindowPatchReviseOpenAction.Postfix(TestUnityExtensions.CreateCustomizingWindow(), null!);
             mockLogger.VerifyExceptionLogged<ArgumentNullException>(action, 2);
         }
 

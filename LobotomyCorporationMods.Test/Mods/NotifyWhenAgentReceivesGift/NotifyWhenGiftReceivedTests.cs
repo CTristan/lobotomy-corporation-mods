@@ -52,11 +52,11 @@ namespace LobotomyCorporationMods.Test.Mods.NotifyWhenAgentReceivesGift
             InitializeTextData(textData);
 
             var equipmentNameDictionary = new Dictionary<string, string> { { "name", giftName } };
-            var metaInfo = TestExtensions.CreateEquipmentTypeInfo(localizeData: equipmentNameDictionary);
+            var metaInfo = TestUnityExtensions.CreateEquipmentTypeInfo(localizeData: equipmentNameDictionary);
             metaInfo.id = giftId;
             metaInfo.attachPos = attachRegion.ToString();
 
-            var gift = TestExtensions.CreateEgoGiftModel(metaInfo);
+            var gift = TestUnityExtensions.CreateEgoGiftModel(metaInfo);
             gift.instanceId = equipmentId;
 
             return gift;
@@ -68,7 +68,7 @@ namespace LobotomyCorporationMods.Test.Mods.NotifyWhenAgentReceivesGift
         /// </summary>
         private static void InitializeTextData(Dictionary<string, string> textData)
         {
-            TestExtensions.CreateLocalizeTextDataModel(textData);
+            TestUnityExtensions.CreateLocalizeTextDataModel(textData);
         }
     }
 }

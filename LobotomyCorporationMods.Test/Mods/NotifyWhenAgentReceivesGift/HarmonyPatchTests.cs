@@ -21,9 +21,9 @@ namespace LobotomyCorporationMods.Test.Mods.NotifyWhenAgentReceivesGift
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.LoadData(mockLogger.Object);
 
-            Action action = static () => UnitModelPatchAttachEgoGift.Prefix(null!, TestExtensions.CreateEgoGiftModel());
+            Action action = static () => UnitModelPatchAttachEgoGift.Prefix(null!, TestUnityExtensions.CreateEgoGiftModel());
             mockLogger.VerifyExceptionLogged<ArgumentNullException>(action);
-            action = static () => UnitModelPatchAttachEgoGift.Prefix(TestExtensions.CreateAgentModel(), null!);
+            action = static () => UnitModelPatchAttachEgoGift.Prefix(TestUnityExtensions.CreateAgentModel(), null!);
             mockLogger.VerifyExceptionLogged<ArgumentNullException>(action, 2);
         }
 

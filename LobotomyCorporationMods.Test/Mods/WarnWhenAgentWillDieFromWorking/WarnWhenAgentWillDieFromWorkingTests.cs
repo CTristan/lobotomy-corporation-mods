@@ -3,11 +3,14 @@
 #region
 
 using System.Collections.Generic;
-using System.Linq;
+using CommandWindow;
+using FluentAssertions;
 using LobotomyCorporationMods.Common.Enums;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.Test.Extensions;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking;
+using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches;
+using Moq;
 using UnityEngine;
 
 #endregion
@@ -16,7 +19,11 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
 {
     public class WarnWhenAgentWillDieFromWorkingTests
     {
-        protected const string DeadAgentString = "AgentState_Dead";
+        private const string DeadAgentString = "AgentState_Dead";
+        protected const AgentState IdleAgentState = AgentState.IDLE;
+        protected const RwbpType SkillTypeAttachment = RwbpType.B;
+        protected const RwbpType SkillTypeInsight = RwbpType.W;
+        protected const RwbpType SkillTypeRepression = RwbpType.P;
         protected const int StatLevelFive = 85;
         protected const int StatLevelFour = 65;
         protected const int StatLevelOne = 1;
@@ -30,83 +37,72 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
             Harmony_Patch.Instance.LoadData(mockLogger.Object);
         }
 
-        protected Color DeadAgentColor { get; } = Color.red;
+        private Color DeadAgentColor { get; } = Color.red;
+        protected GameManager GameManager { get; } = TestUnityExtensions.CreateGameManager();
+        protected Mock<IBeautyBeastAnimAdapter> MockBeautyBeastAnimAdapter { get; } = new();
+        protected Mock<IImageAdapter> MockImageAdapter { get; } = new();
+        protected Mock<ITextAdapter> MockTextAdapter { get; } = new();
+        protected Mock<IYggdrasilAnimAdapter> MockYggdrasilAnimAdapter { get; } = new();
 
-        internal bool AgentWillDie(IImageAdapter workFilterFill, ITextAdapter workFilterText)
+        private bool AgentWillDie(IImageAdapter workFilterFill, ITextAdapter workFilterText)
         {
             var agentWillDie = workFilterFill.Color == DeadAgentColor && workFilterText.Text == DeadAgentString;
 
             return agentWillDie;
         }
 
-        protected static AgentModel GetAgentWithGift(EquipmentId giftId, IEnumerable<UnitBuf> unitBuffs)
+        protected static AgentSlot InitializeAgentSlot(CreatureIds creatureId = CreatureIds.OneSin, IEnumerable<UnitBuf>? unitBufList = null, EquipmentId giftId = (EquipmentId)1,
+            RwbpType skillType = (RwbpType)1, int qliphothCounter = 0)
         {
-            var agent = TestExtensions.CreateAgentModel(bufList: unitBuffs.ToList());
-            var gift = TestExtensions.CreateEgoGiftModel();
-            gift.metaInfo.id = (int)giftId;
-            agent.Equipment.gifts.addedGifts.Add(gift);
+            unitBufList ??= new List<UnitBuf>();
 
-            return agent;
+            var creature = TestExtensions.GetCreatureWithGift(creatureId, qliphothCounter: qliphothCounter);
+            _ = TestExtensions.InitializeCommandWindow(creature, skillType);
+            var agent = TestExtensions.GetAgentWithGift(giftId, unitBufList);
+
+            return TestUnityExtensions.CreateAgentSlot(currentAgent: agent);
         }
 
-        protected static CreatureModel GetCreature(CreatureIds creatureId, int qliphothCounter)
+        protected static void SetupNothingThere(AgentSlot agentSlot, int fortitude)
         {
-            var creature = TestExtensions.CreateCreatureModel(qliphothCounter: qliphothCounter);
-            creature.instanceId = (long)creatureId;
-            creature.metadataId = (long)creatureId;
-            SetMaxObservation(creature);
-
-            // Need to initialize the CreatureLayer with our new creature
-            var creatureUnit = TestExtensions.CreateCreatureUnit();
-            TestExtensions.CreateCreatureLayer(new Dictionary<long, CreatureUnit> { { (long)creatureId, creatureUnit } });
-
-            return creature;
+            SetupNothingThere(agentSlot, fortitude, false);
         }
 
-        protected CommandWindow.CommandWindow InitializeCommandWindow(UnitModel currentTarget)
+        protected static void SetupNothingThere(AgentSlot agentSlot, int fortitude, bool isDisguised)
         {
-            return InitializeCommandWindow(currentTarget, (RwbpType)1);
+            agentSlot.CurrentAgent.primaryStat.hp = fortitude;
+
+            var creature = (CreatureModel)CommandWindow.CommandWindow.CurrentWindow.CurrentTarget;
+            creature.script = new Nothing();
+            ((Nothing)creature.script).copiedWorker = isDisguised ? TestUnityExtensions.CreateAgentModel() : null;
         }
 
-        protected CommandWindow.CommandWindow InitializeCommandWindow(UnitModel currentTarget, RwbpType rwbpType)
+        protected void SetupParasiteTree(int numberOfFlowers)
         {
-            // Need existing game instances
-            InitializeLocalizeTextDataModel();
-            InitializeSkillTypeList(rwbpType);
+            var mockFlower = new Mock<IGameObjectAdapter>();
+            mockFlower.Setup(static adapter => adapter.ActiveSelf).Returns(true);
 
-            var commandWindow = TestExtensions.CreateCommandWindow(currentTarget, CommandType.Management, (long)rwbpType);
-            commandWindow.DeadColor = DeadAgentColor;
-            CommandWindow.CommandWindow.CurrentWindow.DeadColor = DeadAgentColor;
-
-            return commandWindow;
-        }
-
-        private static void InitializeLocalizeTextDataModel()
-        {
-            var list = new Dictionary<string, string> { { DeadAgentString, DeadAgentString } };
-
-            _ = TestExtensions.CreateLocalizeTextDataModel(list);
-        }
-
-        private static void InitializeSkillTypeList(RwbpType rwbpType)
-        {
-            SkillTypeInfo[] skillTypeInfos = { new() { id = (long)rwbpType } };
-            _ = TestExtensions.CreateSkillTypeList(skillTypeInfos);
-        }
-
-        private static void SetMaxObservation(CreatureModel creature)
-        {
-            var observeRegions = new List<ObserveInfoData>
+            var mockFlowers = new List<IGameObjectAdapter>();
+            for (var i = 0; i < numberOfFlowers; i++)
             {
-                new() { regionName = "stat" },
-                new() { regionName = "defense" },
-                new() { regionName = "work_r" },
-                new() { regionName = "work_w" },
-                new() { regionName = "work_b" },
-                new() { regionName = "work_p" }
-            };
-            creature.observeInfo.InitObserveRegion(observeRegions);
-            creature.observeInfo.ObserveAll();
+                mockFlowers.Add(mockFlower.Object);
+            }
+
+            MockYggdrasilAnimAdapter.Setup(static adapter => adapter.Flowers).Returns(mockFlowers);
+        }
+
+        protected void VerifyAgentWillDie(AgentSlot agentSlot)
+        {
+            agentSlot.PatchAfterSetFilter(IdleAgentState, GameManager, MockBeautyBeastAnimAdapter.Object, MockImageAdapter.Object, MockTextAdapter.Object, MockYggdrasilAnimAdapter.Object);
+
+            AgentWillDie(MockImageAdapter.Object, MockTextAdapter.Object).Should().BeTrue();
+        }
+
+        protected void VerifyAgentWillNotDie(AgentSlot agentSlot)
+        {
+            agentSlot.PatchAfterSetFilter(IdleAgentState, GameManager, MockBeautyBeastAnimAdapter.Object, MockImageAdapter.Object, MockTextAdapter.Object, MockYggdrasilAnimAdapter.Object);
+
+            AgentWillDie(MockImageAdapter.Object, MockTextAdapter.Object).Should().BeFalse();
         }
     }
 }

@@ -24,7 +24,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
         {
             // Arrange
             var sut = InitializeCustomizingWindow();
-            var agent = TestExtensions.CreateAgentModel();
+            var agent = TestUnityExtensions.CreateAgentModel();
             agent.iscustom = false;
 
             var mockAgentLayerAdapter = new Mock<IAgentLayerAdapter>();
@@ -41,12 +41,12 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
         public void Customizing_existing_agent_changes_agent_appearance_successfully()
         {
             // Arrange
-            var currentAppearance = TestExtensions.CreateWorkerSprite();
-            var expectedSprite = TestExtensions.CreateSprite();
+            var currentAppearance = TestUnityExtensions.CreateWorkerSprite();
+            var expectedSprite = TestUnityExtensions.CreateSprite();
             var expectedColor = Color.black;
             var expectedAppearance = new Appearance
             {
-                spriteSet = TestExtensions.CreateWorkerSprite(),
+                spriteSet = TestUnityExtensions.CreateWorkerSprite(),
                 Eyebrow_Battle = expectedSprite,
                 FrontHair = expectedSprite,
                 RearHair = expectedSprite,
@@ -62,10 +62,10 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
                 EyeColor = expectedColor
             };
 
-            var currentAgent = TestExtensions.CreateAgentModel();
+            var currentAgent = TestUnityExtensions.CreateAgentModel();
             currentAgent.spriteData = currentAppearance;
 
-            var agentData = TestExtensions.CreateAgentData();
+            var agentData = TestUnityExtensions.CreateAgentData();
             agentData.appearance = expectedAppearance;
 
             var sut = InitializeCustomizingWindow();
@@ -90,14 +90,14 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
         public void Renaming_agent_changes_agent_name_successfully(string currentName, string expectedName)
         {
             // Arrange
-            var currentAgent = TestExtensions.CreateAgentModel();
+            var currentAgent = TestUnityExtensions.CreateAgentModel();
             currentAgent.name = currentName;
             currentAgent._agentName.nameDic = new Dictionary<string, string> { { currentName, currentName } };
 
-            var expectedAgentName = TestExtensions.CreateAgentName();
+            var expectedAgentName = TestUnityExtensions.CreateAgentName();
             expectedAgentName.nameDic = new Dictionary<string, string> { { expectedName, expectedName } };
 
-            var expectedData = TestExtensions.CreateAgentData();
+            var expectedData = TestUnityExtensions.CreateAgentData();
             expectedData.CustomName = expectedName;
             expectedData.agentName = expectedAgentName;
 

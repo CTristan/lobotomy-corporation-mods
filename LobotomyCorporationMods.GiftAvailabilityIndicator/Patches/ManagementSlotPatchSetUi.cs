@@ -10,8 +10,12 @@ using CommandWindow;
 using Harmony;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Extensions;
+using LobotomyCorporationMods.Common.Implementations.Adapters;
+using LobotomyCorporationMods.Common.Interfaces;
+using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.GiftAvailabilityIndicator.Extensions;
 using UnityEngine;
+using UnityEngine.UI;
 
 #endregion
 
@@ -25,16 +29,38 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Patches
         private const string SlotOneName = "Slot";
         private const string SlotThreeName = "Slot (6)";
         private const string SlotTwoName = "Slot (5)";
-        private static readonly List<GameObject> SlotImages = new();
+        private static readonly List<IGameObjectAdapter> s_slotImages = new();
 
+        /// <summary>
+        ///     Runs after initializing the management slot UI to add our own additional icon.
+        /// </summary>
+        // ReSharper disable InconsistentNaming
         [EntryPoint]
         [ExcludeFromCodeCoverage]
-        // ReSharper disable InconsistentNaming
-        public static void Prefix(ManagementSlot __instance, AgentModel agent)
+        public static void Postfix(ManagementSlot __instance, UnitModel agent)
         {
             try
             {
-                __instance.PatchBeforeSetUi(agent);
+                if (__instance is null)
+                {
+                    throw new ArgumentNullException(nameof(__instance));
+                }
+
+                if (agent is null)
+                {
+                    throw new ArgumentNullException(nameof(agent));
+                }
+
+                var componentAdapter = new ComponentAdapter { GameObject = __instance };
+
+                var commandWindow = CommandWindow.CommandWindow.CurrentWindow;
+                var gameObjectAdapter = new GameObjectAdapter { GameObject = new GameObject() };
+                var fileManager = Harmony_Patch.Instance.PublicFileManager;
+                var texture2DAdapter = new Texture2DAdapter { GameObject = new Texture2D(2, 2) };
+                var spriteAdapter = new SpriteAdapter();
+                var imageAdapter = new ImageAdapter();
+
+                componentAdapter.PatchAfterSetUi(agent, commandWindow, gameObjectAdapter, fileManager, texture2DAdapter, spriteAdapter, imageAdapter);
             }
             catch (Exception ex)
             {
@@ -44,59 +70,54 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Patches
             }
         }
 
-        public static void PatchBeforeSetUi(this ManagementSlot instance, UnitModel agent)
+        public static void PatchAfterSetUi(this IComponentAdapter instance, UnitModel agent, CommandWindow.CommandWindow commandWindow, IGameObjectAdapter imageGameObject, IFileManager fileManager,
+            ITexture2DAdapter texture2DAdapter, ISpriteAdapter spriteAdapter, IImageAdapter imageAdapter)
         {
-            var commandWindow = CommandWindow.CommandWindow.CurrentWindow;
+            var abnormalityGift = commandWindow.GetCreatureGiftIfExists();
 
-            if (commandWindow is not null)
+            if (abnormalityGift != null)
             {
-                var slotNumber = instance.name switch
+                var slotNumber = instance.Name switch
                 {
                     SlotOneName => 0,
                     SlotTwoName => 1,
                     SlotThreeName => 2,
                     SlotFourName => 3,
                     SlotFiveName => 4,
-                    _ => throw new InvalidOperationException(instance.name + " is not a valid slot name")
+                    _ => throw new InvalidOperationException(instance.Name + " is not a valid slot name")
                 };
 
-                if (SlotImages.Count < slotNumber + 1)
+                if (s_slotImages.Count < slotNumber + 1)
                 {
-                    SlotImages.Add(instance.CreateGiftAvailabilityImage());
+                    s_slotImages.Add(instance.CreateImageGameObject(imageGameObject, fileManager, texture2DAdapter, spriteAdapter, imageAdapter));
                 }
 
-                if (SlotImages[slotNumber] == null)
+                if (s_slotImages[slotNumber].IsUnityNull())
                 {
-                    SlotImages[slotNumber] = instance.CreateGiftAvailabilityImage();
+                    s_slotImages[slotNumber] = instance.CreateImageGameObject(imageGameObject, fileManager, texture2DAdapter, spriteAdapter, imageAdapter);
                 }
 
-                var image = instance.GetGiftAvailabilityImage(SlotImages[slotNumber]);
+                var image = s_slotImages[slotNumber].GetComponent<Image>();
 
-                var abnormalityGift = commandWindow.GetCreatureGiftIfExists();
+                var giftName = abnormalityGift.equipTypeInfo.Name;
+                var giftSlot = abnormalityGift.equipTypeInfo.attachPos;
+                var agentGifts = agent.GetEquippedGifts();
+                var giftsInSameSlot = agentGifts.Where(model => model.metaInfo.attachPos == giftSlot).ToList();
 
-                if (abnormalityGift is not null)
+                if (giftsInSameSlot.Any())
                 {
-                    var giftName = abnormalityGift.equipTypeInfo.Name;
-                    var giftSlot = abnormalityGift.equipTypeInfo.attachPos;
-
-                    var agentGifts = agent.GetEquippedGifts();
-                    var giftsInSameSlot = agentGifts.Where(model => model.metaInfo.attachPos == giftSlot).ToList();
-
-                    if (giftsInSameSlot.Any())
+                    if (giftsInSameSlot.Any(model => model.metaInfo.Name == giftName))
                     {
-                        if (giftsInSameSlot.Any(model => model.metaInfo.Name == giftName))
-                        {
-                            image.Hide();
-                        }
-                        else
-                        {
-                            image.ShowAsReplacementGift();
-                        }
+                        image.Hide();
                     }
                     else
                     {
-                        image.ShowAsNewGift();
+                        image.ShowAsReplacementGift();
                     }
+                }
+                else
+                {
+                    image.ShowAsNewGift();
                 }
             }
         }

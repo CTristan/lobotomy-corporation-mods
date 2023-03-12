@@ -43,6 +43,11 @@ namespace LobotomyCorporationMods.Common.Implementations
             }
         }
 
+        public string GetFile(string fileName)
+        {
+            return Path.Combine(_dataPath.FullName, fileName);
+        }
+
         public string GetOrCreateFile(string fileName)
         {
             if (_filesCache.TryGetValue(fileName, out var value))
@@ -50,10 +55,15 @@ namespace LobotomyCorporationMods.Common.Implementations
                 return value;
             }
 
-            var fullFilePath = Path.Combine(_dataPath.FullName, fileName);
+            var fullFilePath = GetFile(fileName);
             _filesCache.Add(fileName, fullFilePath);
 
             return _filesCache[fileName];
+        }
+
+        public byte[] ReadAllBytes(string path)
+        {
+            return File.ReadAllBytes(path);
         }
 
         public string ReadAllText(string fileWithPath, bool createIfNotExists)

@@ -23,7 +23,7 @@ namespace LobotomyCorporationMods.Test.Mods.NotifyWhenAgentReceivesGift.Patches
         {
             // Arrange
             GetGift(giftName);
-            var unitModel = TestExtensions.CreateAgentModel(name: agentName);
+            var unitModel = TestUnityExtensions.CreateAgentModel(name: agentName);
             var oldGift = GetGift(DefaultEquipmentId + 1, DefaultGiftId + 1, DefaultGiftName, attachRegion);
             unitModel.Equipment.gifts.addedGifts.Add(oldGift);
             var giftLockState = new UnitEGOgiftSpace.GiftLockState { id = DefaultEquipmentId + 1, state = true };
@@ -43,7 +43,7 @@ namespace LobotomyCorporationMods.Test.Mods.NotifyWhenAgentReceivesGift.Patches
         [InlineData(int.MaxValue)]
         public void Checking_for_equipped_gifts_finds_gift_in_added_gifts_list(int giftId)
         {
-            var unitModel = TestExtensions.CreateAgentModel();
+            var unitModel = TestUnityExtensions.CreateAgentModel();
             var gift = GetGift(DefaultEquipmentId, giftId, DefaultAgentName, DefaultGiftAttachRegion);
             unitModel.Equipment.gifts.addedGifts.Add(gift);
 
@@ -58,7 +58,7 @@ namespace LobotomyCorporationMods.Test.Mods.NotifyWhenAgentReceivesGift.Patches
         [InlineData(int.MaxValue)]
         public void Checking_for_equipped_gifts_finds_gift_in_replaced_gifts_list(int giftId)
         {
-            var unitModel = TestExtensions.CreateAgentModel();
+            var unitModel = TestUnityExtensions.CreateAgentModel();
             var gift = GetGift(DefaultEquipmentId, giftId, DefaultAgentName, DefaultGiftAttachRegion);
             unitModel.Equipment.gifts.replacedGifts.Add(gift);
 
@@ -75,7 +75,7 @@ namespace LobotomyCorporationMods.Test.Mods.NotifyWhenAgentReceivesGift.Patches
         {
             // Arrange
             GetGift(giftName);
-            var unitModel = TestExtensions.CreateAgentModel(name: agentName);
+            var unitModel = TestUnityExtensions.CreateAgentModel(name: agentName);
             var otherGift = GetGift(DefaultEquipmentId + 1, DefaultGiftId + 1, DefaultGiftName, EGOgiftAttachRegion.HEADBACK);
             unitModel.Equipment.gifts.addedGifts.Add(otherGift);
             var giftLockState = new UnitEGOgiftSpace.GiftLockState { id = DefaultEquipmentId + 1, state = true };
@@ -97,7 +97,7 @@ namespace LobotomyCorporationMods.Test.Mods.NotifyWhenAgentReceivesGift.Patches
         {
             // Arrange
             var gift = GetGift(giftName);
-            var unitModel = TestExtensions.CreateAgentModel(name: agentName);
+            var unitModel = TestUnityExtensions.CreateAgentModel(name: agentName);
             unitModel.Equipment.gifts.addedGifts.Add(gift);
 
             // Act
@@ -116,7 +116,7 @@ namespace LobotomyCorporationMods.Test.Mods.NotifyWhenAgentReceivesGift.Patches
         {
             // Arrange
             var gift = GetGift(giftName);
-            var unitModel = TestExtensions.CreateAgentModel(name: agentName);
+            var unitModel = TestUnityExtensions.CreateAgentModel(name: agentName);
             var noticeMessages = new List<string>();
             NoticeAdapter.Setup(static adapter => adapter.Send(It.IsAny<string>(), It.IsAny<object[]>())).Callback((string _, object[] objectArray) => noticeMessages.Add(objectArray[0].ToString()));
 

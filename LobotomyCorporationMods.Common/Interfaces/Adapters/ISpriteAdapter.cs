@@ -3,15 +3,13 @@
 #region
 
 using UnityEngine;
-using UnityEngine.UI;
 
 #endregion
 
 namespace LobotomyCorporationMods.Common.Interfaces.Adapters
 {
-    public interface IImageAdapter : IAdapter<Image>
+    public interface ISpriteAdapter : IAdapter<Sprite>
     {
-        Color Color { get; set; }
-        Sprite Sprite { get; set; }
+        Sprite Create(Texture2D texture, Rect rect, Vector2 pivot);
     }
 }
