@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout private references
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@v3.5.0
         with:
           repository: CTristan/lobotomy-corporation-mods-references
           token: ${{ secrets.PRIVATE_REFERENCES_TOKEN }}
@@ -29,7 +29,7 @@ jobs:
           cd lobotomy-corporation-mods
 
       - name: Checkout main repository
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@v3.5.0
         with:
           path: BaseMods/src/lobotomy-corporation-mods
 
