@@ -17,7 +17,7 @@ namespace LobotomyCorporationMods.Test.Mods.GiftAvailabilityIndicator
         {
             _ = new Harmony_Patch();
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
         }
 
         protected static Mock<IGameObjectAdapter> GetMockImageGameObject()

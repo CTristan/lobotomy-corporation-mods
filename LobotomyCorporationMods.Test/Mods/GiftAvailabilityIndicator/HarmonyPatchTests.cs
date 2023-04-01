@@ -30,7 +30,7 @@ namespace LobotomyCorporationMods.Test.Mods.GiftAvailabilityIndicator
         public void Class_ManagementSlot_Method_SetUi_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
             var times = 1;
             Action action = static () => ManagementSlotPatchSetUi.Postfix(null!, TestUnityExtensions.CreateUnitModel());
