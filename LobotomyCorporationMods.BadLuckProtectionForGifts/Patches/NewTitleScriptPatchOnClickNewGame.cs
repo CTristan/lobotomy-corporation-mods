@@ -33,7 +33,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.WriteToLog(ex);
+                Harmony_Patch.Instance.Logger.WriteException(ex);
 
                 throw;
             }

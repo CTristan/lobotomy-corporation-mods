@@ -64,7 +64,7 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Patches
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.WriteToLog(ex);
+                Harmony_Patch.Instance.Logger.WriteException(ex);
 
                 throw;
             }

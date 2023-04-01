@@ -26,11 +26,16 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         {
             try
             {
+                if (__instance is null)
+                {
+                    throw new ArgumentNullException(nameof(__instance));
+                }
+
                 __instance.PatchAfterOpenAppearanceWindow();
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.WriteToLog(ex);
+                Harmony_Patch.Instance.Logger.WriteException(ex);
 
                 throw;
             }
@@ -38,11 +43,6 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
 
         public static void PatchAfterOpenAppearanceWindow(this CustomizingWindow instance)
         {
-            if (instance is null)
-            {
-                throw new ArgumentNullException(nameof(instance));
-            }
-
             instance.CurrentData.isCustomAppearance = false;
         }
     }

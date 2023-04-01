@@ -16,7 +16,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
         {
             _ = new Harmony_Patch();
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
         }
 
         protected static AgentInfoWindow InitializeAgentInfoWindow()

@@ -16,7 +16,7 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes
         {
             _ = new Harmony_Patch();
             var logger = new Mock<ILogger>();
-            Harmony_Patch.Instance.LoadData(logger.Object);
+            Harmony_Patch.Instance.AddLoggerTarget(logger.Object);
         }
     }
 }

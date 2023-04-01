@@ -18,11 +18,6 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
     {
         public static void PatchAfterFinishWorkSuccessfully(this UseSkill instance, IAgentWorkTracker agentWorkTracker)
         {
-            if (instance is null)
-            {
-                throw new ArgumentNullException(nameof(instance));
-            }
-
             var equipmentMakeInfo = instance.GetCreatureEquipmentMakeInfo();
 
             // If the creature has no gift it returns null
@@ -45,11 +40,16 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
         {
             try
             {
+                if (__instance is null)
+                {
+                    throw new ArgumentNullException(nameof(__instance));
+                }
+
                 __instance.PatchAfterFinishWorkSuccessfully(Harmony_Patch.Instance.AgentWorkTracker);
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.WriteToLog(ex);
+                Harmony_Patch.Instance.Logger.WriteException(ex);
 
                 throw;
             }

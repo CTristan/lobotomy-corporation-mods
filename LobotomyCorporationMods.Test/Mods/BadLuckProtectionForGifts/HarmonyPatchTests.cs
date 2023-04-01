@@ -39,7 +39,7 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
         public void Class_CreatureEquipmentMakeInfo_Method_GetProb_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
             var result = 0f;
 
             void Action() => CreatureEquipmentMakeInfoPatchGetProb.Postfix(null!, ref result);
@@ -61,7 +61,7 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
         public void Class_GameSceneController_Method_OnClickNextDay_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
             Action action = GameSceneControllerPatchOnClickNextDay.Postfix;
 
@@ -82,7 +82,7 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
         public void Class_GameSceneController_Method_OnStageStart_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
             Action action = GameSceneControllerPatchOnStageStart.Postfix;
 
@@ -103,7 +103,7 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
         public void Class_NewTitleScript_Method_OnClickNewGame_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
             Action action = NewTitleScriptPatchOnClickNewGame.Postfix;
 
@@ -124,7 +124,7 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
         public void Class_UseSkill_Method_FinishWorkSuccessfully_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
             static void Action() => UseSkillPatchFinishWorkSuccessfully.Postfix(null!);
 

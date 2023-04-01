@@ -17,11 +17,6 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
     {
         public static bool PatchBeforeCloseWindow(this AppearanceUI instance)
         {
-            if (instance is null)
-            {
-                throw new ArgumentNullException(nameof(instance));
-            }
-
             return instance.closeAction is not null;
         }
 
@@ -37,11 +32,16 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         {
             try
             {
+                if (__instance is null)
+                {
+                    throw new ArgumentNullException(nameof(__instance));
+                }
+
                 return __instance.PatchBeforeCloseWindow();
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.WriteToLog(ex);
+                Harmony_Patch.Instance.Logger.WriteException(ex);
 
                 throw;
             }

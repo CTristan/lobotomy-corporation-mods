@@ -30,7 +30,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
         public void Class_AgentInfoWindow_Method_EnforcementWindow_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
             // No arguments passed in, so we need to make one of the instances null
             AgentInfoWindow.currentWindow = null;
@@ -53,7 +53,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
         public void Class_AgentInfoWindow_Method_GenerateWindow_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
             // No arguments passed in, so we need to make one of the instances null
             AgentInfoWindow.currentWindow = null;
@@ -76,7 +76,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
         public void Class_AppearanceUI_Method_CloseWindow_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
             static void Action() => AppearanceUIPatchCloseWindow.Prefix(null!);
 
@@ -97,7 +97,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
         public void Class_CustomizingWindow_Method_Confirm_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
             static void Action() => CustomizingWindowPatchConfirm.Prefix(null!);
 
@@ -118,7 +118,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
         public void Class_CustomizingWindow_Method_OpenAppearanceWindow_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
             static void Action() => CustomizingWindowPatchOpenAppearanceWindow.Postfix(null!);
 
@@ -139,7 +139,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
         public void Class_CustomizingWindow_Method_ReviseOpenAction_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
             Action action = static () => CustomizingWindowPatchReviseOpenAction.Postfix(null!, null!);
 

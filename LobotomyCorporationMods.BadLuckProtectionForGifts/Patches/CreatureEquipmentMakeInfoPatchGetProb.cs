@@ -17,11 +17,6 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
     {
         public static float PatchAfterGetProb(this CreatureEquipmentMakeInfo instance, float probability, IAgentWorkTracker agentWorkTracker)
         {
-            if (instance is null)
-            {
-                throw new ArgumentNullException(nameof(instance));
-            }
-
             var giftName = instance.equipTypeInfo?.Name;
 
             // If creature has no gift then giftName will be null
@@ -45,11 +40,16 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
         {
             try
             {
+                if (__instance is null)
+                {
+                    throw new ArgumentNullException(nameof(__instance));
+                }
+
                 __result = __instance.PatchAfterGetProb(__result, Harmony_Patch.Instance.AgentWorkTracker);
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.WriteToLog(ex);
+                Harmony_Patch.Instance.Logger.WriteException(ex);
 
                 throw;
             }

@@ -19,7 +19,7 @@ namespace LobotomyCorporationMods.Test.Mods.NotifyWhenAgentReceivesGift
         public void Class_AgentSlot_Method_SetFilter_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
             Action action = static () => UnitModelPatchAttachEgoGift.Prefix(null!, TestUnityExtensions.CreateEgoGiftModel());
             mockLogger.VerifyExceptionLogged<ArgumentNullException>(action);

@@ -25,12 +25,17 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
         {
             try
             {
+                if (__instance is null)
+                {
+                    throw new ArgumentNullException(nameof(__instance));
+                }
+
                 var currentGameManager = GameManager.currentGameManager;
                 __instance.PatchAfterSetFilter(state, currentGameManager, new BeautyBeastAnimAdapter(), new ImageAdapter(), new TextAdapter(), new YggdrasilAnimAdapter());
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.WriteToLog(ex);
+                Harmony_Patch.Instance.Logger.WriteException(ex);
 
                 throw;
             }
@@ -39,11 +44,6 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
         public static void PatchAfterSetFilter(this AgentSlot instance, AgentState state, GameManager? currentGameManager, IBeautyBeastAnimAdapter beautyBeastAnimAdapter, IImageAdapter imageAdapter,
             ITextAdapter textAdapter, IYggdrasilAnimAdapter yggdrasilAnimAdapter)
         {
-            if (instance is null)
-            {
-                throw new ArgumentNullException(nameof(instance));
-            }
-
             // First load won't have a game manager yet, so just gracefully exit
             if (currentGameManager is null)
             {

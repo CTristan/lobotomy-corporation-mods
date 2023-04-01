@@ -19,16 +19,6 @@ namespace LobotomyCorporationMods.BugFixes.Patches
     {
         public static void PatchBeforeSetAgentStatBonus(this CustomizingWindow instance, AgentModel agent, AgentData data, ICustomizingWindowAdapter customizingWindowAdapter)
         {
-            if (agent is null)
-            {
-                throw new ArgumentNullException(nameof(agent));
-            }
-
-            if (data is null)
-            {
-                throw new ArgumentNullException(nameof(data));
-            }
-
             customizingWindowAdapter.GameObject = instance;
             agent.primaryStat.hp = customizingWindowAdapter.SetRandomStatValue(agent.primaryStat.hp, agent.originFortitudeLevel, data.statBonus.rBonus);
             agent.primaryStat.mental = customizingWindowAdapter.SetRandomStatValue(agent.primaryStat.mental, agent.originPrudenceLevel, data.statBonus.wBonus);
@@ -58,6 +48,21 @@ namespace LobotomyCorporationMods.BugFixes.Patches
         {
             try
             {
+                if (__instance is null)
+                {
+                    throw new ArgumentNullException(nameof(__instance));
+                }
+
+                if (agent is null)
+                {
+                    throw new ArgumentNullException(nameof(agent));
+                }
+
+                if (data is null)
+                {
+                    throw new ArgumentNullException(nameof(data));
+                }
+
                 __instance.PatchBeforeSetAgentStatBonus(agent, data, new CustomizingWindowAdapter());
 
                 // Since we're replacing the method we never want to call the original method
@@ -65,7 +70,7 @@ namespace LobotomyCorporationMods.BugFixes.Patches
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.WriteToLog(ex);
+                Harmony_Patch.Instance.Logger.WriteException(ex);
 
                 throw;
             }

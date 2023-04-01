@@ -26,11 +26,21 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         {
             try
             {
+                if (__instance is null)
+                {
+                    throw new ArgumentNullException(nameof(__instance));
+                }
+
+                if (agent is null)
+                {
+                    throw new ArgumentNullException(nameof(agent));
+                }
+
                 __instance.PatchAfterReviseOpenAction(agent);
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.WriteToLog(ex);
+                Harmony_Patch.Instance.Logger.WriteException(ex);
 
                 throw;
             }
@@ -38,16 +48,6 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
 
         public static void PatchAfterReviseOpenAction(this CustomizingWindow instance, AgentModel agent)
         {
-            if (instance is null)
-            {
-                throw new ArgumentNullException(nameof(instance));
-            }
-
-            if (agent is null)
-            {
-                throw new ArgumentNullException(nameof(agent));
-            }
-
             instance.CurrentData.agentName = agent._agentName;
             instance.CurrentData.CustomName = agent.name;
             instance.CurrentData.appearance = agent.GetAppearanceData();

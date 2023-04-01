@@ -20,11 +20,6 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
     {
         public static void PatchBeforeConfirm(this CustomizingWindow instance, IAgentLayerAdapter agentLayerAdapter, IWorkerSpriteManagerAdapter workerSpriteManagerAdapter)
         {
-            if (instance is null)
-            {
-                throw new ArgumentNullException(nameof(instance));
-            }
-
             // We only want to save the appearance data if this is an existing agent, otherwise we'll let the game generate it as usual
             if (instance.CurrentWindowType != CustomizingType.GENERATE)
             {
@@ -50,11 +45,16 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         {
             try
             {
+                if (__instance is null)
+                {
+                    throw new ArgumentNullException(nameof(__instance));
+                }
+
                 __instance.PatchBeforeConfirm(new AgentLayerAdapter(), new WorkerSpriteManagerAdapter());
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.WriteToLog(ex);
+                Harmony_Patch.Instance.Logger.WriteException(ex);
 
                 throw;
             }

@@ -17,11 +17,6 @@ namespace LobotomyCorporationMods.BugFixes.Patches
     {
         public static bool PatchBeforeOnNotice(string notice, params object[] param)
         {
-            if (param is null)
-            {
-                throw new ArgumentNullException(nameof(param));
-            }
-
             if (notice != NoticeName.OnWorkStart)
             {
                 return true;
@@ -67,11 +62,16 @@ namespace LobotomyCorporationMods.BugFixes.Patches
         {
             try
             {
+                if (param is null)
+                {
+                    throw new ArgumentNullException(nameof(param));
+                }
+
                 return PatchBeforeOnNotice(notice, param);
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.WriteToLog(ex);
+                Harmony_Patch.Instance.Logger.WriteException(ex);
 
                 throw;
             }

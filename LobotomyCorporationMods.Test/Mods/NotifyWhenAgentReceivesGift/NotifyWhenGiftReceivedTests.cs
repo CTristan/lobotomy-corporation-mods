@@ -26,7 +26,7 @@ namespace LobotomyCorporationMods.Test.Mods.NotifyWhenAgentReceivesGift
         {
             _ = new Harmony_Patch();
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
         }
 
         protected Mock<INoticeAdapter> NoticeAdapter { get; } = new();
