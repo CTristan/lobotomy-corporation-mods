@@ -106,6 +106,6 @@
     <Folder Include="Mods"/>
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
-    <PackageReference Include="Microsoft.CodeCoverage" Version="17.5.0"/>
+    <PackageReference Include="Microsoft.CodeCoverage" Version="17.6.2"/>
   </ItemGroup>
 </Project>
