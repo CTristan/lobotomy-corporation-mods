@@ -52,7 +52,7 @@ namespace LobotomyCorporationMods.Test.Mods.Common.Attributes
                 .Where(static className => !string.IsNullOrEmpty(className))
                 .ToList();
 
-            return invalidClasses.Any() ? invalidClasses.First() : string.Empty;
+            return invalidClasses.Count != 0 ? invalidClasses.First() : string.Empty;
         }
 
         private static string AnyClassIsIncorrectlyExcludedFromCodeCoverage(IEnumerable<Type> classes)
@@ -83,7 +83,7 @@ namespace LobotomyCorporationMods.Test.Mods.Common.Attributes
         {
             var invalidMethods = methods.Select(static method => MethodIsIncorrectlyExcludeFromCodeCoverage(method)).Where(static methodName => !string.IsNullOrEmpty(methodName)).ToList();
 
-            return invalidMethods.Any() ? invalidMethods.First() : string.Empty;
+            return invalidMethods.Count != 0 ? invalidMethods.First() : string.Empty;
         }
 
         private static string MethodIsIncorrectlyExcludeFromCodeCoverage(MemberInfo method)

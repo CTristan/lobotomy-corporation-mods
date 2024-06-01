@@ -139,7 +139,7 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
         /// <summary>
         ///     Populates the Harmony Patch with an agent work tracker pointed to our specified test data file.
         /// </summary>
-        private static IAgentWorkTracker CreateAgentWorkTracker(string dataFileName, string trackerData = "", IFileManager? fileManager = null)
+        private static AgentWorkTracker CreateAgentWorkTracker(string dataFileName, string trackerData = "", IFileManager? fileManager = null)
         {
             fileManager ??= TestExtensions.GetMockFileManager().Object;
             dataFileName = dataFileName.InCurrentDirectory();

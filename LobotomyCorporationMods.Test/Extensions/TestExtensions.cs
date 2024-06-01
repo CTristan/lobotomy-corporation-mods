@@ -534,7 +534,7 @@ namespace LobotomyCorporationMods.Test.Extensions
         /// <summary>
         ///     Returns the fields which are valid and can be used to populate an object.
         /// </summary>
-        private static IEnumerable<MemberInfo> GetValidFields(this IEnumerable<FieldInfo> typeFields)
+        private static List<MemberInfo> GetValidFields(this IEnumerable<FieldInfo> typeFields)
         {
             var goodFields = new List<MemberInfo>();
             foreach (var typeField in typeFields)
@@ -558,7 +558,7 @@ namespace LobotomyCorporationMods.Test.Extensions
         /// <summary>
         ///     Populate the fields of an uninitialized object with a provided list of objects.
         /// </summary>
-        private static TObject GetPopulatedUninitializedObject<TObject>(TObject obj, MemberInfo[] fields, IDictionary<string, object> newValues) where TObject : class
+        private static TObject GetPopulatedUninitializedObject<TObject>(TObject obj, MemberInfo[] fields, Dictionary<string, object> newValues) where TObject : class
         {
             CreateUninitializedObject<TObject>(out var newObj);
             var values = FormatterServices.GetObjectData(obj, fields.ToArray());

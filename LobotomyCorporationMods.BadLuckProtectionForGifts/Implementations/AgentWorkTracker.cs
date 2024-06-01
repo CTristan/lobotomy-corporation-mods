@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 
 #region
 
@@ -36,12 +36,12 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         public float GetLastAgentWorkCountByGift(string giftName)
         {
             // Make sure this gift has actually been worked on before doing lookups
-            if (!_mostRecentAgentIdByGift.ContainsKey(giftName))
+            if (!_mostRecentAgentIdByGift.TryGetValue(giftName, out var value))
             {
                 return 0;
             }
 
-            var agentId = _mostRecentAgentIdByGift[giftName];
+            var agentId = value;
             var agent = GetAgent(giftName, agentId);
 
             return agent.GetWorkCount();

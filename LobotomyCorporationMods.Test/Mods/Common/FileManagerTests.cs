@@ -76,7 +76,7 @@ namespace LobotomyCorporationMods.Test.Mods.Common
 
         #region Helper Methods
 
-        private static ICollection<DirectoryInfo> GetDirectories()
+        private static List<DirectoryInfo> GetDirectories()
         {
             var currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
 

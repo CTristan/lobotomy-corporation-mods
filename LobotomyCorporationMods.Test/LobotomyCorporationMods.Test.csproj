@@ -14,7 +14,7 @@
     <OutputPath>bin\</OutputPath>
     <OutputType>Library</OutputType>
     <RuntimeIdentifiers>win</RuntimeIdentifiers>
-    <TargetFrameworks>net35;net48</TargetFrameworks>
+    <TargetFramework>net481</TargetFramework>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>

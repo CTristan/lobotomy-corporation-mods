@@ -17,7 +17,7 @@ namespace LobotomyCorporationMods.Common.Implementations
     {
         private readonly DirectoryInfo _dataPath;
         private readonly object _fileLock = new();
-        private readonly IDictionary<string, string> _filesCache;
+        private readonly Dictionary<string, string> _filesCache;
 
         public FileManager(string modFileName, ICollection<DirectoryInfo> directories)
         {
