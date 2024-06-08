@@ -47,7 +47,7 @@ Major.minor.patch.0
 ### Added
 
 - Free Customization [2.0]
-  - Added re-customization capability to Free Customization mod
+  - Added re-customization capability to Free Customization mod.
 
 ## [3.0] - 2023-01-18
 

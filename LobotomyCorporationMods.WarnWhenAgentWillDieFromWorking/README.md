@@ -18,40 +18,48 @@ because they would die from low health/sanity or sending a low-chance agent woul
 ## Abnormality Warnings (Spoilers)
 Provides warnings for the following abnormalities and any of their conditions (*spoilers*):
 
-- Beauty and the Beast
+- **Beauty and the Beast**
   - Assigning Repression work to Beauty and the Beast when the last work performed on Beauty and the Beast was Repression.
-- Bloodbath
+- **Bloodbath**
   - Agent has either Fortitude or Temperance Level 1.
-- Blue Star
+- **Blue Star**
   - Agent has Prudence below Level 5 or Temperance below Level 4 (which would cause the work to take longer than 60 seconds).
-- Crumbling Armor
+- **Crumbling Armor**
   - Any of the following are true:
     - Agent has Fortitude Level 1
     - Assigning Attachment work (to any abnormality) while agent has the Crumbling Armor gift.
-- Fairy Festival
+- **Fairy Festival**
   - Assigning work to any other abnormality while agent has the effect.
-- Happy Teddy Bear
+- **Happy Teddy Bear**
   - Re-assigning the agent that last worked with Happy Teddy Bear.
-- Laetitia
+- **Laetitia**
   - Assigning work to any other abnormality while agent has the effect.
-- Nothing There
+- **Nothing There**
   - Any of the following are true:
     - Agent has Fortitude below Level 4, or
     - Assigning work to Nothing There after it killed the last agent to work on it due to a bad result.
-- Parasite Tree
+- **Parasite Tree**
   - Assigning work when Parasite Tree has four bulbs and the agent doesn't have the effect (which would cause the fifth bulb to appear).
-- Red Shoes
+- **Red Shoes**
   - Agent has Temperance below Level 3.
-- Singing Machine
+- **Singing Machine**
   - Any of the following are true:
     - Qliphoth Counter is 0.
     - Agent has Temperance below Level 3.
     - Agent either has Fortitude above Level 3 or if the agent does not have the gift and receiving the gift would increase their Fortitude above Level 3 (causing the agent to die upon receiving the gift).
-- Spider Bud
+- **Spider Bud**
   - Any of the following are true:
     - Agent has Prudence Level 1.
     - Assigning Insight work to Spider Bud.
-- Void Dream
+- **Void Dream**
   - Agent has Temperance Level 1.
-- Warm-Hearted Woodsman
+- **Warm-Hearted Woodsman**
   - Qliphoth Counter is 0.
+
+## Changelog
+
+### [1.0] - 2023-02-09
+
+#### Added
+
+- Initial release.

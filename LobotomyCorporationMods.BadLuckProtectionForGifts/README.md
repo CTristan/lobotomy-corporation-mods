@@ -12,7 +12,7 @@ After an agent finishes their work, you can see the modified chance in the Abnor
 As an agent works with an abnormality they should become more familiar with it, which in turn means they should be more likely to receive a gift from it.
 It tracks the work count for each agent for each gift, so only the work that agent puts towards that gift will count.
 Work counts are saved across days, but only if the day is completed; if the day is reset then all the work counts incremented during that day will reset as well and will go back to the numbers they were when the day was started.
-It wouldn't make sense for an agent to remember what happened after the day is reset.
+It wouldn't make sense for an agent to remember what happened after resetting the day.
 
 ## Changelog
 
@@ -20,8 +20,7 @@ It wouldn't make sense for an agent to remember what happened after the day is r
 
 #### Fixed
 
-- Bad Luck Protection for Gifts [1.0.1]
-    - Finishing work on a creature with no gifts caused an infinite loop.
+- Fixed infinite loop caused by finishing work on a creature with no gifts.
 
 ### [1.0] - 2020-10-09
 
