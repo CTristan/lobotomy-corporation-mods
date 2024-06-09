@@ -19,6 +19,13 @@ Major.minor.patch.0
 
 *This does not apply to the individual mod versions, as they adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).*
 
+## [4.1.0] - 2024-06-09
+
+### Added
+
+- All mods
+    - Added Info.xml file to add the version number and description in the in-game mod menu.
+
 ## [4.0.1] - 2023-02-10
 
 ### Fixed
