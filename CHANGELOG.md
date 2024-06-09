@@ -42,8 +42,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).*
 - New mod
     - Warn When Agent Will Die From Working [1.0.0]
     - Warns when assigning work if an agent will be killed by an instakill mechanic.
-  - More information available
-    in [the mod's readme](LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking/README.md).
+    - More information available
+      in [the mod's readme](LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking/README.md).
 
 ## [3.2] - 2023-02-01
 
