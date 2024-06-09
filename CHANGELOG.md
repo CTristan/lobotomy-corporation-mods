@@ -35,7 +35,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).*
 - Free Customization [2.1]
     - Fixed issue with renames not working for the initial starting agent when starting from Day 1.
 
-## [4.0] - 2023-02-09
+## [4.0.0] - 2023-02-09
 
 ### Added
 
@@ -45,21 +45,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).*
     - More information available
       in [the mod's readme](LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking/README.md).
 
-## [3.2] - 2023-02-01
+## [3.2.0] - 2023-02-01
 
 ### Added
 
 - Unofficial Bug Fixes [2.0.0]
     - Added bug fix for Crumbling Armor killing agents when they no longer had Crumbling Armor's gift.
 
-## [3.1] - 2023-01-30
+## [3.1.0] - 2023-01-30
 
 ### Added
 
 - Free Customization [2.0.0]
     - Added re-customization capability to Free Customization mod.
 
-## [3.0] - 2023-01-18
+## [3.0.0] - 2023-01-18
 
 ### Added
 
