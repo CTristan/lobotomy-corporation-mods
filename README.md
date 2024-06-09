@@ -7,7 +7,7 @@ They are designed to be used either together or individually, so feel free to pi
 Requires either [Lobotomy Mod Manager](https://www.nexusmods.com/site/mods/765)
 or [Basemod](https://www.nexusmods.com/lobotomycorporation/mods/2) (included in LMM).
 
-#### Mod info pages:
+## Mod info pages
 
 - [Bad Luck Protection for Gifts](LobotomyCorporationMods.BadLuckProtectionForGifts/README.md)
 - [Free Customization](LobotomyCorporationMods.FreeCustomization/README.md)

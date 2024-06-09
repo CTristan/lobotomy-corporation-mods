@@ -33,4 +33,4 @@ sane codebase.
       an ARM processor
       and [.NET Framework 4.8.1 is the first version to support ARM64](https://devblogs.microsoft.com/dotnet/announcing-dotnet-framework-481/).
       While 4.8.1 can support higher C# language versions, we're limiting the C# language to 7.3 to minimize the number
-      of new features that could cause any compatibility issues. 
+      of new features that could cause any compatibility issues.

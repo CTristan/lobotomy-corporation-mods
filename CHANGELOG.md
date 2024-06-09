@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The overall project has a custom versioning system explained below, but each individual mod adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-# Project version numbers
+## Project version numbers
 
 The overall project uses the following custom versioning:
 
