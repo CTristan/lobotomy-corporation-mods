@@ -271,9 +271,8 @@
     <ProjectReference Include="..\LobotomyCorporationMods.Common\LobotomyCorporationMods.Common.csproj"/>
   </ItemGroup>
   <ItemGroup>
-    <None Remove="Info\en\Info.xml"/>
     <Content Include="Info\en\Info.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 </Project>
