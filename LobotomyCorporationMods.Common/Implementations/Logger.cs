@@ -53,11 +53,6 @@ namespace LobotomyCorporationMods.Common.Implementations
 
         private void WriteToLog(Exception exception, string logFileName)
         {
-            if (exception is null)
-            {
-                return;
-            }
-
             var message = exception.ToString();
             WriteToLog(message, logFileName);
 
