@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using CommandWindow;
 using Customizing;
@@ -58,7 +59,7 @@ namespace LobotomyCorporationMods.Test.Extensions
 
         internal static void VerifyExceptionLogged<TException>(this Mock<ILogger> mockLogger, Action action, int numberOfTimes = 1) where TException : Exception
         {
-            action.ShouldThrow<TException>();
+            action.Should().Throw<TException>();
             mockLogger.Verify(static logger => logger.WriteToLog(It.IsAny<TException>()), Times.Exactly(numberOfTimes));
         }
 
@@ -507,7 +508,7 @@ namespace LobotomyCorporationMods.Test.Extensions
         /// </summary>
         private static void CreateUninitializedObject<TObject>(out TObject obj)
         {
-            obj = (TObject)FormatterServices.GetSafeUninitializedObject(typeof(TObject));
+            obj = (TObject)RuntimeHelpers.GetUninitializedObject(typeof(TObject));
         }
 
         /// <summary>
@@ -541,7 +542,10 @@ namespace LobotomyCorporationMods.Test.Extensions
             {
                 try
                 {
-                    if (typeField.FieldHandle.Value != IntPtr.Zero)
+                    var hasValidHandle = typeField.FieldHandle.Value != IntPtr.Zero;
+                    var isNotInitOnly = !typeField.IsInitOnly;
+
+                    if (hasValidHandle && isNotInitOnly)
                     {
                         goodFields.Add(typeField);
                     }

@@ -12,7 +12,6 @@ using LobotomyCorporationMods.Test.Extensions;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches;
 using Moq;
 using Xunit;
-using Xunit.Extensions;
 
 #endregion
 
@@ -48,7 +47,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             Action action = () =>
                 agentSlot.PatchAfterSetFilter(IdleAgentState, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
 
-            action.ShouldNotThrow();
+            action.Should().NotThrow();
         }
 
         [Fact]
@@ -62,7 +61,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             Action action = () =>
                 agentSlot.PatchAfterSetFilter(IdleAgentState, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
 
-            action.ShouldNotThrow();
+            action.Should().NotThrow();
         }
 
         [Fact]
@@ -76,7 +75,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             Action action = () =>
                 agentSlot.PatchAfterSetFilter(IdleAgentState, null!, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
 
-            action.ShouldNotThrow();
+            action.Should().NotThrow();
         }
 
         [Fact]

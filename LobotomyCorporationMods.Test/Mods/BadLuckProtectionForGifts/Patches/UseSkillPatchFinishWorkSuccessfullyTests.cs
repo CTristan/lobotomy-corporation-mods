@@ -7,7 +7,6 @@ using LobotomyCorporationMods.BadLuckProtectionForGifts.Patches;
 using LobotomyCorporationMods.Test.Extensions;
 using Moq;
 using Xunit;
-using Xunit.Extensions;
 
 #endregion
 

@@ -55,3 +55,48 @@ While we have a few test extension methods that exist to reduce code duplication
 This is because the game was developed to initialize instances of most objects either on game start or during gameplay, and trying to create instances normally would just throw a Unity exception.
 
 For more information, see the second on Game Objects.
+
+## Tests run sequentially, not in parallel
+
+You may notice in the [AssemblyInfo.cs](AssemblyInfo.cs) file that I specifically added an assembly directive to force
+xUnit to run tests sequentially instead of in parallel. This is because in order to unit-test game components such as
+CommandWindow I need to be able to create my own global static instances. Due to them being global and static, every
+method that would use them would be affected by other tests running at the same time.
+
+Unfortunately this is something I have no control over without modifying the game's own code directly or using my own
+game DLL.
+
+## Why is the test project .NET 6 when the mods are all .NET Framework?
+
+Due to the nature of the Basemod-related DLLs, having the test project use .NET Framework causes various compatibility
+errors. This is due to
+how [.NET Framework handles references for backward-compatibility reasons](https://nickcraver.com/blog/2020/02/11/binding-redirects/),
+so every update to Basemod/LMM required additional steps to get working as project references. Eventually I came across
+a [compatibility error](https://stackoverflow.com/questions/403731/strong-name-validation-failed) that I wouldn't be
+able to resolve without severely affecting the project and heavily modifying the workflow.
+
+The easiest answer to this was to just use a modern .NET version so the test runner doesn't have to worry about
+compatibility. Thanks to .NET Standard, modern .NET versions can load and reference .NET Framework libraries, meaning
+that even though our test project isn't .NET Framework it can still run the code just fine. In other words, "it just
+works".
+
+## OK, but why specifically .NET 6 when there are more recent versions of .NET available?
+
+As of this writing, .NET 6 is on maintenance support and will be officially out of support on November 12, 2024. The
+latest LTS (Long Term Support) version is .NET 8, and .NET 9 is in Preview.
+
+So why not upgrade? Because the way I've figured out how to unit test my Harmony patches involve creating global static
+instances of the game components, such as the CommandWindow. The way I currently do that is using the .NET
+FormatterServices class, which as of .NET
+7 [have been marked as obsolete and are planned to no longer be available by .NET 9](https://github.com/dotnet/designs/blob/main/accepted/2020/better-obsoletion/binaryformatter-obsoletion.md).
+.NET 6 is the last LTS version to still support the class and doesn't give any warnings or errors.
+
+When trying to upgrade to .NET 8, the FormatterServices class causes an Obsolete warning, and my projects are all set to
+treat warnings as errors so I actually can't compile as it's currently written. Technically I could just turn that off
+and still compile, however that's just putting a bandage on the issue and doesn't solve the fact that it will eventually
+be removed.
+
+Having said all of that, I am researching ways to do what I am currently doing without using the FormatterServices
+class, but right now it's not likely to be a priority for me. After all, this is to run unit tests against .NET
+Framework 4 mods that will be used with a game that was created in .NET Framework 3.5. Being a few versions behind is
+honestly the least of our concerns.

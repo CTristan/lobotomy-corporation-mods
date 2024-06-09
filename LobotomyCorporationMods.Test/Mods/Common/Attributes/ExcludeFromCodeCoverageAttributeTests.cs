@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using FluentAssertions;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using Xunit;
 
@@ -46,7 +47,7 @@ namespace LobotomyCorporationMods.Test.Mods.Common.Attributes
 
         private static string AnyModIsIncorrectlyExcludedFromCodeCoverage(IEnumerable<AssemblyName> referencedAssemblies)
         {
-            var invalidClasses = referencedAssemblies.Select(static assemblyName => Assembly.Load(assemblyName.Name))
+            var invalidClasses = referencedAssemblies.Select(static assemblyName => Assembly.Load(assemblyName.Name!))
                 .Select(static assembly => assembly.GetTypes().Where(static type => type.IsClass && IsInModsNamespace(type.Namespace)))
                 .Select(static classes => AnyClassIsIncorrectlyExcludedFromCodeCoverage(classes))
                 .Where(static className => !string.IsNullOrEmpty(className))
@@ -86,15 +87,16 @@ namespace LobotomyCorporationMods.Test.Mods.Common.Attributes
             return invalidMethods.Count != 0 ? invalidMethods.First() : string.Empty;
         }
 
-        private static string MethodIsIncorrectlyExcludeFromCodeCoverage(MemberInfo method)
+        private static string MethodIsIncorrectlyExcludeFromCodeCoverage([NotNull] MemberInfo method)
         {
             var attributes = method.GetCustomAttributes(false);
             foreach (var attribute in attributes)
             {
                 // Only Entry Point methods can have code coverage excluded
-                if (attribute.ToString() == ExcludeFromCodeCoverageAttributeTypeName && !attributes.Any(static o => o is EntryPointAttribute))
+                if (attribute.ToString() == ExcludeFromCodeCoverageAttributeTypeName &&
+                    !attributes.Any(static o => o is EntryPointAttribute))
                 {
-                    return method.ToString();
+                    return method.ToString()!;
                 }
             }
 
@@ -109,7 +111,7 @@ namespace LobotomyCorporationMods.Test.Mods.Common.Attributes
                 if (attribute.ToString() == ExcludeFromCodeCoverageAttributeTypeName && !attributes.Any(static o => o is AdapterClassAttribute))
                 {
                     // Only Adapter classes can have code coverage excluded for the entire class
-                    return reflectionClass.ToString();
+                    return reflectionClass.ToString()!;
                 }
             }
 

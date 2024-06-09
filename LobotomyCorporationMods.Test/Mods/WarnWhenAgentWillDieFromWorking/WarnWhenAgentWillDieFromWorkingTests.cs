@@ -16,7 +16,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
 {
     public class WarnWhenAgentWillDieFromWorkingTests
     {
-        protected const string DeadAgentString = "AgentState_Dead";
+        private const string DeadAgentString = "AgentState_Dead";
         protected const int StatLevelFive = 85;
         protected const int StatLevelFour = 65;
         protected const int StatLevelOne = 1;

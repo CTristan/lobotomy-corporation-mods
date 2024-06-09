@@ -1,45 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
-    <IsTestProject>true</IsTestProject>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <ProjectGuid>{5186F30E-9617-4955-BE97-0E496DE2148B}</ProjectGuid>
-    <AnalysisLevel>latest-all</AnalysisLevel>
-    <Deterministic>false</Deterministic>
-    <EnableNETAnalyzers>True</EnableNETAnalyzers>
-    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <IsPackable>false</IsPackable>
-    <LangVersion>9</LangVersion>
+    <IsTestProject>true</IsTestProject>
     <Nullable>enable</Nullable>
+    <ProjectGuid>{5186F30E-9617-4955-BE97-0E496DE2148B}</ProjectGuid>
+    <TargetFramework>net6.0</TargetFramework>
+    <AnalysisLevel>latest-all</AnalysisLevel>
+    <Deterministic>true</Deterministic>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <OutputPath>bin\</OutputPath>
     <OutputType>Library</OutputType>
     <RuntimeIdentifiers>win</RuntimeIdentifiers>
-    <TargetFramework>net481</TargetFramework>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="coverlet.collector" Version="3.2.0">
+    <PackageReference Include="coverlet.collector" Version="6.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="coverlet.msbuild" Version="3.2.0">
+    <PackageReference Include="coverlet.msbuild" Version="6.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="FluentAssertions" Version="2.2.0"/>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0"/>
+    <PackageReference Include="FluentAssertions" Version="6.12.0"/>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0"/>
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net35" Version="1.0.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Moq" Version="4.2.1510.2205"/>
-    <PackageReference Include="xunit" Version="1.9.2"/>
-    <PackageReference Include="xunit.extensions" Version="1.9.2"/>
-    <PackageReference Include="xunit.runner.console" Version="2.4.2">
+    <PackageReference Include="Moq" Version="4.20.70"/>
+    <PackageReference Include="xunit" Version="2.8.1"/>
+    <PackageReference Include="xunit.runner.console" Version="2.8.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
