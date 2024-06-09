@@ -13,19 +13,25 @@ The fact that customizing an agent directly affects your gameplay bothers me, so
 
 ## Changelog
 
-### [2.1] - 2023-02-10
+### [2.2.0] - 2024-06-09
+
+#### Added
+
+- Added Info.xml file to add the version number and description in the in-game mod menu.
+
+### [2.1.0] - 2023-02-10
 
 #### Fixed
 
 - Fixed issue with renames not working for the initial starting agent when starting from Day 1.
 
-### [2.0] - 2023-01-30
+### [2.0.0] - 2023-01-30
 
 #### Added
 
 - Added re-customization capability to Free Customization mod.
 
-### [1.0] - 2022-07-25
+### [1.0.0] - 2022-07-25
 
 #### Added
 

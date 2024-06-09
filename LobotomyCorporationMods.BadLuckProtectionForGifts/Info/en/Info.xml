@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<info>
+    <name>Bad Luck Protection For Gifts v1.1.0</name>
+    <descs>
+        <desc>A mod that provides increasing bad luck protection for agents that work on abnormalities to receive a gift
+            from that abnormality.
+        </desc>
+        <desc/>
+        <desc>After an agent finishes their work, you can see the modified chance in the Abnormality Details screen at
+            the E.G.O. Gift section next to Acquisition Probability.
+        </desc>
+    </descs>
+</info>

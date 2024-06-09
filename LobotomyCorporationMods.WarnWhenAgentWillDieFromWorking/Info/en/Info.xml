@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<info>
+    <name>Warn When Agent Will Die From Working v1.1.0</name>
+    <descs>
+        <desc>Provides a visual warning when an agent is guaranteed to die if assigned to work on an abnormality.</desc>
+        <desc/>
+        <desc>The warning only appears when an abnormality has been fully observed to avoid spoiling newly-acquired
+            abnormalities.
+        </desc>
+    </descs>
+</info>

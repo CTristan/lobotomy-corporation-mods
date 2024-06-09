@@ -58,7 +58,13 @@ Provides warnings for the following abnormalities and any of their conditions (*
 
 ## Changelog
 
-### [1.0] - 2023-02-09
+### [1.1.0] - 2024-06-09
+
+#### Added
+
+- Added Info.xml file to add the version number and description in the in-game mod menu.
+
+### [1.0.0] - 2023-02-09
 
 #### Added
 

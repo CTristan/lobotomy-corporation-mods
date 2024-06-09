@@ -3,13 +3,11 @@
 #region
 
 using System;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using LobotomyCorporationMods.Common.Implementations;
 
 #endregion
 
-[assembly: AssemblyVersion("1.0.*")]
 [assembly: CLSCompliant(false)]
 [assembly: ComVisible(false)]
 

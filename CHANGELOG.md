@@ -31,7 +31,7 @@ Major.minor.patch.0
 ### Added
 
 - New mod
-  - Warn When Agent Will Die From Working [1.0]
+    - Warn When Agent Will Die From Working [1.0.0]
     - Warns when assigning work if an agent will be killed by an instakill mechanic.
     - More information available in [the mod's readme](LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking/README.md).
 
@@ -39,14 +39,14 @@ Major.minor.patch.0
 
 ### Added
 
-- Unofficial Bug Fixes [2.0]
+- Unofficial Bug Fixes [2.0.0]
   - Added bug fix for Crumbling Armor killing agents when they no longer had Crumbling Armor's gift.
 
 ## [3.1] - 2023-01-30
 
 ### Added
 
-- Free Customization [2.0]
+- Free Customization [2.0.0]
   - Added re-customization capability to Free Customization mod.
 
 ## [3.0] - 2023-01-18
@@ -54,16 +54,16 @@ Major.minor.patch.0
 ### Added
 
 - New mod
-  - Unofficial Bug Fixes [1.0]
+    - Unofficial Bug Fixes [1.0.0]
     - Fixes a game bug that could cause LOB points to be wasted with certain gifts.
     - More information available in [the mod's readme](LobotomyCorporationMods.BugFixes/README.md).
 
-## [2.0] - 2022-07-25
+## [2.0.0] - 2022-07-25
 
 ### Added
  
 - New mod
-  - Free Customization [1.0]
+    - Free Customization [1.0.0]
     - Customizing an agent no longer costs any LOB points.
     - More information available in [the mod's readme](LobotomyCorporationMods.FreeCustomization/README.md).
 
@@ -74,11 +74,11 @@ Major.minor.patch.0
 - Bad Luck Protection for Gifts [1.0.1]
   - Finishing work on a creature with no gifts caused an infinite loop.
 
-## [1.0] - 2020-10-09
+## [1.0.0] - 2020-10-09
 
 ### Added
 
 - First mod!
-  - Bad Luck Protection for Gifts [1.0]
+    - Bad Luck Protection for Gifts [1.0.0]
     - The more an agent works with an abnormality, the higher chance for them to receive their gift.
     - More information available in [the mod's readme](LobotomyCorporationMods.BadLuckProtectionForGifts/README.md).

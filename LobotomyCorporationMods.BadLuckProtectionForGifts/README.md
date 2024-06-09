@@ -16,13 +16,19 @@ It wouldn't make sense for an agent to remember what happened after resetting th
 
 ## Changelog
 
+### [1.1.0] - 2024-06-09
+
+#### Added
+
+- Added Info.xml file to add the version number and description in the in-game mod menu.
+
 ### [1.0.1] - 2020-10-13
 
 #### Fixed
 
 - Fixed infinite loop caused by finishing work on a creature with no gifts.
 
-### [1.0] - 2020-10-09
+### [1.0.0] - 2020-10-09
 
 #### Added
 

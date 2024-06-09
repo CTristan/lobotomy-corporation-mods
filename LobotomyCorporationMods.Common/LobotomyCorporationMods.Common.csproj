@@ -1,19 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
-    <AssemblyVersion>4.0.1.1</AssemblyVersion>
+    <AssemblyVersion>4.0.2</AssemblyVersion>
     <!--
       Needed to prevent crashes. When Basemod loads the mods, if it finds two DLLs with the same assembly name then it
       will try to re-use the first DLL even if the second DLL has a different assembly version.
     -->
     <AssemblyName>LobotomyCorporationMods.Common.$(AssemblyVersion)</AssemblyName>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <IsPackable>false</IsPackable>
     <ProjectGuid>{D9BB018C-8BB3-4639-983C-F58969C8574E}</ProjectGuid>
     <AnalysisLevel>latest-all</AnalysisLevel>
-    <Deterministic>false</Deterministic>
-    <EnableNETAnalyzers>True</EnableNETAnalyzers>
-    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
-    <IsPackable>false</IsPackable>
+    <Deterministic>true</Deterministic>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <OutputPath>bin\</OutputPath>
     <OutputType>Library</OutputType>
     <RuntimeIdentifiers>win</RuntimeIdentifiers>

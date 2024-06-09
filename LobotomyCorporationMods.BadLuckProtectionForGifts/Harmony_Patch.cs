@@ -3,7 +3,6 @@
 #region
 
 using System;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
@@ -11,7 +10,6 @@ using LobotomyCorporationMods.Common.Implementations;
 
 #endregion
 
-[assembly: AssemblyVersion("1.0.*")]
 [assembly: CLSCompliant(false)]
 [assembly: ComVisible(false)]
 

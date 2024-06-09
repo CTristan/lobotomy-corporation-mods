@@ -1,13 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
+    <AssemblyVersion>2.1.0</AssemblyVersion>
     <ProjectGuid>{B4DFD7AE-4659-4FFB-866C-57487F6CDFB9}</ProjectGuid>
     <AnalysisLevel>latest-all</AnalysisLevel>
-    <Deterministic>false</Deterministic>
-    <EnableNETAnalyzers>True</EnableNETAnalyzers>
-    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <IsPackable>false</IsPackable>
+    <Deterministic>true</Deterministic>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <OutputPath>bin\</OutputPath>
     <OutputType>Library</OutputType>
     <RuntimeIdentifiers>win</RuntimeIdentifiers>
@@ -270,5 +269,10 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LobotomyCorporationMods.Common\LobotomyCorporationMods.Common.csproj"/>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="Info\en\Info.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>

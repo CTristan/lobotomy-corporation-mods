@@ -10,13 +10,19 @@ For example, when an agent had base level 4 Fortitude but had the Crumbling Armo
 
 ## Changelog
 
-### [2.0] - 2023-02-01
+### [2.1.0] - 2024-06-09
+
+#### Added
+
+- Added Info.xml file to add the version number and description in the in-game mod menu.
+
+### [2.0.0] - 2023-02-01
 
 #### Added
 
 - New bug fix for Crumbling Armor killing agents when they no longer had Crumbling Armor's gift.
 
-### [1.0] - 2023-01-18
+### [1.0.0] - 2023-01-18
 
 #### Added
 
