@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using FluentAssertions;
-using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using Xunit;
 
@@ -20,7 +19,7 @@ namespace LobotomyCorporationMods.Test.Mods.Common.Attributes
         private const string ExcludeFromCodeCoverageAttributeTypeName = "System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute";
 
         /// <summary>
-        ///     Uses reflection to get every mod being referenced by the Tests projects, then iterates through all of the classes
+        ///     Uses reflection to get every mod being referenced by the Tests projects, then iterates through all the classes
         ///     and methods using the ExcludeFromCodeCoverage attribute to make sure they also have another attribute that
         ///     indicates why we're excluding from code coverage.
         /// </summary>
@@ -68,7 +67,7 @@ namespace LobotomyCorporationMods.Test.Mods.Common.Attributes
                     return className;
                 }
 
-                // Now we need to check all of the methods in the class
+                // Now we need to check all the methods in the class
                 var methods = reflectionClass.GetMethods();
                 var methodName = AnyMethodIsIncorrectlyExcludedFromCodeCoverage(methods);
                 if (!string.IsNullOrEmpty(methodName))
@@ -87,7 +86,7 @@ namespace LobotomyCorporationMods.Test.Mods.Common.Attributes
             return invalidMethods.Count != 0 ? invalidMethods.First() : string.Empty;
         }
 
-        private static string MethodIsIncorrectlyExcludeFromCodeCoverage([NotNull] MemberInfo method)
+        private static string MethodIsIncorrectlyExcludeFromCodeCoverage(MemberInfo method)
         {
             var attributes = method.GetCustomAttributes(false);
             foreach (var attribute in attributes)

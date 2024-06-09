@@ -51,17 +51,19 @@ namespace LobotomyCorporationMods.Common.Implementations
             _fileManager.WriteAllText(logFile, message);
         }
 
-        private void WriteToLog(Exception? exception, string logFileName)
+        private void WriteToLog(Exception exception, string logFileName)
         {
-            if (exception is not null)
+            if (exception is null)
             {
-                var message = exception.ToString();
-                WriteToLog(message, logFileName);
+                return;
+            }
 
-                if (DebugLoggingEnabled)
-                {
-                    WriteToDebug(message);
-                }
+            var message = exception.ToString();
+            WriteToLog(message, logFileName);
+
+            if (DebugLoggingEnabled)
+            {
+                WriteToDebug(message);
             }
         }
     }

@@ -24,7 +24,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
         {
             const int MaxNumberOfFlowers = 4;
 
-            var numberOfFlowers = _yggdrasilAnimAdapter.Flowers.Count(static flower => flower.ActiveSelf);
+            var numberOfFlowers = _yggdrasilAnimAdapter.Flowers.Count(flower => flower.ActiveSelf);
             var agentWillDie = numberOfFlowers >= MaxNumberOfFlowers && !Agent.HasBuffOfType<YggdrasilBlessBuf>();
 
             return agentWillDie;

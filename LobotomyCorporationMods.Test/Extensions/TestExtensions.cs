@@ -523,7 +523,7 @@ namespace LobotomyCorporationMods.Test.Extensions
                 var typeFields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Static);
                 fields.AddRange(typeFields.GetValidFields());
 
-                if (type.BaseType != null)
+                if (type.BaseType is not null)
                 {
                     type = type.BaseType;
                 }

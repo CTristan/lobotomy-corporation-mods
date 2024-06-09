@@ -8,8 +8,6 @@
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <IsPackable>false</IsPackable>
-    <LangVersion>9</LangVersion>
-    <Nullable>enable</Nullable>
     <OutputPath>bin\</OutputPath>
     <OutputType>Library</OutputType>
     <RuntimeIdentifiers>win</RuntimeIdentifiers>

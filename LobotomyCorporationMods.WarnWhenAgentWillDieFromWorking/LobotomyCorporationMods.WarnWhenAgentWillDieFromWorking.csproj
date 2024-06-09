@@ -8,8 +8,6 @@
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <IsPackable>false</IsPackable>
-    <LangVersion>9</LangVersion>
-    <Nullable>enable</Nullable>
     <OutputPath>bin\</OutputPath>
     <OutputType>Library</OutputType>
     <RuntimeIdentifiers>win</RuntimeIdentifiers>

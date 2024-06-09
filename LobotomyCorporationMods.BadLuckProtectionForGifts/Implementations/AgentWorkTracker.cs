@@ -18,19 +18,21 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
     {
         // ReSharper disable once NullableWarningSuppressionIsUsed
         // We load the FileManager later when applying the patch, so this will be null in the constructor
-        private readonly IFileManager _fileManager = default!;
-        private readonly List<IGift> _gifts = new();
-        private readonly Dictionary<string, long> _mostRecentAgentIdByGift = new();
+        private readonly IFileManager _fileManager;
+        private readonly List<IGift> _gifts = new List<IGift>();
+        private readonly Dictionary<string, long> _mostRecentAgentIdByGift = new Dictionary<string, long>();
         private readonly string _trackerFile = string.Empty;
 
-        public AgentWorkTracker(IFileManager? fileManager, string dataFileName)
+        public AgentWorkTracker(IFileManager fileManager, string dataFileName)
         {
-            if (fileManager is not null)
+            if (fileManager is null)
             {
-                _fileManager = fileManager;
-                _trackerFile = _fileManager.GetOrCreateFile(dataFileName);
-                Load();
+                return;
             }
+
+            _fileManager = fileManager;
+            _trackerFile = _fileManager.GetOrCreateFile(dataFileName);
+            Load();
         }
 
         public float GetLastAgentWorkCountByGift(string giftName)
@@ -79,7 +81,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         private IAgent GetAgent(string giftName, long agentId)
         {
             var gift = _gifts.FirstOrDefault(g => g.GetName().Equals(giftName, StringComparison.Ordinal));
-            if (gift is not null)
+            if (gift is object)
             {
                 return gift.GetOrAddAgent(agentId);
             }

@@ -25,7 +25,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
                 throw new ArgumentNullException(nameof(instance));
             }
 
-            if (instance.customizingWindow.CurrentData is not null)
+            if (instance.customizingWindow.CurrentData is object)
             {
                 var customizingWindow = CustomizingWindow.CurrentWindow;
 

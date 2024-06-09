@@ -22,7 +22,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
                 throw new ArgumentNullException(nameof(instance));
             }
 
-            return instance.closeAction is not null;
+            return instance.closeAction is object;
         }
 
         /// <summary>

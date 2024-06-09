@@ -25,16 +25,18 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             var giftName = instance.equipTypeInfo?.Name;
 
             // If creature has no gift then giftName will be null
-            if (giftName is not null)
+            if (giftName is null)
             {
-                var probabilityBonus = agentWorkTracker.GetLastAgentWorkCountByGift(giftName) / 100f;
-                probability += probabilityBonus;
+                return probability;
+            }
 
-                // Prevent potential overflow issues
-                if (probability > 1f)
-                {
-                    probability = 1f;
-                }
+            var probabilityBonus = agentWorkTracker.GetLastAgentWorkCountByGift(giftName) / 100f;
+            probability += probabilityBonus;
+
+            // Prevent potential overflow issues
+            if (probability > 1f)
+            {
+                probability = 1f;
             }
 
             return probability;

@@ -22,7 +22,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
     {
         private const string ModFileName = "LobotomyCorporationMods.BadLuckProtectionForGifts.dll";
 
-        public static new readonly Harmony_Patch Instance = new(true);
+        public new static readonly Harmony_Patch Instance = new Harmony_Patch(true);
 
         public Harmony_Patch()
             : this(false)
@@ -41,6 +41,6 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
 
         // ReSharper disable once NullableWarningSuppressionIsUsed
         // We load the tracker later on when needed, so this should never be actually null
-        internal IAgentWorkTracker AgentWorkTracker { get; } = default!;
+        internal IAgentWorkTracker AgentWorkTracker { get; }
     }
 }
