@@ -138,7 +138,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
                 builder.Append(gift.GetName());
                 foreach (var agent in gift.GetAgents())
                 {
-                    builder.Append("^" + agent?.GetId() + ";" + agent?.GetWorkCount().ToString(CultureInfo.InvariantCulture));
+                    builder.Append("^" + agent.GetId() + ";" +
+                                   agent.GetWorkCount().ToString(CultureInfo.InvariantCulture));
                 }
             }
 

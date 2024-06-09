@@ -36,7 +36,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         /// <returns>A new or existing agent.</returns>
         public IAgent GetOrAddAgent(long agentId)
         {
-            var agent = _agents.Find(a => a?.GetId() == agentId);
+            var agent = _agents.Find(a => a.GetId() == agentId);
 
             if (agent is object)
             {
