@@ -4,7 +4,8 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-The overall project has a custom versioning system explained below, but each individual mod adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The overall project has a custom versioning system explained below, but each individual mod adheres
+to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 # Project version numbers
 
@@ -12,12 +13,13 @@ The overall project uses the following custom versioning:
 
 Major.minor.patch.0
 
-* Major version is the total number of mods created.
-* Minor version is if there are new additions to existing mods.
-* Patch version is for bug fixes.
-* Fourth value is for development purposes only.
+- Major version is the total number of mods created.
+- Minor version is if there are new additions to existing mods.
+- Patch version is for bug fixes.
+- Fourth value is for development purposes only.
 
-*This does not apply to the individual mod versions, as they adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).*
+*This does not apply to the individual mod versions, as they adhere
+to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).*
 
 ## [4.1.0] - 2024-06-09
 
@@ -31,7 +33,7 @@ Major.minor.patch.0
 ### Fixed
 
 - Free Customization [2.1]
-  - Fixed issue with renames not working for the initial starting agent when starting from Day 1.
+    - Fixed issue with renames not working for the initial starting agent when starting from Day 1.
 
 ## [4.0] - 2023-02-09
 
@@ -40,21 +42,22 @@ Major.minor.patch.0
 - New mod
     - Warn When Agent Will Die From Working [1.0.0]
     - Warns when assigning work if an agent will be killed by an instakill mechanic.
-    - More information available in [the mod's readme](LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking/README.md).
+  - More information available
+    in [the mod's readme](LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking/README.md).
 
 ## [3.2] - 2023-02-01
 
 ### Added
 
 - Unofficial Bug Fixes [2.0.0]
-  - Added bug fix for Crumbling Armor killing agents when they no longer had Crumbling Armor's gift.
+    - Added bug fix for Crumbling Armor killing agents when they no longer had Crumbling Armor's gift.
 
 ## [3.1] - 2023-01-30
 
 ### Added
 
 - Free Customization [2.0.0]
-  - Added re-customization capability to Free Customization mod.
+    - Added re-customization capability to Free Customization mod.
 
 ## [3.0] - 2023-01-18
 
@@ -68,7 +71,7 @@ Major.minor.patch.0
 ## [2.0.0] - 2022-07-25
 
 ### Added
- 
+
 - New mod
     - Free Customization [1.0.0]
     - Customizing an agent no longer costs any LOB points.
@@ -79,7 +82,7 @@ Major.minor.patch.0
 ### Fixed
 
 - Bad Luck Protection for Gifts [1.0.1]
-  - Finishing work on a creature with no gifts caused an infinite loop.
+    - Finishing work on a creature with no gifts caused an infinite loop.
 
 ## [1.0.0] - 2020-10-09
 
