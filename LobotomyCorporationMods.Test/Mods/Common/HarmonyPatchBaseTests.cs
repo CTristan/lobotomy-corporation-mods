@@ -28,7 +28,7 @@ namespace LobotomyCorporationMods.Test.Mods.Common
 
             Action action = () => s_fakeHarmonyPatch.ApplyHarmonyPatch(typeof(HarmonyPatchBase), string.Empty, mockLogger.Object);
 
-            action.Should().NotThrow();
+            action.ShouldNotThrow();
         }
 
         [Fact]
@@ -48,7 +48,7 @@ namespace LobotomyCorporationMods.Test.Mods.Common
 
             Action action = () => s_fakeHarmonyPatch.TestInitializePatchData(new List<DirectoryInfo> { new(currentDirectory) });
 
-            action.Should().NotThrow();
+            action.ShouldNotThrow();
             s_fakeHarmonyPatch.Logger.Should().NotBeNull();
         }
 
@@ -57,7 +57,7 @@ namespace LobotomyCorporationMods.Test.Mods.Common
         {
             Action action = static () => _ = new FakeHarmonyPatch(true);
 
-            action.Should().Throw<InvalidOperationException>();
+            action.ShouldThrow<InvalidOperationException>();
         }
     }
 

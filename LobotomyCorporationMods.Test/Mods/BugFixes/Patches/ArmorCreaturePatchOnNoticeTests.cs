@@ -7,6 +7,7 @@ using LobotomyCorporationMods.BugFixes.Patches;
 using LobotomyCorporationMods.Common.Enums;
 using LobotomyCorporationMods.Test.Extensions;
 using Xunit;
+using Xunit.Extensions;
 
 #endregion
 

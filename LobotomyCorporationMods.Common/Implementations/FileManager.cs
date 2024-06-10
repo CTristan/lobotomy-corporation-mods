@@ -16,14 +16,14 @@ namespace LobotomyCorporationMods.Common.Implementations
     public sealed class FileManager : IFileManager
     {
         private readonly DirectoryInfo _dataPath;
-        private readonly object _fileLock = new object();
+        private readonly object _fileLock = new();
         private readonly Dictionary<string, string> _filesCache;
 
         public FileManager(string modFileName, ICollection<DirectoryInfo> directories)
         {
             var directory = directories.FirstOrDefault(directoryInfo => File.Exists(Path.Combine(directoryInfo.FullName, modFileName)));
 
-            if (directory is object)
+            if (directory is not null)
             {
                 _dataPath = directory;
 

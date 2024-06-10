@@ -95,7 +95,7 @@ namespace LobotomyCorporationMods.Test.Mods.Common.Attributes
                 if (attribute.ToString() == ExcludeFromCodeCoverageAttributeTypeName &&
                     !attributes.Any(static o => o is EntryPointAttribute))
                 {
-                    return method.ToString()!;
+                    return method.ToString();
                 }
             }
 
@@ -110,7 +110,7 @@ namespace LobotomyCorporationMods.Test.Mods.Common.Attributes
                 if (attribute.ToString() == ExcludeFromCodeCoverageAttributeTypeName && !attributes.Any(static o => o is AdapterClassAttribute))
                 {
                     // Only Adapter classes can have code coverage excluded for the entire class
-                    return reflectionClass.ToString()!;
+                    return reflectionClass.ToString();
                 }
             }
 

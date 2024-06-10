@@ -22,7 +22,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
             {
                 var flowers = GameObject.flowers;
 
-                return flowers.Select(flower => new GameObjectAdapter { GameObject = flower });
+                return flowers.Select(static flower => new GameObjectAdapter { GameObject = flower }).Cast<IGameObjectAdapter>();
             }
         }
     }

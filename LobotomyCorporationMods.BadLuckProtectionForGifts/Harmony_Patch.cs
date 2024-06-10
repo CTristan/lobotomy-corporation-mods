@@ -3,6 +3,7 @@
 #region
 
 using System;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
@@ -10,6 +11,7 @@ using LobotomyCorporationMods.Common.Implementations;
 
 #endregion
 
+[assembly: AssemblyVersion("1.0.*")]
 [assembly: CLSCompliant(false)]
 [assembly: ComVisible(false)]
 
@@ -20,7 +22,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
     {
         private const string ModFileName = "LobotomyCorporationMods.BadLuckProtectionForGifts.dll";
 
-        public new static readonly Harmony_Patch Instance = new Harmony_Patch(true);
+        public static new readonly Harmony_Patch Instance = new(true);
 
         public Harmony_Patch()
             : this(false)
@@ -39,6 +41,6 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
 
         // ReSharper disable once NullableWarningSuppressionIsUsed
         // We load the tracker later on when needed, so this should never be actually null
-        internal IAgentWorkTracker AgentWorkTracker { get; }
+        internal IAgentWorkTracker AgentWorkTracker { get; } = default!;
     }
 }

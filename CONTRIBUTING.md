@@ -21,16 +21,12 @@ If you are able to get debugging working in Linux I would love to hear about it!
 Due to the nature of Harmony patching, there are going to be some quirks on how to do things that you wouldn't do in a
 sane codebase.
 
-- NEVER use "== null" or "!= null", ALWAYS use "is null" or "is object" respectively.
+- NEVER use "== null" or "!= null", ALWAYS use "is null" or "is not null" respectively.
     - Because of how [Unity overwrites the == operator for null checking](https://stackoverflow.com/a/72072517), it
       breaks unit tests because we're not actually running Unity to run the tests. When we use "is null" then it doesn't
       use the overloaded operator and checks if it's actually null.
     - While this isn't true for our own types, it's better to be safe and just mandate it everywhere so we don't have to
       double-check whether we're checking a Unity type or not.
-- Mod projects need to use .NET Framework 4.8.1 and the default C# language (7.3).
-    - The original game was created an old Unity version that used .NET Framework 3.5, so to maximize compatibility with
-      our patches we need to use the lowest-supported version available. That said, I do my mod development in a VM with
-      an ARM processor
-      and [.NET Framework 4.8.1 is the first version to support ARM64](https://devblogs.microsoft.com/dotnet/announcing-dotnet-framework-481/).
-      While 4.8.1 can support higher C# language versions, we're limiting the C# language to 7.3 to minimize the number
-      of new features that could cause any compatibility issues.
+- Mod projects need to use .NET Framework 3.5.
+    - The original game was created an old Unity version that used .NET Framework 3.5, so we need to use the same
+      version for our mods.

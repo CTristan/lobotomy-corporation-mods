@@ -47,15 +47,17 @@ jobs:
       - name: Test
         run: dotnet test /p:CollectCoverage=true /p:CoverletOutput="./coverage.opencover.xml" /p:CoverletOutputFormat=opencover --no-build --verbosity normal BaseMods/src/lobotomy-corporation-mods/LobotomyCorporationMods.sln
 
+      # Coverage reports specify the .NET Framework 4.8.1 file since the test runner doesn't work with .NET Framework 3.5
+
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           root_dir: BaseMods/src/lobotomy-corporation-mods
-          files: LobotomyCorporationMods.Test/coverage.opencover.xml
+          files: LobotomyCorporationMods.Test/coverage.opencover481.xml
 
       - name: Upload coverage reports to Codacy
         uses: codacy/codacy-coverage-reporter-action@v1
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          coverage-reports: BaseMods/src/lobotomy-corporation-mods/LobotomyCorporationMods.Test/coverage.opencover.xml
+          coverage-reports: BaseMods/src/lobotomy-corporation-mods/LobotomyCorporationMods.Test/coverage.opencover481.xml

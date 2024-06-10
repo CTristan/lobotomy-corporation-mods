@@ -36,8 +36,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
             }
         }
 
-        public static void PatchAfterSetFilter(this AgentSlot instance, AgentState state,
-            GameManager currentGameManager, IBeautyBeastAnimAdapter beautyBeastAnimAdapter, IImageAdapter imageAdapter,
+        public static void PatchAfterSetFilter(this AgentSlot instance, AgentState state, GameManager? currentGameManager, IBeautyBeastAnimAdapter beautyBeastAnimAdapter, IImageAdapter imageAdapter,
             ITextAdapter textAdapter, IYggdrasilAnimAdapter yggdrasilAnimAdapter)
         {
             if (instance is null)
@@ -59,7 +58,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
 
             // Some initial Command Window checks to make sure we're in the right state
             var commandWindow = CommandWindow.CommandWindow.CurrentWindow;
-            if (commandWindow is object && commandWindow.IsAbnormalityWorkWindow() && !state.IsUncontrollable())
+            if (commandWindow is not null && commandWindow.IsAbnormalityWorkWindow() && !state.IsUncontrollable())
             {
                 var agentWillDie = instance.CheckIfWorkWillKillAgent(commandWindow, beautyBeastAnimAdapter, yggdrasilAnimAdapter);
 

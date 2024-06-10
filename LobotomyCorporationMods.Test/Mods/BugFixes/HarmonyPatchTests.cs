@@ -23,7 +23,7 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes
         public void BadLuckProtectionForGifts_Constructor_is_public_and_externally_accessible()
         {
             Action act = () => _ = new Harmony_Patch();
-            act.Should().NotThrow();
+            act.ShouldNotThrow();
         }
 
         [Fact]

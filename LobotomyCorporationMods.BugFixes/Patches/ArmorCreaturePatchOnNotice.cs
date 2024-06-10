@@ -28,7 +28,7 @@ namespace LobotomyCorporationMods.BugFixes.Patches
             }
 
             // If we're working on a tool or other non-creature then we don't need to verify
-            if (!(param[0] is CreatureModel creatureModel))
+            if (param[0] is not CreatureModel creatureModel)
             {
                 return true;
             }

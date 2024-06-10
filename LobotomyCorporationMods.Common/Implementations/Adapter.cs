@@ -15,7 +15,7 @@ namespace LobotomyCorporationMods.Common.Implementations
     [ExcludeFromCodeCoverage]
     public class Adapter<T> : IAdapter<T>
     {
-        private T _gameObject;
+        private T? _gameObject;
 
         protected Adapter()
         {
@@ -25,7 +25,7 @@ namespace LobotomyCorporationMods.Common.Implementations
         {
             get
             {
-                if (!(_gameObject is object))
+                if (_gameObject is null)
                 {
                     throw new InvalidOperationException("Please load the game object into the adapter before trying to use it.");
                 }
