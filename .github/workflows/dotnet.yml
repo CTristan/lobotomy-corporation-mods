@@ -39,7 +39,7 @@ jobs:
           dotnet-version: 6.x
 
       - name: Restore dependencies
-        run: dotnet restore BaseMods/src/lobotomy-corporation-mods/LobotomyCorporationMods.sln
+        run: dotnet restore LobotomyCorporationMods.sln
 
       - name: Build
         run: dotnet build --no-restore LobotomyCorporationMods.sln
