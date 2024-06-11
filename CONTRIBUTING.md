@@ -21,12 +21,22 @@ If you are able to get debugging working in Linux I would love to hear about it!
 Due to the nature of Harmony patching, there are going to be some quirks on how to do things that you wouldn't do in a
 sane codebase.
 
-- NEVER use "== null" or "!= null", ALWAYS use "is null" or "is not null" respectively.
+- Mod projects need to use .NET Framework 3.5.
+    - The original game was created an old Unity version that used .NET Framework 3.5, so we need to use the same
+      version for our mods.
+- Every mod needs to have a "Harmony_Patch" class in the project root.
+    - Basemod requires this name for the class that initializes the Harmony patches that the mod will load.
+- Harmony patches must be Postfix unless the patch will not work if it's not Prefix. If Prefix is required, a comment
+  needs to display why Postfix won't work.
+    - Prefix methods are potentially dangerous for both the game and other mods since you're changing game state before
+      the method runs. Running our Postfix patch allows us to do things after the method ran so the game and other mods
+      are much less likely to misbehave.
+    - That said, the patches only need to be Postfix when shared with others, so I would recommend creating your patches
+      using Prefix for best-case scenario, then when everything works as expected changing all of your patches to
+      Postfix and re-testing your mod to make sure they don't break.
+- Never use "== null" or "!= null", always use "is null" or "is object" respectively.
     - Because of how [Unity overwrites the == operator for null checking](https://stackoverflow.com/a/72072517), it
       breaks unit tests because we're not actually running Unity to run the tests. When we use "is null" then it doesn't
       use the overloaded operator and checks if it's actually null.
     - While this isn't true for our own types, it's better to be safe and just mandate it everywhere so we don't have to
       double-check whether we're checking a Unity type or not.
-- Mod projects need to use .NET Framework 3.5.
-    - The original game was created an old Unity version that used .NET Framework 3.5, so we need to use the same
-      version for our mods.

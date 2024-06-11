@@ -130,7 +130,7 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
 
             // Assert
             agentWorkTracker.GetLastAgentWorkCountByGift(GiftName).Should().Be(0);
-            mockFileManager.Verify(static manager => manager.WriteAllText(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+            mockFileManager.Verify(manager => manager.WriteAllText(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         }
 
         #region Helper Methods
@@ -138,9 +138,9 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
         /// <summary>
         ///     Populates the Harmony Patch with an agent work tracker pointed to our specified test data file.
         /// </summary>
-        private static AgentWorkTracker CreateAgentWorkTracker(string dataFileName, string trackerData = "", IFileManager? fileManager = null)
+        private static AgentWorkTracker CreateAgentWorkTracker(string dataFileName, string trackerData = "", IFileManager fileManager = null)
         {
-            fileManager ??= TestExtensions.GetMockFileManager().Object;
+            fileManager = fileManager ?? TestExtensions.GetMockFileManager().Object;
             dataFileName = dataFileName.InCurrentDirectory();
             CreateTestTrackerFile(dataFileName, trackerData);
 

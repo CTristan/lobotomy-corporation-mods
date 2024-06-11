@@ -32,7 +32,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.LoadData(mockLogger.Object);
 
-            static void Action() => AgentInfoWindowPatchEnforcementWindow.Postfix();
+            void Action() => AgentInfoWindowPatchEnforcementWindow.Postfix();
 
             mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
         }
@@ -53,7 +53,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.LoadData(mockLogger.Object);
 
-            static void Action() => AgentInfoWindowPatchGenerateWindow.Postfix();
+            void Action() => AgentInfoWindowPatchGenerateWindow.Postfix();
 
             mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
         }
@@ -74,7 +74,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.LoadData(mockLogger.Object);
 
-            static void Action() => AppearanceUIPatchCloseWindow.Prefix(null!);
+            void Action() => AppearanceUIPatchCloseWindow.Prefix(null);
 
             mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
         }
@@ -95,7 +95,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.LoadData(mockLogger.Object);
 
-            static void Action() => CustomizingWindowPatchConfirm.Postfix(null!);
+            void Action() => CustomizingWindowPatchConfirm.Prefix(null);
 
             mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
         }
@@ -116,7 +116,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.LoadData(mockLogger.Object);
 
-            static void Action() => CustomizingWindowPatchOpenAppearanceWindow.Postfix(null!);
+            void Action() => CustomizingWindowPatchOpenAppearanceWindow.Postfix(null);
 
             mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
         }
@@ -137,12 +137,12 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.LoadData(mockLogger.Object);
 
-            Action action = static () => CustomizingWindowPatchReviseOpenAction.Postfix(null!, null!);
+            Action action = () => CustomizingWindowPatchReviseOpenAction.Postfix(null, null);
 
             mockLogger.VerifyExceptionLogged<ArgumentNullException>(action);
 
             // Verify other arguments throw an exception if null
-            action = static () => CustomizingWindowPatchReviseOpenAction.Postfix(TestExtensions.CreateCustomizingWindow(), null!);
+            action = () => CustomizingWindowPatchReviseOpenAction.Postfix(TestExtensions.CreateCustomizingWindow(), null);
             mockLogger.VerifyExceptionLogged<ArgumentNullException>(action, 2);
         }
 

@@ -29,7 +29,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
             return InitializeCustomizingWindow(null);
         }
 
-        protected static CustomizingWindow InitializeCustomizingWindow(AgentModel? currentAgent)
+        protected static CustomizingWindow InitializeCustomizingWindow(AgentModel currentAgent)
         {
             // Need a WorkerSpriteManager instance
             InitializeWorkerSpriteManager();

@@ -21,10 +21,10 @@ namespace LobotomyCorporationMods.Common.Implementations
         ///     Singleton ensures thread safety across Harmony patches.
         ///     https://csharpindepth.com/Articles/Singleton
         /// </summary>
-        protected static readonly HarmonyPatchBase Instance = new();
+        protected static readonly HarmonyPatchBase Instance = new HarmonyPatchBase();
 
-        private static readonly object s_locker = new();
-        private static readonly HashSet<object> s_registeredTypes = new();
+        private static readonly object s_locker = new object();
+        private static readonly HashSet<object> s_registeredTypes = new HashSet<object>();
 
         /// <summary>
         ///     Validate that each mod is using their own Singleton instance.
@@ -44,20 +44,17 @@ namespace LobotomyCorporationMods.Common.Implementations
 
         // We load our properties when applying the patch, so they will be null in the constructor
         // ReSharper disable once NullableWarningSuppressionIsUsed
-        protected IFileManager FileManager { get; private set; } = default!;
+        protected IFileManager FileManager { get; private set; }
 
         // ReSharper disable once NullableWarningSuppressionIsUsed
-        public ILogger Logger { get; private set; } = default!;
+        public ILogger Logger { get; private set; }
 
 
         protected void ApplyHarmonyPatch(Type harmonyPatchType, string modFileName)
         {
             try
             {
-                if (harmonyPatchType is null)
-                {
-                    throw new ArgumentNullException(nameof(harmonyPatchType));
-                }
+                Guard.Against.Null(harmonyPatchType, nameof(harmonyPatchType));
 
                 var harmony = HarmonyInstance.Create(modFileName);
                 harmony.PatchAll(harmonyPatchType.Assembly);
@@ -75,16 +72,16 @@ namespace LobotomyCorporationMods.Common.Implementations
             InitializePatchData(harmonyPatchType, modFileName, null);
         }
 
-        protected void InitializePatchData(Type harmonyPatchType, string modFileName, ICollection<DirectoryInfo>? directoryList)
+        protected void InitializePatchData(Type harmonyPatchType, string modFileName, ICollection<DirectoryInfo> directoryList)
         {
             if (harmonyPatchType.IsHarmonyPatch())
             {
                 try
                 {
                     // Try to get Basemod directory list if we don't have one
-                    directoryList ??= Add_On.instance.DirList;
+                    directoryList = directoryList ?? Add_On.instance.DirList;
                 }
-                catch (Exception exception) when (exception is SystemException or MissingMethodException)
+                catch (Exception exception) when (exception is SystemException)
                 {
                     // If we get a Unity exception then that means we're running this outside of Unity (i.e. unit tests), so we'll just gracefully exit
                     return;

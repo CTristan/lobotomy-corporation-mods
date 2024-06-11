@@ -7,6 +7,8 @@ using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
 using LobotomyCorporationMods.Common.Attributes;
+using LobotomyCorporationMods.Common.Extensions;
+using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.FreeCustomization.Extensions;
 
 #endregion
@@ -35,18 +37,12 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
                 throw;
             }
         }
+        // ReSharper disable InconsistentNaming
 
         public static void PatchAfterReviseOpenAction(this CustomizingWindow instance, AgentModel agent)
         {
-            if (instance is null)
-            {
-                throw new ArgumentNullException(nameof(instance));
-            }
-
-            if (agent is null)
-            {
-                throw new ArgumentNullException(nameof(agent));
-            }
+            Guard.Against.Null(instance, nameof(instance));
+            Guard.Against.Null(agent, nameof(agent));
 
             instance.CurrentData.agentName = agent._agentName;
             instance.CurrentData.CustomName = agent.name;

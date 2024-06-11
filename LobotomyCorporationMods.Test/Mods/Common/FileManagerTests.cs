@@ -80,7 +80,7 @@ namespace LobotomyCorporationMods.Test.Mods.Common
         {
             var currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
-            return new List<DirectoryInfo> { new(currentDirectory) };
+            return new List<DirectoryInfo> { new DirectoryInfo(currentDirectory) };
         }
 
         private static void DeleteFileIfExists(string fileWithPath)

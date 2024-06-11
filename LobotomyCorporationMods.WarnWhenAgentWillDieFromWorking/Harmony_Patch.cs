@@ -17,7 +17,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking
     {
         private const string ModFileName = "LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.dll";
 
-        public new static readonly Harmony_Patch Instance = new(true);
+        public new static readonly Harmony_Patch Instance = new Harmony_Patch(true);
 
         public Harmony_Patch()
             : this(false)

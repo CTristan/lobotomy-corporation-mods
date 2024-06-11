@@ -20,7 +20,7 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts.Patches
 
             NewTitleScriptPatchOnClickNewGame.PatchAfterOnClickNewGame(mockAgentWorkTracker.Object);
 
-            mockAgentWorkTracker.Verify(static tracker => tracker.Reset(), Times.Once);
+            mockAgentWorkTracker.Verify(tracker => tracker.Reset(), Times.Once);
         }
     }
 }

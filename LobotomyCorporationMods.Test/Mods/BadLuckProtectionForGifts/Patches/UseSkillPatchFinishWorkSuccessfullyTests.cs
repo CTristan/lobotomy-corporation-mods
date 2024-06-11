@@ -40,7 +40,7 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts.Patches
 
             useSkill.PatchAfterFinishWorkSuccessfully(mockAgentWorkTracker.Object);
 
-            mockAgentWorkTracker.Verify(static tracker => tracker.IncrementAgentWorkCount(GiftName, It.IsAny<long>(), It.IsAny<int>()), Times.Never);
+            mockAgentWorkTracker.Verify(tracker => tracker.IncrementAgentWorkCount(GiftName, It.IsAny<long>(), It.IsAny<int>()), Times.Never);
         }
     }
 }

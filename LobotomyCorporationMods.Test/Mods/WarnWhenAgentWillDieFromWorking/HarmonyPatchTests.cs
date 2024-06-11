@@ -32,7 +32,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.LoadData(mockLogger.Object);
 
-            static void Action() => AgentSlotPatchSetFilter.Postfix(null!, (AgentState)1);
+            void Action() => AgentSlotPatchSetFilter.Postfix(null, (AgentState)1);
 
             mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
         }

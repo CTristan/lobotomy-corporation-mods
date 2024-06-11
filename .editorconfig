@@ -33,9 +33,6 @@ charset = utf-8
 
 # Dotnet code style settings:
 
-# Don't need to validate arguments since we have nullable enabled
-dotnet_diagnostic.CA1062.severity = none
-
 # Disable naming checks for underscores since every patch has to be named Harmony_Patch
 dotnet_diagnostic.CA1707.severity = none
 

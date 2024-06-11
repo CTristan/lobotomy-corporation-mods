@@ -7,6 +7,8 @@ using System.Diagnostics.CodeAnalysis;
 using CommandWindow;
 using Harmony;
 using LobotomyCorporationMods.Common.Attributes;
+using LobotomyCorporationMods.Common.Extensions;
+using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions;
@@ -35,14 +37,14 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
                 throw;
             }
         }
+        // ReSharper enable InconsistentNaming
 
-        public static void PatchAfterSetFilter(this AgentSlot instance, AgentState state, GameManager? currentGameManager, IBeautyBeastAnimAdapter beautyBeastAnimAdapter, IImageAdapter imageAdapter,
+        public static void PatchAfterSetFilter(this AgentSlot instance, AgentState state, GameManager currentGameManager, IBeautyBeastAnimAdapter beautyBeastAnimAdapter, IImageAdapter imageAdapter,
             ITextAdapter textAdapter, IYggdrasilAnimAdapter yggdrasilAnimAdapter)
         {
-            if (instance is null)
-            {
-                throw new ArgumentNullException(nameof(instance));
-            }
+            Guard.Against.Null(instance, nameof(instance));
+            Guard.Against.Null(imageAdapter, nameof(imageAdapter));
+            Guard.Against.Null(textAdapter, nameof(textAdapter));
 
             // First load won't have a game manager yet, so just gracefully exit
             if (currentGameManager is null)
@@ -58,20 +60,22 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
 
             // Some initial Command Window checks to make sure we're in the right state
             var commandWindow = CommandWindow.CommandWindow.CurrentWindow;
-            if (commandWindow is not null && commandWindow.IsAbnormalityWorkWindow() && !state.IsUncontrollable())
+            if (commandWindow is null || !commandWindow.IsAbnormalityWorkWindow() || state.IsUncontrollable())
             {
-                var agentWillDie = instance.CheckIfWorkWillKillAgent(commandWindow, beautyBeastAnimAdapter, yggdrasilAnimAdapter);
+                return;
+            }
 
-                if (agentWillDie)
-                {
-                    imageAdapter.GameObject = instance.WorkFilterFill;
-                    imageAdapter.Color = commandWindow.DeadColor;
+            var agentWillDie = instance.CheckIfWorkWillKillAgent(commandWindow, beautyBeastAnimAdapter, yggdrasilAnimAdapter);
 
-                    textAdapter.GameObject = instance.WorkFilterText;
-                    textAdapter.Text = LocalizeTextDataModel.instance.GetText("AgentState_Dead");
+            if (agentWillDie)
+            {
+                imageAdapter.GameObject = instance.WorkFilterFill;
+                imageAdapter.Color = commandWindow.DeadColor;
 
-                    instance.SetColor(commandWindow.DeadColor);
-                }
+                textAdapter.GameObject = instance.WorkFilterText;
+                textAdapter.Text = LocalizeTextDataModel.instance.GetText("AgentState_Dead");
+
+                instance.SetColor(commandWindow.DeadColor);
             }
         }
     }

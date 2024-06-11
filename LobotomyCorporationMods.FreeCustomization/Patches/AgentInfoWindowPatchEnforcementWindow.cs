@@ -7,6 +7,8 @@ using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
 using LobotomyCorporationMods.Common.Attributes;
+using LobotomyCorporationMods.Common.Extensions;
+using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
@@ -20,29 +22,31 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         public static void PatchAfterEnforcementWindow(this AgentInfoWindow instance, ICustomizingWindowAdapter customizingWindowAdapter, IGameObjectAdapter gameObjectAdapter,
             IAgentInfoWindowUiComponentsAdapter uiComponentsAdapter)
         {
-            if (instance is null)
+            Guard.Against.Null(instance, nameof(instance));
+            Guard.Against.Null(gameObjectAdapter, nameof(gameObjectAdapter));
+            Guard.Against.Null(uiComponentsAdapter, nameof(uiComponentsAdapter));
+            Guard.Against.Null(customizingWindowAdapter, nameof(customizingWindowAdapter));
+
+            if (instance.customizingWindow.CurrentData is null)
             {
-                throw new ArgumentNullException(nameof(instance));
+                return;
             }
 
-            if (instance.customizingWindow.CurrentData is not null)
-            {
-                var customizingWindow = CustomizingWindow.CurrentWindow;
+            var customizingWindow = CustomizingWindow.CurrentWindow;
 
-                // Make sure the customizing block is active so we can customize the agent
-                gameObjectAdapter.GameObject = instance.customizingBlock;
-                gameObjectAdapter.SetActive(true);
+            // Make sure the customizing block is active so we can customize the agent
+            gameObjectAdapter.GameObject = instance.customizingBlock;
+            gameObjectAdapter.SetActive(true);
 
-                // Make the appearance control active
-                gameObjectAdapter.GameObject = instance.AppearanceActiveControl;
-                gameObjectAdapter.SetActive(true);
+            // Make the appearance control active
+            gameObjectAdapter.GameObject = instance.AppearanceActiveControl;
+            gameObjectAdapter.SetActive(true);
 
-                uiComponentsAdapter.GameObject = instance.UIComponents;
-                uiComponentsAdapter.SetData(customizingWindow.CurrentData);
+            uiComponentsAdapter.GameObject = instance.UIComponents;
+            uiComponentsAdapter.SetData(customizingWindow.CurrentData);
 
-                customizingWindowAdapter.GameObject = instance.customizingWindow;
-                customizingWindowAdapter.OpenAppearanceWindow();
-            }
+            customizingWindowAdapter.GameObject = instance.customizingWindow;
+            customizingWindowAdapter.OpenAppearanceWindow();
         }
 
         /// <summary>

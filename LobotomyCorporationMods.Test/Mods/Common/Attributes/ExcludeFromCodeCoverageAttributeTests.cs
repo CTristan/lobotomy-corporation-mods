@@ -27,7 +27,7 @@ namespace LobotomyCorporationMods.Test.Mods.Common.Attributes
         public void Verify_that_code_coverage_exclusions_are_only_on_appropriately_attributed_classes_and_methods()
         {
             var currentAssembly = typeof(ExcludeFromCodeCoverageAttributeTests).Assembly;
-            var referencedAssemblies = currentAssembly.GetReferencedAssemblies().Where(static name => IsInModsNamespace(name.Name));
+            var referencedAssemblies = currentAssembly.GetReferencedAssemblies().Where(name => IsInModsNamespace(name.Name));
 
             var invalidAttributeFound = AnyModIsIncorrectlyExcludedFromCodeCoverage(referencedAssemblies);
 
@@ -36,20 +36,20 @@ namespace LobotomyCorporationMods.Test.Mods.Common.Attributes
 
         #region Helper Methods
 
-        private static bool IsInModsNamespace(string? name)
+        private static bool IsInModsNamespace(string name)
         {
             const string ModsNamespace = "LobotomyCorporationMods.";
             var namespaceMinLength = ModsNamespace.Length;
 
-            return name is not null && name.Length >= namespaceMinLength && name.Substring(0, namespaceMinLength) == ModsNamespace;
+            return !(name is null) && name.Length >= namespaceMinLength && name.Substring(0, namespaceMinLength) == ModsNamespace;
         }
 
         private static string AnyModIsIncorrectlyExcludedFromCodeCoverage(IEnumerable<AssemblyName> referencedAssemblies)
         {
-            var invalidClasses = referencedAssemblies.Select(static assemblyName => Assembly.Load(assemblyName.Name!))
-                .Select(static assembly => assembly.GetTypes().Where(static type => type.IsClass && IsInModsNamespace(type.Namespace)))
-                .Select(static classes => AnyClassIsIncorrectlyExcludedFromCodeCoverage(classes))
-                .Where(static className => !string.IsNullOrEmpty(className))
+            var invalidClasses = referencedAssemblies.Select(assemblyName => Assembly.Load(assemblyName.Name))
+                .Select(assembly => assembly.GetTypes().Where(type => type.IsClass && IsInModsNamespace(type.Namespace)))
+                .Select(AnyClassIsIncorrectlyExcludedFromCodeCoverage)
+                .Where(className => !string.IsNullOrEmpty(className))
                 .ToList();
 
             return invalidClasses.Count != 0 ? invalidClasses.First() : string.Empty;
@@ -81,19 +81,19 @@ namespace LobotomyCorporationMods.Test.Mods.Common.Attributes
 
         private static string AnyMethodIsIncorrectlyExcludedFromCodeCoverage(MethodInfo[] methods)
         {
-            var invalidMethods = methods.Select(static method => MethodIsIncorrectlyExcludeFromCodeCoverage(method)).Where(static methodName => !string.IsNullOrEmpty(methodName)).ToList();
+            var invalidMethods = methods.Select(MethodIsIncorrectlyExcludeFromCodeCoverage).Where(methodName => !string.IsNullOrEmpty(methodName)).ToList();
 
             return invalidMethods.Count != 0 ? invalidMethods.First() : string.Empty;
         }
 
-        private static string MethodIsIncorrectlyExcludeFromCodeCoverage(MemberInfo method)
+        private static string MethodIsIncorrectlyExcludeFromCodeCoverage(MethodInfo method)
         {
             var attributes = method.GetCustomAttributes(false);
             foreach (var attribute in attributes)
             {
                 // Only Entry Point methods can have code coverage excluded
                 if (attribute.ToString() == ExcludeFromCodeCoverageAttributeTypeName &&
-                    !attributes.Any(static o => o is EntryPointAttribute))
+                    !attributes.Any(o => o is EntryPointAttribute))
                 {
                     return method.ToString();
                 }
@@ -102,12 +102,12 @@ namespace LobotomyCorporationMods.Test.Mods.Common.Attributes
             return string.Empty;
         }
 
-        private static string ClassIsIncorrectlyExcludedFromCodeCoverage(MemberInfo reflectionClass)
+        private static string ClassIsIncorrectlyExcludedFromCodeCoverage(Type reflectionClass)
         {
             var attributes = reflectionClass.GetCustomAttributes(false);
             foreach (var attribute in attributes)
             {
-                if (attribute.ToString() == ExcludeFromCodeCoverageAttributeTypeName && !attributes.Any(static o => o is AdapterClassAttribute))
+                if (attribute.ToString() == ExcludeFromCodeCoverageAttributeTypeName && !attributes.Any(o => o is AdapterClassAttribute))
                 {
                     // Only Adapter classes can have code coverage excluded for the entire class
                     return reflectionClass.ToString();

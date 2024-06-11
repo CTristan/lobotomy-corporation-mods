@@ -30,7 +30,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Extensions
 
         internal static void SaveAgentAppearance(this CustomizingWindow customizingWindow)
         {
-            if (customizingWindow.appearanceUI.copied is not null)
+            if (customizingWindow.appearanceUI.copied is object)
             {
                 customizingWindow.CurrentData.AppearCopy(customizingWindow.appearanceUI.copied);
                 customizingWindow.appearanceUI.copied = null;

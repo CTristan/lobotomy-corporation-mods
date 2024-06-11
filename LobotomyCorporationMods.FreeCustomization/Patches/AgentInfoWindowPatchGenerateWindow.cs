@@ -6,6 +6,8 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using LobotomyCorporationMods.Common.Attributes;
+using LobotomyCorporationMods.Common.Extensions;
+using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
@@ -18,13 +20,10 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
     {
         public static void PatchAfterGenerateWindow(this AgentInfoWindow instance, ICustomizingWindowAdapter customizingWindowAdapter)
         {
-            if (instance is null)
-            {
-                throw new ArgumentNullException(nameof(instance));
-            }
+            Guard.Against.Null(instance, nameof(instance));
+            Guard.Against.Null(customizingWindowAdapter, nameof(customizingWindowAdapter));
 
             var customizingWindow = instance.customizingWindow;
-
             customizingWindowAdapter.GameObject = customizingWindow;
             customizingWindowAdapter.OpenAppearanceWindow();
         }
