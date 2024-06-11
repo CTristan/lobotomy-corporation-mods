@@ -61,7 +61,7 @@ namespace LobotomyCorporationMods.Test.Extensions
         internal static void VerifyExceptionLogged<TException>(this Mock<ILogger> mockLogger, Action action,
             int numberOfTimes = 1) where TException : Exception
         {
-            action.ShouldThrow<TException>();
+            action.Should().Throw<TException>();
             mockLogger.Verify(logger => logger.WriteToLog(It.IsAny<TException>()), Times.Exactly(numberOfTimes));
         }
 
