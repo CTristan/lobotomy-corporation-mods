@@ -17,24 +17,13 @@ jobs:
       - name: Checkout main repository
         uses: actions/checkout@v3.3.0
 
-      - name: Create external reference directories
-        run: |
-          mkdir external
-          cd external
-          mkdir LobotomyCorp_Data
-          cd LobotomyCorp_Data
-
       - name: Checkout private references
         uses: actions/checkout@v3.3.0
         with:
+          path: external/LobotomyCorp_Data
+          persist-credentials: false
           repository: CTristan/lobotomy-corporation-mods-references
           token: ${{ secrets.PRIVATE_REFERENCES_TOKEN }}
-          persist-credentials: false
-
-      - name: Reset directory
-        run: |
-          pwd
-          ls
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
