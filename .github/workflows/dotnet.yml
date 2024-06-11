@@ -16,8 +16,6 @@ jobs:
 
       - name: Checkout main repository
         uses: actions/checkout@v3.3.0
-        with:
-          path: BaseMods/src/lobotomy-corporation-mods
 
       - name: Create external reference directories
         run: |
@@ -34,9 +32,7 @@ jobs:
           persist-credentials: false
 
       - name: Reset directory
-        run: |
-          pwd
-          ls
+        run: cd ../..
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
