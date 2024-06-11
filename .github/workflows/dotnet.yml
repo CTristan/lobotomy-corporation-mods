@@ -34,7 +34,9 @@ jobs:
           persist-credentials: false
 
       - name: Reset directory
-        run: cd ../../
+        run: |
+          cd ../..
+          pwd
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
