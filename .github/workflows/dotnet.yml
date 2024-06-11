@@ -35,8 +35,8 @@ jobs:
 
       - name: Reset directory
         run: |
-          cd ..
           pwd
+          ls
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
