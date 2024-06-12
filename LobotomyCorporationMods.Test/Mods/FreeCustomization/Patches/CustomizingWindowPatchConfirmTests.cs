@@ -18,19 +18,21 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
 {
     public sealed class CustomizingWindowPatchConfirmTests : FreeCustomizationTests
     {
+        private readonly Mock<IAgentLayerAdapter> _mockAgentLayerAdapter = new Mock<IAgentLayerAdapter>();
+
+        private readonly Mock<IWorkerSpriteManagerAdapter> _mockWorkerSpriteManagerAdapter =
+            new Mock<IWorkerSpriteManagerAdapter>();
+
         [Fact]
         public void Changing_random_generated_agent_marks_them_as_custom()
         {
             // Arrange
-            var sut = InitializeCustomizingWindow();
+            var sut = InitializeCustomizingWindow(CustomizingType.REVISE);
             var agent = TestExtensions.CreateAgentModel();
             agent.iscustom = false;
 
-            var mockAgentLayerAdapter = new Mock<IAgentLayerAdapter>();
-            var mockWorkerSpriteManager = new Mock<IWorkerSpriteManagerAdapter>();
-
             // Act
-            sut.PatchBeforeConfirm(mockAgentLayerAdapter.Object, mockWorkerSpriteManager.Object);
+            sut.PatchBeforeConfirm(_mockAgentLayerAdapter.Object, _mockWorkerSpriteManagerAdapter.Object);
 
             // Assert
             sut.CurrentAgent.iscustom.Should().Be(true);
@@ -67,15 +69,12 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
             var agentData = TestExtensions.CreateAgentData();
             agentData.appearance = expectedAppearance;
 
-            var sut = InitializeCustomizingWindow();
+            var sut = InitializeCustomizingWindow(CustomizingType.REVISE);
             sut.appearanceUI.copied = agentData;
             sut.CurrentData.appearance = expectedAppearance;
 
-            var mockAgentLayerAdapter = new Mock<IAgentLayerAdapter>();
-            var mockWorkerSpriteManager = new Mock<IWorkerSpriteManagerAdapter>();
-
             // Act
-            sut.PatchBeforeConfirm(mockAgentLayerAdapter.Object, mockWorkerSpriteManager.Object);
+            sut.PatchBeforeConfirm(_mockAgentLayerAdapter.Object, _mockWorkerSpriteManagerAdapter.Object);
 
             // Assert
             sut.CurrentAgent.spriteData.Should().BeEquivalentTo(expectedAppearance.spriteSet);
@@ -100,19 +99,30 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
             expectedData.CustomName = expectedName;
             expectedData.agentName = expectedAgentName;
 
-            var sut = InitializeCustomizingWindow(currentAgent);
+            var sut = InitializeCustomizingWindow(currentAgent, CustomizingType.REVISE);
             sut.CurrentData = expectedData;
 
-            var mockAgentLayerAdapter = new Mock<IAgentLayerAdapter>();
-            var mockWorkerSpriteManager = new Mock<IWorkerSpriteManagerAdapter>();
-
             // Act
-            sut.PatchBeforeConfirm(mockAgentLayerAdapter.Object, mockWorkerSpriteManager.Object);
+            sut.PatchBeforeConfirm(_mockAgentLayerAdapter.Object, _mockWorkerSpriteManagerAdapter.Object);
 
             // Assert
             sut.CurrentAgent.name.Should().Be(expectedName);
             sut.CurrentAgent._agentName.metaInfo.nameDic.Should().ContainValue(expectedName);
             sut.CurrentAgent._agentName.nameDic.Should().ContainValue(expectedName);
+        }
+
+        [Fact]
+        public void Does_not_attempt_to_update_newly_generated_agents()
+        {
+            // Arrange
+            var sut = InitializeCustomizingWindow(null, CustomizingType.GENERATE);
+
+            // Act
+            sut.PatchBeforeConfirm(_mockAgentLayerAdapter.Object, _mockWorkerSpriteManagerAdapter.Object);
+
+            // Assert
+            _mockWorkerSpriteManagerAdapter.Verify(
+                x => x.SetAgentBasicData(It.IsAny<WorkerSprite.WorkerSprite>(), It.IsAny<Appearance>()), Times.Never);
         }
     }
 }

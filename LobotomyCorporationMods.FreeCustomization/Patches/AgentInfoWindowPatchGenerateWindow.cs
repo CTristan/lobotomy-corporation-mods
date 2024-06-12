@@ -18,7 +18,8 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
     [HarmonyPatch(typeof(AgentInfoWindow), "GenerateWindow")]
     public static class AgentInfoWindowPatchGenerateWindow
     {
-        public static void PatchAfterGenerateWindow(this AgentInfoWindow instance, ICustomizingWindowAdapter customizingWindowAdapter)
+        public static void PatchAfterGenerateWindow(this AgentInfoWindow instance,
+            ICustomizingWindowAdapter customizingWindowAdapter)
         {
             Guard.Against.Null(instance, nameof(instance));
             Guard.Against.Null(customizingWindowAdapter, nameof(customizingWindowAdapter));
@@ -32,13 +33,13 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         ///     Runs after opening the Agent window to automatically open the appearance window, since there's no reason to hide it
         ///     behind a button.
         /// </summary>
-        // GenerateWindow is a static method, so we can't get an instance of it through Harmony.
         [EntryPoint]
         [ExcludeFromCodeCoverage]
         public static void Postfix()
         {
             try
             {
+                // GenerateWindow is a static method, so we can't get an instance of it through Harmony.
                 var agentInfoWindow = AgentInfoWindow.currentWindow;
 
                 agentInfoWindow.PatchAfterGenerateWindow(new CustomizingWindowAdapter());

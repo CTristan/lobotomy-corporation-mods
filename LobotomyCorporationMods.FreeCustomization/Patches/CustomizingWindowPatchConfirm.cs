@@ -27,8 +27,8 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
             Guard.Against.Null(agentLayerAdapter, nameof(agentLayerAdapter));
             Guard.Against.Null(workerSpriteManagerAdapter, nameof(workerSpriteManagerAdapter));
 
-            // We only need to run this if we're modifying an agent, otherwise if it's a new agent the game will have
-            // already created the data.
+            // The original method does this and other things for newly-generated agents, so we only want to do this
+            // when we're updating existing agents.
             if (instance.CurrentWindowType == CustomizingType.GENERATE)
             {
                 return;

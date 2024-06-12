@@ -24,17 +24,17 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
             return TestExtensions.CreateAgentInfoWindow();
         }
 
-        protected static CustomizingWindow InitializeCustomizingWindow()
+        protected static CustomizingWindow InitializeCustomizingWindow(CustomizingType currentWindowType = CustomizingType.GENERATE)
         {
-            return InitializeCustomizingWindow(null);
+            return InitializeCustomizingWindow(null, currentWindowType);
         }
 
-        protected static CustomizingWindow InitializeCustomizingWindow(AgentModel currentAgent)
+        protected static CustomizingWindow InitializeCustomizingWindow(AgentModel currentAgent, CustomizingType currentWindowType = CustomizingType.GENERATE)
         {
             // Need a WorkerSpriteManager instance
             InitializeWorkerSpriteManager();
 
-            return TestExtensions.CreateCustomizingWindow(currentAgent: currentAgent);
+            return TestExtensions.CreateCustomizingWindow(currentAgent: currentAgent, currentWindowType: currentWindowType);
         }
 
         private static void InitializeWorkerSpriteManager()

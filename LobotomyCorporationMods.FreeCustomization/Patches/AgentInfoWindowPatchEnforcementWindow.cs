@@ -19,18 +19,14 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
     [HarmonyPatch(typeof(AgentInfoWindow), "EnforcementWindow")]
     public static class AgentInfoWindowPatchEnforcementWindow
     {
-        public static void PatchAfterEnforcementWindow(this AgentInfoWindow instance, ICustomizingWindowAdapter customizingWindowAdapter, IGameObjectAdapter gameObjectAdapter,
+        public static void PatchAfterEnforcementWindow(this AgentInfoWindow instance,
+            ICustomizingWindowAdapter customizingWindowAdapter, IGameObjectAdapter gameObjectAdapter,
             IAgentInfoWindowUiComponentsAdapter uiComponentsAdapter)
         {
             Guard.Against.Null(instance, nameof(instance));
             Guard.Against.Null(gameObjectAdapter, nameof(gameObjectAdapter));
             Guard.Against.Null(uiComponentsAdapter, nameof(uiComponentsAdapter));
             Guard.Against.Null(customizingWindowAdapter, nameof(customizingWindowAdapter));
-
-            if (instance.customizingWindow.CurrentData is null)
-            {
-                return;
-            }
 
             var customizingWindow = CustomizingWindow.CurrentWindow;
 
@@ -52,16 +48,17 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         /// <summary>
         ///     Runs after opening the Strengthen Agent window to open the appearance window.
         /// </summary>
-        // EnforcementWindow is a static method, so we can't get an instance of the AgentInfoWindow through Harmony.
         [EntryPoint]
         [ExcludeFromCodeCoverage]
         public static void Postfix()
         {
             try
             {
+                // EnforcementWindow is a static method, so we can't get an instance of the AgentInfoWindow through Harmony.
                 var agentInfoWindow = AgentInfoWindow.currentWindow;
 
-                agentInfoWindow.PatchAfterEnforcementWindow(new CustomizingWindowAdapter(), new GameObjectAdapter(), new AgentInfoWindowUiComponentsAdapter());
+                agentInfoWindow.PatchAfterEnforcementWindow(new CustomizingWindowAdapter(), new GameObjectAdapter(),
+                    new AgentInfoWindowUiComponentsAdapter());
             }
             catch (Exception ex)
             {
