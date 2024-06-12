@@ -115,7 +115,8 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
         public void Does_not_attempt_to_update_newly_generated_agents()
         {
             // Arrange
-            var sut = InitializeCustomizingWindow(null, CustomizingType.GENERATE);
+            // Default for CustomizingWindow is Generate
+            var sut = InitializeCustomizingWindow(null);
 
             // Act
             sut.PatchBeforeConfirm(_mockAgentLayerAdapter.Object, _mockWorkerSpriteManagerAdapter.Object);
