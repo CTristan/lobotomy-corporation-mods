@@ -104,6 +104,25 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             VerifyAgentWillNotDie(agentSlot);
         }
 
+        [Theory]
+        [InlineData(AgentState.DEAD)]
+        [InlineData(AgentState.PANIC)]
+        [InlineData(AgentState.UNCONTROLLABLE)]
+        public void Uncontrollable_agent_is_not_checked_even_if_they_would_die(AgentState agentState)
+        {
+            // Arrange
+            // Using Fairy Festival as simple agent-would-die scenario
+            var buffList = new List<UnitBuf> { TestExtensions.CreateFairyBuf() };
+            var agentSlot = InitializeAgentSlot(CreatureIds.OneSin, buffList);
+
+            // Act
+            agentSlot.PatchAfterSetFilter(agentState, _gameManager, _mockBeautyBeastAnimAdapter.Object,
+                _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
+
+            // Assert
+            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeFalse();
+        }
+
         #region Beauty and the Beast Tests
 
         [Fact]
@@ -771,7 +790,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             return TestExtensions.CreateAgentSlot(currentAgent: agent);
         }
 
-        private void VerifyAgentWillDie(AgentSlot agentSlot)
+        private void VerifyAgentWillDie([NotNull] AgentSlot agentSlot)
         {
             agentSlot.PatchAfterSetFilter(IdleAgentState, _gameManager, _mockBeautyBeastAnimAdapter.Object,
                 _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
@@ -779,7 +798,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeTrue();
         }
 
-        private void VerifyAgentWillNotDie(AgentSlot agentSlot)
+        private void VerifyAgentWillNotDie([NotNull] AgentSlot agentSlot)
         {
             agentSlot.PatchAfterSetFilter(IdleAgentState, _gameManager, _mockBeautyBeastAnimAdapter.Object,
                 _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);

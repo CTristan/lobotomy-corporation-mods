@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using CommandWindow;
 using Harmony;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
@@ -23,12 +24,13 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
         // ReSharper disable InconsistentNaming
         [EntryPoint]
         [ExcludeFromCodeCoverage]
-        public static void Postfix(AgentSlot __instance, AgentState state)
+        public static void Postfix([NotNull] AgentSlot __instance, AgentState state)
         {
             try
             {
                 var currentGameManager = GameManager.currentGameManager;
-                __instance.PatchAfterSetFilter(state, currentGameManager, new BeautyBeastAnimAdapter(), new ImageAdapter(), new TextAdapter(), new YggdrasilAnimAdapter());
+                __instance.PatchAfterSetFilter(state, currentGameManager, new BeautyBeastAnimAdapter(),
+                    new ImageAdapter(), new TextAdapter(), new YggdrasilAnimAdapter());
             }
             catch (Exception ex)
             {
@@ -39,8 +41,10 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
         }
         // ReSharper enable InconsistentNaming
 
-        public static void PatchAfterSetFilter(this AgentSlot instance, AgentState state, GameManager currentGameManager, IBeautyBeastAnimAdapter beautyBeastAnimAdapter, IImageAdapter imageAdapter,
-            ITextAdapter textAdapter, IYggdrasilAnimAdapter yggdrasilAnimAdapter)
+        public static void PatchAfterSetFilter([NotNull] this AgentSlot instance, AgentState state,
+            [CanBeNull] GameManager currentGameManager, IBeautyBeastAnimAdapter beautyBeastAnimAdapter,
+            [NotNull] IImageAdapter imageAdapter,
+            [NotNull] ITextAdapter textAdapter, IYggdrasilAnimAdapter yggdrasilAnimAdapter)
         {
             Guard.Against.Null(instance, nameof(instance));
             Guard.Against.Null(imageAdapter, nameof(imageAdapter));
@@ -65,18 +69,21 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
                 return;
             }
 
-            var agentWillDie = instance.CheckIfWorkWillKillAgent(commandWindow, beautyBeastAnimAdapter, yggdrasilAnimAdapter);
+            var agentWillDie =
+                instance.CheckIfWorkWillKillAgent(commandWindow, beautyBeastAnimAdapter, yggdrasilAnimAdapter);
 
-            if (agentWillDie)
+            if (!agentWillDie)
             {
-                imageAdapter.GameObject = instance.WorkFilterFill;
-                imageAdapter.Color = commandWindow.DeadColor;
-
-                textAdapter.GameObject = instance.WorkFilterText;
-                textAdapter.Text = LocalizeTextDataModel.instance.GetText("AgentState_Dead");
-
-                instance.SetColor(commandWindow.DeadColor);
+                return;
             }
+
+            imageAdapter.GameObject = instance.WorkFilterFill;
+            imageAdapter.Color = commandWindow.DeadColor;
+
+            textAdapter.GameObject = instance.WorkFilterText;
+            textAdapter.Text = LocalizeTextDataModel.instance.GetText("AgentState_Dead");
+
+            instance.SetColor(commandWindow.DeadColor);
         }
     }
 }
