@@ -32,7 +32,10 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.LoadData(mockLogger.Object);
 
-            void Action() => AgentSlotPatchSetFilter.Postfix(null, (AgentState)1);
+            void Action()
+            {
+                AgentSlotPatchSetFilter.Postfix(null, (AgentState)1);
+            }
 
             mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
         }
@@ -43,7 +46,11 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
         [Fact]
         public void Constructor_is_public_and_externally_accessible()
         {
-            Action action = () => _ = new Harmony_Patch();
+            Action action = () =>
+            {
+                _ = new Harmony_Patch();
+            };
+
             action.Should().NotThrow();
         }
     }

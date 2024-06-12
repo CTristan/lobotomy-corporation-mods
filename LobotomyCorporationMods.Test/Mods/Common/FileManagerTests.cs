@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using FluentAssertions;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Implementations;
 using Xunit;
 
@@ -68,13 +69,17 @@ namespace LobotomyCorporationMods.Test.Mods.Common
         [Fact]
         public void Throws_exception_when_unable_to_find_mod_folder()
         {
-            Action action = () => _ = new FileManager(string.Empty, GetDirectories());
+            Action action = () =>
+            {
+                _ = new FileManager(string.Empty, GetDirectories());
+            };
 
             action.Should().Throw<InvalidOperationException>();
         }
 
         #region Helper Methods
 
+        [NotNull]
         private static List<DirectoryInfo> GetDirectories()
         {
             var currentDirectory = AppDomain.CurrentDomain.BaseDirectory;

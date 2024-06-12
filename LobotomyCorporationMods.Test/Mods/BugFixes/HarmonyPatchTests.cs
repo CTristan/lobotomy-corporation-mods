@@ -22,7 +22,11 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes
         [Fact]
         public void BadLuckProtectionForGifts_Constructor_is_public_and_externally_accessible()
         {
-            Action act = () => _ = new Harmony_Patch();
+            Action act = () =>
+            {
+                _ = new Harmony_Patch();
+            };
+
             act.Should().NotThrow();
         }
 
@@ -42,7 +46,10 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.LoadData(mockLogger.Object);
 
-            void Action() => ArmorCreaturePatchOnNotice.Prefix(string.Empty, null);
+            void Action()
+            {
+                ArmorCreaturePatchOnNotice.Prefix(string.Empty, null);
+            }
 
             mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
         }
@@ -68,9 +75,11 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes
             mockLogger.VerifyExceptionLogged<ArgumentNullException>(action);
 
             // Verify other arguments throw exception when null
-            action = () => CustomizingWindowPatchSetAgentStatBonus.Prefix(TestExtensions.CreateCustomizingWindow(), null, TestExtensions.CreateAgentData());
+            action = () => CustomizingWindowPatchSetAgentStatBonus.Prefix(TestExtensions.CreateCustomizingWindow(),
+                null, TestExtensions.CreateAgentData());
             mockLogger.VerifyExceptionLogged<ArgumentNullException>(action, 2);
-            action = () => CustomizingWindowPatchSetAgentStatBonus.Prefix(TestExtensions.CreateCustomizingWindow(), TestExtensions.CreateAgentModel(), null);
+            action = () => CustomizingWindowPatchSetAgentStatBonus.Prefix(TestExtensions.CreateCustomizingWindow(),
+                TestExtensions.CreateAgentModel(), null);
             mockLogger.VerifyExceptionLogged<ArgumentNullException>(action, 3);
         }
     }

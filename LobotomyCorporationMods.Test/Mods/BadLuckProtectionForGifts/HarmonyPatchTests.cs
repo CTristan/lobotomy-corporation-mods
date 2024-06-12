@@ -21,7 +21,11 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
         [Fact]
         public void BadLuckProtectionForGifts_Constructor_is_public_and_externally_accessible()
         {
-            Action act = () => _ = new Harmony_Patch();
+            Action act = () =>
+            {
+                _ = new Harmony_Patch();
+            };
+
             act.Should().NotThrow();
         }
 
@@ -42,7 +46,10 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
             Harmony_Patch.Instance.LoadData(mockLogger.Object);
             var result = 0f;
 
-            void Action() => CreatureEquipmentMakeInfoPatchGetProb.Postfix(null, ref result);
+            void Action()
+            {
+                CreatureEquipmentMakeInfoPatchGetProb.Postfix(null, ref result);
+            }
 
             mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
         }
@@ -126,7 +133,10 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.LoadData(mockLogger.Object);
 
-            void Action() => UseSkillPatchFinishWorkSuccessfully.Postfix(null);
+            void Action()
+            {
+                UseSkillPatchFinishWorkSuccessfully.Postfix(null);
+            }
 
             mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
         }
