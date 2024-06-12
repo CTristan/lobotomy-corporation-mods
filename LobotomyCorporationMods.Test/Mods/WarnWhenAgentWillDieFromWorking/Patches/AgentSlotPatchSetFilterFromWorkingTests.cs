@@ -97,62 +97,6 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             VerifyAgentWillNotDie(agentSlot);
         }
 
-        #region Helper Methods
-
-        private static void SetupNothingThere(AgentSlot agentSlot, int fortitude, bool isDisguised = false)
-        {
-            agentSlot.CurrentAgent.primaryStat.hp = fortitude;
-
-            var creature = (CreatureModel)CommandWindow.CommandWindow.CurrentWindow.CurrentTarget;
-            creature.script = new Nothing();
-            ((Nothing)creature.script).copiedWorker = isDisguised ? TestExtensions.CreateAgentModel() : null;
-        }
-
-        private void SetupParasiteTree(int numberOfFlowers)
-        {
-            var mockFlower = new Mock<IGameObjectAdapter>();
-            mockFlower.Setup(adapter => adapter.ActiveSelf).Returns(true);
-
-            var mockFlowers = new List<IGameObjectAdapter>();
-            for (var i = 0; i < numberOfFlowers; i++)
-            {
-                mockFlowers.Add(mockFlower.Object);
-            }
-
-            _mockYggdrasilAnimAdapter.Setup(adapter => adapter.Flowers).Returns(mockFlowers);
-        }
-
-        private AgentSlot InitializeAgentSlot(CreatureIds creatureId, IEnumerable<UnitBuf> buffList = null, EquipmentId giftId = (EquipmentId)1, RwbpType skillType = (RwbpType)1,
-            int qliphothCounter = 0)
-        {
-            buffList = buffList ?? new List<UnitBuf>();
-            var creature = GetCreature(creatureId, qliphothCounter);
-            _ = InitializeCommandWindow(creature, skillType);
-            var agent = GetAgentWithGift(giftId, buffList);
-
-            return TestExtensions.CreateAgentSlot(currentAgent: agent);
-        }
-
-        #endregion
-
-        #region Helper Methods
-
-        private void VerifyAgentWillDie(AgentSlot agentSlot)
-        {
-            agentSlot.PatchAfterSetFilter(IdleAgentState, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeTrue();
-        }
-
-        private void VerifyAgentWillNotDie(AgentSlot agentSlot)
-        {
-            agentSlot.PatchAfterSetFilter(IdleAgentState, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
-
-            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeFalse();
-        }
-
-        #endregion
-
         #region Beauty and the Beast Tests
 
         [Fact]
@@ -444,18 +388,19 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
         [InlineData(StatLevelOne)]
         [InlineData(StatLevelTwo)]
         [InlineData(StatLevelThree)]
-        public void NothingThere_Will_Kill_Agent_With_Fortitude_Less_Than_Four(int fortitude)
+        public void NothingThere_Will_Kill_Agent_With_Fortitude_Less_Than_Four_While_Disguised(int fortitude)
         {
             var agentSlot = InitializeAgentSlot(CreatureIds.NothingThere);
-            SetupNothingThere(agentSlot, fortitude);
+            SetupNothingThere(agentSlot, fortitude, true);
 
             VerifyAgentWillDie(agentSlot);
         }
 
         [Theory]
-        [InlineData(StatLevelFour)]
-        [InlineData(StatLevelFive)]
-        public void NothingThere_Will_Not_Kill_Agent_With_Fortitude_Greater_Than_Three(int fortitude)
+        [InlineData(StatLevelOne)]
+        [InlineData(StatLevelTwo)]
+        [InlineData(StatLevelThree)]
+        public void NothingThere_Will_Not_Kill_Agent_With_Fortitude_Less_Than_Four_While_Not_Disguised(int fortitude)
         {
             var agentSlot = InitializeAgentSlot(CreatureIds.NothingThere);
             SetupNothingThere(agentSlot, fortitude);
@@ -463,20 +408,13 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             VerifyAgentWillNotDie(agentSlot);
         }
 
-        [Fact]
-        public void NothingThere_Will_Kill_Agent_If_Disguised()
+        [Theory]
+        [InlineData(StatLevelFour)]
+        [InlineData(StatLevelFive)]
+        public void NothingThere_Will_Not_Kill_Agent_With_Fortitude_Greater_Than_Three_While_Disguised(int fortitude)
         {
             var agentSlot = InitializeAgentSlot(CreatureIds.NothingThere);
-            SetupNothingThere(agentSlot, StatLevelFive, true);
-
-            VerifyAgentWillDie(agentSlot);
-        }
-
-        [Fact]
-        public void NothingThere_Will_Not_Kill_Agent_If_Not_Disguised()
-        {
-            var agentSlot = InitializeAgentSlot(CreatureIds.NothingThere);
-            SetupNothingThere(agentSlot, StatLevelFive);
+            SetupNothingThere(agentSlot, fortitude, true);
 
             VerifyAgentWillNotDie(agentSlot);
         }
@@ -770,5 +708,58 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
         }
 
         #endregion
+
+        #region Helper Methods
+
+        private static void SetupNothingThere(AgentSlot agentSlot, int fortitude, bool isDisguised = false)
+        {
+            agentSlot.CurrentAgent.primaryStat.hp = fortitude;
+
+            var creature = (CreatureModel)CommandWindow.CommandWindow.CurrentWindow.CurrentTarget;
+            creature.script = new Nothing();
+            ((Nothing)creature.script).copiedWorker = isDisguised ? TestExtensions.CreateAgentModel() : null;
+        }
+
+        private void SetupParasiteTree(int numberOfFlowers)
+        {
+            var mockFlower = new Mock<IGameObjectAdapter>();
+            mockFlower.Setup(adapter => adapter.ActiveSelf).Returns(true);
+
+            var mockFlowers = new List<IGameObjectAdapter>();
+            for (var i = 0; i < numberOfFlowers; i++)
+            {
+                mockFlowers.Add(mockFlower.Object);
+            }
+
+            _mockYggdrasilAnimAdapter.Setup(adapter => adapter.Flowers).Returns(mockFlowers);
+        }
+
+        private AgentSlot InitializeAgentSlot(CreatureIds creatureId, IEnumerable<UnitBuf> buffList = null, EquipmentId giftId = (EquipmentId)1, RwbpType skillType = (RwbpType)1,
+            int qliphothCounter = 0)
+        {
+            buffList = buffList ?? new List<UnitBuf>();
+            var creature = GetCreature(creatureId, qliphothCounter);
+            _ = InitializeCommandWindow(creature, skillType);
+            var agent = GetAgentWithGift(giftId, buffList);
+
+            return TestExtensions.CreateAgentSlot(currentAgent: agent);
+        }
+
+        private void VerifyAgentWillDie(AgentSlot agentSlot)
+        {
+            agentSlot.PatchAfterSetFilter(IdleAgentState, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
+
+            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeTrue();
+        }
+
+        private void VerifyAgentWillNotDie(AgentSlot agentSlot)
+        {
+            agentSlot.PatchAfterSetFilter(IdleAgentState, _gameManager, _mockBeautyBeastAnimAdapter.Object, _mockImageAdapter.Object, _mockTextAdapter.Object, _mockYggdrasilAnimAdapter.Object);
+
+            AgentWillDie(_mockImageAdapter.Object, _mockTextAdapter.Object).Should().BeFalse();
+        }
+
+        #endregion
+
     }
 }

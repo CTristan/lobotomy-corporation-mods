@@ -28,6 +28,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).*
 - All mods
     - Added Info.xml file to add the version number and description in the in-game mod menu.
 
+### Fixed
+
+- Warn When Agent Will Die From Working [1.1.0]
+    - Nothing There
+        - No longer checks for Justice below Level 4 (does not actually kill the agent).
+        - Only checks for Fortitude below Level 4 if Nothing There is already disguised (before it would warn for
+          Fortitude below Level 4 even if Nothing There was not disguised).
+        - No longer always warns when Nothing There is disguised (Nothing There only kills while disguised if Fortitude
+          is below Level 4).
+
 ## [4.0.1] - 2023-02-10
 
 ### Fixed

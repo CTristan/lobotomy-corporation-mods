@@ -41,9 +41,7 @@ Provides warnings for the following abnormalities and any of their conditions (*
 - **Laetitia**
     - Assigning work to any other abnormality while agent has the effect.
 - **Nothing There**
-    - Any of the following are true:
-        - Agent has Fortitude below Level 4, or
-        - Assigning work to Nothing There after it killed the last agent to work on it due to a bad result.
+    - Agent has Fortitude below Level 4 while Nothing There is disguised.
 - **Parasite Tree**
     - Assigning work when Parasite Tree has four bulbs and the agent doesn't have the effect (which would cause the
       fifth bulb to appear).
@@ -71,6 +69,15 @@ Provides warnings for the following abnormalities and any of their conditions (*
 #### Added
 
 - Added Info.xml file to add the version number and description in the in-game mod menu.
+
+#### Fixed
+
+- Nothing There
+    - No longer checks for Justice below Level 4 (does not actually kill the agent).
+    - Only checks for Fortitude below Level 4 if Nothing There is already disguised (before it would warn for Fortitude
+      below Level 4 even if Nothing There was not disguised).
+    - No longer always warns when Nothing There is disguised (Nothing There only kills while disguised if Fortitude is
+      below Level 4).
 
 ### [1.0.0] - 2023-02-09
 
