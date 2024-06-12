@@ -32,7 +32,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
         [NotNull]
         protected static CustomizingWindow InitializeCustomizingWindow(CustomizingType currentWindowType)
         {
-            return InitializeCustomizingWindow(null, currentWindowType);
+            return InitializeCustomizingWindow(DefaultAgentModel, currentWindowType);
         }
 
         [NotNull]
