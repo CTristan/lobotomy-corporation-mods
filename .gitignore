@@ -14,6 +14,7 @@ global.json
 *.sln.docstates
 .vs/
 .vscode/
+.run/
 
 # Build results
 [Aa]rtifacts/
