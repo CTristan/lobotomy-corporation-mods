@@ -15,10 +15,10 @@ jobs:
 
 
       - name: Checkout main repository
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@v4.1.7
 
       - name: Checkout private references
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@v4.1.7
         with:
           path: external/LobotomyCorp_Data
           persist-credentials: false
