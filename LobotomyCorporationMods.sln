@@ -33,6 +33,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ISSUE_TEMPLATE", "ISSUE_TEMPLATE", "{9A0A4FF1-C2F8-425D-89F0-02B3102DB771}"
+	ProjectSection(SolutionItems) = preProject
+		.github\ISSUE_TEMPLATE\bug_report.md = .github\ISSUE_TEMPLATE\bug_report.md
+		.github\ISSUE_TEMPLATE\existing-mod-update-request.md = .github\ISSUE_TEMPLATE\existing-mod-update-request.md
+		.github\ISSUE_TEMPLATE\new-mod-request.md = .github\ISSUE_TEMPLATE\new-mod-request.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -70,6 +77,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{5ADD9EA1-CEAA-48D6-B209-30A51EF60663} = {608ADAC7-1231-4E7C-9D86-269B0543D27B}
 		{1E2DB2F2-3D11-438A-87EE-767E6E0A610A} = {5ADD9EA1-CEAA-48D6-B209-30A51EF60663}
+		{9A0A4FF1-C2F8-425D-89F0-02B3102DB771} = {5ADD9EA1-CEAA-48D6-B209-30A51EF60663}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E9157EDB-3B67-4DDC-84D9-69BC893D31B1}
