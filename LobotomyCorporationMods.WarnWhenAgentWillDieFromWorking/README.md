@@ -9,9 +9,9 @@ The warning only appears when an abnormality has been fully observed to avoid sp
 
 ## What does this mod do?
 
-- Changes the work assignment UI for fully observed abnormalities so that any agents that would trigger an instant-kill mechanic show up in all-red text
-  and display the "Dead" text when hovered over.
-  - Note that this only takes effect if the abnormality is fully observed.
+- Changes the work assignment UI for fully observed abnormalities so that any agents that would trigger an instant-kill
+  mechanic show up in all-red text and display the "Dead" text when hovered over.
+    - Note that this only takes effect if the abnormality is fully observed.
 
 ## Why create this mod?
 
