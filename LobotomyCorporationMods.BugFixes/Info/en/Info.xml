@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<info>
+    <name>Unofficial Bug Fixes v2.1.0</name>
+    <descs>
+        <desc>Fixes the following bugs:</desc>
+        <desc/>
+        <desc>* Wasted stat points: If a gift provides a large negative stat</desc>
+        <desc>bonus (e.g. Crumbling Armor -20 HP), then when upgrading that</desc>
+        <desc>stat it would not actually improve it.</desc>
+        <desc/>
+        <desc>* Crumbling Armor gift kills agents after being replaced - When</desc>
+        <desc>an agent that started the day with Crumbling Armor’s gift later</desc>
+        <desc>replaced the gift, they would still die from Attachment work.</desc>
+    </descs>
+</info>

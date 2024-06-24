@@ -1,0 +1,52 @@
+name: .NET
+
+# Updated: 2023-02-10
+
+on:
+  push:
+    branches: [ "develop" ]
+  pull_request:
+    branches: [ "develop" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+
+      - name: Checkout main repository
+        uses: actions/checkout@v3.3.0
+
+      - name: Checkout private references
+        uses: actions/checkout@v3.3.0
+        with:
+          path: external/LobotomyCorp_Data
+          persist-credentials: false
+          repository: CTristan/lobotomy-corporation-mods-references
+          token: ${{ secrets.PRIVATE_REFERENCES_TOKEN }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.x
+
+      - name: Restore dependencies
+        run: dotnet restore LobotomyCorporationMods.sln
+
+      - name: Build
+        run: dotnet build --no-restore LobotomyCorporationMods.sln
+
+      - name: Test
+        run: dotnet test /p:CollectCoverage=true /p:CoverletOutput="./coverage.opencover.xml" /p:CoverletOutputFormat=opencover --no-build --verbosity normal LobotomyCorporationMods.sln
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: LobotomyCorporationMods.Test/coverage.opencover.xml
+
+      - name: Upload coverage reports to Codacy
+        uses: codacy/codacy-coverage-reporter-action@v1
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          coverage-reports: LobotomyCorporationMods.Test/coverage.opencover.xml
