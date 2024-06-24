@@ -4,7 +4,8 @@ Mods for the
 game [Lobotomy Corporation](https://store.steampowered.com/app/568220/Lobotomy_Corporation__Monster_Management_Simulation/).
 They are designed to be used either together or individually, so feel free to pick and choose.
 
-All mods are available for download on [my Nexus Mods page](https://next.nexusmods.com/profile/IsitChris/mods). Requires
+All mods are available for download
+on [my Nexus Mods page](https://next.nexusmods.com/profile/IsitChris/mods?gameId=2861). Requires
 either [Lobotomy Mod Manager](https://www.nexusmods.com/site/mods/765)
 or [Basemod](https://www.nexusmods.com/lobotomycorporation/mods/2) (included in LMM).
 
