@@ -3,13 +3,11 @@
 #region
 
 using System;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using LobotomyCorporationMods.Common.Implementations;
 
 #endregion
 
-[assembly: AssemblyVersion("1.0.*")]
 [assembly: CLSCompliant(false)]
 [assembly: ComVisible(false)]
 
@@ -19,7 +17,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking
     {
         private const string ModFileName = "LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.dll";
 
-        public static new readonly Harmony_Patch Instance = new(true);
+        public new static readonly Harmony_Patch Instance = new Harmony_Patch(true);
 
         public Harmony_Patch()
             : this(false)

@@ -3,6 +3,7 @@
 #region
 
 using System;
+using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
@@ -36,6 +37,7 @@ namespace LobotomyCorporationMods.Common.Implementations
 
         public void WriteToLog(Exception exception)
         {
+            Guard.Against.Null(exception, nameof(exception));
             WriteToLog(exception, DefaultLogFileName);
         }
 
@@ -51,17 +53,14 @@ namespace LobotomyCorporationMods.Common.Implementations
             _fileManager.WriteAllText(logFile, message);
         }
 
-        private void WriteToLog(Exception? exception, string logFileName)
+        private void WriteToLog(Exception exception, string logFileName)
         {
-            if (exception is not null)
-            {
-                var message = exception.ToString();
-                WriteToLog(message, logFileName);
+            var message = exception.ToString();
+            WriteToLog(message, logFileName);
 
-                if (DebugLoggingEnabled)
-                {
-                    WriteToDebug(message);
-                }
+            if (DebugLoggingEnabled)
+            {
+                WriteToDebug(message);
             }
         }
     }

@@ -29,9 +29,9 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
             sut.PatchAfterEnforcementWindow(mockCustomizingWindowAdapter.Object, mockGameObjectAdapter.Object, mockUiComponentsAdapter.Object);
 
             // Assert
-            mockCustomizingWindowAdapter.Verify(static adapter => adapter.OpenAppearanceWindow(), Times.Once);
-            mockGameObjectAdapter.Verify(static adapter => adapter.SetActive(true), Times.Exactly(2));
-            mockUiComponentsAdapter.Verify(static adapter => adapter.SetData(It.IsAny<AgentData>()), Times.Once);
+            mockCustomizingWindowAdapter.Verify(adapter => adapter.OpenAppearanceWindow(), Times.Once);
+            mockGameObjectAdapter.Verify(adapter => adapter.SetActive(true), Times.Exactly(2));
+            mockUiComponentsAdapter.Verify(adapter => adapter.SetData(It.IsAny<AgentData>()), Times.Once);
         }
     }
 }

@@ -14,14 +14,17 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{608ADAC7-1231-4E7C-9D86-269B0543D27B}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
-		README.adoc = README.adoc
 		.gitignore = .gitignore
 		codecov.yml = codecov.yml
+		README.md = README.md
+		CHANGELOG.md = CHANGELOG.md
+		CONTRIBUTING.md = CONTRIBUTING.md
+		INTEGRATION_TESTING_CHECKLIST.md = INTEGRATION_TESTING_CHECKLIST.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LobotomyCorporationMods.BugFixes", "LobotomyCorporationMods.BugFixes\LobotomyCorporationMods.BugFixes.csproj", "{B4DFD7AE-4659-4FFB-866C-57487F6CDFB9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking", "LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking\LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.csproj", "{715A5702-175E-461E-BDBA-029B65DCBFC5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking", "LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking\LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.csproj", "{715A5702-175E-461E-BDBA-029B65DCBFC5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{5ADD9EA1-CEAA-48D6-B209-30A51EF60663}"
 EndProject
@@ -64,11 +67,11 @@ Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {E9157EDB-3B67-4DDC-84D9-69BC893D31B1}
-	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{5ADD9EA1-CEAA-48D6-B209-30A51EF60663} = {608ADAC7-1231-4E7C-9D86-269B0543D27B}
 		{1E2DB2F2-3D11-438A-87EE-767E6E0A610A} = {5ADD9EA1-CEAA-48D6-B209-30A51EF60663}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E9157EDB-3B67-4DDC-84D9-69BC893D31B1}
 	EndGlobalSection
 EndGlobal

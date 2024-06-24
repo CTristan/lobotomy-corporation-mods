@@ -7,6 +7,8 @@ using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
 using LobotomyCorporationMods.Common.Attributes;
+using LobotomyCorporationMods.Common.Extensions;
+using LobotomyCorporationMods.Common.Implementations;
 
 #endregion
 
@@ -35,13 +37,11 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
                 throw;
             }
         }
+        // ReSharper enable InconsistentNaming
 
         public static void PatchAfterOpenAppearanceWindow(this CustomizingWindow instance)
         {
-            if (instance is null)
-            {
-                throw new ArgumentNullException(nameof(instance));
-            }
+            Guard.Against.Null(instance, nameof(instance));
 
             instance.CurrentData.isCustomAppearance = false;
         }

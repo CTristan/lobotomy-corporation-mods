@@ -6,9 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using FluentAssertions;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Implementations;
 using Xunit;
-using Xunit.Extensions;
 
 #endregion
 
@@ -69,18 +69,22 @@ namespace LobotomyCorporationMods.Test.Mods.Common
         [Fact]
         public void Throws_exception_when_unable_to_find_mod_folder()
         {
-            Action action = () => _ = new FileManager(string.Empty, GetDirectories());
+            Action action = () =>
+            {
+                _ = new FileManager(string.Empty, GetDirectories());
+            };
 
-            action.ShouldThrow<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
 
         #region Helper Methods
 
-        private static ICollection<DirectoryInfo> GetDirectories()
+        [NotNull]
+        private static List<DirectoryInfo> GetDirectories()
         {
             var currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
-            return new List<DirectoryInfo> { new(currentDirectory) };
+            return new List<DirectoryInfo> { new DirectoryInfo(currentDirectory) };
         }
 
         private static void DeleteFileIfExists(string fileWithPath)

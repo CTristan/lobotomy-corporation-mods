@@ -7,12 +7,10 @@ using System.Globalization;
 using System.IO;
 using FluentAssertions;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations;
-using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.Test.Extensions;
 using Moq;
 using Xunit;
-using Xunit.Extensions;
 
 #endregion
 
@@ -83,7 +81,7 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
         }
 
         [Theory]
-        [PropertyData(nameof(TrackerTestData))]
+        [MemberData(nameof(TrackerTestData))]
         public void Loading_data_from_a_saved_tracker_file_populates_a_valid_tracker(string trackerData, string giftName, long agentId, float numberOfTimes)
         {
             // Arrange
@@ -98,7 +96,7 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
         }
 
         [Theory]
-        [PropertyData(nameof(TrackerTestData))]
+        [MemberData(nameof(TrackerTestData))]
         public void Loading_data_multiple_times_from_a_saved_tracker_file_does_not_duplicate_work_progress(string trackerData, string giftName, long agentId, float numberOfTimes)
         {
             var appendText = $"_{giftName}_{agentId}_{numberOfTimes}";
@@ -131,7 +129,7 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
 
             // Assert
             agentWorkTracker.GetLastAgentWorkCountByGift(GiftName).Should().Be(0);
-            mockFileManager.Verify(static manager => manager.WriteAllText(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+            mockFileManager.Verify(manager => manager.WriteAllText(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         }
 
         #region Helper Methods
@@ -139,9 +137,9 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
         /// <summary>
         ///     Populates the Harmony Patch with an agent work tracker pointed to our specified test data file.
         /// </summary>
-        private static IAgentWorkTracker CreateAgentWorkTracker(string dataFileName, string trackerData = "", IFileManager? fileManager = null)
+        private static AgentWorkTracker CreateAgentWorkTracker(string dataFileName, string trackerData = "", IFileManager fileManager = null)
         {
-            fileManager ??= TestExtensions.GetMockFileManager().Object;
+            fileManager = fileManager ?? TestExtensions.GetMockFileManager().Object;
             dataFileName = dataFileName.InCurrentDirectory();
             CreateTestTrackerFile(dataFileName, trackerData);
 

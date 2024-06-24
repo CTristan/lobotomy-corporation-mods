@@ -21,7 +21,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
 
             agentInfoWindow.PatchAfterGenerateWindow(mockCustomizingWindowAdapter.Object);
 
-            mockCustomizingWindowAdapter.Verify(static adapter => adapter.OpenAppearanceWindow(), Times.Once);
+            mockCustomizingWindowAdapter.Verify(adapter => adapter.OpenAppearanceWindow(), Times.Once);
         }
     }
 }

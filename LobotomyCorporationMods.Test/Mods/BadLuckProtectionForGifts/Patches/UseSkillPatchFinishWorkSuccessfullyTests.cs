@@ -7,7 +7,6 @@ using LobotomyCorporationMods.BadLuckProtectionForGifts.Patches;
 using LobotomyCorporationMods.Test.Extensions;
 using Moq;
 using Xunit;
-using Xunit.Extensions;
 
 #endregion
 
@@ -40,7 +39,7 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts.Patches
 
             useSkill.PatchAfterFinishWorkSuccessfully(mockAgentWorkTracker.Object);
 
-            mockAgentWorkTracker.Verify(static tracker => tracker.IncrementAgentWorkCount(GiftName, It.IsAny<long>(), It.IsAny<int>()), Times.Never);
+            mockAgentWorkTracker.Verify(tracker => tracker.IncrementAgentWorkCount(GiftName, It.IsAny<long>(), It.IsAny<int>()), Times.Never);
         }
     }
 }

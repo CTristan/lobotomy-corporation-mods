@@ -3,6 +3,7 @@
 #region
 
 using Customizing;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.FreeCustomization;
 using LobotomyCorporationMods.Test.Extensions;
 
@@ -12,6 +13,9 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
 {
     public class FreeCustomizationTests
     {
+        private const AgentModel DefaultAgentModel = null;
+        private const CustomizingType DefaultCustomizingType = CustomizingType.GENERATE;
+
         protected FreeCustomizationTests()
         {
             _ = new Harmony_Patch();
@@ -19,22 +23,28 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
             Harmony_Patch.Instance.LoadData(mockLogger.Object);
         }
 
+        [NotNull]
         protected static AgentInfoWindow InitializeAgentInfoWindow()
         {
             return TestExtensions.CreateAgentInfoWindow();
         }
 
-        protected static CustomizingWindow InitializeCustomizingWindow()
+        [NotNull]
+        protected static CustomizingWindow InitializeCustomizingWindow(CustomizingType currentWindowType)
         {
-            return InitializeCustomizingWindow(null);
+            return InitializeCustomizingWindow(DefaultAgentModel, currentWindowType);
         }
 
-        protected static CustomizingWindow InitializeCustomizingWindow(AgentModel? currentAgent)
+        [NotNull]
+        protected static CustomizingWindow InitializeCustomizingWindow(
+            [CanBeNull] AgentModel currentAgent = DefaultAgentModel,
+            CustomizingType currentWindowType = DefaultCustomizingType)
         {
             // Need a WorkerSpriteManager instance
             InitializeWorkerSpriteManager();
 
-            return TestExtensions.CreateCustomizingWindow(currentAgent: currentAgent);
+            return TestExtensions.CreateCustomizingWindow(currentAgent: currentAgent,
+                currentWindowType: currentWindowType);
         }
 
         private static void InitializeWorkerSpriteManager()

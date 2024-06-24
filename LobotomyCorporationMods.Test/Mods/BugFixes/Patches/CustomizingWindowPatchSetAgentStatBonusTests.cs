@@ -56,7 +56,7 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes.Patches
             // Assert
             // Even though our current stat level is way above 1 due to our buff, we should still only send as our original un-buffed level.
             const int ExpectedStatLevelSent = 1;
-            mockAdapter.Verify(static adapter => adapter.SetRandomStatValue(It.IsAny<int>(), ExpectedStatLevelSent, It.IsAny<int>()), Times.Exactly(4));
+            mockAdapter.Verify(adapter => adapter.SetRandomStatValue(It.IsAny<int>(), ExpectedStatLevelSent, It.IsAny<int>()), Times.Exactly(4));
         }
     }
 }

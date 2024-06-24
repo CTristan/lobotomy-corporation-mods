@@ -8,6 +8,8 @@ using Harmony;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Extensions;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.Common.Attributes;
+using LobotomyCorporationMods.Common.Extensions;
+using LobotomyCorporationMods.Common.Implementations;
 
 #endregion
 
@@ -18,10 +20,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
     {
         public static void PatchAfterFinishWorkSuccessfully(this UseSkill instance, IAgentWorkTracker agentWorkTracker)
         {
-            if (instance is null)
-            {
-                throw new ArgumentNullException(nameof(instance));
-            }
+            Guard.Against.Null(instance, nameof(instance));
+            Guard.Against.Null(agentWorkTracker, nameof(agentWorkTracker));
 
             var equipmentMakeInfo = instance.GetCreatureEquipmentMakeInfo();
 
@@ -38,7 +38,11 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             agentWorkTracker.IncrementAgentWorkCount(giftName, agentId, numberOfSuccesses);
         }
 
-        // ReSharper disable once InconsistentNaming
+        /// <summary>
+        ///     Runs after an agent finishes working with an abnormality to increment their work count.
+        /// </summary>
+        /// <param name="__instance"></param>
+        // ReSharper disable InconsistentNaming
         [EntryPoint]
         [ExcludeFromCodeCoverage]
         public static void Postfix(UseSkill __instance)
@@ -54,5 +58,6 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
                 throw;
             }
         }
+        // ReSharper enable InconsistentNaming
     }
 }

@@ -24,7 +24,7 @@ namespace LobotomyCorporationMods.Test.Mods.Common
 
             logger.WriteToLog(new InvalidOperationException());
 
-            mockFileManager.Verify(static manager => manager.WriteAllText(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+            mockFileManager.Verify(manager => manager.WriteAllText(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         }
     }
 }

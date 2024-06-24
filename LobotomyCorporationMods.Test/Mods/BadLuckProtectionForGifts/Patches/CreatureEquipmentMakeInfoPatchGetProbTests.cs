@@ -8,7 +8,6 @@ using LobotomyCorporationMods.BadLuckProtectionForGifts.Patches;
 using LobotomyCorporationMods.Test.Extensions;
 using Moq;
 using Xunit;
-using Xunit.Extensions;
 
 #endregion
 
@@ -57,7 +56,7 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts.Patches
             var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
 
             // 101 times worked would equal 101% bonus normally
-            mockAgentWorkTracker.Setup(static tracker => tracker.GetLastAgentWorkCountByGift(GiftName)).Returns(101);
+            mockAgentWorkTracker.Setup(tracker => tracker.GetLastAgentWorkCountByGift(GiftName)).Returns(101);
 
             // Act
             var actual = 0f;
@@ -80,7 +79,7 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts.Patches
             var expected = numberOfSuccesses / 100f;
 
             var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
-            mockAgentWorkTracker.Setup(static tracker => tracker.GetLastAgentWorkCountByGift(GiftName)).Returns(numberOfSuccesses);
+            mockAgentWorkTracker.Setup(tracker => tracker.GetLastAgentWorkCountByGift(GiftName)).Returns(numberOfSuccesses);
 
             // Act
             var actual = 0f;

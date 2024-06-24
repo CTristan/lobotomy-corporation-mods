@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces;
 
 #endregion
@@ -16,14 +17,16 @@ namespace LobotomyCorporationMods.Common.Implementations
     public sealed class FileManager : IFileManager
     {
         private readonly DirectoryInfo _dataPath;
-        private readonly object _fileLock = new();
-        private readonly IDictionary<string, string> _filesCache;
+        private readonly object _fileLock = new object();
+        private readonly Dictionary<string, string> _filesCache;
 
         public FileManager(string modFileName, ICollection<DirectoryInfo> directories)
         {
+            Guard.Against.Null(directories, nameof(directories));
+
             var directory = directories.FirstOrDefault(directoryInfo => File.Exists(Path.Combine(directoryInfo.FullName, modFileName)));
 
-            if (directory is not null)
+            if (directory is object)
             {
                 _dataPath = directory;
 

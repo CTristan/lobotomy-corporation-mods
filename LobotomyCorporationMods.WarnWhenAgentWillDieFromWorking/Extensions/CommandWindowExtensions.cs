@@ -3,6 +3,7 @@
 #region
 
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Enums;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations;
@@ -21,7 +22,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
             ICreatureEvaluator evaluator;
 
             // Make sure we actually have an abnormality in our work window
-            if (commandWindow.TryGetCreature(out var creature) && creature is not null)
+            if (commandWindow.TryGetCreature(out var creature) && !(creature is null))
             {
                 // Need to use the command window's skill type since the agent isn't using a skill yet
                 var skillType = commandWindow.CurrentSkill.rwbpType;
@@ -52,15 +53,15 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
             return evaluator;
         }
 
-        internal static bool IsAbnormalityWorkWindow(this CommandWindow.CommandWindow commandWindow)
+        internal static bool IsAbnormalityWorkWindow([NotNull] this CommandWindow.CommandWindow commandWindow)
         {
             // Validation checks to confirm we have everything we need
-            var isAbnormalityWorkWindow = commandWindow.CurrentSkill?.rwbpType is not null && commandWindow.CurrentWindowType == CommandType.Management;
+            var isAbnormalityWorkWindow = !(commandWindow.CurrentSkill?.rwbpType is null) && commandWindow.CurrentWindowType == CommandType.Management;
 
             return isAbnormalityWorkWindow;
         }
 
-        private static bool TryGetCreature(this CommandWindow.CommandWindow commandWindow, out CreatureModel? creature)
+        private static bool TryGetCreature([NotNull] this CommandWindow.CommandWindow commandWindow, [CanBeNull] out CreatureModel creature)
         {
             creature = null;
 
@@ -70,7 +71,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
                 creature = creatureModel;
             }
 
-            return creature is not null;
+            return !(creature is null);
         }
     }
 }

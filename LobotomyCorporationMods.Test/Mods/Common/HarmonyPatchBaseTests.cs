@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using FluentAssertions;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.Test.Extensions;
@@ -19,16 +20,17 @@ namespace LobotomyCorporationMods.Test.Mods.Common
 {
     public sealed class HarmonyPatchBaseTests
     {
-        private static readonly FakeHarmonyPatch s_fakeHarmonyPatch = new(true);
+        private static readonly FakeHarmonyPatch s_fakeHarmonyPatch = new FakeHarmonyPatch(true);
 
         [Fact]
         public void Applying_a_Harmony_patch_does_not_error()
         {
             var mockLogger = new Mock<ILogger>();
 
-            Action action = () => s_fakeHarmonyPatch.ApplyHarmonyPatch(typeof(HarmonyPatchBase), string.Empty, mockLogger.Object);
+            Action action = () =>
+                s_fakeHarmonyPatch.ApplyHarmonyPatch(typeof(HarmonyPatchBase), string.Empty, mockLogger.Object);
 
-            action.ShouldNotThrow();
+            action.Should().NotThrow();
         }
 
         [Fact]
@@ -36,7 +38,10 @@ namespace LobotomyCorporationMods.Test.Mods.Common
         {
             var mockLogger = new Mock<ILogger>();
 
-            void Action() => s_fakeHarmonyPatch.ApplyHarmonyPatch(null!, string.Empty, mockLogger.Object);
+            void Action()
+            {
+                s_fakeHarmonyPatch.ApplyHarmonyPatch(null, string.Empty, mockLogger.Object);
+            }
 
             mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
         }
@@ -46,18 +51,25 @@ namespace LobotomyCorporationMods.Test.Mods.Common
         {
             var currentDirectory = Directory.GetCurrentDirectory();
 
-            Action action = () => s_fakeHarmonyPatch.TestInitializePatchData(new List<DirectoryInfo> { new(currentDirectory) });
+            Action action = () =>
+                s_fakeHarmonyPatch.TestInitializePatchData(new List<DirectoryInfo>
+                {
+                    new DirectoryInfo(currentDirectory)
+                });
 
-            action.ShouldNotThrow();
+            action.Should().NotThrow();
             s_fakeHarmonyPatch.Logger.Should().NotBeNull();
         }
 
         [Fact]
         public void Instantiating_a_duplicate_static_instance_throws_an_exception()
         {
-            Action action = static () => _ = new FakeHarmonyPatch(true);
+            Action action = () =>
+            {
+                _ = new FakeHarmonyPatch(true);
+            };
 
-            action.ShouldThrow<InvalidOperationException>();
+            action.Should().Throw<InvalidOperationException>();
         }
     }
 
@@ -81,7 +93,7 @@ namespace LobotomyCorporationMods.Test.Mods.Common
             ApplyHarmonyPatch(harmonyPatchType, modFileName);
         }
 
-        internal void TestInitializePatchData(ICollection<DirectoryInfo> directoryList)
+        internal void TestInitializePatchData([NotNull] ICollection<DirectoryInfo> directoryList)
         {
             var directory = directoryList.First();
             var testFileWithPath = Path.Combine(directory.FullName, FileNameThatExists);

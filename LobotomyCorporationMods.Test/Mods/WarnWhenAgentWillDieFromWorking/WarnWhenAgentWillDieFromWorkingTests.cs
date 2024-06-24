@@ -16,7 +16,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
 {
     public class WarnWhenAgentWillDieFromWorkingTests
     {
-        protected const string DeadAgentString = "AgentState_Dead";
+        private const string DeadAgentString = "AgentState_Dead";
         protected const int StatLevelFive = 85;
         protected const int StatLevelFour = 65;
         protected const int StatLevelOne = 1;
@@ -90,7 +90,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
 
         private static void InitializeSkillTypeList(RwbpType rwbpType)
         {
-            SkillTypeInfo[] skillTypeInfos = { new() { id = (long)rwbpType } };
+            SkillTypeInfo[] skillTypeInfos = { new SkillTypeInfo { id = (long)rwbpType } };
             _ = TestExtensions.CreateSkillTypeList(skillTypeInfos);
         }
 
@@ -98,12 +98,12 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
         {
             var observeRegions = new List<ObserveInfoData>
             {
-                new() { regionName = "stat" },
-                new() { regionName = "defense" },
-                new() { regionName = "work_r" },
-                new() { regionName = "work_w" },
-                new() { regionName = "work_b" },
-                new() { regionName = "work_p" }
+                new ObserveInfoData { regionName = "stat" },
+                new ObserveInfoData { regionName = "defense" },
+                new ObserveInfoData { regionName = "work_r" },
+                new ObserveInfoData { regionName = "work_w" },
+                new ObserveInfoData { regionName = "work_b" },
+                new ObserveInfoData { regionName = "work_p" }
             };
             creature.observeInfo.InitObserveRegion(observeRegions);
             creature.observeInfo.ObserveAll();

@@ -7,6 +7,8 @@ using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
 using LobotomyCorporationMods.Common.Attributes;
+using LobotomyCorporationMods.Common.Extensions;
+using LobotomyCorporationMods.Common.Implementations;
 
 #endregion
 
@@ -17,12 +19,9 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
     {
         public static bool PatchBeforeCloseWindow(this AppearanceUI instance)
         {
-            if (instance is null)
-            {
-                throw new ArgumentNullException(nameof(instance));
-            }
+            Guard.Against.Null(instance, nameof(instance));
 
-            return instance.closeAction is not null;
+            return !(instance.closeAction is null);
         }
 
         /// <summary>
