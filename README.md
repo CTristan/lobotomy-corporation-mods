@@ -1,27 +1,38 @@
 # Lobotomy Corporation Mods
 
-Mods for the game
-[Lobotomy Corporation](https://store.steampowered.com/app/568220/Lobotomy_Corporation__Monster_Management_Simulation/).
+Mods for the
+game [Lobotomy Corporation](https://store.steampowered.com/app/568220/Lobotomy_Corporation__Monster_Management_Simulation/).
 They are designed to be used either together or individually, so feel free to pick and choose.
 
-Requires either [Lobotomy Mod Manager](https://www.nexusmods.com/site/mods/765)
+All mods are available for download on [my Nexus Mods page](https://next.nexusmods.com/profile/IsitChris/mods). Requires
+either [Lobotomy Mod Manager](https://www.nexusmods.com/site/mods/765)
 or [Basemod](https://www.nexusmods.com/lobotomycorporation/mods/2) (included in LMM).
 
-## Mod info pages
+## Nexus Mods pages
 
-- [Bad Luck Protection for Gifts](LobotomyCorporationMods.BadLuckProtectionForGifts/README.md)
-- [Free Customization](LobotomyCorporationMods.FreeCustomization/README.md)
-- [Unofficial Bug Fixes](LobotomyCorporationMods.BugFixes/README.md)
-- [Warn When Agent Will Die From Working](LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking/README.md)
+- [Bad Luck Protection for Gifts](https://www.nexusmods.com/lobotomycorporation/mods/476) ([Readme](LobotomyCorporationMods.BadLuckProtectionForGifts/README.md))
+- [Free Customization](https://www.nexusmods.com/lobotomycorporation/mods/477) ([Readme](LobotomyCorporationMods.FreeCustomization/README.md))
+- [Unofficial Bug Fixes](https://www.nexusmods.com/lobotomycorporation/mods/478) ([Readme](LobotomyCorporationMods.BugFixes/README.md))
+- [Warn When Agent Will Die From Working](https://www.nexusmods.com/lobotomycorporation/mods/479) ([Readme](LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking/README.md))
 
 ## Most Recent Change
 
-### [4.0.1] - 2023-02-10
+### [4.1.0] - 2024-06-23
+
+#### Added
+
+- All mods
+    - Added Info.xml file to add the version number and description in the in-game mod menu.
 
 #### Fixed
 
-- Free Customization [2.1]
-    - Fixed issue with renames not working for the initial starting agent when starting from Day 1.
+- Warn When Agent Will Die From Working [1.1.0]
+    - Nothing There
+        - No longer checks for Justice below Level 4 (does not actually kill the agent).
+        - Only checks for Fortitude below Level 4 if Nothing There is already disguised (before it would warn for
+          Fortitude below Level 4 even if Nothing There was not disguised).
+        - No longer always warns when Nothing There is disguised (Nothing There only kills while disguised if Fortitude
+          is below Level 4).
 
 See the [full changelog](CHANGELOG.md) for all changes.
 

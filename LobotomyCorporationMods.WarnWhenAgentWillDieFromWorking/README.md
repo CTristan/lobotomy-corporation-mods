@@ -7,7 +7,13 @@
 Provides a visual warning when an agent is guaranteed to die if assigned to work on an abnormality.
 The warning only appears when an abnormality has been fully observed to avoid spoiling newly-acquired abnormalities.
 
-## Rationale
+## What does this mod do?
+
+- Changes the work assignment UI for fully observed abnormalities so that any agents that would trigger an instant-kill mechanic show up in all-red text
+  and display the "Dead" text when hovered over.
+  - Note that this only takes effect if the abnormality is fully observed.
+
+## Why create this mod?
 
 Discovering how to deal with abnormalities is a major part of the game, however later on there are so many that have
 instant death abilities that are hard to keep track of.
@@ -64,7 +70,7 @@ Provides warnings for the following abnormalities and any of their conditions (*
 
 ## Changelog
 
-### [1.1.0] - 2024-06-09
+### [1.1.0] - 2024-06-23
 
 #### Added
 

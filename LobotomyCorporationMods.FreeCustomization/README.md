@@ -6,17 +6,24 @@
 
 Allows customizing (and re-customizing) agents without having to spend additional LOB points.
 
-## Rationale
+## What does this mod do?
+
+- Hiring new agents or changing existing ones will always have the customization options available without requiring any
+  additional LOB.
+- Re-enables the Name box when changing an existing agent to allow for renames.
+
+## Why create this mod?
 
 I do not like when games require a cost for customizing a character in the first place, but in this game customizing
 requires spending an additional LOB point which you only get a limited number of each day and is also used to hire
 agents and improve stats.
+
 The fact that customizing an agent directly affects your gameplay bothers me, so this mod will make customizing agents
 not require any additional points.
 
 ## Changelog
 
-### [2.2.0] - 2024-06-09
+### [2.2.0] - 2024-06-23
 
 #### Added
 
