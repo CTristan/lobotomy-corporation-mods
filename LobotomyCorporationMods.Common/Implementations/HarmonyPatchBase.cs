@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.IO;
 using Harmony;
 using LobotomyCorporationMods.Common.Extensions;
+using LobotomyCorporationMods.Common.Implementations.Adapters;
+using LobotomyCorporationMods.Common.Implementations.LoggerTargets;
 using LobotomyCorporationMods.Common.Interfaces;
 
 #endregion
@@ -50,6 +52,14 @@ namespace LobotomyCorporationMods.Common.Implementations
         public ILogger Logger { get; private set; }
 
 
+        /// <summary>
+        ///     Entry point for testing.
+        /// </summary>
+        public void AddLoggerTarget(ILogger logger)
+        {
+            Logger = logger;
+        }
+
         protected void ApplyHarmonyPatch(Type harmonyPatchType, string modFileName)
         {
             try
@@ -61,18 +71,14 @@ namespace LobotomyCorporationMods.Common.Implementations
             }
             catch (Exception ex)
             {
-                Logger.WriteToLog(ex);
+                Logger.WriteException(ex);
 
                 throw;
             }
         }
 
-        protected void InitializePatchData(Type harmonyPatchType, string modFileName)
-        {
-            InitializePatchData(harmonyPatchType, modFileName, null);
-        }
-
-        protected void InitializePatchData(Type harmonyPatchType, string modFileName, ICollection<DirectoryInfo> directoryList)
+        protected void InitializePatchData(Type harmonyPatchType, string modFileName,
+            ICollection<DirectoryInfo> directoryList = null)
         {
             if (harmonyPatchType.IsHarmonyPatch())
             {
@@ -88,18 +94,17 @@ namespace LobotomyCorporationMods.Common.Implementations
                 }
 
                 FileManager = new FileManager(modFileName, directoryList);
-                Logger = new Logger(FileManager);
+
+                var fileLoggerTarget = new FileLoggerTarget(FileManager, "log.txt");
+                Logger = new Logger(fileLoggerTarget);
+
+#if DEBUG
+                var debugLoggerTarget = new DebugLoggerTarget(new AngelaConversationUiAdapter());
+                Logger.AddTarget(debugLoggerTarget);
+#endif
 
                 ApplyHarmonyPatch(harmonyPatchType, modFileName);
             }
-        }
-
-        /// <summary>
-        ///     Entry point for testing.
-        /// </summary>
-        public void LoadData(ILogger logger)
-        {
-            Logger = logger;
         }
 
         private void ValidateThatStaticInstanceIsNotDuplicated()

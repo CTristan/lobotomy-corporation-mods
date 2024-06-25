@@ -87,8 +87,8 @@ namespace LobotomyCorporationMods.Test.Mods.Common
 
         internal void ApplyHarmonyPatch(Type harmonyPatchType, string modFileName, ILogger logger)
         {
-            LoadData(logger);
-            Instance.LoadData(logger);
+            AddLoggerTarget(logger);
+            Instance.AddLoggerTarget(logger);
 
             ApplyHarmonyPatch(harmonyPatchType, modFileName);
         }

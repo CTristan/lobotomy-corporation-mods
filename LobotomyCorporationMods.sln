@@ -40,6 +40,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ISSUE_TEMPLATE", "ISSUE_TEM
 		.github\ISSUE_TEMPLATE\new-mod-request.md = .github\ISSUE_TEMPLATE\new-mod-request.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LobotomyCorporationMods.NotifyWhenAgentReceivesGift", "LobotomyCorporationMods.NotifyWhenAgentReceivesGift\LobotomyCorporationMods.NotifyWhenAgentReceivesGift.csproj", "{23535F08-014D-47E4-B3A0-EC9C03E9931B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

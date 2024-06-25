@@ -3,10 +3,8 @@
 #region
 
 using System;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations.Adapters;
+using System.Collections.Generic;
 using LobotomyCorporationMods.Common.Interfaces;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 #endregion
 
@@ -14,53 +12,27 @@ namespace LobotomyCorporationMods.Common.Implementations
 {
     public sealed class Logger : ILogger
     {
-        private const string DefaultLogFileName = "log.txt";
-        private readonly IAngelaConversationUiAdapter _angelaConversationUiAdapter;
-        private readonly IFileManager _fileManager;
-
-        public Logger(IFileManager fileManager)
-            : this(fileManager, new AngelaConversationUiAdapter())
-        {
-        }
-
-        public Logger(IFileManager fileManager, IAngelaConversationUiAdapter angelaConversationUiAdapter)
-        {
-            _fileManager = fileManager;
-            _angelaConversationUiAdapter = angelaConversationUiAdapter;
-
-#if DEBUG
-            DebugLoggingEnabled = true;
-#endif
-        }
+        private readonly List<ILoggerTarget> _targets = new List<ILoggerTarget>();
 
         public bool DebugLoggingEnabled { get; set; }
 
-        public void WriteToLog(Exception exception)
+        public Logger(ILoggerTarget loggerTarget)
         {
-            Guard.Against.Null(exception, nameof(exception));
-            WriteToLog(exception, DefaultLogFileName);
+            _targets.Add(loggerTarget);
         }
 
-        private void WriteToDebug(string message)
+        public void AddTarget(ILoggerTarget target)
         {
-            Notice.instance.Send(NoticeName.AddSystemLog, message);
-            _angelaConversationUiAdapter.AddMessage(message);
+            _targets.Add(target);
         }
 
-        private void WriteToLog(string message, string logFileName)
+        public void WriteException(Exception exception)
         {
-            var logFile = _fileManager.GetOrCreateFile(logFileName);
-            _fileManager.WriteAllText(logFile, message);
-        }
+            var message = $"ERROR: {exception}";
 
-        private void WriteToLog(Exception exception, string logFileName)
-        {
-            var message = exception.ToString();
-            WriteToLog(message, logFileName);
-
-            if (DebugLoggingEnabled)
+            foreach (var target in _targets)
             {
-                WriteToDebug(message);
+                target.WriteToLoggerTarget(message);
             }
         }
     }
