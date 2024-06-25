@@ -6,6 +6,8 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using LobotomyCorporationMods.Common.Attributes;
+using LobotomyCorporationMods.Common.Extensions;
+using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Extensions;
@@ -17,8 +19,13 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches
     [HarmonyPatch(typeof(UnitModel), "AttachEGOgift")]
     public static class UnitModelPatchAttachEgoGift
     {
-        public static void PatchBeforeAttachEgoGift(UnitModel instance, EquipmentModel gift, INoticeAdapter noticeAdapter)
+        public static void PatchBeforeAttachEgoGift(UnitModel instance, EquipmentModel gift,
+            INoticeAdapter noticeAdapter)
         {
+            Guard.Against.Null(instance, nameof(instance));
+            Guard.Against.Null(gift, nameof(gift));
+            Guard.Against.Null(noticeAdapter, nameof(noticeAdapter));
+
             // If we already have this gift equipped we don't want to send an unnecessary notification
             if (instance.HasGiftEquipped(gift.metaInfo.id))
             {
@@ -32,7 +39,8 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches
             }
 
             // Send notification that the agent acquired the gift
-            var message = $"<color=#66bfcd>{instance.GetUnitName()}</color> has received the gift <color=#84bd36>{gift.metaInfo.Name}</color>.";
+            var message =
+                $"<color=#66bfcd>{instance.GetUnitName()}</color> has received the gift <color=#84bd36>{gift.metaInfo.Name}</color>.";
             noticeAdapter.Send(NoticeName.AddSystemLog, message);
         }
 
@@ -47,22 +55,12 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches
         {
             try
             {
-                if (__instance is null)
-                {
-                    throw new ArgumentNullException(nameof(__instance));
-                }
-
-                if (gift is null)
-                {
-                    throw new ArgumentNullException(nameof(gift));
-                }
-
                 var noticeAdapter = new NoticeAdapter { GameObject = Notice.instance };
                 PatchBeforeAttachEgoGift(__instance, gift, noticeAdapter);
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.WriteToLog(ex);
+                Harmony_Patch.Instance.Logger.WriteException(ex);
 
                 throw;
             }

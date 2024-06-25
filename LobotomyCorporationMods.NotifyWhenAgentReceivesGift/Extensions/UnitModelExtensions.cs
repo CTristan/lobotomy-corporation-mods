@@ -14,7 +14,7 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Extensions
         /// <summary>
         ///     A unit's equipped gifts consists of both added and replaced gifts.
         /// </summary>
-        private static IEnumerable<EGOgiftModel> GetEquippedGifts(this UnitModel unitModel)
+        private static List<EGOgiftModel> GetEquippedGifts(this UnitModel unitModel)
         {
             var giftList = new List<EGOgiftModel>();
 
@@ -53,7 +53,7 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Extensions
             var lockStateDictionary = unitModel.Equipment.gifts.lockState;
             var matchingGiftLockState = lockStateDictionary.Values.FirstOrDefault(v => v.id == matchingGiftAtPosition.metaInfo.id);
 
-            return matchingGiftLockState is { state: true };
+            return matchingGiftLockState?.state == true;
         }
     }
 }

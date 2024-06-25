@@ -19,7 +19,7 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes.Patches
         {
             // Arrange
             var notice = NoticeName.OnWorkStart;
-            var skill = TestExtensions.CreateUseSkill();
+            var skill = UnityTestExtensions.CreateUseSkill();
             skill.skillTypeInfo.id = SkillTypeInfo.Consensus;
             var param = new object[] { skill.targetCreature };
 
@@ -93,7 +93,7 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes.Patches
         {
             // Arrange
             var notice = NoticeName.OnWorkStart;
-            var param = new object[] { TestExtensions.CreateUnitModel() };
+            var param = new object[] { UnityTestExtensions.CreateUnitModel() };
 
             // Act
             var result = ArmorCreaturePatchOnNotice.PatchBeforeOnNotice(notice, param);
@@ -106,12 +106,12 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes.Patches
 
         private static object[] SetupCrumblingArmorGifts(int giftId, long skillTypeId)
         {
-            var skill = TestExtensions.CreateUseSkill();
-            var gift = TestExtensions.CreateEgoGiftModel();
+            var skill = UnityTestExtensions.CreateUseSkill();
+            var gift = UnityTestExtensions.CreateEgoGiftModel();
             gift.metaInfo.id = giftId;
-            var equipment = TestExtensions.CreateUnitEquipSpace();
+            var equipment = UnityTestExtensions.CreateUnitEquipSpace();
             equipment.gifts.addedGifts.Add(gift);
-            skill.agent = TestExtensions.CreateAgentModel(equipment: equipment);
+            skill.agent = UnityTestExtensions.CreateAgentModel(equipment: equipment);
             skill.skillTypeInfo.id = skillTypeId;
             var param = new object[] { skill.targetCreature };
 

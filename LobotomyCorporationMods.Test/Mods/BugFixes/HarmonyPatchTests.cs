@@ -44,7 +44,7 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes
         public void Class_ArmorCreature_Method_OnNotice_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
             void Action()
             {
@@ -68,18 +68,18 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes
         public void Class_CustomizingWindow_Method_SetAgentStatBonus_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
             Action action = () => CustomizingWindowPatchSetAgentStatBonus.Prefix(null, null, null);
 
             mockLogger.VerifyExceptionLogged<ArgumentNullException>(action);
 
             // Verify other arguments throw exception when null
-            action = () => CustomizingWindowPatchSetAgentStatBonus.Prefix(TestExtensions.CreateCustomizingWindow(),
-                null, TestExtensions.CreateAgentData());
+            action = () => CustomizingWindowPatchSetAgentStatBonus.Prefix(UnityTestExtensions.CreateCustomizingWindow(),
+                null, UnityTestExtensions.CreateAgentData());
             mockLogger.VerifyExceptionLogged<ArgumentNullException>(action, 2);
-            action = () => CustomizingWindowPatchSetAgentStatBonus.Prefix(TestExtensions.CreateCustomizingWindow(),
-                TestExtensions.CreateAgentModel(), null);
+            action = () => CustomizingWindowPatchSetAgentStatBonus.Prefix(UnityTestExtensions.CreateCustomizingWindow(),
+                UnityTestExtensions.CreateAgentModel(), null);
             mockLogger.VerifyExceptionLogged<ArgumentNullException>(action, 3);
         }
     }

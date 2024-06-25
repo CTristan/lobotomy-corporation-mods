@@ -19,11 +19,11 @@ namespace LobotomyCorporationMods.Test.Mods.NotifyWhenAgentReceivesGift
         public void Class_AgentSlot_Method_SetFilter_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
-            Action action = static () => UnitModelPatchAttachEgoGift.Prefix(null!, TestExtensions.CreateEgoGiftModel());
+            Action action = () => UnitModelPatchAttachEgoGift.Prefix(null, UnityTestExtensions.CreateEgoGiftModel());
             mockLogger.VerifyExceptionLogged<ArgumentNullException>(action);
-            action = static () => UnitModelPatchAttachEgoGift.Prefix(TestExtensions.CreateAgentModel(), null!);
+            action = () => UnitModelPatchAttachEgoGift.Prefix(UnityTestExtensions.CreateAgentModel(), null);
             mockLogger.VerifyExceptionLogged<ArgumentNullException>(action, 2);
         }
 
@@ -44,8 +44,12 @@ namespace LobotomyCorporationMods.Test.Mods.NotifyWhenAgentReceivesGift
         [Fact]
         public void Constructor_is_public_and_externally_accessible()
         {
-            Action action = () => _ = new Harmony_Patch();
-            action.ShouldNotThrow();
+            Action action = () =>
+            {
+                _ = new Harmony_Patch();
+            };
+
+            action.Should().NotThrow();
         }
     }
 }

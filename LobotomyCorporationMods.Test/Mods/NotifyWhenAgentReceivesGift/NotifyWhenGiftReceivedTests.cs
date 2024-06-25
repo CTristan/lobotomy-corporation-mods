@@ -3,6 +3,7 @@
 #region
 
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.Test.Extensions;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking;
@@ -26,37 +27,27 @@ namespace LobotomyCorporationMods.Test.Mods.NotifyWhenAgentReceivesGift
         {
             _ = new Harmony_Patch();
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
         }
 
-        protected Mock<INoticeAdapter> NoticeAdapter { get; } = new();
+        protected Mock<INoticeAdapter> NoticeAdapter { get; } = new Mock<INoticeAdapter>();
 
         /// <summary>
         ///     Returns a gift object that can be used for tests.
         /// </summary>
-        protected static EGOgiftModel GetGift(string giftName)
-        {
-            return GetGift(DefaultEquipmentId, DefaultGiftId, giftName, DefaultGiftAttachRegion);
-        }
-
-
-        protected static EGOgiftModel GetGift(string giftName, EGOgiftAttachRegion attachRegion)
-        {
-            return GetGift(DefaultEquipmentId, DefaultGiftId, giftName, attachRegion);
-        }
-
-
-        protected static EGOgiftModel GetGift(long equipmentId, int giftId, string giftName, EGOgiftAttachRegion attachRegion)
+        [NotNull]
+        protected static EGOgiftModel GetGift([NotNull] string giftName, long equipmentId = DefaultEquipmentId,
+            int giftId = DefaultGiftId, EGOgiftAttachRegion attachRegion = DefaultGiftAttachRegion)
         {
             var textData = new Dictionary<string, string> { { giftName, giftName } };
             InitializeTextData(textData);
 
             var equipmentNameDictionary = new Dictionary<string, string> { { "name", giftName } };
-            var metaInfo = TestExtensions.CreateEquipmentTypeInfo(localizeData: equipmentNameDictionary);
+            var metaInfo = UnityTestExtensions.CreateEquipmentTypeInfo(localizeData: equipmentNameDictionary);
             metaInfo.id = giftId;
             metaInfo.attachPos = attachRegion.ToString();
 
-            var gift = TestExtensions.CreateEgoGiftModel(metaInfo);
+            var gift = UnityTestExtensions.CreateEgoGiftModel(metaInfo);
             gift.instanceId = equipmentId;
 
             return gift;
@@ -68,7 +59,7 @@ namespace LobotomyCorporationMods.Test.Mods.NotifyWhenAgentReceivesGift
         /// </summary>
         private static void InitializeTextData(Dictionary<string, string> textData)
         {
-            TestExtensions.CreateLocalizeTextDataModel(textData);
+            UnityTestExtensions.CreateLocalizeTextDataModel(textData);
         }
     }
 }
