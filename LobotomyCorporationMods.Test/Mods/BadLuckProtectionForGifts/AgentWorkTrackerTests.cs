@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using FluentAssertions;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations;
 using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.Test.Extensions;
@@ -20,6 +21,7 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
     {
         private const string GiftName = "DefaultGiftName";
 
+        [NotNull]
         public static IEnumerable<object[]> TrackerTestData => new List<object[]>
         {
             new object[] { GiftName + "^1;1", GiftName, 1L, 1f }, new object[] { GiftName + "^1;1^2;2", GiftName, 2L, 2f }, new object[] { GiftName + "^1;1^2;2|Second^1;3", "Second", 1L, 3f }
@@ -31,7 +33,7 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
             const string DataFileName = nameof(Converting_a_tracker_to_a_string_with_a_single_gift_and_a_single_agent_returns_the_correct_string);
             var agentWorkTracker = CreateAgentWorkTracker(DataFileName);
             agentWorkTracker.IncrementAgentWorkCount(GiftName, 1L);
-            var expected = $@"{GiftName}^{1L.ToString(CultureInfo.CurrentCulture)};1";
+            var expected = $"{GiftName}^{1L.ToString(CultureInfo.CurrentCulture)};1";
 
             var actual = agentWorkTracker.ToString();
 
@@ -137,6 +139,7 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
         /// <summary>
         ///     Populates the Harmony Patch with an agent work tracker pointed to our specified test data file.
         /// </summary>
+        [NotNull]
         private static AgentWorkTracker CreateAgentWorkTracker(string dataFileName, string trackerData = "", IFileManager fileManager = null)
         {
             fileManager = fileManager ?? TestExtensions.GetMockFileManager().Object;
@@ -146,7 +149,7 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
             return new AgentWorkTracker(fileManager, dataFileName);
         }
 
-        private static void CreateTestTrackerFile(string fileName, string trackerData)
+        private static void CreateTestTrackerFile([NotNull] string fileName, string trackerData)
         {
             var fileNameWithPath = Path.Combine(Directory.GetCurrentDirectory(), fileName);
             File.WriteAllText(fileNameWithPath, trackerData);

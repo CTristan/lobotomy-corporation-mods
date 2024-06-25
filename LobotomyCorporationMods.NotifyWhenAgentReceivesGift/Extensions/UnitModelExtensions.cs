@@ -53,7 +53,7 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Extensions
             var lockStateDictionary = unitModel.Equipment.gifts.lockState;
             var matchingGiftLockState = lockStateDictionary.Values.FirstOrDefault(v => v.id == matchingGiftAtPosition.metaInfo.id);
 
-            return matchingGiftLockState?.state == true;
+            return matchingGiftLockState?.state ?? false;
         }
     }
 }
