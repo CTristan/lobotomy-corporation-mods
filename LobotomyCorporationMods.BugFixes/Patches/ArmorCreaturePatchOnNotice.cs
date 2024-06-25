@@ -5,6 +5,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
@@ -16,7 +17,7 @@ namespace LobotomyCorporationMods.BugFixes.Patches
     [HarmonyPatch(typeof(ArmorCreature), "OnNotice")]
     public static class ArmorCreaturePatchOnNotice
     {
-        public static bool PatchBeforeOnNotice(string notice, params object[] param)
+        public static bool PatchBeforeOnNotice(string notice, [NotNull] params object[] param)
         {
             Guard.Against.Null(param, nameof(param));
 
@@ -69,7 +70,7 @@ namespace LobotomyCorporationMods.BugFixes.Patches
         /// </summary>
         [EntryPoint]
         [ExcludeFromCodeCoverage]
-        public static bool Prefix(string notice, params object[] param)
+        public static bool Prefix(string notice, [NotNull] params object[] param)
         {
             try
             {

@@ -34,6 +34,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
 
             void Action()
             {
+                // ReSharper disable once AssignNullToNotNullAttribute
                 AgentSlotPatchSetFilter.Postfix(null, (AgentState)1);
             }
 

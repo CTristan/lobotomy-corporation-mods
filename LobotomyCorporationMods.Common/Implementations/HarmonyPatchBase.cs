@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Harmony;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Common.Implementations.LoggerTargets;
@@ -60,7 +61,7 @@ namespace LobotomyCorporationMods.Common.Implementations
             Logger = logger;
         }
 
-        protected void ApplyHarmonyPatch(Type harmonyPatchType, string modFileName)
+        protected void ApplyHarmonyPatch([NotNull] Type harmonyPatchType, string modFileName)
         {
             try
             {

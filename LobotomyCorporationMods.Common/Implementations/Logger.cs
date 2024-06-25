@@ -14,8 +14,6 @@ namespace LobotomyCorporationMods.Common.Implementations
     {
         private readonly List<ILoggerTarget> _targets = new List<ILoggerTarget>();
 
-        public bool DebugLoggingEnabled { get; set; }
-
         public Logger(ILoggerTarget loggerTarget)
         {
             _targets.Add(loggerTarget);
