@@ -19,13 +19,13 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Extensions
             var giftList = new List<EGOgiftModel>();
 
             var addedGifts = unitModel.Equipment.gifts.addedGifts;
-            if (!(addedGifts is null) && addedGifts.Count > 0)
+            if (addedGifts.Count > 0)
             {
                 giftList.AddRange(addedGifts);
             }
 
             var replacedGifts = unitModel.Equipment.gifts.replacedGifts;
-            if (!(replacedGifts is null) && replacedGifts.Count > 0)
+            if (replacedGifts.Count > 0)
             {
                 giftList.AddRange(unitModel.Equipment.gifts.replacedGifts);
             }
@@ -51,9 +51,9 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Extensions
             }
 
             var lockStateDictionary = unitModel.Equipment.gifts.lockState;
-            var matchingGiftLockState = lockStateDictionary.Values.FirstOrDefault(v => v.id == matchingGiftAtPosition.metaInfo.id);
+            var matchingGiftLockState = lockStateDictionary.Values.First(v => v.id == matchingGiftAtPosition.metaInfo.id);
 
-            return matchingGiftLockState?.state ?? false;
+            return matchingGiftLockState.state;
         }
     }
 }
