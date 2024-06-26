@@ -43,9 +43,9 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Extensions
         internal static bool PositionHasLockedGift(this UnitModel unitModel, EquipmentModel gift)
         {
             var equippedGifts = unitModel.GetEquippedGifts();
-            var matchingGiftAtPosition = equippedGifts.FirstOrDefault(g => g.metaInfo.attachType == gift.metaInfo.attachType && g.metaInfo.attachPos == gift.metaInfo.attachPos);
+            var matchingGiftAtPosition = equippedGifts.FirstOrDefault(g => g.metaInfo.attachPos == gift.metaInfo.attachPos);
 
-            if (matchingGiftAtPosition == null)
+            if (matchingGiftAtPosition is null)
             {
                 return false;
             }
