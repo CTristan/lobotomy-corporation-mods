@@ -5,6 +5,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Extensions;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.Common.Attributes;
@@ -15,10 +16,10 @@ using LobotomyCorporationMods.Common.Implementations;
 
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
 {
-    [HarmonyPatch(typeof(UseSkill), "FinishWorkSuccessfully")]
+    [HarmonyPatch(typeof(UseSkill), PrivateMethods.UseSkill.FinishWorkSuccessfully)]
     public static class UseSkillPatchFinishWorkSuccessfully
     {
-        public static void PatchAfterFinishWorkSuccessfully(this UseSkill instance, IAgentWorkTracker agentWorkTracker)
+        public static void PatchAfterFinishWorkSuccessfully([NotNull] this UseSkill instance, [NotNull] IAgentWorkTracker agentWorkTracker)
         {
             Guard.Against.Null(instance, nameof(instance));
             Guard.Against.Null(agentWorkTracker, nameof(agentWorkTracker));
@@ -45,7 +46,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
         // ReSharper disable InconsistentNaming
         [EntryPoint]
         [ExcludeFromCodeCoverage]
-        public static void Postfix(UseSkill __instance)
+        public static void Postfix([NotNull] UseSkill __instance)
         {
             try
             {

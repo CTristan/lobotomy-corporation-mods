@@ -21,7 +21,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
         {
             var patch = typeof(AgentSlotPatchSetFilter);
             var originalClass = typeof(AgentSlot);
-            const string MethodName = "SetFilter";
+            const string MethodName = nameof(AgentSlot.SetFilter);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
         }

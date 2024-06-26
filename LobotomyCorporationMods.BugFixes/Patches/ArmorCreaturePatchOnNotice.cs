@@ -14,7 +14,7 @@ using LobotomyCorporationMods.Common.Implementations;
 
 namespace LobotomyCorporationMods.BugFixes.Patches
 {
-    [HarmonyPatch(typeof(ArmorCreature), "OnNotice")]
+    [HarmonyPatch(typeof(ArmorCreature), nameof(ArmorCreature.OnNotice))]
     public static class ArmorCreaturePatchOnNotice
     {
         public static bool PatchBeforeOnNotice(string notice, [NotNull] params object[] param)

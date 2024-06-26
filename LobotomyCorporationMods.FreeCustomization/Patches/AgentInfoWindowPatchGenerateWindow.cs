@@ -5,6 +5,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
@@ -15,11 +16,11 @@ using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 namespace LobotomyCorporationMods.FreeCustomization.Patches
 {
-    [HarmonyPatch(typeof(AgentInfoWindow), "GenerateWindow")]
+    [HarmonyPatch(typeof(AgentInfoWindow), nameof(AgentInfoWindow.GenerateWindow))]
     public static class AgentInfoWindowPatchGenerateWindow
     {
-        public static void PatchAfterGenerateWindow(this AgentInfoWindow instance,
-            ICustomizingWindowAdapter customizingWindowAdapter)
+        public static void PatchAfterGenerateWindow([NotNull] this AgentInfoWindow instance,
+            [NotNull] ICustomizingWindowAdapter customizingWindowAdapter)
         {
             Guard.Against.Null(instance, nameof(instance));
             Guard.Against.Null(customizingWindowAdapter, nameof(customizingWindowAdapter));

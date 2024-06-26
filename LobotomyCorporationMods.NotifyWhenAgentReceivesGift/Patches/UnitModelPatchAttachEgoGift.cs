@@ -16,7 +16,7 @@ using LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Extensions;
 
 namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches
 {
-    [HarmonyPatch(typeof(UnitModel), "AttachEGOgift")]
+    [HarmonyPatch(typeof(UnitModel), nameof(UnitModel.AttachEGOgift))]
     public static class UnitModelPatchAttachEgoGift
     {
         public static void PatchBeforeAttachEgoGift(UnitModel instance, EquipmentModel gift,

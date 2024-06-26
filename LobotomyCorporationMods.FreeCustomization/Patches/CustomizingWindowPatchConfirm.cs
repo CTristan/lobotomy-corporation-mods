@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
@@ -17,11 +18,11 @@ using LobotomyCorporationMods.FreeCustomization.Extensions;
 
 namespace LobotomyCorporationMods.FreeCustomization.Patches
 {
-    [HarmonyPatch(typeof(CustomizingWindow), "Confirm")]
+    [HarmonyPatch(typeof(CustomizingWindow), nameof(CustomizingWindow.Confirm))]
     public static class CustomizingWindowPatchConfirm
     {
-        public static void PatchBeforeConfirm(this CustomizingWindow instance, IAgentLayerAdapter agentLayerAdapter,
-            IWorkerSpriteManagerAdapter workerSpriteManagerAdapter)
+        public static void PatchBeforeConfirm([NotNull] this CustomizingWindow instance, [NotNull] IAgentLayerAdapter agentLayerAdapter,
+            [NotNull] IWorkerSpriteManagerAdapter workerSpriteManagerAdapter)
         {
             Guard.Against.Null(instance, nameof(instance));
             Guard.Against.Null(agentLayerAdapter, nameof(agentLayerAdapter));
@@ -58,7 +59,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         // ReSharper disable InconsistentNaming
         [EntryPoint]
         [ExcludeFromCodeCoverage]
-        public static void Prefix(CustomizingWindow __instance)
+        public static void Prefix([NotNull] CustomizingWindow __instance)
         {
             try
             {

@@ -18,7 +18,7 @@ using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions;
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
 {
-    [HarmonyPatch(typeof(AgentSlot), "SetFilter")]
+    [HarmonyPatch(typeof(AgentSlot), nameof(AgentSlot.SetFilter))]
     public static class AgentSlotPatchSetFilter
     {
         // ReSharper disable InconsistentNaming

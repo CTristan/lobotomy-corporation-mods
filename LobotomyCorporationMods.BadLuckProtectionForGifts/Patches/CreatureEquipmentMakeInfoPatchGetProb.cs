@@ -5,6 +5,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Extensions;
@@ -14,11 +15,11 @@ using LobotomyCorporationMods.Common.Implementations;
 
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
 {
-    [HarmonyPatch(typeof(CreatureEquipmentMakeInfo), "GetProb")]
+    [HarmonyPatch(typeof(CreatureEquipmentMakeInfo), nameof(CreatureEquipmentMakeInfo.GetProb))]
     public static class CreatureEquipmentMakeInfoPatchGetProb
     {
-        public static float PatchAfterGetProb(this CreatureEquipmentMakeInfo instance, float probability,
-            IAgentWorkTracker agentWorkTracker)
+        public static float PatchAfterGetProb([NotNull] this CreatureEquipmentMakeInfo instance, float probability,
+            [NotNull] IAgentWorkTracker agentWorkTracker)
         {
             Guard.Against.Null(instance, nameof(instance));
             Guard.Against.Null(agentWorkTracker, nameof(agentWorkTracker));
@@ -46,7 +47,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
         // ReSharper disable InconsistentNaming
         [EntryPoint]
         [ExcludeFromCodeCoverage]
-        public static void Postfix(CreatureEquipmentMakeInfo __instance, ref float __result)
+        public static void Postfix([NotNull] CreatureEquipmentMakeInfo __instance, ref float __result)
         {
             try
             {

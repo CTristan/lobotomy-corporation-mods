@@ -31,9 +31,9 @@ namespace LobotomyCorporationMods.Test.Mods.NotifyWhenAgentReceivesGift
         public void Class_UnitModel_Method_AttachEgoGift_is_patched_correctly()
         {
             // ReSharper disable once StringLiteralTypo
-            const string MethodName = "AttachEGOgift";
             var patch = typeof(UnitModelPatchAttachEgoGift);
             var originalClass = typeof(UnitModel);
+            const string MethodName = nameof(UnitModel.AttachEGOgift);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
         }

@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
@@ -16,12 +17,12 @@ using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 namespace LobotomyCorporationMods.FreeCustomization.Patches
 {
-    [HarmonyPatch(typeof(AgentInfoWindow), "EnforcementWindow")]
+    [HarmonyPatch(typeof(AgentInfoWindow), nameof(AgentInfoWindow.EnforcementWindow))]
     public static class AgentInfoWindowPatchEnforcementWindow
     {
-        public static void PatchAfterEnforcementWindow(this AgentInfoWindow instance,
-            ICustomizingWindowAdapter customizingWindowAdapter, IGameObjectAdapter gameObjectAdapter,
-            IAgentInfoWindowUiComponentsAdapter uiComponentsAdapter)
+        public static void PatchAfterEnforcementWindow([NotNull] this AgentInfoWindow instance,
+            [NotNull] ICustomizingWindowAdapter customizingWindowAdapter, [NotNull] IGameObjectAdapter gameObjectAdapter,
+            [NotNull] IAgentInfoWindowUiComponentsAdapter uiComponentsAdapter)
         {
             Guard.Against.Null(instance, nameof(instance));
             Guard.Against.Null(gameObjectAdapter, nameof(gameObjectAdapter));

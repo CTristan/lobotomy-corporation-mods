@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
@@ -16,11 +17,11 @@ using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 namespace LobotomyCorporationMods.BugFixes.Patches
 {
-    [HarmonyPatch(typeof(CustomizingWindow), "SetAgentStatBonus")]
+    [HarmonyPatch(typeof(CustomizingWindow), nameof(CustomizingWindow.SetAgentStatBonus))]
     public static class CustomizingWindowPatchSetAgentStatBonus
     {
-        public static void PatchBeforeSetAgentStatBonus(this CustomizingWindow instance, AgentModel agent,
-            AgentData data, ICustomizingWindowAdapter customizingWindowAdapter)
+        public static void PatchBeforeSetAgentStatBonus([NotNull] this CustomizingWindow instance, [NotNull] AgentModel agent,
+            [NotNull] AgentData data, [NotNull] ICustomizingWindowAdapter customizingWindowAdapter)
         {
             Guard.Against.Null(instance, nameof(instance));
             Guard.Against.Null(agent, nameof(agent));
@@ -65,7 +66,7 @@ namespace LobotomyCorporationMods.BugFixes.Patches
         // ReSharper disable InconsistentNaming
         [EntryPoint]
         [ExcludeFromCodeCoverage]
-        public static bool Prefix(CustomizingWindow __instance, AgentModel agent, AgentData data)
+        public static bool Prefix([NotNull] CustomizingWindow __instance, [NotNull] AgentModel agent, [NotNull] AgentData data)
         {
             try
             {

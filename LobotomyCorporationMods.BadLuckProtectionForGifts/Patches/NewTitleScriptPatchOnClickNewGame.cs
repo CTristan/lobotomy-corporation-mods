@@ -5,6 +5,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Extensions;
@@ -14,10 +15,10 @@ using LobotomyCorporationMods.Common.Implementations;
 
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
 {
-    [HarmonyPatch(typeof(NewTitleScript), "OnClickNewGame")]
+    [HarmonyPatch(typeof(NewTitleScript), nameof(NewTitleScript.OnClickNewGame))]
     public static class NewTitleScriptPatchOnClickNewGame
     {
-        public static void PatchAfterOnClickNewGame(IAgentWorkTracker agentWorkTracker)
+        public static void PatchAfterOnClickNewGame([NotNull] IAgentWorkTracker agentWorkTracker)
         {
             Guard.Against.Null(agentWorkTracker, nameof(agentWorkTracker));
 

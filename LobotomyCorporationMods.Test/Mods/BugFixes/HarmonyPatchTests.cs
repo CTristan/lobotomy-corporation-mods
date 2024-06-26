@@ -35,7 +35,7 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes
         {
             var patch = typeof(ArmorCreaturePatchOnNotice);
             var originalClass = typeof(ArmorCreature);
-            const string MethodName = "OnNotice";
+            const string MethodName = nameof(ArmorCreature.OnNotice);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
         }
@@ -59,7 +59,7 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes
         {
             var patch = typeof(CustomizingWindowPatchSetAgentStatBonus);
             var originalClass = typeof(CustomizingWindow);
-            const string MethodName = "SetAgentStatBonus";
+            const string MethodName = nameof(CustomizingWindow.SetAgentStatBonus);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
         }

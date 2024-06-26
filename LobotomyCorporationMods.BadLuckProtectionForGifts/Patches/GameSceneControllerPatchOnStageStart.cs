@@ -5,6 +5,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Extensions;
@@ -14,10 +15,10 @@ using LobotomyCorporationMods.Common.Implementations;
 
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
 {
-    [HarmonyPatch(typeof(GameSceneController), "OnStageStart")]
+    [HarmonyPatch(typeof(GameSceneController), nameof(GameSceneController.OnStageStart))]
     public static class GameSceneControllerPatchOnStageStart
     {
-        public static void PatchAfterOnStageStart(IAgentWorkTracker agentWorkTracker)
+        public static void PatchAfterOnStageStart([NotNull] IAgentWorkTracker agentWorkTracker)
         {
             Guard.Against.Null(agentWorkTracker, nameof(agentWorkTracker));
 

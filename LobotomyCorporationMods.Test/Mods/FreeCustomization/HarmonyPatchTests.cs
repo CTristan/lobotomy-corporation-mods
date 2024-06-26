@@ -21,7 +21,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
         {
             var patch = typeof(AgentInfoWindowPatchEnforcementWindow);
             var originalClass = typeof(AgentInfoWindow);
-            const string MethodName = "EnforcementWindow";
+            const string MethodName = nameof(AgentInfoWindow.EnforcementWindow);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
         }
@@ -45,7 +45,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
         {
             var patch = typeof(AgentInfoWindowPatchGenerateWindow);
             var originalClass = typeof(AgentInfoWindow);
-            const string MethodName = "GenerateWindow";
+            const string MethodName = nameof(AgentInfoWindow.GenerateWindow);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
         }
@@ -69,7 +69,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
         {
             var patch = typeof(AppearanceUIPatchCloseWindow);
             var originalClass = typeof(AppearanceUI);
-            const string MethodName = "CloseWindow";
+            const string MethodName = nameof(AppearanceUI.CloseWindow);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
         }
@@ -93,7 +93,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
         {
             var patch = typeof(CustomizingWindowPatchConfirm);
             var originalClass = typeof(CustomizingWindow);
-            const string MethodName = "Confirm";
+            const string MethodName = nameof(CustomizingWindow.Confirm);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
         }
@@ -117,7 +117,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
         {
             var patch = typeof(CustomizingWindowPatchOpenAppearanceWindow);
             var originalClass = typeof(CustomizingWindow);
-            const string MethodName = "OpenAppearanceWindow";
+            const string MethodName = nameof(CustomizingWindow.OpenAppearanceWindow);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
         }
@@ -141,7 +141,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
         {
             var patch = typeof(CustomizingWindowPatchReviseOpenAction);
             var originalClass = typeof(CustomizingWindow);
-            const string MethodName = "ReviseOpenAction";
+            const string MethodName = PrivateMethods.CustomizingWindow.ReviseOpenAction;
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
         }

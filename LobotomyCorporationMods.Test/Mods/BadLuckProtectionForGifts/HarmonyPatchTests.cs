@@ -122,7 +122,7 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
         {
             var patch = typeof(UseSkillPatchFinishWorkSuccessfully);
             var originalClass = typeof(UseSkill);
-            const string MethodName = "FinishWorkSuccessfully";
+            const string MethodName = PrivateMethods.UseSkill.FinishWorkSuccessfully;
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
         }

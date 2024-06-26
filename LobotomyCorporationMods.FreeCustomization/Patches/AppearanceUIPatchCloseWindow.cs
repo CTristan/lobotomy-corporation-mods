@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
@@ -14,10 +15,10 @@ using LobotomyCorporationMods.Common.Implementations;
 
 namespace LobotomyCorporationMods.FreeCustomization.Patches
 {
-    [HarmonyPatch(typeof(AppearanceUI), "CloseWindow")]
+    [HarmonyPatch(typeof(AppearanceUI), nameof(AppearanceUI.CloseWindow))]
     public static class AppearanceUIPatchCloseWindow
     {
-        public static bool PatchBeforeCloseWindow(this AppearanceUI instance)
+        public static bool PatchBeforeCloseWindow([NotNull] this AppearanceUI instance)
         {
             Guard.Against.Null(instance, nameof(instance));
 
@@ -32,7 +33,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         // ReSharper disable InconsistentNaming
         [EntryPoint]
         [ExcludeFromCodeCoverage]
-        public static bool Prefix(AppearanceUI __instance)
+        public static bool Prefix([NotNull] AppearanceUI __instance)
         {
             try
             {
