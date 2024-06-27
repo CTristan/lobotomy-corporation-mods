@@ -39,7 +39,7 @@
     <ProjectReference Include="..\LobotomyCorporationMods.Common\LobotomyCorporationMods.Common.csproj"/>
   </ItemGroup>
   <ItemGroup>
-    <Content Update="Info\en\Info.xml">
+    <Content Include="Info\en\Info.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Info\GlobalInfo.xml">

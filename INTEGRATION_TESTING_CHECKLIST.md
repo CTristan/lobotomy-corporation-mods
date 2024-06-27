@@ -15,15 +15,12 @@ Note: this will contain spoilers.
 
 ## Unofficial Bugfixes
 
-### Wasted Stat Upgrades
-
-- [ ] Have an agent with a base Fortitude of 65 that has Crumbling Armor's gift, causing the Fortitude level to be 3.
-  Upgrade the agent's Fortitude and verify that the Fortitude level is now 4.
-
-### Crumbling Armor Bugfix
-
-- [ ] Start a day with an agent that has Crumbling Armor's gift, replace Crumbling Armor's gift, then have the agent do
-  attachment work and make sure the agent doesn't die.
+- [ ] Wasted Stat Upgrades
+    - [ ] Have an agent with a base Fortitude of 65 that has Crumbling Armor's gift, causing the Fortitude level to be
+      level 3. Upgrade the agent's Fortitude and verify that the Fortitude level is now level 4.
+- [ ] Crumbling Armor Bugfix
+    - [ ] Start a day with an agent that has Crumbling Armor's gift, replace Crumbling Armor's gift, then have the agent
+      do attachment work and make sure the agent doesn't die.
 
 ## Free Customization
 
@@ -32,6 +29,15 @@ Note: this will contain spoilers.
 - [ ] Rename an agent to make sure changes stay.
 - [ ] Re-customize an existing agent (including a name change), load the day, then restart the day and verify changes
   stay.
+
+## Notify When Agent Receives Gift
+
+- [ ] Displays a message for each condition:
+    - [ ] Have an agent receive a gift in an empty slot.
+    - [ ] Have an agent replace a gift in an existing slot.
+- [ ] Does NOT display a message for each condition:
+    - [ ] An agent would receive a gift when they already have that gift.
+    - [ ] An agent would receive a gift when that slot is locked with another gift.
 
 ## Warn When Agent Will Die From Working
 

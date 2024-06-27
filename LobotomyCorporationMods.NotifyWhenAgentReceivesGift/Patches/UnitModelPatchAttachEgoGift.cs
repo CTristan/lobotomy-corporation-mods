@@ -26,14 +26,14 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches
             Guard.Against.Null(gift, nameof(gift));
             Guard.Against.Null(noticeAdapter, nameof(noticeAdapter));
 
-            // If we already have this gift equipped we don't want to send an unnecessary notification
-            if (instance.HasGiftEquipped(gift.metaInfo.id))
+            // Check if the gift's position already has a locked gift
+            if (instance.PositionHasLockedGift(gift))
             {
                 return;
             }
 
-            // Check if the gift's position already has a locked gift
-            if (instance.PositionHasLockedGift(gift))
+            // If we already have this gift equipped we don't want to send an unnecessary notification
+            if (instance.HasGiftEquipped(gift.metaInfo.id))
             {
                 return;
             }
