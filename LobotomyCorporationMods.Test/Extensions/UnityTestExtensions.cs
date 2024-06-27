@@ -14,7 +14,7 @@ using WorkerSprite;
 
 namespace LobotomyCorporationMods.Test.Extensions
 {
-    public static class UnityTestExtensions
+    internal static class UnityTestExtensions
     {
         #region Unity Objects
 

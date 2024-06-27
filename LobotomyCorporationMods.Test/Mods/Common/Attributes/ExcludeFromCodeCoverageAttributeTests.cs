@@ -88,14 +88,14 @@ namespace LobotomyCorporationMods.Test.Mods.Common.Attributes
 
         private static string AnyMethodIsIncorrectlyExcludedFromCodeCoverage([NotNull] IEnumerable<MethodInfo> methods)
         {
-            var invalidMethods = methods.Select(MethodIsIncorrectlyExcludeFromCodeCoverage)
+            var invalidMethods = methods.Select(MethodIsIncorrectlyExcludedFromCodeCoverage)
                 .Where(methodName => !string.IsNullOrEmpty(methodName)).ToList();
 
             return invalidMethods.Count != 0 ? invalidMethods.First() : string.Empty;
         }
 
         [NotNull]
-        private static string MethodIsIncorrectlyExcludeFromCodeCoverage([NotNull] MethodInfo method)
+        private static string MethodIsIncorrectlyExcludedFromCodeCoverage([NotNull] MethodInfo method)
         {
             var attributes = method.GetCustomAttributes(false);
             foreach (var attribute in attributes)

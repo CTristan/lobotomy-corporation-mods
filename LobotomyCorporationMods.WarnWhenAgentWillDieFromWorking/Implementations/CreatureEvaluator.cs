@@ -41,29 +41,40 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
         /// </summary>
         private bool WillAgentDieFromOtherCreatures()
         {
-            bool agentWillDie;
-
-            // Crumbling Armor
-            if (Agent.HasCrumblingArmor() && SkillType == RwbpType.B)
+            // Crumbling Armor's gift
+            if (WillDieFromCrumblingArmorGift())
             {
-                agentWillDie = true;
-            }
-            // Fairy Festival
-            else if (Agent.HasBuffOfType<FairyBuf>() && Creature.metadataId != (long)CreatureIds.FairyFestival)
-            {
-                agentWillDie = true;
-            }
-            // Laetitia
-            else if (Agent.HasBuffOfType<LittleWitchBuf>() && Creature.metadataId != (long)CreatureIds.Laetitia)
-            {
-                agentWillDie = true;
-            }
-            else
-            {
-                agentWillDie = false;
+                return true;
             }
 
-            return agentWillDie;
+            // Fairy Festival's effect
+            if (WillDieFromFairyFestivalEffect())
+            {
+                return true;
+            }
+
+            // Laetitia's effect
+            if (WillDieFromLaetitiaEffect())
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool WillDieFromCrumblingArmorGift()
+        {
+            return Agent.HasCrumblingArmor() && SkillType == RwbpType.B;
+        }
+
+        private bool WillDieFromFairyFestivalEffect()
+        {
+            return Agent.HasBuffOfType<FairyBuf>() && Creature.metadataId != (long)CreatureIds.FairyFestival;
+        }
+
+        private bool WillDieFromLaetitiaEffect()
+        {
+            return Agent.HasBuffOfType<LittleWitchBuf>() && Creature.metadataId != (long)CreatureIds.Laetitia;
         }
 
         protected abstract bool WillAgentDieFromThisCreature();
