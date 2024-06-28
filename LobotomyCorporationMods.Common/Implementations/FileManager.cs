@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces;
 
@@ -24,7 +25,8 @@ namespace LobotomyCorporationMods.Common.Implementations
         {
             Guard.Against.Null(directories, nameof(directories));
 
-            var directory = directories.FirstOrDefault(directoryInfo => File.Exists(Path.Combine(directoryInfo.FullName, modFileName)));
+            var directory = directories.FirstOrDefault(directoryInfo =>
+                File.Exists(Path.Combine(directoryInfo.FullName, modFileName)));
 
             if (directory is object)
             {
@@ -46,7 +48,7 @@ namespace LobotomyCorporationMods.Common.Implementations
             }
         }
 
-        public string GetOrCreateFile(string fileName)
+        public string GetOrCreateFile([NotNull] string fileName)
         {
             if (_filesCache.TryGetValue(fileName, out var value))
             {

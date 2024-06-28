@@ -32,13 +32,15 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
+            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
+            return;
+
             void Action()
             {
                 // ReSharper disable once AssignNullToNotNullAttribute
+                // Forcing null argument to test exception logging.
                 AgentSlotPatchSetFilter.Postfix(null, (AgentState)1);
             }
-
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
         }
 
         /// <summary>

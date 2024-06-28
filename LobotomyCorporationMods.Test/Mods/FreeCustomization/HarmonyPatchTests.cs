@@ -32,12 +32,13 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
+            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
+            return;
+
             void Action()
             {
                 AgentInfoWindowPatchEnforcementWindow.Postfix();
             }
-
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
         }
 
         [Fact]
@@ -56,12 +57,13 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
+            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
+            return;
+
             void Action()
             {
                 AgentInfoWindowPatchGenerateWindow.Postfix();
             }
-
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
         }
 
         [Fact]
@@ -80,12 +82,15 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
+            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
+            return;
+
             void Action()
             {
+                // ReSharper disable once AssignNullToNotNullAttribute
+                // Forcing null argument to test exception logging.
                 AppearanceUIPatchCloseWindow.Prefix(null);
             }
-
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
         }
 
         [Fact]
@@ -104,12 +109,15 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
+            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
+            return;
+
             void Action()
             {
+                // ReSharper disable once AssignNullToNotNullAttribute
+                // Forcing null argument to test exception logging.
                 CustomizingWindowPatchConfirm.Prefix(null);
             }
-
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
         }
 
         [Fact]
@@ -128,12 +136,15 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
+            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
+            return;
+
             void Action()
             {
+                // ReSharper disable once AssignNullToNotNullAttribute
+                // Forcing null argument to test exception logging.
                 CustomizingWindowPatchOpenAppearanceWindow.Postfix(null);
             }
-
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
         }
 
         [Fact]
@@ -152,12 +163,16 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
+            // ReSharper disable AssignNullToNotNullAttribute
+            // Forcing null arguments to test exception logging.
             Action action = () => CustomizingWindowPatchReviseOpenAction.Postfix(null, null);
+            // ReSharper enable AssignNullToNotNullAttribute
 
             mockLogger.VerifyExceptionLogged<ArgumentNullException>(action);
 
             // Verify other arguments throw an exception if null
-            action = () => CustomizingWindowPatchReviseOpenAction.Postfix(UnityTestExtensions.CreateCustomizingWindow(), null);
+            action = () =>
+                CustomizingWindowPatchReviseOpenAction.Postfix(UnityTestExtensions.CreateCustomizingWindow(), null);
             mockLogger.VerifyExceptionLogged<ArgumentNullException>(action, 2);
         }
 

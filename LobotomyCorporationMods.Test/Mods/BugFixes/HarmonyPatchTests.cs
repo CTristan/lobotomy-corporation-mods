@@ -46,12 +46,15 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
+            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
+            return;
+
             void Action()
             {
+                // ReSharper disable once AssignNullToNotNullAttribute
+                // Forcing null argument to test exception logging.
                 ArmorCreaturePatchOnNotice.Prefix(string.Empty, null);
             }
-
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
         }
 
         [Fact]
@@ -70,7 +73,10 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
+            // ReSharper disable AssignNullToNotNullAttribute
+            // Forcing null argument to test exception logging.
             Action action = () => CustomizingWindowPatchSetAgentStatBonus.Prefix(null, null, null);
+            // ReSharper enable AssignNullToNotNullAttribute
 
             mockLogger.VerifyExceptionLogged<ArgumentNullException>(action);
 

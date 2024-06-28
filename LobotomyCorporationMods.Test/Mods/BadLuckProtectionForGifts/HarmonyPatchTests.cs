@@ -46,12 +46,15 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
             var result = 0f;
 
+            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
+            return;
+
             void Action()
             {
+                // ReSharper disable once AssignNullToNotNullAttribute
+                // Forcing null argument to test exception logging.
                 CreatureEquipmentMakeInfoPatchGetProb.Postfix(null, ref result);
             }
-
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
         }
 
         [Fact]
@@ -133,12 +136,15 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
+            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
+            return;
+
             void Action()
             {
+                // ReSharper disable once AssignNullToNotNullAttribute
+                // Forcing null argument to test exception logging.
                 UseSkillPatchFinishWorkSuccessfully.Postfix(null);
             }
-
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
         }
     }
 }
