@@ -100,7 +100,7 @@ namespace LobotomyCorporationMods.Test.Mods.Common
         private const string FileNameThatExists = "FileNameThatExists.txt";
 
         internal FakeHarmonyPatch(bool isNotDuplicating)
-            : base(isNotDuplicating)
+            : base(typeof(FakeHarmonyPatch), nameof(FakeHarmonyPatch), isNotDuplicating)
         {
         }
 

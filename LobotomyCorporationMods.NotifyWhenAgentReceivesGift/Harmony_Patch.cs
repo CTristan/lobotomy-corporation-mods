@@ -13,10 +13,9 @@ using LobotomyCorporationMods.Common.Implementations;
 
 namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift
 {
+    // ReSharper disable once InconsistentNaming
     public sealed class Harmony_Patch : HarmonyPatchBase
     {
-        private const string ModFileName = "LobotomyCorporationMods.NotifyWhenAgentReceivesGift.dll";
-
         public new static readonly Harmony_Patch Instance = new Harmony_Patch(true);
 
         public Harmony_Patch()
@@ -25,12 +24,8 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift
         }
 
         private Harmony_Patch(bool initialize)
-            : base(initialize)
+            : base(typeof(Harmony_Patch), "LobotomyCorporationMods.NotifyWhenAgentReceivesGift.dll", initialize)
         {
-            if (initialize)
-            {
-                InitializePatchData(typeof(Harmony_Patch), ModFileName);
-            }
         }
     }
 }

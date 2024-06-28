@@ -13,10 +13,9 @@ using LobotomyCorporationMods.Common.Implementations;
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking
 {
+    // ReSharper disable once InconsistentNaming
     public sealed class Harmony_Patch : HarmonyPatchBase
     {
-        private const string ModFileName = "LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.dll";
-
         public new static readonly Harmony_Patch Instance = new Harmony_Patch(true);
 
         public Harmony_Patch()
@@ -25,12 +24,8 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking
         }
 
         private Harmony_Patch(bool initialize)
-            : base(initialize)
+            : base(typeof(Harmony_Patch), "LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.dll", initialize)
         {
-            if (initialize)
-            {
-                InitializePatchData(typeof(Harmony_Patch), ModFileName);
-            }
         }
     }
 }

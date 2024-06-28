@@ -13,10 +13,9 @@ using LobotomyCorporationMods.Common.Implementations;
 
 namespace LobotomyCorporationMods.FreeCustomization
 {
+    // ReSharper disable once InconsistentNaming
     public sealed class Harmony_Patch : HarmonyPatchBase
     {
-        private const string ModFileName = "LobotomyCorporationMods.FreeCustomization.dll";
-
         public new static readonly Harmony_Patch Instance = new Harmony_Patch(true);
 
         public Harmony_Patch()
@@ -25,12 +24,8 @@ namespace LobotomyCorporationMods.FreeCustomization
         }
 
         private Harmony_Patch(bool initialize)
-            : base(initialize)
+            : base(typeof(Harmony_Patch), "LobotomyCorporationMods.FreeCustomization.dll", initialize)
         {
-            if (initialize)
-            {
-                InitializePatchData(typeof(Harmony_Patch), ModFileName);
-            }
         }
     }
 }

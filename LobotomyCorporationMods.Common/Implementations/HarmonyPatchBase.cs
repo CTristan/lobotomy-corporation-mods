@@ -33,12 +33,15 @@ namespace LobotomyCorporationMods.Common.Implementations
         ///     Validate that each mod is using their own Singleton instance.
         ///     https://stackoverflow.com/a/2855324/1410257
         /// </summary>
-        protected HarmonyPatchBase(bool isNotDuplicating)
+        protected HarmonyPatchBase(Type harmonyPatchType, string modFileName, bool isNotDuplicating)
         {
-            if (isNotDuplicating)
+            if (!isNotDuplicating)
             {
-                ValidateThatStaticInstanceIsNotDuplicated();
+                return;
             }
+
+            SetUpPatchData(harmonyPatchType, modFileName);
+            ValidateThatStaticInstanceIsNotDuplicated();
         }
 
         private HarmonyPatchBase()
@@ -78,34 +81,43 @@ namespace LobotomyCorporationMods.Common.Implementations
             }
         }
 
-        protected void InitializePatchData(Type harmonyPatchType, string modFileName,
-            ICollection<DirectoryInfo> directoryList = null)
+        protected void SetUpPatchData(Type type, string modFileName,
+            [CanBeNull] ICollection<DirectoryInfo> directories = null)
         {
-            if (harmonyPatchType.IsHarmonyPatch())
+            if (!type.IsHarmonyPatch())
             {
-                try
-                {
-                    // Try to get Basemod directory list if we don't have one
-                    directoryList = directoryList ?? Add_On.instance.DirList;
-                }
-                catch (Exception exception) when (exception is SystemException)
-                {
-                    // If we get a Unity exception then that means we're running this outside of Unity (i.e. unit tests), so we'll just gracefully exit
-                    return;
-                }
-
-                FileManager = new FileManager(modFileName, directoryList);
-
-                var fileLoggerTarget = new FileLoggerTarget(FileManager, "log.txt");
-                Logger = new Logger(fileLoggerTarget);
-
-#if DEBUG
-                var debugLoggerTarget = new DebugLoggerTarget(new AngelaConversationUiAdapter());
-                Logger.AddTarget(debugLoggerTarget);
-#endif
-
-                ApplyHarmonyPatch(harmonyPatchType, modFileName);
+                return;
             }
+
+            try
+            {
+                HandleDirectories(directories, modFileName);
+            }
+            catch (Exception exception) when (exception is SystemException)
+            {
+                // If we get a Unity exception then that means we're running this outside of Unity (i.e. unit tests), so we'll just gracefully exit
+                return;
+            }
+
+            InitializeLogger();
+            ApplyHarmonyPatch(type, modFileName);
+        }
+
+        private void HandleDirectories(ICollection<DirectoryInfo> directories, string modFileName)
+        {
+            // Try to get Basemod directory list if we don't have one
+            directories = directories ?? Add_On.instance.DirList;
+            FileManager = new FileManager(modFileName, directories);
+        }
+
+        private void InitializeLogger()
+        {
+            var fileLoggerTarget = new FileLoggerTarget(FileManager, "log.txt");
+            Logger = new Logger(fileLoggerTarget);
+#if DEBUG
+            var debugLoggerTarget = new DebugLoggerTarget(new AngelaConversationUiAdapter());
+            Logger.AddTarget(debugLoggerTarget);
+#endif
         }
 
         private void ValidateThatStaticInstanceIsNotDuplicated()
