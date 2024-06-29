@@ -9,6 +9,7 @@ using CommandWindow;
 using Harmony;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
+using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Enums;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
@@ -31,7 +32,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
             s_evaluatorFactoryDictionary = InitEvaluatorFactoryDictionary(); // ReSharper disable InconsistentNaming
 
         [EntryPoint]
-        [ExcludeFromCodeCoverage]
+        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
         public static void Postfix([NotNull] AgentSlot __instance,
             AgentState state)
         {

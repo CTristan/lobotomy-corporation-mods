@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
+using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 
@@ -67,7 +68,7 @@ namespace LobotomyCorporationMods.BugFixes.Patches
         ///     </para>
         /// </remarks>
         [EntryPoint]
-        [ExcludeFromCodeCoverage]
+        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
         // ReSharper disable once UnusedMethodReturnValue.Global
         public static bool Prefix(string notice,
             [NotNull] params object[] param)

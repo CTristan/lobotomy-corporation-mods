@@ -8,6 +8,7 @@ using Customizing;
 using Harmony;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
+using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
@@ -61,7 +62,7 @@ namespace LobotomyCorporationMods.BugFixes.Patches
         ///     </para>
         /// </remarks>
         [EntryPoint]
-        [ExcludeFromCodeCoverage]
+        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
         // ReSharper disable InconsistentNaming
         // ReSharper disable once UnusedMethodReturnValue.Global
         public static bool Prefix([NotNull] CustomizingWindow __instance,

@@ -8,6 +8,7 @@ using Customizing;
 using Harmony;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
+using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 
@@ -24,7 +25,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         /// </summary>
         // ReSharper disable InconsistentNaming
         [EntryPoint]
-        [ExcludeFromCodeCoverage]
+        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
         public static void Postfix([NotNull] CustomizingWindow __instance)
         {
             try

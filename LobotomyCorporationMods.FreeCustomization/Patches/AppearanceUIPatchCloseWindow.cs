@@ -8,6 +8,7 @@ using Customizing;
 using Harmony;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
+using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 
@@ -33,7 +34,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         /// <returns>True if the prefix method successfully executed, otherwise false.</returns>
         // ReSharper disable InconsistentNaming
         [EntryPoint]
-        [ExcludeFromCodeCoverage]
+        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
         public static bool Prefix([NotNull] AppearanceUI __instance)
         {
             try

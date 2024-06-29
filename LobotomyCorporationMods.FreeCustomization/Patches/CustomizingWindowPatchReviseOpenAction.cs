@@ -8,6 +8,7 @@ using Customizing;
 using Harmony;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
+using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.FreeCustomization.Extensions;
@@ -22,7 +23,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         /// <summary>Runs after opening the Strengthen Agent window to set the appearance data for the customization window.</summary>
         // ReSharper disable InconsistentNaming
         [EntryPoint]
-        [ExcludeFromCodeCoverage]
+        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
         public static void Postfix([NotNull] CustomizingWindow __instance,
             [NotNull] AgentModel agent)
         {

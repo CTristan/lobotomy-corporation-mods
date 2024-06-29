@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
 
-// ReSharper disable once CheckNamespace
+using JetBrains.Annotations;
 
+// ReSharper disable once CheckNamespace
 namespace System.Diagnostics.CodeAnalysis
 {
     /// <inheritdoc />
@@ -9,5 +10,8 @@ namespace System.Diagnostics.CodeAnalysis
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = false)]
     public sealed class ExcludeFromCodeCoverageAttribute : Attribute
     {
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
+        [CanBeNull]
+        public string Justification { get; set; }
     }
 }

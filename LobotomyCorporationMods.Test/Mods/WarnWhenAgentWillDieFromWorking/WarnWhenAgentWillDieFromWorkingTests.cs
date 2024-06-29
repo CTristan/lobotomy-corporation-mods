@@ -97,7 +97,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
 
             // Need to initialize the CreatureLayer with our new creature
             var creatureUnit = UnityTestExtensions.CreateCreatureUnit();
-            UnityTestExtensions.CreateCreatureLayer(new Dictionary<long, CreatureUnit>
+            _ = UnityTestExtensions.CreateCreatureLayer(new Dictionary<long, CreatureUnit>
             {
                 {
                     (long)creatureId, creatureUnit

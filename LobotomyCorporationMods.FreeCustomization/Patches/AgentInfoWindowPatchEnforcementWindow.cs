@@ -8,6 +8,7 @@ using Customizing;
 using Harmony;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
+using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
@@ -49,7 +50,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
 
         /// <summary>Runs after opening the Strengthen Agent window to open the appearance window.</summary>
         [EntryPoint]
-        [ExcludeFromCodeCoverage]
+        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
         public static void Postfix()
         {
             try
