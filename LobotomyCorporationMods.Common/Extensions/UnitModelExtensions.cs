@@ -2,6 +2,7 @@
 
 #region
 
+using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Enums;
@@ -38,8 +39,15 @@ namespace LobotomyCorporationMods.Common.Extensions
         {
             Guard.Against.Null(agent, nameof(agent));
 
-            return agent.HasEquipment((int)EquipmentId.CrumblingArmorGift1) || agent.HasEquipment((int)EquipmentId.CrumblingArmorGift2) || agent.HasEquipment((int)EquipmentId.CrumblingArmorGift3) ||
-                   agent.HasEquipment((int)EquipmentId.CrumblingArmorGift4);
+            var crumblingArmorGiftsId = new List<int>
+            {
+                (int)EquipmentId.CrumblingArmorGift1,
+                (int)EquipmentId.CrumblingArmorGift2,
+                (int)EquipmentId.CrumblingArmorGift3,
+                (int)EquipmentId.CrumblingArmorGift4,
+            };
+
+            return crumblingArmorGiftsId.Exists(agent.HasEquipment);
         }
     }
 }

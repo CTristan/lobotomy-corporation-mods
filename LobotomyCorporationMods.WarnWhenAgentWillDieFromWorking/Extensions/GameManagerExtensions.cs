@@ -16,6 +16,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
             AgentState state)
         {
             var commandWindow = CommandWindow.CommandWindow.CurrentWindow;
+
             return IsDayStarted(currentGameManager) && IsCorrectWindow(commandWindow) && IsAgentControllable(state);
         }
 
