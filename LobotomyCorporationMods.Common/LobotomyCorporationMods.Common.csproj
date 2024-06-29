@@ -7,7 +7,6 @@
       will try to re-use the first DLL even if the second DLL has a different assembly version.
     -->
     <AssemblyName>LobotomyCorporationMods.Common.$(AssemblyVersion)</AssemblyName>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <IsPackable>false</IsPackable>
     <ProjectGuid>{D9BB018C-8BB3-4639-983C-F58969C8574E}</ProjectGuid>
     <AnalysisLevel>latest-all</AnalysisLevel>

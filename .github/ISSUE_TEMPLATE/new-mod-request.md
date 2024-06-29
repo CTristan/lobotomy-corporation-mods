@@ -16,14 +16,14 @@ assignees: ''
   original author(s) first. Suggest it here only
   if they don’t respond or decline to make changes.
 
-* **What sort of mod would you like to see? Please be as specific and detailed
+- **What sort of mod would you like to see? Please be as specific and detailed
   as possible.**
 
-* **What inspired this idea?**
+- **What inspired this idea?**
 
-* **Are there other mods that you're aware of that provide similar or related
+- **Are there other mods that you're aware of that provide similar or related
   functionality?**
 
-* **(optional) Any other information (e.g. screenshots, save games, links to
+- **(optional) Any other information (e.g. screenshots, save games, links to
   mods that might have related functionality,
-  etc)**
+  etc.)**
