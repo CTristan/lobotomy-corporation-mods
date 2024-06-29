@@ -8,6 +8,7 @@ using FluentAssertions;
 using LobotomyCorporationMods.FreeCustomization;
 using LobotomyCorporationMods.FreeCustomization.Patches;
 using LobotomyCorporationMods.Test.Extensions;
+using Moq;
 using Xunit;
 
 #endregion
@@ -167,7 +168,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
 
             // Verify other arguments throw an exception if null
             action = () => CustomizingWindowPatchReviseOpenAction.Postfix(UnityTestExtensions.CreateCustomizingWindow(), null);
-            mockLogger.VerifyArgumentNullException(action, 2);
+            mockLogger.VerifyArgumentNullException(action, Times.Exactly(2));
         }
 
         /// <summary>Harmony requires the constructor to be public.</summary>

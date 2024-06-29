@@ -8,6 +8,7 @@ using FluentAssertions;
 using LobotomyCorporationMods.BugFixes;
 using LobotomyCorporationMods.BugFixes.Patches;
 using LobotomyCorporationMods.Test.Extensions;
+using Moq;
 using Xunit;
 
 #endregion
@@ -79,9 +80,9 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes
 
             // Verify other arguments throw exception when null
             action = () => CustomizingWindowPatchSetAgentStatBonus.Prefix(UnityTestExtensions.CreateCustomizingWindow(), null, UnityTestExtensions.CreateAgentData());
-            mockLogger.VerifyArgumentNullException(action, 2);
+            mockLogger.VerifyArgumentNullException(action, Times.Exactly(2));
             action = () => CustomizingWindowPatchSetAgentStatBonus.Prefix(UnityTestExtensions.CreateCustomizingWindow(), UnityTestExtensions.CreateAgentModel(), null);
-            mockLogger.VerifyArgumentNullException(action, 3);
+            mockLogger.VerifyArgumentNullException(action, Times.Exactly(3));
         }
     }
 }

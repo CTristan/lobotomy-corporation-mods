@@ -57,18 +57,18 @@ namespace LobotomyCorporationMods.Test.Extensions
 
         internal static void VerifyArgumentNullException([NotNull] this Mock<ILogger> mockLogger,
             Action action,
-            int numberOfTimes = 1)
+            Times? numberOfTimes = null)
         {
             action.Should().Throw<ArgumentNullException>();
-            mockLogger.Verify(logger => logger.WriteException(It.IsAny<ArgumentNullException>()), Times.Exactly(numberOfTimes));
+            mockLogger.Verify(logger => logger.WriteException(It.IsAny<ArgumentNullException>()), numberOfTimes ?? Times.Once());
         }
 
         internal static void VerifyNullReferenceException([NotNull] this Mock<ILogger> mockLogger,
             Action action,
-            int numberOfTimes = 1)
+            Times? numberOfTimes = null)
         {
             action.Should().Throw<NullReferenceException>();
-            mockLogger.Verify(logger => logger.WriteException(It.IsAny<NullReferenceException>()), Times.Exactly(numberOfTimes));
+            mockLogger.Verify(logger => logger.WriteException(It.IsAny<NullReferenceException>()), numberOfTimes ?? Times.Once());
         }
     }
 }

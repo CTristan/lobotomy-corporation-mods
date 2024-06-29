@@ -7,6 +7,7 @@ using FluentAssertions;
 using LobotomyCorporationMods.NotifyWhenAgentReceivesGift;
 using LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches;
 using LobotomyCorporationMods.Test.Extensions;
+using Moq;
 using Xunit;
 
 #endregion
@@ -24,7 +25,7 @@ namespace LobotomyCorporationMods.Test.Mods.NotifyWhenAgentReceivesGift
             Action action = () => UnitModelPatchAttachEgoGift.Prefix(null, UnityTestExtensions.CreateEgoGiftModel());
             mockLogger.VerifyArgumentNullException(action);
             action = () => UnitModelPatchAttachEgoGift.Prefix(UnityTestExtensions.CreateAgentModel(), null);
-            mockLogger.VerifyArgumentNullException(action, 2);
+            mockLogger.VerifyArgumentNullException(action, Times.Exactly(2));
         }
 
         [Fact]
