@@ -17,7 +17,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
         {
             var commandWindow = CommandWindow.CommandWindow.CurrentWindow;
 
-            return IsDayStarted(currentGameManager) && IsCorrectWindow(commandWindow) && IsAgentControllable(state);
+            return IsDayStarted(currentGameManager) && commandWindow.IsAbnormalityWorkWindow() && IsAgentControllable(state);
         }
 
         /// <summary>Checks if the day has already started.</summary>
@@ -26,14 +26,6 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
         private static bool IsDayStarted(GameManager currentGameManager)
         {
             return currentGameManager.IsNotNull() && currentGameManager.ManageStarted;
-        }
-
-        /// <summary>Checks if the current CommandWindow is an abnormality work window.</summary>
-        /// <param name="commandWindow">The current CommandWindow to check.</param>
-        /// <returns>True if the window is correct, false otherwise.</returns>
-        private static bool IsCorrectWindow(CommandWindow.CommandWindow commandWindow)
-        {
-            return commandWindow.IsNotNull() && commandWindow.IsAbnormalityWorkWindow();
         }
 
         /// <summary>Checks if the agent is controllable.</summary>
