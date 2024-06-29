@@ -99,12 +99,11 @@ namespace LobotomyCorporationMods.Common.Implementations
             ApplyHarmonyPatch(type, modFileName);
         }
 
-        private void HandleDirectories(ICollection<DirectoryInfo> directories,
+        private void HandleDirectories([CanBeNull] ICollection<DirectoryInfo> directories,
             [NotNull] string modFileName)
         {
             // Try to get Basemod directory list if we don't have one
-            directories = directories ?? Add_On.instance.DirList;
-            FileManager = new FileManager(modFileName, directories);
+            FileManager = new FileManager(modFileName, directories ?? Add_On.instance.DirList);
         }
 
         private void InitializeLogger()

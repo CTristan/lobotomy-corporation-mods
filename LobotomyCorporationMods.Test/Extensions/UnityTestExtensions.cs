@@ -26,9 +26,9 @@ namespace LobotomyCorporationMods.Test.Extensions
             Appearance appearance = null,
             StatBonus statBonus = null)
         {
-            agentName = EnsureNotNullWithDefault(agentName, () => CreateAgentName());
-            appearance = EnsureNotNullWithDefault(appearance, () => CreateAppearance());
-            statBonus = EnsureNotNullWithDefault(statBonus, CreateStatBonus);
+            agentName = TestExtensions.EnsureNotNullWithDefault(agentName, () => CreateAgentName());
+            appearance = TestExtensions.EnsureNotNullWithDefault(appearance, () => CreateAppearance());
+            statBonus = TestExtensions.EnsureNotNullWithDefault(statBonus, CreateStatBonus);
 
             return new AgentData
             {
@@ -43,9 +43,9 @@ namespace LobotomyCorporationMods.Test.Extensions
             CustomizingWindow customizingWindow = null,
             AgentInfoWindow.UIComponent uiComponents = null)
         {
-            customizingBlock = EnsureNotNullWithDefault(customizingBlock, CreateGameObject);
-            customizingWindow = EnsureNotNullWithDefault(customizingWindow, () => CreateCustomizingWindow());
-            uiComponents = EnsureNotNullWithDefault(uiComponents, CreateUIComponent);
+            customizingBlock = TestExtensions.EnsureNotNullWithDefault(customizingBlock, CreateGameObject);
+            customizingWindow = TestExtensions.EnsureNotNullWithDefault(customizingWindow, () => CreateCustomizingWindow());
+            uiComponents = TestExtensions.EnsureNotNullWithDefault(uiComponents, CreateUIComponent);
 
             CreateUninitializedObject<AgentInfoWindow>(out var agentInfoWindow);
 
@@ -78,12 +78,12 @@ namespace LobotomyCorporationMods.Test.Extensions
             WorkerSprite.WorkerSprite spriteData = null,
             List<UnitStatBuf> statBufList = null)
         {
-            agentName = EnsureNotNullWithDefault(agentName, () => CreateAgentName());
-            bufList = EnsureNotNullWithDefault(bufList, () => new List<UnitBuf>());
-            equipment = EnsureNotNullWithDefault(equipment, CreateUnitEquipSpace);
-            primaryStat = EnsureNotNullWithDefault(primaryStat, CreateWorkerPrimaryStat);
-            spriteData = EnsureNotNullWithDefault(spriteData, CreateWorkerSprite);
-            statBufList = EnsureNotNullWithDefault(statBufList, () => new List<UnitStatBuf>());
+            agentName = TestExtensions.EnsureNotNullWithDefault(agentName, () => CreateAgentName());
+            bufList = TestExtensions.EnsureNotNullWithDefault(bufList, () => new List<UnitBuf>());
+            equipment = TestExtensions.EnsureNotNullWithDefault(equipment, CreateUnitEquipSpace);
+            primaryStat = TestExtensions.EnsureNotNullWithDefault(primaryStat, CreateWorkerPrimaryStat);
+            spriteData = TestExtensions.EnsureNotNullWithDefault(spriteData, CreateWorkerSprite);
+            statBufList = TestExtensions.EnsureNotNullWithDefault(statBufList, () => new List<UnitStatBuf>());
 
             CreateUninitializedObject<AgentModel>(out var agentModel);
 
@@ -119,27 +119,12 @@ namespace LobotomyCorporationMods.Test.Extensions
             return GetPopulatedUninitializedObject(agentModel, fields, newValues);
         }
 
-        /// <summary>Ensure that a value is not null, and if it.IsNull(), return the result of the specified default method.</summary>
-        /// <remarks>
-        ///     This method is used to ensure that a value is not null. If the value.IsNull(), the specified default method will be called to provide a default value. The default method
-        ///     should return a value of the same type as the value being checked.
-        /// </remarks>
-        /// <typeparam name="T">The type of the value being checked.</typeparam>
-        /// <param name="value">The value to check for null.</param>
-        /// <param name="defaultMethod">The method to call to provide a default value if the value.IsNull().</param>
-        /// <returns>The original value if it is not null, or the result of the default method if the value.IsNull().</returns>
-        private static T EnsureNotNullWithDefault<T>([CanBeNull] T value,
-            Func<T> defaultMethod) where T : class
-        {
-            return value ?? defaultMethod();
-        }
-
         [NotNull]
         internal static AgentName CreateAgentName(AgentNameTypeInfo metaInfo = null,
             Dictionary<string, string> nameDic = null)
         {
-            metaInfo = EnsureNotNullWithDefault(metaInfo, () => CreateAgentNameTypeInfo());
-            nameDic = EnsureNotNullWithDefault(nameDic, () => new Dictionary<string, string>());
+            metaInfo = TestExtensions.EnsureNotNullWithDefault(metaInfo, () => CreateAgentNameTypeInfo());
+            nameDic = TestExtensions.EnsureNotNullWithDefault(nameDic, () => new Dictionary<string, string>());
 
             CreateUninitializedObject<AgentName>(out var agentName);
 
@@ -160,7 +145,7 @@ namespace LobotomyCorporationMods.Test.Extensions
         [NotNull]
         private static AgentNameTypeInfo CreateAgentNameTypeInfo(Dictionary<string, string> nameDic = null)
         {
-            nameDic = EnsureNotNullWithDefault(nameDic, () => new Dictionary<string, string>());
+            nameDic = TestExtensions.EnsureNotNullWithDefault(nameDic, () => new Dictionary<string, string>());
 
             return new AgentNameTypeInfo
             {
@@ -174,10 +159,10 @@ namespace LobotomyCorporationMods.Test.Extensions
             Image workFilterFill = null,
             Text workFilterText = null)
         {
-            coloredTargets = EnsureNotNullWithDefault(coloredTargets, () => new List<MaskableGraphic>());
-            currentAgent = EnsureNotNullWithDefault(currentAgent, () => CreateAgentModel());
-            workFilterFill = EnsureNotNullWithDefault(workFilterFill, CreateImage);
-            workFilterText = EnsureNotNullWithDefault(workFilterText, CreateText);
+            coloredTargets = TestExtensions.EnsureNotNullWithDefault(coloredTargets, () => new List<MaskableGraphic>());
+            currentAgent = TestExtensions.EnsureNotNullWithDefault(currentAgent, () => CreateAgentModel());
+            workFilterFill = TestExtensions.EnsureNotNullWithDefault(workFilterFill, CreateImage);
+            workFilterText = TestExtensions.EnsureNotNullWithDefault(workFilterText, CreateText);
 
             CreateUninitializedObject<AgentSlot>(out var agentSlot);
 
@@ -204,7 +189,7 @@ namespace LobotomyCorporationMods.Test.Extensions
         [NotNull]
         private static Appearance CreateAppearance(WorkerSprite.WorkerSprite spriteSet = null)
         {
-            spriteSet = EnsureNotNullWithDefault(spriteSet, CreateWorkerSprite);
+            spriteSet = TestExtensions.EnsureNotNullWithDefault(spriteSet, CreateWorkerSprite);
 
             return new Appearance
             {
@@ -224,7 +209,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             CommandType currentWindowType = (CommandType)1,
             long selectedWork = 0L)
         {
-            currentTarget = EnsureNotNullWithDefault(currentTarget, () => CreateUnitModel());
+            currentTarget = TestExtensions.EnsureNotNullWithDefault(currentTarget, () => CreateUnitModel());
 
             CreateUninitializedObject<CommandWindow.CommandWindow>(out var commandWindow);
 
@@ -250,7 +235,7 @@ namespace LobotomyCorporationMods.Test.Extensions
         [NotNull]
         internal static CreatureEquipmentMakeInfo CreateCreatureEquipmentMakeInfo(EquipmentTypeInfo equipTypeInfo = null)
         {
-            equipTypeInfo = EnsureNotNullWithDefault(equipTypeInfo, () => CreateEquipmentTypeInfo());
+            equipTypeInfo = TestExtensions.EnsureNotNullWithDefault(equipTypeInfo, () => CreateEquipmentTypeInfo());
 
             return new CreatureEquipmentMakeInfo
             {
@@ -261,7 +246,7 @@ namespace LobotomyCorporationMods.Test.Extensions
         [NotNull]
         internal static CreatureLayer CreateCreatureLayer(Dictionary<long, CreatureUnit> creatureDic = null)
         {
-            creatureDic = EnsureNotNullWithDefault(creatureDic, () => new Dictionary<long, CreatureUnit>());
+            creatureDic = TestExtensions.EnsureNotNullWithDefault(creatureDic, () => new Dictionary<long, CreatureUnit>());
 
             CreateUninitializedObject<CreatureLayer>(out var creatureLayer);
 
@@ -287,10 +272,10 @@ namespace LobotomyCorporationMods.Test.Extensions
             int qliphothCounter = 1,
             SkillTypeInfo skillTypeInfo = null)
         {
-            agent = EnsureNotNullWithDefault(agent, () => CreateAgentModel());
-            metaInfo = EnsureNotNullWithDefault(metaInfo, () => CreateCreatureTypeInfo());
-            observeInfo = EnsureNotNullWithDefault(observeInfo, () => CreateCreatureObserveInfoModel());
-            skillTypeInfo = EnsureNotNullWithDefault(skillTypeInfo, CreateSkillTypeInfo);
+            agent = TestExtensions.EnsureNotNullWithDefault(agent, () => CreateAgentModel());
+            metaInfo = TestExtensions.EnsureNotNullWithDefault(metaInfo, () => CreateCreatureTypeInfo());
+            observeInfo = TestExtensions.EnsureNotNullWithDefault(observeInfo, () => CreateCreatureObserveInfoModel());
+            skillTypeInfo = TestExtensions.EnsureNotNullWithDefault(skillTypeInfo, CreateSkillTypeInfo);
 
             CreateUninitializedObject<CreatureModel>(out var creatureModel);
 
@@ -320,8 +305,8 @@ namespace LobotomyCorporationMods.Test.Extensions
         private static CreatureObserveInfoModel CreateCreatureObserveInfoModel(CreatureTypeInfo metaInfo = null,
             Dictionary<string, ObserveRegion> observeRegions = null)
         {
-            metaInfo = EnsureNotNullWithDefault(metaInfo, () => CreateCreatureTypeInfo());
-            observeRegions = EnsureNotNullWithDefault(observeRegions, () => new Dictionary<string, ObserveRegion>());
+            metaInfo = TestExtensions.EnsureNotNullWithDefault(metaInfo, () => CreateCreatureTypeInfo());
+            observeRegions = TestExtensions.EnsureNotNullWithDefault(observeRegions, () => new Dictionary<string, ObserveRegion>());
 
             CreateUninitializedObject<CreatureObserveInfoModel>(out var creatureObserveInfoModel);
 
@@ -342,7 +327,7 @@ namespace LobotomyCorporationMods.Test.Extensions
         [NotNull]
         internal static CreatureTypeInfo CreateCreatureTypeInfo(List<CreatureEquipmentMakeInfo> equipMakeInfos = null)
         {
-            equipMakeInfos = EnsureNotNullWithDefault(equipMakeInfos, () => new List<CreatureEquipmentMakeInfo>());
+            equipMakeInfos = TestExtensions.EnsureNotNullWithDefault(equipMakeInfos, () => new List<CreatureEquipmentMakeInfo>());
 
             return new CreatureTypeInfo
             {
@@ -364,10 +349,10 @@ namespace LobotomyCorporationMods.Test.Extensions
             AgentData currentData = null,
             CustomizingType currentWindowType = (CustomizingType)1)
         {
-            appearanceBlock = EnsureNotNullWithDefault(appearanceBlock, CreateGameObject);
-            appearanceUI = EnsureNotNullWithDefault(appearanceUI, CreateAppearanceUI);
-            currentAgent = EnsureNotNullWithDefault(currentAgent, () => CreateAgentModel());
-            currentData = EnsureNotNullWithDefault(currentData, () => CreateAgentData());
+            appearanceBlock = TestExtensions.EnsureNotNullWithDefault(appearanceBlock, CreateGameObject);
+            appearanceUI = TestExtensions.EnsureNotNullWithDefault(appearanceUI, CreateAppearanceUI);
+            currentAgent = TestExtensions.EnsureNotNullWithDefault(currentAgent, () => CreateAgentModel());
+            currentData = TestExtensions.EnsureNotNullWithDefault(currentData, () => CreateAgentData());
 
             CreateUninitializedObject<CustomizingWindow>(out var customizingWindow);
 
@@ -411,8 +396,8 @@ namespace LobotomyCorporationMods.Test.Extensions
         internal static EGOgiftModel CreateEgoGiftModel(EquipmentTypeInfo metaInfo = null,
             EquipmentScriptBase script = null)
         {
-            metaInfo = EnsureNotNullWithDefault(metaInfo, () => CreateEquipmentTypeInfo());
-            script = EnsureNotNullWithDefault(script, () => CreateEquipmentScriptBase());
+            metaInfo = TestExtensions.EnsureNotNullWithDefault(metaInfo, () => CreateEquipmentTypeInfo());
+            script = TestExtensions.EnsureNotNullWithDefault(script, () => CreateEquipmentScriptBase());
 
             return new EGOgiftModel
             {
@@ -424,7 +409,7 @@ namespace LobotomyCorporationMods.Test.Extensions
         [NotNull]
         private static EquipmentModel CreateEquipmentModel(EquipmentTypeInfo metaInfo = null)
         {
-            metaInfo = EnsureNotNullWithDefault(metaInfo, () => CreateEquipmentTypeInfo());
+            metaInfo = TestExtensions.EnsureNotNullWithDefault(metaInfo, () => CreateEquipmentTypeInfo());
 
             return new EquipmentModel
             {
@@ -435,7 +420,7 @@ namespace LobotomyCorporationMods.Test.Extensions
         [NotNull]
         private static EquipmentScriptBase CreateEquipmentScriptBase(EquipmentModel model = null)
         {
-            model = EnsureNotNullWithDefault(model, () => CreateEquipmentModel());
+            model = TestExtensions.EnsureNotNullWithDefault(model, () => CreateEquipmentModel());
 
             CreateUninitializedObject<EquipmentScriptBase>(out var equipmentScriptBase);
 
@@ -454,8 +439,8 @@ namespace LobotomyCorporationMods.Test.Extensions
         internal static EquipmentTypeInfo CreateEquipmentTypeInfo(EGObonusInfo bonus = null,
             Dictionary<string, string> localizeData = null)
         {
-            bonus = EnsureNotNullWithDefault(bonus, CreateEgoBonusInfo);
-            localizeData = EnsureNotNullWithDefault(localizeData, () => new Dictionary<string, string>());
+            bonus = TestExtensions.EnsureNotNullWithDefault(bonus, CreateEgoBonusInfo);
+            localizeData = TestExtensions.EnsureNotNullWithDefault(localizeData, () => new Dictionary<string, string>());
 
             CreateUninitializedObject<EquipmentTypeInfo>(out var equipmentTypeInfo);
 
@@ -518,7 +503,7 @@ namespace LobotomyCorporationMods.Test.Extensions
         [NotNull]
         internal static LocalizeTextDataModel CreateLocalizeTextDataModel(Dictionary<string, string> list = null)
         {
-            list = EnsureNotNullWithDefault(list, () => new Dictionary<string, string>());
+            list = TestExtensions.EnsureNotNullWithDefault(list, () => new Dictionary<string, string>());
 
             CreateUninitializedObject<LocalizeTextDataModel>(out var localizeTextDataModel);
 
@@ -544,7 +529,7 @@ namespace LobotomyCorporationMods.Test.Extensions
         [NotNull]
         internal static SkillTypeList CreateSkillTypeList(SkillTypeInfo[] skillTypeInfoList = null)
         {
-            skillTypeInfoList = EnsureNotNullWithDefault(skillTypeInfoList, Array.Empty<SkillTypeInfo>);
+            skillTypeInfoList = TestExtensions.EnsureNotNullWithDefault(skillTypeInfoList, Array.Empty<SkillTypeInfo>);
 
             var skillType = SkillTypeList.instance;
             skillType.Init(skillTypeInfoList);
@@ -597,8 +582,8 @@ namespace LobotomyCorporationMods.Test.Extensions
         internal static UnitModel CreateUnitModel(List<UnitBuf> bufList = null,
             List<UnitStatBuf> statBufList = null)
         {
-            bufList = EnsureNotNullWithDefault(bufList, () => new List<UnitBuf>());
-            statBufList = EnsureNotNullWithDefault(statBufList, () => new List<UnitStatBuf>());
+            bufList = TestExtensions.EnsureNotNullWithDefault(bufList, () => new List<UnitBuf>());
+            statBufList = TestExtensions.EnsureNotNullWithDefault(statBufList, () => new List<UnitStatBuf>());
 
             CreateUninitializedObject<UnitModel>(out var unitModel);
 
@@ -619,7 +604,7 @@ namespace LobotomyCorporationMods.Test.Extensions
         [NotNull]
         internal static UnitStatBuf CreateUnitStatBuf(WorkerPrimaryStatBonus primaryStat = null)
         {
-            primaryStat = EnsureNotNullWithDefault(primaryStat, CreateWorkerPrimaryStatBonus);
+            primaryStat = TestExtensions.EnsureNotNullWithDefault(primaryStat, CreateWorkerPrimaryStatBonus);
 
             CreateUninitializedObject<UnitStatBuf>(out var unitStatBuf);
 
@@ -639,9 +624,9 @@ namespace LobotomyCorporationMods.Test.Extensions
             SkillTypeInfo skillTypeInfo = null,
             CreatureModel targetCreature = null)
         {
-            agent = EnsureNotNullWithDefault(agent, () => CreateAgentModel());
-            skillTypeInfo = EnsureNotNullWithDefault(skillTypeInfo, CreateSkillTypeInfo);
-            targetCreature = EnsureNotNullWithDefault(targetCreature, () => CreateCreatureModel());
+            agent = TestExtensions.EnsureNotNullWithDefault(agent, () => CreateAgentModel());
+            skillTypeInfo = TestExtensions.EnsureNotNullWithDefault(skillTypeInfo, CreateSkillTypeInfo);
+            targetCreature = TestExtensions.EnsureNotNullWithDefault(targetCreature, () => CreateCreatureModel());
 
             // Needed to avoid circular reference
             if (targetCreature.currentSkill.IsNotNull())
@@ -687,7 +672,7 @@ namespace LobotomyCorporationMods.Test.Extensions
         [NotNull]
         internal static WorkerSpriteManager CreateWorkerSpriteManager(WorkerBasicSpriteController basicData = null)
         {
-            basicData = EnsureNotNullWithDefault(basicData, CreateWorkerBasicSpriteController);
+            basicData = TestExtensions.EnsureNotNullWithDefault(basicData, CreateWorkerBasicSpriteController);
 
             CreateUninitializedObject<WorkerSpriteManager>(out var workerSpriteManager);
 

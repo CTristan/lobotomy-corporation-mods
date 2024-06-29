@@ -112,7 +112,7 @@ namespace LobotomyCorporationMods.Test.Mods.Common
         internal void TestInitializePatchData([NotNull] ICollection<DirectoryInfo> directoryList,
             Type patchType = null)
         {
-            patchType = patchType ?? typeof(FakeHarmonyPatch);
+            patchType = TestExtensions.EnsureNotNullWithDefault(patchType, () => typeof(FakeHarmonyPatch));
 
             var directory = directoryList.First();
             var testFileWithPath = Path.Combine(directory.FullName, FileNameThatExists);
