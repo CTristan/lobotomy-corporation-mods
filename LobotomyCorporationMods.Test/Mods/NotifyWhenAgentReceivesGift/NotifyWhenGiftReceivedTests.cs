@@ -32,17 +32,44 @@ namespace LobotomyCorporationMods.Test.Mods.NotifyWhenAgentReceivesGift
 
         protected Mock<INoticeAdapter> NoticeAdapter { get; } = new Mock<INoticeAdapter>();
 
-        /// <summary>
-        ///     Returns a gift object that can be used for tests.
-        /// </summary>
         [NotNull]
-        protected static EGOgiftModel GetGift([NotNull] string giftName, long equipmentId = DefaultEquipmentId,
-            int giftId = DefaultGiftId, EGOgiftAttachRegion attachRegion = DefaultGiftAttachRegion)
+        protected static AgentModel GetAgentWithLockedGift(string agentName,
+            EGOgiftAttachRegion attachRegion)
         {
-            var textData = new Dictionary<string, string> { { giftName, giftName } };
+            GetGift(DefaultGiftName);
+            var unitModel = UnityTestExtensions.CreateAgentModel(name: agentName);
+            var oldGift = GetGift(DefaultGiftName, DefaultEquipmentId + 1, DefaultGiftId + 1, attachRegion);
+            unitModel.Equipment.gifts.addedGifts.Add(oldGift);
+            var giftLockState = new UnitEGOgiftSpace.GiftLockState
+            {
+                id = DefaultEquipmentId + 1,
+                state = true,
+            };
+            unitModel.Equipment.gifts.lockState.Add(1, giftLockState);
+            return unitModel;
+        }
+
+        /// <summary>Returns a gift object that can be used for tests.</summary>
+        [NotNull]
+        protected static EGOgiftModel GetGift([NotNull] string giftName,
+            long equipmentId = DefaultEquipmentId,
+            int giftId = DefaultGiftId,
+            EGOgiftAttachRegion attachRegion = DefaultGiftAttachRegion)
+        {
+            var textData = new Dictionary<string, string>
+            {
+                {
+                    giftName, giftName
+                },
+            };
             InitializeTextData(textData);
 
-            var equipmentNameDictionary = new Dictionary<string, string> { { "name", giftName } };
+            var equipmentNameDictionary = new Dictionary<string, string>
+            {
+                {
+                    "name", giftName
+                },
+            };
             var metaInfo = UnityTestExtensions.CreateEquipmentTypeInfo(localizeData: equipmentNameDictionary);
             metaInfo.id = giftId;
             metaInfo.attachPos = attachRegion.ToString();
@@ -53,10 +80,7 @@ namespace LobotomyCorporationMods.Test.Mods.NotifyWhenAgentReceivesGift
             return gift;
         }
 
-        /// <summary>
-        ///     Adds the gift name to the engine's localized text data and initializes an observer to store any messages sent as a
-        ///     notice.
-        /// </summary>
+        /// <summary>Adds the gift name to the engine's localized text data and initializes an observer to store any messages sent as a notice.</summary>
         private static void InitializeTextData(Dictionary<string, string> textData)
         {
             UnityTestExtensions.CreateLocalizeTextDataModel(textData);

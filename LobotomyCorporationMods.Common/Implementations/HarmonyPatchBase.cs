@@ -20,20 +20,16 @@ namespace LobotomyCorporationMods.Common.Implementations
     {
         private const string DuplicateErrorMessage = "Please create a separate static instance for your mod.";
 
-        /// <summary>
-        ///     Singleton ensures thread safety across Harmony patches.
-        ///     https://csharpindepth.com/Articles/Singleton
-        /// </summary>
+        /// <summary>Singleton ensures thread safety across Harmony patches. https://csharpindepth.com/Articles/Singleton</summary>
         protected static readonly HarmonyPatchBase Instance = new HarmonyPatchBase();
 
         private static readonly object s_locker = new object();
         private static readonly HashSet<object> s_registeredTypes = new HashSet<object>();
 
-        /// <summary>
-        ///     Validate that each mod is using their own Singleton instance.
-        ///     https://stackoverflow.com/a/2855324/1410257
-        /// </summary>
-        protected HarmonyPatchBase(Type harmonyPatchType, string modFileName, bool isNotDuplicating)
+        /// <summary>Validate that each mod is using their own Singleton instance. https://stackoverflow.com/a/2855324/1410257</summary>
+        protected HarmonyPatchBase(Type harmonyPatchType,
+            string modFileName,
+            bool isNotDuplicating)
         {
             if (!isNotDuplicating)
             {
@@ -56,15 +52,14 @@ namespace LobotomyCorporationMods.Common.Implementations
         public ILogger Logger { get; private set; }
 
 
-        /// <summary>
-        ///     Entry point for testing.
-        /// </summary>
+        /// <summary>Entry point for testing.</summary>
         public void AddLoggerTarget(ILogger logger)
         {
             Logger = logger;
         }
 
-        protected void ApplyHarmonyPatch([NotNull] Type harmonyPatchType, string modFileName)
+        protected void ApplyHarmonyPatch([NotNull] Type harmonyPatchType,
+            string modFileName)
         {
             try
             {
@@ -81,7 +76,8 @@ namespace LobotomyCorporationMods.Common.Implementations
             }
         }
 
-        protected void SetUpPatchData(Type type, string modFileName,
+        protected void SetUpPatchData(Type type,
+            string modFileName,
             [CanBeNull] ICollection<DirectoryInfo> directories = null)
         {
             if (!type.IsHarmonyPatch())
@@ -103,7 +99,8 @@ namespace LobotomyCorporationMods.Common.Implementations
             ApplyHarmonyPatch(type, modFileName);
         }
 
-        private void HandleDirectories(ICollection<DirectoryInfo> directories, string modFileName)
+        private void HandleDirectories(ICollection<DirectoryInfo> directories,
+            [NotNull] string modFileName)
         {
             // Try to get Basemod directory list if we don't have one
             directories = directories ?? Add_On.instance.DirList;

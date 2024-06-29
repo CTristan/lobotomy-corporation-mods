@@ -15,9 +15,7 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
 {
     public sealed class HarmonyPatchTests
     {
-        /// <summary>
-        ///     Harmony requires the constructor to be public.
-        /// </summary>
+        /// <summary>Harmony requires the constructor to be public.</summary>
         [Fact]
         public void BadLuckProtectionForGifts_Constructor_is_public_and_externally_accessible()
         {
@@ -46,15 +44,14 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
             var result = 0f;
 
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
-            return;
-
             void Action()
             {
                 // ReSharper disable once AssignNullToNotNullAttribute
                 // Forcing null argument to test exception logging.
                 CreatureEquipmentMakeInfoPatchGetProb.Postfix(null, ref result);
             }
+
+            mockLogger.VerifyArgumentNullException(Action);
         }
 
         [Fact]
@@ -75,7 +72,7 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
 
             Action action = GameSceneControllerPatchOnClickNextDay.Postfix;
 
-            mockLogger.VerifyExceptionLogged<NullReferenceException>(action);
+            mockLogger.VerifyNullReferenceException(action);
         }
 
         [Fact]
@@ -96,7 +93,7 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
 
             Action action = GameSceneControllerPatchOnStageStart.Postfix;
 
-            mockLogger.VerifyExceptionLogged<NullReferenceException>(action);
+            mockLogger.VerifyNullReferenceException(action);
         }
 
         [Fact]
@@ -117,7 +114,7 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
 
             Action action = NewTitleScriptPatchOnClickNewGame.Postfix;
 
-            mockLogger.VerifyExceptionLogged<NullReferenceException>(action);
+            mockLogger.VerifyNullReferenceException(action);
         }
 
         [Fact]
@@ -136,15 +133,14 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
-            return;
-
             void Action()
             {
                 // ReSharper disable once AssignNullToNotNullAttribute
                 // Forcing null argument to test exception logging.
                 UseSkillPatchFinishWorkSuccessfully.Postfix(null);
             }
+
+            mockLogger.VerifyArgumentNullException(Action);
         }
     }
 }

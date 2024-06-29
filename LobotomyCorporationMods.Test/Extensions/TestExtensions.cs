@@ -23,10 +23,9 @@ namespace LobotomyCorporationMods.Test.Extensions
         internal static Mock<IFileManager> GetMockFileManager()
         {
             var mockFileManager = new Mock<IFileManager>();
-            _ = mockFileManager.Setup(fm => fm.GetOrCreateFile(It.IsAny<string>()))
-                .Returns((string fileName) => fileName.InCurrentDirectory());
-            _ = mockFileManager.Setup(fm => fm.ReadAllText(It.IsAny<string>(), It.IsAny<bool>()))
-                .Returns((string fileName, bool _) => File.ReadAllText(fileName.InCurrentDirectory()));
+            _ = mockFileManager.Setup(fm => fm.GetOrCreateFile(It.IsAny<string>())).Returns((string fileName) => fileName.InCurrentDirectory());
+            _ = mockFileManager.Setup(fm => fm.ReadAllText(It.IsAny<string>(), It.IsAny<bool>())).Returns((string fileName,
+                bool _) => File.ReadAllText(fileName.InCurrentDirectory()));
 
             return mockFileManager;
         }
@@ -45,7 +44,8 @@ namespace LobotomyCorporationMods.Test.Extensions
             return Path.Combine(Directory.GetCurrentDirectory(), fileName);
         }
 
-        internal static void ValidateHarmonyPatch([NotNull] this MemberInfo patchClass, Type originalClass,
+        internal static void ValidateHarmonyPatch([NotNull] this MemberInfo patchClass,
+            Type originalClass,
             string methodName)
         {
             var attribute = Attribute.GetCustomAttribute(patchClass, typeof(HarmonyPatch)) as HarmonyPatch;
@@ -55,11 +55,20 @@ namespace LobotomyCorporationMods.Test.Extensions
             attribute?.info.methodName.Should().Be(methodName);
         }
 
-        internal static void VerifyExceptionLogged<TException>([NotNull] this Mock<ILogger> mockLogger, Action action,
-            int numberOfTimes = 1) where TException : Exception
+        internal static void VerifyArgumentNullException([NotNull] this Mock<ILogger> mockLogger,
+            Action action,
+            int numberOfTimes = 1)
         {
-            action.Should().Throw<TException>();
-            mockLogger.Verify(logger => logger.WriteException(It.IsAny<TException>()), Times.Exactly(numberOfTimes));
+            action.Should().Throw<ArgumentNullException>();
+            mockLogger.Verify(logger => logger.WriteException(It.IsAny<ArgumentNullException>()), Times.Exactly(numberOfTimes));
+        }
+
+        internal static void VerifyNullReferenceException([NotNull] this Mock<ILogger> mockLogger,
+            Action action,
+            int numberOfTimes = 1)
+        {
+            action.Should().Throw<NullReferenceException>();
+            mockLogger.Verify(logger => logger.WriteException(It.IsAny<NullReferenceException>()), Times.Exactly(numberOfTimes));
         }
     }
 }

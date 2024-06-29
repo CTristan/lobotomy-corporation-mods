@@ -27,8 +27,7 @@ namespace LobotomyCorporationMods.Test.Mods.Common
         {
             var mockLogger = new Mock<ILogger>();
 
-            Action action = () =>
-                _fakeHarmonyPatch.ApplyHarmonyPatch(typeof(HarmonyPatchBase), string.Empty, mockLogger.Object);
+            Action action = () => _fakeHarmonyPatch.ApplyHarmonyPatch(typeof(HarmonyPatchBase), string.Empty, mockLogger.Object);
 
             action.Should().NotThrow();
         }
@@ -38,15 +37,14 @@ namespace LobotomyCorporationMods.Test.Mods.Common
         {
             var mockLogger = new Mock<ILogger>();
 
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
-            return;
-
             void Action()
             {
                 // ReSharper disable once AssignNullToNotNullAttribute
                 // Forcing null argument to test exception logging.
                 _fakeHarmonyPatch.ApplyHarmonyPatch(null, string.Empty, mockLogger.Object);
             }
+
+            mockLogger.VerifyArgumentNullException(Action);
         }
 
         [Fact]
@@ -54,11 +52,10 @@ namespace LobotomyCorporationMods.Test.Mods.Common
         {
             var currentDirectory = Directory.GetCurrentDirectory();
 
-            Action action = () =>
-                _fakeHarmonyPatch.TestInitializePatchData(new List<DirectoryInfo>
-                {
-                    new DirectoryInfo(currentDirectory)
-                });
+            Action action = () => _fakeHarmonyPatch.TestInitializePatchData(new List<DirectoryInfo>
+            {
+                new DirectoryInfo(currentDirectory),
+            });
 
             action.Should().NotThrow();
             _fakeHarmonyPatch.Logger.Should().NotBeNull();
@@ -69,9 +66,10 @@ namespace LobotomyCorporationMods.Test.Mods.Common
         {
             var currentDirectory = Directory.GetCurrentDirectory();
 
-            Action action = () =>
-                _fakeHarmonyPatch.TestInitializePatchData(
-                    new List<DirectoryInfo> { new DirectoryInfo(currentDirectory) }, typeof(object));
+            Action action = () => _fakeHarmonyPatch.TestInitializePatchData(new List<DirectoryInfo>
+            {
+                new DirectoryInfo(currentDirectory),
+            }, typeof(object));
 
             action.Should().NotThrow();
             _fakeHarmonyPatch.Logger.Should().BeNull();
@@ -92,19 +90,18 @@ namespace LobotomyCorporationMods.Test.Mods.Common
         }
     }
 
-    /// <summary>
-    ///     Only to be used for HarmonyPatchBase tests.
-    /// </summary>
+    /// <summary>Only to be used for HarmonyPatchBase tests.</summary>
     internal sealed class FakeHarmonyPatch : HarmonyPatchBase
     {
         private const string FileNameThatExists = "FileNameThatExists.txt";
 
-        internal FakeHarmonyPatch(bool isNotDuplicating)
-            : base(typeof(FakeHarmonyPatch), nameof(FakeHarmonyPatch), isNotDuplicating)
+        internal FakeHarmonyPatch(bool isNotDuplicating) : base(typeof(FakeHarmonyPatch), nameof(FakeHarmonyPatch), isNotDuplicating)
         {
         }
 
-        internal void ApplyHarmonyPatch([NotNull] Type harmonyPatchType, string modFileName, ILogger logger)
+        internal void ApplyHarmonyPatch([NotNull] Type harmonyPatchType,
+            string modFileName,
+            ILogger logger)
         {
             AddLoggerTarget(logger);
             Instance.AddLoggerTarget(logger);
@@ -112,7 +109,8 @@ namespace LobotomyCorporationMods.Test.Mods.Common
             ApplyHarmonyPatch(harmonyPatchType, modFileName);
         }
 
-        internal void TestInitializePatchData([NotNull] ICollection<DirectoryInfo> directoryList, Type patchType = null)
+        internal void TestInitializePatchData([NotNull] ICollection<DirectoryInfo> directoryList,
+            Type patchType = null)
         {
             patchType = patchType ?? typeof(FakeHarmonyPatch);
 

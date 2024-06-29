@@ -2,15 +2,17 @@
 
 using CommandWindow;
 using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Extensions;
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
 {
     internal static class GameManagerExtensions
     {
-        internal static bool IsValidGameStage([CanBeNull] this GameManager currentGameManager, AgentState state)
+        internal static bool IsValidGameStage([CanBeNull] this GameManager currentGameManager,
+            AgentState state)
         {
             // First load won't have a game manager yet, so just gracefully exit
-            if (currentGameManager is null)
+            if (currentGameManager.IsNull())
             {
                 return false;
             }
@@ -23,12 +25,8 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
 
             // Some initial Command Window checks to make sure we're in the right state
             var commandWindow = CommandWindow.CommandWindow.CurrentWindow;
-            if (commandWindow is null || !commandWindow.IsAbnormalityWorkWindow() || state.IsUncontrollable())
-            {
-                return false;
-            }
 
-            return true;
+            return !commandWindow.IsNull() && commandWindow.IsAbnormalityWorkWindow() && !state.IsUncontrollable();
         }
     }
 }

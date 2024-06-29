@@ -2,14 +2,9 @@
 
 #region
 
-using System;
-using System.Runtime.InteropServices;
 using LobotomyCorporationMods.Common.Implementations;
 
 #endregion
-
-[assembly: CLSCompliant(false)]
-[assembly: ComVisible(false)]
 
 namespace LobotomyCorporationMods.FreeCustomization
 {
@@ -18,13 +13,11 @@ namespace LobotomyCorporationMods.FreeCustomization
     {
         public new static readonly Harmony_Patch Instance = new Harmony_Patch(true);
 
-        public Harmony_Patch()
-            : this(false)
+        public Harmony_Patch() : this(false)
         {
         }
 
-        private Harmony_Patch(bool initialize)
-            : base(typeof(Harmony_Patch), "LobotomyCorporationMods.FreeCustomization.dll", initialize)
+        private Harmony_Patch(bool initialize) : base(typeof(Harmony_Patch), "LobotomyCorporationMods.FreeCustomization.dll", initialize)
         {
         }
     }

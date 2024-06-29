@@ -20,7 +20,9 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
             GameObject.OpenAppearanceWindow();
         }
 
-        public int SetRandomStatValue(int original, int currentLevel, int bonusLevel)
+        public int SetRandomStatValue(int original,
+            int currentLevel,
+            int bonusLevel)
         {
             return GameObject.SetRandomStatValue(original, currentLevel, bonusLevel);
         }

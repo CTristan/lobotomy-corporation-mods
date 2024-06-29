@@ -9,7 +9,8 @@ namespace LobotomyCorporationMods.Common.Implementations.LoggerTargets
         private readonly IFileManager _fileManager;
         private readonly string _logFileName;
 
-        public FileLoggerTarget(IFileManager fileManager, string logFileName)
+        public FileLoggerTarget(IFileManager fileManager,
+            string logFileName)
         {
             _fileManager = fileManager;
             _logFileName = logFileName;

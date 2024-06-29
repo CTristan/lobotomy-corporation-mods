@@ -47,10 +47,10 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
         protected Mock<ITextAdapter> MockTextAdapter { get; } = new Mock<ITextAdapter>();
         protected Mock<IYggdrasilAnimAdapter> MockYggdrasilAnimAdapter { get; } = new Mock<IYggdrasilAnimAdapter>();
 
-        protected Mock<IBeautyBeastAnimAdapter> MockBeautyBeastAnimAdapter { get; } =
-            new Mock<IBeautyBeastAnimAdapter>();
+        protected Mock<IBeautyBeastAnimAdapter> MockBeautyBeastAnimAdapter { get; } = new Mock<IBeautyBeastAnimAdapter>();
 
-        protected bool AgentWillDie([NotNull] IImageAdapter workFilterFill, [NotNull] ITextAdapter workFilterText)
+        protected bool AgentWillDie([NotNull] IImageAdapter workFilterFill,
+            [NotNull] ITextAdapter workFilterText)
         {
             Guard.Against.Null(workFilterFill, nameof(workFilterFill));
             Guard.Against.Null(workFilterText, nameof(workFilterText));
@@ -60,7 +60,8 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
         }
 
         [NotNull]
-        private static AgentModel GetAgentWithGift(EquipmentId giftId = EquipmentId.None, IEnumerable<UnitBuf> unitBuffs = null)
+        private static AgentModel GetAgentWithGift(EquipmentId giftId = EquipmentId.None,
+            IEnumerable<UnitBuf> unitBuffs = null)
         {
             unitBuffs = unitBuffs ?? new List<UnitBuf>();
 
@@ -73,13 +74,18 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
         }
 
         [NotNull]
-        private static CreatureModel GetCreatureWithGift(CreatureIds creatureId = CreatureIds.OneSin, int qliphothCounter = 0, bool maxObservation = true)
+        private static CreatureModel GetCreatureWithGift(CreatureIds creatureId = CreatureIds.OneSin,
+            int qliphothCounter = 0,
+            bool maxObservation = true)
         {
             var equipmentTypeInfo = UnityTestExtensions.CreateEquipmentTypeInfo();
             equipmentTypeInfo.type = EquipmentTypeInfo.EquipmentType.SPECIAL;
 
             var creatureEquipmentMakeInfo = UnityTestExtensions.CreateCreatureEquipmentMakeInfo(equipmentTypeInfo);
-            var creatureTypeInfo = UnityTestExtensions.CreateCreatureTypeInfo(new List<CreatureEquipmentMakeInfo> { creatureEquipmentMakeInfo });
+            var creatureTypeInfo = UnityTestExtensions.CreateCreatureTypeInfo(new List<CreatureEquipmentMakeInfo>
+            {
+                creatureEquipmentMakeInfo,
+            });
             var creature = UnityTestExtensions.CreateCreatureModel(metaInfo: creatureTypeInfo, qliphothCounter: qliphothCounter);
             creature.instanceId = (long)creatureId;
             creature.metadataId = (long)creatureId;
@@ -91,14 +97,22 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
 
             // Need to initialize the CreatureLayer with our new creature
             var creatureUnit = UnityTestExtensions.CreateCreatureUnit();
-            UnityTestExtensions.CreateCreatureLayer(new Dictionary<long, CreatureUnit> { { (long)creatureId, creatureUnit } });
+            UnityTestExtensions.CreateCreatureLayer(new Dictionary<long, CreatureUnit>
+            {
+                {
+                    (long)creatureId, creatureUnit
+                },
+            });
 
             return creature;
         }
 
         [NotNull]
-        protected AgentSlot InitializeAgentSlot(CreatureIds creatureId, IEnumerable<UnitBuf> buffList = null,
-            EquipmentId giftId = (EquipmentId)1, RwbpType skillType = (RwbpType)1, int qliphothCounter = 0)
+        protected AgentSlot InitializeAgentSlot(CreatureIds creatureId,
+            IEnumerable<UnitBuf> buffList = null,
+            EquipmentId giftId = (EquipmentId)1,
+            RwbpType skillType = (RwbpType)1,
+            int qliphothCounter = 0)
         {
             buffList = buffList ?? new List<UnitBuf>();
             var creature = GetCreatureWithGift(creatureId, qliphothCounter);
@@ -118,8 +132,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
             InitializeLocalizeTextDataModel();
             InitializeSkillTypeList(rwbpType);
 
-            var commandWindow =
-                UnityTestExtensions.CreateCommandWindow(currentTarget, CommandType.Management, (long)rwbpType);
+            var commandWindow = UnityTestExtensions.CreateCommandWindow(currentTarget, CommandType.Management, (long)rwbpType);
             commandWindow.DeadColor = DeadAgentColor;
             CommandWindow.CommandWindow.CurrentWindow.DeadColor = DeadAgentColor;
 
@@ -128,14 +141,25 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
 
         private static void InitializeLocalizeTextDataModel()
         {
-            var list = new Dictionary<string, string> { { DeadAgentString, DeadAgentString } };
+            var list = new Dictionary<string, string>
+            {
+                {
+                    DeadAgentString, DeadAgentString
+                },
+            };
 
             _ = UnityTestExtensions.CreateLocalizeTextDataModel(list);
         }
 
         private static void InitializeSkillTypeList(RwbpType rwbpType)
         {
-            SkillTypeInfo[] skillTypeInfos = { new SkillTypeInfo { id = (long)rwbpType } };
+            SkillTypeInfo[] skillTypeInfos =
+            {
+                new SkillTypeInfo
+                {
+                    id = (long)rwbpType,
+                },
+            };
             _ = UnityTestExtensions.CreateSkillTypeList(skillTypeInfos);
         }
 
@@ -143,18 +167,38 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
         {
             var observeRegions = new List<ObserveInfoData>
             {
-                new ObserveInfoData { regionName = "stat" },
-                new ObserveInfoData { regionName = "defense" },
-                new ObserveInfoData { regionName = "work_r" },
-                new ObserveInfoData { regionName = "work_w" },
-                new ObserveInfoData { regionName = "work_b" },
-                new ObserveInfoData { regionName = "work_p" }
+                new ObserveInfoData
+                {
+                    regionName = "stat",
+                },
+                new ObserveInfoData
+                {
+                    regionName = "defense",
+                },
+                new ObserveInfoData
+                {
+                    regionName = "work_r",
+                },
+                new ObserveInfoData
+                {
+                    regionName = "work_w",
+                },
+                new ObserveInfoData
+                {
+                    regionName = "work_b",
+                },
+                new ObserveInfoData
+                {
+                    regionName = "work_p",
+                },
             };
             creature.observeInfo.InitObserveRegion(observeRegions);
             creature.observeInfo.ObserveAll();
         }
 
-        protected static void SetupNothingThere([NotNull] AgentSlot agentSlot, int fortitude, bool isDisguised = false)
+        protected static void SetupNothingThere([NotNull] AgentSlot agentSlot,
+            int fortitude,
+            bool isDisguised = false)
         {
             Guard.Against.Null(agentSlot, nameof(agentSlot));
             agentSlot.CurrentAgent.primaryStat.hp = fortitude;
@@ -180,16 +224,14 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
 
         protected void VerifyAgentWillDie([NotNull] AgentSlot agentSlot)
         {
-            agentSlot.PatchAfterSetFilter(IdleAgentState, GameManager, MockBeautyBeastAnimAdapter.Object,
-                MockImageAdapter.Object, MockTextAdapter.Object, MockYggdrasilAnimAdapter.Object);
+            agentSlot.PatchAfterSetFilter(IdleAgentState, GameManager, MockBeautyBeastAnimAdapter.Object, MockImageAdapter.Object, MockTextAdapter.Object, MockYggdrasilAnimAdapter.Object);
 
             AgentWillDie(MockImageAdapter.Object, MockTextAdapter.Object).Should().BeTrue();
         }
 
         protected void VerifyAgentWillNotDie([NotNull] AgentSlot agentSlot)
         {
-            agentSlot.PatchAfterSetFilter(IdleAgentState, GameManager, MockBeautyBeastAnimAdapter.Object,
-                MockImageAdapter.Object, MockTextAdapter.Object, MockYggdrasilAnimAdapter.Object);
+            agentSlot.PatchAfterSetFilter(IdleAgentState, GameManager, MockBeautyBeastAnimAdapter.Object, MockImageAdapter.Object, MockTextAdapter.Object, MockYggdrasilAnimAdapter.Object);
 
             AgentWillDie(MockImageAdapter.Object, MockTextAdapter.Object).Should().BeFalse();
         }

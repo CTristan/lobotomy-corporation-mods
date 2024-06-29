@@ -18,8 +18,10 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
     {
         public Color Color
         {
-            get => GameObject.color;
-            set => GameObject.color = value;
+            get =>
+                GameObject.color;
+            set =>
+                GameObject.color = value;
         }
     }
 }

@@ -30,10 +30,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
             customizingWindowAdapter.OpenAppearanceWindow();
         }
 
-        /// <summary>
-        ///     Runs after opening the Agent window to automatically open the appearance window, since there's no reason to hide it
-        ///     behind a button.
-        /// </summary>
+        /// <summary>Runs after opening the Agent window to automatically open the appearance window, since there's no reason to hide it behind a button.</summary>
         [EntryPoint]
         [ExcludeFromCodeCoverage]
         public static void Postfix()

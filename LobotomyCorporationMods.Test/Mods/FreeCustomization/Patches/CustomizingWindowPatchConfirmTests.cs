@@ -21,8 +21,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
     {
         private readonly Mock<IAgentLayerAdapter> MockAgentLayerAdapter = new Mock<IAgentLayerAdapter>();
 
-        private readonly Mock<IWorkerSpriteManagerAdapter> MockWorkerSpriteManagerAdapter =
-            new Mock<IWorkerSpriteManagerAdapter>();
+        private readonly Mock<IWorkerSpriteManagerAdapter> MockWorkerSpriteManagerAdapter = new Mock<IWorkerSpriteManagerAdapter>();
 
         [Fact]
         public void Changing_random_generated_agent_marks_them_as_custom()
@@ -61,7 +60,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
                 Mouth_Def = expectedSprite,
                 Mouth_Battle = expectedSprite,
                 HairColor = expectedColor,
-                EyeColor = expectedColor
+                EyeColor = expectedColor,
             };
 
             var currentAgent = UnityTestExtensions.CreateAgentModel();
@@ -86,15 +85,26 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
         [Theory]
         [InlineData("CurrentName", "ExpectedName")]
         [InlineData("OldName", "NewName")]
-        public void Renaming_agent_changes_agent_name_successfully([NotNull] string currentName, [NotNull] string expectedName)
+        public void Renaming_agent_changes_agent_name_successfully([NotNull] string currentName,
+            [NotNull] string expectedName)
         {
             // Arrange
             var currentAgent = UnityTestExtensions.CreateAgentModel();
             currentAgent.name = currentName;
-            currentAgent._agentName.nameDic = new Dictionary<string, string> { { currentName, currentName } };
+            currentAgent._agentName.nameDic = new Dictionary<string, string>
+            {
+                {
+                    currentName, currentName
+                },
+            };
 
             var expectedAgentName = UnityTestExtensions.CreateAgentName();
-            expectedAgentName.nameDic = new Dictionary<string, string> { { expectedName, expectedName } };
+            expectedAgentName.nameDic = new Dictionary<string, string>
+            {
+                {
+                    expectedName, expectedName
+                },
+            };
 
             var expectedData = UnityTestExtensions.CreateAgentData();
             expectedData.CustomName = expectedName;
@@ -123,8 +133,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
             sut.PatchBeforeConfirm(MockAgentLayerAdapter.Object, MockWorkerSpriteManagerAdapter.Object);
 
             // Assert
-            MockWorkerSpriteManagerAdapter.Verify(
-                x => x.SetAgentBasicData(It.IsAny<WorkerSprite.WorkerSprite>(), It.IsAny<Appearance>()), Times.Never);
+            MockWorkerSpriteManagerAdapter.Verify(x => x.SetAgentBasicData(It.IsAny<WorkerSprite.WorkerSprite>(), It.IsAny<Appearance>()), Times.Never);
         }
     }
 }

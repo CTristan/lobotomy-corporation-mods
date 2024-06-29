@@ -3,6 +3,8 @@
 #region
 
 using Customizing;
+using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 #endregion
@@ -11,7 +13,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Extensions
 {
     internal static class CustomizingWindowExtensions
     {
-        internal static void RenameAgent(this CustomizingWindow customizingWindow)
+        internal static void RenameAgent([NotNull] this CustomizingWindow customizingWindow)
         {
             var customName = customizingWindow.CurrentData.CustomName;
             customizingWindow.CurrentAgent.name = customName;
@@ -28,9 +30,9 @@ namespace LobotomyCorporationMods.FreeCustomization.Extensions
             }
         }
 
-        internal static void SaveAgentAppearance(this CustomizingWindow customizingWindow)
+        internal static void SaveAgentAppearance([NotNull] this CustomizingWindow customizingWindow)
         {
-            if (customizingWindow.appearanceUI.copied is object)
+            if (customizingWindow.appearanceUI.copied.IsNotNull())
             {
                 customizingWindow.CurrentData.AppearCopy(customizingWindow.appearanceUI.copied);
                 customizingWindow.appearanceUI.copied = null;
@@ -39,7 +41,8 @@ namespace LobotomyCorporationMods.FreeCustomization.Extensions
             customizingWindow.CurrentAgent.SetAppearanceData(customizingWindow.CurrentData.appearance);
         }
 
-        internal static void UpdateAgentModel(this CustomizingWindow customizingWindow, IAgentLayerAdapter agentLayerAdapter)
+        internal static void UpdateAgentModel([NotNull] this CustomizingWindow customizingWindow,
+            [NotNull] IAgentLayerAdapter agentLayerAdapter)
         {
             var agentModel = customizingWindow.CurrentAgent;
             agentLayerAdapter.RemoveAgent(agentModel);

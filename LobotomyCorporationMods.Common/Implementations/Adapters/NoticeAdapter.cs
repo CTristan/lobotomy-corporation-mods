@@ -14,7 +14,8 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
     [ExcludeFromCodeCoverage]
     public sealed class NoticeAdapter : Adapter<Notice>, INoticeAdapter
     {
-        public void Send(string notice, params object[] param)
+        public void Send(string notice,
+            params object[] param)
         {
             GameObject.Send(notice, param);
         }

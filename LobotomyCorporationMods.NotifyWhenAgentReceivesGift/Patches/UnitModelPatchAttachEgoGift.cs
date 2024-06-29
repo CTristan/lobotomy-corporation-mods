@@ -19,7 +19,8 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches
     [HarmonyPatch(typeof(UnitModel), nameof(UnitModel.AttachEGOgift))]
     public static class UnitModelPatchAttachEgoGift
     {
-        public static void PatchBeforeAttachEgoGift(UnitModel instance, EquipmentModel gift,
+        public static void PatchBeforeAttachEgoGift(UnitModel instance,
+            EquipmentModel gift,
             INoticeAdapter noticeAdapter)
         {
             Guard.Against.Null(instance, nameof(instance));
@@ -39,23 +40,23 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches
             }
 
             // Send notification that the agent acquired the gift
-            var message =
-                $"<color=#66bfcd>{instance.GetUnitName()}</color> has received the gift <color=#84bd36>{gift.metaInfo.Name}</color>.";
+            var message = $"<color=#66bfcd>{instance.GetUnitName()}</color> has received the gift <color=#84bd36>{gift.metaInfo.Name}</color>.";
             noticeAdapter.Send(NoticeName.AddSystemLog, message);
         }
 
-        /// <summary>
-        ///     Needs to run before the method because we need to check ahead of time if the agent already has the gift or has
-        ///     another gift in the same position that is locked.
-        /// </summary>
+        /// <summary>Needs to run before the method because we need to check ahead of time if the agent already has the gift or has another gift in the same position that is locked.</summary>
         // ReSharper disable InconsistentNaming
         [EntryPoint]
         [ExcludeFromCodeCoverage]
-        public static void Prefix(UnitModel __instance, EGOgiftModel gift)
+        public static void Prefix(UnitModel __instance,
+            EGOgiftModel gift)
         {
             try
             {
-                var noticeAdapter = new NoticeAdapter { GameObject = Notice.instance };
+                var noticeAdapter = new NoticeAdapter
+                {
+                    GameObject = Notice.instance,
+                };
                 PatchBeforeAttachEgoGift(__instance, gift, noticeAdapter);
             }
             catch (Exception ex)

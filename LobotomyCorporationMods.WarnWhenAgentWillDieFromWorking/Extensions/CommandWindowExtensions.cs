@@ -2,9 +2,11 @@
 
 #region
 
+using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Enums;
+using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators;
@@ -16,34 +18,32 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
 {
     internal static class CommandWindowExtensions
     {
-        internal static ICreatureEvaluator GetCreatureEvaluator(this CommandWindow.CommandWindow commandWindow, AgentModel agent, IBeautyBeastAnimAdapter beautyBeastAnimAdapter,
+        /// <summary>Retrieves the creature evaluator for the given command window, agent, beautyBeastAnimAdapter, and yggdrasilAnimAdapter.</summary>
+        /// <param name="commandWindow">The command window from which to retrieve the creature evaluator.</param>
+        /// <param name="agent">The agent model.</param>
+        /// <param name="evaluators">The evaluators dictionary.</param>
+        /// <param name="beautyBeastAnimAdapter">The beautyBeastAnimAdapter.</param>
+        /// <param name="yggdrasilAnimAdapter">The yggdrasilAnimAdapter.</param>
+        /// <returns>The creature evaluator for the given parameters.</returns>
+        /// <remarks>
+        ///     GetCreatureEvaluator retrieves the creature evaluator based on the command window, agent, evaluators, beautyBeastAnimAdapter, and yggdrasilAnimAdapter parameters. If the
+        ///     command window contains a creature and it is not null, the evaluator will be retrieved from the evaluators dictionary using the creature's ID. If the command window does not
+        ///     contain a creature or it.IsNull(), the evaluator will be set to null.
+        /// </remarks>
+        internal static ICreatureEvaluator GetCreatureEvaluator([NotNull] this CommandWindow.CommandWindow commandWindow,
+            AgentModel agent,
+            Dictionary<CreatureIds, Func<CreatureEvaluatorParameters, ICreatureEvaluator>> evaluators,
+            IBeautyBeastAnimAdapter beautyBeastAnimAdapter,
             IYggdrasilAnimAdapter yggdrasilAnimAdapter)
         {
             ICreatureEvaluator evaluator;
 
-            // Make sure we actually have an abnormality in our work window
-            if (commandWindow.TryGetCreature(out var creature) && !(creature is null))
+            if (commandWindow.TryGetCreature(out var creature) && !creature.IsNull())
             {
-                // Need to use the command window's skill type since the agent isn't using a skill yet
                 var skillType = commandWindow.CurrentSkill.rwbpType;
+                var evaluatorParameters = new CreatureEvaluatorParameters(agent, creature, skillType, beautyBeastAnimAdapter, yggdrasilAnimAdapter);
 
-                var evaluatorDictionary = new Dictionary<CreatureIds, CreatureEvaluator>
-                {
-                    { CreatureIds.BeautyAndTheBeast, new BeautyAndTheBeastEvaluator(agent, creature, skillType, beautyBeastAnimAdapter) },
-                    { CreatureIds.Bloodbath, new BloodbathEvaluator(agent, creature, skillType) },
-                    { CreatureIds.BlueStar, new BlueStarEvaluator(agent, creature, skillType) },
-                    { CreatureIds.CrumblingArmor, new CrumblingArmorEvaluator(agent, creature, skillType) },
-                    { CreatureIds.HappyTeddyBear, new HappyTeddyBearEvaluator(agent, creature, skillType) },
-                    { CreatureIds.NothingThere, new NothingThereEvaluator(agent, creature, skillType) },
-                    { CreatureIds.ParasiteTree, new ParasiteTreeEvaluator(agent, creature, skillType, yggdrasilAnimAdapter) },
-                    { CreatureIds.RedShoes, new RedShoesEvaluator(agent, creature, skillType) },
-                    { CreatureIds.SingingMachine, new SingingMachineEvaluator(agent, creature, skillType) },
-                    { CreatureIds.SpiderBud, new SpiderBudEvaluator(agent, creature, skillType) },
-                    { CreatureIds.VoidDream, new VoidDreamEvaluator(agent, creature, skillType) },
-                    { CreatureIds.WarmHeartedWoodsman, new WarmHeartedWoodsmanEvaluator(agent, creature, skillType) }
-                };
-
-                evaluator = evaluatorDictionary.TryGetValue((CreatureIds)creature.metadataId, out var concreteEvaluator) ? concreteEvaluator : new DefaultEvaluator(agent, creature, skillType);
+                evaluator = evaluators.TryGetValue((CreatureIds)creature.metadataId, out var factoryMethod) ? factoryMethod(evaluatorParameters) : new DefaultEvaluator(agent, creature, skillType);
             }
             else
             {
@@ -53,15 +53,29 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
             return evaluator;
         }
 
+        /// <summary>
+        ///     Determines whether the current CommandWindow is an abnormality work window. An abnormality work window is a CommandWindow in the Management phase with a non-null rwbpType
+        ///     in the CurrentSkill property.
+        /// </summary>
+        /// <param name="commandWindow">The current CommandWindow to check.</param>
+        /// <returns><c>true</c> if the current CommandWindow is an abnormality work window, otherwise <c>false</c>.</returns>
         internal static bool IsAbnormalityWorkWindow([NotNull] this CommandWindow.CommandWindow commandWindow)
         {
+            var currentSkill = commandWindow.CurrentSkill;
+
+            if (!currentSkill.IsNotNull())
+            {
+                return false;
+            }
+
             // Validation checks to confirm we have everything we need
-            var isAbnormalityWorkWindow = !(commandWindow.CurrentSkill?.rwbpType is null) && commandWindow.CurrentWindowType == CommandType.Management;
+            var isAbnormalityWorkWindow = currentSkill.rwbpType.IsNotNull() && commandWindow.CurrentWindowType == CommandType.Management;
 
             return isAbnormalityWorkWindow;
         }
 
-        private static bool TryGetCreature([NotNull] this CommandWindow.CommandWindow commandWindow, [CanBeNull] out CreatureModel creature)
+        private static bool TryGetCreature([NotNull] this CommandWindow.CommandWindow commandWindow,
+            [CanBeNull] out CreatureModel creature)
         {
             creature = null;
 
@@ -71,7 +85,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
                 creature = creatureModel;
             }
 
-            return !(creature is null);
+            return !creature.IsNull();
         }
     }
 }

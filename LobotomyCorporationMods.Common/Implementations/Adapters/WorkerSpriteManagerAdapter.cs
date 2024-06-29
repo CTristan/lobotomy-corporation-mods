@@ -15,7 +15,8 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
     [ExcludeFromCodeCoverage]
     public sealed class WorkerSpriteManagerAdapter : Adapter<WorkerSpriteManager>, IWorkerSpriteManagerAdapter
     {
-        public void SetAgentBasicData(WorkerSprite.WorkerSprite workerSprite, Appearance appear)
+        public void SetAgentBasicData(WorkerSprite.WorkerSprite workerSprite,
+            Appearance appear)
         {
             GameObject.SetAgentBasicData(workerSprite, appear);
         }

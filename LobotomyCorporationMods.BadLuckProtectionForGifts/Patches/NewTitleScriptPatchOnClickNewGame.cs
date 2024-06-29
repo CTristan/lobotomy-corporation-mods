@@ -25,9 +25,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             agentWorkTracker.Reset();
         }
 
-        /// <summary>
-        ///     Runs after the original OnClickNewGame method does to reset our agent work when the player starts a new game.
-        /// </summary>
+        /// <summary>Runs after the original OnClickNewGame method does to reset our agent work when the player starts a new game.</summary>
         [EntryPoint]
         [ExcludeFromCodeCoverage]
         public static void Postfix()

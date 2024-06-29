@@ -26,8 +26,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
         }
 
         /// <summary>
-        ///     Runs after the original OnClickNextDay method to save our tracker progress. We only save when going to the next
-        ///     day because it doesn't make sense that an agent would remember their creature experience if the day is reset.
+        ///     Runs after the original OnClickNextDay method to save our tracker progress. We only save when going to the next day because it doesn't make sense that an agent would
+        ///     remember their creature experience if the day is reset.
         /// </summary>
         [EntryPoint]
         [ExcludeFromCodeCoverage]

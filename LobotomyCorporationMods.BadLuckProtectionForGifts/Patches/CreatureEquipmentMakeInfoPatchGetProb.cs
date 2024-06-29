@@ -18,7 +18,27 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
     [HarmonyPatch(typeof(CreatureEquipmentMakeInfo), nameof(CreatureEquipmentMakeInfo.GetProb))]
     public static class CreatureEquipmentMakeInfoPatchGetProb
     {
-        public static float PatchAfterGetProb([NotNull] this CreatureEquipmentMakeInfo instance, float probability,
+        // ReSharper disable InconsistentNaming
+        [EntryPoint]
+        [ExcludeFromCodeCoverage]
+        public static void Postfix([NotNull] CreatureEquipmentMakeInfo __instance,
+            ref float __result)
+        {
+            try
+            {
+                __result = __instance.PatchAfterGetProb(__result, Harmony_Patch.Instance.AgentWorkTracker);
+            }
+            catch (Exception ex)
+            {
+                Harmony_Patch.Instance.Logger.WriteException(ex);
+
+                throw;
+            }
+        }
+        // ReSharper enable InconsistentNaming
+
+        public static float PatchAfterGetProb([NotNull] this CreatureEquipmentMakeInfo instance,
+            float probability,
             [NotNull] IAgentWorkTracker agentWorkTracker)
         {
             Guard.Against.Null(instance, nameof(instance));
@@ -27,7 +47,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             var giftName = instance.equipTypeInfo?.Name;
 
             // If creature has no gift then giftName will be null
-            if (giftName is null)
+            if (giftName.IsNull())
             {
                 return probability;
             }
@@ -42,23 +62,6 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             }
 
             return probability;
-        }
-
-        // ReSharper disable InconsistentNaming
-        [EntryPoint]
-        [ExcludeFromCodeCoverage]
-        public static void Postfix([NotNull] CreatureEquipmentMakeInfo __instance, ref float __result)
-        {
-            try
-            {
-                __result = __instance.PatchAfterGetProb(__result, Harmony_Patch.Instance.AgentWorkTracker);
-            }
-            catch (Exception ex)
-            {
-                Harmony_Patch.Instance.Logger.WriteException(ex);
-
-                throw;
-            }
         }
     }
 }

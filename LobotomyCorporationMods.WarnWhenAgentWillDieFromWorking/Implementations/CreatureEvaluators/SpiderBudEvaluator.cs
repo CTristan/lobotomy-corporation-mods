@@ -4,8 +4,9 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 {
     internal sealed class SpiderBudEvaluator : CreatureEvaluator
     {
-        internal SpiderBudEvaluator(AgentModel agent, CreatureModel creature, RwbpType skillType)
-            : base(agent, creature, skillType)
+        internal SpiderBudEvaluator(AgentModel agent,
+            CreatureModel creature,
+            RwbpType skillType) : base(agent, creature, skillType)
         {
         }
 

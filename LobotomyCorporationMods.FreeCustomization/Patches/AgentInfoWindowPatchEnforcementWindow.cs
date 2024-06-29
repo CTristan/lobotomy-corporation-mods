@@ -21,7 +21,8 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
     public static class AgentInfoWindowPatchEnforcementWindow
     {
         public static void PatchAfterEnforcementWindow([NotNull] this AgentInfoWindow instance,
-            [NotNull] ICustomizingWindowAdapter customizingWindowAdapter, [NotNull] IGameObjectAdapter gameObjectAdapter,
+            [NotNull] ICustomizingWindowAdapter customizingWindowAdapter,
+            [NotNull] IGameObjectAdapter gameObjectAdapter,
             [NotNull] IAgentInfoWindowUiComponentsAdapter uiComponentsAdapter)
         {
             Guard.Against.Null(instance, nameof(instance));
@@ -46,9 +47,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
             customizingWindowAdapter.OpenAppearanceWindow();
         }
 
-        /// <summary>
-        ///     Runs after opening the Strengthen Agent window to open the appearance window.
-        /// </summary>
+        /// <summary>Runs after opening the Strengthen Agent window to open the appearance window.</summary>
         [EntryPoint]
         [ExcludeFromCodeCoverage]
         public static void Postfix()
@@ -58,8 +57,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
                 // EnforcementWindow is a static method, so we can't get an instance of the AgentInfoWindow through Harmony.
                 var agentInfoWindow = AgentInfoWindow.currentWindow;
 
-                agentInfoWindow.PatchAfterEnforcementWindow(new CustomizingWindowAdapter(), new GameObjectAdapter(),
-                    new AgentInfoWindowUiComponentsAdapter());
+                agentInfoWindow.PatchAfterEnforcementWindow(new CustomizingWindowAdapter(), new GameObjectAdapter(), new AgentInfoWindowUiComponentsAdapter());
             }
             catch (Exception ex)
             {

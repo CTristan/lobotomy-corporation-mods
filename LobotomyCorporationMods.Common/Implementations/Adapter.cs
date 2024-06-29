@@ -4,7 +4,9 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
+using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces;
 
 #endregion
@@ -21,18 +23,20 @@ namespace LobotomyCorporationMods.Common.Implementations
         {
         }
 
+        [NotNull]
         public T GameObject
         {
             get
             {
-                if (!(_gameObject is object))
+                if (!_gameObject.IsNotNull())
                 {
                     throw new InvalidOperationException("Please load the game object into the adapter before trying to use it.");
                 }
 
                 return _gameObject;
             }
-            set => _gameObject = value;
+            set =>
+                _gameObject = value;
         }
     }
 }

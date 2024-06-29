@@ -32,13 +32,12 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
-            return;
-
             void Action()
             {
                 AgentInfoWindowPatchEnforcementWindow.Postfix();
             }
+
+            mockLogger.VerifyArgumentNullException(Action);
         }
 
         [Fact]
@@ -57,13 +56,12 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
-            return;
-
             void Action()
             {
                 AgentInfoWindowPatchGenerateWindow.Postfix();
             }
+
+            mockLogger.VerifyArgumentNullException(Action);
         }
 
         [Fact]
@@ -82,15 +80,14 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
-            return;
-
             void Action()
             {
                 // ReSharper disable once AssignNullToNotNullAttribute
                 // Forcing null argument to test exception logging.
                 AppearanceUIPatchCloseWindow.Prefix(null);
             }
+
+            mockLogger.VerifyArgumentNullException(Action);
         }
 
         [Fact]
@@ -109,15 +106,14 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
-            return;
-
             void Action()
             {
                 // ReSharper disable once AssignNullToNotNullAttribute
                 // Forcing null argument to test exception logging.
                 CustomizingWindowPatchConfirm.Prefix(null);
             }
+
+            mockLogger.VerifyArgumentNullException(Action);
         }
 
         [Fact]
@@ -136,15 +132,14 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
-            return;
-
             void Action()
             {
                 // ReSharper disable once AssignNullToNotNullAttribute
                 // Forcing null argument to test exception logging.
                 CustomizingWindowPatchOpenAppearanceWindow.Postfix(null);
             }
+
+            mockLogger.VerifyArgumentNullException(Action);
         }
 
         [Fact]
@@ -168,17 +163,14 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
             Action action = () => CustomizingWindowPatchReviseOpenAction.Postfix(null, null);
             // ReSharper enable AssignNullToNotNullAttribute
 
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(action);
+            mockLogger.VerifyArgumentNullException(action);
 
             // Verify other arguments throw an exception if null
-            action = () =>
-                CustomizingWindowPatchReviseOpenAction.Postfix(UnityTestExtensions.CreateCustomizingWindow(), null);
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(action, 2);
+            action = () => CustomizingWindowPatchReviseOpenAction.Postfix(UnityTestExtensions.CreateCustomizingWindow(), null);
+            mockLogger.VerifyArgumentNullException(action, 2);
         }
 
-        /// <summary>
-        ///     Harmony requires the constructor to be public.
-        /// </summary>
+        /// <summary>Harmony requires the constructor to be public.</summary>
         [Fact]
         public void Constructor_is_public_and_externally_accessible()
         {

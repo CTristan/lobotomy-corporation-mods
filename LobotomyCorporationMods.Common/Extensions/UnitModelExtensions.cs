@@ -3,6 +3,7 @@
 #region
 
 using System.Linq;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Enums;
 using LobotomyCorporationMods.Common.Implementations;
 
@@ -12,16 +13,28 @@ namespace LobotomyCorporationMods.Common.Extensions
 {
     public static class UnitModelExtensions
     {
-        public static bool HasBuffOfType<TBuff>(this UnitModel agent) where TBuff : UnitBuf
+        public static bool HasFairyFestivalEffect([NotNull] this UnitModel agent)
         {
             Guard.Against.Null(agent, nameof(agent));
-
-            var buffs = agent.GetUnitBufList();
-
-            return buffs.OfType<TBuff>().Any();
+            var effects = agent.GetUnitBufList();
+            return effects.OfType<FairyBuf>().Any();
         }
 
-        public static bool HasCrumblingArmor(this UnitModel agent)
+        public static bool HasLaetitiaEffect([NotNull] this UnitModel agent)
+        {
+            Guard.Against.Null(agent, nameof(agent));
+            var effects = agent.GetUnitBufList();
+            return effects.OfType<LittleWitchBuf>().Any();
+        }
+
+        public static bool HasParasiteTreeEffect([NotNull] this UnitModel agent)
+        {
+            Guard.Against.Null(agent, nameof(agent));
+            var effects = agent.GetUnitBufList();
+            return effects.OfType<YggdrasilBlessBuf>().Any();
+        }
+
+        public static bool HasCrumblingArmor([NotNull] this UnitModel agent)
         {
             Guard.Against.Null(agent, nameof(agent));
 

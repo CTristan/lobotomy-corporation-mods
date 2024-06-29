@@ -12,7 +12,9 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 {
     internal abstract class CreatureEvaluator : ICreatureEvaluator
     {
-        protected CreatureEvaluator(AgentModel agent, CreatureModel creature, RwbpType skillType)
+        protected CreatureEvaluator(AgentModel agent,
+            CreatureModel creature,
+            RwbpType skillType)
         {
             Agent = agent;
             Creature = creature;
@@ -27,7 +29,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
         {
             var agentWillDie = false;
 
-            // Make sure we have completed observation so we can't cheat
+            // Make sure we have completed observation so that we can't cheat
             if (Creature.observeInfo.IsMaxObserved())
             {
                 agentWillDie = WillAgentDieFromThisCreature() || WillAgentDieFromOtherCreatures();
@@ -36,30 +38,16 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
             return agentWillDie;
         }
 
-        /// <summary>
-        ///     Some abnormalities don't kill from working on them directly but due to other conditions such as gifts or buffs.
-        /// </summary>
+        /// <summary>Some abnormalities don't kill from working on them directly but due to other conditions such as gifts or buffs.</summary>
         private bool WillAgentDieFromOtherCreatures()
         {
-            // Crumbling Armor's gift
-            if (WillDieFromCrumblingArmorGift())
-            {
-                return true;
-            }
-
-            // Fairy Festival's effect
-            if (WillDieFromFairyFestivalEffect())
-            {
-                return true;
-            }
-
-            // Laetitia's effect
-            if (WillDieFromLaetitiaEffect())
-            {
-                return true;
-            }
-
-            return false;
+            return
+                // Crumbling Armor's gift
+                WillDieFromCrumblingArmorGift() ||
+                // Fairy Festival's effect
+                WillDieFromFairyFestivalEffect() ||
+                // Laetitia's effect
+                WillDieFromLaetitiaEffect();
         }
 
         private bool WillDieFromCrumblingArmorGift()
@@ -69,12 +57,12 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 
         private bool WillDieFromFairyFestivalEffect()
         {
-            return Agent.HasBuffOfType<FairyBuf>() && Creature.metadataId != (long)CreatureIds.FairyFestival;
+            return Agent.HasFairyFestivalEffect() && Creature.metadataId != (long)CreatureIds.FairyFestival;
         }
 
         private bool WillDieFromLaetitiaEffect()
         {
-            return Agent.HasBuffOfType<LittleWitchBuf>() && Creature.metadataId != (long)CreatureIds.Laetitia;
+            return Agent.HasLaetitiaEffect() && Creature.metadataId != (long)CreatureIds.Laetitia;
         }
 
         protected abstract bool WillAgentDieFromThisCreature();

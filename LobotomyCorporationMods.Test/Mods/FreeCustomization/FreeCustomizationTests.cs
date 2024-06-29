@@ -36,15 +36,13 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
         }
 
         [NotNull]
-        protected static CustomizingWindow InitializeCustomizingWindow(
-            [CanBeNull] AgentModel currentAgent = DefaultAgentModel,
+        protected static CustomizingWindow InitializeCustomizingWindow([CanBeNull] AgentModel currentAgent = DefaultAgentModel,
             CustomizingType currentWindowType = DefaultCustomizingType)
         {
             // Need a WorkerSpriteManager instance
             InitializeWorkerSpriteManager();
 
-            return UnityTestExtensions.CreateCustomizingWindow(currentAgent: currentAgent,
-                currentWindowType: currentWindowType);
+            return UnityTestExtensions.CreateCustomizingWindow(currentAgent: currentAgent, currentWindowType: currentWindowType);
         }
 
         private static void InitializeWorkerSpriteManager()

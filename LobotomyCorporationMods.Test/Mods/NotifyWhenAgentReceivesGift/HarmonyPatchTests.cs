@@ -22,9 +22,9 @@ namespace LobotomyCorporationMods.Test.Mods.NotifyWhenAgentReceivesGift
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
             Action action = () => UnitModelPatchAttachEgoGift.Prefix(null, UnityTestExtensions.CreateEgoGiftModel());
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(action);
+            mockLogger.VerifyArgumentNullException(action);
             action = () => UnitModelPatchAttachEgoGift.Prefix(UnityTestExtensions.CreateAgentModel(), null);
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(action, 2);
+            mockLogger.VerifyArgumentNullException(action, 2);
         }
 
         [Fact]
@@ -38,9 +38,7 @@ namespace LobotomyCorporationMods.Test.Mods.NotifyWhenAgentReceivesGift
             patch.ValidateHarmonyPatch(originalClass, MethodName);
         }
 
-        /// <summary>
-        ///     Harmony requires the constructor to be public.
-        /// </summary>
+        /// <summary>Harmony requires the constructor to be public.</summary>
         [Fact]
         public void Constructor_is_public_and_externally_accessible()
         {

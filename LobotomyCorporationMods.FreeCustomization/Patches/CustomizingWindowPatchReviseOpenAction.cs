@@ -19,13 +19,12 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
     [HarmonyPatch(typeof(CustomizingWindow), PrivateMethods.CustomizingWindow.ReviseOpenAction)]
     public static class CustomizingWindowPatchReviseOpenAction
     {
-        /// <summary>
-        ///     Runs after opening the Strengthen Agent window to set the appearance data for the customization window.
-        /// </summary>
+        /// <summary>Runs after opening the Strengthen Agent window to set the appearance data for the customization window.</summary>
         // ReSharper disable InconsistentNaming
         [EntryPoint]
         [ExcludeFromCodeCoverage]
-        public static void Postfix([NotNull] CustomizingWindow __instance, [NotNull] AgentModel agent)
+        public static void Postfix([NotNull] CustomizingWindow __instance,
+            [NotNull] AgentModel agent)
         {
             try
             {
@@ -40,7 +39,8 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         }
         // ReSharper disable InconsistentNaming
 
-        public static void PatchAfterReviseOpenAction([NotNull] this CustomizingWindow instance, [NotNull] AgentModel agent)
+        public static void PatchAfterReviseOpenAction([NotNull] this CustomizingWindow instance,
+            [NotNull] AgentModel agent)
         {
             Guard.Against.Null(instance, nameof(instance));
             Guard.Against.Null(agent, nameof(agent));
