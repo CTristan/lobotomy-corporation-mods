@@ -70,6 +70,8 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes
         {
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
+            const int TwoLogs = 2;
+            const int ThreeLogs = 3;
 
             // ReSharper disable AssignNullToNotNullAttribute
             // Forcing null argument to test exception logging.
@@ -80,9 +82,9 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes
 
             // Verify other arguments throw exception when null
             action = () => CustomizingWindowPatchSetAgentStatBonus.Prefix(UnityTestExtensions.CreateCustomizingWindow(), null, UnityTestExtensions.CreateAgentData());
-            mockLogger.VerifyArgumentNullException(action, Times.Exactly(2));
+            mockLogger.VerifyArgumentNullException(action, Times.Exactly(TwoLogs));
             action = () => CustomizingWindowPatchSetAgentStatBonus.Prefix(UnityTestExtensions.CreateCustomizingWindow(), UnityTestExtensions.CreateAgentModel(), null);
-            mockLogger.VerifyArgumentNullException(action, Times.Exactly(3));
+            mockLogger.VerifyArgumentNullException(action, Times.Exactly(ThreeLogs));
         }
     }
 }
