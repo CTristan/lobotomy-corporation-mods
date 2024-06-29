@@ -158,6 +158,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
         {
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
+            const int NumberOfLogs = 2;
 
             // ReSharper disable AssignNullToNotNullAttribute
             // Forcing null arguments to test exception logging.
@@ -168,7 +169,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
 
             // Verify other arguments throw an exception if null
             action = () => CustomizingWindowPatchReviseOpenAction.Postfix(UnityTestExtensions.CreateCustomizingWindow(), null);
-            mockLogger.VerifyArgumentNullException(action, Times.Exactly(2));
+            mockLogger.VerifyArgumentNullException(action, Times.Exactly(NumberOfLogs));
         }
 
         /// <summary>Harmony requires the constructor to be public.</summary>
