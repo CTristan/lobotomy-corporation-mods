@@ -12,7 +12,9 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 {
     internal abstract class CreatureEvaluator : ICreatureEvaluator
     {
-        protected CreatureEvaluator(AgentModel agent, CreatureModel creature, RwbpType skillType)
+        protected CreatureEvaluator(AgentModel agent,
+            CreatureModel creature,
+            RwbpType skillType)
         {
             Agent = agent;
             Creature = creature;
@@ -27,7 +29,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
         {
             var agentWillDie = false;
 
-            // Make sure we have completed observation so we can't cheat
+            // Make sure we have completed observation so that we can't cheat
             if (Creature.observeInfo.IsMaxObserved())
             {
                 agentWillDie = WillAgentDieFromThisCreature() || WillAgentDieFromOtherCreatures();
@@ -36,34 +38,31 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
             return agentWillDie;
         }
 
-        /// <summary>
-        ///     Some abnormalities don't kill from working on them directly but due to other conditions such as gifts or buffs.
-        /// </summary>
+        /// <summary>Some abnormalities don't kill from working on them directly but due to other conditions such as gifts or buffs.</summary>
         private bool WillAgentDieFromOtherCreatures()
         {
-            bool agentWillDie;
+            return
+                // Crumbling Armor's gift
+                WillDieFromCrumblingArmorGift() ||
+                // Fairy Festival's effect
+                WillDieFromFairyFestivalEffect() ||
+                // Laetitia's effect
+                WillDieFromLaetitiaEffect();
+        }
 
-            // Crumbling Armor
-            if (Agent.HasCrumblingArmor() && SkillType == RwbpType.B)
-            {
-                agentWillDie = true;
-            }
-            // Fairy Festival
-            else if (Agent.HasBuffOfType<FairyBuf>() && Creature.metadataId != (long)CreatureIds.FairyFestival)
-            {
-                agentWillDie = true;
-            }
-            // Laetitia
-            else if (Agent.HasBuffOfType<LittleWitchBuf>() && Creature.metadataId != (long)CreatureIds.Laetitia)
-            {
-                agentWillDie = true;
-            }
-            else
-            {
-                agentWillDie = false;
-            }
+        private bool WillDieFromCrumblingArmorGift()
+        {
+            return Agent.HasCrumblingArmor() && SkillType == RwbpType.B;
+        }
 
-            return agentWillDie;
+        private bool WillDieFromFairyFestivalEffect()
+        {
+            return Agent.HasFairyFestivalEffect() && Creature.metadataId != (long)CreatureIds.FairyFestival;
+        }
+
+        private bool WillDieFromLaetitiaEffect()
+        {
+            return Agent.HasLaetitiaEffect() && Creature.metadataId != (long)CreatureIds.Laetitia;
         }
 
         protected abstract bool WillAgentDieFromThisCreature();

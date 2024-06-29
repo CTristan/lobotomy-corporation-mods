@@ -20,13 +20,13 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
         {
             _ = new Harmony_Patch();
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
         }
 
         [NotNull]
         protected static AgentInfoWindow InitializeAgentInfoWindow()
         {
-            return TestExtensions.CreateAgentInfoWindow();
+            return UnityTestExtensions.CreateAgentInfoWindow();
         }
 
         [NotNull]
@@ -36,20 +36,18 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
         }
 
         [NotNull]
-        protected static CustomizingWindow InitializeCustomizingWindow(
-            [CanBeNull] AgentModel currentAgent = DefaultAgentModel,
+        protected static CustomizingWindow InitializeCustomizingWindow([CanBeNull] AgentModel currentAgent = DefaultAgentModel,
             CustomizingType currentWindowType = DefaultCustomizingType)
         {
             // Need a WorkerSpriteManager instance
             InitializeWorkerSpriteManager();
 
-            return TestExtensions.CreateCustomizingWindow(currentAgent: currentAgent,
-                currentWindowType: currentWindowType);
+            return UnityTestExtensions.CreateCustomizingWindow(currentAgent: currentAgent, currentWindowType: currentWindowType);
         }
 
         private static void InitializeWorkerSpriteManager()
         {
-            _ = TestExtensions.CreateWorkerSpriteManager();
+            _ = UnityTestExtensions.CreateWorkerSpriteManager();
         }
     }
 }

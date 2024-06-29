@@ -16,8 +16,8 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes.Patches
     public sealed class CustomizingWindowPatchSetAgentStatBonusTests : BugFixesTests
     {
         /// <summary>
-        ///     The original method uses the current stat level instead of the base stat level, so we just need to check that the
-        ///     base stat level is being used in the call rather than the current stat level.
+        ///     The original method uses the current stat level instead of the base stat level, so we just need to check that the base stat level is being used in the call rather than
+        ///     the current stat level.
         /// </summary>
         [Fact]
         public void When_upgrading_an_agent_we_should_always_use_the_original_stat_level_rather_than_the_stat_level_modified_by_bonuses()
@@ -25,12 +25,12 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes.Patches
             // Arrange
             const int BaseStatValue = 1;
             const int BuffStatBonus = 100;
-            var customizingWindow = TestExtensions.CreateCustomizingWindow();
+            var customizingWindow = UnityTestExtensions.CreateCustomizingWindow();
             var mockAdapter = new Mock<ICustomizingWindowAdapter>();
 
             // The base stat level is primary stat + title bonus
             // We'll ignore the title bonus
-            var primaryStat = TestExtensions.CreateWorkerPrimaryStat();
+            var primaryStat = UnityTestExtensions.CreateWorkerPrimaryStat();
             primaryStat.battle = BaseStatValue;
             primaryStat.hp = BaseStatValue;
             primaryStat.mental = BaseStatValue;
@@ -38,16 +38,19 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes.Patches
 
             // The current stat level is the base stat level + buffs + equipment/gift bonuses
             // We'll add a generic buff to increase all stats
-            var statBonus = TestExtensions.CreateWorkerPrimaryStatBonus();
+            var statBonus = UnityTestExtensions.CreateWorkerPrimaryStatBonus();
             statBonus.battle = BuffStatBonus;
             statBonus.hp = BuffStatBonus;
             statBonus.mental = BuffStatBonus;
             statBonus.work = BuffStatBonus;
-            var statBuff = TestExtensions.CreateUnitStatBuf(statBonus);
-            var statBuffList = new List<UnitStatBuf> { statBuff };
+            var statBuff = UnityTestExtensions.CreateUnitStatBuf(statBonus);
+            var statBuffList = new List<UnitStatBuf>
+            {
+                statBuff,
+            };
 
-            var agent = TestExtensions.CreateAgentModel(primaryStat: primaryStat, statBufList: statBuffList);
-            var data = TestExtensions.CreateAgentData();
+            var agent = UnityTestExtensions.CreateAgentModel(primaryStat: primaryStat, statBufList: statBuffList);
+            var data = UnityTestExtensions.CreateAgentData();
 
 
             // Act

@@ -12,8 +12,10 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
     {
         private readonly IBeautyBeastAnimAdapter _adapter;
 
-        internal BeautyAndTheBeastEvaluator(AgentModel agent, CreatureModel creature, RwbpType skillType, IBeautyBeastAnimAdapter animationScriptAdapter)
-            : base(agent, creature, skillType)
+        internal BeautyAndTheBeastEvaluator(AgentModel agent,
+            CreatureModel creature,
+            RwbpType skillType,
+            IBeautyBeastAnimAdapter animationScriptAdapter) : base(agent, creature, skillType)
         {
             _adapter = animationScriptAdapter;
         }

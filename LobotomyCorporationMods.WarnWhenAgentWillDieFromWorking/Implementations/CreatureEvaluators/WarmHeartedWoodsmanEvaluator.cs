@@ -4,8 +4,9 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 {
     internal sealed class WarmHeartedWoodsmanEvaluator : CreatureEvaluator
     {
-        internal WarmHeartedWoodsmanEvaluator(AgentModel agent, CreatureModel creature, RwbpType skillType)
-            : base(agent, creature, skillType)
+        internal WarmHeartedWoodsmanEvaluator(AgentModel agent,
+            CreatureModel creature,
+            RwbpType skillType) : base(agent, creature, skillType)
         {
         }
 

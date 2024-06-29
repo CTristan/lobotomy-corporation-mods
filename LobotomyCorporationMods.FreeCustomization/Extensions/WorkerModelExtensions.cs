@@ -3,6 +3,7 @@
 #region
 
 using Customizing;
+using JetBrains.Annotations;
 
 #endregion
 
@@ -10,7 +11,8 @@ namespace LobotomyCorporationMods.FreeCustomization.Extensions
 {
     internal static class WorkerModelExtensions
     {
-        internal static Appearance GetAppearanceData(this WorkerModel workerModel)
+        [NotNull]
+        internal static Appearance GetAppearanceData([NotNull] this WorkerModel workerModel)
         {
             return new Appearance
             {
@@ -27,11 +29,12 @@ namespace LobotomyCorporationMods.FreeCustomization.Extensions
                 Mouth_Def = workerModel.spriteData.Mouth,
                 Mouth_Battle = workerModel.spriteData.BattleMouth,
                 HairColor = workerModel.spriteData.HairColor,
-                EyeColor = workerModel.spriteData.EyeColor
+                EyeColor = workerModel.spriteData.EyeColor,
             };
         }
 
-        internal static void SetAppearanceData(this WorkerModel workerModel, Appearance appearance)
+        internal static void SetAppearanceData([NotNull] this WorkerModel workerModel,
+            [NotNull] Appearance appearance)
         {
             workerModel.spriteData = appearance.spriteSet;
             workerModel.spriteData.BattleEyeBrow = appearance.Eye_Battle;

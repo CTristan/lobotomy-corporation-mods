@@ -21,7 +21,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
         {
             var patch = typeof(AgentSlotPatchSetFilter);
             var originalClass = typeof(AgentSlot);
-            const string MethodName = "SetFilter";
+            const string MethodName = nameof(AgentSlot.SetFilter);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
         }
@@ -30,19 +30,19 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
         public void Class_AgentSlot_Method_SetFilter_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
             void Action()
             {
+                // ReSharper disable once AssignNullToNotNullAttribute
+                // Forcing null argument to test exception logging.
                 AgentSlotPatchSetFilter.Postfix(null, (AgentState)1);
             }
 
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
+            mockLogger.VerifyArgumentNullException(Action);
         }
 
-        /// <summary>
-        ///     Harmony requires the constructor to be public.
-        /// </summary>
+        /// <summary>Harmony requires the constructor to be public.</summary>
         [Fact]
         public void Constructor_is_public_and_externally_accessible()
         {

@@ -1,10 +1,14 @@
 // SPDX-License-Identifier: MIT
 
+using JetBrains.Annotations;
+
 namespace LobotomyCorporationMods.Test.Extensions
 {
     internal static class StringExtensions
     {
-        internal static string ShortenBy(this string value, int lengthToRemove)
+        [NotNull]
+        internal static string ShortenBy([NotNull] this string value,
+            int lengthToRemove)
         {
             var length = value.Length;
 

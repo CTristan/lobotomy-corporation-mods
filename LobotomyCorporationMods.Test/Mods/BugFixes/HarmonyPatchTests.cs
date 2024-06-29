@@ -8,6 +8,7 @@ using FluentAssertions;
 using LobotomyCorporationMods.BugFixes;
 using LobotomyCorporationMods.BugFixes.Patches;
 using LobotomyCorporationMods.Test.Extensions;
+using Moq;
 using Xunit;
 
 #endregion
@@ -16,9 +17,7 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes
 {
     public sealed class HarmonyPatchTests
     {
-        /// <summary>
-        ///     Harmony requires the constructor to be public.
-        /// </summary>
+        /// <summary>Harmony requires the constructor to be public.</summary>
         [Fact]
         public void BadLuckProtectionForGifts_Constructor_is_public_and_externally_accessible()
         {
@@ -35,7 +34,7 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes
         {
             var patch = typeof(ArmorCreaturePatchOnNotice);
             var originalClass = typeof(ArmorCreature);
-            const string MethodName = "OnNotice";
+            const string MethodName = nameof(ArmorCreature.OnNotice);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
         }
@@ -44,14 +43,16 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes
         public void Class_ArmorCreature_Method_OnNotice_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
             void Action()
             {
+                // ReSharper disable once AssignNullToNotNullAttribute
+                // Forcing null argument to test exception logging.
                 ArmorCreaturePatchOnNotice.Prefix(string.Empty, null);
             }
 
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
+            mockLogger.VerifyArgumentNullException(Action);
         }
 
         [Fact]
@@ -59,7 +60,7 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes
         {
             var patch = typeof(CustomizingWindowPatchSetAgentStatBonus);
             var originalClass = typeof(CustomizingWindow);
-            const string MethodName = "SetAgentStatBonus";
+            const string MethodName = nameof(CustomizingWindow.SetAgentStatBonus);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
         }
@@ -68,19 +69,22 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes
         public void Class_CustomizingWindow_Method_SetAgentStatBonus_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
+            const int TwoLogs = 2;
+            const int ThreeLogs = 3;
 
+            // ReSharper disable AssignNullToNotNullAttribute
+            // Forcing null argument to test exception logging.
             Action action = () => CustomizingWindowPatchSetAgentStatBonus.Prefix(null, null, null);
+            // ReSharper enable AssignNullToNotNullAttribute
 
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(action);
+            mockLogger.VerifyArgumentNullException(action);
 
             // Verify other arguments throw exception when null
-            action = () => CustomizingWindowPatchSetAgentStatBonus.Prefix(TestExtensions.CreateCustomizingWindow(),
-                null, TestExtensions.CreateAgentData());
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(action, 2);
-            action = () => CustomizingWindowPatchSetAgentStatBonus.Prefix(TestExtensions.CreateCustomizingWindow(),
-                TestExtensions.CreateAgentModel(), null);
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(action, 3);
+            action = () => CustomizingWindowPatchSetAgentStatBonus.Prefix(UnityTestExtensions.CreateCustomizingWindow(), null, UnityTestExtensions.CreateAgentData());
+            mockLogger.VerifyArgumentNullException(action, Times.Exactly(TwoLogs));
+            action = () => CustomizingWindowPatchSetAgentStatBonus.Prefix(UnityTestExtensions.CreateCustomizingWindow(), UnityTestExtensions.CreateAgentModel(), null);
+            mockLogger.VerifyArgumentNullException(action, Times.Exactly(ThreeLogs));
         }
     }
 }

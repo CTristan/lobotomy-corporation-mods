@@ -19,21 +19,20 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
 {
     public sealed class CustomizingWindowPatchConfirmTests : FreeCustomizationTests
     {
-        private readonly Mock<IAgentLayerAdapter> _mockAgentLayerAdapter = new Mock<IAgentLayerAdapter>();
+        private readonly Mock<IAgentLayerAdapter> MockAgentLayerAdapter = new Mock<IAgentLayerAdapter>();
 
-        private readonly Mock<IWorkerSpriteManagerAdapter> _mockWorkerSpriteManagerAdapter =
-            new Mock<IWorkerSpriteManagerAdapter>();
+        private readonly Mock<IWorkerSpriteManagerAdapter> MockWorkerSpriteManagerAdapter = new Mock<IWorkerSpriteManagerAdapter>();
 
         [Fact]
         public void Changing_random_generated_agent_marks_them_as_custom()
         {
             // Arrange
             var sut = InitializeCustomizingWindow(CustomizingType.REVISE);
-            var agent = TestExtensions.CreateAgentModel();
+            var agent = UnityTestExtensions.CreateAgentModel();
             agent.iscustom = false;
 
             // Act
-            sut.PatchBeforeConfirm(_mockAgentLayerAdapter.Object, _mockWorkerSpriteManagerAdapter.Object);
+            sut.PatchBeforeConfirm(MockAgentLayerAdapter.Object, MockWorkerSpriteManagerAdapter.Object);
 
             // Assert
             sut.CurrentAgent.iscustom.Should().Be(true);
@@ -43,12 +42,12 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
         public void Customizing_existing_agent_changes_agent_appearance_successfully()
         {
             // Arrange
-            var currentAppearance = TestExtensions.CreateWorkerSprite();
-            var expectedSprite = TestExtensions.CreateSprite();
+            var currentAppearance = UnityTestExtensions.CreateWorkerSprite();
+            var expectedSprite = UnityTestExtensions.CreateSprite();
             var expectedColor = Color.black;
             var expectedAppearance = new Appearance
             {
-                spriteSet = TestExtensions.CreateWorkerSprite(),
+                spriteSet = UnityTestExtensions.CreateWorkerSprite(),
                 Eyebrow_Battle = expectedSprite,
                 FrontHair = expectedSprite,
                 RearHair = expectedSprite,
@@ -61,13 +60,13 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
                 Mouth_Def = expectedSprite,
                 Mouth_Battle = expectedSprite,
                 HairColor = expectedColor,
-                EyeColor = expectedColor
+                EyeColor = expectedColor,
             };
 
-            var currentAgent = TestExtensions.CreateAgentModel();
+            var currentAgent = UnityTestExtensions.CreateAgentModel();
             currentAgent.spriteData = currentAppearance;
 
-            var agentData = TestExtensions.CreateAgentData();
+            var agentData = UnityTestExtensions.CreateAgentData();
             agentData.appearance = expectedAppearance;
 
             var sut = InitializeCustomizingWindow(CustomizingType.REVISE);
@@ -75,7 +74,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
             sut.CurrentData.appearance = expectedAppearance;
 
             // Act
-            sut.PatchBeforeConfirm(_mockAgentLayerAdapter.Object, _mockWorkerSpriteManagerAdapter.Object);
+            sut.PatchBeforeConfirm(MockAgentLayerAdapter.Object, MockWorkerSpriteManagerAdapter.Object);
 
             // Assert
             sut.CurrentAgent.spriteData.Should().BeEquivalentTo(expectedAppearance.spriteSet);
@@ -86,17 +85,28 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
         [Theory]
         [InlineData("CurrentName", "ExpectedName")]
         [InlineData("OldName", "NewName")]
-        public void Renaming_agent_changes_agent_name_successfully([NotNull] string currentName, [NotNull] string expectedName)
+        public void Renaming_agent_changes_agent_name_successfully([NotNull] string currentName,
+            [NotNull] string expectedName)
         {
             // Arrange
-            var currentAgent = TestExtensions.CreateAgentModel();
+            var currentAgent = UnityTestExtensions.CreateAgentModel();
             currentAgent.name = currentName;
-            currentAgent._agentName.nameDic = new Dictionary<string, string> { { currentName, currentName } };
+            currentAgent._agentName.nameDic = new Dictionary<string, string>
+            {
+                {
+                    currentName, currentName
+                },
+            };
 
-            var expectedAgentName = TestExtensions.CreateAgentName();
-            expectedAgentName.nameDic = new Dictionary<string, string> { { expectedName, expectedName } };
+            var expectedAgentName = UnityTestExtensions.CreateAgentName();
+            expectedAgentName.nameDic = new Dictionary<string, string>
+            {
+                {
+                    expectedName, expectedName
+                },
+            };
 
-            var expectedData = TestExtensions.CreateAgentData();
+            var expectedData = UnityTestExtensions.CreateAgentData();
             expectedData.CustomName = expectedName;
             expectedData.agentName = expectedAgentName;
 
@@ -104,7 +114,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
             sut.CurrentData = expectedData;
 
             // Act
-            sut.PatchBeforeConfirm(_mockAgentLayerAdapter.Object, _mockWorkerSpriteManagerAdapter.Object);
+            sut.PatchBeforeConfirm(MockAgentLayerAdapter.Object, MockWorkerSpriteManagerAdapter.Object);
 
             // Assert
             sut.CurrentAgent.name.Should().Be(expectedName);
@@ -120,11 +130,10 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
             var sut = InitializeCustomizingWindow();
 
             // Act
-            sut.PatchBeforeConfirm(_mockAgentLayerAdapter.Object, _mockWorkerSpriteManagerAdapter.Object);
+            sut.PatchBeforeConfirm(MockAgentLayerAdapter.Object, MockWorkerSpriteManagerAdapter.Object);
 
             // Assert
-            _mockWorkerSpriteManagerAdapter.Verify(
-                x => x.SetAgentBasicData(It.IsAny<WorkerSprite.WorkerSprite>(), It.IsAny<Appearance>()), Times.Never);
+            MockWorkerSpriteManagerAdapter.Verify(x => x.SetAgentBasicData(It.IsAny<WorkerSprite.WorkerSprite>(), It.IsAny<Appearance>()), Times.Never);
         }
     }
 }

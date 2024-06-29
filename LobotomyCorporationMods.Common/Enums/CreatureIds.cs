@@ -19,6 +19,6 @@ namespace LobotomyCorporationMods.Common.Enums
         SingingMachine = 100006,
         SpiderBud = 100012,
         VoidDream = 100060,
-        WarmHeartedWoodsman = 100051
+        WarmHeartedWoodsman = 100051,
     }
 }

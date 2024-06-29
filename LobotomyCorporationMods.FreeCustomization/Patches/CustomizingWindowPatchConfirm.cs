@@ -6,7 +6,9 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
+using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
@@ -17,11 +19,12 @@ using LobotomyCorporationMods.FreeCustomization.Extensions;
 
 namespace LobotomyCorporationMods.FreeCustomization.Patches
 {
-    [HarmonyPatch(typeof(CustomizingWindow), "Confirm")]
+    [HarmonyPatch(typeof(CustomizingWindow), nameof(CustomizingWindow.Confirm))]
     public static class CustomizingWindowPatchConfirm
     {
-        public static void PatchBeforeConfirm(this CustomizingWindow instance, IAgentLayerAdapter agentLayerAdapter,
-            IWorkerSpriteManagerAdapter workerSpriteManagerAdapter)
+        public static void PatchBeforeConfirm([NotNull] this CustomizingWindow instance,
+            [NotNull] IAgentLayerAdapter agentLayerAdapter,
+            [NotNull] IWorkerSpriteManagerAdapter workerSpriteManagerAdapter)
         {
             Guard.Against.Null(instance, nameof(instance));
             Guard.Against.Null(agentLayerAdapter, nameof(agentLayerAdapter));
@@ -39,26 +42,21 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
             instance.CurrentData.appearance.SetResrouceData();
 
             workerSpriteManagerAdapter.GameObject = WorkerSpriteManager.instance;
-            workerSpriteManagerAdapter.SetAgentBasicData(instance.CurrentData.appearance.spriteSet,
-                instance.CurrentData.appearance);
+            workerSpriteManagerAdapter.SetAgentBasicData(instance.CurrentData.appearance.spriteSet, instance.CurrentData.appearance);
 
             agentLayerAdapter.GameObject = AgentLayer.currentLayer;
             instance.UpdateAgentModel(agentLayerAdapter);
         }
 
         /// <summary>
-        ///     Runs before confirming the Strengthen Employee window to save appearance data.
-        ///
-        ///     Needs to run before the Confirm method because the Confirm method unloads the CurrentAgent from the
-        ///     customizing window, so it would be too late for us to update the agent.
-        ///
-        ///     This forcefully updates an agent's data because the game wasn't designed to allow you to
+        ///     Runs before confirming the Strengthen Employee window to save appearance data. Needs to run before the Confirm method because the Confirm method unloads the CurrentAgent
+        ///     from the customizing window, so it would be too late for us to update the agent. This forcefully updates an agent's data because the game wasn't designed to allow you to
         ///     customize existing agents, so the game assumes the agent was already created before this step.
         /// </summary>
         // ReSharper disable InconsistentNaming
         [EntryPoint]
-        [ExcludeFromCodeCoverage]
-        public static void Prefix(CustomizingWindow __instance)
+        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
+        public static void Prefix([NotNull] CustomizingWindow __instance)
         {
             try
             {
@@ -66,7 +64,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.WriteToLog(ex);
+                Harmony_Patch.Instance.Logger.WriteException(ex);
 
                 throw;
             }

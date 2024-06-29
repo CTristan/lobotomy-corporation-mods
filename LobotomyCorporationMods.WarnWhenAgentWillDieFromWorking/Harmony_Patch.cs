@@ -2,35 +2,23 @@
 
 #region
 
-using System;
-using System.Runtime.InteropServices;
 using LobotomyCorporationMods.Common.Implementations;
 
 #endregion
 
-[assembly: CLSCompliant(false)]
-[assembly: ComVisible(false)]
-
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking
 {
+    // ReSharper disable once InconsistentNaming
     public sealed class Harmony_Patch : HarmonyPatchBase
     {
-        private const string ModFileName = "LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.dll";
-
         public new static readonly Harmony_Patch Instance = new Harmony_Patch(true);
 
-        public Harmony_Patch()
-            : this(false)
+        public Harmony_Patch() : this(false)
         {
         }
 
-        private Harmony_Patch(bool initialize)
-            : base(initialize)
+        private Harmony_Patch(bool initialize) : base(typeof(Harmony_Patch), "LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.dll", initialize)
         {
-            if (initialize)
-            {
-                InitializePatchData(typeof(Harmony_Patch), ModFileName);
-            }
         }
     }
 }

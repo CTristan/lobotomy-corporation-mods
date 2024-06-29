@@ -5,6 +5,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using LobotomyCorporationMods.Common.Attributes;
+using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 #endregion
@@ -12,7 +13,7 @@ using LobotomyCorporationMods.Common.Interfaces.Adapters;
 namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [AdapterClass]
-    [ExcludeFromCodeCoverage]
+    [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
     public sealed class AgentInfoWindowUiComponentsAdapter : Adapter<AgentInfoWindow.UIComponent>, IAgentInfoWindowUiComponentsAdapter
     {
         public void SetData(AgentData agentData)

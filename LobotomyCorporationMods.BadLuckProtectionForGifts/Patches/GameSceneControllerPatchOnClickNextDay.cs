@@ -5,8 +5,10 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.Common.Attributes;
+using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 
@@ -14,10 +16,10 @@ using LobotomyCorporationMods.Common.Implementations;
 
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
 {
-    [HarmonyPatch(typeof(GameSceneController), "OnClickNextDay")]
+    [HarmonyPatch(typeof(GameSceneController), nameof(GameSceneController.OnClickNextDay))]
     public static class GameSceneControllerPatchOnClickNextDay
     {
-        public static void PatchAfterOnClickNextDay(IAgentWorkTracker agentWorkTracker)
+        public static void PatchAfterOnClickNextDay([NotNull] IAgentWorkTracker agentWorkTracker)
         {
             Guard.Against.Null(agentWorkTracker, nameof(agentWorkTracker));
 
@@ -25,11 +27,11 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
         }
 
         /// <summary>
-        ///     Runs after the original OnClickNextDay method to save our tracker progress. We only save when going to the next
-        ///     day because it doesn't make sense that an agent would remember their creature experience if the day is reset.
+        ///     Runs after the original OnClickNextDay method to save our tracker progress. We only save when going to the next day because it doesn't make sense that an agent would
+        ///     remember their creature experience if the day is reset.
         /// </summary>
         [EntryPoint]
-        [ExcludeFromCodeCoverage]
+        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
         public static void Postfix()
         {
             try
@@ -38,7 +40,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.WriteToLog(ex);
+                Harmony_Patch.Instance.Logger.WriteException(ex);
 
                 throw;
             }

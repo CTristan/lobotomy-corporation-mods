@@ -6,7 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Harmony;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
+using LobotomyCorporationMods.Common.Implementations.Adapters;
+using LobotomyCorporationMods.Common.Implementations.LoggerTargets;
 using LobotomyCorporationMods.Common.Interfaces;
 
 #endregion
@@ -17,25 +20,24 @@ namespace LobotomyCorporationMods.Common.Implementations
     {
         private const string DuplicateErrorMessage = "Please create a separate static instance for your mod.";
 
-        /// <summary>
-        ///     Singleton ensures thread safety across Harmony patches.
-        ///     https://csharpindepth.com/Articles/Singleton
-        /// </summary>
+        /// <summary>Singleton ensures thread safety across Harmony patches. https://csharpindepth.com/Articles/Singleton</summary>
         protected static readonly HarmonyPatchBase Instance = new HarmonyPatchBase();
 
         private static readonly object s_locker = new object();
         private static readonly HashSet<object> s_registeredTypes = new HashSet<object>();
 
-        /// <summary>
-        ///     Validate that each mod is using their own Singleton instance.
-        ///     https://stackoverflow.com/a/2855324/1410257
-        /// </summary>
-        protected HarmonyPatchBase(bool isNotDuplicating)
+        /// <summary>Validate that each mod is using their own Singleton instance. https://stackoverflow.com/a/2855324/1410257</summary>
+        protected HarmonyPatchBase(Type harmonyPatchType,
+            string modFileName,
+            bool isNotDuplicating)
         {
-            if (isNotDuplicating)
+            if (!isNotDuplicating)
             {
-                ValidateThatStaticInstanceIsNotDuplicated();
+                return;
             }
+
+            SetUpPatchData(harmonyPatchType, modFileName);
+            ValidateThatStaticInstanceIsNotDuplicated();
         }
 
         private HarmonyPatchBase()
@@ -50,7 +52,14 @@ namespace LobotomyCorporationMods.Common.Implementations
         public ILogger Logger { get; private set; }
 
 
-        protected void ApplyHarmonyPatch(Type harmonyPatchType, string modFileName)
+        /// <summary>Entry point for testing.</summary>
+        public void AddLoggerTarget(ILogger logger)
+        {
+            Logger = logger;
+        }
+
+        protected void ApplyHarmonyPatch([NotNull] Type harmonyPatchType,
+            string modFileName)
         {
             try
             {
@@ -61,45 +70,50 @@ namespace LobotomyCorporationMods.Common.Implementations
             }
             catch (Exception ex)
             {
-                Logger.WriteToLog(ex);
+                Logger.WriteException(ex);
 
                 throw;
             }
         }
 
-        protected void InitializePatchData(Type harmonyPatchType, string modFileName)
+        protected void SetUpPatchData(Type type,
+            string modFileName,
+            [CanBeNull] ICollection<DirectoryInfo> directories = null)
         {
-            InitializePatchData(harmonyPatchType, modFileName, null);
-        }
-
-        protected void InitializePatchData(Type harmonyPatchType, string modFileName, ICollection<DirectoryInfo> directoryList)
-        {
-            if (harmonyPatchType.IsHarmonyPatch())
+            if (!type.IsHarmonyPatch())
             {
-                try
-                {
-                    // Try to get Basemod directory list if we don't have one
-                    directoryList = directoryList ?? Add_On.instance.DirList;
-                }
-                catch (Exception exception) when (exception is SystemException)
-                {
-                    // If we get a Unity exception then that means we're running this outside of Unity (i.e. unit tests), so we'll just gracefully exit
-                    return;
-                }
-
-                FileManager = new FileManager(modFileName, directoryList);
-                Logger = new Logger(FileManager);
-
-                ApplyHarmonyPatch(harmonyPatchType, modFileName);
+                return;
             }
+
+            try
+            {
+                HandleDirectories(directories, modFileName);
+            }
+            catch (TypeInitializationException)
+            {
+                // If we get a Unity exception then that means we're running this outside of Unity (i.e. unit tests), so we'll just gracefully exit
+                return;
+            }
+
+            InitializeLogger();
+            ApplyHarmonyPatch(type, modFileName);
         }
 
-        /// <summary>
-        ///     Entry point for testing.
-        /// </summary>
-        public void LoadData(ILogger logger)
+        private void HandleDirectories([CanBeNull] ICollection<DirectoryInfo> directories,
+            [NotNull] string modFileName)
         {
-            Logger = logger;
+            // Try to get Basemod directory list if we don't have one
+            FileManager = new FileManager(modFileName, directories ?? Add_On.instance.DirList);
+        }
+
+        private void InitializeLogger()
+        {
+            var fileLoggerTarget = new FileLoggerTarget(FileManager, "log.txt");
+            Logger = new Logger(fileLoggerTarget);
+#if DEBUG
+            var debugLoggerTarget = new DebugLoggerTarget(new AngelaConversationUiAdapter());
+            Logger.AddTarget(debugLoggerTarget);
+#endif
         }
 
         private void ValidateThatStaticInstanceIsNotDuplicated()

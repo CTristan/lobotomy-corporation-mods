@@ -5,9 +5,11 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Extensions;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.Common.Attributes;
+using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 
@@ -15,10 +17,11 @@ using LobotomyCorporationMods.Common.Implementations;
 
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
 {
-    [HarmonyPatch(typeof(UseSkill), "FinishWorkSuccessfully")]
+    [HarmonyPatch(typeof(UseSkill), PrivateMethods.UseSkill.FinishWorkSuccessfully)]
     public static class UseSkillPatchFinishWorkSuccessfully
     {
-        public static void PatchAfterFinishWorkSuccessfully(this UseSkill instance, IAgentWorkTracker agentWorkTracker)
+        public static void PatchAfterFinishWorkSuccessfully([NotNull] this UseSkill instance,
+            [NotNull] IAgentWorkTracker agentWorkTracker)
         {
             Guard.Against.Null(instance, nameof(instance));
             Guard.Against.Null(agentWorkTracker, nameof(agentWorkTracker));
@@ -26,7 +29,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             var equipmentMakeInfo = instance.GetCreatureEquipmentMakeInfo();
 
             // If the creature has no gift it returns null
-            if (equipmentMakeInfo is null)
+            if (equipmentMakeInfo.IsNull())
             {
                 return;
             }
@@ -38,14 +41,12 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             agentWorkTracker.IncrementAgentWorkCount(giftName, agentId, numberOfSuccesses);
         }
 
-        /// <summary>
-        ///     Runs after an agent finishes working with an abnormality to increment their work count.
-        /// </summary>
+        /// <summary>Runs after an agent finishes working with an abnormality to increment their work count.</summary>
         /// <param name="__instance"></param>
         // ReSharper disable InconsistentNaming
         [EntryPoint]
-        [ExcludeFromCodeCoverage]
-        public static void Postfix(UseSkill __instance)
+        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
+        public static void Postfix([NotNull] UseSkill __instance)
         {
             try
             {
@@ -53,7 +54,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.WriteToLog(ex);
+                Harmony_Patch.Instance.Logger.WriteException(ex);
 
                 throw;
             }

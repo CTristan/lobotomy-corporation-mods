@@ -20,15 +20,14 @@ namespace LobotomyCorporationMods.Test.Mods.Common
 {
     public sealed class HarmonyPatchBaseTests
     {
-        private static readonly FakeHarmonyPatch s_fakeHarmonyPatch = new FakeHarmonyPatch(true);
+        private FakeHarmonyPatch _fakeHarmonyPatch = new FakeHarmonyPatch(false);
 
         [Fact]
         public void Applying_a_Harmony_patch_does_not_error()
         {
             var mockLogger = new Mock<ILogger>();
 
-            Action action = () =>
-                s_fakeHarmonyPatch.ApplyHarmonyPatch(typeof(HarmonyPatchBase), string.Empty, mockLogger.Object);
+            Action action = () => _fakeHarmonyPatch.ApplyHarmonyPatch(typeof(HarmonyPatchBase), string.Empty, mockLogger.Object);
 
             action.Should().NotThrow();
         }
@@ -40,10 +39,12 @@ namespace LobotomyCorporationMods.Test.Mods.Common
 
             void Action()
             {
-                s_fakeHarmonyPatch.ApplyHarmonyPatch(null, string.Empty, mockLogger.Object);
+                // ReSharper disable once AssignNullToNotNullAttribute
+                // Forcing null argument to test exception logging.
+                _fakeHarmonyPatch.ApplyHarmonyPatch(null, string.Empty, mockLogger.Object);
             }
 
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
+            mockLogger.VerifyArgumentNullException(Action);
         }
 
         [Fact]
@@ -51,19 +52,35 @@ namespace LobotomyCorporationMods.Test.Mods.Common
         {
             var currentDirectory = Directory.GetCurrentDirectory();
 
-            Action action = () =>
-                s_fakeHarmonyPatch.TestInitializePatchData(new List<DirectoryInfo>
-                {
-                    new DirectoryInfo(currentDirectory)
-                });
+            Action action = () => _fakeHarmonyPatch.TestInitializePatchData(new List<DirectoryInfo>
+            {
+                new DirectoryInfo(currentDirectory),
+            });
 
             action.Should().NotThrow();
-            s_fakeHarmonyPatch.Logger.Should().NotBeNull();
+            _fakeHarmonyPatch.Logger.Should().NotBeNull();
         }
+
+        [Fact]
+        public void Trying_to_initialize_patch_without_inheriting_from_base_does_not_initialize()
+        {
+            var currentDirectory = Directory.GetCurrentDirectory();
+
+            Action action = () => _fakeHarmonyPatch.TestInitializePatchData(new List<DirectoryInfo>
+            {
+                new DirectoryInfo(currentDirectory),
+            }, typeof(object));
+
+            action.Should().NotThrow();
+            _fakeHarmonyPatch.Logger.Should().BeNull();
+        }
+
 
         [Fact]
         public void Instantiating_a_duplicate_static_instance_throws_an_exception()
         {
+            _fakeHarmonyPatch = new FakeHarmonyPatch(true);
+
             Action action = () =>
             {
                 _ = new FakeHarmonyPatch(true);
@@ -73,33 +90,35 @@ namespace LobotomyCorporationMods.Test.Mods.Common
         }
     }
 
-    /// <summary>
-    ///     Only to be used for HarmonyPatchBase tests.
-    /// </summary>
+    /// <summary>Only to be used for HarmonyPatchBase tests.</summary>
     internal sealed class FakeHarmonyPatch : HarmonyPatchBase
     {
         private const string FileNameThatExists = "FileNameThatExists.txt";
 
-        internal FakeHarmonyPatch(bool isNotDuplicating)
-            : base(isNotDuplicating)
+        internal FakeHarmonyPatch(bool isNotDuplicating) : base(typeof(FakeHarmonyPatch), nameof(FakeHarmonyPatch), isNotDuplicating)
         {
         }
 
-        internal void ApplyHarmonyPatch(Type harmonyPatchType, string modFileName, ILogger logger)
+        internal void ApplyHarmonyPatch([NotNull] Type harmonyPatchType,
+            string modFileName,
+            ILogger logger)
         {
-            LoadData(logger);
-            Instance.LoadData(logger);
+            AddLoggerTarget(logger);
+            Instance.AddLoggerTarget(logger);
 
             ApplyHarmonyPatch(harmonyPatchType, modFileName);
         }
 
-        internal void TestInitializePatchData([NotNull] ICollection<DirectoryInfo> directoryList)
+        internal void TestInitializePatchData([NotNull] ICollection<DirectoryInfo> directoryList,
+            Type patchType = null)
         {
+            patchType = TestExtensions.EnsureNotNullWithDefault(patchType, () => typeof(FakeHarmonyPatch));
+
             var directory = directoryList.First();
             var testFileWithPath = Path.Combine(directory.FullName, FileNameThatExists);
             File.WriteAllText(testFileWithPath, string.Empty);
 
-            InitializePatchData(typeof(FakeHarmonyPatch), FileNameThatExists, directoryList);
+            SetUpPatchData(patchType, FileNameThatExists, directoryList);
         }
     }
 }

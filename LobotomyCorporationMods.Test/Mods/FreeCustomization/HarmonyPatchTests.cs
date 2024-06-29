@@ -8,6 +8,7 @@ using FluentAssertions;
 using LobotomyCorporationMods.FreeCustomization;
 using LobotomyCorporationMods.FreeCustomization.Patches;
 using LobotomyCorporationMods.Test.Extensions;
+using Moq;
 using Xunit;
 
 #endregion
@@ -21,7 +22,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
         {
             var patch = typeof(AgentInfoWindowPatchEnforcementWindow);
             var originalClass = typeof(AgentInfoWindow);
-            const string MethodName = "EnforcementWindow";
+            const string MethodName = nameof(AgentInfoWindow.EnforcementWindow);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
         }
@@ -30,14 +31,14 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
         public void Class_AgentInfoWindow_Method_EnforcementWindow_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
             void Action()
             {
                 AgentInfoWindowPatchEnforcementWindow.Postfix();
             }
 
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
+            mockLogger.VerifyArgumentNullException(Action);
         }
 
         [Fact]
@@ -45,7 +46,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
         {
             var patch = typeof(AgentInfoWindowPatchGenerateWindow);
             var originalClass = typeof(AgentInfoWindow);
-            const string MethodName = "GenerateWindow";
+            const string MethodName = nameof(AgentInfoWindow.GenerateWindow);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
         }
@@ -54,14 +55,14 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
         public void Class_AgentInfoWindow_Method_GenerateWindow_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
             void Action()
             {
                 AgentInfoWindowPatchGenerateWindow.Postfix();
             }
 
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
+            mockLogger.VerifyArgumentNullException(Action);
         }
 
         [Fact]
@@ -69,7 +70,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
         {
             var patch = typeof(AppearanceUIPatchCloseWindow);
             var originalClass = typeof(AppearanceUI);
-            const string MethodName = "CloseWindow";
+            const string MethodName = nameof(AppearanceUI.CloseWindow);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
         }
@@ -78,14 +79,16 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
         public void Class_AppearanceUI_Method_CloseWindow_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
             void Action()
             {
+                // ReSharper disable once AssignNullToNotNullAttribute
+                // Forcing null argument to test exception logging.
                 AppearanceUIPatchCloseWindow.Prefix(null);
             }
 
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
+            mockLogger.VerifyArgumentNullException(Action);
         }
 
         [Fact]
@@ -93,7 +96,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
         {
             var patch = typeof(CustomizingWindowPatchConfirm);
             var originalClass = typeof(CustomizingWindow);
-            const string MethodName = "Confirm";
+            const string MethodName = nameof(CustomizingWindow.Confirm);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
         }
@@ -102,14 +105,16 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
         public void Class_CustomizingWindow_Method_Confirm_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
             void Action()
             {
+                // ReSharper disable once AssignNullToNotNullAttribute
+                // Forcing null argument to test exception logging.
                 CustomizingWindowPatchConfirm.Prefix(null);
             }
 
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
+            mockLogger.VerifyArgumentNullException(Action);
         }
 
         [Fact]
@@ -117,7 +122,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
         {
             var patch = typeof(CustomizingWindowPatchOpenAppearanceWindow);
             var originalClass = typeof(CustomizingWindow);
-            const string MethodName = "OpenAppearanceWindow";
+            const string MethodName = nameof(CustomizingWindow.OpenAppearanceWindow);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
         }
@@ -126,14 +131,16 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
         public void Class_CustomizingWindow_Method_OpenAppearanceWindow_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
             void Action()
             {
+                // ReSharper disable once AssignNullToNotNullAttribute
+                // Forcing null argument to test exception logging.
                 CustomizingWindowPatchOpenAppearanceWindow.Postfix(null);
             }
 
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(Action);
+            mockLogger.VerifyArgumentNullException(Action);
         }
 
         [Fact]
@@ -141,7 +148,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
         {
             var patch = typeof(CustomizingWindowPatchReviseOpenAction);
             var originalClass = typeof(CustomizingWindow);
-            const string MethodName = "ReviseOpenAction";
+            const string MethodName = PrivateMethods.CustomizingWindow.ReviseOpenAction;
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
         }
@@ -150,20 +157,22 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
         public void Class_CustomizingWindow_Method_ReviseOpenAction_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.LoadData(mockLogger.Object);
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
+            const int NumberOfLogs = 2;
 
+            // ReSharper disable AssignNullToNotNullAttribute
+            // Forcing null arguments to test exception logging.
             Action action = () => CustomizingWindowPatchReviseOpenAction.Postfix(null, null);
+            // ReSharper enable AssignNullToNotNullAttribute
 
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(action);
+            mockLogger.VerifyArgumentNullException(action);
 
             // Verify other arguments throw an exception if null
-            action = () => CustomizingWindowPatchReviseOpenAction.Postfix(TestExtensions.CreateCustomizingWindow(), null);
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(action, 2);
+            action = () => CustomizingWindowPatchReviseOpenAction.Postfix(UnityTestExtensions.CreateCustomizingWindow(), null);
+            mockLogger.VerifyArgumentNullException(action, Times.Exactly(NumberOfLogs));
         }
 
-        /// <summary>
-        ///     Harmony requires the constructor to be public.
-        /// </summary>
+        /// <summary>Harmony requires the constructor to be public.</summary>
         [Fact]
         public void Constructor_is_public_and_externally_accessible()
         {
