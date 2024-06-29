@@ -89,7 +89,7 @@ namespace LobotomyCorporationMods.Common.Implementations
             {
                 HandleDirectories(directories, modFileName);
             }
-            catch (Exception exception) when (exception is SystemException)
+            catch (TypeInitializationException)
             {
                 // If we get a Unity exception then that means we're running this outside of Unity (i.e. unit tests), so we'll just gracefully exit
                 return;
