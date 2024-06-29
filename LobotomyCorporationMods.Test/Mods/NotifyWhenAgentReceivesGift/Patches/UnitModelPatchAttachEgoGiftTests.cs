@@ -23,15 +23,10 @@ namespace LobotomyCorporationMods.Test.Mods.NotifyWhenAgentReceivesGift.Patches
             [NotNull] string giftName,
             EGOgiftAttachRegion attachRegion)
         {
-            // Arrange
             var unitModel = GetAgentWithLockedGift(agentName, attachRegion);
             var newGift = GetGift(giftName, attachRegion: attachRegion);
 
-            // Act
-            UnitModelPatchAttachEgoGift.PatchBeforeAttachEgoGift(unitModel, newGift, NoticeAdapter.Object);
-
-            // Assert
-            NoticeAdapter.Verify(adapter => adapter.Send(It.IsAny<string>(), It.IsAny<object[]>()), Times.Never);
+            ExecutePatchAndVerifyNotification(unitModel, newGift, Times.Never());
         }
 
         [Theory]
@@ -43,10 +38,7 @@ namespace LobotomyCorporationMods.Test.Mods.NotifyWhenAgentReceivesGift.Patches
             var gift = GetGift(DefaultAgentName, DefaultEquipmentId, giftId);
             unitModel.Equipment.gifts.addedGifts.Add(gift);
 
-            UnitModelPatchAttachEgoGift.PatchBeforeAttachEgoGift(unitModel, gift, NoticeAdapter.Object);
-
-            // Assert
-            NoticeAdapter.Verify(adapter => adapter.Send(It.IsAny<string>(), It.IsAny<object[]>()), Times.Never);
+            ExecutePatchAndVerifyNotification(unitModel, gift, Times.Never());
         }
 
         [Theory]
@@ -58,10 +50,7 @@ namespace LobotomyCorporationMods.Test.Mods.NotifyWhenAgentReceivesGift.Patches
             var gift = GetGift(DefaultAgentName, DefaultEquipmentId, giftId);
             unitModel.Equipment.gifts.replacedGifts.Add(gift);
 
-            UnitModelPatchAttachEgoGift.PatchBeforeAttachEgoGift(unitModel, gift, NoticeAdapter.Object);
-
-            // Assert
-            NoticeAdapter.Verify(adapter => adapter.Send(It.IsAny<string>(), It.IsAny<object[]>()), Times.Never);
+            ExecutePatchAndVerifyNotification(unitModel, gift, Times.Never());
         }
 
         [Theory]
@@ -71,15 +60,10 @@ namespace LobotomyCorporationMods.Test.Mods.NotifyWhenAgentReceivesGift.Patches
             [NotNull] string giftName,
             EGOgiftAttachRegion newGiftAttachRegion)
         {
-            // Arrange
             var unitModel = GetAgentWithLockedGift(agentName, DefaultGiftAttachRegion);
             var newGift = GetGift(giftName, attachRegion: newGiftAttachRegion);
 
-            // Act
-            UnitModelPatchAttachEgoGift.PatchBeforeAttachEgoGift(unitModel, newGift, NoticeAdapter.Object);
-
-            // Assert
-            NoticeAdapter.Verify(adapter => adapter.Send(It.IsAny<string>(), It.IsAny<object[]>()), Times.Once);
+            ExecutePatchAndVerifyNotification(unitModel, newGift, Times.Once());
         }
 
         [Theory]
@@ -88,16 +72,11 @@ namespace LobotomyCorporationMods.Test.Mods.NotifyWhenAgentReceivesGift.Patches
         public void Receiving_a_duplicate_gift_does_not_cause_a_notification(string agentName,
             [NotNull] string giftName)
         {
-            // Arrange
             var gift = GetGift(giftName);
             var unitModel = UnityTestExtensions.CreateAgentModel(name: agentName);
             unitModel.Equipment.gifts.addedGifts.Add(gift);
 
-            // Act
-            UnitModelPatchAttachEgoGift.PatchBeforeAttachEgoGift(unitModel, gift, NoticeAdapter.Object);
-
-            // Assert
-            NoticeAdapter.Verify(adapter => adapter.Send(It.IsAny<string>(), It.IsAny<object[]>()), Times.Never);
+            ExecutePatchAndVerifyNotification(unitModel, gift, Times.Never());
         }
 
         [Theory]
@@ -108,19 +87,28 @@ namespace LobotomyCorporationMods.Test.Mods.NotifyWhenAgentReceivesGift.Patches
             [NotNull] string giftName,
             string expectedMessage)
         {
-            // Arrange
             var gift = GetGift(giftName);
             var unitModel = UnityTestExtensions.CreateAgentModel(name: agentName);
             var noticeMessages = new List<string>();
             NoticeAdapter.Setup(adapter => adapter.Send(It.IsAny<string>(), It.IsAny<object[]>())).Callback((string _,
                 object[] objectArray) => noticeMessages.Add(objectArray[0].ToString()));
 
-            // Act
-            UnitModelPatchAttachEgoGift.PatchBeforeAttachEgoGift(unitModel, gift, NoticeAdapter.Object);
+            ExecutePatchAndVerifyNotification(unitModel, gift, Times.Once());
 
-            // Assert
-            NoticeAdapter.Verify(adapter => adapter.Send(It.IsAny<string>(), It.IsAny<object[]>()), Times.Once);
             noticeMessages[0].Should().Be(expectedMessage);
         }
+
+        #region Helper Methods
+
+        private void ExecutePatchAndVerifyNotification(UnitModel unitModel,
+            EGOgiftModel gift,
+            Times numberOfTimes)
+        {
+            UnitModelPatchAttachEgoGift.PatchBeforeAttachEgoGift(unitModel, gift, NoticeAdapter.Object);
+
+            NoticeAdapter.Verify(adapter => adapter.Send(It.IsAny<string>(), It.IsAny<object[]>()), numberOfTimes);
+        }
+
+        #endregion
     }
 }
