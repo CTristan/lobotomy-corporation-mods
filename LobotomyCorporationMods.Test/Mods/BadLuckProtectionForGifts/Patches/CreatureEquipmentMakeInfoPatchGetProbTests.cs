@@ -3,11 +3,9 @@
 #region
 
 using FluentAssertions;
-using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Patches;
 using LobotomyCorporationMods.Common.Implementations.Facades;
-using LobotomyCorporationMods.Common.Interfaces.Facades;
 using LobotomyCorporationMods.Test.Extensions;
 using Moq;
 using Xunit;
@@ -26,11 +24,12 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts.Patches
         {
             // Arrange
             var sut = UnityTestExtensions.CreateCreatureEquipmentMakeInfo();
-            var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
             var facade = new CreatureEquipmentMakeInfoFacade(sut);
 
+            var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
+
             // Act
-            var actual = PatchAfterGetProb(facade, expected, mockAgentWorkTracker.Object);
+            var actual = facade.PatchAfterGetProb(expected, mockAgentWorkTracker.Object);
 
             // Assert
             Assert.Equal(expected, actual);
@@ -40,15 +39,16 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts.Patches
         public void An_abnormality_with_no_gift_does_not_increase_probability_chance()
         {
             // Arrange
-            const float Expected = 0f;
             var sut = UnityTestExtensions.CreateCreatureEquipmentMakeInfo();
+            var facade = new CreatureEquipmentMakeInfoFacade(sut);
+            const float Expected = 0f;
+
             sut.equipTypeInfo = null;
             var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
-            var facade = new CreatureEquipmentMakeInfoFacade(sut);
 
             // Act
             var actual = 0f;
-            actual = PatchAfterGetProb(facade, actual, mockAgentWorkTracker.Object);
+            actual = facade.PatchAfterGetProb(actual, mockAgentWorkTracker.Object);
 
             // Assert
             actual.Should().Be(Expected);
@@ -59,15 +59,16 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts.Patches
         {
             // Arrange
             var sut = GetCreatureEquipmentMakeInfo(GiftName);
+            var facade = new CreatureEquipmentMakeInfoFacade(sut);
+
             var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
 
             // 101 times worked would equal 101% bonus normally
             mockAgentWorkTracker.Setup(tracker => tracker.GetLastAgentWorkCountByGift(GiftName)).Returns(101);
-            var facade = new CreatureEquipmentMakeInfoFacade(sut);
 
             // Act
             var actual = 0f;
-            actual = PatchAfterGetProb(facade, actual, mockAgentWorkTracker.Object);
+            actual = facade.PatchAfterGetProb(actual, mockAgentWorkTracker.Object);
 
             // Assert
             // We should only get back 100% even with the 101% bonus
@@ -83,26 +84,19 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts.Patches
         {
             // Arrange
             var sut = GetCreatureEquipmentMakeInfo(GiftName);
+            var facade = new CreatureEquipmentMakeInfoFacade(sut);
             var expected = numberOfSuccesses / 100f;
 
             var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
             mockAgentWorkTracker.Setup(tracker => tracker.GetLastAgentWorkCountByGift(GiftName)).Returns(numberOfSuccesses);
 
-            var facade = new CreatureEquipmentMakeInfoFacade(sut);
 
             // Act
             var actual = 0f;
-            actual = PatchAfterGetProb(facade, actual, mockAgentWorkTracker.Object);
+            actual = facade.PatchAfterGetProb(actual, mockAgentWorkTracker.Object);
 
             // Assert
             actual.Should().Be(expected);
-        }
-
-        private static float PatchAfterGetProb([NotNull] ICreatureEquipmentMakeInfoFacade facade,
-            float probability,
-            [NotNull] IAgentWorkTracker agentWorkTracker)
-        {
-            return CreatureEquipmentMakeInfoPatchGetProb.PatchAfterGetProb(facade, probability, agentWorkTracker);
         }
     }
 }

@@ -21,7 +21,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
     [HarmonyPatch(typeof(CreatureEquipmentMakeInfo), nameof(CreatureEquipmentMakeInfo.GetProb))]
     public static class CreatureEquipmentMakeInfoPatchGetProb
     {
-        public static float PatchAfterGetProb([NotNull] ICreatureEquipmentMakeInfoFacade facade,
+        public static float PatchAfterGetProb([NotNull] this ICreatureEquipmentMakeInfoFacade facade,
             float probability,
             [NotNull] IAgentWorkTracker agentWorkTracker)
         {
