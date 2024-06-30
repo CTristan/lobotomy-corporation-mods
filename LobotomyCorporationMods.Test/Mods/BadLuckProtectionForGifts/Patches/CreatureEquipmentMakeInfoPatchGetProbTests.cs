@@ -85,7 +85,6 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts.Patches
             var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
             mockAgentWorkTracker.Setup(tracker => tracker.GetLastAgentWorkCountByGift(GiftName)).Returns(numberOfSuccesses);
 
-
             // Act
             var actual = 0f;
             actual = sut.PatchAfterGetProb(actual, mockAgentWorkTracker.Object);

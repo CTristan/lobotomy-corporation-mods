@@ -16,7 +16,11 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
     [HarmonyPatch(typeof(CreatureEquipmentMakeInfo), nameof(CreatureEquipmentMakeInfo.GetProb))]
     public static class CreatureEquipmentMakeInfoPatchGetProb
     {
-        /// <summary>Increases the chance of getting the gift based on total work count</summary>
+        /// <summary>Increases the chance of getting the gift based on total work count.</summary>
+        /// <param name="instance">The instance of CreatureEquipmentMakeInfo.</param>
+        /// <param name="probability">The original probability value.</param>
+        /// <param name="agentWorkTracker">The agent work tracker.</param>
+        /// <returns>The modified probability value.</returns>
         public static float PatchAfterGetProb([NotNull] this CreatureEquipmentMakeInfo instance,
             float probability,
             [NotNull] IAgentWorkTracker agentWorkTracker)
@@ -24,9 +28,21 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             Guard.Against.Null(instance, nameof(instance));
             Guard.Against.Null(agentWorkTracker, nameof(agentWorkTracker));
 
-            var giftName = instance.GetGift()?.Name ?? string.Empty;
+            var giftName = instance.GetGift()?.Name;
+            probability = ModifyProbabilityIfGiftNameIsValid(probability, agentWorkTracker, giftName);
 
-            // If the abnormality has no gift then there's nothing to track
+            return ValidateProbability(probability);
+        }
+
+        /// <summary>Modifies the probability value if the gift name is valid.</summary>
+        /// <param name="probability">The original probability value.</param>
+        /// <param name="agentWorkTracker">The agent work tracker.</param>
+        /// <param name="giftName">The name of the gift.</param>
+        /// <returns>The modified probability value.</returns>
+        private static float ModifyProbabilityIfGiftNameIsValid(float probability,
+            IAgentWorkTracker agentWorkTracker,
+            [CanBeNull] string giftName)
+        {
             if (string.IsNullOrEmpty(giftName))
             {
                 return probability;
@@ -35,13 +51,15 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             var probabilityBonus = agentWorkTracker.GetLastAgentWorkCountByGift(giftName) / 100f;
             probability += probabilityBonus;
 
-            // Prevent potential overflow issues
-            if (probability > 1f)
-            {
-                probability = 1f;
-            }
-
             return probability;
+        }
+
+        /// <summary>Prevents probabilities higher than 100% which could cause potential overflow.</summary>
+        /// <param name="probability">The probability value to validate.</param>
+        /// <returns>The validated probability value.</returns>
+        private static float ValidateProbability(float probability)
+        {
+            return probability > 1f ? 1f : probability;
         }
 
         /// <summary>Runs after GetProb to add on additional chance based on our work tracking.</summary>
