@@ -5,7 +5,6 @@
 using FluentAssertions;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Patches;
-using LobotomyCorporationMods.Common.Implementations.Facades;
 using LobotomyCorporationMods.Test.Extensions;
 using Moq;
 using Xunit;
@@ -24,12 +23,11 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts.Patches
         {
             // Arrange
             var sut = UnityTestExtensions.CreateCreatureEquipmentMakeInfo();
-            var facade = new CreatureEquipmentMakeInfoFacade(sut);
 
             var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
 
             // Act
-            var actual = facade.PatchAfterGetProb(expected, mockAgentWorkTracker.Object);
+            var actual = sut.PatchAfterGetProb(expected, mockAgentWorkTracker.Object);
 
             // Assert
             Assert.Equal(expected, actual);
@@ -40,7 +38,6 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts.Patches
         {
             // Arrange
             var sut = UnityTestExtensions.CreateCreatureEquipmentMakeInfo();
-            var facade = new CreatureEquipmentMakeInfoFacade(sut);
             const float Expected = 0f;
 
             sut.equipTypeInfo = null;
@@ -48,7 +45,7 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts.Patches
 
             // Act
             var actual = 0f;
-            actual = facade.PatchAfterGetProb(actual, mockAgentWorkTracker.Object);
+            actual = sut.PatchAfterGetProb(actual, mockAgentWorkTracker.Object);
 
             // Assert
             actual.Should().Be(Expected);
@@ -59,7 +56,6 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts.Patches
         {
             // Arrange
             var sut = GetCreatureEquipmentMakeInfo(GiftName);
-            var facade = new CreatureEquipmentMakeInfoFacade(sut);
 
             var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
 
@@ -68,7 +64,7 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts.Patches
 
             // Act
             var actual = 0f;
-            actual = facade.PatchAfterGetProb(actual, mockAgentWorkTracker.Object);
+            actual = sut.PatchAfterGetProb(actual, mockAgentWorkTracker.Object);
 
             // Assert
             // We should only get back 100% even with the 101% bonus
@@ -84,7 +80,6 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts.Patches
         {
             // Arrange
             var sut = GetCreatureEquipmentMakeInfo(GiftName);
-            var facade = new CreatureEquipmentMakeInfoFacade(sut);
             var expected = numberOfSuccesses / 100f;
 
             var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
@@ -93,7 +88,7 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts.Patches
 
             // Act
             var actual = 0f;
-            actual = facade.PatchAfterGetProb(actual, mockAgentWorkTracker.Object);
+            actual = sut.PatchAfterGetProb(actual, mockAgentWorkTracker.Object);
 
             // Assert
             actual.Should().Be(expected);

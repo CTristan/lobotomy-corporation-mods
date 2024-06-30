@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using FluentAssertions;
 using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.Test.Extensions;
@@ -112,7 +113,7 @@ namespace LobotomyCorporationMods.Test.Mods.Common
         internal void TestInitializePatchData([NotNull] ICollection<DirectoryInfo> directoryList,
             Type patchType = null)
         {
-            patchType = TestExtensions.EnsureNotNullWithDefault(patchType, () => typeof(FakeHarmonyPatch));
+            patchType = patchType.EnsureNotNullWithMethod(() => typeof(FakeHarmonyPatch));
 
             var directory = directoryList.First();
             var testFileWithPath = Path.Combine(directory.FullName, FileNameThatExists);

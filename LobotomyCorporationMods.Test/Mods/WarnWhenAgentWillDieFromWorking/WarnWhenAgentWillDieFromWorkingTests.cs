@@ -63,7 +63,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
         private static AgentModel GetAgentWithGift(EquipmentId giftId = EquipmentId.None,
             IEnumerable<UnitBuf> unitBuffs = null)
         {
-            unitBuffs = TestExtensions.EnsureNotNullWithDefault(unitBuffs, () => new List<UnitBuf>());
+            unitBuffs = unitBuffs.EnsureNotNullWithMethod(() => new List<UnitBuf>());
 
             var agent = UnityTestExtensions.CreateAgentModel(bufList: unitBuffs.ToList());
             var gift = UnityTestExtensions.CreateEgoGiftModel();
@@ -114,7 +114,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
             RwbpType skillType = (RwbpType)1,
             int qliphothCounter = 0)
         {
-            buffList = TestExtensions.EnsureNotNullWithDefault(buffList, () => new List<UnitBuf>());
+            buffList = buffList.EnsureNotNullWithMethod(() => new List<UnitBuf>());
 
             var creature = GetCreatureWithGift(creatureId, qliphothCounter);
             _ = InitializeCommandWindow(creature, skillType);
@@ -127,7 +127,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
         protected CommandWindow.CommandWindow InitializeCommandWindow([CanBeNull] UnitModel currentTarget = null,
             RwbpType rwbpType = (RwbpType)1)
         {
-            currentTarget = TestExtensions.EnsureNotNullWithDefault(currentTarget, () => UnityTestExtensions.CreateCreatureModel());
+            currentTarget = currentTarget.EnsureNotNullWithMethod(() => UnityTestExtensions.CreateCreatureModel());
 
             // Need existing game instances
             InitializeLocalizeTextDataModel();
