@@ -6,12 +6,12 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.BadLuckProtectionForGifts.Extensions;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
+using LobotomyCorporationMods.Common.Implementations.Facades;
 
 #endregion
 
@@ -26,16 +26,15 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             Guard.Against.Null(instance, nameof(instance));
             Guard.Against.Null(agentWorkTracker, nameof(agentWorkTracker));
 
-            var equipmentMakeInfo = instance.GetCreatureEquipmentMakeInfo();
+            var giftName = instance.GetAbnormalityGiftName();
 
-            // If the creature has no gift it returns null
-            if (equipmentMakeInfo.IsNull())
+            // If the abnormality has no gift then there's nothing to track
+            if (string.IsNullOrEmpty(giftName))
             {
                 return;
             }
 
-            var giftName = equipmentMakeInfo.equipTypeInfo.Name;
-            var agentId = instance.agent.instanceId;
+            var agentId = instance.GetAgentId();
             var numberOfSuccesses = instance.successCount;
 
             agentWorkTracker.IncrementAgentWorkCount(giftName, agentId, numberOfSuccesses);

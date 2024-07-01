@@ -28,7 +28,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             Guard.Against.Null(instance, nameof(instance));
             Guard.Against.Null(agentWorkTracker, nameof(agentWorkTracker));
 
-            var giftName = instance.GetGift()?.Name;
+            var giftName = instance.GetAbnormalityGiftName();
             probability = ModifyProbabilityIfGiftNameIsValid(probability, agentWorkTracker, giftName);
 
             return ValidateProbability(probability);
