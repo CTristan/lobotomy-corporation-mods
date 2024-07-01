@@ -24,14 +24,14 @@ namespace LobotomyCorporationMods.BugFixes.Patches
         public static void PatchBeforeSetAgentStatBonus([NotNull] this CustomizingWindow instance,
             [NotNull] AgentModel agent,
             [NotNull] AgentData data,
-            [CanBeNull] ICustomizingWindowAdapter customizingWindowAdapter = null)
+            [CanBeNull] ICustomizingWindowTestAdapter customizingWindowTestAdapter = null)
         {
             Guard.Against.Null(instance, nameof(instance));
             Guard.Against.Null(agent, nameof(agent));
             Guard.Against.Null(data, nameof(data));
 
             // This is our custom fixed update
-            instance.UpdateAgentStats(agent, data, customizingWindowAdapter);
+            instance.UpdateAgentStats(agent, data, customizingWindowTestAdapter);
         }
 
         /// <summary>Runs before SetAgentStatBonus to use the original stat levels instead of the modified stat levels.</summary>

@@ -111,7 +111,7 @@ namespace LobotomyCorporationMods.Common.Implementations
             var fileLoggerTarget = new FileLoggerTarget(FileManager, "log.txt");
             Logger = new Logger(fileLoggerTarget);
 #if DEBUG
-            var debugLoggerTarget = new DebugLoggerTarget(new AngelaConversationUiAdapter());
+            var debugLoggerTarget = new DebugLoggerTarget(new AngelaConversationUiTestAdapter());
             Logger.AddTarget(debugLoggerTarget);
 #endif
         }

@@ -21,17 +21,17 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
             var sut = InitializeAgentInfoWindow();
             _ = InitializeCustomizingWindow();
 
-            var mockCustomizingWindowAdapter = new Mock<ICustomizingWindowAdapter>();
-            var mockGameObjectAdapter = new Mock<IGameObjectAdapter>();
-            var mockUiComponentsAdapter = new Mock<IAgentInfoWindowUiComponentsAdapter>();
+            var mockCustomizingWindowTestAdapter = new Mock<ICustomizingWindowTestAdapter>();
+            var mockGameObjectTestAdapter = new Mock<IGameObjectTestAdapter>();
+            var mockUiComponentsTestAdapter = new Mock<IAgentInfoWindowUiComponentsTestAdapter>();
 
             // Act
-            sut.PatchAfterEnforcementWindow(mockCustomizingWindowAdapter.Object, mockGameObjectAdapter.Object, mockUiComponentsAdapter.Object);
+            sut.PatchAfterEnforcementWindow(mockCustomizingWindowTestAdapter.Object, mockGameObjectTestAdapter.Object, mockUiComponentsTestAdapter.Object);
 
             // Assert
-            mockCustomizingWindowAdapter.Verify(adapter => adapter.OpenAppearanceWindow(), Times.Once);
-            mockGameObjectAdapter.Verify(adapter => adapter.SetActive(true), Times.Exactly(2));
-            mockUiComponentsAdapter.Verify(adapter => adapter.SetData(It.IsAny<AgentData>()), Times.Once);
+            mockCustomizingWindowTestAdapter.Verify(adapter => adapter.OpenAppearanceWindow(), Times.Once);
+            mockGameObjectTestAdapter.Verify(adapter => adapter.SetActive(true), Times.Exactly(2));
+            mockUiComponentsTestAdapter.Verify(adapter => adapter.SetData(It.IsAny<AgentData>()), Times.Once);
         }
     }
 }

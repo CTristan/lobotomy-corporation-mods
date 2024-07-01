@@ -13,12 +13,12 @@ namespace LobotomyCorporationMods.Test.Mods.Common.LoggerTargets
         public void Logging_message_sends_to_Angela()
         {
             const string ExpectedMessage = "MessageSentToLog";
-            var mockAngelaConversationUiAdapter = new Mock<IAngelaConversationUiAdapter>();
-            var sut = new DebugLoggerTarget(mockAngelaConversationUiAdapter.Object);
+            var mockAngelaConversationUiTestAdapter = new Mock<IAngelaConversationUiTestAdapter>();
+            var sut = new DebugLoggerTarget(mockAngelaConversationUiTestAdapter.Object);
 
             sut.WriteToLoggerTarget(ExpectedMessage);
 
-            mockAngelaConversationUiAdapter.Verify(adapter => adapter.AddMessage(ExpectedMessage), Times.Once);
+            mockAngelaConversationUiTestAdapter.Verify(adapter => adapter.AddMessage(ExpectedMessage), Times.Once);
         }
     }
 }

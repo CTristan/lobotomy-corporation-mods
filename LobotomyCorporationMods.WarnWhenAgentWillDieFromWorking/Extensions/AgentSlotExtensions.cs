@@ -20,25 +20,25 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
         internal static bool CheckIfWorkWillKillAgent([NotNull] this AgentSlot agentSlot,
             [NotNull] CommandWindow.CommandWindow commandWindow,
             Dictionary<CreatureIds, Func<CreatureEvaluatorParameters, ICreatureEvaluator>> evaluators,
-            IBeautyBeastAnimAdapter beautyBeastAnimAdapter,
-            IYggdrasilAnimAdapter yggdrasilAnimAdapter)
+            IBeautyBeastAnimTestAdapter beautyBeastAnimTestAdapter,
+            IYggdrasilAnimTestAdapter yggdrasilAnimTestAdapter)
         {
             var agent = agentSlot.CurrentAgent;
-            var evaluator = commandWindow.GetCreatureEvaluator(agent, evaluators, beautyBeastAnimAdapter, yggdrasilAnimAdapter);
+            var evaluator = commandWindow.GetCreatureEvaluator(agent, evaluators, beautyBeastAnimTestAdapter, yggdrasilAnimTestAdapter);
 
             return evaluator.WillAgentDie();
         }
 
         internal static void IndicateThatAgentWillDie([NotNull] this AgentSlot instance,
-            [NotNull] IImageAdapter imageAdapter,
-            [NotNull] ITextAdapter textAdapter)
+            [NotNull] IImageTestAdapter imageTestAdapter,
+            [NotNull] ITextTestAdapter textTestAdapter)
         {
             var commandWindow = CommandWindow.CommandWindow.CurrentWindow;
 
-            imageAdapter.GameObject = instance.WorkFilterFill;
-            imageAdapter.Color = commandWindow.DeadColor;
-            textAdapter.GameObject = instance.WorkFilterText;
-            textAdapter.Text = LocalizeTextDataModel.instance.GetText("AgentState_Dead");
+            imageTestAdapter.GameObject = instance.WorkFilterFill;
+            imageTestAdapter.Color = commandWindow.DeadColor;
+            textTestAdapter.GameObject = instance.WorkFilterText;
+            textTestAdapter.Text = LocalizeTextDataModel.instance.GetText("AgentState_Dead");
             instance.SetColor(commandWindow.DeadColor);
         }
     }

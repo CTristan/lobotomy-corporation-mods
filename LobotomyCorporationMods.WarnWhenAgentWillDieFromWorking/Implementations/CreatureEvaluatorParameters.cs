@@ -9,20 +9,20 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
         internal CreatureEvaluatorParameters(AgentModel agent,
             CreatureModel creature,
             RwbpType skillType,
-            IBeautyBeastAnimAdapter beautyBeastAnimAdapter,
-            IYggdrasilAnimAdapter yggdrasilAnimAdapter)
+            IBeautyBeastAnimTestAdapter beautyBeastAnimTestAdapter,
+            IYggdrasilAnimTestAdapter yggdrasilAnimTestAdapter)
         {
             Agent = agent;
             Creature = creature;
             SkillType = skillType;
-            BeautyBeastAnimAdapter = beautyBeastAnimAdapter;
-            YggdrasilAnimAdapter = yggdrasilAnimAdapter;
+            BeautyBeastAnimTestAdapter = beautyBeastAnimTestAdapter;
+            YggdrasilAnimTestAdapter = yggdrasilAnimTestAdapter;
         }
 
         internal AgentModel Agent { get; private set; }
         internal CreatureModel Creature { get; private set; }
         internal RwbpType SkillType { get; private set; }
-        internal IBeautyBeastAnimAdapter BeautyBeastAnimAdapter { get; private set; }
-        internal IYggdrasilAnimAdapter YggdrasilAnimAdapter { get; private set; }
+        internal IBeautyBeastAnimTestAdapter BeautyBeastAnimTestAdapter { get; private set; }
+        internal IYggdrasilAnimTestAdapter YggdrasilAnimTestAdapter { get; private set; }
     }
 }

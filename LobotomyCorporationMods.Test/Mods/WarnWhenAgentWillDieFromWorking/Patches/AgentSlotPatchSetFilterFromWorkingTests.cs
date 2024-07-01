@@ -19,8 +19,8 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
     {
         public AgentSlotPatchSetFilterTests()
         {
-            MockImageAdapter.SetupProperty(adapter => adapter.Color);
-            MockTextAdapter.SetupProperty(adapter => adapter.Text);
+            MockImageTestAdapter.SetupProperty(adapter => adapter.Color);
+            MockTextTestAdapter.SetupProperty(adapter => adapter.Text);
 
             GameManager.ManageStarted = true;
         }
@@ -32,8 +32,8 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             _ = UnityTestExtensions.CreateCommandWindow(creature, CommandType.Suppress);
             var agentSlot = UnityTestExtensions.CreateAgentSlot();
 
-            Action action = () => agentSlot.PatchAfterSetFilter(IdleAgentState, GameManager,
-                MockBeautyBeastAnimAdapter.Object, MockImageAdapter.Object, MockTextAdapter.Object, MockYggdrasilAnimAdapter.Object);
+            Action action = () => agentSlot.PatchAfterSetFilter(IdleAgentState, GameManager, MockBeautyBeastAnimTestAdapter.Object, MockImageTestAdapter.Object, MockTextTestAdapter.Object,
+                MockYggdrasilAnimTestAdapter.Object);
 
             action.Should().NotThrow();
         }
@@ -46,8 +46,8 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             var agentSlot = UnityTestExtensions.CreateAgentSlot();
             GameManager.ManageStarted = false;
 
-            Action action = () => agentSlot.PatchAfterSetFilter(IdleAgentState, GameManager,
-                MockBeautyBeastAnimAdapter.Object, MockImageAdapter.Object, MockTextAdapter.Object, MockYggdrasilAnimAdapter.Object);
+            Action action = () => agentSlot.PatchAfterSetFilter(IdleAgentState, GameManager, MockBeautyBeastAnimTestAdapter.Object, MockImageTestAdapter.Object, MockTextTestAdapter.Object,
+                MockYggdrasilAnimTestAdapter.Object);
 
             action.Should().NotThrow();
         }
@@ -60,8 +60,8 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             var agentSlot = UnityTestExtensions.CreateAgentSlot();
 
             // Send a null game manager to indicate this is our first game load
-            Action action = () => agentSlot.PatchAfterSetFilter(IdleAgentState, null, MockBeautyBeastAnimAdapter.Object,
-                MockImageAdapter.Object, MockTextAdapter.Object, MockYggdrasilAnimAdapter.Object);
+            Action action = () => agentSlot.PatchAfterSetFilter(IdleAgentState, null, MockBeautyBeastAnimTestAdapter.Object, MockImageTestAdapter.Object, MockTextTestAdapter.Object,
+                MockYggdrasilAnimTestAdapter.Object);
 
             action.Should().NotThrow();
         }
@@ -100,10 +100,10 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             var agentSlot = InitializeAgentSlot(CreatureIds.OneSin, buffList);
 
             // Act
-            agentSlot.PatchAfterSetFilter(agentState, GameManager, MockBeautyBeastAnimAdapter.Object, MockImageAdapter.Object, MockTextAdapter.Object, MockYggdrasilAnimAdapter.Object);
+            agentSlot.PatchAfterSetFilter(agentState, GameManager, MockBeautyBeastAnimTestAdapter.Object, MockImageTestAdapter.Object, MockTextTestAdapter.Object, MockYggdrasilAnimTestAdapter.Object);
 
             // Assert
-            AgentWillDie(MockImageAdapter.Object, MockTextAdapter.Object).Should().BeFalse();
+            AgentWillDie(MockImageTestAdapter.Object, MockTextTestAdapter.Object).Should().BeFalse();
         }
 
         #region Beauty and the Beast Tests
@@ -116,7 +116,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
 
             // Mock animation script adapter to avoid Unity errors
             const int NormalState = 0;
-            MockBeautyBeastAnimAdapter.Setup(adapter => adapter.State).Returns(NormalState);
+            MockBeautyBeastAnimTestAdapter.Setup(adapter => adapter.State).Returns(NormalState);
 
             // Assert
             VerifyAgentWillNotDie(agentSlot);
@@ -130,7 +130,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
 
             // Mock animation script adapter to avoid Unity errors
             const int WeakenedState = 1;
-            MockBeautyBeastAnimAdapter.Setup(adapter => adapter.State).Returns(WeakenedState);
+            MockBeautyBeastAnimTestAdapter.Setup(adapter => adapter.State).Returns(WeakenedState);
 
             // Assert
             VerifyAgentWillDie(agentSlot);
@@ -147,7 +147,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
 
             // Mock animation script adapter to avoid Unity errors
             const int WeakenedState = 1;
-            MockBeautyBeastAnimAdapter.Setup(adapter => adapter.State).Returns(WeakenedState);
+            MockBeautyBeastAnimTestAdapter.Setup(adapter => adapter.State).Returns(WeakenedState);
 
             // Assert
             VerifyAgentWillNotDie(agentSlot);

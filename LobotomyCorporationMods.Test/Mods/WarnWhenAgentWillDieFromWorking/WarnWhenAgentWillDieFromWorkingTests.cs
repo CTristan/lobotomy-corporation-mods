@@ -43,18 +43,17 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
 
         private Color DeadAgentColor { get; } = Color.red;
         protected GameManager GameManager { get; } = UnityTestExtensions.CreateGameManager();
-        protected Mock<IImageAdapter> MockImageAdapter { get; } = new Mock<IImageAdapter>();
-        protected Mock<ITextAdapter> MockTextAdapter { get; } = new Mock<ITextAdapter>();
-        protected Mock<IYggdrasilAnimAdapter> MockYggdrasilAnimAdapter { get; } = new Mock<IYggdrasilAnimAdapter>();
+        protected Mock<IImageTestAdapter> MockImageTestAdapter { get; } = new Mock<IImageTestAdapter>();
+        protected Mock<ITextTestAdapter> MockTextTestAdapter { get; } = new Mock<ITextTestAdapter>();
+        protected Mock<IYggdrasilAnimTestAdapter> MockYggdrasilAnimTestAdapter { get; } = new Mock<IYggdrasilAnimTestAdapter>();
+        protected Mock<IBeautyBeastAnimTestAdapter> MockBeautyBeastAnimTestAdapter { get; } = new Mock<IBeautyBeastAnimTestAdapter>();
 
-        protected Mock<IBeautyBeastAnimAdapter> MockBeautyBeastAnimAdapter { get; } = new Mock<IBeautyBeastAnimAdapter>();
-
-        protected bool AgentWillDie([NotNull] IImageAdapter workFilterFill,
-            [NotNull] ITextAdapter workFilterText)
+        protected bool AgentWillDie([NotNull] IImageTestAdapter workFilterFill,
+            [NotNull] ITextTestAdapter workFilterTextTest)
         {
             Guard.Against.Null(workFilterFill, nameof(workFilterFill));
-            Guard.Against.Null(workFilterText, nameof(workFilterText));
-            var agentWillDie = workFilterFill.Color == DeadAgentColor && workFilterText.Text == DeadAgentString;
+            Guard.Against.Null(workFilterTextTest, nameof(workFilterTextTest));
+            var agentWillDie = workFilterFill.Color == DeadAgentColor && workFilterTextTest.Text == DeadAgentString;
 
             return agentWillDie;
         }
@@ -211,30 +210,32 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
 
         protected void SetupParasiteTree(int numberOfFlowers)
         {
-            var mockFlower = new Mock<IGameObjectAdapter>();
+            var mockFlower = new Mock<IGameObjectTestAdapter>();
             mockFlower.Setup(adapter => adapter.ActiveSelf).Returns(true);
 
-            var mockFlowers = new List<IGameObjectAdapter>();
+            var mockFlowers = new List<IGameObjectTestAdapter>();
             for (var i = 0; i < numberOfFlowers; i++)
             {
                 mockFlowers.Add(mockFlower.Object);
             }
 
-            MockYggdrasilAnimAdapter.Setup(adapter => adapter.Flowers).Returns(mockFlowers);
+            MockYggdrasilAnimTestAdapter.Setup(adapter => adapter.Flowers).Returns(mockFlowers);
         }
 
         protected void VerifyAgentWillDie([NotNull] AgentSlot agentSlot)
         {
-            agentSlot.PatchAfterSetFilter(IdleAgentState, GameManager, MockBeautyBeastAnimAdapter.Object, MockImageAdapter.Object, MockTextAdapter.Object, MockYggdrasilAnimAdapter.Object);
+            agentSlot.PatchAfterSetFilter(IdleAgentState, GameManager, MockBeautyBeastAnimTestAdapter.Object, MockImageTestAdapter.Object, MockTextTestAdapter.Object,
+                MockYggdrasilAnimTestAdapter.Object);
 
-            AgentWillDie(MockImageAdapter.Object, MockTextAdapter.Object).Should().BeTrue();
+            AgentWillDie(MockImageTestAdapter.Object, MockTextTestAdapter.Object).Should().BeTrue();
         }
 
         protected void VerifyAgentWillNotDie([NotNull] AgentSlot agentSlot)
         {
-            agentSlot.PatchAfterSetFilter(IdleAgentState, GameManager, MockBeautyBeastAnimAdapter.Object, MockImageAdapter.Object, MockTextAdapter.Object, MockYggdrasilAnimAdapter.Object);
+            agentSlot.PatchAfterSetFilter(IdleAgentState, GameManager, MockBeautyBeastAnimTestAdapter.Object, MockImageTestAdapter.Object, MockTextTestAdapter.Object,
+                MockYggdrasilAnimTestAdapter.Object);
 
-            AgentWillDie(MockImageAdapter.Object, MockTextAdapter.Object).Should().BeFalse();
+            AgentWillDie(MockImageTestAdapter.Object, MockTextTestAdapter.Object).Should().BeFalse();
         }
     }
 }

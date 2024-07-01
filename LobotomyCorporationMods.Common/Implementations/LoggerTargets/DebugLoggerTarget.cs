@@ -7,17 +7,17 @@ namespace LobotomyCorporationMods.Common.Implementations.LoggerTargets
 {
     public sealed class DebugLoggerTarget : ILoggerTarget
     {
-        private readonly IAngelaConversationUiAdapter _angelaConversationUiAdapter;
+        private readonly IAngelaConversationUiTestAdapter _angelaConversationUiTestAdapter;
 
-        public DebugLoggerTarget(IAngelaConversationUiAdapter angelaConversationUiAdapter)
+        public DebugLoggerTarget(IAngelaConversationUiTestAdapter angelaConversationUiTestAdapter)
         {
-            _angelaConversationUiAdapter = angelaConversationUiAdapter;
+            _angelaConversationUiTestAdapter = angelaConversationUiTestAdapter;
         }
 
         public void WriteToLoggerTarget(string message)
         {
             Notice.instance.Send(NoticeName.AddSystemLog, message);
-            _angelaConversationUiAdapter.AddMessage(message);
+            _angelaConversationUiTestAdapter.AddMessage(message);
         }
     }
 }

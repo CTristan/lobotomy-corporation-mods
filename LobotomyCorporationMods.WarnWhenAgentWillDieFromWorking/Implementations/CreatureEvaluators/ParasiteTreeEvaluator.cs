@@ -12,21 +12,21 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 {
     internal sealed class ParasiteTreeEvaluator : CreatureEvaluator
     {
-        private readonly IYggdrasilAnimAdapter _yggdrasilAnimAdapter;
+        private readonly IYggdrasilAnimTestAdapter _yggdrasilAnimTestAdapter;
 
         internal ParasiteTreeEvaluator(AgentModel agent,
             CreatureModel creature,
             RwbpType skillType,
-            IYggdrasilAnimAdapter yggdrasilAnimAdapter) : base(agent, creature, skillType)
+            IYggdrasilAnimTestAdapter yggdrasilAnimTestAdapter) : base(agent, creature, skillType)
         {
-            _yggdrasilAnimAdapter = yggdrasilAnimAdapter;
+            _yggdrasilAnimTestAdapter = yggdrasilAnimTestAdapter;
         }
 
         protected override bool WillAgentDieFromThisCreature()
         {
             const int MaxNumberOfFlowers = 4;
 
-            var numberOfFlowers = _yggdrasilAnimAdapter.Flowers.Count(flower => flower.ActiveSelf);
+            var numberOfFlowers = _yggdrasilAnimTestAdapter.Flowers.Count(flower => flower.ActiveSelf);
             var agentWillDie = numberOfFlowers >= MaxNumberOfFlowers && !Agent.HasParasiteTreeEffect();
 
             return agentWillDie;

@@ -22,8 +22,8 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
         /// <param name="commandWindow">The command window from which to retrieve the creature evaluator.</param>
         /// <param name="agent">The agent model.</param>
         /// <param name="evaluators">The evaluators dictionary.</param>
-        /// <param name="beautyBeastAnimAdapter">The beautyBeastAnimAdapter.</param>
-        /// <param name="yggdrasilAnimAdapter">The yggdrasilAnimAdapter.</param>
+        /// <param name="beautyBeastAnimTestAdapter">The beautyBeastAnimAdapter.</param>
+        /// <param name="yggdrasilAnimTestAdapter">The yggdrasilAnimAdapter.</param>
         /// <returns>The creature evaluator for the given parameters.</returns>
         /// <remarks>
         ///     GetCreatureEvaluator retrieves the creature evaluator based on the command window, agent, evaluators, beautyBeastAnimAdapter, and yggdrasilAnimAdapter parameters. If the
@@ -33,15 +33,15 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
         internal static ICreatureEvaluator GetCreatureEvaluator([NotNull] this CommandWindow.CommandWindow commandWindow,
             AgentModel agent,
             Dictionary<CreatureIds, Func<CreatureEvaluatorParameters, ICreatureEvaluator>> evaluators,
-            IBeautyBeastAnimAdapter beautyBeastAnimAdapter,
-            IYggdrasilAnimAdapter yggdrasilAnimAdapter)
+            IBeautyBeastAnimTestAdapter beautyBeastAnimTestAdapter,
+            IYggdrasilAnimTestAdapter yggdrasilAnimTestAdapter)
         {
             ICreatureEvaluator evaluator;
 
             if (commandWindow.TryGetCreature(out var creature) && !creature.IsNull())
             {
                 var skillType = commandWindow.CurrentSkill.rwbpType;
-                var evaluatorParameters = new CreatureEvaluatorParameters(agent, creature, skillType, beautyBeastAnimAdapter, yggdrasilAnimAdapter);
+                var evaluatorParameters = new CreatureEvaluatorParameters(agent, creature, skillType, beautyBeastAnimTestAdapter, yggdrasilAnimTestAdapter);
 
                 evaluator = evaluators.TryGetValue((CreatureIds)creature.metadataId, out var factoryMethod) ? factoryMethod(evaluatorParameters) : new DefaultEvaluator(agent, creature, skillType);
             }

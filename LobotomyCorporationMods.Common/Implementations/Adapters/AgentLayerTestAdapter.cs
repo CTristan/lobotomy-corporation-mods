@@ -6,8 +6,6 @@ using System.Diagnostics.CodeAnalysis;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
-using UnityEngine;
-using UnityEngine.UI;
 
 #endregion
 
@@ -15,14 +13,16 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    public sealed class ImageAdapter : Adapter<Image>, IImageAdapter
+    public sealed class AgentLayerTestAdapter : Adapter<AgentLayer>, IAgentLayerTestAdapter
     {
-        public Color Color
+        public void AddAgent(AgentModel model)
         {
-            get =>
-                GameObject.color;
-            set =>
-                GameObject.color = value;
+            GameObject.AddAgent(model);
+        }
+
+        public void RemoveAgent(AgentModel model)
+        {
+            GameObject.RemoveAgent(model);
         }
     }
 }

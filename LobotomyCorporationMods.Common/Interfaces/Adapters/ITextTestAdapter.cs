@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace LobotomyCorporationMods.Common.Interfaces.Adapters
 {
-    public interface ITextAdapter : IAdapter<Text>
+    public interface ITextTestAdapter : ITestAdapter<Text>
     {
         string Text { get; set; }
     }

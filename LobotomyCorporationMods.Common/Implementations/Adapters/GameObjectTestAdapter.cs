@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
+using UnityEngine;
 
 #endregion
 
@@ -13,12 +14,13 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    public sealed class NoticeAdapter : Adapter<Notice>, INoticeAdapter
+    public class GameObjectTestAdapter : Adapter<GameObject>, IGameObjectTestAdapter
     {
-        public void Send(string notice,
-            params object[] param)
+        public bool ActiveSelf => GameObject.activeSelf;
+
+        public void SetActive(bool value)
         {
-            GameObject.Send(notice, param);
+            GameObject.SetActive(value);
         }
     }
 }

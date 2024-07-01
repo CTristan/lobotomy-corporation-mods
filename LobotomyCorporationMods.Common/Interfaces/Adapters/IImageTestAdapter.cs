@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 namespace LobotomyCorporationMods.Common.Interfaces.Adapters
 {
-    public interface IImageAdapter : IAdapter<Image>
+    public interface IImageTestAdapter : ITestAdapter<Image>
     {
         Color Color { get; set; }
     }

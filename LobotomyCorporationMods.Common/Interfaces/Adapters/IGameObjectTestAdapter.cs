@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace LobotomyCorporationMods.Common.Interfaces.Adapters
 {
-    public interface IGameObjectAdapter : IAdapter<GameObject>
+    public interface IGameObjectTestAdapter : ITestAdapter<GameObject>
     {
         bool ActiveSelf { get; }
         void SetActive(bool value);

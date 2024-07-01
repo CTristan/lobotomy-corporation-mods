@@ -2,7 +2,7 @@
 
 namespace LobotomyCorporationMods.Common.Interfaces.Adapters
 {
-    public interface IAngelaConversationUiAdapter : IAdapter<AngelaConversationUI>
+    public interface IAngelaConversationUiTestAdapter : ITestAdapter<AngelaConversationUI>
     {
         void AddMessage(string message);
     }

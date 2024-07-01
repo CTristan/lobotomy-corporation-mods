@@ -8,7 +8,7 @@ using Customizing;
 
 namespace LobotomyCorporationMods.Common.Interfaces.Adapters
 {
-    public interface ICustomizingWindowAdapter : IAdapter<CustomizingWindow>
+    public interface ICustomizingWindowTestAdapter : ITestAdapter<CustomizingWindow>
     {
         void OpenAppearanceWindow();
 

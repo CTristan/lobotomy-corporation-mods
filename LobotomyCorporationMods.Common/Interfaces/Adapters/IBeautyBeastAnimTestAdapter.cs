@@ -2,7 +2,7 @@
 
 namespace LobotomyCorporationMods.Common.Interfaces.Adapters
 {
-    public interface IBeautyBeastAnimAdapter : IAdapter<BeautyBeastAnim>
+    public interface IBeautyBeastAnimTestAdapter : ITestAdapter<BeautyBeastAnim>
     {
         int State { get; }
     }

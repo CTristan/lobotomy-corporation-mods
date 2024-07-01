@@ -17,11 +17,11 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
         public void Opening_the_agent_window_automatically_opens_the_appearance_window()
         {
             var agentInfoWindow = InitializeAgentInfoWindow();
-            var mockCustomizingWindowAdapter = new Mock<ICustomizingWindowAdapter>();
+            var mockCustomizingWindowTestAdapter = new Mock<ICustomizingWindowTestAdapter>();
 
-            agentInfoWindow.PatchAfterGenerateWindow(mockCustomizingWindowAdapter.Object);
+            agentInfoWindow.PatchAfterGenerateWindow(mockCustomizingWindowTestAdapter.Object);
 
-            mockCustomizingWindowAdapter.Verify(adapter => adapter.OpenAppearanceWindow(), Times.Once);
+            mockCustomizingWindowTestAdapter.Verify(adapter => adapter.OpenAppearanceWindow(), Times.Once);
         }
     }
 }

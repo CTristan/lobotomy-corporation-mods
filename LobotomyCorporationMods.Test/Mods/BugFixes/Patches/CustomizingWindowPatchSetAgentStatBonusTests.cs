@@ -26,7 +26,7 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes.Patches
             const int BaseStatValue = 1;
             const int BuffStatBonus = 100;
             var customizingWindow = UnityTestExtensions.CreateCustomizingWindow();
-            var mockAdapter = new Mock<ICustomizingWindowAdapter>();
+            var mockTestAdapter = new Mock<ICustomizingWindowTestAdapter>();
 
             // The base stat level is primary stat + title bonus
             // We'll ignore the title bonus
@@ -54,12 +54,12 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes.Patches
 
 
             // Act
-            customizingWindow.PatchBeforeSetAgentStatBonus(agent, data, mockAdapter.Object);
+            customizingWindow.PatchBeforeSetAgentStatBonus(agent, data, mockTestAdapter.Object);
 
             // Assert
             // Even though our current stat level is way above 1 due to our buff, we should still only send as our original un-buffed level.
             const int ExpectedStatLevelSent = 1;
-            mockAdapter.Verify(adapter => adapter.SetRandomStatValue(It.IsAny<int>(), ExpectedStatLevelSent, It.IsAny<int>()), Times.Exactly(4));
+            mockTestAdapter.Verify(adapter => adapter.SetRandomStatValue(It.IsAny<int>(), ExpectedStatLevelSent, It.IsAny<int>()), Times.Exactly(4));
         }
     }
 }

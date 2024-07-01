@@ -13,16 +13,12 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    public sealed class AgentLayerAdapter : Adapter<AgentLayer>, IAgentLayerAdapter
+    public sealed class NoticeTestAdapter : Adapter<Notice>, INoticeTestAdapter
     {
-        public void AddAgent(AgentModel model)
+        public void Send(string notice,
+            params object[] param)
         {
-            GameObject.AddAgent(model);
-        }
-
-        public void RemoveAgent(AgentModel model)
-        {
-            GameObject.RemoveAgent(model);
+            GameObject.Send(notice, param);
         }
     }
 }

@@ -39,7 +39,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
             try
             {
                 var currentGameManager = GameManager.currentGameManager;
-                __instance.PatchAfterSetFilter(state, currentGameManager, new BeautyBeastAnimAdapter(), new ImageAdapter(), new TextAdapter(), new YggdrasilAnimAdapter());
+                __instance.PatchAfterSetFilter(state, currentGameManager, new BeautyBeastAnimTestAdapter(), new ImageTestAdapter(), new TextTestAdapter(), new YggdrasilAnimTestAdapter());
             }
             catch (Exception ex)
             {
@@ -53,28 +53,28 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
         public static void PatchAfterSetFilter([NotNull] this AgentSlot instance,
             AgentState state,
             [CanBeNull] GameManager currentGameManager,
-            IBeautyBeastAnimAdapter beautyBeastAnimAdapter,
-            [NotNull] IImageAdapter imageAdapter,
-            [NotNull] ITextAdapter textAdapter,
-            IYggdrasilAnimAdapter yggdrasilAnimAdapter)
+            IBeautyBeastAnimTestAdapter beautyBeastAnimTestAdapter,
+            [NotNull] IImageTestAdapter imageTestAdapter,
+            [NotNull] ITextTestAdapter textTestAdapter,
+            IYggdrasilAnimTestAdapter yggdrasilAnimTestAdapter)
         {
             Guard.Against.Null(instance, nameof(instance));
-            Guard.Against.Null(imageAdapter, nameof(imageAdapter));
-            Guard.Against.Null(textAdapter, nameof(textAdapter));
+            Guard.Against.Null(imageTestAdapter, nameof(imageTestAdapter));
+            Guard.Against.Null(textTestAdapter, nameof(textTestAdapter));
 
             if (!currentGameManager.IsValidGameStage(state))
             {
                 return;
             }
 
-            var agentWillDie = instance.CheckIfWorkWillKillAgent(CommandWindow.CommandWindow.CurrentWindow, s_evaluatorFactoryDictionary, beautyBeastAnimAdapter, yggdrasilAnimAdapter);
+            var agentWillDie = instance.CheckIfWorkWillKillAgent(CommandWindow.CommandWindow.CurrentWindow, s_evaluatorFactoryDictionary, beautyBeastAnimTestAdapter, yggdrasilAnimTestAdapter);
 
             if (!agentWillDie)
             {
                 return;
             }
 
-            instance.IndicateThatAgentWillDie(imageAdapter, textAdapter);
+            instance.IndicateThatAgentWillDie(imageTestAdapter, textTestAdapter);
         }
 
         /// <summary>Stores our evaluators in a dictionary of factories so that we only need to create the dictionary once but can make evaluators from the factories as often as we need to.</summary>
@@ -85,7 +85,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
             return new Dictionary<CreatureIds, Func<CreatureEvaluatorParameters, ICreatureEvaluator>>
             {
                 {
-                    CreatureIds.BeautyAndTheBeast, parameters => new BeautyAndTheBeastEvaluator(parameters.Agent, parameters.Creature, parameters.SkillType, parameters.BeautyBeastAnimAdapter)
+                    CreatureIds.BeautyAndTheBeast, parameters => new BeautyAndTheBeastEvaluator(parameters.Agent, parameters.Creature, parameters.SkillType, parameters.BeautyBeastAnimTestAdapter)
                 },
                 {
                     CreatureIds.Bloodbath, parameters => new BloodbathEvaluator(parameters.Agent, parameters.Creature, parameters.SkillType)
@@ -103,7 +103,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
                     CreatureIds.NothingThere, parameters => new NothingThereEvaluator(parameters.Agent, parameters.Creature, parameters.SkillType)
                 },
                 {
-                    CreatureIds.ParasiteTree, parameters => new ParasiteTreeEvaluator(parameters.Agent, parameters.Creature, parameters.SkillType, parameters.YggdrasilAnimAdapter)
+                    CreatureIds.ParasiteTree, parameters => new ParasiteTreeEvaluator(parameters.Agent, parameters.Creature, parameters.SkillType, parameters.YggdrasilAnimTestAdapter)
                 },
                 {
                     CreatureIds.RedShoes, parameters => new RedShoesEvaluator(parameters.Agent, parameters.Creature, parameters.SkillType)

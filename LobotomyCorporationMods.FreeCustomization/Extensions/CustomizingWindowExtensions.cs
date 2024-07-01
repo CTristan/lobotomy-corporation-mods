@@ -42,11 +42,11 @@ namespace LobotomyCorporationMods.FreeCustomization.Extensions
         }
 
         internal static void UpdateAgentModel([NotNull] this CustomizingWindow customizingWindow,
-            [NotNull] IAgentLayerAdapter agentLayerAdapter)
+            [NotNull] IAgentLayerTestAdapter agentLayerTestAdapter)
         {
             var agentModel = customizingWindow.CurrentAgent;
-            agentLayerAdapter.RemoveAgent(agentModel);
-            agentLayerAdapter.AddAgent(agentModel);
+            agentLayerTestAdapter.RemoveAgent(agentModel);
+            agentLayerTestAdapter.AddAgent(agentModel);
         }
     }
 }

@@ -8,7 +8,7 @@ using Customizing;
 
 namespace LobotomyCorporationMods.Common.Interfaces.Adapters
 {
-    public interface IAgentInfoWindowUiComponentsAdapter : IAdapter<AgentInfoWindow.UIComponent>
+    public interface IAgentInfoWindowUiComponentsTestAdapter : ITestAdapter<AgentInfoWindow.UIComponent>
     {
         void SetData(AgentData agentData);
     }

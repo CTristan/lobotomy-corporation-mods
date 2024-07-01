@@ -13,16 +13,16 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         public static void UpdateAgentStats(this CustomizingWindow customizingWindow,
             [NotNull] AgentModel agent,
             [NotNull] AgentData agentData,
-            ICustomizingWindowAdapter customizingWindowAdapter = null)
+            ICustomizingWindowTestAdapter customizingWindowTestAdapter = null)
         {
             Guard.Against.Null(agent, nameof(agent));
             Guard.Against.Null(agentData, nameof(agentData));
-            customizingWindowAdapter = customizingWindowAdapter.EnsureNotNullWithMethod(() => new CustomizingWindowAdapter());
+            customizingWindowTestAdapter = customizingWindowTestAdapter.EnsureNotNullWithMethod(() => new CustomizingWindowTestAdapter());
 
-            agent.primaryStat.hp = customizingWindowAdapter.SetRandomStatValue(agent.primaryStat.hp, agent.originFortitudeLevel, agentData.statBonus.rBonus);
-            agent.primaryStat.mental = customizingWindowAdapter.SetRandomStatValue(agent.primaryStat.mental, agent.originPrudenceLevel, agentData.statBonus.wBonus);
-            agent.primaryStat.work = customizingWindowAdapter.SetRandomStatValue(agent.primaryStat.work, agent.originTemperanceLevel, agentData.statBonus.bBonus);
-            agent.primaryStat.battle = customizingWindowAdapter.SetRandomStatValue(agent.primaryStat.battle, agent.originJusticeLevel, agentData.statBonus.pBonus);
+            agent.primaryStat.hp = customizingWindowTestAdapter.SetRandomStatValue(agent.primaryStat.hp, agent.originFortitudeLevel, agentData.statBonus.rBonus);
+            agent.primaryStat.mental = customizingWindowTestAdapter.SetRandomStatValue(agent.primaryStat.mental, agent.originPrudenceLevel, agentData.statBonus.wBonus);
+            agent.primaryStat.work = customizingWindowTestAdapter.SetRandomStatValue(agent.primaryStat.work, agent.originTemperanceLevel, agentData.statBonus.bBonus);
+            agent.primaryStat.battle = customizingWindowTestAdapter.SetRandomStatValue(agent.primaryStat.battle, agent.originJusticeLevel, agentData.statBonus.pBonus);
             agent.UpdateTitle(agent.level);
         }
     }

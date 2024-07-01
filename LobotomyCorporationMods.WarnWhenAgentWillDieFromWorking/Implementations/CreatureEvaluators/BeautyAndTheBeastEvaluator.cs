@@ -10,22 +10,22 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 {
     internal sealed class BeautyAndTheBeastEvaluator : CreatureEvaluator
     {
-        private readonly IBeautyBeastAnimAdapter _adapter;
+        private readonly IBeautyBeastAnimTestAdapter _testAdapter;
 
         internal BeautyAndTheBeastEvaluator(AgentModel agent,
             CreatureModel creature,
             RwbpType skillType,
-            IBeautyBeastAnimAdapter animationScriptAdapter) : base(agent, creature, skillType)
+            IBeautyBeastAnimTestAdapter animationScriptTestAdapter) : base(agent, creature, skillType)
         {
-            _adapter = animationScriptAdapter;
+            _testAdapter = animationScriptTestAdapter;
         }
 
         protected override bool WillAgentDieFromThisCreature()
         {
             const int WeakenedState = 1;
 
-            _adapter.GameObject = (BeautyBeastAnim)Creature.GetAnimScript();
-            var animationState = _adapter.State;
+            _testAdapter.GameObject = (BeautyBeastAnim)Creature.GetAnimScript();
+            var animationState = _testAdapter.State;
             var isWeakened = animationState == WeakenedState;
 
             var agentWillDie = isWeakened && SkillType == RwbpType.P;

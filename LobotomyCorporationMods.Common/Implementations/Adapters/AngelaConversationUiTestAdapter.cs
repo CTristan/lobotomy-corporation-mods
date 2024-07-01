@@ -3,7 +3,6 @@
 #region
 
 using System.Diagnostics.CodeAnalysis;
-using Customizing;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
@@ -14,11 +13,11 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    public sealed class AgentInfoWindowUiComponentsAdapter : Adapter<AgentInfoWindow.UIComponent>, IAgentInfoWindowUiComponentsAdapter
+    public sealed class AngelaConversationUiTestAdapter : Adapter<AngelaConversationUI>, IAngelaConversationUiTestAdapter
     {
-        public void SetData(AgentData agentData)
+        public void AddMessage(string message)
         {
-            GameObject.SetData(agentData);
+            GameObject.AddAngelaMessage(message);
         }
     }
 }

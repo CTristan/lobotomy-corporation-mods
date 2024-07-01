@@ -2,7 +2,7 @@
 
 namespace LobotomyCorporationMods.Common.Interfaces.Adapters
 {
-    public interface INoticeAdapter : IAdapter<Notice>
+    public interface INoticeTestAdapter : ITestAdapter<Notice>
     {
         void Send(string notice,
             params object[] param);

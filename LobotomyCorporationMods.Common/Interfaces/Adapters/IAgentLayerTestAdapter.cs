@@ -2,7 +2,7 @@
 
 namespace LobotomyCorporationMods.Common.Interfaces.Adapters
 {
-    public interface IAgentLayerAdapter : IAdapter<AgentLayer>
+    public interface IAgentLayerTestAdapter : ITestAdapter<AgentLayer>
     {
         void AddAgent(AgentModel model);
         void RemoveAgent(AgentModel model);

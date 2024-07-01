@@ -3,10 +3,10 @@
 #region
 
 using System.Diagnostics.CodeAnalysis;
-using Customizing;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
+using UnityEngine.UI;
 
 #endregion
 
@@ -14,18 +14,14 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    public sealed class CustomizingWindowAdapter : Adapter<CustomizingWindow>, ICustomizingWindowAdapter
+    public sealed class TextTestAdapter : Adapter<Text>, ITextTestAdapter
     {
-        public void OpenAppearanceWindow()
+        public string Text
         {
-            GameObject.OpenAppearanceWindow();
-        }
-
-        public int SetRandomStatValue(int original,
-            int currentLevel,
-            int bonusLevel)
-        {
-            return GameObject.SetRandomStatValue(original, currentLevel, bonusLevel);
+            get =>
+                GameObject.text;
+            set =>
+                GameObject.text = value;
         }
     }
 }

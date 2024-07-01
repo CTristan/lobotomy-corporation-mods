@@ -16,19 +16,19 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    public sealed class YggdrasilAnimAdapter : Adapter<YggdrasilAnim>, IYggdrasilAnimAdapter
+    public sealed class YggdrasilAnimTestAdapter : Adapter<YggdrasilAnim>, IYggdrasilAnimTestAdapter
     {
         [NotNull]
-        public IEnumerable<IGameObjectAdapter> Flowers
+        public IEnumerable<IGameObjectTestAdapter> Flowers
         {
             get
             {
                 var flowers = GameObject.flowers;
 
-                return flowers.Select(flower => new GameObjectAdapter
+                return flowers.Select(flower => new GameObjectTestAdapter
                 {
                     GameObject = flower,
-                }).Cast<IGameObjectAdapter>();
+                }).Cast<IGameObjectTestAdapter>();
             }
         }
     }

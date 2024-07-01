@@ -14,12 +14,11 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    public sealed class WorkerSpriteManagerAdapter : Adapter<WorkerSpriteManager>, IWorkerSpriteManagerAdapter
+    public sealed class AgentInfoWindowUiComponentsTestAdapter : Adapter<AgentInfoWindow.UIComponent>, IAgentInfoWindowUiComponentsTestAdapter
     {
-        public void SetAgentBasicData(WorkerSprite.WorkerSprite workerSprite,
-            Appearance appear)
+        public void SetData(AgentData agentData)
         {
-            GameObject.SetAgentBasicData(workerSprite, appear);
+            GameObject.SetData(agentData);
         }
     }
 }
