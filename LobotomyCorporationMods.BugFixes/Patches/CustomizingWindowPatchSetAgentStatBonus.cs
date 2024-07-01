@@ -11,7 +11,7 @@ using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Implementations.Adapters;
+using LobotomyCorporationMods.Common.Implementations.Facades;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 #endregion
@@ -24,19 +24,14 @@ namespace LobotomyCorporationMods.BugFixes.Patches
         public static void PatchBeforeSetAgentStatBonus([NotNull] this CustomizingWindow instance,
             [NotNull] AgentModel agent,
             [NotNull] AgentData data,
-            [NotNull] ICustomizingWindowAdapter customizingWindowAdapter)
+            [CanBeNull] ICustomizingWindowAdapter customizingWindowAdapter = null)
         {
             Guard.Against.Null(instance, nameof(instance));
             Guard.Against.Null(agent, nameof(agent));
             Guard.Against.Null(data, nameof(data));
-            Guard.Against.Null(customizingWindowAdapter, nameof(customizingWindowAdapter));
 
-            customizingWindowAdapter.GameObject = instance;
-            agent.primaryStat.hp = customizingWindowAdapter.SetRandomStatValue(agent.primaryStat.hp, agent.originFortitudeLevel, data.statBonus.rBonus);
-            agent.primaryStat.mental = customizingWindowAdapter.SetRandomStatValue(agent.primaryStat.mental, agent.originPrudenceLevel, data.statBonus.wBonus);
-            agent.primaryStat.work = customizingWindowAdapter.SetRandomStatValue(agent.primaryStat.work, agent.originTemperanceLevel, data.statBonus.bBonus);
-            agent.primaryStat.battle = customizingWindowAdapter.SetRandomStatValue(agent.primaryStat.battle, agent.originJusticeLevel, data.statBonus.pBonus);
-            agent.UpdateTitle(agent.level);
+            // This is our custom fixed update
+            instance.UpdateAgentStats(agent, data, customizingWindowAdapter);
         }
 
         /// <summary>Runs before SetAgentStatBonus to use the original stat levels instead of the modified stat levels.</summary>
@@ -71,7 +66,7 @@ namespace LobotomyCorporationMods.BugFixes.Patches
         {
             try
             {
-                __instance.PatchBeforeSetAgentStatBonus(agent, data, new CustomizingWindowAdapter());
+                __instance.PatchBeforeSetAgentStatBonus(agent, data);
 
                 // Since we're replacing the method we never want to call the original method
                 return false;
