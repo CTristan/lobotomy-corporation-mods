@@ -4,6 +4,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Customizing;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
@@ -14,8 +15,12 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    public sealed class CustomizingWindowTestAdapter : Adapter<CustomizingWindow>, ICustomizingWindowTestAdapter
+    internal sealed class CustomizingWindowTestAdapter : Adapter<CustomizingWindow>, ICustomizingWindowTestAdapter
     {
+        internal CustomizingWindowTestAdapter([NotNull] CustomizingWindow customizingWindow) : base(customizingWindow)
+        {
+        }
+
         public void OpenAppearanceWindow()
         {
             GameObject.OpenAppearanceWindow();

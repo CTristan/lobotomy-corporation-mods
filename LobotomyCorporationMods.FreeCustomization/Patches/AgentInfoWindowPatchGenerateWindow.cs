@@ -10,7 +10,7 @@ using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Implementations.Adapters;
+using LobotomyCorporationMods.Common.Implementations.Facades;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 #endregion
@@ -21,14 +21,13 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
     public static class AgentInfoWindowPatchGenerateWindow
     {
         public static void PatchAfterGenerateWindow([NotNull] this AgentInfoWindow instance,
-            [NotNull] ICustomizingWindowTestAdapter customizingWindowTestAdapter)
+            [CanBeNull] IAgentInfoWindowUiComponentsTestAdapter agentInfoWindowUiComponentsTestAdapter = null,
+            [CanBeNull] ICustomizingWindowTestAdapter customizingWindowTestAdapter = null,
+            [CanBeNull] IGameObjectTestAdapter gameObjectTestAdapter = null)
         {
             Guard.Against.Null(instance, nameof(instance));
-            Guard.Against.Null(customizingWindowTestAdapter, nameof(customizingWindowTestAdapter));
 
-            var customizingWindow = instance.customizingWindow;
-            customizingWindowTestAdapter.GameObject = customizingWindow;
-            customizingWindowTestAdapter.OpenAppearanceWindow();
+            instance.OpenAppearancePanel(agentInfoWindowUiComponentsTestAdapter, customizingWindowTestAdapter, gameObjectTestAdapter);
         }
 
         /// <summary>Runs after opening the Agent window to automatically open the appearance window, since there's no reason to hide it behind a button.</summary>
@@ -41,7 +40,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
                 // GenerateWindow is a static method, so we can't get an instance of it through Harmony.
                 var agentInfoWindow = AgentInfoWindow.currentWindow;
 
-                agentInfoWindow.PatchAfterGenerateWindow(new CustomizingWindowTestAdapter());
+                agentInfoWindow.PatchAfterGenerateWindow();
             }
             catch (Exception ex)
             {

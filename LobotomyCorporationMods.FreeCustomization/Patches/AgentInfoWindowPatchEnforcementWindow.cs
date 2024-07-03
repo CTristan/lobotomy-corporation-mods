@@ -4,14 +4,13 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using Customizing;
 using Harmony;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Implementations.Adapters;
+using LobotomyCorporationMods.Common.Implementations.Facades;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 #endregion
@@ -22,30 +21,13 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
     public static class AgentInfoWindowPatchEnforcementWindow
     {
         public static void PatchAfterEnforcementWindow([NotNull] this AgentInfoWindow instance,
-            [NotNull] ICustomizingWindowTestAdapter customizingWindowTestAdapter,
-            [NotNull] IGameObjectTestAdapter gameObjectTestAdapter,
-            [NotNull] IAgentInfoWindowUiComponentsTestAdapter uiComponentsTestAdapter)
+            [CanBeNull] IAgentInfoWindowUiComponentsTestAdapter agentInfoWindowUiComponentsTestAdapter = null,
+            [CanBeNull] ICustomizingWindowTestAdapter customizingWindowTestAdapter = null,
+            [CanBeNull] IGameObjectTestAdapter gameObjectTestAdapter = null)
         {
             Guard.Against.Null(instance, nameof(instance));
-            Guard.Against.Null(gameObjectTestAdapter, nameof(gameObjectTestAdapter));
-            Guard.Against.Null(uiComponentsTestAdapter, nameof(uiComponentsTestAdapter));
-            Guard.Against.Null(customizingWindowTestAdapter, nameof(customizingWindowTestAdapter));
 
-            var customizingWindow = CustomizingWindow.CurrentWindow;
-
-            // Make sure the customizing block is active so we can customize the agent
-            gameObjectTestAdapter.GameObject = instance.customizingBlock;
-            gameObjectTestAdapter.SetActive(true);
-
-            // Make the appearance control active
-            gameObjectTestAdapter.GameObject = instance.AppearanceActiveControl;
-            gameObjectTestAdapter.SetActive(true);
-
-            uiComponentsTestAdapter.GameObject = instance.UIComponents;
-            uiComponentsTestAdapter.SetData(customizingWindow.CurrentData);
-
-            customizingWindowTestAdapter.GameObject = instance.customizingWindow;
-            customizingWindowTestAdapter.OpenAppearanceWindow();
+            instance.OpenAppearancePanel(agentInfoWindowUiComponentsTestAdapter, customizingWindowTestAdapter, gameObjectTestAdapter);
         }
 
         /// <summary>Runs after opening the Strengthen Agent window to open the appearance window.</summary>
@@ -58,7 +40,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
                 // EnforcementWindow is a static method, so we can't get an instance of the AgentInfoWindow through Harmony.
                 var agentInfoWindow = AgentInfoWindow.currentWindow;
 
-                agentInfoWindow.PatchAfterEnforcementWindow(new CustomizingWindowTestAdapter(), new GameObjectTestAdapter(), new AgentInfoWindowUiComponentsTestAdapter());
+                agentInfoWindow.PatchAfterEnforcementWindow();
             }
             catch (Exception ex)
             {
