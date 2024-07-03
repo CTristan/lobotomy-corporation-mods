@@ -7,7 +7,7 @@ using JetBrains.Annotations;
 
 #endregion
 
-namespace LobotomyCorporationMods.FreeCustomization.Extensions
+namespace LobotomyCorporationMods.Common.Extensions
 {
     internal static class WorkerModelExtensions
     {

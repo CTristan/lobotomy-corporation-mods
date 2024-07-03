@@ -4,6 +4,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Customizing;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
@@ -14,8 +15,13 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    public sealed class WorkerSpriteManagerTestAdapter : Adapter<WorkerSpriteManager>, IWorkerSpriteManagerTestAdapter
+    internal sealed class WorkerSpriteManagerTestAdapter : Adapter<WorkerSpriteManager>, IWorkerSpriteManagerTestAdapter
     {
+        internal WorkerSpriteManagerTestAdapter([NotNull] WorkerSpriteManager workerSpriteManager)
+        {
+            GameObject = workerSpriteManager;
+        }
+
         public void SetAgentBasicData(WorkerSprite.WorkerSprite workerSprite,
             Appearance appear)
         {

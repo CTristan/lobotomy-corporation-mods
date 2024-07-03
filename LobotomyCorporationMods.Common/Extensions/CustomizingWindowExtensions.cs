@@ -1,15 +1,10 @@
-// SPDX-License-Identifier: MIT
-
-#region
+﻿// SPDX-License-Identifier: MIT
 
 using Customizing;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
-#endregion
-
-namespace LobotomyCorporationMods.FreeCustomization.Extensions
+namespace LobotomyCorporationMods.Common.Extensions
 {
     internal static class CustomizingWindowExtensions
     {

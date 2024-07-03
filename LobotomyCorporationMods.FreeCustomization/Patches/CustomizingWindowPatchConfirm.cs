@@ -11,9 +11,8 @@ using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Implementations.Adapters;
+using LobotomyCorporationMods.Common.Implementations.Facades;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
-using LobotomyCorporationMods.FreeCustomization.Extensions;
 
 #endregion
 
@@ -23,29 +22,12 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
     public static class CustomizingWindowPatchConfirm
     {
         public static void PatchBeforeConfirm([NotNull] this CustomizingWindow instance,
-            [NotNull] IAgentLayerTestAdapter agentLayerTestAdapter,
-            [NotNull] IWorkerSpriteManagerTestAdapter workerSpriteManagerTestAdapter)
+            [CanBeNull] IAgentLayerTestAdapter agentLayerTestAdapter = null,
+            [CanBeNull] IWorkerSpriteManagerTestAdapter workerSpriteManagerTestAdapter = null)
         {
             Guard.Against.Null(instance, nameof(instance));
-            Guard.Against.Null(agentLayerTestAdapter, nameof(agentLayerTestAdapter));
-            Guard.Against.Null(workerSpriteManagerTestAdapter, nameof(workerSpriteManagerTestAdapter));
 
-            // The original method does this and other things for newly-generated agents, so we only want to do this
-            // when we're updating existing agents.
-            if (instance.CurrentWindowType == CustomizingType.GENERATE)
-            {
-                return;
-            }
-
-            instance.SaveAgentAppearance();
-            instance.RenameAgent();
-            instance.CurrentData.appearance.SetResrouceData();
-
-            workerSpriteManagerTestAdapter.GameObject = WorkerSpriteManager.instance;
-            workerSpriteManagerTestAdapter.SetAgentBasicData(instance.CurrentData.appearance.spriteSet, instance.CurrentData.appearance);
-
-            agentLayerTestAdapter.GameObject = AgentLayer.currentLayer;
-            instance.UpdateAgentModel(agentLayerTestAdapter);
+            instance.SaveAppearanceData(agentLayerTestAdapter, workerSpriteManagerTestAdapter);
         }
 
         /// <summary>
@@ -60,7 +42,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         {
             try
             {
-                __instance.PatchBeforeConfirm(new AgentLayerTestAdapter(), new WorkerSpriteManagerTestAdapter());
+                __instance.PatchBeforeConfirm();
             }
             catch (Exception ex)
             {

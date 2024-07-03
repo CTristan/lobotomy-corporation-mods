@@ -3,6 +3,7 @@
 #region
 
 using System.Diagnostics.CodeAnalysis;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
@@ -13,8 +14,13 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    public sealed class AgentLayerTestAdapter : Adapter<AgentLayer>, IAgentLayerTestAdapter
+    internal sealed class AgentLayerTestAdapter : Adapter<AgentLayer>, IAgentLayerTestAdapter
     {
+        internal AgentLayerTestAdapter([NotNull] AgentLayer agentLayer)
+        {
+            GameObject = agentLayer;
+        }
+
         public void AddAgent(AgentModel model)
         {
             GameObject.AddAgent(model);

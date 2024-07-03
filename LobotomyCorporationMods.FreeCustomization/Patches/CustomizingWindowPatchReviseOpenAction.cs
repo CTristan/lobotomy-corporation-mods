@@ -11,7 +11,7 @@ using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.FreeCustomization.Extensions;
+using LobotomyCorporationMods.Common.Implementations.Facades;
 
 #endregion
 
@@ -20,6 +20,15 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
     [HarmonyPatch(typeof(CustomizingWindow), PrivateMethods.CustomizingWindow.ReviseOpenAction)]
     public static class CustomizingWindowPatchReviseOpenAction
     {
+        public static void PatchAfterReviseOpenAction([NotNull] this CustomizingWindow instance,
+            [NotNull] AgentModel agent)
+        {
+            Guard.Against.Null(instance, nameof(instance));
+            Guard.Against.Null(agent, nameof(agent));
+
+            instance.LoadAgentData(agent);
+        }
+
         /// <summary>Runs after opening the Strengthen Agent window to set the appearance data for the customization window.</summary>
         // ReSharper disable InconsistentNaming
         [EntryPoint]
@@ -39,16 +48,5 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
             }
         }
         // ReSharper disable InconsistentNaming
-
-        public static void PatchAfterReviseOpenAction([NotNull] this CustomizingWindow instance,
-            [NotNull] AgentModel agent)
-        {
-            Guard.Against.Null(instance, nameof(instance));
-            Guard.Against.Null(agent, nameof(agent));
-
-            instance.CurrentData.agentName = agent._agentName;
-            instance.CurrentData.CustomName = agent.name;
-            instance.CurrentData.appearance = agent.GetAppearanceData();
-        }
     }
 }
