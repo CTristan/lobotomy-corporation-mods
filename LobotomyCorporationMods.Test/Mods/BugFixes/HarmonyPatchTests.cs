@@ -44,12 +44,13 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes
         {
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
+            var armorCreature = new ArmorCreature();
 
             void Action()
             {
                 // ReSharper disable once AssignNullToNotNullAttribute
                 // Forcing null argument to test exception logging.
-                ArmorCreaturePatchOnNotice.Prefix(string.Empty, null);
+                ArmorCreaturePatchOnNotice.Postfix(armorCreature, string.Empty, null);
             }
 
             mockLogger.VerifyArgumentNullException(Action);

@@ -2,6 +2,7 @@
 
 #region
 
+using JetBrains.Annotations;
 using LobotomyCorporationMods.BugFixes;
 using LobotomyCorporationMods.Common.Interfaces;
 using Moq;
@@ -18,5 +19,8 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes
             var logger = new Mock<ILogger>();
             Harmony_Patch.Instance.AddLoggerTarget(logger.Object);
         }
+
+        [NotNull]
+        protected static ArmorCreature ArmorCreature => new ArmorCreature();
     }
 }
