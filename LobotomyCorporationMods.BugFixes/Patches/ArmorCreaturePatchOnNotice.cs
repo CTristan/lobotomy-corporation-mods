@@ -10,7 +10,6 @@ using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Common.Implementations.Facades;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
@@ -70,12 +69,7 @@ namespace LobotomyCorporationMods.BugFixes.Patches
         {
             try
             {
-                var armorCreatureTestAdapter = new ArmorCreatureTestAdapter
-                {
-                    GameObject = __instance,
-                };
-
-                __instance.PatchAfterOnNotice(notice, armorCreatureTestAdapter, param);
+                __instance.PatchAfterOnNotice(notice, noticeParameters: param);
             }
             catch (Exception ex)
             {

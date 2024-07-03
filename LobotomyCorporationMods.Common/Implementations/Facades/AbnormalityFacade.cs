@@ -14,7 +14,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         {
             Guard.Against.Null(armorCreature, nameof(armorCreature));
 
-            testAdapter = testAdapter.EnsureNotNullWithMethod(() => new ArmorCreatureTestAdapter());
+            testAdapter = testAdapter.EnsureNotNullWithMethod(() => new ArmorCreatureTestAdapter(armorCreature));
 
             testAdapter.SpecialAgentList.Clear();
             testAdapter.OnViewInit();

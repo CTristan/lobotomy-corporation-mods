@@ -16,8 +16,13 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    public sealed class ArmorCreatureTestAdapter : Adapter<ArmorCreature>, IArmorCreatureTestAdapter
+    internal sealed class ArmorCreatureTestAdapter : Adapter<ArmorCreature>, IArmorCreatureTestAdapter
     {
+        internal ArmorCreatureTestAdapter([NotNull] ArmorCreature armorCreature)
+        {
+            GameObject = armorCreature;
+        }
+
         [CanBeNull]
         public IList SpecialAgentList
         {
