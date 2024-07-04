@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<info>
+    <name>Notify When Agent Receives Gift v1.0.0</name>
+    <descs>
+        <desc>Whenever an agent receives a gift that they don’t already have, a</desc>
+        <desc>message will display in the log.</desc>
+    </descs>
+</info>
