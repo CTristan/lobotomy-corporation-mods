@@ -13,7 +13,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    public sealed class AngelaConversationUiTestAdapter : Adapter<AngelaConversationUI>, IAngelaConversationUiTestAdapter
+    internal sealed class AngelaConversationUiTestAdapter : Adapter<AngelaConversationUI>, IAngelaConversationUiTestAdapter
     {
         public void AddMessage(string message)
         {

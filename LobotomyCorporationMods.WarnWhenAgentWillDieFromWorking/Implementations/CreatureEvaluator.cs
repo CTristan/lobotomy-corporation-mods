@@ -3,7 +3,7 @@
 #region
 
 using LobotomyCorporationMods.Common.Enums;
-using LobotomyCorporationMods.Common.Extensions;
+using LobotomyCorporationMods.Common.Implementations.Facades;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
 
 #endregion

@@ -3,6 +3,7 @@
 #region
 
 using System.Diagnostics.CodeAnalysis;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
@@ -15,8 +16,13 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    public sealed class ImageTestAdapter : Adapter<Image>, IImageTestAdapter
+    internal sealed class ImageTestAdapter : Adapter<Image>, IImageTestAdapter
     {
+        internal ImageTestAdapter([NotNull] Image image)
+        {
+            GameObject = image;
+        }
+
         public Color Color
         {
             get =>

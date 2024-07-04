@@ -13,7 +13,7 @@ using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Enums;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Implementations.Adapters;
+using LobotomyCorporationMods.Common.Implementations.Facades;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations;
@@ -28,39 +28,17 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
     public static class AgentSlotPatchSetFilter
     {
         /// <summary>Dictionary that contains factory methods for creating ICreatureEvaluator objects based on CreatureIds.</summary>
-        private static readonly Dictionary<CreatureIds, Func<CreatureEvaluatorParameters, ICreatureEvaluator>>
-            s_evaluatorFactoryDictionary = InitEvaluatorFactoryDictionary(); // ReSharper disable InconsistentNaming
-
-        [EntryPoint]
-        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-        public static void Postfix([NotNull] AgentSlot __instance,
-            AgentState state)
-        {
-            try
-            {
-                var currentGameManager = GameManager.currentGameManager;
-                __instance.PatchAfterSetFilter(state, currentGameManager, new BeautyBeastAnimTestAdapter(), new ImageTestAdapter(), new TextTestAdapter(), new YggdrasilAnimTestAdapter());
-            }
-            catch (Exception ex)
-            {
-                Harmony_Patch.Instance.Logger.WriteException(ex);
-
-                throw;
-            }
-        }
-        // ReSharper enable InconsistentNaming
+        private static readonly Dictionary<CreatureIds, Func<CreatureEvaluatorParameters, ICreatureEvaluator>> s_evaluatorFactoryDictionary = InitEvaluatorFactoryDictionary();
 
         public static void PatchAfterSetFilter([NotNull] this AgentSlot instance,
             AgentState state,
             [CanBeNull] GameManager currentGameManager,
-            IBeautyBeastAnimTestAdapter beautyBeastAnimTestAdapter,
-            [NotNull] IImageTestAdapter imageTestAdapter,
-            [NotNull] ITextTestAdapter textTestAdapter,
-            IYggdrasilAnimTestAdapter yggdrasilAnimTestAdapter)
+            [CanBeNull] IBeautyBeastAnimTestAdapter beautyBeastAnimTestAdapter = null,
+            [CanBeNull] IImageTestAdapter imageTestAdapter = null,
+            [CanBeNull] ITextTestAdapter textTestAdapter = null,
+            [CanBeNull] IYggdrasilAnimTestAdapter yggdrasilAnimTestAdapter = null)
         {
             Guard.Against.Null(instance, nameof(instance));
-            Guard.Against.Null(imageTestAdapter, nameof(imageTestAdapter));
-            Guard.Against.Null(textTestAdapter, nameof(textTestAdapter));
 
             if (!currentGameManager.IsValidGameStage(state))
             {
@@ -74,7 +52,10 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
                 return;
             }
 
-            instance.IndicateThatAgentWillDie(imageTestAdapter, textTestAdapter);
+            var commandWindow = CommandWindow.CommandWindow.CurrentWindow;
+            var slotColor = commandWindow.DeadColor;
+            var slotText = LocalizeTextDataModel.instance.GetText("AgentState_Dead");
+            instance.UpdateAgentSlot(slotColor, slotText, imageTestAdapter, textTestAdapter);
         }
 
         /// <summary>Stores our evaluators in a dictionary of factories so that we only need to create the dictionary once but can make evaluators from the factories as often as we need to.</summary>
@@ -122,5 +103,25 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
                 },
             };
         }
+
+        [EntryPoint]
+        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
+        // ReSharper disable InconsistentNaming
+        public static void Postfix([NotNull] AgentSlot __instance,
+            AgentState state)
+        {
+            try
+            {
+                var currentGameManager = GameManager.currentGameManager;
+                __instance.PatchAfterSetFilter(state, currentGameManager);
+            }
+            catch (Exception ex)
+            {
+                Harmony_Patch.Instance.Logger.WriteException(ex);
+
+                throw;
+            }
+        }
+        // ReSharper enable InconsistentNaming
     }
 }

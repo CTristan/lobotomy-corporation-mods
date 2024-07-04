@@ -2,8 +2,8 @@
 
 #region
 
-using System.Linq;
-using LobotomyCorporationMods.Common.Extensions;
+using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Implementations.Facades;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 #endregion
@@ -17,7 +17,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
         internal ParasiteTreeEvaluator(AgentModel agent,
             CreatureModel creature,
             RwbpType skillType,
-            IYggdrasilAnimTestAdapter yggdrasilAnimTestAdapter) : base(agent, creature, skillType)
+            [CanBeNull] IYggdrasilAnimTestAdapter yggdrasilAnimTestAdapter = null) : base(agent, creature, skillType)
         {
             _yggdrasilAnimTestAdapter = yggdrasilAnimTestAdapter;
         }
@@ -26,7 +26,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
         {
             const int MaxNumberOfFlowers = 4;
 
-            var numberOfFlowers = _yggdrasilAnimTestAdapter.Flowers.Count(flower => flower.ActiveSelf);
+            var numberOfFlowers = Creature.GetParasiteTreeNumberOfFlowers(_yggdrasilAnimTestAdapter);
             var agentWillDie = numberOfFlowers >= MaxNumberOfFlowers && !Agent.HasParasiteTreeEffect();
 
             return agentWillDie;

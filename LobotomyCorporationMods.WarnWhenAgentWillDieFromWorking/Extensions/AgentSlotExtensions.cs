@@ -28,18 +28,5 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
 
             return evaluator.WillAgentDie();
         }
-
-        internal static void IndicateThatAgentWillDie([NotNull] this AgentSlot instance,
-            [NotNull] IImageTestAdapter imageTestAdapter,
-            [NotNull] ITextTestAdapter textTestAdapter)
-        {
-            var commandWindow = CommandWindow.CommandWindow.CurrentWindow;
-
-            imageTestAdapter.GameObject = instance.WorkFilterFill;
-            imageTestAdapter.Color = commandWindow.DeadColor;
-            textTestAdapter.GameObject = instance.WorkFilterText;
-            textTestAdapter.Text = LocalizeTextDataModel.instance.GetText("AgentState_Dead");
-            instance.SetColor(commandWindow.DeadColor);
-        }
     }
 }

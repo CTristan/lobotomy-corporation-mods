@@ -16,8 +16,13 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    public sealed class YggdrasilAnimTestAdapter : Adapter<YggdrasilAnim>, IYggdrasilAnimTestAdapter
+    internal sealed class YggdrasilAnimTestAdapter : Adapter<YggdrasilAnim>, IYggdrasilAnimTestAdapter
     {
+        internal YggdrasilAnimTestAdapter([NotNull] YggdrasilAnim yggdrasilAnim)
+        {
+            GameObject = yggdrasilAnim;
+        }
+
         [NotNull]
         public IEnumerable<IGameObjectTestAdapter> Flowers
         {

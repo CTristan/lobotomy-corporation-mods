@@ -2,6 +2,8 @@
 
 #region
 
+using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Implementations.Facades;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 #endregion
@@ -10,24 +12,19 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 {
     internal sealed class BeautyAndTheBeastEvaluator : CreatureEvaluator
     {
-        private readonly IBeautyBeastAnimTestAdapter _testAdapter;
+        private readonly IBeautyBeastAnimTestAdapter _beautyBeastAnimTestAdapter;
 
         internal BeautyAndTheBeastEvaluator(AgentModel agent,
             CreatureModel creature,
             RwbpType skillType,
-            IBeautyBeastAnimTestAdapter animationScriptTestAdapter) : base(agent, creature, skillType)
+            [CanBeNull] IBeautyBeastAnimTestAdapter animationScriptBeautyBeastAnimTestAdapter = null) : base(agent, creature, skillType)
         {
-            _testAdapter = animationScriptTestAdapter;
+            _beautyBeastAnimTestAdapter = animationScriptBeautyBeastAnimTestAdapter;
         }
 
         protected override bool WillAgentDieFromThisCreature()
         {
-            const int WeakenedState = 1;
-
-            _testAdapter.GameObject = (BeautyBeastAnim)Creature.GetAnimScript();
-            var animationState = _testAdapter.State;
-            var isWeakened = animationState == WeakenedState;
-
+            var isWeakened = Creature.IsBeautyAndTheBeastWeakened(_beautyBeastAnimTestAdapter);
             var agentWillDie = isWeakened && SkillType == RwbpType.P;
 
             return agentWillDie;
