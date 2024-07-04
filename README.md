@@ -15,31 +15,24 @@ LMM).
 
 - [Bad Luck Protection for Gifts](https://www.nexusmods.com/lobotomycorporation/mods/476) ([Readme](LobotomyCorporationMods.BadLuckProtectionForGifts/README.md))
 - [Free Customization](https://www.nexusmods.com/lobotomycorporation/mods/477) ([Readme](LobotomyCorporationMods.FreeCustomization/README.md))
+- [Notify When Agent Receives Gift](https://www.nexusmods.com/lobotomycorporation/mods/487) ([Readme](LobotomyCorporationMods.NotifyWhenAgentReceivesGift/README.md))
 - [Unofficial Bug Fixes](https://www.nexusmods.com/lobotomycorporation/mods/478) ([Readme](LobotomyCorporationMods.BugFixes/README.md))
 - [Warn When Agent Will Die From Working](https://www.nexusmods.com/lobotomycorporation/mods/479) ([Readme](LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking/README.md))
 
 ## Most Recent Change
 
-### [4.1.0] - 2024-06-23
+### [5.0.0] - 2024-07-04
 
 #### Added
 
-- All mods
-  - Added Info.xml file to add the version number and description in the in-game
-    mod menu.
-
-#### Fixed
-
-- Warn When Agent Will Die From Working [1.1.0]
-  - Nothing There
-    - No longer checks for Justice below Level 4 (does not actually kill the
-      agent).
-    - Only checks for Fortitude below Level 4 if Nothing There is already
-      disguised (before it would warn for
-      Fortitude below Level 4 even if Nothing There was not disguised).
-    - No longer always warns when Nothing There is disguised (Nothing There only
-      kills while disguised if Fortitude
-      is below Level 4).
+- New mod: Notify When Agent Receives Gift [1.0.0]
+  - Whenever an agent receives a gift, a message will display in the log.
+- Unofficial Bug Fixes [3.0.0]
+  - Added fix for Crumbling Armor bug where replacing ANY gift would cause
+    the agent to not die from doing Attachment work for the rest of the day.
+- Warn When Agent Will Die From Working [15.0.0]
+  - Added check for Snow Queen when the agent is wearing the Feather of
+    Honor armor.
 
 See the [full changelog](CHANGELOG.md) for all changes.
 
@@ -70,6 +63,17 @@ additional LOB points.
 
 [Mod Readme](LobotomyCorporationMods.FreeCustomization/README.md) for full
 details.
+
+---
+
+### Notify When Agent Receives Gift
+
+![Notify When Agent Receives Gift example](https://raw.githubusercontent.com/ctristan/lobotomy-corporation-mods/assets/notify-when-agent-receives-gift.png)
+
+Whenever an agent receives a gift, a message will display in the log.
+
+[Mod Readme](LobotomyCorporationMods.NotifyWhenAgentReceivesGift/README.md) for
+full details.
 
 ---
 

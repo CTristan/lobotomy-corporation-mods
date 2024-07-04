@@ -23,10 +23,13 @@ Note: this will contain spoilers.
     gift, causing the Fortitude level to be
     level 3. Upgrade the agent's Fortitude and verify that the Fortitude level
     is now level 4.
-- [ ] Crumbling Armor Bugfix
+- [ ] Crumbling Armor Bugfixes
   - [ ] Start a day with an agent that has Crumbling Armor's gift, replace
     Crumbling Armor's gift, then have the agent
     do attachment work and make sure the agent doesn't die.
+  - [ ] Have an agent with multiple gifts get Crumbling Armor's gift,
+    replace one of the other gifts, then have the agent do attachment work
+    and make sure the agent dies.
 
 ## Free Customization
 
@@ -48,6 +51,7 @@ Note: this will contain spoilers.
   - [ ] An agent would receive a gift when they already have that gift.
   - [ ] An agent would receive a gift when that slot is locked with another
     gift.
+  - [ ] Agent receives Snow Queen's icicle from a normal/bad work result.
 
 ## Warn When Agent Will Die From Working
 
@@ -90,17 +94,20 @@ Note: this will contain spoilers.
 - [ ] Red Shoes
   - [ ] DEAD: Agent has Temperance below three.
   - [ ] NOT dead: Agent has Temperance above two.
-- [ ] Spider Bud
-  - [ ] DEAD: Agent has one Prudence and performs work other than Insight.
-  - [ ] DEAD: Agent has Prudence above one and performs Insight work.
-  - [ ] NOT dead: Agent has Prudence above one and performs work other than
-    Insight.
 - [ ] Singing Machine
   - [ ] DEAD: Qliphoth counter is zero.
   - [ ] DEAD: Agent has Fortitude above three and Temperance above two.
   - [ ] DEAD: Agent has Fortitude below four and Temperance below three.
   - [ ] DEAD: Agent has Fortitude from 57 to 64 and does not have gift.
   - [ ] NOT dead: Agent has Fortitude below four and Temperance above two.
+- [ ] Snow Queen
+  - [ ] DEAD: Agent has the Feather of Honor armor equipped.
+  - [ ] NOT dead: Agent does not have the Feather of Honor equipped.
+- [ ] Spider Bud
+  - [ ] DEAD: Agent has one Prudence and performs work other than Insight.
+  - [ ] DEAD: Agent has Prudence above one and performs Insight work.
+  - [ ] NOT dead: Agent has Prudence above one and performs work other than
+    Insight.
 - [ ] Void Dream
   - [ ] DEAD: Agent has one Temperance.
   - [ ] NOT dead: Agent has Temperance above one.

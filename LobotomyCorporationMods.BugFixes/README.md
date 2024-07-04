@@ -15,11 +15,21 @@ Bugs fixed:
   would remain level 3 after the upgrade instead of increasing by 1 (base level
   5, modified level 4).
 - **Crumbling Armor gift kills agents after being replaced** - When an agent
-  that started the day with Crumbling Armor’s
-  gift later replaced the gift with another one, they would still die when
-  performing an Attachment work.
+  that started the day with Crumbling Armor’s gift later replaced the gift with
+  another one, they could still die when performing an Attachment work.
+- **Crumbling Armor gift does not kill agent when another gift is replaced** -
+  When an agent with Crumbling Armor's gift replaces a gift in another slot (
+  like Hand or Face), they will no longer die from Crumbling Armor's effect for
+  doing Attachment work.
 
 ## Changelog
+
+### [3.0.0] - 2014-07-04
+
+### Added
+
+- New bug fix for Crumbling Armor not killing agents that replaced a
+  different gift.
 
 ### [2.1.0] - 2024-06-23
 

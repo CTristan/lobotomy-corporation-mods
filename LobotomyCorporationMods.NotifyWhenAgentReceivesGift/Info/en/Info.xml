@@ -2,7 +2,7 @@
 <info>
     <name>Notify When Agent Receives Gift v1.0.0</name>
     <descs>
-        <desc>Whenever an agent receives a gift that they don’t already have, a</desc>
-        <desc>message will display in the log.</desc>
+        <desc>Whenever an agent receives a gift, a message will display in the</desc>
+        <desc>log.</desc>
     </descs>
 </info>

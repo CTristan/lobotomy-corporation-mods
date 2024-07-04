@@ -75,6 +75,8 @@ Provides warnings for the following abnormalities and any of their conditions (
       gift and receiving the gift would
       increase their Fortitude above Level 3 (causing the agent to die upon
       receiving the gift).
+- **Snow Queen**
+  - Agent is wearing the Feather of Honor armor.
 - **Spider Bud**
   - Any of the following are true:
     - Agent has Prudence Level 1.

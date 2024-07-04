@@ -22,6 +22,19 @@ Major.minor.patch.0
 *This does not apply to the individual mod versions, as they adhere
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).*
 
+## [5.0.0] - 2024-07-04
+
+### Added
+
+- New mod: Notify When Agent Receives Gift [1.0.0]
+  - Whenever an agent receives a gift, a message will display in the log.
+- Unofficial Bug Fixes [3.0.0]
+  - Added fix for Crumbling Armor bug where replacing ANY gift would cause
+    the agent to no longer die from doing Attachment work.
+- Warn When Agent Will Die From Working [15.0.0]
+  - Added check for Snow Queen when the agent is wearing the Feather of
+    Honor armor.
+
 ## [4.1.0] - 2024-06-23
 
 ### Added
@@ -32,7 +45,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).*
 
 ### Fixed
 
-- Warn When Agent Will Die From Working [1.1.0]
+- Warn When Agent Will Die From Working [14.1.0]
   - Nothing There
     - No longer checks for Justice below Level 4 (does not actually kill the
       agent).
@@ -55,8 +68,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).*
 
 ### Added
 
-- New mod
-  - Warn When Agent Will Die From Working [1.0.0]
+- New mod: Warn When Agent Will Die From Working [14.0.0]
   - Warns when assigning work if an agent will be killed by an instakill
     mechanic.
   - More information available
@@ -81,8 +93,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).*
 
 ### Added
 
-- New mod
-  - Unofficial Bug Fixes [1.0.0]
+- New mod: Unofficial Bug Fixes [1.0.0]
   - Fixes a game bug that could cause LOB points to be wasted with certain
     gifts.
   - More information available
@@ -92,8 +103,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).*
 
 ### Added
 
-- New mod
-  - Free Customization [1.0.0]
+- New mod: Free Customization [1.0.0]
   - Customizing an agent no longer costs any LOB points.
   - More information available
     in [the mod's readme](LobotomyCorporationMods.FreeCustomization/README.md).

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <info>
-    <name>Warn When Agent Will Die From Working v1.1.0</name>
+    <name>Warn When Agent Will Die From Working v15.0.0</name>
     <descs>
         <desc>Provides a visual warning when an agent is guaranteed to die if</desc>
         <desc>assigned to work on an abnormality.</desc>

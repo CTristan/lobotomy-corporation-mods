@@ -39,16 +39,30 @@ namespace LobotomyCorporationMods.BugFixes.Patches
 
         /// <summary>Runs after the original OnNotice method to force Crumbling Armor to re-initialize it's internal list of agents.</summary>
         /// <remarks>
-        ///     <para>
-        ///         Bug Fixed: When an agent that started the day with Crumbling Armor's gift but later replaced the gift with another one, they would still die when performing an
-        ///         Attachment work.
-        ///     </para>
-        ///     <para>
-        ///         Reproduction: Start the day with an agent that has Crumbling Armor's gift. Have that agent work on One Sin and Hundreds of Good Deeds until they get One Sin's gift,
-        ///         replacing Crumbling Armor's gift. Then have the agent perform an Attachment work on any abnormality.
-        ///     </para>
-        ///     <para>Expected result: Agent should not die from Crumbling Armor's effect when starting the Attachment work.</para>
-        ///     <para>Actual result: Agent dies from Crumbling Armor's effect.</para>
+        ///     Bugs fixed:
+        ///     <list type="number">
+        ///         <item>
+        ///             <para>
+        ///                 Bug: When an agent that started the day with Crumbling Armor's gift but later replaced the gift with another one, they would still die when performing an
+        ///                 Attachment work.
+        ///             </para>
+        ///             <para>
+        ///                 Reproduction: Start the day with an agent that has Crumbling Armor's gift. Have that agent work on One Sin and Hundreds of Good Deeds until they get One Sin's
+        ///                 gift, replacing Crumbling Armor's gift. Then have the agent perform an Attachment work on any abnormality other than Crumbling Armor.
+        ///             </para>
+        ///             <para>Expected result: Agent should not die from Crumbling Armor's effect when starting the Attachment work.</para>
+        ///             <para>Actual result: Agent dies from Crumbling Armor's effect.</para>
+        ///         </item>
+        ///         <item>
+        ///             <para>Bug: When an agent with Crumbling Armor's gift replaced a gift in a different slot (e.g. Hand or Face)</para>
+        ///             <para>
+        ///                 Reproduction: Have an agent with Crumbling Armor's gift replace a gift in a slot that's not a Hat slot gift, the perform Attachment work on any abnormality other
+        ///                 than Crumbling Armor.
+        ///             </para>
+        ///             <para>Expected result: Agent should die from Crumbling Armor's effect when starting the Attachment work.</para>
+        ///             <para>Actual result: Agent does not die from Crumbling Armor's effect.</para>
+        ///         </item>
+        ///     </list>
         ///     <para>
         ///         Technical notes: The root cause of the bug is that the trigger for killing the agent is separate from whether the agent actually has the gift or not. The armor keeps its
         ///         own private list of agents that have either started the day with the gift or have acquired the gift during the day. Unfortunately it doesn't always correctly remove the
