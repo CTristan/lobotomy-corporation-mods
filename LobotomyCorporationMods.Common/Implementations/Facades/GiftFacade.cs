@@ -1,7 +1,5 @@
 ﻿// SPDX-License-Identifier: MIT
 
-using System.Collections.Generic;
-using System.Linq;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
 
@@ -9,27 +7,6 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
 {
     public static class GiftFacade
     {
-        /// <summary>A unit's equipped gifts consists of both added and replaced gifts.</summary>
-        [NotNull]
-        private static List<EGOgiftModel> GetEquippedGifts([NotNull] this UnitModel unitModel)
-        {
-            var giftList = new List<EGOgiftModel>();
-
-            var addedGifts = unitModel.Equipment.gifts.addedGifts;
-            if (addedGifts.Count > 0)
-            {
-                giftList.AddRange(addedGifts);
-            }
-
-            var replacedGifts = unitModel.Equipment.gifts.replacedGifts;
-            if (replacedGifts.Count > 0)
-            {
-                giftList.AddRange(unitModel.Equipment.gifts.replacedGifts);
-            }
-
-            return giftList;
-        }
-
         public static bool HasGiftEquipped([NotNull] this UnitModel unitModel,
             int giftId)
         {
@@ -40,40 +17,24 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             return equippedGifts.Exists(g => g.metaInfo.id == giftId);
         }
 
+        /// <summary>Some gifts are in special slots that don't show up in an agent's gift window and are used for abnormality effect, for example Snow Queen's icicle</summary>
+        /// <param name="equipmentModel">The equipment to check.</param>
+        /// <returns>True if the equipment is in a valid slot, otherwise false.</returns>
+        public static bool IsInValidSlot([NotNull] this EquipmentModel equipmentModel)
+        {
+            Guard.Against.Null(equipmentModel, nameof(equipmentModel));
+
+            return equipmentModel.metaInfo.attachPos != EGOgiftAttachRegion.BODY_UP.ToString();
+        }
+
         public static bool PositionHasLockedGift([NotNull] this UnitModel unitModel,
             [NotNull] EquipmentModel gift)
         {
             Guard.Against.Null(gift, nameof(gift));
 
-            var matchingGiftAtPosition = FindGiftAtPosition(unitModel, gift.metaInfo.attachPos);
+            var matchingGiftAtPosition = unitModel.FindGiftAtPosition(gift.metaInfo.attachPos);
 
-            return !matchingGiftAtPosition.IsNull() && IsGiftLocked(unitModel, matchingGiftAtPosition.metaInfo.id);
-        }
-
-        private static EGOgiftModel FindGiftAtPosition([NotNull] this UnitModel unitModel,
-            string position)
-        {
-            var equippedGifts = unitModel.GetEquippedGifts();
-
-            return equippedGifts.Find(g => g.metaInfo.attachPos == position);
-        }
-
-        private static bool IsGiftLocked([NotNull] this UnitModel unitModel,
-            int giftId)
-        {
-            var matchingGiftLockState = unitModel.GetMatchingGiftLockState(giftId);
-
-            return matchingGiftLockState.state;
-        }
-
-        [NotNull]
-        private static UnitEGOgiftSpace.GiftLockState GetMatchingGiftLockState([NotNull] this UnitModel unitModel,
-            int giftId)
-        {
-            var lockStateDictionary = unitModel.Equipment.gifts.lockState;
-            var lockState = lockStateDictionary.Values.FirstOrDefault(v => v.id == giftId);
-
-            return lockState ?? new UnitEGOgiftSpace.GiftLockState();
+            return !matchingGiftAtPosition.IsNull() && unitModel.IsGiftLocked(matchingGiftAtPosition.metaInfo.id);
         }
     }
 }

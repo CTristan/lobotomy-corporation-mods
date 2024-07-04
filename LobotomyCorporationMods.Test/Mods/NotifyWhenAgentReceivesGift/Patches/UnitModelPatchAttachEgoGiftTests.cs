@@ -79,6 +79,16 @@ namespace LobotomyCorporationMods.Test.Mods.NotifyWhenAgentReceivesGift.Patches
             ExecutePatchAndVerifyNotification(unitModel, gift, Times.Never());
         }
 
+        [Fact]
+        public void Receiving_a_gift_in_an_invalid_slot_does_not_cause_a_notification()
+        {
+            var unitModel = UnityTestExtensions.CreateAgentModel();
+            var gift = GetGift(DefaultAgentName, attachRegion: EGOgiftAttachRegion.BODY_UP);
+            unitModel.Equipment.gifts.addedGifts.Add(gift);
+
+            ExecutePatchAndVerifyNotification(unitModel, gift, Times.Never());
+        }
+
         [Theory]
         [InlineData(DefaultAgentName, DefaultGiftName,
             "<color=" + ColorAgentString + ">" + DefaultAgentName + "</color> has received the gift <color=" + ColorGiftString + ">" + DefaultGiftName + "</color>.")]

@@ -26,6 +26,13 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches
             Guard.Against.Null(instance, nameof(instance));
             Guard.Against.Null(gift, nameof(gift));
 
+            // Some gifts are in special slots that don't show up in an agent's gift window and are used for abnormality effects
+            // For example, Snow Queen's icicle
+            if (!gift.IsInValidSlot())
+            {
+                return;
+            }
+
             // Check if the gift's position already has a locked gift
             if (instance.PositionHasLockedGift(gift))
             {

@@ -23,7 +23,7 @@ notice them in the portrait or gift list for an agent.
 
 ## Changelog
 
-### [1.0.0] - 2024-06-26
+### [1.0.0] - 2024-07-04
 
 #### Added
 
