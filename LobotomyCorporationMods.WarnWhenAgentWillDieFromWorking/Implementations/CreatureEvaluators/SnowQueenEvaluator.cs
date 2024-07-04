@@ -14,7 +14,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 
         protected override bool WillAgentDieFromThisCreature()
         {
-            return Agent.HasEquipment((int)EquipmentIds.FirebirdWeapon);
+            return Agent.HasEquipment((int)EquipmentIds.FirebirdArmor);
         }
     }
 }

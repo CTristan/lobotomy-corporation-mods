@@ -532,11 +532,11 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
         public void SnowQueen_Will_Kill_Agent_With_FirebirdWeapon()
         {
             var agentSlot = InitializeAgentSlot(CreatureIds.SnowQueen);
-            agentSlot.CurrentAgent.Equipment.weapon = new WeaponModel
+            agentSlot.CurrentAgent.Equipment.armor = new ArmorModel
             {
                 metaInfo = new EquipmentTypeInfo
                 {
-                    id = (int)EquipmentIds.FirebirdWeapon,
+                    id = (int)EquipmentIds.FirebirdArmor,
                 },
             };
 
@@ -551,7 +551,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
             {
                 metaInfo = new EquipmentTypeInfo
                 {
-                    id = (int)EquipmentIds.FirebirdWeapon + 1,
+                    id = (int)EquipmentIds.FirebirdArmor + 1,
                 },
             };
 
