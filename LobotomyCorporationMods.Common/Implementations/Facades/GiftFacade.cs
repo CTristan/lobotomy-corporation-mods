@@ -1,5 +1,6 @@
 ﻿// SPDX-License-Identifier: MIT
 
+using System;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
 
@@ -24,7 +25,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         {
             Guard.Against.Null(equipmentModel, nameof(equipmentModel));
 
-            return equipmentModel.metaInfo.attachPos != EGOgiftAttachRegion.BODY_UP.ToString();
+            return !equipmentModel.metaInfo.attachPos.Equals(EGOgiftAttachRegion.BODY_UP.ToString(), StringComparison.OrdinalIgnoreCase);
         }
 
         public static bool PositionHasLockedGift([NotNull] this UnitModel unitModel,
