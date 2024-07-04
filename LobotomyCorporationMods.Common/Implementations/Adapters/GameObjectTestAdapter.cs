@@ -17,10 +17,6 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
     internal sealed class GameObjectTestAdapter : Adapter<GameObject>, IGameObjectTestAdapter
     {
-        internal GameObjectTestAdapter()
-        {
-        }
-
         internal GameObjectTestAdapter([NotNull] GameObject gameObject) : base(gameObject)
         {
         }

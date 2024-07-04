@@ -18,9 +18,8 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
     internal sealed class ArmorCreatureTestAdapter : Adapter<ArmorCreature>, IArmorCreatureTestAdapter
     {
-        internal ArmorCreatureTestAdapter([NotNull] ArmorCreature armorCreature)
+        internal ArmorCreatureTestAdapter([NotNull] ArmorCreature gameObject) : base(gameObject)
         {
-            GameObject = armorCreature;
         }
 
         [CanBeNull]

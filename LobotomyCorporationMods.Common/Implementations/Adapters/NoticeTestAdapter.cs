@@ -16,9 +16,8 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
     internal sealed class NoticeTestAdapter : Adapter<Notice>, INoticeTestAdapter
     {
-        internal NoticeTestAdapter([NotNull] Notice notice)
+        internal NoticeTestAdapter([NotNull] Notice gameObject) : base(gameObject)
         {
-            GameObject = notice;
         }
 
         public void Send(string notice,

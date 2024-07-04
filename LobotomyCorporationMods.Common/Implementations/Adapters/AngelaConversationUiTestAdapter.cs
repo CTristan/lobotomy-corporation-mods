@@ -3,6 +3,7 @@
 #region
 
 using System.Diagnostics.CodeAnalysis;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
@@ -15,6 +16,10 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
     internal sealed class AngelaConversationUiTestAdapter : Adapter<AngelaConversationUI>, IAngelaConversationUiTestAdapter
     {
+        internal AngelaConversationUiTestAdapter([NotNull] AngelaConversationUI gameObject) : base(gameObject)
+        {
+        }
+
         public void AddMessage(string message)
         {
             GameObject.AddAngelaMessage(message);

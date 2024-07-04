@@ -18,9 +18,8 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
     internal sealed class YggdrasilAnimTestAdapter : Adapter<YggdrasilAnim>, IYggdrasilAnimTestAdapter
     {
-        internal YggdrasilAnimTestAdapter([NotNull] YggdrasilAnim yggdrasilAnim)
+        internal YggdrasilAnimTestAdapter([NotNull] YggdrasilAnim gameObject) : base(gameObject)
         {
-            GameObject = yggdrasilAnim;
         }
 
         [NotNull]
@@ -30,10 +29,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
             {
                 var flowers = GameObject.flowers;
 
-                return flowers.Select(flower => new GameObjectTestAdapter
-                {
-                    GameObject = flower,
-                }).Cast<IGameObjectTestAdapter>();
+                return flowers.Select(flower => new GameObjectTestAdapter(flower)).Cast<IGameObjectTestAdapter>();
             }
         }
     }

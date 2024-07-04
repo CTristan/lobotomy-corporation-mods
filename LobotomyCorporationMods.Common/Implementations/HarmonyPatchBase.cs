@@ -8,9 +8,9 @@ using System.IO;
 using Harmony;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Common.Implementations.LoggerTargets;
 using LobotomyCorporationMods.Common.Interfaces;
+using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 #endregion
 
@@ -78,7 +78,8 @@ namespace LobotomyCorporationMods.Common.Implementations
 
         protected void SetUpPatchData(Type type,
             string modFileName,
-            [CanBeNull] ICollection<DirectoryInfo> directories = null)
+            [CanBeNull] ICollection<DirectoryInfo> directories = null,
+            [CanBeNull] IAngelaConversationUiTestAdapter angelaConversationUiTestAdapter = null)
         {
             if (!type.IsHarmonyPatch())
             {
@@ -95,7 +96,7 @@ namespace LobotomyCorporationMods.Common.Implementations
                 return;
             }
 
-            InitializeLogger();
+            InitializeLogger(angelaConversationUiTestAdapter);
             ApplyHarmonyPatch(type, modFileName);
         }
 
@@ -106,14 +107,21 @@ namespace LobotomyCorporationMods.Common.Implementations
             FileManager = new FileManager(modFileName, directories ?? Add_On.instance.DirList);
         }
 
-        private void InitializeLogger()
+        private void InitializeLogger(IAngelaConversationUiTestAdapter angelaConversationUiTestAdapter)
         {
             var fileLoggerTarget = new FileLoggerTarget(FileManager, "log.txt");
             Logger = new Logger(fileLoggerTarget);
+
 #if DEBUG
-            var debugLoggerTarget = new DebugLoggerTarget(new AngelaConversationUiTestAdapter());
-            Logger.AddTarget(debugLoggerTarget);
+            // ReSharper disable once InconsistentNaming
+            const bool logToAngela = true;
+#else
+            var logToAngela = File.Exists("log.config");
 #endif
+
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+            var angelaLoggerTarget = new AngelaLoggerTarget(logToAngela, angelaConversationUiTestAdapter);
+            Logger.AddTarget(angelaLoggerTarget);
         }
 
         private void ValidateThatStaticInstanceIsNotDuplicated()

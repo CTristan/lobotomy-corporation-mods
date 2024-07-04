@@ -7,18 +7,30 @@ using Xunit;
 
 namespace LobotomyCorporationMods.Test.Mods.Common.LoggerTargets
 {
-    public sealed class DebugLoggerTests
+    public sealed class AngelaLoggerTests
     {
         [Fact]
         public void Logging_message_sends_to_Angela()
         {
             const string ExpectedMessage = "MessageSentToLog";
             var mockAngelaConversationUiTestAdapter = new Mock<IAngelaConversationUiTestAdapter>();
-            var sut = new DebugLoggerTarget(mockAngelaConversationUiTestAdapter.Object);
+            var sut = new AngelaLoggerTarget(true, mockAngelaConversationUiTestAdapter.Object);
 
             sut.WriteToLoggerTarget(ExpectedMessage);
 
             mockAngelaConversationUiTestAdapter.Verify(adapter => adapter.AddMessage(ExpectedMessage), Times.Once);
+        }
+
+        [Fact]
+        public void Disabling_Angela_logging_does_not_send_messages_to_Angela()
+        {
+            const string ExpectedMessage = "MessageSentToLog";
+            var mockAngelaConversationUiTestAdapter = new Mock<IAngelaConversationUiTestAdapter>();
+            var sut = new AngelaLoggerTarget(false, mockAngelaConversationUiTestAdapter.Object);
+
+            sut.WriteToLoggerTarget(ExpectedMessage);
+
+            mockAngelaConversationUiTestAdapter.Verify(adapter => adapter.AddMessage(ExpectedMessage), Times.Never);
         }
     }
 }

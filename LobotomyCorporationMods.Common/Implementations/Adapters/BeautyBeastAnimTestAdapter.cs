@@ -16,9 +16,8 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
     internal sealed class BeautyBeastAnimTestAdapter : Adapter<BeautyBeastAnim>, IBeautyBeastAnimTestAdapter
     {
-        internal BeautyBeastAnimTestAdapter([NotNull] BeautyBeastAnim beautyBeastAnim)
+        internal BeautyBeastAnimTestAdapter([NotNull] BeautyBeastAnim gameObject) : base(gameObject)
         {
-            GameObject = beautyBeastAnim;
         }
 
         public int State => GameObject.GetState();

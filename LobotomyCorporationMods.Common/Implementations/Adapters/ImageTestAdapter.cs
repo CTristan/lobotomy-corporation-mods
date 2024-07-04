@@ -18,9 +18,8 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
     internal sealed class ImageTestAdapter : Adapter<Image>, IImageTestAdapter
     {
-        internal ImageTestAdapter([NotNull] Image image)
+        internal ImageTestAdapter([NotNull] Image gameObject) : base(gameObject)
         {
-            GameObject = image;
         }
 
         public Color Color

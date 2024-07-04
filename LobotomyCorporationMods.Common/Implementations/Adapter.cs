@@ -20,10 +20,6 @@ namespace LobotomyCorporationMods.Common.Implementations
     {
         private T _gameObject;
 
-        protected Adapter()
-        {
-        }
-
         protected Adapter([NotNull] T gameObject)
         {
             GameObject = gameObject;

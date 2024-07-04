@@ -17,9 +17,8 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
     internal sealed class WorkerSpriteManagerTestAdapter : Adapter<WorkerSpriteManager>, IWorkerSpriteManagerTestAdapter
     {
-        internal WorkerSpriteManagerTestAdapter([NotNull] WorkerSpriteManager workerSpriteManager)
+        internal WorkerSpriteManagerTestAdapter([NotNull] WorkerSpriteManager gameObject) : base(gameObject)
         {
-            GameObject = workerSpriteManager;
         }
 
         public void SetAgentBasicData(WorkerSprite.WorkerSprite workerSprite,
