@@ -4,8 +4,9 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 {
     internal sealed class BlueStarEvaluator : CreatureEvaluator
     {
-        internal BlueStarEvaluator(AgentModel agent, CreatureModel creature, RwbpType skillType)
-            : base(agent, creature, skillType)
+        internal BlueStarEvaluator(AgentModel agent,
+            CreatureModel creature,
+            RwbpType skillType) : base(agent, creature, skillType)
         {
         }
 

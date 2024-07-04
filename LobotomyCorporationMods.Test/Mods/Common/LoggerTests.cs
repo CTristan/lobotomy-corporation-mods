@@ -5,7 +5,6 @@
 using System;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Interfaces;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using Moq;
 using Xunit;
 
@@ -18,13 +17,12 @@ namespace LobotomyCorporationMods.Test.Mods.Common
         [Fact]
         public void Logging_exception_writes_to_log()
         {
-            var mockFileManager = new Mock<IFileManager>();
-            var mockAngelaConversationUiAdapter = new Mock<IAngelaConversationUiAdapter>();
-            var logger = new Logger(mockFileManager.Object, mockAngelaConversationUiAdapter.Object);
+            var mockLoggerTarget = new Mock<ILoggerTarget>();
+            var logger = new Logger(mockLoggerTarget.Object);
 
-            logger.WriteToLog(new InvalidOperationException());
+            logger.WriteException(new InvalidOperationException());
 
-            mockFileManager.Verify(manager => manager.WriteAllText(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+            mockLoggerTarget.Verify(target => target.WriteToLoggerTarget(It.IsAny<string>()), Times.Once);
         }
     }
 }

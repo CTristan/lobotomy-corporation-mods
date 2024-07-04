@@ -5,79 +5,89 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
+using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
+using LobotomyCorporationMods.Common.Implementations.Facades;
+using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 #endregion
 
 namespace LobotomyCorporationMods.BugFixes.Patches
 {
-    [HarmonyPatch(typeof(ArmorCreature), "OnNotice")]
+    [HarmonyPatch(typeof(ArmorCreature), nameof(ArmorCreature.OnNotice))]
     public static class ArmorCreaturePatchOnNotice
     {
-        public static bool PatchBeforeOnNotice(string notice, params object[] param)
+        public static void PatchAfterOnNotice([NotNull] this ArmorCreature instance,
+            [NotNull] string noticeName,
+            [CanBeNull] IArmorCreatureTestAdapter armorCreatureTestAdapter = null,
+            [NotNull] params object[] noticeParameters)
         {
-            Guard.Against.Null(param, nameof(param));
+            Guard.Against.Null(instance, nameof(instance));
+            Guard.Against.Null(noticeName, nameof(noticeName));
+            Guard.Against.Null(noticeParameters, nameof(noticeParameters));
 
-            if (notice != NoticeName.OnWorkStart)
+            if (!noticeName.Equals(NoticeName.OnChangeGift, StringComparison.Ordinal))
             {
-                return true;
+                return;
             }
 
-            // If we're working on a tool or other non-creature then we don't need to verify
-            if (!(param[0] is CreatureModel creatureModel))
-            {
-                return true;
-            }
-
-            // We only care if we're doing Attachment work
-            var skillId = creatureModel.currentSkill.skillTypeInfo.id;
-            if (skillId != SkillTypeInfo.Consensus)
-            {
-                return true;
-            }
-
-            var agent = creatureModel.currentSkill.agent;
-
-            // If the agent doesn't actually have Crumbling Armor's gift then we won't continue.
-            return agent.HasCrumblingArmor();
+            instance.ResetCrumblingArmorAgentList(armorCreatureTestAdapter);
         }
 
-        /// <summary>
-        ///     Bug Fixed: When an agent that started the day with Crumbling Armor's gift but later replaced the gift
-        ///     with another one, they would still die when performing an Attachment work.
-        ///
-        ///     Reproduction: Start the day with an agent that has Crumbling Armor's gift. Have that agent work on One
-        ///     Sin and Hundreds of Good Deeds until they get One Sin's gift, replacing Crumbling Armor's gift. Then
-        ///     have the agent perform an Attachment work on any abnormality.
-        ///
-        ///     Expected result: Agent should not die from Crumbling Armor's effect when starting the Attachment work.
-        ///
-        ///     Actual result: Agent dies from Crumbling Armor's effect.
-        ///
-        ///     Technical notes: The root cause of the bug is that the trigger for killing the agent is separate from
-        ///     whether the agent actually has the gift or not. The armor keeps its own private list of agents that have
-        ///     either started the day with the gift or have acquired the gift during the day. Unfortunately it doesn't
-        ///     correctly remove the agents from the list when they replace the gift, so the only way to avoid the bug
-        ///     normally is to wait until the next day to perform Attachment work. This fix will force the trigger to
-        ///     check if the agent actually has the gift, and if they do then we stop the armor from checking its
-        ///     private list for the agent.
-        ///
-        ///     This needs to be Prefix because the bug is in a private (and thus inaccessible) property, so we need to
-        ///     be able to skip the method call to work around that issue.
-        /// </summary>
+        /// <summary>Runs after the original OnNotice method to force Crumbling Armor to re-initialize it's internal list of agents.</summary>
+        /// <remarks>
+        ///     Bugs fixed:
+        ///     <list type="number">
+        ///         <item>
+        ///             <para>
+        ///                 Bug: When an agent that started the day with Crumbling Armor's gift but later replaced the gift with another one, they would still die when performing an
+        ///                 Attachment work.
+        ///             </para>
+        ///             <para>
+        ///                 Reproduction: Start the day with an agent that has Crumbling Armor's gift. Have that agent work on One Sin and Hundreds of Good Deeds until they get One Sin's
+        ///                 gift, replacing Crumbling Armor's gift. Then have the agent perform an Attachment work on any abnormality other than Crumbling Armor.
+        ///             </para>
+        ///             <para>Expected result: Agent should not die from Crumbling Armor's effect when starting the Attachment work.</para>
+        ///             <para>Actual result: Agent dies from Crumbling Armor's effect.</para>
+        ///         </item>
+        ///         <item>
+        ///             <para>Bug: When an agent with Crumbling Armor's gift replaced a gift in a different slot (e.g. Hand or Face)</para>
+        ///             <para>
+        ///                 Reproduction: Have an agent with Crumbling Armor's gift replace a gift in a slot that's not a Hat slot gift, the perform Attachment work on any abnormality other
+        ///                 than Crumbling Armor.
+        ///             </para>
+        ///             <para>Expected result: Agent should die from Crumbling Armor's effect when starting the Attachment work.</para>
+        ///             <para>Actual result: Agent does not die from Crumbling Armor's effect.</para>
+        ///         </item>
+        ///     </list>
+        ///     <para>
+        ///         Technical notes: The root cause of the bug is that the trigger for killing the agent is separate from whether the agent actually has the gift or not. The armor keeps its
+        ///         own private list of agents that have either started the day with the gift or have acquired the gift during the day. Unfortunately it doesn't always correctly remove the
+        ///         agents from the list when they replace the gift, so the only guaranteed way to avoid the bug normally is to wait until the next day to perform Attachment work. Even
+        ///         weirder, there's actually an adjacent bug where replacing ANY gift on that agent triggers removing them from the list, so for example replacing an existing Hand gift will
+        ///         also cause the agent to not die from Crumbling Armor's gift (which is on the Head) even though they still have it. This fix will force Crumbling Armor to re-initialize its
+        ///         internal list of agents whenever anyone changes their gift so that it will always have the most up-to-date list of agents with the gift and so that we don't have to
+        ///         babysit the death trigger.
+        ///     </para>
+        /// </remarks>
         [EntryPoint]
-        [ExcludeFromCodeCoverage]
-        public static bool Prefix(string notice, params object[] param)
+        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
+        // ReSharper disable once InconsistentNaming
+        // ReSharper disable once UnusedMethodReturnValue.Global
+        public static void Postfix([NotNull] ArmorCreature __instance,
+            [NotNull] string notice,
+            [NotNull] params object[] param)
         {
             try
             {
-                return PatchBeforeOnNotice(notice, param);
+                __instance.PatchAfterOnNotice(notice, noticeParameters: param);
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.WriteToLog(ex);
+                Harmony_Patch.Instance.Logger.WriteException(ex);
 
                 throw;
             }

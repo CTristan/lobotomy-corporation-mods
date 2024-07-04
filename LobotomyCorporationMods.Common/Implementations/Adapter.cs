@@ -4,7 +4,10 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
+using LobotomyCorporationMods.Common.Constants;
+using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces;
 
 #endregion
@@ -12,27 +15,30 @@ using LobotomyCorporationMods.Common.Interfaces;
 namespace LobotomyCorporationMods.Common.Implementations
 {
     [AdapterClass]
-    [ExcludeFromCodeCoverage]
-    public class Adapter<T> : IAdapter<T>
+    [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
+    internal class Adapter<T> : ITestAdapter<T>
     {
         private T _gameObject;
 
-        protected Adapter()
+        protected Adapter([NotNull] T gameObject)
         {
+            GameObject = gameObject;
         }
 
+        [NotNull]
         public T GameObject
         {
             get
             {
-                if (!(_gameObject is object))
+                if (!_gameObject.IsNotNull())
                 {
                     throw new InvalidOperationException("Please load the game object into the adapter before trying to use it.");
                 }
 
                 return _gameObject;
             }
-            set => _gameObject = value;
+            set =>
+                _gameObject = value;
         }
     }
 }

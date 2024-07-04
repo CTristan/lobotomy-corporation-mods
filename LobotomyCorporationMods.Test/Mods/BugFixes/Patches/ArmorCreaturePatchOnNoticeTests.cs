@@ -2,10 +2,11 @@
 
 #region
 
-using FluentAssertions;
+using System.Collections.Generic;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.BugFixes.Patches;
-using LobotomyCorporationMods.Common.Enums;
-using LobotomyCorporationMods.Test.Extensions;
+using LobotomyCorporationMods.Common.Interfaces.Adapters;
+using Moq;
 using Xunit;
 
 #endregion
@@ -14,108 +15,47 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes.Patches
 {
     public sealed class ArmorCreaturePatchOnNoticeTests : BugFixesTests
     {
-        [Fact]
-        public void Performing_attachment_work_after_replacing_gift_does_not_kill_agent()
-        {
-            // Arrange
-            var notice = NoticeName.OnWorkStart;
-            var skill = TestExtensions.CreateUseSkill();
-            skill.skillTypeInfo.id = SkillTypeInfo.Consensus;
-            var param = new object[] { skill.targetCreature };
+        private readonly object[] _defaultParams = new object[1];
+        private readonly Mock<IArmorCreatureTestAdapter> _mockArmorCreatureTestAdapter = new Mock<IArmorCreatureTestAdapter>();
+        private readonly string _onChangeGiftNotice = NoticeName.OnChangeGift;
 
+        public ArmorCreaturePatchOnNoticeTests()
+        {
+            _mockArmorCreatureTestAdapter.Setup(a => a.SpecialAgentList).Returns(new List<object>());
+        }
+
+        [Fact]
+        public void Any_agent_changing_their_gift_causes_Crumbling_Armor_list_to_reset()
+        {
             // Act
-            var result = ArmorCreaturePatchOnNotice.PatchBeforeOnNotice(notice, param);
+            ArmorCreature.PatchAfterOnNotice(_onChangeGiftNotice, _mockArmorCreatureTestAdapter.Object, _defaultParams);
 
             // Assert
-            result.Should().BeFalse();
+            VerifyListReset();
         }
 
         [Theory]
-        [InlineData((int)EquipmentId.CrumblingArmorGift1)]
-        [InlineData((int)EquipmentId.CrumblingArmorGift2)]
-        [InlineData((int)EquipmentId.CrumblingArmorGift3)]
-        [InlineData((int)EquipmentId.CrumblingArmorGift4)]
-        public void Performing_attachment_work_with_crumbling_armor_gift_kills_agent(int giftId)
+        [InlineData(nameof(NoticeName.OnWorkStart))]
+        [InlineData(nameof(NoticeName.OnReleaseWork))]
+        public void Receiving_any_other_notice_does_not_cause_Crumbling_Armor_list_to_reset([NotNull] string notice)
         {
-            // Arrange
-            var notice = NoticeName.OnWorkStart;
-            var param = SetupCrumblingArmorGifts(giftId, SkillTypeInfo.Consensus);
-
             // Act
-            var result = ArmorCreaturePatchOnNotice.PatchBeforeOnNotice(notice, param);
+            ArmorCreature.PatchAfterOnNotice(notice, _mockArmorCreatureTestAdapter.Object, _defaultParams);
 
             // Assert
-            result.Should().BeTrue();
-        }
-
-        [Theory]
-        [InlineData((int)EquipmentId.CrumblingArmorGift1, SkillTypeInfo.Amusements)]
-        [InlineData((int)EquipmentId.CrumblingArmorGift1, SkillTypeInfo.Cleanliness)]
-        [InlineData((int)EquipmentId.CrumblingArmorGift1, SkillTypeInfo.Nutrition)]
-        [InlineData((int)EquipmentId.CrumblingArmorGift1, SkillTypeInfo.Violence)]
-        [InlineData((int)EquipmentId.CrumblingArmorGift2, SkillTypeInfo.Amusements)]
-        [InlineData((int)EquipmentId.CrumblingArmorGift2, SkillTypeInfo.Cleanliness)]
-        [InlineData((int)EquipmentId.CrumblingArmorGift2, SkillTypeInfo.Nutrition)]
-        [InlineData((int)EquipmentId.CrumblingArmorGift2, SkillTypeInfo.Violence)]
-        [InlineData((int)EquipmentId.CrumblingArmorGift3, SkillTypeInfo.Amusements)]
-        [InlineData((int)EquipmentId.CrumblingArmorGift3, SkillTypeInfo.Cleanliness)]
-        [InlineData((int)EquipmentId.CrumblingArmorGift3, SkillTypeInfo.Nutrition)]
-        [InlineData((int)EquipmentId.CrumblingArmorGift3, SkillTypeInfo.Violence)]
-        [InlineData((int)EquipmentId.CrumblingArmorGift4, SkillTypeInfo.Amusements)]
-        [InlineData((int)EquipmentId.CrumblingArmorGift4, SkillTypeInfo.Cleanliness)]
-        [InlineData((int)EquipmentId.CrumblingArmorGift4, SkillTypeInfo.Nutrition)]
-        [InlineData((int)EquipmentId.CrumblingArmorGift4, SkillTypeInfo.Violence)]
-        public void Performing_non_attachment_work_with_crumbling_armor_gift_will_not_kill_agent(int giftId, long workTypeId)
-        {
-            // Arrange
-            var notice = NoticeName.OnWorkStart;
-            var param = SetupCrumblingArmorGifts(giftId, workTypeId);
-
-            // Act
-            var result = ArmorCreaturePatchOnNotice.PatchBeforeOnNotice(notice, param);
-
-            // Assert
-            result.Should().BeTrue();
-        }
-
-        [Fact]
-        public void Skip_if_not_starting_work_on_an_abnormality()
-        {
-            var notice = NoticeName.Update;
-
-            var result = ArmorCreaturePatchOnNotice.PatchBeforeOnNotice(notice);
-
-            result.Should().BeTrue();
-        }
-
-        [Fact]
-        public void Skip_if_agent_will_work_on_tool()
-        {
-            // Arrange
-            var notice = NoticeName.OnWorkStart;
-            var param = new object[] { TestExtensions.CreateUnitModel() };
-
-            // Act
-            var result = ArmorCreaturePatchOnNotice.PatchBeforeOnNotice(notice, param);
-
-            // Assert
-            result.Should().BeTrue();
+            VerifyListNotReset();
         }
 
         #region Helper Methods
 
-        private static object[] SetupCrumblingArmorGifts(int giftId, long skillTypeId)
+        private void VerifyListReset()
         {
-            var skill = TestExtensions.CreateUseSkill();
-            var gift = TestExtensions.CreateEgoGiftModel();
-            gift.metaInfo.id = giftId;
-            var equipment = TestExtensions.CreateUnitEquipSpace();
-            equipment.gifts.addedGifts.Add(gift);
-            skill.agent = TestExtensions.CreateAgentModel(equipment: equipment);
-            skill.skillTypeInfo.id = skillTypeId;
-            var param = new object[] { skill.targetCreature };
+            _mockArmorCreatureTestAdapter.Verify(x => x.OnViewInit(), Times.Once);
+        }
 
-            return param;
+        private void VerifyListNotReset()
+        {
+            _mockArmorCreatureTestAdapter.Verify(x => x.OnViewInit(), Times.Never);
         }
 
         #endregion

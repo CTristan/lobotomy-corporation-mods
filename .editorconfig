@@ -7,10 +7,6 @@ root = true
 [*]
 indent_style = space
 
-# ReSharper properties
-resharper_place_accessorholder_attribute_on_same_line = false
-resharper_place_expr_property_on_single_line = true
-resharper_use_heuristics_for_body_style = true
 # (Please don't specify an indent_size here; that has too many unintended consequences.)
 
 # XML project files
@@ -31,16 +27,19 @@ indent_size = 4
 insert_final_newline = true
 charset = utf-8
 
+# File Header
+file_header_template = SPDX-License-Identifier: MIT
+
 # Dotnet code style settings:
 
 # Disable naming checks for underscores since every patch has to be named Harmony_Patch
-dotnet_diagnostic.CA1707.severity = none
+dotnet_diagnostic.ca1707.severity = none
 
 # Disable array initialization method for newer .NET versions
-dotnet_diagnostic.CA1825.severity = none
+dotnet_diagnostic.ca1825.severity = none
 
 # Allow for Harmony-patch-named arguments (such as __instance)
-dotnet_diagnostic.IDE1006.severity = none
+dotnet_diagnostic.ide1006.severity = none
 
 # Sort using and Import directives with System.* appearing first
 dotnet_sort_system_directives_first = true
@@ -209,5 +208,8 @@ csharp_prefer_braces = true: suggestion
 csharp_preserve_single_line_blocks = true
 csharp_preserve_single_line_statements = true
 
-# File Header
-file_header_template = SPDX-License-Identifier: MIT
+# ReSharper properties
+resharper_place_accessorholder_attribute_on_same_line = false
+resharper_place_expr_property_on_single_line = true
+resharper_use_heuristics_for_body_style = true
+resharper_wrap_object_and_collection_initializer_style = chop_always

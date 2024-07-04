@@ -21,12 +21,15 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts.Patches
         [InlineData(1F)]
         public void A_gift_that_has_not_been_worked_on_yet_displays_the_base_value(float expected)
         {
-            var sut = TestExtensions.CreateCreatureEquipmentMakeInfo();
+            // Arrange
+            var sut = UnityTestExtensions.CreateCreatureEquipmentMakeInfo();
+
             var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
 
-            var actual = expected;
-            actual = sut.PatchAfterGetProb(actual, mockAgentWorkTracker.Object);
+            // Act
+            var actual = sut.PatchAfterGetProb(expected, mockAgentWorkTracker.Object);
 
+            // Assert
             Assert.Equal(expected, actual);
         }
 
@@ -34,10 +37,10 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts.Patches
         public void An_abnormality_with_no_gift_does_not_increase_probability_chance()
         {
             // Arrange
+            var sut = UnityTestExtensions.CreateCreatureEquipmentMakeInfo();
             const float Expected = 0f;
-            var sut = TestExtensions.CreateCreatureEquipmentMakeInfo();
-            sut.equipTypeInfo = null;
 
+            sut.equipTypeInfo = null;
             var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
 
             // Act
@@ -53,6 +56,7 @@ namespace LobotomyCorporationMods.Test.Mods.BadLuckProtectionForGifts.Patches
         {
             // Arrange
             var sut = GetCreatureEquipmentMakeInfo(GiftName);
+
             var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
 
             // 101 times worked would equal 101% bonus normally

@@ -2,6 +2,7 @@
 
 #region
 
+using JetBrains.Annotations;
 using LobotomyCorporationMods.BugFixes;
 using LobotomyCorporationMods.Common.Interfaces;
 using Moq;
@@ -12,11 +13,16 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes
 {
     public class BugFixesTests
     {
+        protected const int FourTimes = 4;
+
         protected BugFixesTests()
         {
             _ = new Harmony_Patch();
             var logger = new Mock<ILogger>();
-            Harmony_Patch.Instance.LoadData(logger.Object);
+            Harmony_Patch.Instance.AddLoggerTarget(logger.Object);
         }
+
+        [NotNull]
+        protected static ArmorCreature ArmorCreature => new ArmorCreature();
     }
 }

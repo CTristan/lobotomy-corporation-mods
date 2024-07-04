@@ -1,32 +1,58 @@
-// SPDX-License-Identifier: MIT
+﻿// SPDX-License-Identifier: MIT
 
-#region
-
+using System.Collections.Generic;
 using System.Linq;
-using LobotomyCorporationMods.Common.Enums;
-using LobotomyCorporationMods.Common.Implementations;
-
-#endregion
+using JetBrains.Annotations;
 
 namespace LobotomyCorporationMods.Common.Extensions
 {
-    public static class UnitModelExtensions
+    internal static class UnitModelExtensions
     {
-        public static bool HasBuffOfType<TBuff>(this UnitModel agent) where TBuff : UnitBuf
+        /// <summary>A unit's equipped gifts consists of both added and replaced gifts.</summary>
+        [NotNull]
+        internal static List<EGOgiftModel> GetEquippedGifts([NotNull] this UnitModel unitModel)
         {
-            Guard.Against.Null(agent, nameof(agent));
+            var giftList = new List<EGOgiftModel>();
 
-            var buffs = agent.GetUnitBufList();
+            var addedGifts = unitModel.Equipment.gifts.addedGifts;
+            if (addedGifts.Count > 0)
+            {
+                giftList.AddRange(addedGifts);
+            }
 
-            return buffs.OfType<TBuff>().Any();
+            var replacedGifts = unitModel.Equipment.gifts.replacedGifts;
+            if (replacedGifts.Count > 0)
+            {
+                giftList.AddRange(unitModel.Equipment.gifts.replacedGifts);
+            }
+
+            return giftList;
         }
 
-        public static bool HasCrumblingArmor(this UnitModel agent)
+        internal static EGOgiftModel FindGiftAtPosition([NotNull] this UnitModel unitModel,
+            string position)
         {
-            Guard.Against.Null(agent, nameof(agent));
+            var equippedGifts = unitModel.GetEquippedGifts();
 
-            return agent.HasEquipment((int)EquipmentId.CrumblingArmorGift1) || agent.HasEquipment((int)EquipmentId.CrumblingArmorGift2) || agent.HasEquipment((int)EquipmentId.CrumblingArmorGift3) ||
-                   agent.HasEquipment((int)EquipmentId.CrumblingArmorGift4);
+            return equippedGifts.Find(g => g.metaInfo.attachPos == position);
+        }
+
+        internal static bool IsGiftLocked([NotNull] this UnitModel unitModel,
+            int giftId)
+        {
+            var matchingGiftLockState = unitModel.GetMatchingGiftLockState(giftId);
+
+            return matchingGiftLockState.state;
+        }
+
+        [NotNull]
+        private static UnitEGOgiftSpace.GiftLockState GetMatchingGiftLockState([NotNull] this UnitModel unitModel,
+            int giftId)
+        {
+            var lockStateDictionary = unitModel.Equipment.gifts.lockState;
+            var lockState = lockStateDictionary.Values.FirstOrDefault(v => v.id == giftId);
+
+            return lockState ?? new UnitEGOgiftSpace.GiftLockState();
         }
     }
 }

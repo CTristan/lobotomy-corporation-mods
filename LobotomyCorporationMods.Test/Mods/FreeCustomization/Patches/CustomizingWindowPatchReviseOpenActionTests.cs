@@ -19,7 +19,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
         public void Opening_the_strengthen_employee_window_gets_agent_appearance_data(string agentName)
         {
             var sut = InitializeCustomizingWindow();
-            var agentModel = TestExtensions.CreateAgentModel();
+            var agentModel = UnityTestExtensions.CreateAgentModel();
             agentModel.name = agentName;
 
             sut.PatchAfterReviseOpenAction(agentModel);

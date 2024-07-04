@@ -3,7 +3,9 @@
 #region
 
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
+using LobotomyCorporationMods.Common.Extensions;
 
 #endregion
 
@@ -29,16 +31,15 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
             return _name;
         }
 
-        /// <summary>
-        ///     If an agent exists then returns that agent, otherwise creates a new agent and adds it to the list.
-        /// </summary>
+        /// <summary>If an agent exists then returns that agent, otherwise creates a new agent and adds it to the list.</summary>
         /// <param name="agentId">Agent Id</param>
         /// <returns>A new or existing agent.</returns>
+        [NotNull]
         public IAgent GetOrAddAgent(long agentId)
         {
             var agent = _agents.Find(a => a.GetId() == agentId);
 
-            if (agent is object)
+            if (agent.IsNotNull())
             {
                 return agent;
             }

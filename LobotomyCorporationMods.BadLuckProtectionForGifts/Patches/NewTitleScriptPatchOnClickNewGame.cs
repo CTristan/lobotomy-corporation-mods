@@ -5,8 +5,10 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.Common.Attributes;
+using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 
@@ -14,21 +16,19 @@ using LobotomyCorporationMods.Common.Implementations;
 
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
 {
-    [HarmonyPatch(typeof(NewTitleScript), "OnClickNewGame")]
+    [HarmonyPatch(typeof(NewTitleScript), nameof(NewTitleScript.OnClickNewGame))]
     public static class NewTitleScriptPatchOnClickNewGame
     {
-        public static void PatchAfterOnClickNewGame(IAgentWorkTracker agentWorkTracker)
+        public static void PatchAfterOnClickNewGame([NotNull] IAgentWorkTracker agentWorkTracker)
         {
             Guard.Against.Null(agentWorkTracker, nameof(agentWorkTracker));
 
             agentWorkTracker.Reset();
         }
 
-        /// <summary>
-        ///     Runs after the original OnClickNewGame method does to reset our agent work when the player starts a new game.
-        /// </summary>
+        /// <summary>Runs after the original OnClickNewGame method does to reset our agent work when the player starts a new game.</summary>
         [EntryPoint]
-        [ExcludeFromCodeCoverage]
+        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
         public static void Postfix()
         {
             try
@@ -37,7 +37,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.WriteToLog(ex);
+                Harmony_Patch.Instance.Logger.WriteException(ex);
 
                 throw;
             }

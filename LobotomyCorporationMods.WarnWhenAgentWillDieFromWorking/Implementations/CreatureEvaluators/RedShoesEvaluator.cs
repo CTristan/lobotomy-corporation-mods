@@ -4,8 +4,9 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 {
     internal sealed class RedShoesEvaluator : CreatureEvaluator
     {
-        internal RedShoesEvaluator(AgentModel agent, CreatureModel creature, RwbpType skillType)
-            : base(agent, creature, skillType)
+        internal RedShoesEvaluator(AgentModel agent,
+            CreatureModel creature,
+            RwbpType skillType) : base(agent, creature, skillType)
         {
         }
 
