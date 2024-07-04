@@ -53,20 +53,6 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
             return evaluator;
         }
 
-        /// <summary>
-        ///     Determines whether the current CommandWindow is an abnormality work window. An abnormality work window is a CommandWindow in the Management phase with a non-null rwbpType
-        ///     in the CurrentSkill property.
-        /// </summary>
-        /// <param name="commandWindow">The current CommandWindow to check.</param>
-        /// <returns><c>true</c> if the current CommandWindow is an abnormality work window, otherwise <c>false</c>.</returns>
-        internal static bool IsAbnormalityWorkWindow([NotNull] this CommandWindow.CommandWindow commandWindow)
-        {
-            // Validation checks to confirm we have everything we need
-            var isAbnormalityWorkWindow = commandWindow.CurrentSkill.IsNotNull() && commandWindow.CurrentWindowType == CommandType.Management;
-
-            return isAbnormalityWorkWindow;
-        }
-
         private static bool TryGetCreature([NotNull] this CommandWindow.CommandWindow commandWindow,
             [CanBeNull] out CreatureModel creature)
         {

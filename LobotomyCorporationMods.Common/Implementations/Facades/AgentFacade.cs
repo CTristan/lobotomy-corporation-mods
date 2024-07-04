@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using CommandWindow;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Enums;
 using LobotomyCorporationMods.Common.Extensions;
@@ -49,6 +50,11 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             Guard.Against.Null(agent, nameof(agent));
             var effects = agent.GetUnitBufList();
             return effects.OfType<YggdrasilBlessBuf>().Any();
+        }
+
+        public static bool IsUncontrollable(this AgentState state)
+        {
+            return state == AgentState.DEAD || state == AgentState.PANIC || state == AgentState.UNCONTROLLABLE;
         }
     }
 }
