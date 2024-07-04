@@ -13,11 +13,16 @@ LMM).
 
 ## Nexus Mods pages
 
-- [Bad Luck Protection for Gifts](https://www.nexusmods.com/lobotomycorporation/mods/476) ([Readme](LobotomyCorporationMods.BadLuckProtectionForGifts/README.md))
-- [Free Customization](https://www.nexusmods.com/lobotomycorporation/mods/477) ([Readme](LobotomyCorporationMods.FreeCustomization/README.md))
-- [Notify When Agent Receives Gift](https://www.nexusmods.com/lobotomycorporation/mods/487) ([Readme](LobotomyCorporationMods.NotifyWhenAgentReceivesGift/README.md))
-- [Unofficial Bug Fixes](https://www.nexusmods.com/lobotomycorporation/mods/478) ([Readme](LobotomyCorporationMods.BugFixes/README.md))
-- [Warn When Agent Will Die From Working](https://www.nexusmods.com/lobotomycorporation/mods/479) ([Readme](LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking/README.md))
+- [Bad Luck Protection for Gifts](https://www.nexusmods.com/lobotomycorporation/mods/476)
+  - ([Readme](LobotomyCorporationMods.BadLuckProtectionForGifts/README.md))
+- [Free Customization](https://www.nexusmods.com/lobotomycorporation/mods/477)
+  - ([Readme](LobotomyCorporationMods.FreeCustomization/README.md))
+- [Notify When Agent Receives Gift](https://www.nexusmods.com/lobotomycorporation/mods/487)
+  - ([Readme](LobotomyCorporationMods.NotifyWhenAgentReceivesGift/README.md))
+- [Unofficial Bug Fixes](https://www.nexusmods.com/lobotomycorporation/mods/478)
+  - ([Readme](LobotomyCorporationMods.BugFixes/README.md))
+- [Warn When Agent Will Die From Working](https://www.nexusmods.com/lobotomycorporation/mods/479)
+  - ([Readme](LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking/README.md))
 
 ## Most Recent Change
 
