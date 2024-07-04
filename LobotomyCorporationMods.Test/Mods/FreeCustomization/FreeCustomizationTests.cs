@@ -13,6 +13,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
 {
     public class FreeCustomizationTests
     {
+        protected const int Twice = 2;
         private const AgentModel DefaultAgentModel = null;
         private const CustomizingType DefaultCustomizingType = CustomizingType.GENERATE;
 

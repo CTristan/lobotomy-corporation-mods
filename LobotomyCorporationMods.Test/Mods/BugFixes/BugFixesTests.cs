@@ -13,6 +13,8 @@ namespace LobotomyCorporationMods.Test.Mods.BugFixes
 {
     public class BugFixesTests
     {
+        protected const int FourTimes = 4;
+
         protected BugFixesTests()
         {
             _ = new Harmony_Patch();

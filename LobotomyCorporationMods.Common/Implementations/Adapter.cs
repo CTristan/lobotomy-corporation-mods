@@ -16,7 +16,7 @@ namespace LobotomyCorporationMods.Common.Implementations
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    public abstract class Adapter<T> : ITestAdapter<T>
+    internal class Adapter<T> : ITestAdapter<T>
     {
         private T _gameObject;
 

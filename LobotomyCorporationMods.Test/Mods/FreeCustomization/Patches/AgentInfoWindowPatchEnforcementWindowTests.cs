@@ -31,7 +31,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization.Patches
             // Assert
             mockAgentInfoWindowUiComponentsTestAdapter.Verify(adapter => adapter.SetData(It.IsAny<AgentData>()), Times.Once);
             mockCustomizingWindowTestAdapter.Verify(adapter => adapter.OpenAppearanceWindow(), Times.Once);
-            mockGameObjectTestAdapter.Verify(adapter => adapter.SetActive(true), Times.Exactly(2));
+            mockGameObjectTestAdapter.Verify(adapter => adapter.SetActive(true), Times.Exactly(Twice));
         }
     }
 }
