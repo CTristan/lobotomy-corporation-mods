@@ -9,9 +9,8 @@ using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Implementations.Adapters;
+using LobotomyCorporationMods.Common.Implementations.Facades;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
-using LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Extensions;
 
 #endregion
 
@@ -20,13 +19,12 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches
     [HarmonyPatch(typeof(UnitModel), nameof(UnitModel.AttachEGOgift))]
     public static class UnitModelPatchAttachEgoGift
     {
-        public static void PatchBeforeAttachEgoGift(UnitModel instance,
+        public static void PatchBeforeAttachEgoGift(this UnitModel instance,
             EquipmentModel gift,
-            INoticeAdapter noticeAdapter)
+            INoticeTestAdapter noticeTestAdapter = null)
         {
             Guard.Against.Null(instance, nameof(instance));
             Guard.Against.Null(gift, nameof(gift));
-            Guard.Against.Null(noticeAdapter, nameof(noticeAdapter));
 
             // Check if the gift's position already has a locked gift
             if (instance.PositionHasLockedGift(gift))
@@ -42,7 +40,7 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches
 
             // Send notification that the agent acquired the gift
             var message = $"<color=#66bfcd>{instance.GetUnitName()}</color> has received the gift <color=#84bd36>{gift.metaInfo.Name}</color>.";
-            noticeAdapter.Send(NoticeName.AddSystemLog, message);
+            instance.SendMessage(message, noticeTestAdapter);
         }
 
         /// <summary>Needs to run before the method because we need to check ahead of time if the agent already has the gift or has another gift in the same position that is locked.</summary>
@@ -54,11 +52,7 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches
         {
             try
             {
-                var noticeAdapter = new NoticeAdapter
-                {
-                    GameObject = Notice.instance,
-                };
-                PatchBeforeAttachEgoGift(__instance, gift, noticeAdapter);
+                __instance.PatchBeforeAttachEgoGift(gift);
             }
             catch (Exception ex)
             {

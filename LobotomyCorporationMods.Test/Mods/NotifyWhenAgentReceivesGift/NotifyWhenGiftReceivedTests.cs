@@ -30,7 +30,7 @@ namespace LobotomyCorporationMods.Test.Mods.NotifyWhenAgentReceivesGift
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
         }
 
-        protected Mock<INoticeAdapter> NoticeAdapter { get; } = new Mock<INoticeAdapter>();
+        protected Mock<INoticeTestAdapter> NoticeTestAdapter { get; } = new Mock<INoticeTestAdapter>();
 
         [NotNull]
         protected static AgentModel GetAgentWithLockedGift(string agentName,
