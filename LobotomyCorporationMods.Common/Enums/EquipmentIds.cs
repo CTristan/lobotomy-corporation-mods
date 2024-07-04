@@ -2,7 +2,7 @@
 
 namespace LobotomyCorporationMods.Common.Enums
 {
-    public enum EquipmentId
+    public enum EquipmentIds
     {
         None = 0,
 
@@ -12,6 +12,12 @@ namespace LobotomyCorporationMods.Common.Enums
         CrumblingArmorGift2 = 4_000_372,
         CrumblingArmorGift3 = 4_000_373,
         CrumblingArmorGift4 = 4_000_374,
+
+        #endregion
+
+        #region Weapons
+
+        FirebirdWeapon = 300061,
 
         #endregion
     }

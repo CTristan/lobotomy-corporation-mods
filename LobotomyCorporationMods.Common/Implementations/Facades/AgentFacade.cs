@@ -36,10 +36,10 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
 
             var crumblingArmorGiftsId = new List<int>
             {
-                (int)EquipmentId.CrumblingArmorGift1,
-                (int)EquipmentId.CrumblingArmorGift2,
-                (int)EquipmentId.CrumblingArmorGift3,
-                (int)EquipmentId.CrumblingArmorGift4,
+                (int)EquipmentIds.CrumblingArmorGift1,
+                (int)EquipmentIds.CrumblingArmorGift2,
+                (int)EquipmentIds.CrumblingArmorGift3,
+                (int)EquipmentIds.CrumblingArmorGift4,
             };
 
             return crumblingArmorGiftsId.Exists(agent.HasEquipment);

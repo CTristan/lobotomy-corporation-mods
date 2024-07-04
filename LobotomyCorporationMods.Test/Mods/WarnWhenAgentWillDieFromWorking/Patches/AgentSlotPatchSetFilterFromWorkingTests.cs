@@ -267,13 +267,13 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
         }
 
         [Theory]
-        [InlineData(EquipmentId.CrumblingArmorGift1)]
-        [InlineData(EquipmentId.CrumblingArmorGift2)]
-        [InlineData(EquipmentId.CrumblingArmorGift3)]
-        [InlineData(EquipmentId.CrumblingArmorGift4)]
-        public void CrumblingArmor_Will_Kill_Agent_With_Gift_If_Performing_Attachment_Work(EquipmentId equipmentId)
+        [InlineData(EquipmentIds.CrumblingArmorGift1)]
+        [InlineData(EquipmentIds.CrumblingArmorGift2)]
+        [InlineData(EquipmentIds.CrumblingArmorGift3)]
+        [InlineData(EquipmentIds.CrumblingArmorGift4)]
+        public void CrumblingArmor_Will_Kill_Agent_With_Gift_If_Performing_Attachment_Work(EquipmentIds equipmentIds)
         {
-            var agentSlot = InitializeAgentSlot(CreatureIds.CrumblingArmor, giftId: equipmentId, skillType: SkillTypeAttachment);
+            var agentSlot = InitializeAgentSlot(CreatureIds.CrumblingArmor, giftIds: equipmentIds, skillType: SkillTypeAttachment);
             agentSlot.CurrentAgent.primaryStat.hp = StatLevelFive;
 
             VerifyAgentWillDie(agentSlot);
@@ -293,22 +293,22 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
         }
 
         [Theory]
-        [InlineData(EquipmentId.CrumblingArmorGift1, RwbpType.R)]
-        [InlineData(EquipmentId.CrumblingArmorGift1, RwbpType.W)]
-        [InlineData(EquipmentId.CrumblingArmorGift1, SkillTypeRepression)]
-        [InlineData(EquipmentId.CrumblingArmorGift2, RwbpType.R)]
-        [InlineData(EquipmentId.CrumblingArmorGift2, RwbpType.W)]
-        [InlineData(EquipmentId.CrumblingArmorGift2, SkillTypeRepression)]
-        [InlineData(EquipmentId.CrumblingArmorGift3, RwbpType.R)]
-        [InlineData(EquipmentId.CrumblingArmorGift3, RwbpType.W)]
-        [InlineData(EquipmentId.CrumblingArmorGift3, SkillTypeRepression)]
-        [InlineData(EquipmentId.CrumblingArmorGift4, RwbpType.R)]
-        [InlineData(EquipmentId.CrumblingArmorGift4, RwbpType.W)]
-        [InlineData(EquipmentId.CrumblingArmorGift4, SkillTypeRepression)]
-        public void CrumblingArmor_Will_Not_Kill_Agent_With_Gift_If_Not_Performing_Attachment_Work(EquipmentId giftId,
+        [InlineData(EquipmentIds.CrumblingArmorGift1, RwbpType.R)]
+        [InlineData(EquipmentIds.CrumblingArmorGift1, RwbpType.W)]
+        [InlineData(EquipmentIds.CrumblingArmorGift1, SkillTypeRepression)]
+        [InlineData(EquipmentIds.CrumblingArmorGift2, RwbpType.R)]
+        [InlineData(EquipmentIds.CrumblingArmorGift2, RwbpType.W)]
+        [InlineData(EquipmentIds.CrumblingArmorGift2, SkillTypeRepression)]
+        [InlineData(EquipmentIds.CrumblingArmorGift3, RwbpType.R)]
+        [InlineData(EquipmentIds.CrumblingArmorGift3, RwbpType.W)]
+        [InlineData(EquipmentIds.CrumblingArmorGift3, SkillTypeRepression)]
+        [InlineData(EquipmentIds.CrumblingArmorGift4, RwbpType.R)]
+        [InlineData(EquipmentIds.CrumblingArmorGift4, RwbpType.W)]
+        [InlineData(EquipmentIds.CrumblingArmorGift4, SkillTypeRepression)]
+        public void CrumblingArmor_Will_Not_Kill_Agent_With_Gift_If_Not_Performing_Attachment_Work(EquipmentIds giftIds,
             RwbpType skillType)
         {
-            var agentSlot = InitializeAgentSlot(CreatureIds.CrumblingArmor, giftId: giftId, skillType: skillType);
+            var agentSlot = InitializeAgentSlot(CreatureIds.CrumblingArmor, giftIds: giftIds, skillType: skillType);
             agentSlot.CurrentAgent.primaryStat.hp = StatLevelFive;
 
             VerifyAgentWillNotDie(agentSlot);
@@ -520,6 +520,40 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
         {
             var agentSlot = InitializeAgentSlot(CreatureIds.RedShoes);
             agentSlot.CurrentAgent.primaryStat.work = temperance;
+
+            VerifyAgentWillNotDie(agentSlot);
+        }
+
+        #endregion
+
+        #region Snow Queen Tests
+
+        [Fact]
+        public void SnowQueen_Will_Kill_Agent_With_FirebirdWeapon()
+        {
+            var agentSlot = InitializeAgentSlot(CreatureIds.SnowQueen);
+            agentSlot.CurrentAgent.Equipment.weapon = new WeaponModel
+            {
+                metaInfo = new EquipmentTypeInfo
+                {
+                    id = (int)EquipmentIds.FirebirdWeapon,
+                },
+            };
+
+            VerifyAgentWillDie(agentSlot);
+        }
+
+        [Fact]
+        public void SnowQueen_Will_Not_Kill_Agent_Without_FirebirdWeapon()
+        {
+            var agentSlot = InitializeAgentSlot(CreatureIds.SnowQueen);
+            agentSlot.CurrentAgent.Equipment.weapon = new WeaponModel
+            {
+                metaInfo = new EquipmentTypeInfo
+                {
+                    id = (int)EquipmentIds.FirebirdWeapon + 1,
+                },
+            };
 
             VerifyAgentWillNotDie(agentSlot);
         }

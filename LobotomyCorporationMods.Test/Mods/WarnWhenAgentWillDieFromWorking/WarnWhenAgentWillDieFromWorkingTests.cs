@@ -59,14 +59,14 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
         }
 
         [NotNull]
-        private static AgentModel GetAgentWithGift(EquipmentId giftId = EquipmentId.None,
+        private static AgentModel GetAgentWithGift(EquipmentIds giftIds = EquipmentIds.None,
             IEnumerable<UnitBuf> unitBuffs = null)
         {
             unitBuffs = unitBuffs.EnsureNotNullWithMethod(() => new List<UnitBuf>());
 
             var agent = UnityTestExtensions.CreateAgentModel(bufList: unitBuffs.ToList());
             var gift = UnityTestExtensions.CreateEgoGiftModel();
-            gift.metaInfo.id = (int)giftId;
+            gift.metaInfo.id = (int)giftIds;
             agent.Equipment.gifts.addedGifts.Add(gift);
 
             return agent;
@@ -109,7 +109,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
         [NotNull]
         protected AgentSlot InitializeAgentSlot(CreatureIds creatureId,
             IEnumerable<UnitBuf> buffList = null,
-            EquipmentId giftId = (EquipmentId)1,
+            EquipmentIds giftIds = (EquipmentIds)1,
             RwbpType skillType = (RwbpType)1,
             int qliphothCounter = 0)
         {
@@ -117,7 +117,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
 
             var creature = GetCreatureWithGift(creatureId, qliphothCounter);
             _ = InitializeCommandWindow(creature, skillType);
-            var agent = GetAgentWithGift(giftId, buffList);
+            var agent = GetAgentWithGift(giftIds, buffList);
 
             return UnityTestExtensions.CreateAgentSlot(currentAgent: agent);
         }

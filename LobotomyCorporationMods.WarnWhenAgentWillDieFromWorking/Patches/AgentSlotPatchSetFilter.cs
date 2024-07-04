@@ -93,6 +93,9 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
                     CreatureIds.SingingMachine, parameters => new SingingMachineEvaluator(parameters.Agent, parameters.Creature, parameters.SkillType)
                 },
                 {
+                    CreatureIds.SnowQueen, parameters => new SnowQueenEvaluator(parameters.Agent, parameters.Creature, parameters.SkillType)
+                },
+                {
                     CreatureIds.SpiderBud, parameters => new SpiderBudEvaluator(parameters.Agent, parameters.Creature, parameters.SkillType)
                 },
                 {
