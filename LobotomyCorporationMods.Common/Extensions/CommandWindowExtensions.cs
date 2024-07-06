@@ -1,20 +1,36 @@
 // SPDX-License-Identifier: MIT
 
+using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Implementations;
+
 namespace LobotomyCorporationMods.Common.Extensions
 {
-    public static class CommandWindowExtensions
+    internal static class CommandWindowExtensions
     {
-        public static bool TryGetCreature(this CommandWindow.CommandWindow commandWindow, out CreatureModel? creature)
+        internal static CreatureEquipmentMakeInfo GetAbnormalityGift([NotNull] this CommandWindow.CommandWindow commandWindow)
         {
-            creature = null;
+            if (!commandWindow.TryGetCreature(out var creature) || !creature.IsNotNull())
+            {
+                return null;
+            }
 
+            return creature.GetAbnormalityGift();
+        }
+
+        private static bool TryGetCreature([NotNull] this CommandWindow.CommandWindow commandWindow,
+            [CanBeNull] out CreatureModel creature)
+        {
+            Guard.Against.Null(commandWindow, nameof(commandWindow));
+
+            creature = null;
             var unitModel = commandWindow.CurrentTarget;
+
             if (unitModel is CreatureModel creatureModel)
             {
                 creature = creatureModel;
             }
 
-            return creature is not null;
+            return creature.IsNotNull();
         }
     }
 }

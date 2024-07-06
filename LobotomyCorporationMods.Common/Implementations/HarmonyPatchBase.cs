@@ -46,7 +46,7 @@ namespace LobotomyCorporationMods.Common.Implementations
 
         // We load our properties when applying the patch, so they will be null in the constructor
         // ReSharper disable once NullableWarningSuppressionIsUsed
-        protected IFileManager FileManager { get; private set; }
+        public IFileManager FileManager { get; private set; }
 
         // ReSharper disable once NullableWarningSuppressionIsUsed
         public ILogger Logger { get; private set; }

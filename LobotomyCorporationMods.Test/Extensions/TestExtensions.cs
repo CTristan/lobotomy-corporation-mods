@@ -3,11 +3,15 @@
 #region
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using FluentAssertions;
 using Harmony;
 using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Enums;
+using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces;
 using Moq;
 using ILogger = LobotomyCorporationMods.Common.Interfaces.ILogger;
@@ -20,10 +24,25 @@ namespace LobotomyCorporationMods.Test.Extensions
     internal static class TestExtensions
     {
         [NotNull]
+        internal static AgentModel GetAgentWithGift(EquipmentIds giftId = EquipmentIds.None,
+            IEnumerable<UnitBuf> unitBuffs = null)
+        {
+            unitBuffs = unitBuffs.EnsureNotNullWithMethod(() => new List<UnitBuf>());
+
+            var agent = UnityTestExtensions.CreateAgentModel(bufList: unitBuffs.ToList());
+            var gift = UnityTestExtensions.CreateEgoGiftModel();
+            gift.metaInfo.id = (int)giftId;
+            agent.Equipment.gifts.addedGifts.Add(gift);
+
+            return agent;
+        }
+
+        [NotNull]
         internal static Mock<IFileManager> GetMockFileManager()
         {
             var mockFileManager = new Mock<IFileManager>();
-            _ = mockFileManager.Setup(fm => fm.GetOrCreateFile(It.IsAny<string>())).Returns((string fileName) => fileName.InCurrentDirectory());
+            _ = mockFileManager.Setup(fm => fm.GetOrCreateFile(It.IsAny<string>(), It.IsAny<bool>())).Returns((string fileName,
+                bool createIfNotExists) => fileName.InCurrentDirectory());
             _ = mockFileManager.Setup(fm => fm.ReadAllText(It.IsAny<string>(), It.IsAny<bool>())).Returns((string fileName,
                 bool _) => File.ReadAllText(fileName.InCurrentDirectory()));
 

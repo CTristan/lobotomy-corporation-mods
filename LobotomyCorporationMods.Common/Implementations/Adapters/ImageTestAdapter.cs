@@ -29,5 +29,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
             set =>
                 GameObject.color = value;
         }
+
+        public Sprite Sprite { get; set; }
     }
 }

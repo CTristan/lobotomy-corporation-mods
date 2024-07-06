@@ -8,6 +8,7 @@ using FluentAssertions;
 using LobotomyCorporationMods.GiftAvailabilityIndicator;
 using LobotomyCorporationMods.GiftAvailabilityIndicator.Patches;
 using LobotomyCorporationMods.Test.Extensions;
+using Moq;
 using Xunit;
 
 #endregion
@@ -21,7 +22,7 @@ namespace LobotomyCorporationMods.Test.Mods.GiftAvailabilityIndicator
         {
             var patch = typeof(ManagementSlotPatchSetUi);
             var originalClass = typeof(ManagementSlot);
-            const string MethodName = "SetUI";
+            const string MethodName = nameof(ManagementSlot.SetUI);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
         }
@@ -32,20 +33,24 @@ namespace LobotomyCorporationMods.Test.Mods.GiftAvailabilityIndicator
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
+            // Forcing null arguments to test exception logging.
+            // ReSharper disable AssignNullToNotNullAttribute
             var times = 1;
-            Action action = static () => ManagementSlotPatchSetUi.Postfix(null!, TestUnityExtensions.CreateUnitModel());
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(action, times++);
-            action = static () => ManagementSlotPatchSetUi.Postfix(TestUnityExtensions.CreateManagementSlot(), null!);
-            mockLogger.VerifyExceptionLogged<ArgumentNullException>(action, times);
+            Action action = () => ManagementSlotPatchSetUi.Postfix(null, UnityTestExtensions.CreateUnitModel());
+            mockLogger.VerifyArgumentNullException(action, Times.Exactly(times++));
+            action = () => ManagementSlotPatchSetUi.Postfix(UnityTestExtensions.CreateManagementSlot(), null);
+            mockLogger.VerifyArgumentNullException(action, Times.Exactly(times));
+            // ReSharper enable AssignNullToNotNullAttribute
         }
 
-        /// <summary>
-        ///     Harmony requires the constructor to be public.
-        /// </summary>
+        /// <summary>Harmony requires the constructor to be public.</summary>
         [Fact]
         public void Constructor_is_public_and_externally_accessible()
         {
-            Action action = () => _ = new Harmony_Patch();
+            Action action = () =>
+            {
+                _ = new Harmony_Patch();
+            };
             action.Should().NotThrow();
         }
     }

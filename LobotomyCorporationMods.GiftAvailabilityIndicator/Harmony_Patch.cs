@@ -2,42 +2,23 @@
 
 #region
 
-using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Interfaces;
 
 #endregion
 
-[assembly: AssemblyVersion("1.0.*")]
-[assembly: CLSCompliant(false)]
-[assembly: ComVisible(false)]
-
 namespace LobotomyCorporationMods.GiftAvailabilityIndicator
 {
+    // ReSharper disable once InconsistentNaming
     public sealed class Harmony_Patch : HarmonyPatchBase
     {
-        private const string ModFileName = "LobotomyCorporationMods.GiftAvailabilityIndicator.dll";
+        public new static readonly Harmony_Patch Instance = new Harmony_Patch(true);
 
-        public static new readonly Harmony_Patch Instance = new(true);
-
-        public Harmony_Patch()
-            : this(false)
+        public Harmony_Patch() : this(false)
         {
         }
 
-        private Harmony_Patch(bool initialize)
-            : base(initialize)
+        private Harmony_Patch(bool initialize) : base(typeof(Harmony_Patch), "LobotomyCorporationMods.GiftAvailabilityIndicator.dll", initialize)
         {
-            if (initialize)
-            {
-                InitializePatchData(typeof(Harmony_Patch), ModFileName);
-            }
-
-            PublicFileManager = FileManager;
         }
-
-        public IFileManager PublicFileManager { get; }
     }
 }

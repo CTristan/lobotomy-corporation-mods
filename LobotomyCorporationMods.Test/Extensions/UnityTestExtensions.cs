@@ -521,6 +521,17 @@ namespace LobotomyCorporationMods.Test.Extensions
         }
 
         [NotNull]
+        internal static ManagementSlot CreateManagementSlot()
+        {
+            CreateUninitializedObject<ManagementSlot>(out var managementSlot);
+
+            var fields = GetUninitializedFieldsIncludingBaseType(managementSlot.GetType());
+            var newValues = new Dictionary<string, object>();
+
+            return GetPopulatedUninitializedObject(managementSlot, fields, newValues);
+        }
+
+        [NotNull]
         private static SkillTypeInfo CreateSkillTypeInfo()
         {
             return new SkillTypeInfo();

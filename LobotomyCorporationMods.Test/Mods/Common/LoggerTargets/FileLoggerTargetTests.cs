@@ -19,7 +19,7 @@ namespace LobotomyCorporationMods.Test.Mods.Common.LoggerTargets
 
             sut.WriteToLoggerTarget(ExpectedMessage);
 
-            mockFileManager.Verify(manager => manager.GetOrCreateFile(ExpectedLogFilename), Times.Once);
+            mockFileManager.Verify(manager => manager.GetOrCreateFile(ExpectedLogFilename, true), Times.Once);
             mockFileManager.Verify(manager => manager.WriteAllText(It.IsAny<string>(), ExpectedMessage), Times.Once);
         }
     }

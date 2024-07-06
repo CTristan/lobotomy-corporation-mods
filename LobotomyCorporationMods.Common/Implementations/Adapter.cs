@@ -18,6 +18,8 @@ namespace LobotomyCorporationMods.Common.Implementations
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
     internal class Adapter<T> : ITestAdapter<T>
     {
+        private const string UninitializedGameObjectErrorMessage = "Please load the game object into the adapter before trying to use it.";
+
         private T _gameObject;
 
         protected Adapter([NotNull] T gameObject)
@@ -32,7 +34,7 @@ namespace LobotomyCorporationMods.Common.Implementations
             {
                 if (!_gameObject.IsNotNull())
                 {
-                    throw new InvalidOperationException("Please load the game object into the adapter before trying to use it.");
+                    throw new InvalidOperationException(UninitializedGameObjectErrorMessage);
                 }
 
                 return _gameObject;

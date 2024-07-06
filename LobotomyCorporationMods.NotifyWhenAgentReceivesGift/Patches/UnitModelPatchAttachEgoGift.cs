@@ -40,7 +40,7 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches
             }
 
             // If we already have this gift equipped we don't want to send an unnecessary notification
-            if (instance.HasGiftEquipped(gift.metaInfo.id))
+            if (instance.HasGift(gift.metaInfo.id))
             {
                 return;
             }

@@ -1,6 +1,7 @@
 ﻿// SPDX-License-Identifier: MIT
 
 using System;
+using CommandWindow;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
 
@@ -8,7 +9,35 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
 {
     public static class GiftFacade
     {
-        public static bool HasGiftEquipped([NotNull] this UnitModel unitModel,
+        public static bool AbnormalityHasGift([NotNull] this ManagementSlot managementSlot)
+        {
+            return managementSlot.GetAbnormalityGift().IsNotNull();
+        }
+
+        public static int GetAbnormalityGiftId([NotNull] this ManagementSlot managementSlot)
+        {
+            return managementSlot.GetAbnormalityGiftInfo().id;
+        }
+
+        [NotNull]
+        public static string GetAbnormalityGiftName([NotNull] this CreatureEquipmentMakeInfo creatureEquipmentMakeInfo)
+        {
+            return creatureEquipmentMakeInfo.GetAbnormalityGiftInfo()?.Name ?? string.Empty;
+        }
+
+        [NotNull]
+        public static string GetAbnormalityGiftName([NotNull] this UseSkill useSkill)
+        {
+            return useSkill.GetAbnormalityGiftInfo()?.Name ?? string.Empty;
+        }
+
+        [NotNull]
+        public static string GetAbnormalityGiftSlot([NotNull] this ManagementSlot managementSlot)
+        {
+            return managementSlot.GetAbnormalityGiftInfo().attachPos ?? string.Empty;
+        }
+
+        public static bool HasGift([NotNull] this UnitModel unitModel,
             int giftId)
         {
             Guard.Against.Null(unitModel, nameof(unitModel));
@@ -16,6 +45,14 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             var equippedGifts = unitModel.GetEquippedGifts();
 
             return equippedGifts.Exists(g => g.metaInfo.id == giftId);
+        }
+
+        public static bool HasGiftInPosition([NotNull] this UnitModel unitModel,
+            [NotNull] string positionName)
+        {
+            Guard.Against.Null(unitModel, nameof(unitModel));
+
+            return unitModel.GetEquippedGifts().Exists(model => model.metaInfo.attachPos.Equals(positionName, StringComparison.OrdinalIgnoreCase));
         }
 
         /// <summary>Some gifts are in special slots that don't show up in an agent's gift window and are used for abnormality effect, for example Snow Queen's icicle</summary>
