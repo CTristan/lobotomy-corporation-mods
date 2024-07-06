@@ -7,6 +7,7 @@ using Customizing;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
+using LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 #endregion
@@ -15,7 +16,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    internal sealed class CustomizingWindowTestAdapter : Adapter<CustomizingWindow>, ICustomizingWindowTestAdapter
+    internal sealed class CustomizingWindowTestAdapter : ComponentTestAdapter<CustomizingWindow>, ICustomizingWindowTestAdapter
     {
         internal CustomizingWindowTestAdapter([NotNull] CustomizingWindow customizingWindow) : base(customizingWindow)
         {

@@ -7,6 +7,7 @@ namespace LobotomyCorporationMods.Common.Extensions
 {
     internal static class CommandWindowExtensions
     {
+        [CanBeNull]
         internal static CreatureEquipmentMakeInfo GetAbnormalityGift([NotNull] this CommandWindow.CommandWindow commandWindow)
         {
             if (!commandWindow.TryGetCreature(out var creature) || !creature.IsNotNull())

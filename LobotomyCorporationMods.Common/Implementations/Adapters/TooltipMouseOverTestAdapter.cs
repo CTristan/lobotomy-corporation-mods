@@ -1,29 +1,25 @@
-// SPDX-License-Identifier: MIT
-
-#region
+﻿// SPDX-License-Identifier: MIT
 
 using System.Diagnostics.CodeAnalysis;
-using Customizing;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
+using LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
-
-#endregion
 
 namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    internal sealed class AgentInfoWindowUiComponentsTestAdapter : Adapter<AgentInfoWindow.UIComponent>, IAgentInfoWindowUiComponentsTestAdapter
+    internal sealed class TooltipMouseOverTestAdapter : ComponentTestAdapter<TooltipMouseOver>, ITooltipMouseOverTestAdapter
     {
-        internal AgentInfoWindowUiComponentsTestAdapter([NotNull] AgentInfoWindow.UIComponent gameObject) : base(gameObject)
+        internal TooltipMouseOverTestAdapter([NotNull] TooltipMouseOver gameObject) : base(gameObject)
         {
         }
 
-        public void SetData(AgentData agentData)
+        public void SetDynamicTooltip(string str)
         {
-            GameObject.SetData(agentData);
+            GameObject.SetDynamicTooltip(str);
         }
     }
 }

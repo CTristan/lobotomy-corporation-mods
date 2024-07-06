@@ -3,12 +3,13 @@
 #region
 
 using Customizing;
+using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
 
 #endregion
 
 namespace LobotomyCorporationMods.Common.Interfaces.Adapters
 {
-    public interface ICustomizingWindowTestAdapter : ITestAdapter<CustomizingWindow>
+    public interface ICustomizingWindowTestAdapter : IComponentTestAdapter<CustomizingWindow>
     {
         void OpenAppearanceWindow();
 

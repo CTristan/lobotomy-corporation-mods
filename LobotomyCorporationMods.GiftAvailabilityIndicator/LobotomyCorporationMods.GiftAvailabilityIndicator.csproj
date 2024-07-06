@@ -56,7 +56,6 @@
     <Content Include="Info\GlobalInfo.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Remove="Assets\gift.png"/>
     <Content Include="Assets\gift.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

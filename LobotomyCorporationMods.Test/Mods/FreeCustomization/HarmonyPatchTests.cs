@@ -68,7 +68,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
         [Fact]
         public void Class_AppearanceUI_Method_CloseWindow_is_patched_correctly()
         {
-            var patch = typeof(AppearanceUIPatchCloseWindow);
+            var patch = typeof(AppearanceUiPatchCloseWindow);
             var originalClass = typeof(AppearanceUI);
             const string MethodName = nameof(AppearanceUI.CloseWindow);
 
@@ -85,7 +85,7 @@ namespace LobotomyCorporationMods.Test.Mods.FreeCustomization
             {
                 // ReSharper disable once AssignNullToNotNullAttribute
                 // Forcing null argument to test exception logging.
-                AppearanceUIPatchCloseWindow.Prefix(null);
+                AppearanceUiPatchCloseWindow.Prefix(null);
             }
 
             mockLogger.VerifyArgumentNullException(Action);

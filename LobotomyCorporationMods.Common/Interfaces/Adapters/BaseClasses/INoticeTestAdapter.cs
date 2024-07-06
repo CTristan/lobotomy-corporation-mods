@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-namespace LobotomyCorporationMods.Common.Interfaces.Adapters
+namespace LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses
 {
     public interface INoticeTestAdapter : ITestAdapter<Notice>
     {

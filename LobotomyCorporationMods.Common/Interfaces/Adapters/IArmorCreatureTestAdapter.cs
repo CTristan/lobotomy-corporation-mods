@@ -4,7 +4,7 @@ using System.Collections;
 
 namespace LobotomyCorporationMods.Common.Interfaces.Adapters
 {
-    public interface IArmorCreatureTestAdapter : ITestAdapter<ArmorCreature>
+    public interface IArmorCreatureTestAdapter
     {
         IList SpecialAgentList { get; }
         void OnViewInit();

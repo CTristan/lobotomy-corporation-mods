@@ -9,8 +9,8 @@ using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
+using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
 using UnityEngine;
-using UnityEngine.UI;
 
 // ReSharper disable UnusedParameter.Global
 
@@ -19,16 +19,20 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
     [SuppressMessage("Style", "IDE0060:Remove unused parameter")]
     public static class ManagementUiFacade
     {
-        [ThreadStatic] private static Dictionary<string, GameObject> s_imagesDictionary;
+        [ThreadStatic] private static Dictionary<string, IImageTestAdapter> s_imagesDictionary;
 
-        private static void CreateImageObjectIfNotExist([NotNull] this ManagementSlot instance,
+        private static void CreateImageObjectIfNotExist([NotNull] this ManagementSlot managementSlot,
             [NotNull] string imageName,
-            [NotNull] IFileManager fileManager)
+            [NotNull] IFileManager fileManager,
+            [CanBeNull] IManagementSlotTestAdapter testAdapter = null,
+            [CanBeNull] IGameObjectTestAdapter imageGameObjectTestAdapter = null,
+            [CanBeNull] ITexture2dTestAdapter texture2dTestAdapter = null,
+            [CanBeNull] ISpriteTestAdapter spriteTestAdapter = null)
         {
-            Guard.Against.Null(instance, nameof(instance));
+            Guard.Against.Null(managementSlot, nameof(managementSlot));
             Guard.Against.Null(fileManager, nameof(fileManager));
 
-            s_imagesDictionary = s_imagesDictionary.EnsureNotNullWithMethod(() => new Dictionary<string, GameObject>());
+            s_imagesDictionary = s_imagesDictionary.EnsureNotNullWithMethod(() => new Dictionary<string, IImageTestAdapter>());
             if (s_imagesDictionary.ContainsKey(imageName))
             {
                 return;
@@ -41,13 +45,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             const float LocalScaleY = 0.2f;
             const string ImagePath = "Assets/gift.png";
 
-            var imageObject = new GameObject();
-            var texture2dObject = new Texture2D(0, 0);
-
-            imageObject.transform.SetParent(instance.transform.GetChild(0));
-            imageObject.transform.localScale = new Vector3(LocalScaleX, LocalScaleY);
-            imageObject.transform.localPosition = new Vector3(LocalPositionX, LocalPositionY, LocalPositionZ);
-            imageObject.SetActive(true);
+            texture2dTestAdapter = texture2dTestAdapter.EnsureNotNullWithMethod(() => new Texture2dTestAdapter(new Texture2D(2, 2)));
 
             var fileWithPath = fileManager.GetOrCreateFile(ImagePath, false);
             if (string.IsNullOrEmpty(fileWithPath))
@@ -55,30 +53,38 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
                 throw new InvalidOperationException("No image found with name " + ImagePath);
             }
 
-            texture2dObject.LoadImage(fileManager.ReadAllBytes(fileWithPath));
-            var sprite = Sprite.Create(texture2dObject, new Rect(0f, 0f, texture2dObject.width, texture2dObject.height), new Vector2(0.5f, 0.5f));
+            texture2dTestAdapter.LoadImage(fileManager.ReadAllBytes(fileWithPath));
 
-            var imageComponent = imageObject.AddComponent<Image>();
-            imageComponent.sprite = sprite;
+            var imageObject = managementSlot.CreateImageObjectTestAdapter(LocalScaleX, LocalScaleY, LocalPositionX, LocalPositionY, LocalPositionZ, texture2dTestAdapter, testAdapter,
+                imageGameObjectTestAdapter, spriteTestAdapter);
 
-            var tooltipAdapter = imageComponent.gameObject.AddComponent<TooltipMouseOver>();
-            var newParent = imageObject.transform.parent;
-            tooltipAdapter.gameObject.transform.SetParent(newParent);
+            var imageTestAdapter = imageObject.ImageComponent;
+            s_imagesDictionary.Add(imageName, imageTestAdapter);
+        }
 
-            s_imagesDictionary.Add(imageName, imageObject);
+        public static string GetSlotName([NotNull] this ManagementSlot managementSlot,
+            [CanBeNull] IManagementSlotTestAdapter testAdapter = null)
+        {
+            testAdapter = testAdapter.EnsureNotNullWithMethod(() => new ManagementSlotTestAdapter(managementSlot));
+
+            return testAdapter.Name;
         }
 
         public static void HideImageObject([NotNull] this ManagementSlot managementSlot,
             [NotNull] string imageName,
-            [NotNull] IFileManager fileManager)
+            [NotNull] IFileManager fileManager,
+            [CanBeNull] IManagementSlotTestAdapter testAdapter = null,
+            [CanBeNull] IGameObjectTestAdapter imageGameObjectTestAdapter = null,
+            [CanBeNull] ITexture2dTestAdapter texture2dTestAdapter = null,
+            [CanBeNull] ISpriteTestAdapter spriteTestAdapter = null)
         {
-            CreateImageObjectIfNotExist(managementSlot, imageName, fileManager);
+            CreateImageObjectIfNotExist(managementSlot, imageName, fileManager, testAdapter, imageGameObjectTestAdapter, texture2dTestAdapter, spriteTestAdapter);
             var image = GetImage(imageName);
 
-            image.color = Color.clear;
+            image.Color = Color.clear;
 
-            var tooltip = image.GetComponent<TooltipMouseOver>();
-            tooltip.gameObject.SetActive(false);
+            var tooltip = image.TooltipMouseOverComponent;
+            tooltip.SetActive(false);
         }
 
         /// <summary>
@@ -117,24 +123,28 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             [NotNull] string imageName,
             [NotNull] IFileManager fileManager,
             Color color,
-            [CanBeNull] string tooltipMessage = null)
+            [CanBeNull] string tooltipMessage = null,
+            [CanBeNull] IManagementSlotTestAdapter testAdapter = null,
+            [CanBeNull] IGameObjectTestAdapter imageGameObjectTestAdapter = null,
+            [CanBeNull] ITexture2dTestAdapter texture2dTestAdapter = null,
+            [CanBeNull] ISpriteTestAdapter spriteTestAdapter = null)
         {
-            CreateImageObjectIfNotExist(managementSlot, imageName, fileManager);
+            CreateImageObjectIfNotExist(managementSlot, imageName, fileManager, testAdapter, imageGameObjectTestAdapter, texture2dTestAdapter, spriteTestAdapter);
             var image = GetImage(imageName);
-            image.color = color;
+            image.Color = color;
 
             if (tooltipMessage.IsNull())
             {
                 return;
             }
 
-            var tooltip = image.GetComponent<TooltipMouseOver>();
-            tooltip.gameObject.SetActive(true);
+            var tooltip = image.TooltipMouseOverComponent;
+            tooltip.SetActive(true);
             tooltip.SetDynamicTooltip(tooltipMessage);
         }
 
         [NotNull]
-        private static Image GetImage([NotNull] string imageName)
+        private static IImageTestAdapter GetImage([NotNull] string imageName)
         {
             s_imagesDictionary.TryGetValue(imageName, out var image);
             if (image.IsNull())
@@ -142,7 +152,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
                 throw new InvalidOperationException("No image found with name " + imageName);
             }
 
-            return image.GetComponent<Image>();
+            return image;
         }
     }
 }

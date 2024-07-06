@@ -7,21 +7,35 @@ using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
+using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
 using UnityEngine;
+using UnityEngine.UI;
 
 #endregion
 
-namespace LobotomyCorporationMods.Common.Implementations.Adapters
+namespace LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    internal sealed class GameObjectTestAdapter : Adapter<GameObject>, IGameObjectTestAdapter
+    internal sealed class GameObjectTestAdapter : TestAdapter<GameObject>, IGameObjectTestAdapter
     {
         internal GameObjectTestAdapter([NotNull] GameObject gameObject) : base(gameObject)
         {
         }
 
         public bool ActiveSelf => GameObject.activeSelf;
+
+        [NotNull]
+        public ITransformTestAdapter Transform => new TransformTestAdapter(GameObject.transform);
+
+        [NotNull]
+        public IImageTestAdapter AddImageComponent()
+        {
+            return new ImageTestAdapter(GameObject.AddComponent<Image>());
+        }
+
+        [NotNull]
+        public IImageTestAdapter ImageComponent => new ImageTestAdapter(GameObject.GetComponent<Image>());
 
         public void SetActive(bool value)
         {

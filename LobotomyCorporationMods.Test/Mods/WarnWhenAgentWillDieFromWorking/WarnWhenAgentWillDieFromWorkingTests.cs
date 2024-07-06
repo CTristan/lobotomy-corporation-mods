@@ -11,6 +11,7 @@ using LobotomyCorporationMods.Common.Enums;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
+using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
 using LobotomyCorporationMods.Test.Extensions;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches;
@@ -73,41 +74,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
         }
 
         [NotNull]
-        private static CreatureModel GetCreatureWithGift(CreatureIds creatureId = CreatureIds.OneSin,
-            int qliphothCounter = 0,
-            bool maxObservation = true)
-        {
-            var equipmentTypeInfo = UnityTestExtensions.CreateEquipmentTypeInfo();
-            equipmentTypeInfo.type = EquipmentTypeInfo.EquipmentType.SPECIAL;
-
-            var creatureEquipmentMakeInfo = UnityTestExtensions.CreateCreatureEquipmentMakeInfo(equipmentTypeInfo);
-            var creatureTypeInfo = UnityTestExtensions.CreateCreatureTypeInfo(new List<CreatureEquipmentMakeInfo>
-            {
-                creatureEquipmentMakeInfo,
-            });
-            var creature = UnityTestExtensions.CreateCreatureModel(metaInfo: creatureTypeInfo, qliphothCounter: qliphothCounter);
-            creature.instanceId = (long)creatureId;
-            creature.metadataId = (long)creatureId;
-
-            if (maxObservation)
-            {
-                SetMaxObservation(creature);
-            }
-
-            // Need to initialize the CreatureLayer with our new creature
-            var creatureUnit = UnityTestExtensions.CreateCreatureUnit();
-            _ = UnityTestExtensions.CreateCreatureLayer(new Dictionary<long, CreatureUnit>
-            {
-                {
-                    (long)creatureId, creatureUnit
-                },
-            });
-
-            return creature;
-        }
-
-        [NotNull]
-        protected AgentSlot InitializeAgentSlot(CreatureIds creatureId,
+        protected static AgentSlot InitializeAgentSlot(CreatureIds creatureId,
             IEnumerable<UnitBuf> buffList = null,
             EquipmentIds giftIds = (EquipmentIds)1,
             RwbpType skillType = (RwbpType)1,
@@ -115,85 +82,11 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
         {
             buffList = buffList.EnsureNotNullWithMethod(() => new List<UnitBuf>());
 
-            var creature = GetCreatureWithGift(creatureId, qliphothCounter);
-            _ = InitializeCommandWindow(creature, skillType);
+            var creature = TestExtensions.GetCreatureWithGift(creatureId, qliphothCounter: qliphothCounter);
+            _ = TestExtensions.InitializeCommandWindow(creature, skillType, DeadAgentString);
             var agent = GetAgentWithGift(giftIds, buffList);
 
             return UnityTestExtensions.CreateAgentSlot(currentAgent: agent);
-        }
-
-        [NotNull]
-        protected CommandWindow.CommandWindow InitializeCommandWindow([CanBeNull] UnitModel currentTarget = null,
-            RwbpType rwbpType = (RwbpType)1)
-        {
-            currentTarget = currentTarget.EnsureNotNullWithMethod(() => UnityTestExtensions.CreateCreatureModel());
-
-            // Need existing game instances
-            InitializeLocalizeTextDataModel();
-            InitializeSkillTypeList(rwbpType);
-
-            var commandWindow = UnityTestExtensions.CreateCommandWindow(currentTarget, CommandType.Management, (long)rwbpType);
-            commandWindow.DeadColor = DeadAgentColor;
-            CommandWindow.CommandWindow.CurrentWindow.DeadColor = DeadAgentColor;
-
-            return commandWindow;
-        }
-
-        private static void InitializeLocalizeTextDataModel()
-        {
-            var list = new Dictionary<string, string>
-            {
-                {
-                    DeadAgentString, DeadAgentString
-                },
-            };
-
-            _ = UnityTestExtensions.CreateLocalizeTextDataModel(list);
-        }
-
-        private static void InitializeSkillTypeList(RwbpType rwbpType)
-        {
-            SkillTypeInfo[] skillTypeInfos =
-            {
-                new SkillTypeInfo
-                {
-                    id = (long)rwbpType,
-                },
-            };
-            _ = UnityTestExtensions.CreateSkillTypeList(skillTypeInfos);
-        }
-
-        private static void SetMaxObservation([NotNull] CreatureModel creature)
-        {
-            var observeRegions = new List<ObserveInfoData>
-            {
-                new ObserveInfoData
-                {
-                    regionName = "stat",
-                },
-                new ObserveInfoData
-                {
-                    regionName = "defense",
-                },
-                new ObserveInfoData
-                {
-                    regionName = "work_r",
-                },
-                new ObserveInfoData
-                {
-                    regionName = "work_w",
-                },
-                new ObserveInfoData
-                {
-                    regionName = "work_b",
-                },
-                new ObserveInfoData
-                {
-                    regionName = "work_p",
-                },
-            };
-            creature.observeInfo.InitObserveRegion(observeRegions);
-            creature.observeInfo.ObserveAll();
         }
 
         protected static void SetupNothingThere([NotNull] AgentSlot agentSlot,

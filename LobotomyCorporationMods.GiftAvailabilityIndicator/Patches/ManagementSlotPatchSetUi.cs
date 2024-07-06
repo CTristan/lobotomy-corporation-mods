@@ -13,6 +13,8 @@ using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Implementations.Facades;
 using LobotomyCorporationMods.Common.Interfaces;
+using LobotomyCorporationMods.Common.Interfaces.Adapters;
+using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
 using LobotomyCorporationMods.GiftAvailabilityIndicator.Extensions;
 
 #endregion
@@ -24,15 +26,19 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Patches
     {
         public static void PatchAfterSetUi([NotNull] this ManagementSlot instance,
             [NotNull] UnitModel agent,
-            [CanBeNull] IFileManager fileManager = null)
+            [CanBeNull] IManagementSlotTestAdapter testAdapter = null,
+            [CanBeNull] IFileManager fileManager = null,
+            [CanBeNull] IGameObjectTestAdapter imageGameObjectTestAdapter = null,
+            [CanBeNull] ITexture2dTestAdapter texture2dTestAdapter = null,
+            [CanBeNull] ISpriteTestAdapter spriteTestAdapter = null)
         {
             Guard.Against.Null(instance, nameof(instance));
 
-            var imageName = instance.name;
+            var imageName = instance.GetSlotName(testAdapter);
             fileManager = fileManager.EnsureNotNullWithMethod(() => Harmony_Patch.Instance.FileManager);
             if (!instance.AbnormalityHasGift())
             {
-                instance.HideImageObject(imageName, fileManager);
+                instance.HideImageObject(imageName, fileManager, testAdapter, imageGameObjectTestAdapter, texture2dTestAdapter, spriteTestAdapter);
                 return;
             }
 
@@ -43,16 +49,16 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Patches
                 var giftId = instance.GetAbnormalityGiftId();
                 if (agent.HasGift(giftId))
                 {
-                    instance.HideImageObject(imageName, fileManager);
+                    instance.HideImageObject(imageName, fileManager, testAdapter, imageGameObjectTestAdapter, texture2dTestAdapter, spriteTestAdapter);
                 }
                 else
                 {
-                    instance.ShowAsReplacementGift(imageName, fileManager);
+                    instance.ShowAsReplacementGift(imageName, fileManager, testAdapter, imageGameObjectTestAdapter, texture2dTestAdapter, spriteTestAdapter);
                 }
             }
             else
             {
-                instance.ShowAsNewGift(imageName, fileManager);
+                instance.ShowAsNewGift(imageName, fileManager, testAdapter, imageGameObjectTestAdapter, texture2dTestAdapter, spriteTestAdapter);
             }
         }
 

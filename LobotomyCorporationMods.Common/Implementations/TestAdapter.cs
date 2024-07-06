@@ -16,13 +16,13 @@ namespace LobotomyCorporationMods.Common.Implementations
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    internal class Adapter<T> : ITestAdapter<T>
+    internal class TestAdapter<T> : ITestAdapter<T>
     {
         private const string UninitializedGameObjectErrorMessage = "Please load the game object into the adapter before trying to use it.";
 
         private T _gameObject;
 
-        protected Adapter([NotNull] T gameObject)
+        protected TestAdapter([NotNull] T gameObject)
         {
             GameObject = gameObject;
         }

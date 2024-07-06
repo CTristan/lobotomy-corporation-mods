@@ -6,11 +6,14 @@ using UnityEngine;
 
 #endregion
 
-namespace LobotomyCorporationMods.Common.Interfaces.Adapters
+namespace LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses
 {
     public interface IGameObjectTestAdapter : ITestAdapter<GameObject>
     {
         bool ActiveSelf { get; }
+        ITransformTestAdapter Transform { get; }
+        IImageTestAdapter ImageComponent { get; }
+        IImageTestAdapter AddImageComponent();
         void SetActive(bool value);
     }
 }

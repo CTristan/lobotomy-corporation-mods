@@ -4,6 +4,7 @@
 
 using Customizing;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
+using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
 using LobotomyCorporationMods.FreeCustomization.Patches;
 using Moq;
 using Xunit;

@@ -42,7 +42,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
         public void Does_not_error_if_we_are_not_in_Management_phase()
         {
             var creature = UnityTestExtensions.CreateCreatureModel();
-            _ = InitializeCommandWindow(creature);
+            _ = TestExtensions.InitializeCommandWindow(creature);
             var agentSlot = UnityTestExtensions.CreateAgentSlot();
             GameManager.ManageStarted = false;
 
@@ -56,7 +56,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
         public void Does_not_error_on_first_game_load()
         {
             var creature = UnityTestExtensions.CreateCreatureModel();
-            _ = InitializeCommandWindow(creature);
+            _ = TestExtensions.InitializeCommandWindow(creature);
             var agentSlot = UnityTestExtensions.CreateAgentSlot();
 
             // Send a null game manager to indicate this is our first game load
@@ -69,7 +69,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
         [Fact]
         public void No_false_positives()
         {
-            _ = InitializeCommandWindow(UnityTestExtensions.CreateCreatureModel());
+            _ = TestExtensions.InitializeCommandWindow(UnityTestExtensions.CreateCreatureModel());
             var agentSlot = UnityTestExtensions.CreateAgentSlot();
 
             VerifyAgentWillNotDie(agentSlot);
@@ -79,7 +79,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking.Patc
         public void Tool_does_not_show_if_agent_will_die()
         {
             var tool = UnityTestExtensions.CreateUnitModel();
-            _ = InitializeCommandWindow(tool);
+            _ = TestExtensions.InitializeCommandWindow(tool);
             var agentSlot = UnityTestExtensions.CreateAgentSlot();
 
             VerifyAgentWillNotDie(agentSlot);

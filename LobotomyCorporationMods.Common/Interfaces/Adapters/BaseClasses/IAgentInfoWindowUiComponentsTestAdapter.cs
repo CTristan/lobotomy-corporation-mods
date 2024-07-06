@@ -6,7 +6,7 @@ using Customizing;
 
 #endregion
 
-namespace LobotomyCorporationMods.Common.Interfaces.Adapters
+namespace LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses
 {
     public interface IAgentInfoWindowUiComponentsTestAdapter : ITestAdapter<AgentInfoWindow.UIComponent>
     {

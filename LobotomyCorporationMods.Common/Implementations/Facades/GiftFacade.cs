@@ -16,7 +16,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
 
         public static int GetAbnormalityGiftId([NotNull] this ManagementSlot managementSlot)
         {
-            return managementSlot.GetAbnormalityGiftInfo().id;
+            return managementSlot.GetAbnormalityGiftInfo()?.id ?? 0;
         }
 
         [NotNull]
@@ -34,7 +34,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         [NotNull]
         public static string GetAbnormalityGiftSlot([NotNull] this ManagementSlot managementSlot)
         {
-            return managementSlot.GetAbnormalityGiftInfo().attachPos ?? string.Empty;
+            return managementSlot.GetAbnormalityGiftInfo()?.attachPos ?? string.Empty;
         }
 
         public static bool HasGift([NotNull] this UnitModel unitModel,
