@@ -19,16 +19,16 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
     [SuppressMessage("Style", "IDE0060:Remove unused parameter")]
     public static class ManagementUiFacade
     {
-        [ThreadStatic] private static Dictionary<string, Image> s_imagesDictionary;
+        [ThreadStatic] private static Dictionary<string, GameObject> s_imagesDictionary;
 
-        public static void CreateImageObjectIfNotExist([NotNull] this ManagementSlot instance,
+        private static void CreateImageObjectIfNotExist([NotNull] this ManagementSlot instance,
             [NotNull] string imageName,
             [NotNull] IFileManager fileManager)
         {
             Guard.Against.Null(instance, nameof(instance));
             Guard.Against.Null(fileManager, nameof(fileManager));
 
-            s_imagesDictionary = s_imagesDictionary.EnsureNotNullWithMethod(() => new Dictionary<string, Image>());
+            s_imagesDictionary = s_imagesDictionary.EnsureNotNullWithMethod(() => new Dictionary<string, GameObject>());
             if (s_imagesDictionary.ContainsKey(imageName))
             {
                 return;
@@ -65,12 +65,14 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             var newParent = imageObject.transform.parent;
             tooltipAdapter.gameObject.transform.SetParent(newParent);
 
-            s_imagesDictionary.Add(imageName, imageObject.GetComponent<Image>());
+            s_imagesDictionary.Add(imageName, imageObject);
         }
 
         public static void HideImageObject([NotNull] this ManagementSlot managementSlot,
-            [NotNull] string imageName)
+            [NotNull] string imageName,
+            [NotNull] IFileManager fileManager)
         {
+            CreateImageObjectIfNotExist(managementSlot, imageName, fileManager);
             var image = GetImage(imageName);
 
             image.color = Color.clear;
@@ -113,19 +115,22 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
 
         public static void UpdateImage([NotNull] this ManagementSlot managementSlot,
             [NotNull] string imageName,
+            [NotNull] IFileManager fileManager,
             Color color,
-            [CanBeNull] string tooltip = null)
+            [CanBeNull] string tooltipMessage = null)
         {
+            CreateImageObjectIfNotExist(managementSlot, imageName, fileManager);
             var image = GetImage(imageName);
             image.color = color;
 
-            if (tooltip.IsNull())
+            if (tooltipMessage.IsNull())
             {
                 return;
             }
 
-            var tooltipAdapter = image.GetComponent<TooltipMouseOver>();
-            tooltipAdapter.SetDynamicTooltip(tooltip);
+            var tooltip = image.GetComponent<TooltipMouseOver>();
+            tooltip.gameObject.SetActive(true);
+            tooltip.SetDynamicTooltip(tooltipMessage);
         }
 
         [NotNull]
@@ -137,7 +142,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
                 throw new InvalidOperationException("No image found with name " + imageName);
             }
 
-            return image;
+            return image.GetComponent<Image>();
         }
     }
 }

@@ -23,38 +23,36 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Patches
     public static class ManagementSlotPatchSetUi
     {
         public static void PatchAfterSetUi([NotNull] this ManagementSlot instance,
-            UnitModel agent,
+            [NotNull] UnitModel agent,
             [CanBeNull] IFileManager fileManager = null)
         {
             Guard.Against.Null(instance, nameof(instance));
 
+            var imageName = instance.name;
+            fileManager = fileManager.EnsureNotNullWithMethod(() => Harmony_Patch.Instance.FileManager);
             if (!instance.AbnormalityHasGift())
             {
+                instance.HideImageObject(imageName, fileManager);
                 return;
             }
 
-            var imageName = instance.name;
-            fileManager = fileManager.EnsureNotNullWithMethod(() => Harmony_Patch.Instance.FileManager);
-
-            instance.CreateImageObjectIfNotExist(imageName, fileManager);
             var giftSlot = instance.GetAbnormalityGiftSlot();
             var giftsInSameSlot = agent.HasGiftInPosition(giftSlot);
-
             if (giftsInSameSlot)
             {
                 var giftId = instance.GetAbnormalityGiftId();
                 if (agent.HasGift(giftId))
                 {
-                    instance.HideImageObject(imageName);
+                    instance.HideImageObject(imageName, fileManager);
                 }
                 else
                 {
-                    instance.ShowAsReplacementGift(imageName);
+                    instance.ShowAsReplacementGift(imageName, fileManager);
                 }
             }
             else
             {
-                instance.ShowAsNewGift(imageName);
+                instance.ShowAsNewGift(imageName, fileManager);
             }
         }
 
