@@ -36,7 +36,7 @@ namespace LobotomyCorporationMods.Common.Extensions
             imageComponentTestAdapter.Sprite = sprite;
 
             var tooltipAdapter = imageComponentTestAdapter.AddTooltipMouseOverComponent();
-            var newParent = imageGameObjectTestAdapter.Transform.Parent;
+            var newParent = imageGameObjectTestAdapter.Transform.Parent.Parent;
             tooltipAdapter.Transform.SetParent(newParent);
 
             return imageGameObjectTestAdapter;
