@@ -4,8 +4,7 @@ namespace LobotomyCorporationMods.Common.Interfaces
 {
     public interface IFileManager
     {
-        string GetOrCreateFile(string fileName,
-            bool createIfNotExists = true);
+        string GetFile(string fileName);
 
         byte[] ReadAllBytes(string filePath);
 

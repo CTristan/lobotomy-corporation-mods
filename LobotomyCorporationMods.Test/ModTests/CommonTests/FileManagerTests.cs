@@ -18,14 +18,12 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
     {
         private const string DefaultModFileName = "LobotomyCorporationMods.Test.dll";
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void Able_to_find_existing_file_in_mod_folder(bool createIfNotExists)
+        [Fact]
+        public void Able_to_find_existing_file_in_mod_folder()
         {
             var fileManager = new FileManager(DefaultModFileName, GetDirectories());
 
-            var result = fileManager.GetOrCreateFile(DefaultModFileName, createIfNotExists);
+            var result = fileManager.GetFile(DefaultModFileName);
 
             result.Should().NotBeNullOrWhiteSpace();
         }
@@ -35,7 +33,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         {
             var fileManager = new FileManager(DefaultModFileName, GetDirectories());
 
-            var result = fileManager.GetOrCreateFile("NewFileName");
+            var result = fileManager.GetFile("NewFileName");
 
             result.Should().NotBeNullOrWhiteSpace();
         }
@@ -46,7 +44,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         public void Reading_a_nonexistent_file_with_flag_not_set_does_not_create_the_file([NotNull] string fileName)
         {
             var fileManager = new FileManager(DefaultModFileName, GetDirectories());
-            var fileWithPath = fileManager.GetOrCreateFile(fileName);
+            var fileWithPath = fileManager.GetFile(fileName);
             DeleteFileIfExists(fileWithPath);
 
             var result = fileManager.ReadAllText(fileWithPath, false);
@@ -60,23 +58,12 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         public void Reading_a_nonexistent_file_with_flag_set_creates_the_file([NotNull] string fileName)
         {
             var fileManager = new FileManager(DefaultModFileName, GetDirectories());
-            var fileWithPath = fileManager.GetOrCreateFile(fileName);
+            var fileWithPath = fileManager.GetFile(fileName);
             DeleteFileIfExists(fileWithPath);
 
             _ = fileManager.ReadAllText(fileWithPath, true);
 
             File.Exists(fileWithPath).Should().BeTrue();
-        }
-
-        [Theory]
-        [InlineData("IDoNotExist.txt")]
-        [InlineData("DoNotCreateMe.txt")]
-        public void Reading_a_nonexistent_file_without_flag_set_returns_null([NotNull] string fileName)
-        {
-            var fileManager = new FileManager(DefaultModFileName, GetDirectories());
-            var fileWithPath = fileManager.GetOrCreateFile(fileName, false);
-
-            fileWithPath.Should().BeNull();
         }
 
         [Fact]

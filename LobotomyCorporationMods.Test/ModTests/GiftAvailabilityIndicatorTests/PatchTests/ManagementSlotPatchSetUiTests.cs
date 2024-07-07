@@ -41,7 +41,7 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAvailabilityIndicatorTests.P
             mockManagementSlotTestAdapter.SetupGet(x => x.Name).Returns(ImageName);
 
             var mockFileManager = new Mock<IFileManager>();
-            mockFileManager.Setup(x => x.GetOrCreateFile(ImageName, false)).Returns(string.Empty);
+            mockFileManager.Setup(x => x.GetFile(ImageName)).Returns(string.Empty);
 
             // Act
             Action action = () => sut.PatchAfterSetUi(agent, ImageName, mockManagementSlotTestAdapter.Object, mockFileManager.Object, texture2dTestAdapter: mockTexture2dTestAdapter.Object);

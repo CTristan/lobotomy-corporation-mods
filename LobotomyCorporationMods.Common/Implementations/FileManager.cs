@@ -53,8 +53,7 @@ namespace LobotomyCorporationMods.Common.Implementations
             }
         }
 
-        public string GetOrCreateFile([NotNull] string fileName,
-            bool createIfNotExists = true)
+        public string GetFile([NotNull] string fileName)
         {
             if (_filesCache.TryGetValue(fileName, out var value))
             {
@@ -62,12 +61,6 @@ namespace LobotomyCorporationMods.Common.Implementations
             }
 
             var fullFilePath = Path.Combine(_dataPath.FullName, fileName);
-
-            if (!File.Exists(fullFilePath) && !createIfNotExists)
-            {
-                return null;
-            }
-
             _filesCache.Add(fileName, fullFilePath);
 
             return _filesCache[fileName];

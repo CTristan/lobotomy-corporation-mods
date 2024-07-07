@@ -47,7 +47,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
 
             texture2dTestAdapter = texture2dTestAdapter.EnsureNotNullWithMethod(() => new Texture2dTestAdapter(new Texture2D(2, 2)));
 
-            var fileWithPath = fileManager.GetOrCreateFile(imagePath, false);
+            var fileWithPath = fileManager.GetFile(imagePath);
             if (string.IsNullOrEmpty(fileWithPath))
             {
                 throw new InvalidOperationException("No image found with name " + imagePath);

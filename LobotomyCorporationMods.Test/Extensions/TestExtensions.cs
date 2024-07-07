@@ -82,8 +82,7 @@ namespace LobotomyCorporationMods.Test.Extensions
         internal static Mock<IFileManager> GetMockFileManager()
         {
             var mockFileManager = new Mock<IFileManager>();
-            _ = mockFileManager.Setup(fm => fm.GetOrCreateFile(It.IsAny<string>(), It.IsAny<bool>())).Returns((string fileName,
-                bool createIfNotExists) => fileName.InCurrentDirectory());
+            _ = mockFileManager.Setup(fm => fm.GetFile(It.IsAny<string>())).Returns((string fileName) => fileName.InCurrentDirectory());
             _ = mockFileManager.Setup(fm => fm.ReadAllText(It.IsAny<string>(), It.IsAny<bool>())).Returns((string fileName,
                 bool _) => File.ReadAllText(fileName.InCurrentDirectory()));
 

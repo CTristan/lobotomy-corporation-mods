@@ -34,7 +34,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
             }
 
             _fileManager = fileManager;
-            _trackerFile = _fileManager.GetOrCreateFile(dataFileName);
+            _trackerFile = _fileManager.GetFile(dataFileName);
             Load();
         }
 
