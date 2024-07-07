@@ -18,12 +18,14 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
     {
         private const string DefaultModFileName = "LobotomyCorporationMods.Test.dll";
 
-        [Fact]
-        public void Able_to_find_existing_file_in_mod_folder()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void Able_to_find_existing_file_in_mod_folder(bool createIfNotExists)
         {
             var fileManager = new FileManager(DefaultModFileName, GetDirectories());
 
-            var result = fileManager.GetOrCreateFile(DefaultModFileName);
+            var result = fileManager.GetOrCreateFile(DefaultModFileName, createIfNotExists);
 
             result.Should().NotBeNullOrWhiteSpace();
         }
