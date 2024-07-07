@@ -43,7 +43,7 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Patches
                 return;
             }
 
-            var giftSlot = instance.GetAbnormalityGiftSlot();
+            var giftSlot = instance.GetAbnormalityGiftPosition();
             var giftsInSameSlot = agent.HasGiftInPosition(giftSlot);
             if (giftsInSameSlot)
             {

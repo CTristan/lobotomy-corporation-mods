@@ -32,7 +32,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         }
 
         [CanBeNull]
-        public static string GetAbnormalityGiftSlot([NotNull] this ManagementSlot managementSlot)
+        public static string GetAbnormalityGiftPosition([NotNull] this ManagementSlot managementSlot)
         {
             return managementSlot.GetAbnormalityGiftInfo()?.attachPos;
         }
