@@ -123,7 +123,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             [NotNull] string imageName,
             [NotNull] IFileManager fileManager,
             Color color,
-            [CanBeNull] string tooltipMessage = null,
+            [CanBeNull] string tooltipMessage = "",
             [CanBeNull] IManagementSlotTestAdapter testAdapter = null,
             [CanBeNull] IGameObjectTestAdapter imageGameObjectTestAdapter = null,
             [CanBeNull] ITexture2dTestAdapter texture2dTestAdapter = null,
@@ -133,11 +133,6 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             var image = GetImage(imageName);
             image.Color = color;
 
-            if (tooltipMessage.IsNull())
-            {
-                return;
-            }
-
             var tooltip = image.TooltipMouseOverComponent;
             tooltip.SetActive(true);
             tooltip.SetDynamicTooltip(tooltipMessage);
@@ -146,13 +141,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         [NotNull]
         private static IImageTestAdapter GetImage([NotNull] string imageName)
         {
-            s_imagesDictionary.TryGetValue(imageName, out var image);
-            if (image.IsNull())
-            {
-                throw new InvalidOperationException("No image found with name " + imageName);
-            }
-
-            return image;
+            return s_imagesDictionary[imageName];
         }
     }
 }
