@@ -17,6 +17,15 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
 {
     public sealed class AgentSlotPatchSetFilterTests : WarnWhenAgentWillDieFromWorkingModTests
     {
+        private const int StatLevelFourMinusOne = StatLevelFour - 1;
+        private const int StatLevelFourMinusTwo = StatLevelFour - 2;
+        private const int StatLevelFourMinusThree = StatLevelFour - 3;
+        private const int StatLevelFourMinusFour = StatLevelFour - 4;
+        private const int StatLevelFourMinusFive = StatLevelFour - 5;
+        private const int StatLevelFourMinusSix = StatLevelFour - 6;
+        private const int StatLevelFourMinusSeven = StatLevelFour - 7;
+        private const int StatLevelFourMinusEight = StatLevelFour - 8;
+
         public AgentSlotPatchSetFilterTests()
         {
             MockImageTestAdapter.SetupProperty(adapter => adapter.Color);
@@ -649,14 +658,14 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
 
         /// <summary>Singing Machine's gift gives +8 fortitude, so we need to make sure that the gift won't push an agent's fortitude to 4.</summary>
         [Theory]
-        [InlineData(StatLevelFour - 1)]
-        [InlineData(StatLevelFour - 2)]
-        [InlineData(StatLevelFour - 3)]
-        [InlineData(StatLevelFour - 4)]
-        [InlineData(StatLevelFour - 5)]
-        [InlineData(StatLevelFour - 6)]
-        [InlineData(StatLevelFour - 7)]
-        [InlineData(StatLevelFour - 8)]
+        [InlineData(StatLevelFourMinusOne)]
+        [InlineData(StatLevelFourMinusTwo)]
+        [InlineData(StatLevelFourMinusThree)]
+        [InlineData(StatLevelFourMinusFour)]
+        [InlineData(StatLevelFourMinusFive)]
+        [InlineData(StatLevelFourMinusSix)]
+        [InlineData(StatLevelFourMinusSeven)]
+        [InlineData(StatLevelFourMinusEight)]
         public void SingingMachine_Will_Kill_Agent_At_Qliphoth_Greater_Than_Zero_With_Fortitude_Three_Because_Gift_Will_Make_Fortitude_Greater_Than_Three(int fortitude)
         {
             const int QliphothCounterOne = 1;

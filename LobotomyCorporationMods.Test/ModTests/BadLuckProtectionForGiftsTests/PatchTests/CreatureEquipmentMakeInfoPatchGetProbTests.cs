@@ -57,10 +57,12 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
             // Arrange
             var sut = GetCreatureEquipmentMakeInfo(GiftName);
 
+            // 101 times worked would equal 101% bonus normally
+            const int TimesWorked = 101;
+
             var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
 
-            // 101 times worked would equal 101% bonus normally
-            mockAgentWorkTracker.Setup(tracker => tracker.GetLastAgentWorkCountByGift(GiftName)).Returns(101);
+            mockAgentWorkTracker.Setup(tracker => tracker.GetLastAgentWorkCountByGift(GiftName)).Returns(TimesWorked);
 
             // Act
             var actual = 0f;

@@ -8,6 +8,7 @@ using System.IO;
 using FluentAssertions;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations;
+using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.Test.Extensions;
 using Moq;
@@ -21,9 +22,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
     {
         private const string DefaultGiftName = "DefaultGiftName";
 
-        /// <summary>
-        /// Provides test data for the <see cref="AgentWorkTrackerTests"/> class.
-        /// </summary>
+        /// <summary>Provides test data for the <see cref="AgentWorkTrackerTests" /> class.</summary>
         [NotNull]
         public static IEnumerable<object[]> TrackerTestData
         {
@@ -79,8 +78,10 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
         {
             // Arrange
             const string DataFileName = nameof(Converting_a_tracker_to_a_string_with_multiple_gifts_and_agents_contains_all_of_the_data_in_the_tracker);
+            const float SecondGiftCount = 2f;
             const string SecondGiftName = "Second";
             const long SecondAgentId = 1L + 1;
+
             var agentWorkTracker = CreateAgentWorkTracker(DataFileName);
 
             // First gift first agent
@@ -90,7 +91,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
             agentWorkTracker.IncrementAgentWorkCount(DefaultGiftName, SecondAgentId);
 
             // Second gift second agent
-            agentWorkTracker.IncrementAgentWorkCount(SecondGiftName, SecondAgentId, 2f);
+            agentWorkTracker.IncrementAgentWorkCount(SecondGiftName, SecondAgentId, SecondGiftCount);
             var expected = string.Format(CultureInfo.CurrentCulture, "{0}^{1};1^{2};1|{3}^{2};2", DefaultGiftName, 1L.ToString(CultureInfo.CurrentCulture),
                 SecondAgentId.ToString(CultureInfo.CurrentCulture), SecondGiftName);
 
@@ -178,7 +179,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
             string trackerData = "",
             IFileManager fileManager = null)
         {
-            fileManager = fileManager ?? TestExtensions.GetMockFileManager().Object;
+            fileManager = fileManager.EnsureNotNullWithMethod(() => TestExtensions.GetMockFileManager().Object);
             dataFileName = dataFileName.InCurrentDirectory();
             CreateTestTrackerFile(dataFileName, trackerData);
 
