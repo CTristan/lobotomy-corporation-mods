@@ -3,11 +3,11 @@
 #region
 
 using System;
-using System.Collections.Generic;
 using CommandWindow;
 using FluentAssertions;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Enums;
+using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
 using LobotomyCorporationMods.GiftAvailabilityIndicator.Patches;
@@ -28,13 +28,36 @@ namespace LobotomyCorporationMods.Test.Mods.GiftAvailabilityIndicator.Patches
         private readonly Color _replacementGiftColor = Color.grey;
 
         [Fact]
+        public void Errors_when_image_file_does_not_exist()
+        {
+            // Arrange
+            var sut = UnityTestExtensions.CreateManagementSlot();
+            var agent = TestExtensions.GetAgentWithGift();
+            var tool = UnityTestExtensions.CreateUnitModel();
+            _ = TestExtensions.InitializeCommandWindowWithAbnormality(tool);
+            var mockTexture2dTestAdapter = new Mock<ITexture2dTestAdapter>();
+
+            var mockManagementSlotTestAdapter = new Mock<IManagementSlotTestAdapter>();
+            mockManagementSlotTestAdapter.SetupGet(x => x.Name).Returns(DefaultImageName);
+
+            var mockFileManager = new Mock<IFileManager>();
+            mockFileManager.Setup(x => x.GetOrCreateFile(DefaultImageName, false)).Returns(string.Empty);
+
+            // Act
+            Action action = () => sut.PatchAfterSetUi(agent, mockManagementSlotTestAdapter.Object, mockFileManager.Object, texture2dTestAdapter: mockTexture2dTestAdapter.Object);
+
+            // Assert
+            action.Should().Throw<InvalidOperationException>().WithMessage("No image found with name " + DefaultImageName);
+        }
+
+        [Fact]
         public void Hides_image_when_abnormality_does_not_have_a_gift()
         {
             // Arrange
             var sut = UnityTestExtensions.CreateManagementSlot();
             var creature = UnityTestExtensions.CreateCreatureModel();
             _ = TestExtensions.InitializeCommandWindowWithAbnormality(creature);
-            var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1, unitBuffs: new List<UnitBuf>());
+            var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1);
             var mockImageTestAdapter = GetMockImageTestAdapter();
 
             SetUpSlot(sut, agent, DefaultImageName, mockImageTestAdapter);
@@ -47,9 +70,9 @@ namespace LobotomyCorporationMods.Test.Mods.GiftAvailabilityIndicator.Patches
         {
             // Arrange
             var sut = UnityTestExtensions.CreateManagementSlot();
-            var creature = TestExtensions.GetCreatureWithGift(giftId: EquipmentIds.CrumblingArmorGift1, attachPosition: EGOgiftAttachRegion.HEAD);
+            var creature = TestExtensions.GetCreatureWithGift(giftId: EquipmentIds.CrumblingArmorGift1);
             _ = TestExtensions.InitializeCommandWindowWithAbnormality(creature);
-            var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1, EGOgiftAttachRegion.HEAD, new List<UnitBuf>());
+            var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1);
             const string ImageName = nameof(Hides_image_when_abnormality_does_not_have_a_gift);
             var mockImageTestAdapter = GetMockImageTestAdapter();
 
@@ -65,7 +88,7 @@ namespace LobotomyCorporationMods.Test.Mods.GiftAvailabilityIndicator.Patches
             var sut = UnityTestExtensions.CreateManagementSlot();
             var unitModel = UnityTestExtensions.CreateUnitModel();
             _ = UnityTestExtensions.CreateCommandWindow(unitModel);
-            var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1, unitBuffs: new List<UnitBuf>());
+            var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1);
             var mockImageTestAdapter = GetMockImageTestAdapter();
 
             SetUpSlot(sut, agent, DefaultImageName, mockImageTestAdapter);
@@ -84,7 +107,7 @@ namespace LobotomyCorporationMods.Test.Mods.GiftAvailabilityIndicator.Patches
             var creature = TestExtensions.GetCreatureWithGift(attachPosition: firstGiftPosition);
             _ = TestExtensions.InitializeCommandWindowWithAbnormality(creature);
             var imageName = nameof(Shows_as_new_gift_when_gift_is_in_a_new_slot) + firstGiftPosition + newGiftPosition;
-            var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1, newGiftPosition, new List<UnitBuf>());
+            var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1, newGiftPosition);
             var mockImageTestAdapter = GetMockImageTestAdapter();
 
             SetUpSlot(sut, agent, imageName, mockImageTestAdapter);
@@ -103,7 +126,7 @@ namespace LobotomyCorporationMods.Test.Mods.GiftAvailabilityIndicator.Patches
             var creature = TestExtensions.GetCreatureWithGift(attachPosition: firstGiftPosition);
             _ = TestExtensions.InitializeCommandWindowWithAbnormality(creature);
             var imageName = nameof(Shows_as_replacement_gift_when_gift_is_in_an_existing_slot) + firstGiftPosition + newGiftPosition;
-            var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1, newGiftPosition, new List<UnitBuf>());
+            var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1, newGiftPosition);
             var mockImageTestAdapter = GetMockImageTestAdapter();
 
             SetUpSlot(sut, agent, imageName, mockImageTestAdapter);
