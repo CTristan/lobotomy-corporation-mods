@@ -66,6 +66,17 @@ namespace LobotomyCorporationMods.Test.Mods.Common
             File.Exists(fileWithPath).Should().BeTrue();
         }
 
+        [Theory]
+        [InlineData("IDoNotExist.txt")]
+        [InlineData("DoNotCreateMe.txt")]
+        public void Reading_a_nonexistent_file_without_flag_set_returns_null([NotNull] string fileName)
+        {
+            var fileManager = new FileManager(DefaultModFileName, GetDirectories());
+            var fileWithPath = fileManager.GetOrCreateFile(fileName, false);
+
+            fileWithPath.Should().BeNull();
+        }
+
         [Fact]
         public void Throws_exception_when_unable_to_find_mod_folder()
         {
@@ -75,6 +86,16 @@ namespace LobotomyCorporationMods.Test.Mods.Common
             };
 
             action.Should().Throw<InvalidOperationException>();
+        }
+
+        [Fact]
+        public void Able_to_read_bytes_from_file()
+        {
+            var fileManager = new FileManager(DefaultModFileName, GetDirectories());
+
+            var result = fileManager.ReadAllBytes(DefaultModFileName);
+
+            result.Should().NotBeNull();
         }
 
         #region Helper Methods

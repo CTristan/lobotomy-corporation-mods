@@ -23,6 +23,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
 
         private static void CreateImageObjectIfNotExist([NotNull] this ManagementSlot managementSlot,
             [NotNull] string imageName,
+            [NotNull] string imagePath,
             [NotNull] IFileManager fileManager,
             [CanBeNull] IManagementSlotTestAdapter testAdapter = null,
             [CanBeNull] IGameObjectTestAdapter imageGameObjectTestAdapter = null,
@@ -43,14 +44,13 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             const float LocalPositionZ = -1f;
             const float LocalScaleX = 0.2f;
             const float LocalScaleY = 0.2f;
-            const string ImagePath = "Assets/gift.png";
 
             texture2dTestAdapter = texture2dTestAdapter.EnsureNotNullWithMethod(() => new Texture2dTestAdapter(new Texture2D(2, 2)));
 
-            var fileWithPath = fileManager.GetOrCreateFile(ImagePath, false);
+            var fileWithPath = fileManager.GetOrCreateFile(imagePath, false);
             if (string.IsNullOrEmpty(fileWithPath))
             {
-                throw new InvalidOperationException("No image found with name " + ImagePath);
+                throw new InvalidOperationException("No image found with name " + imagePath);
             }
 
             texture2dTestAdapter.LoadImage(fileManager.ReadAllBytes(fileWithPath));
@@ -72,13 +72,14 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
 
         public static void HideImageObject([NotNull] this ManagementSlot managementSlot,
             [NotNull] string imageName,
+            [NotNull] string imagePath,
             [NotNull] IFileManager fileManager,
             [CanBeNull] IManagementSlotTestAdapter testAdapter = null,
             [CanBeNull] IGameObjectTestAdapter imageGameObjectTestAdapter = null,
             [CanBeNull] ITexture2dTestAdapter texture2dTestAdapter = null,
             [CanBeNull] ISpriteTestAdapter spriteTestAdapter = null)
         {
-            CreateImageObjectIfNotExist(managementSlot, imageName, fileManager, testAdapter, imageGameObjectTestAdapter, texture2dTestAdapter, spriteTestAdapter);
+            CreateImageObjectIfNotExist(managementSlot, imageName, imagePath, fileManager, testAdapter, imageGameObjectTestAdapter, texture2dTestAdapter, spriteTestAdapter);
             var image = GetImage(imageName);
 
             image.Color = Color.clear;
@@ -121,6 +122,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
 
         public static void UpdateImage([NotNull] this ManagementSlot managementSlot,
             [NotNull] string imageName,
+            [NotNull] string imagePath,
             [NotNull] IFileManager fileManager,
             Color color,
             [CanBeNull] string tooltipMessage = "",
@@ -129,7 +131,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             [CanBeNull] ITexture2dTestAdapter texture2dTestAdapter = null,
             [CanBeNull] ISpriteTestAdapter spriteTestAdapter = null)
         {
-            CreateImageObjectIfNotExist(managementSlot, imageName, fileManager, testAdapter, imageGameObjectTestAdapter, texture2dTestAdapter, spriteTestAdapter);
+            CreateImageObjectIfNotExist(managementSlot, imageName, imagePath, fileManager, testAdapter, imageGameObjectTestAdapter, texture2dTestAdapter, spriteTestAdapter);
             var image = GetImage(imageName);
             image.Color = color;
 

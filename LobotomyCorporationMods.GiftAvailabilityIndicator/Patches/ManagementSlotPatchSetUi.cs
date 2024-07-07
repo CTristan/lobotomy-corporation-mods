@@ -26,6 +26,7 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Patches
     {
         public static void PatchAfterSetUi([NotNull] this ManagementSlot instance,
             [NotNull] UnitModel agent,
+            [NotNull] string imagePath,
             [CanBeNull] IManagementSlotTestAdapter testAdapter = null,
             [CanBeNull] IFileManager fileManager = null,
             [CanBeNull] IGameObjectTestAdapter imageGameObjectTestAdapter = null,
@@ -38,7 +39,7 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Patches
             fileManager = fileManager.EnsureNotNullWithMethod(() => Harmony_Patch.Instance.FileManager);
             if (!instance.AbnormalityHasGift())
             {
-                instance.HideImageObject(imageName, fileManager, testAdapter, imageGameObjectTestAdapter, texture2dTestAdapter, spriteTestAdapter);
+                instance.HideImageObject(imageName, imagePath, fileManager, testAdapter, imageGameObjectTestAdapter, texture2dTestAdapter, spriteTestAdapter);
                 return;
             }
 
@@ -49,16 +50,16 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Patches
                 var giftId = instance.GetAbnormalityGiftId();
                 if (agent.HasGift(giftId))
                 {
-                    instance.HideImageObject(imageName, fileManager, testAdapter, imageGameObjectTestAdapter, texture2dTestAdapter, spriteTestAdapter);
+                    instance.HideImageObject(imageName, imagePath, fileManager, testAdapter, imageGameObjectTestAdapter, texture2dTestAdapter, spriteTestAdapter);
                 }
                 else
                 {
-                    instance.ShowAsReplacementGift(imageName, fileManager, testAdapter, imageGameObjectTestAdapter, texture2dTestAdapter, spriteTestAdapter);
+                    instance.ShowAsReplacementGift(imageName, imagePath, fileManager, testAdapter, imageGameObjectTestAdapter, texture2dTestAdapter, spriteTestAdapter);
                 }
             }
             else
             {
-                instance.ShowAsNewGift(imageName, fileManager, testAdapter, imageGameObjectTestAdapter, texture2dTestAdapter, spriteTestAdapter);
+                instance.ShowAsNewGift(imageName, imagePath, fileManager, testAdapter, imageGameObjectTestAdapter, texture2dTestAdapter, spriteTestAdapter);
             }
         }
 
@@ -74,7 +75,9 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Patches
                 Guard.Against.Null(__instance, nameof(__instance));
                 Guard.Against.Null(agent, nameof(agent));
 
-                __instance.PatchAfterSetUi(agent);
+                const string ImagePath = "Assets/gift.png";
+
+                __instance.PatchAfterSetUi(agent, ImagePath);
             }
             catch (Exception ex)
             {

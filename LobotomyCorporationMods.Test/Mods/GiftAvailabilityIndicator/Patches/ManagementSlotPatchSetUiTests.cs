@@ -22,7 +22,6 @@ namespace LobotomyCorporationMods.Test.Mods.GiftAvailabilityIndicator.Patches
 {
     public sealed class ManagementSlotPatchSetUiTests : GiftAvailabilityIndicatorTests
     {
-        private const string DefaultImageName = "Assets/gift.png";
         private readonly Color _newGiftColor = Color.green;
         private readonly Color _noGiftColor = Color.clear;
         private readonly Color _replacementGiftColor = Color.grey;
@@ -32,22 +31,23 @@ namespace LobotomyCorporationMods.Test.Mods.GiftAvailabilityIndicator.Patches
         {
             // Arrange
             var sut = UnityTestExtensions.CreateManagementSlot();
+            const string ImageName = nameof(Errors_when_image_file_does_not_exist);
             var agent = TestExtensions.GetAgentWithGift();
             var tool = UnityTestExtensions.CreateUnitModel();
             _ = TestExtensions.InitializeCommandWindowWithAbnormality(tool);
             var mockTexture2dTestAdapter = new Mock<ITexture2dTestAdapter>();
 
             var mockManagementSlotTestAdapter = new Mock<IManagementSlotTestAdapter>();
-            mockManagementSlotTestAdapter.SetupGet(x => x.Name).Returns(DefaultImageName);
+            mockManagementSlotTestAdapter.SetupGet(x => x.Name).Returns(ImageName);
 
             var mockFileManager = new Mock<IFileManager>();
-            mockFileManager.Setup(x => x.GetOrCreateFile(DefaultImageName, false)).Returns(string.Empty);
+            mockFileManager.Setup(x => x.GetOrCreateFile(ImageName, false)).Returns(string.Empty);
 
             // Act
-            Action action = () => sut.PatchAfterSetUi(agent, mockManagementSlotTestAdapter.Object, mockFileManager.Object, texture2dTestAdapter: mockTexture2dTestAdapter.Object);
+            Action action = () => sut.PatchAfterSetUi(agent, ImageName, mockManagementSlotTestAdapter.Object, mockFileManager.Object, texture2dTestAdapter: mockTexture2dTestAdapter.Object);
 
             // Assert
-            action.Should().Throw<InvalidOperationException>().WithMessage("No image found with name " + DefaultImageName);
+            action.Should().Throw<InvalidOperationException>().WithMessage("No image found with name " + ImageName);
         }
 
         [Fact]
@@ -60,7 +60,7 @@ namespace LobotomyCorporationMods.Test.Mods.GiftAvailabilityIndicator.Patches
             var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1);
             var mockImageTestAdapter = GetMockImageTestAdapter();
 
-            SetUpSlot(sut, agent, DefaultImageName, mockImageTestAdapter);
+            SetUpSlot(sut, agent, nameof(Hides_image_when_abnormality_does_not_have_a_gift), mockImageTestAdapter);
 
             mockImageTestAdapter.Object.Color.Should().Be(_noGiftColor);
         }
@@ -91,7 +91,7 @@ namespace LobotomyCorporationMods.Test.Mods.GiftAvailabilityIndicator.Patches
             var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1);
             var mockImageTestAdapter = GetMockImageTestAdapter();
 
-            SetUpSlot(sut, agent, DefaultImageName, mockImageTestAdapter);
+            SetUpSlot(sut, agent, nameof(Hides_image_when_abnormality_is_a_tool), mockImageTestAdapter);
 
             mockImageTestAdapter.Object.Color.Should().Be(_noGiftColor);
         }
@@ -161,7 +161,7 @@ namespace LobotomyCorporationMods.Test.Mods.GiftAvailabilityIndicator.Patches
             mockManagementSlotTestAdapter.Setup(x => x.Transform.GetChild(It.IsAny<int>())).Returns(mockTransformTestAdapter.Object);
 
             // Act
-            Action action = () => sut.PatchAfterSetUi(agent, mockManagementSlotTestAdapter.Object, fileManager.Object, mockGameObjectAdapter.Object, mockTexture2dTestAdapter.Object,
+            Action action = () => sut.PatchAfterSetUi(agent, imageName, mockManagementSlotTestAdapter.Object, fileManager.Object, mockGameObjectAdapter.Object, mockTexture2dTestAdapter.Object,
                 mockSpriteTestAdapter.Object);
 
             // Assert
