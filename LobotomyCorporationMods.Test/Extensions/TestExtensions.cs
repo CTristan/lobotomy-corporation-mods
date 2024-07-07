@@ -42,11 +42,13 @@ namespace LobotomyCorporationMods.Test.Extensions
 
         [NotNull]
         internal static CreatureModel GetCreatureWithGift(CreatureIds creatureId = CreatureIds.OneSin,
+            EquipmentIds giftId = EquipmentIds.None,
             EGOgiftAttachRegion attachPosition = EGOgiftAttachRegion.HEAD,
             int qliphothCounter = 0,
             bool maxObservation = true)
         {
             var equipmentTypeInfo = UnityTestExtensions.CreateEquipmentTypeInfo();
+            equipmentTypeInfo.id = (int)giftId;
             equipmentTypeInfo.type = EquipmentTypeInfo.EquipmentType.SPECIAL;
             equipmentTypeInfo.attachPos = attachPosition.ToString();
 
