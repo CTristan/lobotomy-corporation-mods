@@ -33,7 +33,7 @@ namespace LobotomyCorporationMods.Test.Mods.GiftAvailabilityIndicator.Patches
             // Arrange
             var sut = UnityTestExtensions.CreateManagementSlot();
             var creature = UnityTestExtensions.CreateCreatureModel();
-            _ = TestExtensions.InitializeCommandWindow(creature);
+            _ = TestExtensions.InitializeCommandWindowWithAbnormality(creature);
             var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1, unitBuffs: new List<UnitBuf>());
             var mockImageTestAdapter = GetMockImageTestAdapter();
 
@@ -48,12 +48,27 @@ namespace LobotomyCorporationMods.Test.Mods.GiftAvailabilityIndicator.Patches
             // Arrange
             var sut = UnityTestExtensions.CreateManagementSlot();
             var creature = TestExtensions.GetCreatureWithGift(giftId: EquipmentIds.CrumblingArmorGift1, attachPosition: EGOgiftAttachRegion.HEAD);
-            _ = TestExtensions.InitializeCommandWindow(creature);
+            _ = TestExtensions.InitializeCommandWindowWithAbnormality(creature);
             var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1, EGOgiftAttachRegion.HEAD, new List<UnitBuf>());
             const string ImageName = nameof(Hides_image_when_abnormality_does_not_have_a_gift);
             var mockImageTestAdapter = GetMockImageTestAdapter();
 
             SetUpSlot(sut, agent, ImageName, mockImageTestAdapter);
+
+            mockImageTestAdapter.Object.Color.Should().Be(_noGiftColor);
+        }
+
+        [Fact]
+        public void Hides_image_when_abnormality_is_a_tool()
+        {
+            // Arrange
+            var sut = UnityTestExtensions.CreateManagementSlot();
+            var unitModel = UnityTestExtensions.CreateUnitModel();
+            _ = UnityTestExtensions.CreateCommandWindow(unitModel);
+            var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1, unitBuffs: new List<UnitBuf>());
+            var mockImageTestAdapter = GetMockImageTestAdapter();
+
+            SetUpSlot(sut, agent, DefaultImageName, mockImageTestAdapter);
 
             mockImageTestAdapter.Object.Color.Should().Be(_noGiftColor);
         }
@@ -67,7 +82,7 @@ namespace LobotomyCorporationMods.Test.Mods.GiftAvailabilityIndicator.Patches
             // Arrange
             var sut = UnityTestExtensions.CreateManagementSlot();
             var creature = TestExtensions.GetCreatureWithGift(attachPosition: firstGiftPosition);
-            _ = TestExtensions.InitializeCommandWindow(creature);
+            _ = TestExtensions.InitializeCommandWindowWithAbnormality(creature);
             var imageName = nameof(Shows_as_new_gift_when_gift_is_in_a_new_slot) + firstGiftPosition + newGiftPosition;
             var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1, newGiftPosition, new List<UnitBuf>());
             var mockImageTestAdapter = GetMockImageTestAdapter();
@@ -86,7 +101,7 @@ namespace LobotomyCorporationMods.Test.Mods.GiftAvailabilityIndicator.Patches
             // Arrange
             var sut = UnityTestExtensions.CreateManagementSlot();
             var creature = TestExtensions.GetCreatureWithGift(attachPosition: firstGiftPosition);
-            _ = TestExtensions.InitializeCommandWindow(creature);
+            _ = TestExtensions.InitializeCommandWindowWithAbnormality(creature);
             var imageName = nameof(Shows_as_replacement_gift_when_gift_is_in_an_existing_slot) + firstGiftPosition + newGiftPosition;
             var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1, newGiftPosition, new List<UnitBuf>());
             var mockImageTestAdapter = GetMockImageTestAdapter();

@@ -105,7 +105,7 @@ namespace LobotomyCorporationMods.Test.Extensions
         }
 
         [NotNull]
-        internal static CommandWindow.CommandWindow InitializeCommandWindow([CanBeNull] UnitModel currentTarget = null,
+        internal static CommandWindow.CommandWindow InitializeCommandWindowWithAbnormality([CanBeNull] UnitModel currentTarget = null,
             RwbpType rwbpType = (RwbpType)1,
             [NotNull] string textValue = "")
         {

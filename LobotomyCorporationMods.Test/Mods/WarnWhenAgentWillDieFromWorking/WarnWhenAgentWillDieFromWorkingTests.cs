@@ -83,7 +83,7 @@ namespace LobotomyCorporationMods.Test.Mods.WarnWhenAgentWillDieFromWorking
             buffList = buffList.EnsureNotNullWithMethod(() => new List<UnitBuf>());
 
             var creature = TestExtensions.GetCreatureWithGift(creatureId, qliphothCounter: qliphothCounter);
-            _ = TestExtensions.InitializeCommandWindow(creature, skillType, DeadAgentString);
+            _ = TestExtensions.InitializeCommandWindowWithAbnormality(creature, skillType, DeadAgentString);
             var agent = GetAgentWithGift(giftIds, buffList);
 
             return UnityTestExtensions.CreateAgentSlot(currentAgent: agent);
