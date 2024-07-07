@@ -14,31 +14,31 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             return managementSlot.GetAbnormalityGift().IsNotNull();
         }
 
-        public static int GetAbnormalityGiftId([NotNull] this ManagementSlot managementSlot)
+        public static int? GetAbnormalityGiftId([NotNull] this ManagementSlot managementSlot)
         {
-            return managementSlot.GetAbnormalityGiftInfo()?.id ?? 0;
+            return managementSlot.GetAbnormalityGiftInfo()?.id;
         }
 
-        [NotNull]
+        [CanBeNull]
         public static string GetAbnormalityGiftName([NotNull] this CreatureEquipmentMakeInfo creatureEquipmentMakeInfo)
         {
-            return creatureEquipmentMakeInfo.GetAbnormalityGiftInfo()?.Name ?? string.Empty;
+            return creatureEquipmentMakeInfo.GetAbnormalityGiftInfo()?.Name;
         }
 
-        [NotNull]
+        [CanBeNull]
         public static string GetAbnormalityGiftName([NotNull] this UseSkill useSkill)
         {
-            return useSkill.GetAbnormalityGiftInfo()?.Name ?? string.Empty;
+            return useSkill.GetAbnormalityGiftInfo()?.Name;
         }
 
-        [NotNull]
+        [CanBeNull]
         public static string GetAbnormalityGiftSlot([NotNull] this ManagementSlot managementSlot)
         {
-            return managementSlot.GetAbnormalityGiftInfo()?.attachPos ?? string.Empty;
+            return managementSlot.GetAbnormalityGiftInfo()?.attachPos;
         }
 
         public static bool HasGift([NotNull] this UnitModel unitModel,
-            int giftId)
+            int? giftId)
         {
             Guard.Against.Null(unitModel, nameof(unitModel));
 
@@ -48,7 +48,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         }
 
         public static bool HasGiftInPosition([NotNull] this UnitModel unitModel,
-            [NotNull] string positionName)
+            string positionName)
         {
             Guard.Against.Null(unitModel, nameof(unitModel));
 
