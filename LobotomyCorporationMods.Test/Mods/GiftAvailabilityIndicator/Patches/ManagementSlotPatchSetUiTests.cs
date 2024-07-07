@@ -22,7 +22,7 @@ namespace LobotomyCorporationMods.Test.Mods.GiftAvailabilityIndicator.Patches
 {
     public sealed class ManagementSlotPatchSetUiTests : GiftAvailabilityIndicatorTests
     {
-        private const string ImageName = "Assets/gift.png";
+        private const string DefaultImageName = "Assets/gift.png";
         private readonly Color _newGiftColor = Color.green;
         private readonly Color _noGiftColor = Color.clear;
         private readonly Color _replacementGiftColor = Color.grey;
@@ -37,7 +37,7 @@ namespace LobotomyCorporationMods.Test.Mods.GiftAvailabilityIndicator.Patches
             var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1, unitBuffs: new List<UnitBuf>());
             var mockImageTestAdapter = GetMockImageTestAdapter();
 
-            SetUpSlot(sut, agent, mockImageTestAdapter);
+            SetUpSlot(sut, agent, DefaultImageName, mockImageTestAdapter);
 
             mockImageTestAdapter.Object.Color.Should().Be(_noGiftColor);
         }
@@ -50,15 +50,17 @@ namespace LobotomyCorporationMods.Test.Mods.GiftAvailabilityIndicator.Patches
             var creature = TestExtensions.GetCreatureWithGift(giftId: EquipmentIds.CrumblingArmorGift1, attachPosition: EGOgiftAttachRegion.HEAD);
             _ = TestExtensions.InitializeCommandWindow(creature);
             var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1, EGOgiftAttachRegion.HEAD, new List<UnitBuf>());
+            const string ImageName = nameof(Hides_image_when_abnormality_does_not_have_a_gift);
             var mockImageTestAdapter = GetMockImageTestAdapter();
 
-            SetUpSlot(sut, agent, mockImageTestAdapter);
+            SetUpSlot(sut, agent, ImageName, mockImageTestAdapter);
 
             mockImageTestAdapter.Object.Color.Should().Be(_noGiftColor);
         }
 
         [Theory]
-        [InlineData(EGOgiftAttachRegion.HEAD, EGOgiftAttachRegion.EYE)]
+        [InlineData(EGOgiftAttachRegion.EYE, EGOgiftAttachRegion.MOUTH)]
+        [InlineData(EGOgiftAttachRegion.LEFTHAND, EGOgiftAttachRegion.MASK)]
         public void Shows_as_new_gift_when_gift_is_in_a_new_slot(EGOgiftAttachRegion firstGiftPosition,
             EGOgiftAttachRegion newGiftPosition)
         {
@@ -66,16 +68,18 @@ namespace LobotomyCorporationMods.Test.Mods.GiftAvailabilityIndicator.Patches
             var sut = UnityTestExtensions.CreateManagementSlot();
             var creature = TestExtensions.GetCreatureWithGift(attachPosition: firstGiftPosition);
             _ = TestExtensions.InitializeCommandWindow(creature);
+            var imageName = nameof(Shows_as_new_gift_when_gift_is_in_a_new_slot) + firstGiftPosition + newGiftPosition;
             var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1, newGiftPosition, new List<UnitBuf>());
             var mockImageTestAdapter = GetMockImageTestAdapter();
 
-            SetUpSlot(sut, agent, mockImageTestAdapter);
+            SetUpSlot(sut, agent, imageName, mockImageTestAdapter);
 
             mockImageTestAdapter.Object.Color.Should().Be(_newGiftColor);
         }
 
         [Theory]
-        [InlineData(EGOgiftAttachRegion.HEAD, EGOgiftAttachRegion.HEAD)]
+        [InlineData(EGOgiftAttachRegion.EYE, EGOgiftAttachRegion.EYE)]
+        [InlineData(EGOgiftAttachRegion.LEFTHAND, EGOgiftAttachRegion.LEFTHAND)]
         public void Shows_as_replacement_gift_when_gift_is_in_an_existing_slot(EGOgiftAttachRegion firstGiftPosition,
             EGOgiftAttachRegion newGiftPosition)
         {
@@ -83,10 +87,11 @@ namespace LobotomyCorporationMods.Test.Mods.GiftAvailabilityIndicator.Patches
             var sut = UnityTestExtensions.CreateManagementSlot();
             var creature = TestExtensions.GetCreatureWithGift(attachPosition: firstGiftPosition);
             _ = TestExtensions.InitializeCommandWindow(creature);
+            var imageName = nameof(Shows_as_replacement_gift_when_gift_is_in_an_existing_slot) + firstGiftPosition + newGiftPosition;
             var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1, newGiftPosition, new List<UnitBuf>());
             var mockImageTestAdapter = GetMockImageTestAdapter();
 
-            SetUpSlot(sut, agent, mockImageTestAdapter);
+            SetUpSlot(sut, agent, imageName, mockImageTestAdapter);
 
             mockImageTestAdapter.Object.Color.Should().Be(_replacementGiftColor);
         }
@@ -95,6 +100,7 @@ namespace LobotomyCorporationMods.Test.Mods.GiftAvailabilityIndicator.Patches
 
         private static void SetUpSlot(ManagementSlot sut,
             AgentModel agent,
+            string imageName,
             [NotNull] Mock<IImageTestAdapter> mockImageTestAdapter)
         {
             var fileManager = TestExtensions.GetMockFileManager();
@@ -108,12 +114,12 @@ namespace LobotomyCorporationMods.Test.Mods.GiftAvailabilityIndicator.Patches
             mockTooltipMouseOverTestAdapter.SetupGet(x => x.Transform).Returns(mockTransformTestAdapter.Object);
 
             var mockGameObjectAdapter = new Mock<IGameObjectTestAdapter>();
-            mockGameObjectAdapter.SetupGet(x => x.Transform).Returns(mockTransformTestAdapter.Object);
+            mockGameObjectAdapter.SetupGet(x => x.Transform).Returns(mockImageTestAdapter.Object.Transform);
             mockGameObjectAdapter.Setup(x => x.AddImageComponent()).Returns(mockImageTestAdapter.Object);
             mockGameObjectAdapter.Setup(x => x.ImageComponent).Returns(mockImageTestAdapter.Object);
 
             var mockManagementSlotTestAdapter = new Mock<IManagementSlotTestAdapter>();
-            mockManagementSlotTestAdapter.Setup(x => x.Name).Returns(ImageName);
+            mockManagementSlotTestAdapter.Setup(x => x.Name).Returns(imageName);
             mockManagementSlotTestAdapter.Setup(x => x.Transform.GetChild(It.IsAny<int>())).Returns(mockTransformTestAdapter.Object);
 
             // Act
@@ -137,6 +143,7 @@ namespace LobotomyCorporationMods.Test.Mods.GiftAvailabilityIndicator.Patches
             mockImageTestAdapter.SetupAllProperties();
             mockImageTestAdapter.Setup(x => x.AddTooltipMouseOverComponent()).Returns(mockTooltipMouseOverTestAdapter.Object);
             mockImageTestAdapter.Setup(x => x.TooltipMouseOverComponent).Returns(mockTooltipMouseOverTestAdapter.Object);
+            mockImageTestAdapter.SetupGet(x => x.Transform).Returns(mockTransformTestAdapter.Object);
 
             return mockImageTestAdapter;
         }
