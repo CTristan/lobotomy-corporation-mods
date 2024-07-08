@@ -99,6 +99,9 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
 
             action.Should().NotThrow();
             _fakeHarmonyPatch.Logger.Should().NotBeNull();
+
+            // Cleanup
+            DeleteXmlLocalizationFile();
         }
 
         [Fact]
@@ -147,6 +150,13 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
             var file = new FileInfo(Path.Combine(currentDirectory, LocalizationFile));
             file.Directory.Create();
             File.WriteAllText(file.FullName, xmlTextBuilder.ToString());
+        }
+
+        private static void DeleteXmlLocalizationFile()
+        {
+            var currentDirectory = Directory.GetCurrentDirectory();
+            const string LocalizationFile = "Localize/en/text_en.xml";
+            File.Delete(Path.Combine(currentDirectory, LocalizationFile));
         }
 
         #endregion

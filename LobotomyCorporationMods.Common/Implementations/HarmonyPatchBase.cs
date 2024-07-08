@@ -122,9 +122,7 @@ namespace LobotomyCorporationMods.Common.Implementations
             Logger.AddTarget(angelaLoggerTarget);
         }
 
-        /// <summary>
-        /// Needed because Basemod doesn't use a localization file as a backup, so in other languages it will default everything to "UKNOWN".
-        /// </summary>
+        /// <summary>Needed because Basemod doesn't use a localization file as a backup, so in other languages it will default everything to "UKNOWN".</summary>
         private void AddDefaultLocalizedText()
         {
             var defaultLocalizationFile = FileManager.GetFile("Localize/en/text_en.xml");
