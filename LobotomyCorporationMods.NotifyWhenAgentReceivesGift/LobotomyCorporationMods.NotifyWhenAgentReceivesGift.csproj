@@ -48,5 +48,9 @@
     <Content Include="Info\GlobalInfo.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Remove="Localize\en\text_en.xml"/>
+    <Content Include="Localize\en\text_en.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>

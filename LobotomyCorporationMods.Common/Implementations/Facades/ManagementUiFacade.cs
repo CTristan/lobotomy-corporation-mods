@@ -34,7 +34,9 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             Guard.Against.Null(fileManager, nameof(fileManager));
 
             s_imagesDictionary = s_imagesDictionary.EnsureNotNullWithMethod(() => new Dictionary<string, IImageTestAdapter>());
-            if (s_imagesDictionary.ContainsKey(imageName))
+
+            // When retrieving the object from the dictionary, it is possible that Unity has destroyed the engine object.
+            if (s_imagesDictionary.TryGetValue(imageName, out var value) && !value.IsUnityNull())
             {
                 return;
             }
@@ -59,7 +61,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
                 imageGameObjectTestAdapter, spriteTestAdapter);
 
             var imageTestAdapter = imageObject.ImageComponent;
-            s_imagesDictionary.Add(imageName, imageTestAdapter);
+            s_imagesDictionary[imageName] = imageTestAdapter;
         }
 
         public static string GetSlotName([NotNull] this ManagementSlot managementSlot,

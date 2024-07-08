@@ -11,6 +11,7 @@ using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Implementations.Facades;
 using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
+using LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Constants;
 
 #endregion
 
@@ -46,7 +47,8 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches
             }
 
             // Send notification that the agent acquired the gift
-            var message = $"<color=#66bfcd>{instance.GetUnitName()}</color> has received the gift <color=#84bd36>{gift.metaInfo.Name}</color>.";
+            var notificationMessage = LocalizeIds.LogMessage.GetLocalized();
+            var message = $"<color=#66bfcd>{instance.GetUnitName()}</color>{notificationMessage}<color=#84bd36>{gift.metaInfo.Name}</color>.";
             instance.SendMessage(message, noticeTestAdapter);
         }
 

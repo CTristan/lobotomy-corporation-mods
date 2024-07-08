@@ -1,18 +1,15 @@
 // SPDX-License-Identifier: MIT
 
-#region
-
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml;
 using Harmony;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations.LoggerTargets;
 using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
-
-#endregion
 
 namespace LobotomyCorporationMods.Common.Implementations
 {
@@ -89,6 +86,7 @@ namespace LobotomyCorporationMods.Common.Implementations
             try
             {
                 HandleDirectories(directories, modFileName);
+                InitializeLogger(angelaConversationUiTestAdapter);
             }
             catch (TypeInitializationException)
             {
@@ -96,7 +94,7 @@ namespace LobotomyCorporationMods.Common.Implementations
                 return;
             }
 
-            InitializeLogger(angelaConversationUiTestAdapter);
+            AddDefaultLocalizedData();
             ApplyHarmonyPatch(type, modFileName);
         }
 
@@ -122,6 +120,38 @@ namespace LobotomyCorporationMods.Common.Implementations
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             var angelaLoggerTarget = new AngelaLoggerTarget(logToAngela, angelaConversationUiTestAdapter);
             Logger.AddTarget(angelaLoggerTarget);
+        }
+
+        private void AddDefaultLocalizedData()
+        {
+            var defaultLocalizationFile = FileManager.GetFile("Localize/en/text_en.xml");
+
+            if (!File.Exists(defaultLocalizationFile))
+            {
+                return;
+            }
+
+            var xml = File.ReadAllText(defaultLocalizationFile);
+            var xmlDocument = new XmlDocument
+            {
+                XmlResolver = null,
+            };
+
+            var xmlSettings = new XmlReaderSettings
+            {
+                ProhibitDtd = true,
+            };
+
+            using (var xmlReader = XmlReader.Create(new StringReader(xml), xmlSettings))
+            {
+                xmlDocument.Load(xmlReader);
+            }
+
+            var dataLoader = new LocalizeTextDataLoader("en");
+            foreach (var keyValuePair in dataLoader.LoadText(xmlDocument))
+            {
+                DefaultLocalizedValues.AddOrOverwriteDefaultLocalizedValue(keyValuePair.Key, keyValuePair.Value);
+            }
         }
 
         private void ValidateThatStaticInstanceIsNotDuplicated()

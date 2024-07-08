@@ -5,10 +5,12 @@
 using System.Text;
 using CommandWindow;
 using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations.Facades;
 using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
+using LobotomyCorporationMods.GiftAvailabilityIndicator.Constants;
 using UnityEngine;
 
 #endregion
@@ -27,9 +29,13 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Extensions
             [CanBeNull] ISpriteTestAdapter spriteTestAdapter = null)
         {
             var color = Color.green;
+            var tooltipLine1 = LocalizationIds.NewGiftTooltip1.GetLocalized();
+            var tooltipLine2 = LocalizationIds.NewGiftTooltip2.GetLocalized();
+
             var tooltipMessage = new StringBuilder();
-            tooltipMessage.AppendLine("Gift available in new slot");
-            tooltipMessage.AppendLine("Using this agent may provide the agent with a gift in a slot that is currently empty");
+            tooltipMessage.AppendLine(tooltipLine1);
+            tooltipMessage.AppendLine();
+            tooltipMessage.AppendLine(tooltipLine2);
 
             managementSlot.UpdateImage(imageName, imagePath, fileManager, color, tooltipMessage.ToString(), testAdapter, imageGameObjectTestAdapter, texture2dTestAdapter, spriteTestAdapter);
         }
@@ -44,9 +50,13 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Extensions
             [CanBeNull] ISpriteTestAdapter spriteTestAdapter = null)
         {
             var color = Color.grey;
+            var tooltipLine1 = LocalizationIds.ReplacementGiftTooltip1.GetLocalized();
+            var tooltipLine2 = LocalizationIds.ReplacementGiftTooltip2.GetLocalized();
+
             var tooltipMessage = new StringBuilder();
-            tooltipMessage.AppendLine("Gift may replace another gift");
-            tooltipMessage.AppendLine("This agent already has a gift in this slot");
+            tooltipMessage.AppendLine(tooltipLine1);
+            tooltipMessage.AppendLine();
+            tooltipMessage.AppendLine(tooltipLine2);
 
             managementSlot.UpdateImage(imageName, imagePath, fileManager, color, tooltipMessage.ToString(), testAdapter, imageGameObjectTestAdapter, texture2dTestAdapter, spriteTestAdapter);
         }

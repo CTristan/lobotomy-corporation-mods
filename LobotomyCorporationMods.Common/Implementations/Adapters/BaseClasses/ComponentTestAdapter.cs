@@ -21,6 +21,11 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses
         [NotNull]
         public ITransformTestAdapter Transform => new TransformTestAdapter(GameObject.transform);
 
+        public bool IsUnityNull()
+        {
+            return !GameObject;
+        }
+
         public void SetActive(bool value)
         {
             GameObject.gameObject.SetActive(value);

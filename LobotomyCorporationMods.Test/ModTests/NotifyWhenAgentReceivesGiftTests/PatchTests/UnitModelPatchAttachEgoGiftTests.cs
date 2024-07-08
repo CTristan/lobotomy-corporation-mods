@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using FluentAssertions;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches;
+using LobotomyCorporationMods.Test.Constants;
 using LobotomyCorporationMods.Test.Extensions;
 using Moq;
 using Xunit;
@@ -91,8 +92,8 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
 
         [Theory]
         [InlineData(DefaultAgentName, DefaultGiftName,
-            "<color=" + ColorAgentString + ">" + DefaultAgentName + "</color> has received the gift <color=" + ColorGiftString + ">" + DefaultGiftName + "</color>.")]
-        [InlineData("TestAgent", "TestGift", "<color=" + ColorAgentString + ">TestAgent</color> has received the gift <color=" + ColorGiftString + ">TestGift</color>.")]
+            "<color=" + ColorAgentString + ">" + DefaultAgentName + "</color>" + TextValues.LocalizedValue + "<color=" + ColorGiftString + ">" + DefaultGiftName + "</color>.")]
+        [InlineData("TestAgent", "TestGift", "<color=" + ColorAgentString + ">TestAgent</color>" + TextValues.LocalizedValue + "<color=" + ColorGiftString + ">TestGift</color>.")]
         public void Receiving_a_gift_causes_a_notification(string agentName,
             [NotNull] string giftName,
             string expectedMessage)
