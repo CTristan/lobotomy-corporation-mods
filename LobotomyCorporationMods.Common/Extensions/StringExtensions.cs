@@ -11,7 +11,7 @@ namespace LobotomyCorporationMods.Common.Extensions
         [NotNull]
         public static string GetLocalized(this string localizeTextId)
         {
-            const string MissingLocalizationText = "UNKNOWN";
+            const string MissingLocalizationText = LocalizeTextDataModel.Failed;
 
             var localizedText = LocalizeTextDataModel.instance.GetText(localizeTextId);
 

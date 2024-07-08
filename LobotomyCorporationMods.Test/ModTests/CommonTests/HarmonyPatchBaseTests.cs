@@ -49,6 +49,29 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
             mockLogger.VerifyArgumentNullException(Action);
         }
 
+        [Theory]
+        [InlineData("")]
+        [InlineData("Test Text")]
+        public void Initializing_localized_text_returns_correct_value(string expectedValue)
+        {
+            // Arrange
+            var key = nameof(Initializing_localized_text_returns_correct_value) + expectedValue;
+            var dictionary = new Dictionary<string, string>
+            {
+                {
+                    key, expectedValue
+                },
+            };
+
+            LocalizeTextDataModel.instance.Init(dictionary);
+
+            // Act
+            var dictionaryValue = key.GetLocalized();
+
+            // Assert
+            dictionaryValue.Should().Be(expectedValue).And.NotBe(LocalizeTextDataModel.Failed);
+        }
+
         [Fact]
         public void Initializing_patch_data_with_directory_does_not_error_and_initializes_logger()
         {
@@ -111,11 +134,13 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         private static void GenerateXmlLocalizationFile()
         {
             var currentDirectory = Directory.GetCurrentDirectory();
+            const string xmlTextId = "testId";
+            const string xmlTextValue = "Test Text";
 
             var xmlTextBuilder = new StringBuilder();
             xmlTextBuilder.AppendLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
             xmlTextBuilder.AppendLine("<localize>");
-            xmlTextBuilder.AppendLine("    <text id=\"testId\">Test Text</text>\n");
+            xmlTextBuilder.AppendLine($"    <text id=\"{xmlTextId}\">{xmlTextValue}</text>\n");
             xmlTextBuilder.AppendLine("</localize>");
 
             const string LocalizationFile = "Localize/en/text_en.xml";
