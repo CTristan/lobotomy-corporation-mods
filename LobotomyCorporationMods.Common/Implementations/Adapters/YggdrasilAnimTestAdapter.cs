@@ -29,7 +29,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
         {
             get
             {
-                var flowers = GameObject.flowers;
+                var flowers = _gameObject.flowers;
 
                 return flowers.Select(flower => new GameObjectTestAdapter(flower)).Cast<IGameObjectTestAdapter>();
             }

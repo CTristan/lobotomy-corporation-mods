@@ -1,4 +1,4 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <localize>
-    <text id="NotifyWhenAgentReceivesGift_ReceiveGiftMessage">has received the gift</text>
+    <text id="NotifyWhenAgentReceivesGift_ReceiveGiftMessage"> has received the gift </text>
 </localize>

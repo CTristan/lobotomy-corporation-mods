@@ -19,33 +19,33 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
         }
 
         [NotNull]
-        public ITransformTestAdapter Parent => new TransformTestAdapter(GameObject.parent);
+        public ITransformTestAdapter Parent => new TransformTestAdapter(_gameObject.parent);
 
         [NotNull]
         public ITransformTestAdapter GetChild(int index)
         {
-            return new TransformTestAdapter(GameObject.GetChild(index));
+            return new TransformTestAdapter(_gameObject.GetChild(index));
         }
 
         public Vector3 LocalPosition
         {
             get =>
-                GameObject.localPosition;
+                _gameObject.localPosition;
             set =>
-                GameObject.localPosition = value;
+                _gameObject.localPosition = value;
         }
 
         public Vector3 LocalScale
         {
             get =>
-                GameObject.localScale;
+                _gameObject.localScale;
             set =>
-                GameObject.localScale = value;
+                _gameObject.localScale = value;
         }
 
         public void SetParent([NotNull] ITransformTestAdapter parent)
         {
-            GameObject.SetParent(parent.GameObject);
+            _gameObject.SetParent(parent.GameObject);
         }
     }
 }

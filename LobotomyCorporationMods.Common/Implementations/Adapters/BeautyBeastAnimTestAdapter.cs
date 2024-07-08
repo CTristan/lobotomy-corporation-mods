@@ -21,6 +21,6 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
         {
         }
 
-        public int State => GameObject.GetState();
+        public int State => _gameObject.GetState();
     }
 }

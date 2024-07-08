@@ -35,7 +35,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 
         public void OnViewInit()
         {
-            GameObject.OnViewInit(GameObject.Unit);
+            _gameObject.OnViewInit(_gameObject.Unit);
         }
     }
 }

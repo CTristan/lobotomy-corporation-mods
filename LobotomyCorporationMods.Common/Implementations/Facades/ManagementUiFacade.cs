@@ -1,7 +1,6 @@
 ﻿// SPDX-License-Identifier: MIT
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using CommandWindow;
 using JetBrains.Annotations;
@@ -11,6 +10,7 @@ using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
 using UnityEngine;
+using UnityEngine.UI;
 
 // ReSharper disable UnusedParameter.Global
 
@@ -19,7 +19,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
     [SuppressMessage("Style", "IDE0060:Remove unused parameter")]
     public static class ManagementUiFacade
     {
-        [ThreadStatic] private static Dictionary<string, IImageTestAdapter> s_imagesDictionary;
+        [ThreadStatic] private static UnityAdapterDictionary<string, IImageTestAdapter, Image> s_imagesDictionary;
 
         private static void CreateImageObjectIfNotExist([NotNull] this ManagementSlot managementSlot,
             [NotNull] string imageName,
@@ -33,10 +33,9 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             Guard.Against.Null(managementSlot, nameof(managementSlot));
             Guard.Against.Null(fileManager, nameof(fileManager));
 
-            s_imagesDictionary = s_imagesDictionary.EnsureNotNullWithMethod(() => new Dictionary<string, IImageTestAdapter>());
+            s_imagesDictionary = s_imagesDictionary.EnsureNotNullWithMethod(() => new UnityAdapterDictionary<string, IImageTestAdapter, Image>());
 
-            // When retrieving the object from the dictionary, it is possible that Unity has destroyed the engine object.
-            if (s_imagesDictionary.TryGetValue(imageName, out var value) && !value.IsUnityNull())
+            if (s_imagesDictionary.ContainsKey(imageName))
             {
                 return;
             }

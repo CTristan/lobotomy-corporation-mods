@@ -25,7 +25,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
         public void SetAgentBasicData(WorkerSprite.WorkerSprite workerSprite,
             Appearance appear)
         {
-            GameObject.SetAgentBasicData(workerSprite, appear);
+            _gameObject.SetAgentBasicData(workerSprite, appear);
         }
     }
 }

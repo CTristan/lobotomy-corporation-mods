@@ -23,7 +23,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 
         public void AddMessage(string message)
         {
-            GameObject.AddAngelaMessage(message);
+            _gameObject.AddAngelaMessage(message);
         }
     }
 }

@@ -18,6 +18,6 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
         {
         }
 
-        public string Name => GameObject.name;
+        public string Name => _gameObject.name;
     }
 }

@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
+using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
 using UnityEngine;
@@ -23,23 +24,31 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses
         {
         }
 
-        public bool ActiveSelf => GameObject.activeSelf;
+        public bool ActiveSelf => _gameObject.activeSelf;
 
         [NotNull]
-        public ITransformTestAdapter Transform => new TransformTestAdapter(GameObject.transform);
+        public ITransformTestAdapter Transform => new TransformTestAdapter(_gameObject.transform);
 
         [NotNull]
         public IImageTestAdapter AddImageComponent()
         {
-            return new ImageTestAdapter(GameObject.AddComponent<Image>());
+            return new ImageTestAdapter(_gameObject.AddComponent<Image>());
         }
 
         [NotNull]
-        public IImageTestAdapter ImageComponent => new ImageTestAdapter(GameObject.GetComponent<Image>());
+        public IImageTestAdapter ImageComponent => new ImageTestAdapter(_gameObject.GetComponent<Image>());
 
         public void SetActive(bool value)
         {
-            GameObject.SetActive(value);
+            _gameObject.SetActive(value);
+        }
+
+        public override GameObject GameObject
+        {
+            get =>
+                !_gameObject.IsUnityNull() ? _gameObject : null;
+            set =>
+                _gameObject = value;
         }
     }
 }

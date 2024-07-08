@@ -86,7 +86,6 @@ namespace LobotomyCorporationMods.Common.Implementations
             try
             {
                 HandleDirectories(directories, modFileName);
-                InitializeLogger(angelaConversationUiTestAdapter);
             }
             catch (TypeInitializationException)
             {
@@ -94,7 +93,8 @@ namespace LobotomyCorporationMods.Common.Implementations
                 return;
             }
 
-            AddDefaultLocalizedData();
+            InitializeLogger(angelaConversationUiTestAdapter);
+            AddDefaultLocalizedText();
             ApplyHarmonyPatch(type, modFileName);
         }
 
@@ -122,7 +122,10 @@ namespace LobotomyCorporationMods.Common.Implementations
             Logger.AddTarget(angelaLoggerTarget);
         }
 
-        private void AddDefaultLocalizedData()
+        /// <summary>
+        /// Needed because Basemod doesn't use a localization file as a backup, so in other languages it will default everything to "UKNOWN".
+        /// </summary>
+        private void AddDefaultLocalizedText()
         {
             var defaultLocalizationFile = FileManager.GetFile("Localize/en/text_en.xml");
 
