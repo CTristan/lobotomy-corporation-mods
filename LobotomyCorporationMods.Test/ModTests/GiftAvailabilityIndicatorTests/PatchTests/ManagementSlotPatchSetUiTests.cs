@@ -14,6 +14,7 @@ using LobotomyCorporationMods.GiftAvailabilityIndicator.Patches;
 using LobotomyCorporationMods.Test.Extensions;
 using Moq;
 using UnityEngine;
+using UnityEngine.UI;
 using Xunit;
 
 #endregion
@@ -25,6 +26,48 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAvailabilityIndicatorTests.P
         private readonly Color _newGiftColor = Color.green;
         private readonly Color _noGiftColor = Color.clear;
         private readonly Color _replacementGiftColor = Color.grey;
+
+        [Fact]
+        public void Only_creates_image_object_once()
+        {
+            // Arrange
+            var sut = UnityTestExtensions.CreateManagementSlot();
+            const string ImageName = nameof(Only_creates_image_object_once);
+            var creature = UnityTestExtensions.CreateCreatureModel();
+            _ = TestExtensions.InitializeCommandWindowWithAbnormality(creature);
+            var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1);
+            var fileManager = TestExtensions.GetMockFileManager();
+            var mockTexture2dTestAdapter = new Mock<ITexture2dTestAdapter>();
+            var mockSpriteTestAdapter = new Mock<ISpriteTestAdapter>();
+
+            var mockImageTestAdapter = GetMockImageTestAdapter();
+            mockImageTestAdapter.SetupGet(x => x.GameObject).Returns(new Mock<Image>().Object);
+
+            var mockGameObjectAdapter = new Mock<IGameObjectTestAdapter>();
+            mockGameObjectAdapter.SetupGet(x => x.Transform).Returns(mockImageTestAdapter.Object.Transform);
+            mockGameObjectAdapter.Setup(x => x.AddImageComponent()).Returns(mockImageTestAdapter.Object);
+            mockGameObjectAdapter.Setup(x => x.ImageComponent).Returns(mockImageTestAdapter.Object);
+
+            var mockTransformTestAdapter = new Mock<ITransformTestAdapter>();
+            mockTransformTestAdapter.SetupGet(x => x.Parent).Returns(mockTransformTestAdapter.Object);
+
+            var mockTooltipMouseOverTestAdapter = new Mock<ITooltipMouseOverTestAdapter>();
+            mockTooltipMouseOverTestAdapter.SetupGet(x => x.Transform).Returns(mockTransformTestAdapter.Object);
+
+            var mockManagementSlotTestAdapter = new Mock<IManagementSlotTestAdapter>();
+            mockManagementSlotTestAdapter.Setup(x => x.Name).Returns(ImageName);
+            mockManagementSlotTestAdapter.Setup(x => x.Transform.GetChild(It.IsAny<int>())).Returns(mockTransformTestAdapter.Object);
+
+            // Act
+            // Run twice to see if the image gets created a second time
+            sut.PatchAfterSetUi(agent, ImageName, mockManagementSlotTestAdapter.Object, fileManager.Object, mockGameObjectAdapter.Object, mockTexture2dTestAdapter.Object,
+                mockSpriteTestAdapter.Object);
+            sut.PatchAfterSetUi(agent, ImageName, mockManagementSlotTestAdapter.Object, fileManager.Object, mockGameObjectAdapter.Object, mockTexture2dTestAdapter.Object,
+                mockSpriteTestAdapter.Object);
+
+            // Assert
+            fileManager.Verify(x => x.GetFile(It.IsAny<string>()), Times.Once);
+        }
 
         [Fact]
         public void Errors_when_image_file_does_not_exist()
