@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using FluentAssertions;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
@@ -63,6 +64,21 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         }
 
         [Fact]
+        public void Initializing_patch_data_with_english_localization_file_does_not_error_and_initializes_logger()
+        {
+            var currentDirectory = Directory.GetCurrentDirectory();
+            GenerateXmlLocalizationFile();
+
+            Action action = () => _fakeHarmonyPatch.TestInitializePatchData(new List<DirectoryInfo>
+            {
+                new DirectoryInfo(currentDirectory),
+            });
+
+            action.Should().NotThrow();
+            _fakeHarmonyPatch.Logger.Should().NotBeNull();
+        }
+
+        [Fact]
         public void Trying_to_initialize_patch_without_inheriting_from_base_does_not_initialize()
         {
             var currentDirectory = Directory.GetCurrentDirectory();
@@ -89,6 +105,26 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
 
             action.Should().Throw<InvalidOperationException>();
         }
+
+        #region Helper Methods
+
+        private static void GenerateXmlLocalizationFile()
+        {
+            var currentDirectory = Directory.GetCurrentDirectory();
+
+            var xmlTextBuilder = new StringBuilder();
+            xmlTextBuilder.AppendLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+            xmlTextBuilder.AppendLine("<localize>");
+            xmlTextBuilder.AppendLine("    <text id=\"testId\">Test Text</text>\n");
+            xmlTextBuilder.AppendLine("</localize>");
+
+            const string LocalizationFile = "Localize/en/text_en.xml";
+            var file = new FileInfo(Path.Combine(currentDirectory, LocalizationFile));
+            file.Directory.Create();
+            File.WriteAllText(file.FullName, xmlTextBuilder.ToString());
+        }
+
+        #endregion
     }
 
     /// <summary>Only to be used for HarmonyPatchBase tests.</summary>
