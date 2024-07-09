@@ -35,6 +35,14 @@
       <HintPath>..\external\LobotomyCorp_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="UnityEngine.JSONSerializeModule">
+      <HintPath>..\external\LobotomyCorp_Data\Managed\UnityEngine.JSONSerializeModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>..\external\LobotomyCorp_Data\Managed\UnityEngine.UI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net35" Version="1.0.3">
@@ -51,6 +59,10 @@
     </Content>
     <Content Include="Info\GlobalInfo.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Remove="Presets\OriginalPresets.json"/>
+    <Content Include="Presets\OriginalPresets.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 </Project>

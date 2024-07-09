@@ -148,7 +148,9 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
 
             const string LocalizationFile = "Localize/en/text_en.xml";
             var file = new FileInfo(Path.Combine(currentDirectory, LocalizationFile));
-            file.Directory.Create();
+
+            file.Directory?.Create();
+
             File.WriteAllText(file.FullName, xmlTextBuilder.ToString());
         }
 
