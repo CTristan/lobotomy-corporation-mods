@@ -18,6 +18,35 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests
     public sealed class HarmonyPatchTests
     {
         [Fact]
+        public void Class_AgentData_Method_AppearCopy_is_patched_correctly()
+        {
+            var patch = typeof(AgentDataPatchAppearCopy);
+            var originalClass = typeof(AgentData);
+            const string MethodName = nameof(AgentData.AppearCopy);
+
+            patch.ValidateHarmonyPatch(originalClass, MethodName);
+        }
+
+        [Fact]
+        public void Class_AgentData_Method_AppearCopy_logs_exceptions()
+        {
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
+
+            // ReSharper disable AssignNullToNotNullAttribute
+            // Forcing null arguments to test exception logging.
+            Action action = () => AgentDataPatchAppearCopy.Postfix(null, new AgentData());
+            // ReSharper enable AssignNullToNotNullAttribute
+
+            mockLogger.VerifyArgumentNullException(action);
+
+            // Verify other arguments throw an exception if null
+            action = () => AgentDataPatchAppearCopy.Postfix(UnityTestExtensions.CreateAgentData(), null);
+            const int NumberOfLogs = 2;
+            mockLogger.VerifyArgumentNullException(action, Times.Exactly(NumberOfLogs));
+        }
+
+        [Fact]
         public void Class_AgentInfoWindow_Method_EnforcementWindow_is_patched_correctly()
         {
             var patch = typeof(AgentInfoWindowPatchEnforcementWindow);

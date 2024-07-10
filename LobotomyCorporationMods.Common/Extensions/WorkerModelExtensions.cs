@@ -27,6 +27,7 @@ namespace LobotomyCorporationMods.Common.Extensions
                 Eye_Panic = workerModel.spriteData.EyePanic,
                 Eye_Dead = workerModel.spriteData.EyeDead,
                 Mouth_Def = workerModel.spriteData.Mouth,
+                Mouth_Panic = workerModel.spriteData.PanicMouth,
                 Mouth_Battle = workerModel.spriteData.BattleMouth,
                 HairColor = workerModel.spriteData.HairColor,
                 EyeColor = workerModel.spriteData.EyeColor,
@@ -47,6 +48,7 @@ namespace LobotomyCorporationMods.Common.Extensions
             workerModel.spriteData.EyePanic = appearance.Eye_Panic;
             workerModel.spriteData.EyeDead = appearance.Eye_Dead;
             workerModel.spriteData.Mouth = appearance.Mouth_Def;
+            workerModel.spriteData.PanicMouth = appearance.Mouth_Panic;
             workerModel.spriteData.BattleMouth = appearance.Mouth_Battle;
             workerModel.spriteData.HairColor = appearance.HairColor;
             workerModel.spriteData.EyeColor = appearance.EyeColor;
