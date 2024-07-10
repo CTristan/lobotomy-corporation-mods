@@ -48,7 +48,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
                 var uniqueCreditInfo = AgentNameList.instance.GetUniqueCreditInfo(name);
                 CustomizingWindow.CurrentWindow.GenUniqueSpriteSet(uniqueCreditInfo, ref instance.copied);
 
-                presetSaver.SavePreset(name, instance.original.appearance.spriteSet);
+                presetSaver.SavePreset(name, instance.original.appearance);
 
                 if (!presetLoader.IsPreset(name))
                 {

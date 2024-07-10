@@ -1,10 +1,12 @@
 ﻿// SPDX-License-Identifier: MIT
 
+using Customizing;
+
 namespace LobotomyCorporationMods.FreeCustomization.Interfaces
 {
     public interface IPresetSaver
     {
         void SavePreset(string agentName,
-            WorkerSprite.WorkerSprite agentData);
+            Appearance agentData);
     }
 }

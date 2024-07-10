@@ -2,6 +2,7 @@
 
 using System.IO;
 using System.Xml.Serialization;
+using Customizing;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.FreeCustomization.Interfaces;
@@ -20,7 +21,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Implementations
         }
 
         public void SavePreset(string agentName,
-            [NotNull] WorkerSprite.WorkerSprite agentData)
+            [NotNull] Appearance agentData)
         {
             var data = new Preset
             {
