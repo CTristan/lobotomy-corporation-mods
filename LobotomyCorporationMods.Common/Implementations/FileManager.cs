@@ -53,6 +53,16 @@ namespace LobotomyCorporationMods.Common.Implementations
             }
         }
 
+        public void CreateDirectoryIfNotExists([NotNull] string path)
+        {
+            if (Directory.Exists(path))
+            {
+                return;
+            }
+
+            Directory.CreateDirectory(path);
+        }
+
         public string GetFile([NotNull] string fileName)
         {
             if (_filesCache.TryGetValue(fileName, out var value))
@@ -64,6 +74,15 @@ namespace LobotomyCorporationMods.Common.Implementations
             _filesCache.Add(fileName, fullFilePath);
 
             return _filesCache[fileName];
+        }
+
+        [NotNull]
+        public IEnumerable<string> GetFilesFromDirectory([NotNull] string path,
+            [NotNull] string searchPattern = "*.*")
+        {
+            var fullPath = Path.Combine(_dataPath.FullName, path);
+
+            return Directory.GetFiles(fullPath, searchPattern);
         }
 
         [NotNull]
@@ -93,11 +112,19 @@ namespace LobotomyCorporationMods.Common.Implementations
         }
 
         public void WriteAllText([NotNull] string fileWithPath,
-            string contents)
+            string contents,
+            bool append = false)
         {
             lock (_fileLock)
             {
-                File.WriteAllText(fileWithPath, contents);
+                if (append)
+                {
+                    File.AppendAllText(fileWithPath, contents);
+                }
+                else
+                {
+                    File.WriteAllText(fileWithPath, contents);
+                }
             }
         }
     }

@@ -13,6 +13,7 @@ using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Implementations.Facades;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
+using LobotomyCorporationMods.FreeCustomization.Extensions;
 
 #endregion
 
@@ -29,6 +30,8 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
             Guard.Against.Null(instance, nameof(instance));
 
             instance.OpenAppearancePanel(agentInfoWindowUiComponentsTestAdapter, customizingWindowTestAdapter, gameObjectTestAdapter);
+
+            instance.CreateSavePresetButton();
         }
 
         /// <summary>Runs after opening the Strengthen Agent window to open the appearance window.</summary>

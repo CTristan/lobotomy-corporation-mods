@@ -3,6 +3,9 @@
 #region
 
 using LobotomyCorporationMods.Common.Implementations;
+using LobotomyCorporationMods.FreeCustomization.Implementations;
+using LobotomyCorporationMods.FreeCustomization.Interfaces;
+using UnityEngine.UI;
 
 #endregion
 
@@ -19,6 +22,12 @@ namespace LobotomyCorporationMods.FreeCustomization
 
         private Harmony_Patch(bool initialize) : base(typeof(Harmony_Patch), "LobotomyCorporationMods.FreeCustomization.dll", initialize)
         {
+            PresetLoader = new PresetLoader(FileManager);
+            PresetSaver = new PresetSaver(FileManager, PresetLoader);
         }
+
+        internal IPresetLoader PresetLoader { get; }
+        internal IPresetSaver PresetSaver { get; }
+        internal Button SavePresetButton { get; set; }
     }
 }

@@ -140,7 +140,7 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests
             {
                 // ReSharper disable once AssignNullToNotNullAttribute
                 // Forcing null argument to test exception logging.
-                AppearanceUiPatchOnSetNameText.Prefix(null);
+                AppearanceUiPatchOnSetNameText.Postfix(null);
             }
 
             mockLogger.VerifyArgumentNullException(Action);

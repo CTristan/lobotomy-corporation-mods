@@ -28,6 +28,9 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
             instance.appearance.Mouth_Panic = copied.appearance.Mouth_Panic;
         }
 
+        /// <summary>Runs after the AppearCopy method in AgentData is called so that we can correctly set the Panic Mouth, fixing a bug in the original game.</summary>
+        /// <param name="__instance">The instance of AgentData.</param>
+        /// <param name="copied">The copied AgentData.</param>
         [EntryPoint]
         [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
         // ReSharper disable once InconsistentNaming

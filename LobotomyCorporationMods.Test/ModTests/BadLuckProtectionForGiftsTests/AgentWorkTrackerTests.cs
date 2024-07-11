@@ -168,7 +168,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
 
             // Assert
             agentWorkTracker.GetLastAgentWorkCountByGift(DefaultGiftName).Should().Be(0);
-            mockFileManager.Verify(manager => manager.WriteAllText(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+            mockFileManager.Verify(manager => manager.WriteAllText(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>()), Times.Once);
         }
 
         #region Helper Methods
