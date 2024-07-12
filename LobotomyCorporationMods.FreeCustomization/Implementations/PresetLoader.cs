@@ -1,9 +1,11 @@
 ﻿// SPDX-License-Identifier: MIT
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Customizing;
 using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.FreeCustomization.Constants;
 using LobotomyCorporationMods.FreeCustomization.Interfaces;
@@ -23,32 +25,61 @@ namespace LobotomyCorporationMods.FreeCustomization.Implementations
         internal PresetLoader(IFileManager fileManager)
         {
             _fileManager = fileManager;
-            InitializeAllPresetFiles();
+            // InitializeAllPresetFiles();
         }
 
         public Dictionary<string, PresetData> Presets { get; } = new Dictionary<string, PresetData>();
 
-        public bool IsPreset([NotNull] string agentName)
+        public bool IsExactPreset([NotNull] string agentName,
+            Appearance appearance)
+        {
+            if (!HasPreset(agentName))
+            {
+                return false;
+            }
+
+            var preset = Presets[agentName];
+
+            var presetCheckList = new List<bool>
+            {
+                Compare(preset.FrontHair, appearance.FrontHair?.name) && Compare(preset.RearHair, appearance.RearHair?.name) && Compare(preset.EyebrowDef, appearance.Eyebrow_Def?.name) &&
+                Compare(preset.EyebrowBattle, appearance.Eyebrow_Battle?.name) && Compare(preset.EyebrowPanic, appearance.Eyebrow_Panic?.name) && Compare(preset.EyeDef, appearance.Eye_Def?.name) &&
+                Compare(preset.EyeBattle, appearance.Eye_Battle?.name) && Compare(preset.EyePanic, appearance.Eye_Panic?.name) && Compare(preset.EyeDead, appearance.Eye_Dead?.name) &&
+                Compare(preset.MouthDef, appearance.Mouth_Def?.name) && Compare(preset.MouthBattle, appearance.Mouth_Battle?.name) &&
+                Compare(preset.HairColor, appearance.HairColor.ToHtmlStringRgb()) && Compare(preset.EyeColor, appearance.EyeColor.ToHtmlStringRgb()),
+            };
+
+            return presetCheckList.TrueForAll(isEqual => isEqual);
+        }
+
+        public bool HasPreset([NotNull] string agentName)
         {
             return Presets.ContainsKey(agentName);
         }
 
-        public void LoadPreset([NotNull] string agentName)
+        [NotNull]
+        public PresetList LoadPresetsFromDefaultCustomFile()
         {
-            InitializeAllPresetFiles();
+            var defaultCustomFile = _fileManager.GetFile(PresetDefaults.DefaultCustomFileName);
 
-            if (!IsPreset(agentName))
+            return LoadPresetListFromFile(defaultCustomFile);
+        }
+
+        public AgentData LoadPreset([NotNull] string agentName)
+        {
+            var customizingWindow = CustomizingWindow.CurrentWindow;
+            var data = customizingWindow.CurrentData;
+
+            if (!HasPreset(agentName))
             {
-                return;
+                return data;
             }
 
             var preset = Presets[agentName];
 
             // Load the preset into the currently-customizing agent
-            var customizingWindow = CustomizingWindow.CurrentWindow;
-            var data = customizingWindow.CurrentData;
             var spriteSet = GetSpriteSet(preset);
-            data.appearance = new Appearance
+            var appearance = new Appearance
             {
                 spriteSet = spriteSet,
                 FrontHair = spriteSet.FrontHair,
@@ -57,58 +88,31 @@ namespace LobotomyCorporationMods.FreeCustomization.Implementations
                 Eyebrow_Battle = spriteSet.BattleEyeBrow,
                 Eyebrow_Panic = spriteSet.PanicEyeBrow,
                 Eye_Def = spriteSet.Eye,
-                Eye_Battle = spriteSet.BattleEyeBrow,
-                Eye_Panic = spriteSet.PanicEyeBrow,
+                Eye_Panic = spriteSet.EyePanic,
                 Eye_Dead = spriteSet.EyeDead,
                 Mouth_Def = spriteSet.Mouth,
                 Mouth_Battle = spriteSet.BattleMouth,
                 Mouth_Panic = spriteSet.PanicMouth,
                 HairColor = spriteSet.HairColor,
                 EyeColor = spriteSet.EyeColor,
+
+                // This is an issue with the original game because there is no sprite for Combat Eyes, so the original code does the same thing as this.
+                Eye_Battle = spriteSet.BattleEyeBrow,
             };
 
-
+            data.appearance = appearance;
             customizingWindow.portrait.SetCustomizing(data);
+
+            return data;
         }
 
-        [NotNull]
-        public PresetList LoadSerializablePresetsFromDefaultCustomFile()
+        public void InitializeDefaultCustomPresetFile()
         {
-            var defaultCustomFile = _fileManager.GetFile(PresetDefaults.DefaultCustomFileName);
-
-            return LoadPresetListFromFile(defaultCustomFile);
-        }
-
-        private static WorkerSprite.WorkerSprite GetSpriteSet(PresetData preset)
-        {
-            var workerSprite = new WorkerSprite.WorkerSprite
+            var presetList = LoadPresetListFromFile(_fileManager.GetFile(PresetDefaults.DefaultCustomFileName));
+            foreach (var preset in presetList.Presets)
             {
-                FrontHair = GetSpriteFromGameData(BasicSpriteRegion.HAIR_FRONT, preset.FrontHair),
-                RearHair = GetSpriteFromGameData(BasicSpriteRegion.HAIR_REAR, preset.RearHair),
-                EyeBrow = GetSpriteFromGameData(BasicSpriteRegion.EYEBROW, preset.EyebrowDef),
-                BattleEyeBrow = GetSpriteFromGameData(BasicSpriteRegion.EYEBROW_BATTLE, preset.EyebrowBattle),
-                PanicEyeBrow = GetSpriteFromGameData(BasicSpriteRegion.EYEBROW_PANIC, preset.EyebrowPanic),
-                Eye = GetSpriteFromGameData(BasicSpriteRegion.EYE_DEFAULT, preset.EyeDef),
-                EyePanic = GetSpriteFromGameData(BasicSpriteRegion.EYE_PANIC, preset.EyePanic),
-                EyeDead = GetSpriteFromGameData(BasicSpriteRegion.EYE_DEAD, preset.EyeDead),
-                Mouth = GetSpriteFromGameData(BasicSpriteRegion.MOUTH, preset.MouthDef),
-                BattleMouth = GetSpriteFromGameData(BasicSpriteRegion.MOUTH_BATTLE, preset.MouthBattle),
-                PanicMouth = GetSpriteFromGameData(BasicSpriteRegion.MOUTH_PANIC, preset.MouthPanic),
-                HairColor = preset.HairColor.ToColor(),
-                EyeColor = preset.EyeColor.ToColor(),
-            };
-
-            return workerSprite;
-        }
-
-        private static Sprite GetSpriteFromGameData(BasicSpriteRegion region,
-            string spriteName)
-        {
-            // Get the list of sprites loaded into the game
-            var workerBasicSpriteController = WorkerSpriteDataLoader.Loader.basic;
-
-            workerBasicSpriteController.GetData(region, out var workerBasicSprite);
-            return workerBasicSprite.GetAllSprites().Find(x => x.name == spriteName);
+                Presets[preset.Key] = preset.Value;
+            }
         }
 
         private void InitializeAllPresetFiles()
@@ -122,6 +126,66 @@ namespace LobotomyCorporationMods.FreeCustomization.Implementations
             {
                 Presets[preset.Key] = preset.Value;
             }
+
+            // Reload the default preset file last so that it overrules the presets from other files
+            InitializeDefaultCustomPresetFile();
+        }
+
+        private static bool Compare(string currentValue,
+            string newValue)
+        {
+            // If either value is null, it can't be compared anyway so just say it's good
+            if (currentValue.IsNull() || newValue.IsNull())
+            {
+                return true;
+            }
+
+            var valuesAreEqual = currentValue.Equals(newValue, StringComparison.OrdinalIgnoreCase);
+
+            return valuesAreEqual;
+        }
+
+        [NotNull]
+        private static WorkerSprite.WorkerSprite GetSpriteSet([NotNull] PresetData preset)
+        {
+            if (!ColorUtility.TryParseHtmlString(preset.HairColor, out var hairColor))
+            {
+                hairColor = Color.white;
+            }
+
+            if (!ColorUtility.TryParseHtmlString(preset.EyeColor, out var eyeColor))
+            {
+                eyeColor = Color.white;
+            }
+
+            var workerSprite = new WorkerSprite.WorkerSprite
+            {
+                FrontHair = GetSpriteFromGameData(BasicSpriteRegion.HAIR_FRONT, preset.FrontHair),
+                RearHair = GetSpriteFromGameData(BasicSpriteRegion.HAIR_REAR, preset.RearHair),
+                EyeBrow = GetSpriteFromGameData(BasicSpriteRegion.EYEBROW, preset.EyebrowDef),
+                BattleEyeBrow = GetSpriteFromGameData(BasicSpriteRegion.EYEBROW_BATTLE, preset.EyebrowBattle),
+                PanicEyeBrow = GetSpriteFromGameData(BasicSpriteRegion.EYEBROW_PANIC, preset.EyebrowPanic),
+                Eye = GetSpriteFromGameData(BasicSpriteRegion.EYE_DEFAULT, preset.EyeDef),
+                EyePanic = GetSpriteFromGameData(BasicSpriteRegion.EYE_PANIC, preset.EyePanic),
+                EyeDead = GetSpriteFromGameData(BasicSpriteRegion.EYE_DEAD, preset.EyeDead),
+                Mouth = GetSpriteFromGameData(BasicSpriteRegion.MOUTH, preset.MouthDef),
+                BattleMouth = GetSpriteFromGameData(BasicSpriteRegion.MOUTH_BATTLE, preset.MouthBattle),
+                PanicMouth = GetSpriteFromGameData(BasicSpriteRegion.MOUTH_PANIC, preset.MouthPanic),
+                HairColor = hairColor,
+                EyeColor = eyeColor,
+            };
+
+            return workerSprite;
+        }
+
+        private static Sprite GetSpriteFromGameData(BasicSpriteRegion region,
+            string spriteName)
+        {
+            // Get the list of sprites loaded into the game
+            var workerBasicSpriteController = WorkerSpriteDataLoader.Loader.basic;
+
+            workerBasicSpriteController.GetData(region, out var workerBasicSprite);
+            return workerBasicSprite.GetAllSprites().Find(x => x.name == spriteName);
         }
 
         [NotNull]

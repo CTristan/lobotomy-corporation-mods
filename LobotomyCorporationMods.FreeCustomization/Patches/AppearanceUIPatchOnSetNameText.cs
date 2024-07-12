@@ -31,30 +31,22 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
             fileManager = fileManager.EnsureNotNullWithMethod(() => Harmony_Patch.Instance.FileManager);
             presetLoader = presetLoader.EnsureNotNullWithMethod(() => new PresetLoader(fileManager));
 
-            var name = instance.NameInput.text;
-            if (name.Equals(instance.original.agentName.GetName(), StringComparison.OrdinalIgnoreCase) || string.IsNullOrEmpty(name))
+            var agentName = instance.NameInput.text;
+            if (!presetLoader.HasPreset(agentName))
             {
-                instance.copied.isCustomName = false;
+                return;
             }
-            else
-            {
-                instance.copied.isCustomName = true;
-                instance.copied.CustomName = name;
 
-                // // Should only be needed to save the existing unique agents
-                // // Can delete these lines afterward if not needed
-                // var uniqueCreditInfo = AgentNameList.instance.GetUniqueCreditInfo(name);
-                // CustomizingWindow.CurrentWindow.GenUniqueSpriteSet(uniqueCreditInfo, ref instance.copied);
+            instance.copied.isCustomName = true;
+            instance.copied.CustomName = agentName;
+            instance.copied.isUniqueCredit = false;
+            var loadedAgentData = presetLoader.LoadPreset(agentName);
 
-                if (!presetLoader.IsPreset(name))
-                {
-                    return;
-                }
+            instance.palette.OnSetColor(loadedAgentData.appearance.HairColor);
+            instance.SetAppearanceSprite(loadedAgentData);
+            instance.SetCreditControl(true);
 
-                presetLoader.LoadPreset(name);
-
-                instance.SetCreditControl(true);
-            }
+            Harmony_Patch.Instance.PresetSaver.UpdateSavePresetButtonText(agentName, loadedAgentData.appearance);
         }
 
         [EntryPoint]

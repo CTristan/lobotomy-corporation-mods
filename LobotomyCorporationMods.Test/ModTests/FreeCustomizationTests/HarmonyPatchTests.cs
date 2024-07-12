@@ -147,6 +147,32 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests
         }
 
         [Fact]
+        public void Class_AppearanceUI_Method_UpdatePortrait_is_patched_correctly()
+        {
+            var patch = typeof(AppearanceUIPatchUpdatePortrait);
+            var originalClass = typeof(AppearanceUI);
+            const string MethodName = nameof(AppearanceUI.UpdatePortrait);
+
+            patch.ValidateHarmonyPatch(originalClass, MethodName);
+        }
+
+        [Fact]
+        public void Class_AppearanceUI_Method_UpdatePortrait_logs_exceptions()
+        {
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
+
+            void Action()
+            {
+                // ReSharper disable once AssignNullToNotNullAttribute
+                // Forcing null argument to test exception logging.
+                AppearanceUIPatchUpdatePortrait.Postfix(null);
+            }
+
+            mockLogger.VerifyArgumentNullException(Action);
+        }
+
+        [Fact]
         public void Class_CustomizingWindow_Method_Confirm_is_patched_correctly()
         {
             var patch = typeof(CustomizingWindowPatchConfirm);

@@ -31,7 +31,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Objects
                 }
 
                 var indent = new string(' ', InitialIndentLevel * 2);
-                jsonBuilder.AppendLine($"{indent}\"{kvp.Key}\" : ");
+                jsonBuilder.AppendLine($"{indent}\"{kvp.Key}\": ");
                 jsonBuilder.Append(kvp.Value.ToJson(ValueIndentLevel));
             }
 

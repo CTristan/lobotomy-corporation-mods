@@ -3,8 +3,10 @@
 using Customizing;
 using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.FreeCustomization.Constants;
+using LobotomyCorporationMods.FreeCustomization.Extensions;
 using LobotomyCorporationMods.FreeCustomization.Interfaces;
 using LobotomyCorporationMods.FreeCustomization.Objects;
+using UnityEngine;
 
 namespace LobotomyCorporationMods.FreeCustomization.Implementations
 {
@@ -27,18 +29,26 @@ namespace LobotomyCorporationMods.FreeCustomization.Implementations
             var appearanceData = customizingWindow.appearanceUI.copied.appearance;
 
             // Reload the default custom preset file in case there are any missing changes before we overwrite the file.
-            var data = ReloadDefaultPresetFile();
+            var data = _presetLoader.LoadPresetsFromDefaultCustomFile();
             data.Presets[agentName] = PresetData.FromAppearanceData(appearanceData);
 
             var jsonData = data.ToJson();
             var fileName = _fileManager.GetFile(PresetDefaults.DefaultCustomFileName);
             _fileManager.WriteAllText(fileName, jsonData);
+
+            UpdateSavePresetButtonText(agentName, appearanceData);
         }
 
-        /// <summary>Reloads the default custom preset file from disk in case there are any missing changes before we overwrite the file.</summary>
-        private PresetList ReloadDefaultPresetFile()
+        public void UpdateSavePresetButtonText(string agentName,
+            Appearance appearance)
         {
-            return _presetLoader.LoadSerializablePresetsFromDefaultCustomFile();
+            if (Harmony_Patch.Instance.SavePresetButtonText == null)
+            {
+                AgentInfoWindow.currentWindow.CreateSavePresetButtonText();
+            }
+
+            _presetLoader.InitializeDefaultCustomPresetFile();
+            Harmony_Patch.Instance.SavePresetButtonText.color = Harmony_Patch.Instance.PresetLoader.IsExactPreset(agentName, appearance) ? Color.grey : new Color(239f / 256f, 139f / 256f, 39f / 256f);
         }
     }
 }

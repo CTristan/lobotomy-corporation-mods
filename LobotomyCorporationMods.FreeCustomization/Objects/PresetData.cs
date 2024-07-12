@@ -25,8 +25,8 @@ namespace LobotomyCorporationMods.FreeCustomization.Objects
         public string MouthDef { get; set; }
         public string MouthPanic { get; set; }
         public string RearHair { get; set; }
-        public PresetColor HairColor { get; set; }
-        public PresetColor EyeColor { get; set; }
+        public string HairColor { get; set; }
+        public string EyeColor { get; set; }
 
         [NotNull]
         internal static PresetData FromAppearanceData([NotNull] Appearance appearance)
@@ -47,8 +47,8 @@ namespace LobotomyCorporationMods.FreeCustomization.Objects
                 MouthDef = appearance.Mouth_Def.GetSpriteName(),
                 MouthPanic = appearance.Mouth_Panic.GetSpriteName(),
                 RearHair = appearance.RearHair.GetSpriteName(),
-                HairColor = PresetColor.FromColor(appearance.HairColor),
-                EyeColor = PresetColor.FromColor(appearance.EyeColor),
+                HairColor = appearance.HairColor.ToHtmlStringRgb(),
+                EyeColor = appearance.EyeColor.ToHtmlStringRgb(),
             };
         }
 
@@ -62,21 +62,20 @@ namespace LobotomyCorporationMods.FreeCustomization.Objects
             var jsonBuilder = new StringBuilder($"{indent}{{{Environment.NewLine}");
 
             var nextIndent = new string(' ', (indentLevel + 1) * 2);
-            var nextIndentLevel = indentLevel + 2;
-            jsonBuilder.AppendLine($"{nextIndent}\"{nameof(EyeBattle)}\" : \"{EyeBattle}\",");
-            jsonBuilder.AppendLine($"{nextIndent}\"{nameof(EyeDead)}\" : \"{EyeDead}\",");
-            jsonBuilder.AppendLine($"{nextIndent}\"{nameof(EyeDef)}\" : \"{EyeDef}\",");
-            jsonBuilder.AppendLine($"{nextIndent}\"{nameof(EyePanic)}\" : \"{EyePanic}\",");
-            jsonBuilder.AppendLine($"{nextIndent}\"{nameof(EyebrowBattle)}\" : \"{EyebrowBattle}\",");
-            jsonBuilder.AppendLine($"{nextIndent}\"{nameof(EyebrowDef)}\" : \"{EyebrowDef}\",");
-            jsonBuilder.AppendLine($"{nextIndent}\"{nameof(EyebrowPanic)}\" : \"{EyebrowPanic}\",");
-            jsonBuilder.AppendLine($"{nextIndent}\"{nameof(FrontHair)}\" : \"{FrontHair}\",");
-            jsonBuilder.AppendLine($"{nextIndent}\"{nameof(MouthBattle)}\" : \"{MouthBattle}\",");
-            jsonBuilder.AppendLine($"{nextIndent}\"{nameof(MouthDef)}\" : \"{MouthDef}\",");
-            jsonBuilder.AppendLine($"{nextIndent}\"{nameof(MouthPanic)}\" : \"{MouthPanic}\",");
-            jsonBuilder.AppendLine($"{nextIndent}\"{nameof(RearHair)}\" : \"{RearHair}\",");
-            jsonBuilder.AppendLine($"{nextIndent}\"{nameof(HairColor)}\" : {HairColor.ToJson(nextIndentLevel)},");
-            jsonBuilder.AppendLine($"{nextIndent}\"{nameof(EyeColor)}\" : {EyeColor.ToJson(nextIndentLevel)}");
+            jsonBuilder.AppendLine($"{nextIndent}\"{nameof(EyeBattle)}\": \"{EyeBattle}\",");
+            jsonBuilder.AppendLine($"{nextIndent}\"{nameof(EyeDead)}\": \"{EyeDead}\",");
+            jsonBuilder.AppendLine($"{nextIndent}\"{nameof(EyeDef)}\": \"{EyeDef}\",");
+            jsonBuilder.AppendLine($"{nextIndent}\"{nameof(EyePanic)}\": \"{EyePanic}\",");
+            jsonBuilder.AppendLine($"{nextIndent}\"{nameof(EyebrowBattle)}\": \"{EyebrowBattle}\",");
+            jsonBuilder.AppendLine($"{nextIndent}\"{nameof(EyebrowDef)}\": \"{EyebrowDef}\",");
+            jsonBuilder.AppendLine($"{nextIndent}\"{nameof(EyebrowPanic)}\": \"{EyebrowPanic}\",");
+            jsonBuilder.AppendLine($"{nextIndent}\"{nameof(FrontHair)}\": \"{FrontHair}\",");
+            jsonBuilder.AppendLine($"{nextIndent}\"{nameof(MouthBattle)}\": \"{MouthBattle}\",");
+            jsonBuilder.AppendLine($"{nextIndent}\"{nameof(MouthDef)}\": \"{MouthDef}\",");
+            jsonBuilder.AppendLine($"{nextIndent}\"{nameof(MouthPanic)}\": \"{MouthPanic}\",");
+            jsonBuilder.AppendLine($"{nextIndent}\"{nameof(RearHair)}\": \"{RearHair}\",");
+            jsonBuilder.AppendLine($"{nextIndent}\"{nameof(HairColor)}\": \"{HairColor}\",");
+            jsonBuilder.AppendLine($"{nextIndent}\"{nameof(EyeColor)}\": \"{EyeColor}\"");
 
             jsonBuilder.Append($"{indent}}}");
 

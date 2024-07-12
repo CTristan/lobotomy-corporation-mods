@@ -29,5 +29,6 @@ namespace LobotomyCorporationMods.FreeCustomization
         internal IPresetLoader PresetLoader { get; }
         internal IPresetSaver PresetSaver { get; }
         internal Button SavePresetButton { get; set; }
+        internal Text SavePresetButtonText { get; set; }
     }
 }

@@ -8,5 +8,8 @@ namespace LobotomyCorporationMods.FreeCustomization.Constants
     {
         [NotNull]
         internal static string DefaultCustomFileName => "Presets/presets.json";
+
+        [NotNull]
+        internal static string SaveIcon => "Assets/save.png";
     }
 }

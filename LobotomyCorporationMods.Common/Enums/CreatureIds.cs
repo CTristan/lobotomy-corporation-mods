@@ -4,7 +4,6 @@ namespace LobotomyCorporationMods.Common.Enums
 {
     public enum CreatureIds
     {
-        // ReSharper disable once UnusedMember.Global
         None = 0,
 
         BeautyAndTheBeast = 100013,

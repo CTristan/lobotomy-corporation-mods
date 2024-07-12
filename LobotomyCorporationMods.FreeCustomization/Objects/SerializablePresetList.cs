@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using JetBrains.Annotations;
 
 namespace LobotomyCorporationMods.FreeCustomization.Objects
@@ -47,31 +46,8 @@ namespace LobotomyCorporationMods.FreeCustomization.Objects
                 MouthBattle = value[nameof(PresetData.MouthBattle)].ToString(),
                 MouthDef = value[nameof(PresetData.MouthDef)].ToString(),
                 MouthPanic = value[nameof(PresetData.MouthPanic)].ToString(),
-                HairColor = ToPresetColor(value[nameof(PresetData.HairColor)]),
-                EyeColor = ToPresetColor(value[nameof(PresetData.EyeColor)]),
-            };
-        }
-
-        [NotNull]
-        private static PresetColor ToPresetColor([NotNull] object value)
-        {
-            return value is Dictionary<string, object> dictionary ? ToPresetColor(dictionary) : throw new ArgumentException("The value must be a dictionary");
-        }
-
-        [NotNull]
-        private static PresetColor ToPresetColor([NotNull] Dictionary<string, object> value)
-        {
-            var redValue = float.TryParse(value[nameof(PresetColor.Red)].ToString(), NumberStyles.Float, CultureInfo.InvariantCulture, out var red) ? red : 0f;
-            var greenValue = float.TryParse(value[nameof(PresetColor.Green)].ToString(), NumberStyles.Float, CultureInfo.InvariantCulture, out var green) ? green : 0f;
-            var blueValue = float.TryParse(value[nameof(PresetColor.Blue)].ToString(), NumberStyles.Float, CultureInfo.InvariantCulture, out var blue) ? blue : 0f;
-            var alphaValue = float.TryParse(value[nameof(PresetColor.Alpha)].ToString(), NumberStyles.Float, CultureInfo.InvariantCulture, out var alpha) ? alpha : 0f;
-
-            return new PresetColor
-            {
-                Red = redValue,
-                Green = greenValue,
-                Blue = blueValue,
-                Alpha = alphaValue,
+                HairColor = value[nameof(PresetData.HairColor)].ToString(),
+                EyeColor = value[nameof(PresetData.EyeColor)].ToString(),
             };
         }
     }

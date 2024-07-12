@@ -32,9 +32,10 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
             instance.OpenAppearancePanel(agentInfoWindowUiComponentsTestAdapter, customizingWindowTestAdapter, gameObjectTestAdapter);
 
             instance.CreateSavePresetButton();
+            instance.CreateSavePresetButtonText();
         }
 
-        /// <summary>Runs after opening the Strengthen Agent window to open the appearance window.</summary>
+        /// <summary>Runs after opening the Strengthen Agent window to force it to open the appearance window.</summary>
         [EntryPoint]
         [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
         public static void Postfix()

@@ -47,7 +47,7 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches
             }
 
             // Send notification that the agent acquired the gift
-            var notificationMessage = LocalizeIds.LogMessage.GetLocalized();
+            var notificationMessage = LocalizationIds.LogMessage.GetLocalized();
             var message = $"<color=#66bfcd>{instance.GetUnitName()}</color>{notificationMessage}<color=#84bd36>{gift.metaInfo.Name}</color>.";
             instance.SendMessage(message, noticeTestAdapter);
         }
