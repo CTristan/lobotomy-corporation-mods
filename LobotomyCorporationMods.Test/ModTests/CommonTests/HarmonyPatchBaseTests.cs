@@ -136,20 +136,19 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
 
         private static void GenerateXmlLocalizationFile()
         {
-            var currentDirectory = Directory.GetCurrentDirectory();
-            const string xmlTextId = "testId";
-            const string xmlTextValue = "Test Text";
+            const string XmlTextId = "testId";
+            const string XmlTextValue = "Test Text";
 
             var xmlTextBuilder = new StringBuilder();
             xmlTextBuilder.AppendLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
             xmlTextBuilder.AppendLine("<localize>");
-            xmlTextBuilder.AppendLine($"    <text id=\"{xmlTextId}\">{xmlTextValue}</text>\n");
+            xmlTextBuilder.AppendLine($"    <text id=\"{XmlTextId}\">{XmlTextValue}</text>\n");
             xmlTextBuilder.AppendLine("</localize>");
 
             const string LocalizationFile = "Localize/en/text_en.xml";
-            var file = new FileInfo(Path.Combine(currentDirectory, LocalizationFile));
-            file.Directory.Create();
-            File.WriteAllText(file.FullName, xmlTextBuilder.ToString());
+            var fileManager = TestExtensions.GetMockFileManager();
+            var fileWithPath = fileManager.Object.GetFile(LocalizationFile);
+            fileManager.Object.WriteAllText(fileWithPath, xmlTextBuilder.ToString());
         }
 
         private static void DeleteXmlLocalizationFile()
