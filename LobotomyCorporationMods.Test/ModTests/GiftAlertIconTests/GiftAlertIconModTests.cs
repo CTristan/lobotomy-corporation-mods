@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 
-using LobotomyCorporationMods.GiftAvailabilityIndicator;
+using LobotomyCorporationMods.GiftAlertIcon;
 using LobotomyCorporationMods.Test.Extensions;
 
-namespace LobotomyCorporationMods.Test.ModTests.GiftAvailabilityIndicatorTests
+namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests
 {
-    public class GiftAvailabilityIndicatorModTests
+    public class GiftAlertIconModTests
     {
-        protected GiftAvailabilityIndicatorModTests()
+        protected GiftAlertIconModTests()
         {
             _ = new Harmony_Patch();
             var mockLogger = TestExtensions.GetMockLogger();

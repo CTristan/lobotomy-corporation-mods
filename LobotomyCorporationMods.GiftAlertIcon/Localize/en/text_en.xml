@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<localize>
+    <text id="GiftAlertIcon_NewGiftTooltip1">Gift available in new slot</text>
+    <text id="GiftAlertIcon_NewGiftTooltip2">Using this agent may provide the agent with a gift in a slot that is currently empty</text>
+    <text id="GiftAlertIcon_ReplacementGiftTooltip1">Gift will replace another gift</text>
+    <text id="GiftAlertIcon_ReplacementGiftTooltip2">This agent already has a gift in this slot</text>
+</localize>

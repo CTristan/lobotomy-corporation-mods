@@ -48,7 +48,7 @@
     <ProjectReference Include="..\LobotomyCorporationMods.BadLuckProtectionForGifts\LobotomyCorporationMods.BadLuckProtectionForGifts.csproj"/>
     <ProjectReference Include="..\LobotomyCorporationMods.BugFixes\LobotomyCorporationMods.BugFixes.csproj"/>
     <ProjectReference Include="..\LobotomyCorporationMods.FreeCustomization\LobotomyCorporationMods.FreeCustomization.csproj"/>
-    <ProjectReference Include="..\LobotomyCorporationMods.GiftAvailabilityIndicator\LobotomyCorporationMods.GiftAvailabilityIndicator.csproj"/>
+    <ProjectReference Include="..\LobotomyCorporationMods.GiftAlertIcon\LobotomyCorporationMods.GiftAlertIcon.csproj"/>
     <ProjectReference Include="..\LobotomyCorporationMods.NotifyWhenAgentReceivesGift\LobotomyCorporationMods.NotifyWhenAgentReceivesGift.csproj"/>
     <ProjectReference Include="..\LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking\LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.csproj"/>
   </ItemGroup>

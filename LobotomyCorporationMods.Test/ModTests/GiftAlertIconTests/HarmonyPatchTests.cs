@@ -5,15 +5,15 @@
 using System;
 using CommandWindow;
 using FluentAssertions;
-using LobotomyCorporationMods.GiftAvailabilityIndicator;
-using LobotomyCorporationMods.GiftAvailabilityIndicator.Patches;
+using LobotomyCorporationMods.GiftAlertIcon;
+using LobotomyCorporationMods.GiftAlertIcon.Patches;
 using LobotomyCorporationMods.Test.Extensions;
 using Moq;
 using Xunit;
 
 #endregion
 
-namespace LobotomyCorporationMods.Test.ModTests.GiftAvailabilityIndicatorTests
+namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests
 {
     public sealed class HarmonyPatchTests
     {

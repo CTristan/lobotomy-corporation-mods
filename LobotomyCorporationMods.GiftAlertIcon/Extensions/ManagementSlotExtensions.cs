@@ -9,12 +9,12 @@ using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations.Facades;
 using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.Common.ParameterObjects;
-using LobotomyCorporationMods.GiftAvailabilityIndicator.Constants;
+using LobotomyCorporationMods.GiftAlertIcon.Constants;
 using UnityEngine;
 
 #endregion
 
-namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Extensions
+namespace LobotomyCorporationMods.GiftAlertIcon.Extensions
 {
     internal static class ManagementSlotExtensions
     {

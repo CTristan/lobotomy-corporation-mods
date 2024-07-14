@@ -11,7 +11,7 @@ using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
 using LobotomyCorporationMods.Common.ParameterObjects;
-using LobotomyCorporationMods.GiftAvailabilityIndicator.Patches;
+using LobotomyCorporationMods.GiftAlertIcon.Patches;
 using LobotomyCorporationMods.Test.Extensions;
 using Moq;
 using UnityEngine;
@@ -20,9 +20,9 @@ using Xunit;
 
 #endregion
 
-namespace LobotomyCorporationMods.Test.ModTests.GiftAvailabilityIndicatorTests.PatchTests
+namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
 {
-    public sealed class ManagementSlotPatchSetUiTests : GiftAvailabilityIndicatorModTests
+    public sealed class ManagementSlotPatchSetUiTests : GiftAlertIconModTests
     {
         private readonly Color _newGiftColor = Color.green;
         private readonly Color _noGiftColor = Color.clear;

@@ -6,7 +6,7 @@ using LobotomyCorporationMods.Common.Implementations;
 
 #endregion
 
-namespace LobotomyCorporationMods.GiftAvailabilityIndicator
+namespace LobotomyCorporationMods.GiftAlertIcon
 {
     // ReSharper disable once InconsistentNaming
     public sealed class Harmony_Patch : HarmonyPatchBase
@@ -17,7 +17,7 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator
         {
         }
 
-        private Harmony_Patch(bool initialize) : base(typeof(Harmony_Patch), "LobotomyCorporationMods.GiftAvailabilityIndicator.dll", initialize)
+        private Harmony_Patch(bool initialize) : base(typeof(Harmony_Patch), "LobotomyCorporationMods.GiftAlertIcon.dll", initialize)
         {
         }
     }

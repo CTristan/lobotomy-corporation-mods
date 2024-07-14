@@ -43,7 +43,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ISSUE_TEMPLATE", "ISSUE_TEM
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LobotomyCorporationMods.NotifyWhenAgentReceivesGift", "LobotomyCorporationMods.NotifyWhenAgentReceivesGift\LobotomyCorporationMods.NotifyWhenAgentReceivesGift.csproj", "{23535F08-014D-47E4-B3A0-EC9C03E9931B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LobotomyCorporationMods.GiftAvailabilityIndicator", "LobotomyCorporationMods.GiftAvailabilityIndicator\LobotomyCorporationMods.GiftAvailabilityIndicator.csproj", "{0B066766-A14E-48C8-93CD-9813C22549F8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LobotomyCorporationMods.GiftAlertIcon", "LobotomyCorporationMods.GiftAlertIcon\LobotomyCorporationMods.GiftAlertIcon.csproj", "{0B066766-A14E-48C8-93CD-9813C22549F8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

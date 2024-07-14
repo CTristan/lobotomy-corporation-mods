@@ -12,6 +12,7 @@
     <RuntimeIdentifiers>win</RuntimeIdentifiers>
     <TargetFramework>net35</TargetFramework>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <RootNamespace>LobotomyCorporationMods.GiftAlertIcon</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugType>full</DebugType>

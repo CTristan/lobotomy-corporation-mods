@@ -14,11 +14,11 @@ using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Implementations.Facades;
 using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.Common.ParameterObjects;
-using LobotomyCorporationMods.GiftAvailabilityIndicator.Extensions;
+using LobotomyCorporationMods.GiftAlertIcon.Extensions;
 
 #endregion
 
-namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Patches
+namespace LobotomyCorporationMods.GiftAlertIcon.Patches
 {
     [HarmonyPatch(typeof(ManagementSlot), nameof(ManagementSlot.SetUI))]
     public static class ManagementSlotPatchSetUi
