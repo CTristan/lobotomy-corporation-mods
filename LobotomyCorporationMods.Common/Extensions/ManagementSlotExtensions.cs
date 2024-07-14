@@ -16,17 +16,13 @@ namespace LobotomyCorporationMods.Common.Extensions
     {
         [NotNull]
         internal static IGameObjectTestAdapter CreateImageObjectTestAdapter([NotNull] this ManagementSlot managementSlot,
-            float localScaleX,
-            float localScaleY,
-            float localPositionX,
-            float localPositionY,
-            float localPositionZ,
+            [NotNull] ImageParameters imageParameters,
             [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null)
         {
             testAdapterParameters = testAdapterParameters.EnsureNotNullWithMethod(() => new OptionalTestAdapterParameters());
-            var managementSlotTestAdapter = testAdapterParameters.ManagementSlotTestAdapter.EnsureNotNullWithMethod(() => new ManagementSlotTestAdapter(managementSlot));
+            testAdapterParameters.ManagementSlotTestAdapter = testAdapterParameters.ManagementSlotTestAdapter.EnsureNotNullWithMethod(() => new ManagementSlotTestAdapter(managementSlot));
 
-            return managementSlotTestAdapter.CreateImageObjectTestAdapter(localScaleX, localScaleY, localPositionX, localPositionY, localPositionZ, testAdapterParameters);
+            return testAdapterParameters.ManagementSlotTestAdapter.CreateImageObjectTestAdapter(imageParameters, testAdapterParameters);
         }
 
         [CanBeNull]

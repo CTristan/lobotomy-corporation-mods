@@ -18,6 +18,7 @@ namespace LobotomyCorporationMods.Common.Extensions
         /// <param name="value">The value to check for null.</param>
         /// <param name="defaultMethod">The method to call to provide a default value if the value.IsNull().</param>
         /// <returns>The original value if it is not null, or the result of the default method if the value.IsNull().</returns>
+        [NotNull]
         public static T EnsureNotNullWithMethod<T>([CanBeNull] this T value,
             [NotNull] Func<T> defaultMethod) where T : class
         {

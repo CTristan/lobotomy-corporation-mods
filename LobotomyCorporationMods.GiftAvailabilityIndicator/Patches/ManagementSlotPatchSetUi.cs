@@ -32,8 +32,26 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Patches
             Guard.Against.Null(instance, nameof(instance));
             fileManager = fileManager.EnsureNotNullWithMethod(() => Harmony_Patch.Instance.FileManager);
             testAdapterParameters = testAdapterParameters.EnsureNotNullWithMethod(() => new OptionalTestAdapterParameters());
-            var imageName = instance.GetSlotName(testAdapterParameters.ManagementSlotTestAdapter);
-            instance.UpdateGiftIcon(agent, imageName, imagePath, fileManager, testAdapterParameters);
+
+            const float LocalPositionX = -12f;
+            const float LocalPositionY = 28f;
+            const float LocalPositionZ = -1f;
+            const float LocalScaleX = 0.2f;
+            const float LocalScaleY = 0.2f;
+
+            var imageId = instance.GetSlotName(testAdapterParameters.ManagementSlotTestAdapter);
+            var imageProperties = new ImageParameters
+            {
+                ImageId = imageId,
+                ImageFilePath = imagePath,
+                LocalPositionX = LocalPositionX,
+                LocalPositionY = LocalPositionY,
+                LocalPositionZ = LocalPositionZ,
+                LocalScaleX = LocalScaleX,
+                LocalScaleY = LocalScaleY,
+            };
+
+            instance.UpdateGiftIcon(agent, imageProperties, fileManager, testAdapterParameters);
         }
 
         /// <summary>Runs after initializing the management slot UI to add our own additional icon.</summary>

@@ -14,25 +14,24 @@ namespace LobotomyCorporationMods.Common.Extensions
     {
         [NotNull]
         internal static IGameObjectTestAdapter CreateImageObjectTestAdapter([NotNull] this IManagementSlotTestAdapter managementSlotTestAdapter,
-            float localScaleX,
-            float localScaleY,
-            float localPositionX,
-            float localPositionY,
-            float localPositionZ,
+            [NotNull] ImageParameters imageParameters,
             [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null)
         {
             testAdapterParameters = testAdapterParameters.EnsureNotNullWithMethod(() => new OptionalTestAdapterParameters());
-            var imageGameObjectTestAdapter = testAdapterParameters.GameObjectTestAdapter.EnsureNotNullWithMethod(() => new GameObjectTestAdapter(new GameObject()));
-            var spriteTestAdapter = testAdapterParameters.SpriteTestAdapter.EnsureNotNullWithMethod(() => new SpriteTestAdapter(new Sprite()));
-            var texture2dTestAdapter = testAdapterParameters.Texture2DTestAdapter.EnsureNotNullWithMethod(() => new Texture2dTestAdapter());
+            testAdapterParameters.SpriteTestAdapter = testAdapterParameters.SpriteTestAdapter.EnsureNotNullWithMethod(() => new SpriteTestAdapter(new Sprite()));
+            testAdapterParameters.Texture2DTestAdapter = testAdapterParameters.Texture2DTestAdapter.EnsureNotNullWithMethod(() => new Texture2dTestAdapter());
+            testAdapterParameters.GameObjectTestAdapter = testAdapterParameters.GameObjectTestAdapter.EnsureNotNullWithMethod(() => new GameObjectTestAdapter(new GameObject()));
 
+            var imageGameObjectTestAdapter = testAdapterParameters.GameObjectTestAdapter;
             var parent = managementSlotTestAdapter.Transform.GetChild(0);
             imageGameObjectTestAdapter.Transform.SetParent(parent);
-            imageGameObjectTestAdapter.Transform.LocalScale = new Vector3(localScaleX, localScaleY);
-            imageGameObjectTestAdapter.Transform.LocalPosition = new Vector3(localPositionX, localPositionY, localPositionZ);
+            imageGameObjectTestAdapter.Transform.LocalScale = new Vector3(imageParameters.LocalScaleX, imageParameters.LocalScaleY);
+            imageGameObjectTestAdapter.Transform.LocalPosition = new Vector3(imageParameters.LocalPositionX, imageParameters.LocalPositionY, imageParameters.LocalPositionZ);
             imageGameObjectTestAdapter.SetActive(true);
 
-            var sprite = spriteTestAdapter.Create(texture2dTestAdapter.GameObject, new Rect(0f, 0f, texture2dTestAdapter.Width, texture2dTestAdapter.Height), new Vector2(0.5f, 0.5f));
+            var texture2dTestAdapter = testAdapterParameters.Texture2DTestAdapter;
+            var sprite = testAdapterParameters.SpriteTestAdapter.Create(texture2dTestAdapter.GameObject, new Rect(0f, 0f, texture2dTestAdapter.Width, texture2dTestAdapter.Height),
+                new Vector2(0.5f, 0.5f));
 
             var imageComponentTestAdapter = imageGameObjectTestAdapter.AddImageComponent();
             imageComponentTestAdapter.Sprite = sprite;

@@ -20,14 +20,13 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Extensions
     {
         internal static void UpdateGiftIcon([NotNull] this ManagementSlot instance,
             UnitModel agent,
-            [NotNull] string imageName,
-            [NotNull] string imagePath,
+            [NotNull] ImageParameters imageParameters,
             [NotNull] IFileManager fileManager,
             OptionalTestAdapterParameters testAdapterParameters)
         {
             if (!instance.AbnormalityHasGift())
             {
-                instance.HideImageObject(imageName, imagePath, fileManager, testAdapterParameters);
+                instance.HideImageObject(imageParameters, fileManager, testAdapterParameters);
                 return;
             }
 
@@ -35,17 +34,16 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Extensions
             var giftsInSameSlot = agent.HasGiftInPosition(giftSlot);
             if (giftsInSameSlot)
             {
-                ProcessGiftInSameSlot(instance, agent, imageName, imagePath, fileManager, testAdapterParameters);
+                ProcessGiftInSameSlot(instance, agent, imageParameters, fileManager, testAdapterParameters);
             }
             else
             {
-                instance.ShowAsNewGift(imageName, imagePath, fileManager, testAdapterParameters);
+                instance.ShowAsNewGift(imageParameters, fileManager, testAdapterParameters);
             }
         }
 
         private static void ShowAsGift([NotNull] this ManagementSlot managementSlot,
-            [NotNull] string imageName,
-            [NotNull] string imagePath,
+            [NotNull] ImageParameters imageParameters,
             Color color,
             string tooltipLine1,
             string tooltipLine2,
@@ -57,12 +55,11 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Extensions
             tooltipMessage.AppendLine();
             tooltipMessage.AppendLine(tooltipLine2);
 
-            managementSlot.UpdateImage(imageName, imagePath, fileManager, color, tooltipMessage.ToString(), testAdapterParameters);
+            managementSlot.UpdateImage(imageParameters, fileManager, color, tooltipMessage.ToString(), testAdapterParameters);
         }
 
         private static void ShowAsNewGift([NotNull] this ManagementSlot managementSlot,
-            [NotNull] string imageName,
-            [NotNull] string imagePath,
+            [NotNull] ImageParameters imageParameters,
             [NotNull] IFileManager fileManager,
             [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null)
         {
@@ -70,12 +67,11 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Extensions
             var tooltipLine1 = LocalizationIds.NewGiftTooltip1.GetLocalized();
             var tooltipLine2 = LocalizationIds.NewGiftTooltip2.GetLocalized();
 
-            ShowAsGift(managementSlot, imageName, imagePath, color, tooltipLine1, tooltipLine2, fileManager, testAdapterParameters);
+            ShowAsGift(managementSlot, imageParameters, color, tooltipLine1, tooltipLine2, fileManager, testAdapterParameters);
         }
 
         private static void ShowAsReplacementGift([NotNull] this ManagementSlot managementSlot,
-            [NotNull] string imageName,
-            [NotNull] string imagePath,
+            [NotNull] ImageParameters imageParameters,
             [NotNull] IFileManager fileManager,
             [CanBeNull] OptionalTestAdapterParameters testAdapterParameters)
         {
@@ -83,24 +79,23 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Extensions
             var tooltipLine1 = LocalizationIds.ReplacementGiftTooltip1.GetLocalized();
             var tooltipLine2 = LocalizationIds.ReplacementGiftTooltip2.GetLocalized();
 
-            ShowAsGift(managementSlot, imageName, imagePath, color, tooltipLine1, tooltipLine2, fileManager, testAdapterParameters);
+            ShowAsGift(managementSlot, imageParameters, color, tooltipLine1, tooltipLine2, fileManager, testAdapterParameters);
         }
 
         private static void ProcessGiftInSameSlot([NotNull] this ManagementSlot instance,
             [NotNull] UnitModel agent,
-            [NotNull] string imageName,
-            [NotNull] string imagePath,
+            [NotNull] ImageParameters imageParameters,
             [NotNull] IFileManager fileManager,
             OptionalTestAdapterParameters testAdapterParameters)
         {
             var giftId = instance.GetAbnormalityGiftId();
             if (agent.HasGift(giftId))
             {
-                instance.HideImageObject(imageName, imagePath, fileManager, testAdapterParameters);
+                instance.HideImageObject(imageParameters, fileManager, testAdapterParameters);
             }
             else
             {
-                instance.ShowAsReplacementGift(imageName, imagePath, fileManager, testAdapterParameters);
+                instance.ShowAsReplacementGift(imageParameters, fileManager, testAdapterParameters);
             }
         }
     }

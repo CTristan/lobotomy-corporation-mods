@@ -22,8 +22,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         [ThreadStatic] private static UnityAdapterDictionary<string, IImageTestAdapter, Image> s_imagesDictionary;
 
         private static void CreateImageObjectIfNotExist([NotNull] this ManagementSlot managementSlot,
-            [NotNull] string imageName,
-            [NotNull] string imagePath,
+            [NotNull] ImageParameters imageParameters,
             [NotNull] IFileManager fileManager,
             [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null)
         {
@@ -32,31 +31,25 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
 
             s_imagesDictionary = s_imagesDictionary.EnsureNotNullWithMethod(() => new UnityAdapterDictionary<string, IImageTestAdapter, Image>());
             testAdapterParameters = testAdapterParameters.EnsureNotNullWithMethod(() => new OptionalTestAdapterParameters());
-            var texture2dTestAdapter = testAdapterParameters.Texture2DTestAdapter.EnsureNotNullWithMethod(() => new Texture2dTestAdapter(new Texture2D(2, 2)));
+            testAdapterParameters.Texture2DTestAdapter = testAdapterParameters.Texture2DTestAdapter.EnsureNotNullWithMethod(() => new Texture2dTestAdapter());
 
-            if (s_imagesDictionary.ContainsKey(imageName))
+            if (s_imagesDictionary.ContainsKey(imageParameters.ImageId))
             {
                 return;
             }
 
-            const float LocalPositionX = -12f;
-            const float LocalPositionY = 28f;
-            const float LocalPositionZ = -1f;
-            const float LocalScaleX = 0.2f;
-            const float LocalScaleY = 0.2f;
-
-            var fileWithPath = fileManager.GetFile(imagePath);
+            var fileWithPath = fileManager.GetFile(imageParameters.ImageFilePath);
             if (string.IsNullOrEmpty(fileWithPath))
             {
-                throw new InvalidOperationException("No image found with name " + imagePath);
+                throw new InvalidOperationException("No image found with name " + imageParameters.ImageFilePath);
             }
 
-            texture2dTestAdapter.LoadImage(fileManager.ReadAllBytes(fileWithPath));
+            testAdapterParameters.Texture2DTestAdapter.LoadImage(fileManager.ReadAllBytes(fileWithPath));
 
-            var imageObject = managementSlot.CreateImageObjectTestAdapter(LocalScaleX, LocalScaleY, LocalPositionX, LocalPositionY, LocalPositionZ, testAdapterParameters);
+            var imageObject = managementSlot.CreateImageObjectTestAdapter(imageParameters, testAdapterParameters);
 
             var imageTestAdapter = imageObject.ImageComponent;
-            s_imagesDictionary[imageName] = imageTestAdapter;
+            s_imagesDictionary[imageParameters.ImageId] = imageTestAdapter;
         }
 
         public static string GetSlotName([NotNull] this ManagementSlot managementSlot,
@@ -68,13 +61,14 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         }
 
         public static void HideImageObject([NotNull] this ManagementSlot managementSlot,
-            [NotNull] string imageName,
-            [NotNull] string imagePath,
+            [NotNull] ImageParameters imageParameters,
             [NotNull] IFileManager fileManager,
             [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null)
         {
-            CreateImageObjectIfNotExist(managementSlot, imageName, imagePath, fileManager, testAdapterParameters);
-            var image = GetImage(imageName);
+            Guard.Against.Null(imageParameters, nameof(imageParameters));
+
+            CreateImageObjectIfNotExist(managementSlot, imageParameters, fileManager, testAdapterParameters);
+            var image = GetImage(imageParameters.ImageId);
 
             image.Color = Color.clear;
 
@@ -115,17 +109,19 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         }
 
         public static void UpdateImage([NotNull] this ManagementSlot managementSlot,
-            [NotNull] string imageName,
-            [NotNull] string imagePath,
+            [NotNull] ImageParameters imageParameters,
             [NotNull] IFileManager fileManager,
             Color color,
             [CanBeNull] string tooltipMessage = "",
             [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null)
         {
-            CreateImageObjectIfNotExist(managementSlot, imageName, imagePath, fileManager, testAdapterParameters);
+            Guard.Against.Null(imageParameters, nameof(imageParameters));
 
-            var image = GetImage(imageName);
+            CreateImageObjectIfNotExist(managementSlot, imageParameters, fileManager, testAdapterParameters);
+
+            var image = GetImage(imageParameters.ImageId);
             image.Color = color;
+            image.SetActive(true);
 
             var tooltip = image.TooltipMouseOverComponent;
             tooltip.SetActive(true);
