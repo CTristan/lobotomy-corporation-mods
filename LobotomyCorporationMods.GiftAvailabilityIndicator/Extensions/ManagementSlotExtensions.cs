@@ -43,6 +43,23 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Extensions
             }
         }
 
+        private static void ShowAsGift([NotNull] this ManagementSlot managementSlot,
+            [NotNull] string imageName,
+            [NotNull] string imagePath,
+            Color color,
+            string tooltipLine1,
+            string tooltipLine2,
+            [NotNull] IFileManager fileManager,
+            [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null)
+        {
+            var tooltipMessage = new StringBuilder();
+            tooltipMessage.AppendLine(tooltipLine1);
+            tooltipMessage.AppendLine();
+            tooltipMessage.AppendLine(tooltipLine2);
+
+            managementSlot.UpdateImage(imageName, imagePath, fileManager, color, tooltipMessage.ToString(), testAdapterParameters);
+        }
+
         private static void ShowAsNewGift([NotNull] this ManagementSlot managementSlot,
             [NotNull] string imageName,
             [NotNull] string imagePath,
@@ -53,12 +70,7 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Extensions
             var tooltipLine1 = LocalizationIds.NewGiftTooltip1.GetLocalized();
             var tooltipLine2 = LocalizationIds.NewGiftTooltip2.GetLocalized();
 
-            var tooltipMessage = new StringBuilder();
-            tooltipMessage.AppendLine(tooltipLine1);
-            tooltipMessage.AppendLine();
-            tooltipMessage.AppendLine(tooltipLine2);
-
-            managementSlot.UpdateImage(imageName, imagePath, fileManager, color, tooltipMessage.ToString(), testAdapterParameters);
+            ShowAsGift(managementSlot, imageName, imagePath, color, tooltipLine1, tooltipLine2, fileManager, testAdapterParameters);
         }
 
         private static void ShowAsReplacementGift([NotNull] this ManagementSlot managementSlot,
@@ -71,12 +83,7 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Extensions
             var tooltipLine1 = LocalizationIds.ReplacementGiftTooltip1.GetLocalized();
             var tooltipLine2 = LocalizationIds.ReplacementGiftTooltip2.GetLocalized();
 
-            var tooltipMessage = new StringBuilder();
-            tooltipMessage.AppendLine(tooltipLine1);
-            tooltipMessage.AppendLine();
-            tooltipMessage.AppendLine(tooltipLine2);
-
-            managementSlot.UpdateImage(imageName, imagePath, fileManager, color, tooltipMessage.ToString(), testAdapterParameters);
+            ShowAsGift(managementSlot, imageName, imagePath, color, tooltipLine1, tooltipLine2, fileManager, testAdapterParameters);
         }
 
         private static void ProcessGiftInSameSlot([NotNull] this ManagementSlot instance,
