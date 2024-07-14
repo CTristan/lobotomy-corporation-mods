@@ -53,7 +53,7 @@ namespace LobotomyCorporationMods.Common.Implementations
             }
         }
 
-        public string GetOrCreateFile([NotNull] string fileName)
+        public string GetFile([NotNull] string fileName)
         {
             if (_filesCache.TryGetValue(fileName, out var value))
             {
@@ -64,6 +64,12 @@ namespace LobotomyCorporationMods.Common.Implementations
             _filesCache.Add(fileName, fullFilePath);
 
             return _filesCache[fileName];
+        }
+
+        [NotNull]
+        public byte[] ReadAllBytes([NotNull] string filePath)
+        {
+            return File.ReadAllBytes(filePath);
         }
 
         [NotNull]

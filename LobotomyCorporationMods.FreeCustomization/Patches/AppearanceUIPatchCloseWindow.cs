@@ -17,7 +17,7 @@ using LobotomyCorporationMods.Common.Implementations;
 namespace LobotomyCorporationMods.FreeCustomization.Patches
 {
     [HarmonyPatch(typeof(AppearanceUI), nameof(AppearanceUI.CloseWindow))]
-    public static class AppearanceUIPatchCloseWindow
+    public static class AppearanceUiPatchCloseWindow
     {
         public static bool PatchBeforeCloseWindow([NotNull] this AppearanceUI instance)
         {

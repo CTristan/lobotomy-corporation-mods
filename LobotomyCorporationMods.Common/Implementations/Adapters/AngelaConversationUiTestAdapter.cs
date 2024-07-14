@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
+using LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 #endregion
@@ -14,7 +15,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    internal sealed class AngelaConversationUiTestAdapter : Adapter<AngelaConversationUI>, IAngelaConversationUiTestAdapter
+    internal sealed class AngelaConversationUiTestAdapter : ComponentTestAdapter<AngelaConversationUI>, IAngelaConversationUiTestAdapter
     {
         internal AngelaConversationUiTestAdapter([NotNull] AngelaConversationUI gameObject) : base(gameObject)
         {
@@ -22,7 +23,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 
         public void AddMessage(string message)
         {
-            GameObject.AddAngelaMessage(message);
+            _gameObject.AddAngelaMessage(message);
         }
     }
 }

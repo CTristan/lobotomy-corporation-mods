@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
+using LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using UnityEngine.UI;
 
@@ -15,7 +16,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    internal sealed class TextTestAdapter : Adapter<Text>, ITextTestAdapter
+    internal sealed class TextTestAdapter : ComponentTestAdapter<Text>, ITextTestAdapter
     {
         internal TextTestAdapter([NotNull] Text gameObject) : base(gameObject)
         {
@@ -24,9 +25,9 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
         public string Text
         {
             get =>
-                GameObject.text;
+                _gameObject.text;
             set =>
-                GameObject.text = value;
+                _gameObject.text = value;
         }
     }
 }

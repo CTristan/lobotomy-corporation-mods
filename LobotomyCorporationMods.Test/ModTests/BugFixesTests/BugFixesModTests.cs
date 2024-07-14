@@ -1,0 +1,28 @@
+// SPDX-License-Identifier: MIT
+
+#region
+
+using JetBrains.Annotations;
+using LobotomyCorporationMods.BugFixes;
+using LobotomyCorporationMods.Common.Interfaces;
+using Moq;
+
+#endregion
+
+namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests
+{
+    public class BugFixesModTests
+    {
+        protected const int FourTimes = 4;
+
+        protected BugFixesModTests()
+        {
+            _ = new Harmony_Patch();
+            var logger = new Mock<ILogger>();
+            Harmony_Patch.Instance.AddLoggerTarget(logger.Object);
+        }
+
+        [NotNull]
+        protected static ArmorCreature ArmorCreature => new ArmorCreature();
+    }
+}

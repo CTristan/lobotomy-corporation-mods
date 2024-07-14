@@ -1,18 +1,15 @@
 // SPDX-License-Identifier: MIT
 
-#region
-
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml;
 using Harmony;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations.LoggerTargets;
 using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
-
-#endregion
 
 namespace LobotomyCorporationMods.Common.Implementations
 {
@@ -46,7 +43,7 @@ namespace LobotomyCorporationMods.Common.Implementations
 
         // We load our properties when applying the patch, so they will be null in the constructor
         // ReSharper disable once NullableWarningSuppressionIsUsed
-        protected IFileManager FileManager { get; private set; }
+        public IFileManager FileManager { get; private set; }
 
         // ReSharper disable once NullableWarningSuppressionIsUsed
         public ILogger Logger { get; private set; }
@@ -97,6 +94,7 @@ namespace LobotomyCorporationMods.Common.Implementations
             }
 
             InitializeLogger(angelaConversationUiTestAdapter);
+            AddDefaultLocalizedText();
             ApplyHarmonyPatch(type, modFileName);
         }
 
@@ -122,6 +120,39 @@ namespace LobotomyCorporationMods.Common.Implementations
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             var angelaLoggerTarget = new AngelaLoggerTarget(logToAngela, angelaConversationUiTestAdapter);
             Logger.AddTarget(angelaLoggerTarget);
+        }
+
+        /// <summary>Needed because Basemod doesn't use a localization file as a backup, so in other languages it will default everything to "UKNOWN".</summary>
+        private void AddDefaultLocalizedText()
+        {
+            var defaultLocalizationFile = FileManager.GetFile("Localize/en/text_en.xml");
+
+            if (!File.Exists(defaultLocalizationFile))
+            {
+                return;
+            }
+
+            var xml = File.ReadAllText(defaultLocalizationFile);
+            var xmlDocument = new XmlDocument
+            {
+                XmlResolver = null,
+            };
+
+            var xmlSettings = new XmlReaderSettings
+            {
+                ProhibitDtd = true,
+            };
+
+            using (var xmlReader = XmlReader.Create(new StringReader(xml), xmlSettings))
+            {
+                xmlDocument.Load(xmlReader);
+            }
+
+            var dataLoader = new LocalizeTextDataLoader("en");
+            foreach (var keyValuePair in dataLoader.LoadText(xmlDocument))
+            {
+                DefaultLocalizedValues.AddOrOverwriteDefaultLocalizedValue(keyValuePair.Key, keyValuePair.Value);
+            }
         }
 
         private void ValidateThatStaticInstanceIsNotDuplicated()

@@ -4,13 +4,15 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using Harmony;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Implementations.Facades;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
+using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
+using LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Constants;
 
 #endregion
 
@@ -26,7 +28,7 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches
             Guard.Against.Null(instance, nameof(instance));
             Guard.Against.Null(gift, nameof(gift));
 
-            // Some gifts are in special slots that don't show up in an agent's gift window and are used for abnormality effects
+            // Some gifts are in special slots that don't show up in an agent's gift window and are used for abnormality effects.
             // For example, Snow Queen's icicle
             if (!gift.IsInValidSlot())
             {
@@ -39,14 +41,19 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches
                 return;
             }
 
-            // If we already have this gift equipped we don't want to send an unnecessary notification
-            if (instance.HasGiftEquipped(gift.metaInfo.id))
+            // If we already have this gift equipped, we don't want to send an unnecessary notification
+            if (instance.HasGift(gift.metaInfo.id))
             {
                 return;
             }
 
             // Send notification that the agent acquired the gift
-            var message = $"<color=#66bfcd>{instance.GetUnitName()}</color> has received the gift <color=#84bd36>{gift.metaInfo.Name}</color>.";
+            var notificationMessage = LocalizationIds.LogMessage.GetLocalized();
+            var agentColorCode = LocalizationIds.AgentColorCode.GetLocalized();
+            var giftColorCode = LocalizationIds.GiftColorCode.GetLocalized();
+            var agentColoredName = $"<color={agentColorCode}>{instance.GetUnitName()}</color>";
+            var giftColoredName = $"<color={giftColorCode}>{gift.metaInfo.Name}</color>";
+            var message = string.Format(CultureInfo.InvariantCulture, notificationMessage, agentColoredName, giftColoredName);
             instance.SendMessage(message, noticeTestAdapter);
         }
 

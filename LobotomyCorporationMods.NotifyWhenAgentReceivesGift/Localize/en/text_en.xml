@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<localize>
+    <text id="NotifyWhenAgentReceivesGift_ReceiveGiftMessage">{0} has received the gift {1}.</text>
+    <text id="NotifyWhenAgentReceivesGift_AgentColorCode">#66bfcd</text>
+    <text id="NotifyWhenAgentReceivesGift_GiftColorCode">#84bd36</text>
+</localize>

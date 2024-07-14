@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
+using LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,7 +17,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    internal sealed class ImageTestAdapter : Adapter<Image>, IImageTestAdapter
+    internal sealed class ImageTestAdapter : ComponentTestAdapter<Image>, IImageTestAdapter
     {
         internal ImageTestAdapter([NotNull] Image gameObject) : base(gameObject)
         {
@@ -25,9 +26,26 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
         public Color Color
         {
             get =>
-                GameObject.color;
+                _gameObject.color;
             set =>
-                GameObject.color = value;
+                _gameObject.color = value;
         }
+
+        public Sprite Sprite
+        {
+            get =>
+                _gameObject.sprite;
+            set =>
+                _gameObject.sprite = value;
+        }
+
+        [NotNull]
+        public ITooltipMouseOverTestAdapter AddTooltipMouseOverComponent()
+        {
+            return new TooltipMouseOverTestAdapter(_gameObject.gameObject.AddComponent<TooltipMouseOver>());
+        }
+
+        [NotNull]
+        public ITooltipMouseOverTestAdapter TooltipMouseOverComponent => new TooltipMouseOverTestAdapter(_gameObject.gameObject.GetComponent<TooltipMouseOver>());
     }
 }

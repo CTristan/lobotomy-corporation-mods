@@ -39,17 +39,5 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             testAdapter.SpecialAgentList.Clear();
             testAdapter.OnViewInit();
         }
-
-        [NotNull]
-        public static string GetAbnormalityGiftName([NotNull] this CreatureEquipmentMakeInfo creatureEquipmentMakeInfo)
-        {
-            return creatureEquipmentMakeInfo.GetAbnormalityGiftInfo()?.Name ?? string.Empty;
-        }
-
-        [NotNull]
-        public static string GetAbnormalityGiftName([NotNull] this UseSkill useSkill)
-        {
-            return useSkill.GetAbnormalityGiftInfo()?.Name ?? string.Empty;
-        }
     }
 }

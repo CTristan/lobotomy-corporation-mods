@@ -45,7 +45,7 @@ namespace LobotomyCorporationMods.Test.Extensions
         {
             customizingBlock = customizingBlock.EnsureNotNullWithMethod(CreateGameObject);
             customizingWindow = customizingWindow.EnsureNotNullWithMethod(() => CreateCustomizingWindow());
-            uiComponents = uiComponents.EnsureNotNullWithMethod(CreateUIComponent);
+            uiComponents = uiComponents.EnsureNotNullWithMethod(CreateUiComponent);
 
             CreateUninitializedObject<AgentInfoWindow>(out var agentInfoWindow);
 
@@ -197,7 +197,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             };
         }
 
-        internal static AppearanceUI CreateAppearanceUI()
+        internal static AppearanceUI CreateAppearanceUi()
         {
             CreateUninitializedObject<AppearanceUI>(out var appearanceUi);
 
@@ -344,13 +344,13 @@ namespace LobotomyCorporationMods.Test.Extensions
 
         [NotNull]
         internal static CustomizingWindow CreateCustomizingWindow(GameObject appearanceBlock = null,
-            AppearanceUI appearanceUI = null,
+            AppearanceUI appearanceUi = null,
             AgentModel currentAgent = null,
             AgentData currentData = null,
             CustomizingType currentWindowType = (CustomizingType)1)
         {
             appearanceBlock = appearanceBlock.EnsureNotNullWithMethod(CreateGameObject);
-            appearanceUI = appearanceUI.EnsureNotNullWithMethod(CreateAppearanceUI);
+            appearanceUi = appearanceUi.EnsureNotNullWithMethod(CreateAppearanceUi);
             currentAgent = currentAgent.EnsureNotNullWithMethod(() => CreateAgentModel());
             currentData = currentData.EnsureNotNullWithMethod(() => CreateAgentData());
 
@@ -363,7 +363,7 @@ namespace LobotomyCorporationMods.Test.Extensions
                     "appearanceBlock", appearanceBlock
                 },
                 {
-                    "appearanceUI", appearanceUI
+                    "appearanceUI", appearanceUi
                 },
                 {
                     "_currentAgent", currentAgent
@@ -521,6 +521,17 @@ namespace LobotomyCorporationMods.Test.Extensions
         }
 
         [NotNull]
+        internal static ManagementSlot CreateManagementSlot()
+        {
+            CreateUninitializedObject<ManagementSlot>(out var managementSlot);
+
+            var fields = GetUninitializedFieldsIncludingBaseType(managementSlot.GetType());
+            var newValues = new Dictionary<string, object>();
+
+            return GetPopulatedUninitializedObject(managementSlot, fields, newValues);
+        }
+
+        [NotNull]
         private static SkillTypeInfo CreateSkillTypeInfo()
         {
             return new SkillTypeInfo();
@@ -567,7 +578,7 @@ namespace LobotomyCorporationMods.Test.Extensions
         }
 
         [NotNull]
-        private static AgentInfoWindow.UIComponent CreateUIComponent()
+        private static AgentInfoWindow.UIComponent CreateUiComponent()
         {
             return new AgentInfoWindow.UIComponent();
         }
