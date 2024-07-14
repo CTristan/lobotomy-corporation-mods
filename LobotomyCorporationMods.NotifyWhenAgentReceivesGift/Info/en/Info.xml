@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <info>
-    <name>Notify When Agent Receives Gift v1.0.0</name>
+    <name>Notify When Agent Receives Gift v1.1.0</name>
     <descs>
         <desc>Whenever an agent receives a gift, a message will display in the</desc>
         <desc>log.</desc>

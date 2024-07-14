@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <info>
-    <name>提示员工获得饰品v1.0.0</name>
+    <name>提示员工获得饰品v1.1.0</name>
     <descs>
         <desc>无论什么时候，只要员工获得饰品，日志中就会显示一条相关</desc>
         <desc>信息。</desc>
