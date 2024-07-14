@@ -75,30 +75,16 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         [Fact]
         public void Initializing_patch_data_with_directory_does_not_error_and_initializes_logger()
         {
-            var currentDirectory = Directory.GetCurrentDirectory();
-
-            Action action = () => _fakeHarmonyPatch.TestInitializePatchData(new List<DirectoryInfo>
-            {
-                new DirectoryInfo(currentDirectory),
-            });
-
-            action.Should().NotThrow();
-            _fakeHarmonyPatch.Logger.Should().NotBeNull();
+            InitiatePatchData();
+            AssertInitialization(false);
         }
 
         [Fact]
         public void Initializing_patch_data_with_english_localization_file_does_not_error_and_initializes_logger()
         {
-            var currentDirectory = Directory.GetCurrentDirectory();
             GenerateXmlLocalizationFile();
-
-            Action action = () => _fakeHarmonyPatch.TestInitializePatchData(new List<DirectoryInfo>
-            {
-                new DirectoryInfo(currentDirectory),
-            });
-
-            action.Should().NotThrow();
-            _fakeHarmonyPatch.Logger.Should().NotBeNull();
+            InitiatePatchData();
+            AssertInitialization(false);
 
             // Cleanup
             DeleteXmlLocalizationFile();
@@ -107,17 +93,9 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         [Fact]
         public void Trying_to_initialize_patch_without_inheriting_from_base_does_not_initialize()
         {
-            var currentDirectory = Directory.GetCurrentDirectory();
-
-            Action action = () => _fakeHarmonyPatch.TestInitializePatchData(new List<DirectoryInfo>
-            {
-                new DirectoryInfo(currentDirectory),
-            }, typeof(object));
-
-            action.Should().NotThrow();
-            _fakeHarmonyPatch.Logger.Should().BeNull();
+            InitiatePatchData(typeof(object));
+            AssertInitialization(true);
         }
-
 
         [Fact]
         public void Instantiating_a_duplicate_static_instance_throws_an_exception()
@@ -133,6 +111,18 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         }
 
         #region Helper Methods
+
+        private void AssertInitialization(bool isNull)
+        {
+            if (isNull)
+            {
+                _fakeHarmonyPatch.Logger.Should().BeNull();
+            }
+            else
+            {
+                _fakeHarmonyPatch.Logger.Should().NotBeNull();
+            }
+        }
 
         private static void GenerateXmlLocalizationFile()
         {
@@ -156,6 +146,17 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
             var currentDirectory = Directory.GetCurrentDirectory();
             const string LocalizationFile = "Localize/en/text_en.xml";
             File.Delete(Path.Combine(currentDirectory, LocalizationFile));
+        }
+
+        private void InitiatePatchData([CanBeNull] Type patchType = null)
+        {
+            var currentDirectory = Directory.GetCurrentDirectory();
+
+            Action action = () => _fakeHarmonyPatch.TestInitializePatchData(new List<DirectoryInfo>
+            {
+                new DirectoryInfo(currentDirectory),
+            }, patchType);
+            action.Should().NotThrow();
         }
 
         #endregion
