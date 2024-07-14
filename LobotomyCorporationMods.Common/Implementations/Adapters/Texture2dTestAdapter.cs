@@ -14,6 +14,12 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
     internal sealed class Texture2dTestAdapter : TextureTestAdapter<Texture2D>, ITexture2dTestAdapter
     {
+        private const int DefaultTextureSize = 1;
+
+        internal Texture2dTestAdapter() : base(new Texture2D(DefaultTextureSize, DefaultTextureSize))
+        {
+        }
+
         internal Texture2dTestAdapter([NotNull] Texture2D gameObject) : base(gameObject)
         {
         }

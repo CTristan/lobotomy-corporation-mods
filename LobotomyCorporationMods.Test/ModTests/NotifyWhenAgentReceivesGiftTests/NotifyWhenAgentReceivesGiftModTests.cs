@@ -22,6 +22,8 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
         protected const EGOgiftAttachRegion DefaultGiftAttachRegion = EGOgiftAttachRegion.HEAD;
         protected const int DefaultGiftId = 1;
         protected const string DefaultGiftName = "DefaultGiftName";
+        protected const string NotificationLogMessage = "{0} has received the gift {1}.";
+        protected const string TestNotificationLogMessage = " has received the gift ";
 
         protected NotifyWhenAgentReceivesGiftModTests()
         {
@@ -81,8 +83,16 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
         }
 
         /// <summary>Adds the gift name to the engine's localized text data and initializes an observer to store any messages sent as a notice.</summary>
-        private static void InitializeTextData(Dictionary<string, string> textData)
+        private static void InitializeTextData([NotNull] Dictionary<string, string> textData)
         {
+            // Add the static localized values to the text data
+            const string AgentColorCodeId = "NotifyWhenAgentReceivesGift_AgentColorCode";
+            const string GiftColorCodeId = "NotifyWhenAgentReceivesGift_GiftColorCode";
+            const string LogMessageId = "NotifyWhenAgentReceivesGift_ReceiveGiftMessage";
+            textData[AgentColorCodeId] = ColorAgentString;
+            textData[GiftColorCodeId] = ColorGiftString;
+            textData[LogMessageId] = NotificationLogMessage;
+
             UnityTestExtensions.CreateLocalizeTextDataModel(textData);
         }
     }

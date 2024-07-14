@@ -4,8 +4,8 @@ using System.Diagnostics.CodeAnalysis;
 using CommandWindow;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
+using LobotomyCorporationMods.Common.ParameterObjects;
 
 // ReSharper disable UnusedParameter.Global
 
@@ -21,15 +21,12 @@ namespace LobotomyCorporationMods.Common.Extensions
             float localPositionX,
             float localPositionY,
             float localPositionZ,
-            [NotNull] ITexture2dTestAdapter texture2dTestAdapter,
-            [CanBeNull] IManagementSlotTestAdapter testAdapter = null,
-            [CanBeNull] IGameObjectTestAdapter imageGameObjectTestAdapter = null,
-            [CanBeNull] ISpriteTestAdapter spriteTestAdapter = null)
+            [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null)
         {
-            testAdapter = testAdapter.EnsureNotNullWithMethod(() => new ManagementSlotTestAdapter(managementSlot));
+            testAdapterParameters = testAdapterParameters.EnsureNotNullWithMethod(() => new OptionalTestAdapterParameters());
+            var managementSlotTestAdapter = testAdapterParameters.ManagementSlotTestAdapter.EnsureNotNullWithMethod(() => new ManagementSlotTestAdapter(managementSlot));
 
-            return testAdapter.CreateImageObjectTestAdapter(localScaleX, localScaleY, localPositionX, localPositionY, localPositionZ, texture2dTestAdapter, imageGameObjectTestAdapter,
-                spriteTestAdapter);
+            return managementSlotTestAdapter.CreateImageObjectTestAdapter(localScaleX, localScaleY, localPositionX, localPositionY, localPositionZ, testAdapterParameters);
         }
 
         [CanBeNull]

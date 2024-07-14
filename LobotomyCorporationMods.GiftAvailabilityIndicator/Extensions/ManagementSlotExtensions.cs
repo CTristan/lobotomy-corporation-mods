@@ -8,8 +8,7 @@ using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations.Facades;
 using LobotomyCorporationMods.Common.Interfaces;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
-using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
+using LobotomyCorporationMods.Common.ParameterObjects;
 using LobotomyCorporationMods.GiftAvailabilityIndicator.Constants;
 using UnityEngine;
 
@@ -23,10 +22,7 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Extensions
             [NotNull] string imageName,
             [NotNull] string imagePath,
             [NotNull] IFileManager fileManager,
-            [CanBeNull] IManagementSlotTestAdapter testAdapter = null,
-            [CanBeNull] IGameObjectTestAdapter imageGameObjectTestAdapter = null,
-            [CanBeNull] ITexture2dTestAdapter texture2dTestAdapter = null,
-            [CanBeNull] ISpriteTestAdapter spriteTestAdapter = null)
+            [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null)
         {
             var color = Color.green;
             var tooltipLine1 = LocalizationIds.NewGiftTooltip1.GetLocalized();
@@ -37,17 +33,14 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Extensions
             tooltipMessage.AppendLine();
             tooltipMessage.AppendLine(tooltipLine2);
 
-            managementSlot.UpdateImage(imageName, imagePath, fileManager, color, tooltipMessage.ToString(), testAdapter, imageGameObjectTestAdapter, texture2dTestAdapter, spriteTestAdapter);
+            managementSlot.UpdateImage(imageName, imagePath, fileManager, color, tooltipMessage.ToString(), testAdapterParameters);
         }
 
         internal static void ShowAsReplacementGift([NotNull] this ManagementSlot managementSlot,
             [NotNull] string imageName,
             [NotNull] string imagePath,
             [NotNull] IFileManager fileManager,
-            [CanBeNull] IManagementSlotTestAdapter testAdapter = null,
-            [CanBeNull] IGameObjectTestAdapter imageGameObjectTestAdapter = null,
-            [CanBeNull] ITexture2dTestAdapter texture2dTestAdapter = null,
-            [CanBeNull] ISpriteTestAdapter spriteTestAdapter = null)
+            [CanBeNull] OptionalTestAdapterParameters testAdapterParameters)
         {
             var color = Color.grey;
             var tooltipLine1 = LocalizationIds.ReplacementGiftTooltip1.GetLocalized();
@@ -58,7 +51,7 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Extensions
             tooltipMessage.AppendLine();
             tooltipMessage.AppendLine(tooltipLine2);
 
-            managementSlot.UpdateImage(imageName, imagePath, fileManager, color, tooltipMessage.ToString(), testAdapter, imageGameObjectTestAdapter, texture2dTestAdapter, spriteTestAdapter);
+            managementSlot.UpdateImage(imageName, imagePath, fileManager, color, tooltipMessage.ToString(), testAdapterParameters);
         }
     }
 }

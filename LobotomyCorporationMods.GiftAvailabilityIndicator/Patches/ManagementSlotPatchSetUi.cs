@@ -13,8 +13,7 @@ using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Implementations.Facades;
 using LobotomyCorporationMods.Common.Interfaces;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
-using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
+using LobotomyCorporationMods.Common.ParameterObjects;
 using LobotomyCorporationMods.GiftAvailabilityIndicator.Extensions;
 
 #endregion
@@ -27,19 +26,18 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Patches
         public static void PatchAfterSetUi([NotNull] this ManagementSlot instance,
             [NotNull] UnitModel agent,
             [NotNull] string imagePath,
-            [CanBeNull] IManagementSlotTestAdapter testAdapter = null,
             [CanBeNull] IFileManager fileManager = null,
-            [CanBeNull] IGameObjectTestAdapter imageGameObjectTestAdapter = null,
-            [CanBeNull] ITexture2dTestAdapter texture2dTestAdapter = null,
-            [CanBeNull] ISpriteTestAdapter spriteTestAdapter = null)
+            [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null)
         {
             Guard.Against.Null(instance, nameof(instance));
 
-            var imageName = instance.GetSlotName(testAdapter);
             fileManager = fileManager.EnsureNotNullWithMethod(() => Harmony_Patch.Instance.FileManager);
+            testAdapterParameters = testAdapterParameters.EnsureNotNullWithMethod(() => new OptionalTestAdapterParameters());
+
+            var imageName = instance.GetSlotName(testAdapterParameters.ManagementSlotTestAdapter);
             if (!instance.AbnormalityHasGift())
             {
-                instance.HideImageObject(imageName, imagePath, fileManager, testAdapter, imageGameObjectTestAdapter, texture2dTestAdapter, spriteTestAdapter);
+                instance.HideImageObject(imageName, imagePath, fileManager, testAdapterParameters);
                 return;
             }
 
@@ -50,16 +48,16 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Patches
                 var giftId = instance.GetAbnormalityGiftId();
                 if (agent.HasGift(giftId))
                 {
-                    instance.HideImageObject(imageName, imagePath, fileManager, testAdapter, imageGameObjectTestAdapter, texture2dTestAdapter, spriteTestAdapter);
+                    instance.HideImageObject(imageName, imagePath, fileManager, testAdapterParameters);
                 }
                 else
                 {
-                    instance.ShowAsReplacementGift(imageName, imagePath, fileManager, testAdapter, imageGameObjectTestAdapter, texture2dTestAdapter, spriteTestAdapter);
+                    instance.ShowAsReplacementGift(imageName, imagePath, fileManager, testAdapterParameters);
                 }
             }
             else
             {
-                instance.ShowAsNewGift(imageName, imagePath, fileManager, testAdapter, imageGameObjectTestAdapter, texture2dTestAdapter, spriteTestAdapter);
+                instance.ShowAsNewGift(imageName, imagePath, fileManager, testAdapterParameters);
             }
         }
 

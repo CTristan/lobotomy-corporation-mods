@@ -1,9 +1,11 @@
 ﻿// SPDX-License-Identifier: MIT
 
 using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
+using LobotomyCorporationMods.Common.ParameterObjects;
 using UnityEngine;
 
 namespace LobotomyCorporationMods.Common.Extensions
@@ -17,12 +19,12 @@ namespace LobotomyCorporationMods.Common.Extensions
             float localPositionX,
             float localPositionY,
             float localPositionZ,
-            [NotNull] ITexture2dTestAdapter texture2dTestAdapter,
-            [CanBeNull] IGameObjectTestAdapter imageGameObjectTestAdapter = null,
-            [CanBeNull] ISpriteTestAdapter spriteTestAdapter = null)
+            [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null)
         {
-            imageGameObjectTestAdapter = imageGameObjectTestAdapter.EnsureNotNullWithMethod(() => new GameObjectTestAdapter(new GameObject()));
-            spriteTestAdapter = spriteTestAdapter.EnsureNotNullWithMethod(() => new SpriteTestAdapter(new Sprite()));
+            testAdapterParameters = testAdapterParameters.EnsureNotNullWithMethod(() => new OptionalTestAdapterParameters());
+            var imageGameObjectTestAdapter = testAdapterParameters.GameObjectTestAdapter.EnsureNotNullWithMethod(() => new GameObjectTestAdapter(new GameObject()));
+            var spriteTestAdapter = testAdapterParameters.SpriteTestAdapter.EnsureNotNullWithMethod(() => new SpriteTestAdapter(new Sprite()));
+            var texture2dTestAdapter = testAdapterParameters.Texture2DTestAdapter.EnsureNotNullWithMethod(() => new Texture2dTestAdapter());
 
             var parent = managementSlotTestAdapter.Transform.GetChild(0);
             imageGameObjectTestAdapter.Transform.SetParent(parent);

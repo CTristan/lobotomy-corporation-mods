@@ -8,7 +8,7 @@ using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
-using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
+using LobotomyCorporationMods.Common.ParameterObjects;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -25,15 +25,14 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             [NotNull] string imageName,
             [NotNull] string imagePath,
             [NotNull] IFileManager fileManager,
-            [CanBeNull] IManagementSlotTestAdapter testAdapter = null,
-            [CanBeNull] IGameObjectTestAdapter imageGameObjectTestAdapter = null,
-            [CanBeNull] ITexture2dTestAdapter texture2dTestAdapter = null,
-            [CanBeNull] ISpriteTestAdapter spriteTestAdapter = null)
+            [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null)
         {
             Guard.Against.Null(managementSlot, nameof(managementSlot));
             Guard.Against.Null(fileManager, nameof(fileManager));
 
             s_imagesDictionary = s_imagesDictionary.EnsureNotNullWithMethod(() => new UnityAdapterDictionary<string, IImageTestAdapter, Image>());
+            testAdapterParameters = testAdapterParameters.EnsureNotNullWithMethod(() => new OptionalTestAdapterParameters());
+            var texture2dTestAdapter = testAdapterParameters.Texture2DTestAdapter.EnsureNotNullWithMethod(() => new Texture2dTestAdapter(new Texture2D(2, 2)));
 
             if (s_imagesDictionary.ContainsKey(imageName))
             {
@@ -46,8 +45,6 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             const float LocalScaleX = 0.2f;
             const float LocalScaleY = 0.2f;
 
-            texture2dTestAdapter = texture2dTestAdapter.EnsureNotNullWithMethod(() => new Texture2dTestAdapter(new Texture2D(2, 2)));
-
             var fileWithPath = fileManager.GetFile(imagePath);
             if (string.IsNullOrEmpty(fileWithPath))
             {
@@ -56,8 +53,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
 
             texture2dTestAdapter.LoadImage(fileManager.ReadAllBytes(fileWithPath));
 
-            var imageObject = managementSlot.CreateImageObjectTestAdapter(LocalScaleX, LocalScaleY, LocalPositionX, LocalPositionY, LocalPositionZ, texture2dTestAdapter, testAdapter,
-                imageGameObjectTestAdapter, spriteTestAdapter);
+            var imageObject = managementSlot.CreateImageObjectTestAdapter(LocalScaleX, LocalScaleY, LocalPositionX, LocalPositionY, LocalPositionZ, testAdapterParameters);
 
             var imageTestAdapter = imageObject.ImageComponent;
             s_imagesDictionary[imageName] = imageTestAdapter;
@@ -75,12 +71,9 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             [NotNull] string imageName,
             [NotNull] string imagePath,
             [NotNull] IFileManager fileManager,
-            [CanBeNull] IManagementSlotTestAdapter testAdapter = null,
-            [CanBeNull] IGameObjectTestAdapter imageGameObjectTestAdapter = null,
-            [CanBeNull] ITexture2dTestAdapter texture2dTestAdapter = null,
-            [CanBeNull] ISpriteTestAdapter spriteTestAdapter = null)
+            [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null)
         {
-            CreateImageObjectIfNotExist(managementSlot, imageName, imagePath, fileManager, testAdapter, imageGameObjectTestAdapter, texture2dTestAdapter, spriteTestAdapter);
+            CreateImageObjectIfNotExist(managementSlot, imageName, imagePath, fileManager, testAdapterParameters);
             var image = GetImage(imageName);
 
             image.Color = Color.clear;
@@ -127,12 +120,10 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             [NotNull] IFileManager fileManager,
             Color color,
             [CanBeNull] string tooltipMessage = "",
-            [CanBeNull] IManagementSlotTestAdapter testAdapter = null,
-            [CanBeNull] IGameObjectTestAdapter imageGameObjectTestAdapter = null,
-            [CanBeNull] ITexture2dTestAdapter texture2dTestAdapter = null,
-            [CanBeNull] ISpriteTestAdapter spriteTestAdapter = null)
+            [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null)
         {
-            CreateImageObjectIfNotExist(managementSlot, imageName, imagePath, fileManager, testAdapter, imageGameObjectTestAdapter, texture2dTestAdapter, spriteTestAdapter);
+            CreateImageObjectIfNotExist(managementSlot, imageName, imagePath, fileManager, testAdapterParameters);
+
             var image = GetImage(imageName);
             image.Color = color;
 
