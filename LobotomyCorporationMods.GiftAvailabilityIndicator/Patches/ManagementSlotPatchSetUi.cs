@@ -30,35 +30,10 @@ namespace LobotomyCorporationMods.GiftAvailabilityIndicator.Patches
             [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null)
         {
             Guard.Against.Null(instance, nameof(instance));
-
             fileManager = fileManager.EnsureNotNullWithMethod(() => Harmony_Patch.Instance.FileManager);
             testAdapterParameters = testAdapterParameters.EnsureNotNullWithMethod(() => new OptionalTestAdapterParameters());
-
             var imageName = instance.GetSlotName(testAdapterParameters.ManagementSlotTestAdapter);
-            if (!instance.AbnormalityHasGift())
-            {
-                instance.HideImageObject(imageName, imagePath, fileManager, testAdapterParameters);
-                return;
-            }
-
-            var giftSlot = instance.GetAbnormalityGiftPosition();
-            var giftsInSameSlot = agent.HasGiftInPosition(giftSlot);
-            if (giftsInSameSlot)
-            {
-                var giftId = instance.GetAbnormalityGiftId();
-                if (agent.HasGift(giftId))
-                {
-                    instance.HideImageObject(imageName, imagePath, fileManager, testAdapterParameters);
-                }
-                else
-                {
-                    instance.ShowAsReplacementGift(imageName, imagePath, fileManager, testAdapterParameters);
-                }
-            }
-            else
-            {
-                instance.ShowAsNewGift(imageName, imagePath, fileManager, testAdapterParameters);
-            }
+            instance.UpdateGiftIcon(agent, imageName, imagePath, fileManager, testAdapterParameters);
         }
 
         /// <summary>Runs after initializing the management slot UI to add our own additional icon.</summary>

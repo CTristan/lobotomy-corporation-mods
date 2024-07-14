@@ -21,8 +21,8 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests.AttributeTests
         private const string ExcludeFromCodeCoverageAttributeTypeName = "System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute";
 
         /// <summary>
-        ///     Uses reflection to get every mod being referenced by the Tests projects, then iterates through all the classes and methods using the ExcludeFromCodeCoverage attribute to
-        ///     make sure they also have another attribute that indicates why we're excluding from code coverage.
+        ///     Using reflection, we try to get every mod being referenced by the Tests projects. Afterward, we iterate through all the classes and methods using the
+        ///     ExcludeFromCodeCoverage attribute to make sure they as well have another attribute that indicates why we're excluding from code coverage.
         /// </summary>
         [Fact]
         public void Verify_that_code_coverage_exclusions_are_only_on_appropriately_attributed_classes_and_methods()
@@ -37,12 +37,12 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests.AttributeTests
 
         #region Helper Methods
 
+        private const string ModsNamespace = "LobotomyCorporationMods.";
+        private static readonly int s_namespaceMinLength = ModsNamespace.Length;
+
         private static bool IsInModsNamespace([CanBeNull] string name)
         {
-            const string ModsNamespace = "LobotomyCorporationMods.";
-            var namespaceMinLength = ModsNamespace.Length;
-
-            return !name.IsNull() && name.Length >= namespaceMinLength && name.Substring(0, namespaceMinLength) == ModsNamespace;
+            return !name.IsNull() && name.Length >= s_namespaceMinLength && name.StartsWith(ModsNamespace, StringComparison.InvariantCulture);
         }
 
         private static string AnyModIsIncorrectlyExcludedFromCodeCoverage([NotNull] IEnumerable<AssemblyName> referencedAssemblies)
@@ -57,26 +57,28 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests.AttributeTests
         [NotNull]
         private static string AnyClassIsIncorrectlyExcludedFromCodeCoverage([NotNull] IEnumerable<Type> classes)
         {
-            // Iterate through every class in every mod
-            foreach (var reflectionClass in classes)
-            {
-                // First need to check if the class itself is marked with ExcludeFromCodeCoverage
-                var className = ClassIsIncorrectlyExcludedFromCodeCoverage(reflectionClass);
-                if (!string.IsNullOrEmpty(className))
-                {
-                    return className;
-                }
+            // Iterate through every class
+            var misconfiguredElement = classes.Select(CheckClassAndMethodsForInvalidExclusion).Where(me => !string.IsNullOrEmpty(me)).ToList();
 
-                // Now we need to check all the methods in the class
-                var methods = reflectionClass.GetMethods();
-                var methodName = AnyMethodIsIncorrectlyExcludedFromCodeCoverage(methods);
-                if (!string.IsNullOrEmpty(methodName))
-                {
-                    return methodName + " in " + reflectionClass;
-                }
+            return misconfiguredElement.Count != 0 ? misconfiguredElement[0] : string.Empty;
+        }
+
+        [NotNull]
+        private static string CheckClassAndMethodsForInvalidExclusion([NotNull] Type reflectionClass)
+        {
+            // First, check if the class itself is marked with ExcludeFromCodeCoverage
+            var className = ClassIsIncorrectlyExcludedFromCodeCoverage(reflectionClass);
+
+            if (!string.IsNullOrEmpty(className))
+            {
+                return className;
             }
 
-            return string.Empty;
+            // Now we need to check all the methods in the class
+            var methods = reflectionClass.GetMethods();
+            var methodName = AnyMethodIsIncorrectlyExcludedFromCodeCoverage(methods);
+
+            return !string.IsNullOrEmpty(methodName) ? $"{methodName} in {reflectionClass}" : string.Empty;
         }
 
         private static string AnyMethodIsIncorrectlyExcludedFromCodeCoverage([NotNull] IEnumerable<MethodInfo> methods)
