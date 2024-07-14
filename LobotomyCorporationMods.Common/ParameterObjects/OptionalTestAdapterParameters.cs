@@ -23,11 +23,5 @@ namespace LobotomyCorporationMods.Common.ParameterObjects
 
         [CanBeNull]
         public ITexture2dTestAdapter Texture2DTestAdapter { get; set; }
-
-        [CanBeNull]
-        public ITooltipMouseOverTestAdapter TooltipMouseOverTestAdapter { get; set; }
-
-        [CanBeNull]
-        public ITransformTestAdapter TransformTestAdapter { get; set; }
     }
 }

@@ -161,7 +161,27 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAvailabilityIndicatorTests.P
             string imageName,
             [NotNull] Mock<IImageTestAdapter> mockImageTestAdapter)
         {
+            var testAdapterParameters = CreateTestAdapterParameters(imageName, mockImageTestAdapter);
             var fileManager = TestExtensions.GetMockFileManager();
+
+            // Act
+            Action action = () => sut.PatchAfterSetUi(agent, imageName, fileManager.Object, testAdapterParameters);
+
+            // Assert
+            action.Should().NotThrow();
+        }
+
+        [NotNull]
+        private static OptionalTestAdapterParameters SetupTestParameters(string imageName)
+        {
+            var mockImageTestAdapter = GetMockImageTestAdapter();
+            return CreateTestAdapterParameters(imageName, mockImageTestAdapter);
+        }
+
+        [NotNull]
+        private static OptionalTestAdapterParameters CreateTestAdapterParameters(string imageName,
+            [NotNull] Mock<IImageTestAdapter> mockImageTestAdapter)
+        {
             var testAdapterParameters = new OptionalTestAdapterParameters();
 
             var mockTexture2dTestAdapter = new Mock<ITexture2dTestAdapter>();
@@ -170,13 +190,8 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAvailabilityIndicatorTests.P
             var mockSpriteTestAdapter = new Mock<ISpriteTestAdapter>();
             testAdapterParameters.SpriteTestAdapter = mockSpriteTestAdapter.Object;
 
-            var mockTransformTestAdapter = new Mock<ITransformTestAdapter>();
-            mockTransformTestAdapter.SetupGet(x => x.Parent).Returns(mockTransformTestAdapter.Object);
-            testAdapterParameters.TransformTestAdapter = mockTransformTestAdapter.Object;
-
-            var mockTooltipMouseOverTestAdapter = new Mock<ITooltipMouseOverTestAdapter>();
-            mockTooltipMouseOverTestAdapter.SetupGet(x => x.Transform).Returns(mockTransformTestAdapter.Object);
-            testAdapterParameters.TooltipMouseOverTestAdapter = mockTooltipMouseOverTestAdapter.Object;
+            mockImageTestAdapter.SetupGet(x => x.GameObject).Returns(new Mock<Image>().Object);
+            testAdapterParameters.ImageTestAdapter = mockImageTestAdapter.Object;
 
             var mockGameObjectAdapter = new Mock<IGameObjectTestAdapter>();
             mockGameObjectAdapter.SetupGet(x => x.Transform).Returns(mockImageTestAdapter.Object.Transform);
@@ -186,14 +201,10 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAvailabilityIndicatorTests.P
 
             var mockManagementSlotTestAdapter = new Mock<IManagementSlotTestAdapter>();
             mockManagementSlotTestAdapter.Setup(x => x.Name).Returns(imageName);
-            mockManagementSlotTestAdapter.Setup(x => x.Transform.GetChild(It.IsAny<int>())).Returns(mockTransformTestAdapter.Object);
+            mockManagementSlotTestAdapter.Setup(x => x.Transform.GetChild(It.IsAny<int>())).Returns(mockImageTestAdapter.Object.Transform);
             testAdapterParameters.ManagementSlotTestAdapter = mockManagementSlotTestAdapter.Object;
 
-            // Act
-            Action action = () => sut.PatchAfterSetUi(agent, imageName, fileManager.Object, testAdapterParameters);
-
-            // Assert
-            action.Should().NotThrow();
+            return testAdapterParameters;
         }
 
         [NotNull]
@@ -212,35 +223,6 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAvailabilityIndicatorTests.P
             mockImageTestAdapter.SetupGet(x => x.Transform).Returns(mockTransformTestAdapter.Object);
 
             return mockImageTestAdapter;
-        }
-
-        [NotNull]
-        private static OptionalTestAdapterParameters SetupTestParameters(string imageName)
-        {
-            var testAdapterParameters = new OptionalTestAdapterParameters();
-
-            var mockTexture2dTestAdapter = new Mock<ITexture2dTestAdapter>();
-            testAdapterParameters.Texture2DTestAdapter = mockTexture2dTestAdapter.Object;
-
-            var mockSpriteTestAdapter = new Mock<ISpriteTestAdapter>();
-            testAdapterParameters.SpriteTestAdapter = mockSpriteTestAdapter.Object;
-
-            var mockImageTestAdapter = GetMockImageTestAdapter();
-            mockImageTestAdapter.SetupGet(x => x.GameObject).Returns(new Mock<Image>().Object);
-            testAdapterParameters.ImageTestAdapter = mockImageTestAdapter.Object;
-
-            var mockGameObjectAdapter = new Mock<IGameObjectTestAdapter>();
-            mockGameObjectAdapter.SetupGet(x => x.Transform).Returns(mockImageTestAdapter.Object.Transform);
-            mockGameObjectAdapter.Setup(x => x.AddImageComponent()).Returns(mockImageTestAdapter.Object);
-            mockGameObjectAdapter.Setup(x => x.ImageComponent).Returns(mockImageTestAdapter.Object);
-            testAdapterParameters.GameObjectTestAdapter = mockGameObjectAdapter.Object;
-
-            var mockManagementSlotTestAdapter = new Mock<IManagementSlotTestAdapter>();
-            mockManagementSlotTestAdapter.Setup(x => x.Name).Returns(imageName);
-            mockManagementSlotTestAdapter.Setup(x => x.Transform.GetChild(It.IsAny<int>())).Returns(mockImageTestAdapter.Object.Transform);
-            testAdapterParameters.ManagementSlotTestAdapter = mockManagementSlotTestAdapter.Object;
-
-            return testAdapterParameters;
         }
 
         #endregion
