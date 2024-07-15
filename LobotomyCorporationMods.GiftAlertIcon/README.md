@@ -29,4 +29,4 @@ to notice them in the portrait or gift list for an agent.
 
 #### Added
 
-- Initial release.
+* Initial release.
