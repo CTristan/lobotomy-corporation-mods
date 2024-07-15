@@ -10,8 +10,8 @@ Shows an icon when a new or replacement gift is available for an agent.
 
 * When assigning work for agents, it will show an icon if the agent doesn't
   have that abnormality's gift.
-  - Shows green if the agent doesn't have a gift in that slot.
-  - Shows gray if the agent has a different gift in that slot already.
+  * Shows green if the agent doesn't have a gift in that slot.
+  * Shows gray if the agent has a different gift in that slot already.
 
 ## Why create this mod?
 

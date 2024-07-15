@@ -2,7 +2,7 @@
 
 Mods for the
 game [Lobotomy Corporation](https://store.steampowered.com/app/568220/Lobotomy_Corporation__Monster_Management_Simulation/).
-They are designed to be used either together or individually, so feel free to
+They’re designed to be used either together or individually, so feel free to
 pick and choose.
 
 All mods are available for download
@@ -13,18 +13,18 @@ LMM).
 
 ## Nexus Mods pages
 
-- [Bad Luck Protection for Gifts](https://www.nexusmods.com/lobotomycorporation/mods/476)
-  - ([Readme](LobotomyCorporationMods.BadLuckProtectionForGifts/README.md))
-- [Free Customization](https://www.nexusmods.com/lobotomycorporation/mods/477)
-  - ([Readme](LobotomyCorporationMods.FreeCustomization/README.md))
-- [Gift Alert Icon](https://www.nexusmods.com/lobotomycorporation/mods/494)
-  - ([Readme](LobotomyCorporationMods.GiftAlertIcon))
-- [Notify When Agent Receives Gift](https://www.nexusmods.com/lobotomycorporation/mods/487)
-  - ([Readme](LobotomyCorporationMods.NotifyWhenAgentReceivesGift/README.md))
-- [Unofficial Bug Fixes](https://www.nexusmods.com/lobotomycorporation/mods/478)
-  - ([Readme](LobotomyCorporationMods.BugFixes/README.md))
-- [Warn When Agent Will Die From Working](https://www.nexusmods.com/lobotomycorporation/mods/479)
-  - ([Readme](LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking/README.md))
+* [Bad Luck Protection for Gifts](https://www.nexusmods.com/lobotomycorporation/mods/476)
+  * ([Readme](LobotomyCorporationMods.BadLuckProtectionForGifts/README.md))
+* [Free Customization](https://www.nexusmods.com/lobotomycorporation/mods/477)
+  * ([Readme](LobotomyCorporationMods.FreeCustomization/README.md))
+* [Gift Alert Icon](https://www.nexusmods.com/lobotomycorporation/mods/494)
+  * ([Readme](LobotomyCorporationMods.GiftAlertIcon))
+* [Notify When Agent Receives Gift](https://www.nexusmods.com/lobotomycorporation/mods/487)
+  * ([Readme](LobotomyCorporationMods.NotifyWhenAgentReceivesGift/README.md))
+* [Unofficial Bug Fixes](https://www.nexusmods.com/lobotomycorporation/mods/478)
+  * ([Readme](LobotomyCorporationMods.BugFixes/README.md))
+* [Warn When Agent Will Die From Working](https://www.nexusmods.com/lobotomycorporation/mods/479)
+  * ([Readme](LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking/README.md))
 
 ## Most Recent Change
 
@@ -32,11 +32,11 @@ LMM).
 
 #### Added
 
-- New mod: Gift Alert Icon [1.0.0]
-  - Shows an icon when a new or replacement gift is available for an agent.
-- Notify When Agent Receives Gift [1.1.0]
-  - Added localization through external text files.
-  - Added Chinese localization thanks to 21474836(Lin).
+* New mod: Gift Alert Icon [1.0.0]
+  * Shows an icon when a new or replacement gift is available for an agent.
+* Notify When Agent Receives Gift [1.1.0]
+  * Added localization through external text files.
+  * Added Chinese localization thanks to 21474836(Lin).
 
 See the [full changelog](CHANGELOG.md) for all changes.
 
@@ -121,12 +121,12 @@ for full details.
 
 ## Building
 
-The original game files are required but are not provided.
+The original game files are required but aren’t provided.
 My current environment setup is a "`src`" folder in the BaseMods folder that I
 placed the repo in, so my folder
 structure for the repo is
 LobotomyCorp_Data/BaseMods/src/lobotomy-corporation-mods.
-If you follow this same structure then the references should use the game’s
+If you follow this same structure, then the references should use the game’s
 files and will build the output to the
 appropriate BaseMod folder e.g.
 LobotomyCorp_Data/BaseMods/LobotomyCorporationMods.BadLuckProtectionForGifts.
@@ -134,10 +134,10 @@ LobotomyCorp_Data/BaseMods/LobotomyCorporationMods.BadLuckProtectionForGifts.
 If you’re running Linux, make sure mono-devel is installed.
 You should be able to open the solution in VSCode or VSCodium and build with
 xbuild.
-That said, I wouldn't recommend it as I have not found a way to be able to debug
+That said, I wouldn't recommend it as I haven’t found a way to be able to debug
 Unity .NET Framework DLLs in Linux like
 I can in Windows with dnSpy, especially since the game has to run in Proton.
-If you are able to get debugging working in Linux I would love to hear about it!
+If you’re able to get debugging working in Linux I would love to hear about it!
 
 ## Debug Logging
 
