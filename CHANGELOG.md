@@ -22,6 +22,16 @@ Major.minor.patch.0
 *This does not apply to the individual mod versions, as they adhere
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).*
 
+## [6.0.0] - 2024-07-14
+
+### Added
+
+- New mod: Gift Alert Icon [1.0.0]
+  - Shows an icon when a new or replacement gift is available for an agent.
+- Notify When Agent Receives Gift [1.1.0]
+  - Added localization through external text files.
+  - Added Chinese localization thanks to 21474836(Lin).
+
 ## [5.0.0] - 2024-07-04
 
 ### Added

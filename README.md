@@ -17,6 +17,8 @@ LMM).
   - ([Readme](LobotomyCorporationMods.BadLuckProtectionForGifts/README.md))
 - [Free Customization](https://www.nexusmods.com/lobotomycorporation/mods/477)
   - ([Readme](LobotomyCorporationMods.FreeCustomization/README.md))
+- [Gift Alert Icon](https://www.nexusmods.com/lobotomycorporation/mods/494)
+  - ([Readme](LobotomyCorporationMods.GiftAlertIcon))
 - [Notify When Agent Receives Gift](https://www.nexusmods.com/lobotomycorporation/mods/487)
   - ([Readme](LobotomyCorporationMods.NotifyWhenAgentReceivesGift/README.md))
 - [Unofficial Bug Fixes](https://www.nexusmods.com/lobotomycorporation/mods/478)
@@ -26,18 +28,15 @@ LMM).
 
 ## Most Recent Change
 
-### [5.0.0] - 2024-07-04
+### [6.0.0] - 2024-07-14
 
 #### Added
 
-- New mod: Notify When Agent Receives Gift [1.0.0]
-  - Whenever an agent receives a gift, a message will display in the log.
-- Unofficial Bug Fixes [3.0.0]
-  - Added fix for Crumbling Armor bug where replacing ANY gift would cause
-    the agent to not die from doing Attachment work for the rest of the day.
-- Warn When Agent Will Die From Working [15.0.0]
-  - Added check for Snow Queen when the agent is wearing the Feather of
-    Honor armor.
+- New mod: Gift Alert Icon [1.0.0]
+  - Shows an icon when a new or replacement gift is available for an agent.
+- Notify When Agent Receives Gift [1.1.0]
+  - Added localization through external text files.
+  - Added Chinese localization thanks to 21474836(Lin).
 
 See the [full changelog](CHANGELOG.md) for all changes.
 
@@ -68,6 +67,16 @@ additional LOB points.
 
 [Mod Readme](LobotomyCorporationMods.FreeCustomization/README.md) for full
 details.
+
+---
+
+### Gift Alert Icon
+
+![Gift Alert Icon example](https://raw.githubusercontent.com/ctristan/lobotomy-corporation-mods/assets/gift-alert-icon.jpg)
+
+Shows an icon when a new or replacement gift is available for an agent.
+
+[Mod Readme](LobotomyCorporationMods.GiftAlertIcon/README.md) for full details.
 
 ---
 
