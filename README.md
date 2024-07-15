@@ -84,7 +84,7 @@ Shows an icon when a new or replacement gift is available for an agent.
 
 ![Notify When Agent Receives Gift example](https://raw.githubusercontent.com/ctristan/lobotomy-corporation-mods/assets/notify-when-agent-receives-gift.png)
 
-Whenever an agent receives a gift, a message will display in the log.
+Whenever an agent receives a gift, a message will be displayed in the log.
 
 [Mod Readme](LobotomyCorporationMods.NotifyWhenAgentReceivesGift/README.md) for
 full details.
@@ -97,8 +97,8 @@ A collection of bug fixes to fix various minor issues in the original game code.
 
 Bugs fixed:
 
-- Wasted stat upgrades from gifts with large negative stat minuses
-- Crumbling Armor gift kills agents after being replaced
+* Wasted stat upgrades from gifts with large negative stat minuses
+* Crumbling Armor gift kills agents after being replaced
 
 [Mod Readme](LobotomyCorporationMods.BugFixes/README.md) for full details.
  
@@ -135,15 +135,15 @@ If you’re running Linux, make sure mono-devel is installed.
 You should be able to open the solution in VSCode or VSCodium and build with
 xbuild.
 That said, I wouldn't recommend it as I haven’t found a way to be able to debug
-Unity .NET Framework DLLs in Linux like
-I can in Windows with dnSpy, especially since the game has to run in Proton.
-If you’re able to get debugging working in Linux I would love to hear about it!
+Unity .NET Framework DLLs on Linux like
+I can on Windows with dnSpy, especially since the game has to run in Proton.
+If you’re able to get debugging working on Linux, I would love to hear about it!
 
 ## Debug Logging
 
 In the release versions errors are logged to a text file, but if you deploy as
-debug DLLs they will also appear in-game
-in both the system log and as an Angela notification:
+debug DLLs, they will also appear in-game in both the system log and as an
+Angela notification:
 
 ![Debug Logging example](https://raw.githubusercontent.com/ctristan/lobotomy-corporation-mods/assets/debug-logging.png)
 
