@@ -23,7 +23,17 @@ enough to want to know when someone got one; weapons and armor have to be
 purchased, so you know you have them, but gifts are invisible unless you happen
 to notice them in the portrait or gift list for an agent.
 
+## Translations
+
+* Chinese translation provided by 21474836(Lin).
+
 ## Changelog
+
+### [1.0.1] - 2024-07-15
+
+#### Added
+
+* Added Chinese localization thanks to 21474836(Lin).
 
 ### [1.0.0] - 2024-07-14
 

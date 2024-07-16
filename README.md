@@ -28,6 +28,13 @@ LMM).
 
 ## Most Recent Change
 
+### [6.0.1] - 2024-07-15
+
+#### Added
+
+* Gift Alert Icon [1.0.1]
+  * Added Chinese localization thanks to 21474836(Lin).
+
 ### [6.0.0] - 2024-07-14
 
 #### Added

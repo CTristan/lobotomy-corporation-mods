@@ -42,6 +42,13 @@ Note: this will contain spoilers.
   then restart the day and verify changes
   stay.
 
+## Gift Alert Icon
+
+- [ ] A green gift icon appears if the slot is empty.
+- [ ] A gray gift icon appears if the agent has a gift in that slot but not
+  that specific gift.
+- [ ] No gift icon appears if the agent already has that gift.
+
 ## Notify When Agent Receives Gift
 
 - [ ] Displays a message for each condition:
