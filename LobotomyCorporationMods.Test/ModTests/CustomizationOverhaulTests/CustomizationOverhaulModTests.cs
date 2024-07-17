@@ -4,20 +4,20 @@
 
 using Customizing;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.FreeCustomization;
+using LobotomyCorporationMods.CustomizationOverhaul;
 using LobotomyCorporationMods.Test.Extensions;
 
 #endregion
 
-namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests
+namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests
 {
-    public class FreeCustomizationModTests
+    public class CustomizationOverhaulModTests
     {
         protected const int Twice = 2;
         private const AgentModel DefaultAgentModel = null;
         private const CustomizingType DefaultCustomizingType = CustomizingType.GENERATE;
 
-        protected FreeCustomizationModTests()
+        protected CustomizationOverhaulModTests()
         {
             _ = new Harmony_Patch();
             var mockLogger = TestExtensions.GetMockLogger();

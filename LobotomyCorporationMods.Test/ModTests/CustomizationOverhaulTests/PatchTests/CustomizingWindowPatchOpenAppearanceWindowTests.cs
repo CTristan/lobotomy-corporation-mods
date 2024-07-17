@@ -4,14 +4,14 @@
 
 using Customizing;
 using FluentAssertions;
-using LobotomyCorporationMods.FreeCustomization.Patches;
+using LobotomyCorporationMods.CustomizationOverhaul.Patches;
 using Xunit;
 
 #endregion
 
-namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests.PatchTests
+namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests.PatchTests
 {
-    public sealed class CustomizingWindowPatchOpenAppearanceWindowTests : FreeCustomizationModTests
+    public sealed class CustomizingWindowPatchOpenAppearanceWindowTests : CustomizationOverhaulModTests
     {
         [Theory]
         [InlineData(true)]

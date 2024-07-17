@@ -7,7 +7,7 @@ using Customizing;
 using FluentAssertions;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
-using LobotomyCorporationMods.FreeCustomization.Patches;
+using LobotomyCorporationMods.CustomizationOverhaul.Patches;
 using LobotomyCorporationMods.Test.Extensions;
 using Moq;
 using UnityEngine;
@@ -15,9 +15,9 @@ using Xunit;
 
 #endregion
 
-namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests.PatchTests
+namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests.PatchTests
 {
-    public sealed class CustomizingWindowPatchConfirmTests : FreeCustomizationModTests
+    public sealed class CustomizingWindowPatchConfirmTests : CustomizationOverhaulModTests
     {
         private readonly Mock<IAgentLayerTestAdapter> _mockAgentLayerTestAdapter = new Mock<IAgentLayerTestAdapter>();
 

@@ -3,15 +3,15 @@
 #region
 
 using FluentAssertions;
-using LobotomyCorporationMods.FreeCustomization.Patches;
+using LobotomyCorporationMods.CustomizationOverhaul.Patches;
 using LobotomyCorporationMods.Test.Extensions;
 using Xunit;
 
 #endregion
 
-namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests.PatchTests
+namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests.PatchTests
 {
-    public sealed class AppearanceUiPatchCloseWindowTests : FreeCustomizationModTests
+    public sealed class AppearanceUiPatchCloseWindowTests : CustomizationOverhaulModTests
     {
         [Fact]
         public void The_Appearance_UI_does_not_close_itself_if_there_is_no_close_action()

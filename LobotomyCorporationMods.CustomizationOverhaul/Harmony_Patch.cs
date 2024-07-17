@@ -6,7 +6,7 @@ using LobotomyCorporationMods.Common.Implementations;
 
 #endregion
 
-namespace LobotomyCorporationMods.FreeCustomization
+namespace LobotomyCorporationMods.CustomizationOverhaul
 {
     // ReSharper disable once InconsistentNaming
     public sealed class Harmony_Patch : HarmonyPatchBase
@@ -17,7 +17,7 @@ namespace LobotomyCorporationMods.FreeCustomization
         {
         }
 
-        private Harmony_Patch(bool initialize) : base(typeof(Harmony_Patch), "LobotomyCorporationMods.FreeCustomization.dll", initialize)
+        private Harmony_Patch(bool initialize) : base(typeof(Harmony_Patch), "LobotomyCorporationMods.CustomizationOverhaul.dll", initialize)
         {
         }
     }

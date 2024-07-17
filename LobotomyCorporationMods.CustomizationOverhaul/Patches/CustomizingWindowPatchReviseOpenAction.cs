@@ -15,7 +15,7 @@ using LobotomyCorporationMods.Common.Implementations.Facades;
 
 #endregion
 
-namespace LobotomyCorporationMods.FreeCustomization.Patches
+namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
 {
     [HarmonyPatch(typeof(CustomizingWindow), PrivateMethods.CustomizingWindow.ReviseOpenAction)]
     public static class CustomizingWindowPatchReviseOpenAction

@@ -5,15 +5,15 @@
 using System;
 using Customizing;
 using FluentAssertions;
-using LobotomyCorporationMods.FreeCustomization;
-using LobotomyCorporationMods.FreeCustomization.Patches;
+using LobotomyCorporationMods.CustomizationOverhaul;
+using LobotomyCorporationMods.CustomizationOverhaul.Patches;
 using LobotomyCorporationMods.Test.Extensions;
 using Moq;
 using Xunit;
 
 #endregion
 
-namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests
+namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests
 {
     public sealed class HarmonyPatchTests
     {

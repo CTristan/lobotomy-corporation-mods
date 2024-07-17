@@ -3,15 +3,15 @@
 #region
 
 using FluentAssertions;
-using LobotomyCorporationMods.FreeCustomization.Patches;
+using LobotomyCorporationMods.CustomizationOverhaul.Patches;
 using LobotomyCorporationMods.Test.Extensions;
 using Xunit;
 
 #endregion
 
-namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests.PatchTests
+namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests.PatchTests
 {
-    public sealed class CustomizingWindowPatchReviseOpenActionTests : FreeCustomizationModTests
+    public sealed class CustomizingWindowPatchReviseOpenActionTests : CustomizationOverhaulModTests
     {
         [Theory]
         [InlineData("DefaultAgent")]

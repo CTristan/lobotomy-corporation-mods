@@ -5,15 +5,15 @@
 using Customizing;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
-using LobotomyCorporationMods.FreeCustomization.Patches;
+using LobotomyCorporationMods.CustomizationOverhaul.Patches;
 using Moq;
 using Xunit;
 
 #endregion
 
-namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests.PatchTests
+namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests.PatchTests
 {
-    public sealed class AgentInfoWindowPatchEnforcementWindowTests : FreeCustomizationModTests
+    public sealed class AgentInfoWindowPatchEnforcementWindowTests : CustomizationOverhaulModTests
     {
         [Fact]
         public void Opening_the_strengthen_employee_window_opens_the_Appearance_UI()

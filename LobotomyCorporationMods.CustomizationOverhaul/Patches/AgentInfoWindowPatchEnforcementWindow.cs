@@ -16,12 +16,12 @@ using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
 
 #endregion
 
-namespace LobotomyCorporationMods.FreeCustomization.Patches
+namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
 {
-    [HarmonyPatch(typeof(AgentInfoWindow), nameof(AgentInfoWindow.GenerateWindow))]
-    public static class AgentInfoWindowPatchGenerateWindow
+    [HarmonyPatch(typeof(AgentInfoWindow), nameof(AgentInfoWindow.EnforcementWindow))]
+    public static class AgentInfoWindowPatchEnforcementWindow
     {
-        public static void PatchAfterGenerateWindow([NotNull] this AgentInfoWindow instance,
+        public static void PatchAfterEnforcementWindow([NotNull] this AgentInfoWindow instance,
             [CanBeNull] IAgentInfoWindowUiComponentsTestAdapter agentInfoWindowUiComponentsTestAdapter = null,
             [CanBeNull] ICustomizingWindowTestAdapter customizingWindowTestAdapter = null,
             [CanBeNull] IGameObjectTestAdapter gameObjectTestAdapter = null)
@@ -31,17 +31,17 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
             instance.OpenAppearancePanel(agentInfoWindowUiComponentsTestAdapter, customizingWindowTestAdapter, gameObjectTestAdapter);
         }
 
-        /// <summary>Runs after opening the Agent window to automatically open the appearance window, since there's no reason to hide it behind a button.</summary>
+        /// <summary>Runs after opening the Strengthen Agent window to open the appearance window.</summary>
         [EntryPoint]
         [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
         public static void Postfix()
         {
             try
             {
-                // GenerateWindow is a static method, so we can't get an instance of it through Harmony.
+                // EnforcementWindow is a static method, so we can't get an instance of the AgentInfoWindow through Harmony.
                 var agentInfoWindow = AgentInfoWindow.currentWindow;
 
-                agentInfoWindow.PatchAfterGenerateWindow();
+                agentInfoWindow.PatchAfterEnforcementWindow();
             }
             catch (Exception ex)
             {

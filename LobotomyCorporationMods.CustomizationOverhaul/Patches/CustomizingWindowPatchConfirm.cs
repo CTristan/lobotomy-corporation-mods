@@ -16,7 +16,7 @@ using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 #endregion
 
-namespace LobotomyCorporationMods.FreeCustomization.Patches
+namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
 {
     [HarmonyPatch(typeof(CustomizingWindow), nameof(CustomizingWindow.Confirm))]
     public static class CustomizingWindowPatchConfirm

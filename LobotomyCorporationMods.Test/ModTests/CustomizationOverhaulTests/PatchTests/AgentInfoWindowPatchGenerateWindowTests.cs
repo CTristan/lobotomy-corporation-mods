@@ -4,15 +4,15 @@
 
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
-using LobotomyCorporationMods.FreeCustomization.Patches;
+using LobotomyCorporationMods.CustomizationOverhaul.Patches;
 using Moq;
 using Xunit;
 
 #endregion
 
-namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests.PatchTests
+namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests.PatchTests
 {
-    public sealed class AgentInfoWindowPatchGenerateWindowTests : FreeCustomizationModTests
+    public sealed class AgentInfoWindowPatchGenerateWindowTests : CustomizationOverhaulModTests
     {
         [Fact]
         public void Opening_the_agent_window_automatically_opens_the_appearance_window()
