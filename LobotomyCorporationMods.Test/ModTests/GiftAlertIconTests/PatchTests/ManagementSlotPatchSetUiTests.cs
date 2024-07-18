@@ -10,7 +10,7 @@ using LobotomyCorporationMods.Common.Enums;
 using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
-using LobotomyCorporationMods.Common.ParameterObjects;
+using LobotomyCorporationMods.Common.ParameterContainers;
 using LobotomyCorporationMods.GiftAlertIcon.Patches;
 using LobotomyCorporationMods.Test.Extensions;
 using Moq;
@@ -182,7 +182,7 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
         }
 
         [NotNull]
-        private static OptionalTestAdapterParameters SetupTestParameters(string imageName)
+        private static OptionalTestAdapterParametersContainer SetupTestParameters(string imageName)
         {
             var mockImageTestAdapter = GetMockImageTestAdapter();
 
@@ -190,10 +190,10 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
         }
 
         [NotNull]
-        private static OptionalTestAdapterParameters CreateTestAdapterParameters(string imageName,
+        private static OptionalTestAdapterParametersContainer CreateTestAdapterParameters(string imageName,
             [NotNull] Mock<IImageTestAdapter> mockImageTestAdapter)
         {
-            var testAdapterParameters = new OptionalTestAdapterParameters();
+            var testAdapterParameters = new OptionalTestAdapterParametersContainer();
 
             var mockTexture2dTestAdapter = new Mock<ITexture2dTestAdapter>();
             testAdapterParameters.Texture2DTestAdapter = mockTexture2dTestAdapter.Object;

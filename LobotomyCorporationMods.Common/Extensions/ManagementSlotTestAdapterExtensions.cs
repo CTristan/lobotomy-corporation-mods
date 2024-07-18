@@ -5,7 +5,7 @@ using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
-using LobotomyCorporationMods.Common.ParameterObjects;
+using LobotomyCorporationMods.Common.ParameterContainers;
 using UnityEngine;
 
 namespace LobotomyCorporationMods.Common.Extensions
@@ -14,23 +14,23 @@ namespace LobotomyCorporationMods.Common.Extensions
     {
         [NotNull]
         internal static IGameObjectTestAdapter CreateImageObjectTestAdapter([NotNull] this IManagementSlotTestAdapter managementSlotTestAdapter,
-            [NotNull] ImageParameters imageParameters,
-            [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null)
+            [NotNull] ImageParametersContainer imageParametersContainer,
+            [CanBeNull] OptionalTestAdapterParametersContainer testAdapterParametersContainer = null)
         {
-            testAdapterParameters = testAdapterParameters.EnsureNotNullWithMethod(() => new OptionalTestAdapterParameters());
-            testAdapterParameters.SpriteTestAdapter = testAdapterParameters.SpriteTestAdapter.EnsureNotNullWithMethod(() => new SpriteTestAdapter(new Sprite()));
-            testAdapterParameters.Texture2DTestAdapter = testAdapterParameters.Texture2DTestAdapter.EnsureNotNullWithMethod(() => new Texture2dTestAdapter());
-            testAdapterParameters.GameObjectTestAdapter = testAdapterParameters.GameObjectTestAdapter.EnsureNotNullWithMethod(() => new GameObjectTestAdapter(new GameObject()));
+            testAdapterParametersContainer = testAdapterParametersContainer.EnsureNotNullWithMethod(() => new OptionalTestAdapterParametersContainer());
+            testAdapterParametersContainer.SpriteTestAdapter = testAdapterParametersContainer.SpriteTestAdapter.EnsureNotNullWithMethod(() => new SpriteTestAdapter(new Sprite()));
+            testAdapterParametersContainer.Texture2DTestAdapter = testAdapterParametersContainer.Texture2DTestAdapter.EnsureNotNullWithMethod(() => new Texture2dTestAdapter());
+            testAdapterParametersContainer.GameObjectTestAdapter = testAdapterParametersContainer.GameObjectTestAdapter.EnsureNotNullWithMethod(() => new GameObjectTestAdapter(new GameObject()));
 
-            var imageGameObjectTestAdapter = testAdapterParameters.GameObjectTestAdapter;
+            var imageGameObjectTestAdapter = testAdapterParametersContainer.GameObjectTestAdapter;
             var parent = managementSlotTestAdapter.Transform.GetChild(0);
             imageGameObjectTestAdapter.Transform.SetParent(parent);
-            imageGameObjectTestAdapter.Transform.LocalScale = new Vector3(imageParameters.LocalScaleX, imageParameters.LocalScaleY);
-            imageGameObjectTestAdapter.Transform.LocalPosition = new Vector3(imageParameters.LocalPositionX, imageParameters.LocalPositionY, imageParameters.LocalPositionZ);
+            imageGameObjectTestAdapter.Transform.LocalScale = new Vector3(imageParametersContainer.LocalScaleX, imageParametersContainer.LocalScaleY);
+            imageGameObjectTestAdapter.Transform.LocalPosition = new Vector3(imageParametersContainer.LocalPositionX, imageParametersContainer.LocalPositionY, imageParametersContainer.LocalPositionZ);
             imageGameObjectTestAdapter.SetActive(true);
 
-            var texture2dTestAdapter = testAdapterParameters.Texture2DTestAdapter;
-            var sprite = testAdapterParameters.SpriteTestAdapter.Create(texture2dTestAdapter.GameObject, new Rect(0f, 0f, texture2dTestAdapter.Width, texture2dTestAdapter.Height),
+            var texture2dTestAdapter = testAdapterParametersContainer.Texture2DTestAdapter;
+            var sprite = testAdapterParametersContainer.SpriteTestAdapter.Create(texture2dTestAdapter.GameObject, new Rect(0f, 0f, texture2dTestAdapter.Width, texture2dTestAdapter.Height),
                 new Vector2(0.5f, 0.5f));
 
             var imageComponentTestAdapter = imageGameObjectTestAdapter.AddImageComponent();

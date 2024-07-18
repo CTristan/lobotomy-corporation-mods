@@ -8,7 +8,7 @@ using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
-using LobotomyCorporationMods.Common.ParameterObjects;
+using LobotomyCorporationMods.Common.ParameterContainers;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,34 +22,34 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         [ThreadStatic] private static UnityAdapterDictionary<string, IImageTestAdapter, Image> s_imagesDictionary;
 
         private static void CreateImageObjectIfNotExist([NotNull] this ManagementSlot managementSlot,
-            [NotNull] ImageParameters imageParameters,
+            [NotNull] ImageParametersContainer imageParametersContainer,
             [NotNull] IFileManager fileManager,
-            [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null)
+            [CanBeNull] OptionalTestAdapterParametersContainer testAdapterParametersContainer = null)
         {
             Guard.Against.Null(managementSlot, nameof(managementSlot));
             Guard.Against.Null(fileManager, nameof(fileManager));
 
             s_imagesDictionary = s_imagesDictionary.EnsureNotNullWithMethod(() => new UnityAdapterDictionary<string, IImageTestAdapter, Image>());
-            testAdapterParameters = testAdapterParameters.EnsureNotNullWithMethod(() => new OptionalTestAdapterParameters());
-            testAdapterParameters.Texture2DTestAdapter = testAdapterParameters.Texture2DTestAdapter.EnsureNotNullWithMethod(() => new Texture2dTestAdapter());
+            testAdapterParametersContainer = testAdapterParametersContainer.EnsureNotNullWithMethod(() => new OptionalTestAdapterParametersContainer());
+            testAdapterParametersContainer.Texture2DTestAdapter = testAdapterParametersContainer.Texture2DTestAdapter.EnsureNotNullWithMethod(() => new Texture2dTestAdapter());
 
-            if (s_imagesDictionary.ContainsKey(imageParameters.ImageId))
+            if (s_imagesDictionary.ContainsKey(imageParametersContainer.ImageId))
             {
                 return;
             }
 
-            var fileWithPath = fileManager.GetFile(imageParameters.ImageFilePath);
+            var fileWithPath = fileManager.GetFile(imageParametersContainer.ImageFilePath);
             if (string.IsNullOrEmpty(fileWithPath))
             {
-                throw new InvalidOperationException("No image found with name " + imageParameters.ImageFilePath);
+                throw new InvalidOperationException("No image found with name " + imageParametersContainer.ImageFilePath);
             }
 
-            testAdapterParameters.Texture2DTestAdapter.LoadImage(fileManager.ReadAllBytes(fileWithPath));
+            testAdapterParametersContainer.Texture2DTestAdapter.LoadImage(fileManager.ReadAllBytes(fileWithPath));
 
-            var imageObject = managementSlot.CreateImageObjectTestAdapter(imageParameters, testAdapterParameters);
+            var imageObject = managementSlot.CreateImageObjectTestAdapter(imageParametersContainer, testAdapterParametersContainer);
 
             var imageTestAdapter = imageObject.ImageComponent;
-            s_imagesDictionary[imageParameters.ImageId] = imageTestAdapter;
+            s_imagesDictionary[imageParametersContainer.ImageId] = imageTestAdapter;
         }
 
         public static string GetSlotName([NotNull] this ManagementSlot managementSlot,
@@ -61,14 +61,14 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         }
 
         public static void HideImageObject([NotNull] this ManagementSlot managementSlot,
-            [NotNull] ImageParameters imageParameters,
+            [NotNull] ImageParametersContainer imageParametersContainer,
             [NotNull] IFileManager fileManager,
-            [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null)
+            [CanBeNull] OptionalTestAdapterParametersContainer testAdapterParametersContainer = null)
         {
-            Guard.Against.Null(imageParameters, nameof(imageParameters));
+            Guard.Against.Null(imageParametersContainer, nameof(imageParametersContainer));
 
-            CreateImageObjectIfNotExist(managementSlot, imageParameters, fileManager, testAdapterParameters);
-            var image = GetImage(imageParameters.ImageId);
+            CreateImageObjectIfNotExist(managementSlot, imageParametersContainer, fileManager, testAdapterParametersContainer);
+            var image = GetImage(imageParametersContainer.ImageId);
 
             image.Color = Color.clear;
 
@@ -109,17 +109,17 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         }
 
         public static void UpdateImage([NotNull] this ManagementSlot managementSlot,
-            [NotNull] ImageParameters imageParameters,
+            [NotNull] ImageParametersContainer imageParametersContainer,
             [NotNull] IFileManager fileManager,
             Color color,
             [CanBeNull] string tooltipMessage = "",
-            [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null)
+            [CanBeNull] OptionalTestAdapterParametersContainer testAdapterParametersContainer = null)
         {
-            Guard.Against.Null(imageParameters, nameof(imageParameters));
+            Guard.Against.Null(imageParametersContainer, nameof(imageParametersContainer));
 
-            CreateImageObjectIfNotExist(managementSlot, imageParameters, fileManager, testAdapterParameters);
+            CreateImageObjectIfNotExist(managementSlot, imageParametersContainer, fileManager, testAdapterParametersContainer);
 
-            var image = GetImage(imageParameters.ImageId);
+            var image = GetImage(imageParametersContainer.ImageId);
             image.Color = color;
             image.SetActive(true);
 

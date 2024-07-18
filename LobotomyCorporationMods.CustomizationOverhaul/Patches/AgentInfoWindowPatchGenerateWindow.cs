@@ -13,6 +13,7 @@ using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Implementations.Facades;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
+using LobotomyCorporationMods.CustomizationOverhaul.Extensions;
 
 #endregion
 
@@ -29,6 +30,9 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
             Guard.Against.Null(instance, nameof(instance));
 
             instance.OpenAppearancePanel(agentInfoWindowUiComponentsTestAdapter, customizingWindowTestAdapter, gameObjectTestAdapter);
+
+            instance.CreateSavePresetButton();
+            instance.CreateSavePresetButtonText();
         }
 
         /// <summary>Runs after opening the Agent window to automatically open the appearance window, since there's no reason to hide it behind a button.</summary>

@@ -5,7 +5,7 @@ using CommandWindow;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
-using LobotomyCorporationMods.Common.ParameterObjects;
+using LobotomyCorporationMods.Common.ParameterContainers;
 
 // ReSharper disable UnusedParameter.Global
 
@@ -16,13 +16,14 @@ namespace LobotomyCorporationMods.Common.Extensions
     {
         [NotNull]
         internal static IGameObjectTestAdapter CreateImageObjectTestAdapter([NotNull] this ManagementSlot managementSlot,
-            [NotNull] ImageParameters imageParameters,
-            [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null)
+            [NotNull] ImageParametersContainer imageParametersContainer,
+            [CanBeNull] OptionalTestAdapterParametersContainer testAdapterParametersContainer = null)
         {
-            testAdapterParameters = testAdapterParameters.EnsureNotNullWithMethod(() => new OptionalTestAdapterParameters());
-            testAdapterParameters.ManagementSlotTestAdapter = testAdapterParameters.ManagementSlotTestAdapter.EnsureNotNullWithMethod(() => new ManagementSlotTestAdapter(managementSlot));
+            testAdapterParametersContainer = testAdapterParametersContainer.EnsureNotNullWithMethod(() => new OptionalTestAdapterParametersContainer());
+            testAdapterParametersContainer.ManagementSlotTestAdapter =
+                testAdapterParametersContainer.ManagementSlotTestAdapter.EnsureNotNullWithMethod(() => new ManagementSlotTestAdapter(managementSlot));
 
-            return testAdapterParameters.ManagementSlotTestAdapter.CreateImageObjectTestAdapter(imageParameters, testAdapterParameters);
+            return testAdapterParametersContainer.ManagementSlotTestAdapter.CreateImageObjectTestAdapter(imageParametersContainer, testAdapterParametersContainer);
         }
 
         [CanBeNull]

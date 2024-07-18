@@ -1,10 +1,17 @@
 ﻿// SPDX-License-Identifier: MIT
 
+using System.Collections.Generic;
+
 namespace LobotomyCorporationMods.Common.Interfaces
 {
     public interface IFileManager
     {
+        void CreateDirectoryIfNotExists(string path);
+
         string GetFile(string fileName);
+
+        IEnumerable<string> GetFilesFromDirectory(string path,
+            string searchPattern = "*.*");
 
         byte[] ReadAllBytes(string filePath);
 

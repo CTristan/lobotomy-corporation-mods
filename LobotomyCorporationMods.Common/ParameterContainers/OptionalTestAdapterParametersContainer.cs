@@ -4,10 +4,10 @@ using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
 
-namespace LobotomyCorporationMods.Common.ParameterObjects
+namespace LobotomyCorporationMods.Common.ParameterContainers
 {
     /// <summary>Represents a set of optional test adapter parameters.</summary>
-    public sealed class OptionalTestAdapterParameters
+    public sealed class OptionalTestAdapterParametersContainer
     {
         [CanBeNull]
         public IGameObjectTestAdapter GameObjectTestAdapter { get; set; }

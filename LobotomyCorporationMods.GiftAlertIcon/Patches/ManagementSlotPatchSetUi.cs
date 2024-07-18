@@ -13,7 +13,7 @@ using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Implementations.Facades;
 using LobotomyCorporationMods.Common.Interfaces;
-using LobotomyCorporationMods.Common.ParameterObjects;
+using LobotomyCorporationMods.Common.ParameterContainers;
 using LobotomyCorporationMods.GiftAlertIcon.Extensions;
 
 #endregion
@@ -27,11 +27,11 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Patches
             [NotNull] UnitModel agent,
             [NotNull] string imagePath,
             [CanBeNull] IFileManager fileManager = null,
-            [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null)
+            [CanBeNull] OptionalTestAdapterParametersContainer testAdapterParametersContainer = null)
         {
             Guard.Against.Null(instance, nameof(instance));
             fileManager = fileManager.EnsureNotNullWithMethod(() => Harmony_Patch.Instance.FileManager);
-            testAdapterParameters = testAdapterParameters.EnsureNotNullWithMethod(() => new OptionalTestAdapterParameters());
+            testAdapterParametersContainer = testAdapterParametersContainer.EnsureNotNullWithMethod(() => new OptionalTestAdapterParametersContainer());
 
             const float LocalPositionX = -12f;
             const float LocalPositionY = 28f;
@@ -39,8 +39,8 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Patches
             const float LocalScaleX = 0.2f;
             const float LocalScaleY = 0.2f;
 
-            var imageId = instance.GetSlotName(testAdapterParameters.ManagementSlotTestAdapter);
-            var imageProperties = new ImageParameters
+            var imageId = instance.GetSlotName(testAdapterParametersContainer.ManagementSlotTestAdapter);
+            var imageProperties = new ImageParametersContainer
             {
                 ImageId = imageId,
                 ImageFilePath = imagePath,
@@ -51,7 +51,7 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Patches
                 LocalScaleY = LocalScaleY,
             };
 
-            instance.UpdateGiftIcon(agent, imageProperties, fileManager, testAdapterParameters);
+            instance.UpdateGiftIcon(agent, imageProperties, fileManager, testAdapterParametersContainer);
         }
 
         /// <summary>Runs after initializing the management slot UI to add our own additional icon.</summary>

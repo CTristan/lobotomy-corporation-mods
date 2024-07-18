@@ -13,6 +13,7 @@ using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Implementations.Facades;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
+using LobotomyCorporationMods.CustomizationOverhaul.Extensions;
 
 #endregion
 
@@ -29,9 +30,12 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
             Guard.Against.Null(instance, nameof(instance));
 
             instance.OpenAppearancePanel(agentInfoWindowUiComponentsTestAdapter, customizingWindowTestAdapter, gameObjectTestAdapter);
+
+            instance.CreateSavePresetButton();
+            instance.CreateSavePresetButtonText();
         }
 
-        /// <summary>Runs after opening the Strengthen Agent window to open the appearance window.</summary>
+        /// <summary>Runs after opening the Strengthen Agent window to force it to open the appearance window.</summary>
         [EntryPoint]
         [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
         public static void Postfix()

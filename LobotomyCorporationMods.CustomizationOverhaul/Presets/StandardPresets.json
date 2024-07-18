@@ -1,0 +1,34 @@
+﻿{
+  "Bongbong": {
+    "EyeBattle": "",
+    "EyeDead": "Eye_Dead_1_1",
+    "EyeDef": "Eye_Default_1_31",
+    "EyePanic": "Eye_Panic_1_4",
+    "EyebrowBattle": "EyeBrow_Battle_1_7",
+    "EyebrowDef": "EyeBrow_1_7",
+    "EyebrowPanic": "EyeBrow_Panic_5",
+    "FrontHair": "2_3",
+    "MouthBattle": "Mouth_Battle_1_7",
+    "MouthDef": "Mouth_1_5",
+    "MouthPanic": "",
+    "RearHair": "4_3",
+    "HairColor": "#0000FF",
+    "EyeColor": "#FFFFFF"
+  },
+  "Joy Kirbs": {
+    "EyeBattle": "",
+    "EyeDead": "Eye_Dead_1_1",
+    "EyeDef": "JoyKirbs",
+    "EyePanic": "Eye_Panic_1_5",
+    "EyebrowBattle": "EyeBrow_Battle_1_5",
+    "EyebrowDef": "EyeBrow_1_6",
+    "EyebrowPanic": "EyeBrow_Panic_2",
+    "FrontHair": "JoyKirbsWhite",
+    "MouthBattle": "Mouth_Battle_1_2",
+    "MouthDef": "Mouth_1_2",
+    "MouthPanic": "Mouth_Panic_1_1",
+    "RearHair": "4_2",
+    "HairColor": "#FFA1CC",
+    "EyeColor": "#FFFFFF"
+  }
+}

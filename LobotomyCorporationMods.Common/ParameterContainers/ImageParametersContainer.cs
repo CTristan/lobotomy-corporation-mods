@@ -1,9 +1,9 @@
 ﻿// SPDX-License-Identifier: MIT
 
-namespace LobotomyCorporationMods.Common.ParameterObjects
+namespace LobotomyCorporationMods.Common.ParameterContainers
 {
     /// <summary>Represents the parameters of an image.</summary>
-    public sealed class ImageParameters
+    public sealed class ImageParametersContainer
     {
         /// <summary>A specific ID for the image to reference later.</summary>
         public string ImageId { get; set; }
