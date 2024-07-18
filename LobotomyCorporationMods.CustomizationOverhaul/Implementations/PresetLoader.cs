@@ -24,6 +24,11 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
 
         internal PresetLoader(IFileManager fileManager)
         {
+            if (fileManager.IsNull())
+            {
+                return;
+            }
+
             _fileManager = fileManager;
             InitializeAllPresetFiles();
         }
