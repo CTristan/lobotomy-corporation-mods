@@ -4,6 +4,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Constants
 {
     internal static class LocalizationIds
     {
+        internal const string LoadPresetIconText = "Load_Preset";
         internal const string SavePresetIconText = "Save_Preset";
     }
 }

@@ -32,7 +32,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
             instance.OpenAppearancePanel(agentInfoWindowUiComponentsTestAdapter, customizingWindowTestAdapter, gameObjectTestAdapter);
 
             instance.CreateSavePresetButton();
-            instance.CreateSavePresetButtonText();
+            instance.CreateLoadPresetButton();
         }
 
         /// <summary>Runs after opening the Strengthen Agent window to force it to open the appearance window.</summary>

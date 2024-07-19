@@ -260,6 +260,9 @@
     <Content Include="Info\GlobalInfo.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Localize\en\text_en.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Presets\StandardPresets.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

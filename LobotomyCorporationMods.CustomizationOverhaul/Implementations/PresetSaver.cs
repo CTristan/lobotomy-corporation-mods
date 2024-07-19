@@ -48,13 +48,13 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
         public void UpdateSavePresetButtonText(string agentName,
             Appearance appearance)
         {
-            if (Harmony_Patch.Instance.SavePresetButtonText.IsNull())
+            if (Harmony_Patch.Instance.SavePresetButton.IsNull())
             {
-                AgentInfoWindow.currentWindow.CreateSavePresetButtonText();
+                AgentInfoWindow.currentWindow.CreateSavePresetButton();
             }
 
             _presetLoader.InitializeDefaultCustomPresetFile();
-            Harmony_Patch.Instance.SavePresetButtonText.color = Harmony_Patch.Instance.PresetLoader.IsExactPreset(agentName, appearance) ? Color.grey : PresetConstants.PresetTextColor;
+            Harmony_Patch.Instance.SavePresetButton.TextColor = Harmony_Patch.Instance.PresetLoader.IsExactPreset(agentName, appearance) ? Color.grey : PresetConstants.PresetTextColor;
         }
     }
 }

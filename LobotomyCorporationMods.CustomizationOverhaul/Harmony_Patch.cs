@@ -3,9 +3,10 @@
 #region
 
 using LobotomyCorporationMods.Common.Implementations;
+using LobotomyCorporationMods.Common.Interfaces.UiComponents;
 using LobotomyCorporationMods.CustomizationOverhaul.Implementations;
 using LobotomyCorporationMods.CustomizationOverhaul.Interfaces;
-using UnityEngine.UI;
+using UnityEngine;
 
 #endregion
 
@@ -26,8 +27,10 @@ namespace LobotomyCorporationMods.CustomizationOverhaul
             PresetSaver = new PresetSaver(FileManager, PresetLoader);
         }
 
-        internal Button SavePresetButton { get; set; }
-        internal Text SavePresetButtonText { get; set; }
+        internal IUiButton LoadPresetButton { get; set; }
+
+        internal GameObject LoadPresetPanel { get; set; }
+        internal IUiButton SavePresetButton { get; set; }
         internal IPresetLoader PresetLoader { get; }
         internal IPresetSaver PresetSaver { get; }
     }
