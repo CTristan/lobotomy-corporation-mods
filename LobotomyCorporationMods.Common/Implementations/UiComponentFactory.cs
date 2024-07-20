@@ -15,6 +15,12 @@ namespace LobotomyCorporationMods.Common.Implementations
         }
 
         [NotNull]
+        public static IUiImage CreateUiImage()
+        {
+            return new UiImage();
+        }
+
+        [NotNull]
         internal static IUiText CreateUiText()
         {
             return new UiText();

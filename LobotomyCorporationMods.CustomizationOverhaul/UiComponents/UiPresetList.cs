@@ -2,7 +2,13 @@
 
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using Customizing;
 using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Extensions;
+using LobotomyCorporationMods.Common.Implementations;
+using LobotomyCorporationMods.Common.Interfaces.UiComponents;
+using LobotomyCorporationMods.CustomizationOverhaul.Constants;
 using LobotomyCorporationMods.CustomizationOverhaul.Objects;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,162 +17,141 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
 {
     internal sealed class UiPresetList : MonoBehaviour
     {
-        public GameObject _downArrow;
-
-        public int _page;
-
-        public List<GameObject> _panelList;
-
-        public List<Text> _panelTextList;
-        public List<KeyValuePair<string, PresetData>> _presets;
-
-        public GameObject _upArrow;
+        private const int NumberOfPresetsPerPage = 5;
+        private readonly string _arrowIconPath = Application.dataPath + "/Managed/BaseMod/Image/Down.png";
+        private int _currentPage;
+        private IUiButton _downArrow;
+        private List<IUiButton> _panelButtonList;
+        private List<KeyValuePair<string, PresetData>> _presets;
+        private GameObject _upArrow;
 
         [UsedImplicitly]
         public void Awake()
         {
-            _presets = new List<KeyValuePair<string, PresetData>>(Harmony_Patch.Instance.PresetLoader.Presets);
-            _page = 0;
-            _panelList = new List<GameObject>();
-            _panelTextList = new List<Text>();
-            for (var i = 0; i < 5; i++)
-            {
-                var hasMorePresets = _presets.Count > i;
-                var newGameObject = MakeModInfo(i);
-                MakeModInfo2(hasMorePresets ? _presets[i].Key : null, newGameObject);
-
-                _panelList.Add(newGameObject);
-                newGameObject.transform.localPosition = new Vector2(-800f, 255 - i * 100);
-            }
-
-            _downArrow = MakeDownButton();
-            _downArrow.transform.localPosition = new Vector2(-795f, -445f);
-            _upArrow = MakeUpButton();
-            _upArrow.transform.localPosition = new Vector2(-795f, 355f);
             UpdatePage();
         }
 
-        [UsedImplicitly]
-        public void Update()
+        private void ReloadPresets()
         {
-            if (gameObject.activeSelf)
+            _presets = new List<KeyValuePair<string, PresetData>>(Harmony_Patch.Instance.PresetLoader.Presets.OrderBy(x => x.Key));
+        }
+
+        private void ReinitializeComponents()
+        {
+            ReloadPresets();
+            InitializeArrows();
+            InitializePanelButtonsList();
+        }
+
+        private void InitializeArrows()
+        {
+            if (_downArrow.IsNull())
+            {
+                _downArrow = MakeDownButton();
+            }
+
+            if (_upArrow.IsNull())
+            {
+                _upArrow = MakeUpButton();
+            }
+        }
+
+        private void InitializePanelButtonsList()
+        {
+            if (_panelButtonList.IsNull())
             {
                 return;
             }
 
-            var x = _upArrow.transform.localPosition.x;
-            var y = _upArrow.transform.localPosition.y;
-            if (Input.GetKey(KeyCode.UpArrow))
+            _panelButtonList = new List<IUiButton>();
+            for (var presetNum = 0; presetNum < NumberOfPresetsPerPage; presetNum++)
             {
-                _upArrow.transform.localPosition = new Vector2(x, y + 1f);
-            }
-
-            if (Input.GetKey(KeyCode.DownArrow))
-            {
-                _upArrow.transform.localPosition = new Vector2(x, y - 1f);
-            }
-
-            if (Input.GetKey(KeyCode.LeftArrow))
-            {
-                _upArrow.transform.localPosition = new Vector2(x - 1f, y);
-            }
-
-            if (Input.GetKey(KeyCode.RightArrow))
-            {
-                _upArrow.transform.localPosition = new Vector2(x + 1f, y);
+                var hasPresetAtIndex = presetNum < _presets.Count;
+                var presetName = hasPresetAtIndex ? _presets[presetNum].Key : string.Empty;
+                _panelButtonList.Add(CreatePresetButton(presetNum, presetName));
             }
         }
 
         [NotNull]
-        public GameObject MakeModInfo(int i)
+        public IUiButton CreatePresetButton(int buttonNum,
+            string presetName)
         {
-            var gameObject = new GameObject("BackGround1");
-            var image = gameObject.AddComponent<Image>();
-            gameObject.transform.SetParent(this.gameObject.transform);
-            var texture2D = new Texture2D(2, 2);
-            texture2D.LoadImage(File.ReadAllBytes(Application.dataPath + "/Managed/BaseMod/Image/Mod.png"));
-            var sprite = Sprite.Create(texture2D, new Rect(0f, 0f, texture2D.width, texture2D.height), new Vector2(0f, 0f));
-            image.sprite = sprite;
-            image.rectTransform.sizeDelta = new Vector2(texture2D.width, texture2D.height);
-            gameObject.transform.localScale = new Vector3(1f, 1f);
-            var button = gameObject.AddComponent<Button>();
-            button.targetGraphic = image;
+            var button = UiComponentFactory.CreateUiButton();
+            button.SetParent(gameObject.transform);
+            button.Text = presetName;
+            button.TextColor = PresetConstants.PresetTextColor;
+            button.TextFontSize = PresetConstants.ButtonTextFontSize;
+            button.TextFont = DeployUI.instance.ordeal.font;
+            button.TextAlignment = TextAnchor.MiddleCenter;
 
-            // button.onClick.AddListener(delegate
-            // {
-            //     OnClickModInfo(i);
-            // });
+            var fileManager = Harmony_Patch.Instance.FileManager;
+            var imagePath = fileManager.GetFile("Assets/preset-panel.png");
+            button.SetButtonImage(imagePath);
+            button.SetPosition(0.0f, PresetConstants.LoadPresetPanelPositionY - buttonNum * button.Height);
 
-            return gameObject;
-        }
-
-        [NotNull]
-        public GameObject MakeModInfo2([CanBeNull] string presetName,
-            [NotNull] GameObject Button)
-        {
-            var gameObject = new GameObject("InfoText");
-            var text = gameObject.AddComponent<Text>();
-            gameObject.transform.SetParent(Button.transform);
-            text.rectTransform.sizeDelta = Vector2.zero;
-            text.rectTransform.anchorMin = new Vector2(0.02f, 0f);
-            text.rectTransform.anchorMax = new Vector2(0.98f, 1f);
-            text.rectTransform.anchoredPosition = new Vector2(0f, 0f);
-            if (presetName != null)
+            button.OnClick.AddListener(delegate
             {
-                text.text = presetName;
-            }
+                var loadedAgentData = Harmony_Patch.Instance.PresetLoader.LoadPreset(presetName);
 
-            text.font = OptionUI.Instance.CreditTitle.font;
-            text.fontSize = 30;
-            text.color = new Color(0.2509804f, 1f, 0.654902f);
-            text.alignment = TextAnchor.MiddleCenter;
-            gameObject.transform.localScale = new Vector3(1f, 1f);
-            gameObject.transform.localPosition = new Vector3(0f, 0f, 0f);
-            gameObject.SetActive(true);
-            _panelTextList.Add(text);
-            return gameObject;
+                var instance = CustomizingWindow.CurrentWindow.appearanceUI;
+                instance.palette.OnSetColor(loadedAgentData.appearance.HairColor);
+                instance.SetAppearanceSprite(loadedAgentData);
+                instance.SetCreditControl(true);
+
+                Harmony_Patch.Instance.PresetSaver.UpdateSavePresetButtonText(presetName, loadedAgentData.appearance);
+            });
+
+            return button;
         }
 
+        /// <summary>Updates the page of the preset list.</summary>
         public void UpdatePage()
         {
-            if (_page == 0)
-            {
-                _upArrow.SetActive(false);
-            }
-            else
-            {
-                _upArrow.SetActive(true);
-            }
+            ReinitializeComponents();
+            var pageStartIndex = _currentPage * NumberOfPresetsPerPage;
 
-            for (var i = 0; i < 5; i++)
+            _upArrow.SetActive(_currentPage != 0);
+
+            for (var presetPanelNum = 0; presetPanelNum < NumberOfPresetsPerPage; presetPanelNum++)
             {
-                if (_page * 5 + i >= _presets.Count)
+                _panelButtonList[presetPanelNum].OnClick.RemoveAllListeners();
+
+                var presetIndex = pageStartIndex + presetPanelNum;
+                var hasPresetAtIndex = presetIndex < _presets.Count;
+                if (hasPresetAtIndex)
                 {
-                    _panelTextList[i].text = "";
+                    var presetName = _presets[presetIndex].Key;
+                    _panelButtonList[presetPanelNum].Text = _presets[presetIndex].Key;
+                    _panelButtonList[presetPanelNum].OnClick.AddListener(delegate
+                    {
+                        var loadedAgentData = Harmony_Patch.Instance.PresetLoader.LoadPreset(presetName);
+
+                        var instance = CustomizingWindow.CurrentWindow.appearanceUI;
+                        instance.palette.OnSetColor(loadedAgentData.appearance.HairColor);
+                        instance.SetAppearanceSprite(loadedAgentData);
+                        instance.SetCreditControl(true);
+
+                        Harmony_Patch.Instance.PresetSaver.UpdateSavePresetButtonText(presetName, loadedAgentData.appearance);
+                    });
                 }
                 else
                 {
-                    _panelTextList[i].text = _presets[_page * 5 + i].Key;
+                    _panelButtonList[presetPanelNum].Text = string.Empty;
                 }
             }
 
-            if (_page * 5 + 5 >= _presets.Count)
-            {
-                _downArrow.SetActive(false);
-                return;
-            }
-
-            _downArrow.SetActive(true);
+            var hasMorePagesToShow = pageStartIndex + NumberOfPresetsPerPage < _presets.Count;
+            _downArrow.SetActive(hasMorePagesToShow);
         }
 
         public void OnClickDownButton()
         {
-            if ((_page + 1) * 5 >= _presets.Count)
+            if ((_currentPage + 1) * NumberOfPresetsPerPage >= _presets.Count)
             {
                 return;
             }
 
-            _page++;
+            _currentPage++;
             UpdatePage();
         }
 
@@ -185,17 +170,19 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
             var button = downButtonGameObject.AddComponent<Button>();
             button.targetGraphic = image;
             button.onClick.AddListener(OnClickDownButton);
+            downButtonGameObject.transform.localPosition = new Vector2(0.0f, -300f);
+
             return downButtonGameObject;
         }
 
         public void OnClickUpButton()
         {
-            if (_page == 0)
+            if (_currentPage == 0)
             {
                 return;
             }
 
-            _page--;
+            _currentPage--;
             UpdatePage();
         }
 
@@ -214,6 +201,8 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
             var button = upButtonGameObject.AddComponent<Button>();
             button.targetGraphic = image;
             button.onClick.AddListener(OnClickUpButton);
+            upButtonGameObject.transform.localPosition = new Vector2(0.0f, 250f);
+
             return upButtonGameObject;
         }
     }

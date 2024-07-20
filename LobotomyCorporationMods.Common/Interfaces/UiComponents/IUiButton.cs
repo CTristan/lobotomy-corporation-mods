@@ -14,8 +14,14 @@ namespace LobotomyCorporationMods.Common.Interfaces.UiComponents
         Color TextColor { get; set; }
         Font TextFont { get; set; }
         int TextFontSize { get; set; }
+        float Width { get; }
+        float Height { get; }
 
-        void SetButtonGraphic();
+        void SetButtonImage(string imagePath);
+        void SetButtonImageColor(Color color);
+
+        void SetScale(float x,
+            float y);
 
         void SetSize(float width,
             float height);

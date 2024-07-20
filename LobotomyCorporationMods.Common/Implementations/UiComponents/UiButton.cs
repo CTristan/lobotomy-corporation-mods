@@ -1,5 +1,7 @@
 ﻿// SPDX-License-Identifier: MIT
 
+using System.IO;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Interfaces.UiComponents;
 using UnityEngine;
 using UnityEngine.UI;
@@ -60,14 +62,36 @@ namespace LobotomyCorporationMods.Common.Implementations.UiComponents
                 TextObject.FontSize = value;
         }
 
+        public float Width => ImageObject.rectTransform.rect.width;
+
+        public float Height => ImageObject.rectTransform.rect.height;
+
         public Button.ButtonClickedEvent OnClick => ButtonObject.onClick;
 
-        public void SetButtonGraphic()
+        public void SetButtonImage([NotNull] string imagePath)
         {
             var texture2D = new Texture2D(2, 2);
+
+            if (!string.IsNullOrEmpty(imagePath))
+            {
+                texture2D.LoadImage(File.ReadAllBytes(imagePath));
+            }
+
             var sprite = Sprite.Create(texture2D, new Rect(0.0f, 0.0f, texture2D.width, texture2D.height), new Vector2());
             ImageObject.sprite = sprite;
             ButtonObject.targetGraphic = ImageObject;
+            SetSize(texture2D.width, texture2D.height);
+        }
+
+        public void SetButtonImageColor(Color color)
+        {
+            ImageObject.color = color;
+        }
+
+        public void SetScale(float x,
+            float y)
+        {
+            ImageObject.rectTransform.localScale = new Vector3(x, y);
         }
 
         public void SetTextAnchor(float anchorX,
@@ -91,7 +115,7 @@ namespace LobotomyCorporationMods.Common.Implementations.UiComponents
             TextObject.SetParent(GameObject.transform);
             TextObject.SetSize(0f, 0f);
             SetTextAnchor(0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f);
-            SetButtonGraphic();
+            SetButtonImage(string.Empty);
         }
     }
 }

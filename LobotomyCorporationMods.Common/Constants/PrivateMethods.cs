@@ -4,6 +4,11 @@
 
 namespace PrivateMethods
 {
+    public static class AgentInfoWindow
+    {
+        public const string Awake = "Awake";
+    }
+
     public static class CustomizingWindow
     {
         public const string ReviseOpenAction = "ReviseOpenAction";

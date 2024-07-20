@@ -9,6 +9,13 @@ namespace LobotomyCorporationMods.Common.Implementations.UiComponents
     {
         protected GameObject GameObject { get; } = new GameObject();
 
+        public T AddComponent<T>() where T : Component
+        {
+            return GameObject.AddComponent<T>();
+        }
+
+        public bool IsActive => GameObject.activeSelf;
+
         public void SetActive(bool value)
         {
             GameObject.SetActive(value);
