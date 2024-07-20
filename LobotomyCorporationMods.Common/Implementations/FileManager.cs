@@ -112,11 +112,19 @@ namespace LobotomyCorporationMods.Common.Implementations
         }
 
         public void WriteAllText([NotNull] string fileWithPath,
-            string contents)
+            string contents,
+            bool append = false)
         {
             lock (_fileLock)
             {
-                File.WriteAllText(fileWithPath, contents);
+                if (append)
+                {
+                    File.AppendAllText(fileWithPath, contents + Environment.NewLine + Environment.NewLine);
+                }
+                else
+                {
+                    File.WriteAllText(fileWithPath, contents);
+                }
             }
         }
     }
