@@ -1,5 +1,6 @@
 ﻿// SPDX-License-Identifier: MIT
 
+using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces.UiComponents;
 using UnityEngine;
 
@@ -16,9 +17,9 @@ namespace LobotomyCorporationMods.Common.Implementations.UiComponents
 
         public bool IsActive => GameObject.activeSelf;
 
-        public bool IsUnityNull()
+        public virtual bool AnyComponentIsNull()
         {
-            return !GameObject;
+            return GameObject.IsUnityNull();
         }
 
         public void SetActive(bool value)

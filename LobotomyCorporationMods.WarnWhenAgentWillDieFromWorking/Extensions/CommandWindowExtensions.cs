@@ -28,7 +28,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
         /// <remarks>
         ///     GetCreatureEvaluator retrieves the creature evaluator based on the command window, agent, evaluators, beautyBeastAnimAdapter, and yggdrasilAnimAdapter parameters. If the
         ///     command window contains a creature, the evaluator will be retrieved from the evaluators dictionary using the creature's ID. If the command window does not contain a creature
-        ///     or it.IsNull(), the evaluator will be set to null.
+        ///     or it.IsUnityNull(), the evaluator will be set to null.
         /// </remarks>
         internal static ICreatureEvaluator GetCreatureEvaluator([NotNull] this CommandWindow.CommandWindow commandWindow,
             AgentModel agent,
@@ -38,7 +38,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
         {
             ICreatureEvaluator evaluator;
 
-            if (commandWindow.TryGetCreature(out var creature) && !creature.IsNull())
+            if (commandWindow.TryGetCreature(out var creature) && creature.IsNotNull())
             {
                 var skillType = commandWindow.CurrentSkill.rwbpType;
                 var evaluatorParameters = new CreatureEvaluatorParameters(agent, creature, skillType, beautyBeastAnimTestAdapter, yggdrasilAnimTestAdapter);
@@ -64,7 +64,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
                 creature = creatureModel;
             }
 
-            return !creature.IsNull();
+            return creature.IsNotNull();
         }
     }
 }

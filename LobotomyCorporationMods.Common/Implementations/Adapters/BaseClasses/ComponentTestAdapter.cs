@@ -30,7 +30,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses
         public override T GameObject
         {
             get =>
-                !_gameObject.IsUnityNull() ? _gameObject : null;
+                _gameObject.IsUnityNull() ? null : _gameObject;
             set =>
                 _gameObject = value;
         }

@@ -4,6 +4,7 @@ using Customizing;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces;
+using LobotomyCorporationMods.Common.Interfaces.UiComponents;
 using LobotomyCorporationMods.CustomizationOverhaul.Constants;
 using LobotomyCorporationMods.CustomizationOverhaul.Extensions;
 using LobotomyCorporationMods.CustomizationOverhaul.Interfaces;
@@ -49,7 +50,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
         public void UpdateSavePresetButtonText(string agentName,
             Appearance appearance)
         {
-            if (Harmony_Patch.Instance.SavePresetButton.IsNull())
+            if (Harmony_Patch.Instance.SavePresetButton.IsUnityNull())
             {
                 AgentInfoWindow.currentWindow.CreateSavePresetButton();
             }

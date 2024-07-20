@@ -2,6 +2,7 @@
 
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
+using LobotomyCorporationMods.Common.Interfaces.UiComponents;
 using LobotomyCorporationMods.CustomizationOverhaul.Constants;
 using LobotomyCorporationMods.CustomizationOverhaul.UiComponents.BaseComponents;
 using UnityEngine;
@@ -30,7 +31,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
 
         private static void ActionsOnClick()
         {
-            if (Harmony_Patch.Instance.LoadPresetPanel.IsNull() || Harmony_Patch.Instance.LoadPresetPanel.IsUnityNull())
+            if (Harmony_Patch.Instance.LoadPresetPanel.IsUnityNull())
             {
                 Harmony_Patch.Instance.LoadPresetPanel = new LoadPresetPanel();
                 return;

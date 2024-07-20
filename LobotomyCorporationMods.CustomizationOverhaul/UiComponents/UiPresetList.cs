@@ -26,7 +26,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
         private GameObject _upArrow;
 
         [UsedImplicitly]
-        public void Awake()
+        internal void Awake()
         {
             UpdatePage();
         }
@@ -73,7 +73,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
         }
 
         [NotNull]
-        public IUiButton CreatePresetButton(int buttonNum,
+        internal IUiButton CreatePresetButton(int buttonNum,
             string presetName)
         {
             var button = UiComponentFactory.CreateUiButton();
@@ -105,7 +105,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
         }
 
         /// <summary>Updates the page of the preset list.</summary>
-        public void UpdatePage()
+        internal void UpdatePage()
         {
             ReinitializeComponents();
             var pageStartIndex = _currentPage * NumberOfPresetsPerPage;
@@ -144,7 +144,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
             _downArrow.SetActive(hasMorePagesToShow);
         }
 
-        public void OnClickDownButton()
+        internal void OnClickDownButton()
         {
             if ((_currentPage + 1) * NumberOfPresetsPerPage >= _presets.Count)
             {
@@ -156,7 +156,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
         }
 
         [NotNull]
-        public GameObject MakeDownButton()
+        internal GameObject MakeDownButton()
         {
             var downButtonGameObject = new GameObject("Down");
             var image = downButtonGameObject.AddComponent<Image>();
@@ -175,7 +175,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
             return downButtonGameObject;
         }
 
-        public void OnClickUpButton()
+        internal void OnClickUpButton()
         {
             if (_currentPage == 0)
             {
@@ -187,7 +187,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
         }
 
         [NotNull]
-        public GameObject MakeUpButton()
+        internal GameObject MakeUpButton()
         {
             var upButtonGameObject = new GameObject("Down");
             var image = upButtonGameObject.AddComponent<Image>();

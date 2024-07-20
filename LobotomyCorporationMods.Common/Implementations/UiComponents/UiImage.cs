@@ -2,6 +2,7 @@
 
 using System.IO;
 using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces.UiComponents;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,6 +17,11 @@ namespace LobotomyCorporationMods.Common.Implementations.UiComponents
         }
 
         private Image ImageObject { get; }
+
+        public override bool AnyComponentIsNull()
+        {
+            return GameObject.IsUnityNull() || ImageObject.IsUnityNull();
+        }
 
         public void SetImageFromFile([CanBeNull] string imagePath)
         {

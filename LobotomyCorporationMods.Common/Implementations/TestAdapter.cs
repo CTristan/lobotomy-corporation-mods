@@ -37,7 +37,7 @@ namespace LobotomyCorporationMods.Common.Implementations
         {
             get
             {
-                if (!_gameObject.IsNotNull())
+                if (_gameObject.IsNull())
                 {
                     throw new InvalidOperationException(UninitializedGameObjectErrorMessage);
                 }

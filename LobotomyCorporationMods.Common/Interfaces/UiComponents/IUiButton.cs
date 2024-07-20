@@ -1,5 +1,6 @@
 ﻿// SPDX-License-Identifier: MIT
 
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -32,5 +33,13 @@ namespace LobotomyCorporationMods.Common.Interfaces.UiComponents
             float anchorMinY,
             float anchorMaxX,
             float anchorMaxY);
+    }
+
+    public static class IUiButtonExtensions
+    {
+        public static bool IsUnityNull([CanBeNull] this IUiButton uiButton)
+        {
+            return uiButton == null || uiButton.AnyComponentIsNull();
+        }
     }
 }

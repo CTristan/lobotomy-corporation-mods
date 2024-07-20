@@ -9,7 +9,6 @@ using System.Reflection;
 using FluentAssertions;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Extensions;
 using Xunit;
 
 #endregion
@@ -42,7 +41,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests.AttributeTests
 
         private static bool IsInModsNamespace([CanBeNull] string name)
         {
-            return !name.IsNull() && name.Length >= s_namespaceMinLength && name.StartsWith(ModsNamespace, StringComparison.InvariantCulture);
+            return !string.IsNullOrEmpty(name) && name.Length >= s_namespaceMinLength && name.StartsWith(ModsNamespace, StringComparison.InvariantCulture);
         }
 
         private static string AnyModIsIncorrectlyExcludedFromCodeCoverage([NotNull] IEnumerable<AssemblyName> referencedAssemblies)

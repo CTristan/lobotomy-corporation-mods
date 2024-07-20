@@ -1,6 +1,6 @@
 ﻿// SPDX-License-Identifier: MIT
 
-using LobotomyCorporationMods.Common.Extensions;
+using LobotomyCorporationMods.Common.Interfaces.UiComponents;
 using LobotomyCorporationMods.CustomizationOverhaul.UiComponents;
 
 namespace LobotomyCorporationMods.CustomizationOverhaul.Extensions
@@ -11,7 +11,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Extensions
         {
             if (!GameManager.currentGameManager.ManageStarted)
             {
-                if (Harmony_Patch.Instance.LoadPresetButton.IsNull() || Harmony_Patch.Instance.LoadPresetButton.IsUnityNull())
+                if (Harmony_Patch.Instance.LoadPresetButton.IsUnityNull())
                 {
                     Harmony_Patch.Instance.LoadPresetButton = new LoadPresetButton();
                 }
@@ -22,7 +22,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Extensions
             }
             else
             {
-                if (Harmony_Patch.Instance.LoadPresetButton == null)
+                if (Harmony_Patch.Instance.LoadPresetButton.IsUnityNull())
                 {
                     return;
                 }
@@ -35,7 +35,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Extensions
         {
             if (!GameManager.currentGameManager.ManageStarted)
             {
-                if (Harmony_Patch.Instance.SavePresetButton.IsNull() || Harmony_Patch.Instance.SavePresetButton.IsUnityNull())
+                if (Harmony_Patch.Instance.SavePresetButton.IsUnityNull())
                 {
                     Harmony_Patch.Instance.SavePresetButton = new SavePresetButton();
                 }
@@ -46,7 +46,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Extensions
             }
             else
             {
-                if (Harmony_Patch.Instance.SavePresetButton == null)
+                if (Harmony_Patch.Instance.SavePresetButton.IsUnityNull())
                 {
                     return;
                 }

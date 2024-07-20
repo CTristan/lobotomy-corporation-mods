@@ -12,9 +12,9 @@ namespace LobotomyCorporationMods.Common.Extensions
             return unityObject.IsNotNull() ? unityObject.name : string.Empty;
         }
 
-        public static bool IsUnityNull([NotNull] this Object unityObject)
+        public static bool IsUnityNull([CanBeNull] this Object unityObject)
         {
-            return !unityObject;
+            return unityObject == null;
         }
     }
 }

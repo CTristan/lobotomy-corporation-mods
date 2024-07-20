@@ -1,10 +1,13 @@
 ﻿// SPDX-License-Identifier: MIT
 
+using System;
 using System.IO;
 using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces.UiComponents;
 using UnityEngine;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 namespace LobotomyCorporationMods.Common.Implementations.UiComponents
 {
@@ -21,6 +24,17 @@ namespace LobotomyCorporationMods.Common.Implementations.UiComponents
         private Button ButtonObject { get; }
         private Image ImageObject { get; }
         private IUiText TextObject { get; }
+
+        public override bool AnyComponentIsNull()
+        {
+            var uiElements = new Object[]
+            {
+                GameObject, ButtonObject, ImageObject,
+            };
+
+            var uiElementIsNull = Array.Exists(uiElements, uiElement => uiElement.IsUnityNull());
+            return uiElementIsNull || TextObject.AnyComponentIsNull();
+        }
 
         public string Text
         {

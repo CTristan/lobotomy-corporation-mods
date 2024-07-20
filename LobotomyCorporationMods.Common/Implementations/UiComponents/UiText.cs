@@ -1,5 +1,6 @@
 ﻿// SPDX-License-Identifier: MIT
 
+using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces.UiComponents;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,6 +15,11 @@ namespace LobotomyCorporationMods.Common.Implementations.UiComponents
         }
 
         private Text TextObject { get; }
+
+        public override bool AnyComponentIsNull()
+        {
+            return GameObject.IsUnityNull() || TextObject.IsUnityNull();
+        }
 
         public Font Font
         {
@@ -54,6 +60,7 @@ namespace LobotomyCorporationMods.Common.Implementations.UiComponents
             set =>
                 TextObject.alignment = value;
         }
+
 
         public void SetAnchor(float anchorX,
             float anchorY,

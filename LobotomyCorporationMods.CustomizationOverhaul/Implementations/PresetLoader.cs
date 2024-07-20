@@ -233,7 +233,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
             }
 
             var presetData = DecodeJsonToPresetData(jsonData);
-            if (presetData == null || presetData.Count == 0)
+            if (presetData.IsNull() || presetData.Count == 0)
             {
                 return new SerializablePresetList().ToPresetList();
             }

@@ -23,7 +23,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
         {
             Guard.Against.Null(instance, nameof(instance));
 
-            return !instance.closeAction.IsNull();
+            return instance.closeAction.IsNotNull();
         }
 
         /// <summary>
