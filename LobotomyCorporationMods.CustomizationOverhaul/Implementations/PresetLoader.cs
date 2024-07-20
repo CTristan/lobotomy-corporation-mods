@@ -22,7 +22,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
         private const string AllJsonFiles = "*.json";
         private readonly IFileManager _fileManager;
 
-        internal PresetLoader(IFileManager fileManager)
+        internal PresetLoader([NotNull] IFileManager fileManager)
         {
             if (fileManager.IsNull())
             {
@@ -166,7 +166,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
             InitializeDefaultCustomPresetFile();
         }
 
-        private static bool IsSameSpriteName(string currentValue,
+        private static bool IsSameSpriteName([NotNull] string currentValue,
             string newValue)
         {
             // If either value is null, it can't be compared anyway, so just say it's good

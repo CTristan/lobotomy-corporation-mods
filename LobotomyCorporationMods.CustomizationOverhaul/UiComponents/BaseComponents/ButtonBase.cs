@@ -23,6 +23,11 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents.BaseCompone
             return Button.AddComponent<T>();
         }
 
+        public bool IsUnityNull()
+        {
+            return Button.IsUnityNull();
+        }
+
         public void SetActive(bool value)
         {
             Button.SetActive(value);

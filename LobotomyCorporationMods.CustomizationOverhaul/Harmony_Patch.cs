@@ -2,6 +2,7 @@
 
 #region
 
+using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Interfaces.UiComponents;
 using LobotomyCorporationMods.CustomizationOverhaul.Implementations;
@@ -32,5 +33,23 @@ namespace LobotomyCorporationMods.CustomizationOverhaul
         internal IUiButton SavePresetButton { get; set; }
         internal IPresetLoader PresetLoader { get; }
         internal IPresetSaver PresetSaver { get; }
+
+        internal static void DisableAllCustomUiComponents()
+        {
+            if (Instance.LoadPresetButton.IsNotNull() && !Instance.LoadPresetButton.IsUnityNull())
+            {
+                Instance.LoadPresetButton.SetActive(false);
+            }
+
+            if (Instance.SavePresetButton.IsNotNull() && !Instance.SavePresetButton.IsUnityNull())
+            {
+                Instance.SavePresetButton.SetActive(false);
+            }
+
+            if (Instance.LoadPresetPanel.IsNotNull() && !Instance.LoadPresetPanel.IsUnityNull())
+            {
+                Instance.LoadPresetPanel.SetActive(false);
+            }
+        }
     }
 }

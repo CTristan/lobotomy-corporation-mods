@@ -7,29 +7,11 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Extensions
 {
     internal static class AgentInfoWindowExtensions
     {
-        internal static void DisableAllCustomUiComponents(this AgentInfoWindow agentInfoWindow)
-        {
-            if (Harmony_Patch.Instance.LoadPresetButton.IsNotNull())
-            {
-                Harmony_Patch.Instance.LoadPresetButton.SetActive(false);
-            }
-
-            if (Harmony_Patch.Instance.SavePresetButton.IsNotNull())
-            {
-                Harmony_Patch.Instance.SavePresetButton.SetActive(false);
-            }
-
-            if (Harmony_Patch.Instance.LoadPresetPanel.IsNotNull())
-            {
-                Harmony_Patch.Instance.LoadPresetPanel.SetActive(false);
-            }
-        }
-
         internal static void CreateLoadPresetButton(this AgentInfoWindow agentInfoWindow)
         {
             if (!GameManager.currentGameManager.ManageStarted)
             {
-                if (Harmony_Patch.Instance.LoadPresetButton.IsNull())
+                if (Harmony_Patch.Instance.LoadPresetButton.IsNull() || Harmony_Patch.Instance.LoadPresetButton.IsUnityNull())
                 {
                     Harmony_Patch.Instance.LoadPresetButton = new LoadPresetButton();
                 }
@@ -53,7 +35,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Extensions
         {
             if (!GameManager.currentGameManager.ManageStarted)
             {
-                if (Harmony_Patch.Instance.SavePresetButton.IsNull())
+                if (Harmony_Patch.Instance.SavePresetButton.IsNull() || Harmony_Patch.Instance.SavePresetButton.IsUnityNull())
                 {
                     Harmony_Patch.Instance.SavePresetButton = new SavePresetButton();
                 }

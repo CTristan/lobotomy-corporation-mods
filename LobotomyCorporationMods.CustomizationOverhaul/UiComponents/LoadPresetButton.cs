@@ -30,7 +30,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
 
         private static void ActionsOnClick()
         {
-            if (Harmony_Patch.Instance.LoadPresetPanel.IsNull())
+            if (Harmony_Patch.Instance.LoadPresetPanel.IsNull() || Harmony_Patch.Instance.LoadPresetPanel.IsUnityNull())
             {
                 Harmony_Patch.Instance.LoadPresetPanel = new LoadPresetPanel();
                 return;

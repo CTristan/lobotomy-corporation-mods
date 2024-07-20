@@ -20,7 +20,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
         private const int NumberOfPresetsPerPage = 5;
         private readonly string _arrowIconPath = Application.dataPath + "/Managed/BaseMod/Image/Down.png";
         private int _currentPage;
-        private IUiButton _downArrow;
+        private GameObject _downArrow;
         private List<IUiButton> _panelButtonList;
         private List<KeyValuePair<string, PresetData>> _presets;
         private GameObject _upArrow;
@@ -45,12 +45,12 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
 
         private void InitializeArrows()
         {
-            if (_downArrow.IsNull())
+            if (_downArrow.IsUnityNull())
             {
                 _downArrow = MakeDownButton();
             }
 
-            if (_upArrow.IsNull())
+            if (_upArrow.IsUnityNull())
             {
                 _upArrow = MakeUpButton();
             }
@@ -58,7 +58,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
 
         private void InitializePanelButtonsList()
         {
-            if (_panelButtonList.IsNull())
+            if (_panelButtonList.IsNotNull())
             {
                 return;
             }
@@ -162,7 +162,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
             var image = downButtonGameObject.AddComponent<Image>();
             downButtonGameObject.transform.SetParent(gameObject.transform);
             var texture2D = new Texture2D(2, 2);
-            texture2D.LoadImage(File.ReadAllBytes(Application.dataPath + "/Managed/BaseMod/Image/Down.png"));
+            texture2D.LoadImage(File.ReadAllBytes(_arrowIconPath));
             var sprite = Sprite.Create(texture2D, new Rect(0f, 0f, texture2D.width, texture2D.height), new Vector2(0f, 0f));
             image.sprite = sprite;
             image.rectTransform.sizeDelta = new Vector2(texture2D.width, texture2D.height);
@@ -193,7 +193,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
             var image = upButtonGameObject.AddComponent<Image>();
             upButtonGameObject.transform.SetParent(gameObject.transform);
             var texture2D = new Texture2D(2, 2);
-            texture2D.LoadImage(File.ReadAllBytes(Application.dataPath + "/Managed/BaseMod/Image/Down.png"));
+            texture2D.LoadImage(File.ReadAllBytes(_arrowIconPath));
             var sprite = Sprite.Create(texture2D, new Rect(0f, 0f, texture2D.width, texture2D.height), new Vector2(0f, 0f));
             image.sprite = sprite;
             image.rectTransform.sizeDelta = new Vector2(texture2D.width, texture2D.height);

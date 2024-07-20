@@ -10,7 +10,6 @@ using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.CustomizationOverhaul.Extensions;
 
 #endregion
 
@@ -23,7 +22,10 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
         {
             Guard.Against.Null(instance, nameof(instance));
 
-            instance.DisableAllCustomUiComponents();
+            if (GameManager.currentGameManager.state != GameState.STOP)
+            {
+                Harmony_Patch.DisableAllCustomUiComponents();
+            }
         }
 
         /// <summary>Runs after opening the Strengthen Agent window to force it to open the appearance window.</summary>

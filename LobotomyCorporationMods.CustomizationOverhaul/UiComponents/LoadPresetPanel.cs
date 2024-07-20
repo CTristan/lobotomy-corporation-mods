@@ -26,6 +26,11 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
             return Image.AddComponent<T>();
         }
 
+        public bool IsUnityNull()
+        {
+            return Image.IsUnityNull();
+        }
+
         public void SetActive(bool value)
         {
             if (value)
@@ -60,7 +65,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
 
         private void InitializeComponents()
         {
-            if (Image.IsNull())
+            if (Image.IsNull() || Image.IsUnityNull())
             {
                 Image = UiComponentFactory.CreateUiImage();
                 Image.SetActive(true);
@@ -70,7 +75,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
                 Image.SetSize(PresetConstants.LoadPresetPanelSizeX, PresetConstants.LoadPresetPanelSizeY);
             }
 
-            if (!UiPresetList.IsNull())
+            if (!UiPresetList.IsUnityNull())
             {
                 return;
             }

@@ -15,17 +15,14 @@ using LobotomyCorporationMods.Common.Implementations;
 
 namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
 {
-    [HarmonyPatch(typeof(AgentInfoWindow), nameof(AgentInfoWindow.CreateWindow))]
-    public static class AgentInfoWindowPatchCreateWindow
+    [HarmonyPatch(typeof(AgentInfoWindow), nameof(AgentInfoWindow.CloseWindow))]
+    public static class AgentInfoWindowPatchCloseWindow
     {
-        public static void PatchAfterCreateWindow([NotNull] this AgentInfoWindow instance)
+        public static void PatchAfterCloseWindow([NotNull] this AgentInfoWindow instance)
         {
             Guard.Against.Null(instance, nameof(instance));
 
-            if (GameManager.currentGameManager.state != GameState.STOP)
-            {
-                Harmony_Patch.DisableAllCustomUiComponents();
-            }
+            Harmony_Patch.DisableAllCustomUiComponents();
         }
 
         /// <summary>Runs after opening the Strengthen Agent window to force it to open the appearance window.</summary>
@@ -38,7 +35,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
                 // EnforcementWindow is a static method, so we can't get an instance of the AgentInfoWindow through Harmony.
                 var agentInfoWindow = AgentInfoWindow.currentWindow;
 
-                agentInfoWindow.PatchAfterCreateWindow();
+                agentInfoWindow.PatchAfterCloseWindow();
             }
             catch (Exception ex)
             {

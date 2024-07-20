@@ -8,6 +8,7 @@ namespace LobotomyCorporationMods.Common.Interfaces.UiComponents
     {
         bool IsActive { get; }
         T AddComponent<T>() where T : Component;
+        bool IsUnityNull();
         void SetActive(bool value);
         void SetParent(Transform parent);
 

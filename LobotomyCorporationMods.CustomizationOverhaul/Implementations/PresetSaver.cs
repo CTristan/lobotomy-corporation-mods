@@ -1,6 +1,7 @@
 ﻿// SPDX-License-Identifier: MIT
 
 using Customizing;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.CustomizationOverhaul.Constants;
@@ -16,7 +17,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
         private readonly IFileManager _fileManager;
         private readonly IPresetLoader _presetLoader;
 
-        internal PresetSaver(IFileManager fileManager,
+        internal PresetSaver([NotNull] IFileManager fileManager,
             IPresetLoader presetLoader)
         {
             if (fileManager.IsNull())

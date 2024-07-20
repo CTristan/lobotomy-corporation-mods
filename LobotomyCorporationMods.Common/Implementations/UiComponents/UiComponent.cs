@@ -16,6 +16,11 @@ namespace LobotomyCorporationMods.Common.Implementations.UiComponents
 
         public bool IsActive => GameObject.activeSelf;
 
+        public bool IsUnityNull()
+        {
+            return !GameObject;
+        }
+
         public void SetActive(bool value)
         {
             GameObject.SetActive(value);

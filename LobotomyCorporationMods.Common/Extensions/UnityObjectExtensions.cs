@@ -5,11 +5,16 @@ using UnityEngine;
 
 namespace LobotomyCorporationMods.Common.Extensions
 {
-    internal static class UnityObjectExtensions
+    public static class UnityObjectExtensions
     {
         internal static string GetName([NotNull] this Object unityObject)
         {
             return unityObject.IsNotNull() ? unityObject.name : string.Empty;
+        }
+
+        public static bool IsUnityNull([NotNull] this Object unityObject)
+        {
+            return !unityObject;
         }
     }
 }
