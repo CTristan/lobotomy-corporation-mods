@@ -258,10 +258,8 @@
     <ProjectReference Include="..\LobotomyCorporationMods.Common\LobotomyCorporationMods.Common.csproj"/>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Info\en\Info.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Info\GlobalInfo.xml">
+    <Compile Remove="LobotomyCorporationGamePack.cs"/>
+    <Content Include="LobotomyCorporationGamePack.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

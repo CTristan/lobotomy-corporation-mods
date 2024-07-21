@@ -4,6 +4,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Interfaces;
 
 #endregion
@@ -19,6 +21,9 @@ namespace LobotomyCorporationMods.Common.Implementations
             _targets.Add(loggerTarget);
         }
 
+        [NotNull]
+        private static string Timestamp => DateTimeOffset.UtcNow.ToString("HH:mm:ss", CultureInfo.InvariantCulture);
+
         public void AddTarget(ILoggerTarget target)
         {
             _targets.Add(target);
@@ -26,7 +31,7 @@ namespace LobotomyCorporationMods.Common.Implementations
 
         public void LogException(Exception exception)
         {
-            var message = $"ERROR: {exception}";
+            var message = $"{Timestamp} ERROR: {exception}";
 
             foreach (var target in _targets)
             {
@@ -36,22 +41,20 @@ namespace LobotomyCorporationMods.Common.Implementations
 
         public void LogInfo(string message)
         {
-            message = $"INFO: {message}";
+            message = $"{Timestamp} INFO: {message}";
 
-            foreach (var target in _targets)
-            {
-                target.WriteToLoggerTarget(message);
-            }
+            var target = _targets[0];
+
+            target.WriteToLoggerTarget(message);
         }
 
         public void LogWarning(string message)
         {
-            message = $"WARNING: {message}";
+            message = $"{Timestamp} WARNING: {message}";
 
-            foreach (var target in _targets)
-            {
-                target.WriteToLoggerTarget(message);
-            }
+            var target = _targets[0];
+
+            target.WriteToLoggerTarget(message);
         }
     }
 }

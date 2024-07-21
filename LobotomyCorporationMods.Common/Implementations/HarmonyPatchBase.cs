@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Xml;
 using Harmony;
@@ -107,7 +108,8 @@ namespace LobotomyCorporationMods.Common.Implementations
 
         private void InitializeLogger(IAngelaConversationUiTestAdapter angelaConversationUiTestAdapter)
         {
-            var fileLoggerTarget = new FileLoggerTarget(FileManager, "log.txt");
+            var logFileName = $"log_{DateTimeOffset.UtcNow.ToString("yyyyMMdd", CultureInfo.InvariantCulture)}.log";
+            var fileLoggerTarget = new FileLoggerTarget(FileManager, logFileName);
             Logger = new Logger(fileLoggerTarget);
 
 #if DEBUG
