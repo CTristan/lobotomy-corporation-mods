@@ -12,6 +12,7 @@ namespace LobotomyCorporationMods.Common.Interfaces
             bool createIfNotExists);
 
         void WriteAllText(string fileWithPath,
-            string contents);
+            string contents,
+            bool append = false);
     }
 }

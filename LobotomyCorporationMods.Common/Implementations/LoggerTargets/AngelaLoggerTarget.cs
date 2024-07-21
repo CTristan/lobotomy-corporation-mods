@@ -28,6 +28,11 @@ namespace LobotomyCorporationMods.Common.Implementations.LoggerTargets
                 return;
             }
 
+            if (_angelaConversationUiTestAdapter == null && AngelaConversationUI.instance.IsNull())
+            {
+                return;
+            }
+
             _angelaConversationUiTestAdapter = _angelaConversationUiTestAdapter.EnsureNotNullWithMethod(() => new AngelaConversationUiTestAdapter(AngelaConversationUI.instance));
 
             Notice.instance.Send(NoticeName.AddSystemLog, message);

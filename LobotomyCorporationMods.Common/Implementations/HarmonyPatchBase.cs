@@ -67,7 +67,7 @@ namespace LobotomyCorporationMods.Common.Implementations
             }
             catch (Exception ex)
             {
-                Logger.WriteException(ex);
+                Logger.LogException(ex);
 
                 throw;
             }

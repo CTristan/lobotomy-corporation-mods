@@ -43,7 +43,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.WriteException(ex);
+                Harmony_Patch.Instance.Logger.LogException(ex);
 
                 throw;
             }

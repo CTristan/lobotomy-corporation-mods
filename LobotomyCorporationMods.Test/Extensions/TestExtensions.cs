@@ -85,8 +85,9 @@ namespace LobotomyCorporationMods.Test.Extensions
             _ = mockFileManager.Setup(fm => fm.GetFile(It.IsAny<string>())).Returns((string fileName) => fileName.InCurrentDirectory());
             _ = mockFileManager.Setup(fm => fm.ReadAllText(It.IsAny<string>(), It.IsAny<bool>())).Returns((string fileName,
                 bool _) => File.ReadAllText(fileName.InCurrentDirectory()));
-            _ = mockFileManager.Setup(fm => fm.WriteAllText(It.IsAny<string>(), It.IsAny<string>())).Callback<string, string>((path,
-                contents) =>
+            _ = mockFileManager.Setup(fm => fm.WriteAllText(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>())).Callback<string, string, bool>((path,
+                contents,
+                append) =>
             {
                 var directory = Path.GetDirectoryName(path);
                 if (directory.IsNotNull() && !Directory.Exists(directory))
@@ -94,7 +95,14 @@ namespace LobotomyCorporationMods.Test.Extensions
                     Directory.CreateDirectory(directory);
                 }
 
-                File.WriteAllText(path, contents);
+                if (append)
+                {
+                    File.AppendAllText(path, contents);
+                }
+                else
+                {
+                    File.WriteAllText(path, contents);
+                }
             });
 
             return mockFileManager;
@@ -207,7 +215,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             Times? numberOfTimes = null)
         {
             action.Should().Throw<ArgumentNullException>();
-            mockLogger.Verify(logger => logger.WriteException(It.IsAny<ArgumentNullException>()), numberOfTimes ?? Times.Once());
+            mockLogger.Verify(logger => logger.LogException(It.IsAny<ArgumentNullException>()), numberOfTimes ?? Times.Once());
         }
 
         internal static void VerifyNullReferenceException([NotNull] this Mock<ILogger> mockLogger,
@@ -215,7 +223,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             Times? numberOfTimes = null)
         {
             action.Should().Throw<NullReferenceException>();
-            mockLogger.Verify(logger => logger.WriteException(It.IsAny<NullReferenceException>()), numberOfTimes ?? Times.Once());
+            mockLogger.Verify(logger => logger.LogException(It.IsAny<NullReferenceException>()), numberOfTimes ?? Times.Once());
         }
     }
 }
