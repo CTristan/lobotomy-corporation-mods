@@ -29,7 +29,7 @@ namespace LobotomyCorporationMods.CrowdControl.CrowdControl
                         }
 
                         var time = thread.Remaining;
-                        new TimedResponse(thread.Id, time, CrowdControlResponseStatus.STATUS_PAUSE).Send(CrowdControlClient.Socket);
+                        new TimedResponse(thread.Id, time, CrowdControlResponseStatus.Paused).Send(CrowdControlClient.Socket);
                         thread.Paused = true;
                     }
                 }
@@ -55,7 +55,7 @@ namespace LobotomyCorporationMods.CrowdControl.CrowdControl
                         }
 
                         var time = thread.Remaining;
-                        new TimedResponse(thread.Id, time, CrowdControlResponseStatus.STATUS_RESUME).Send(CrowdControlClient.Socket);
+                        new TimedResponse(thread.Id, time, CrowdControlResponseStatus.Resumed).Send(CrowdControlClient.Socket);
                         thread.Paused = false;
                     }
                 }

@@ -7,24 +7,22 @@ using LobotomyCorporationMods.Common.Implementations;
 
 namespace LobotomyCorporationMods.CrowdControl.CrowdControl
 {
-    public delegate CrowdControlResponse CrowdControlAction(CrowdControlClient client,
+    internal delegate CrowdControlResponse CrowdControlAction(CrowdControlClient client,
         CrowdControlRequest req);
 
-    public static class CrowdControlDelegates
+    internal static class CrowdControlDelegates
     {
         [NotNull]
-        public static CrowdControlResponse Example(CrowdControlClient client,
+        internal static CrowdControlResponse AddEnergy(CrowdControlClient client,
             [NotNull] CrowdControlRequest request)
         {
             Guard.Against.Null(request, nameof(request));
 
-            // Example of a non-timed effect
-            var status = CrowdControlResponseStatus.STATUS_SUCCESS;
-            var message = "";
+            const CrowdControlResponseStatus Status = CrowdControlResponseStatus.Success;
 
             try
             {
-                // Do something here
+                EnergyModel.instance.AddEnergy(10f);
             }
             catch (Exception e)
             {
@@ -32,7 +30,7 @@ namespace LobotomyCorporationMods.CrowdControl.CrowdControl
                 throw;
             }
 
-            return new CrowdControlResponse(request.Id, status, message);
+            return new CrowdControlResponse(request.Id, Status);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace LobotomyCorporationMods.CrowdControl.CrowdControl
     public class CrowdControlResponse
     {
         internal CrowdControlResponse(int id,
-            CrowdControlResponseStatus status = CrowdControlResponseStatus.STATUS_SUCCESS,
+            CrowdControlResponseStatus status,
             string message = "")
         {
             Id = id;
@@ -30,7 +30,7 @@ namespace LobotomyCorporationMods.CrowdControl.CrowdControl
 
         internal static void KeepAlive([NotNull] Socket socket)
         {
-            new CrowdControlResponse(0, CrowdControlResponseStatus.STATUS_KEEPALIVE).Send(socket);
+            new CrowdControlResponse(0, CrowdControlResponseStatus.NotReady).Send(socket);
         }
 
         internal void Send([NotNull] Socket socket)
@@ -39,7 +39,7 @@ namespace LobotomyCorporationMods.CrowdControl.CrowdControl
 
             var json = ToJson();
 
-            if (Status != (int)CrowdControlResponseStatus.STATUS_KEEPALIVE)
+            if (Status != (int)CrowdControlResponseStatus.NotReady)
             {
                 Harmony_Patch.Instance.Logger.LogInfo($"Trying to serialize this JSON: {json}");
             }
@@ -52,19 +52,17 @@ namespace LobotomyCorporationMods.CrowdControl.CrowdControl
         }
 
         [NotNull]
-        private string ToJson(int indentLevel = 0)
+        private string ToJson()
         {
-            var indent = new string(' ', indentLevel * 2);
-            var jsonBuilder = new StringBuilder($"{indent}{{{Environment.NewLine}");
+            var jsonBuilder = new StringBuilder("{");
 
-            var nextIndent = new string(' ', (indentLevel + 1) * 2);
-            jsonBuilder.AppendLine($"{nextIndent}\"{nameof(Id)}\": \"{Id}\",");
-            jsonBuilder.AppendLine($"{nextIndent}\"{nameof(Code)}\": \"{Code}\",");
-            jsonBuilder.AppendLine($"{nextIndent}\"{nameof(Message)}\": \"{Message}\",");
-            jsonBuilder.AppendLine($"{nextIndent}\"{nameof(Status)}\": \"{Status}\",");
-            jsonBuilder.AppendLine($"{nextIndent}\"{nameof(Type)}\": \"{Type}\",");
+            jsonBuilder.Append($"\"id\":{Id},");
+            jsonBuilder.Append($"\"code\":\"{Code}\",");
+            jsonBuilder.Append($"\"message\":\"{Message}\",");
+            jsonBuilder.Append($"\"status\":{Status},");
+            jsonBuilder.Append($"\"type\":{Type}");
 
-            jsonBuilder.Append($"{indent}}}");
+            jsonBuilder.Append('}');
 
             return jsonBuilder.ToString();
         }

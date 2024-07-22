@@ -108,7 +108,7 @@ namespace LobotomyCorporationMods.Common.Implementations
 
         private void InitializeLogger(IAngelaConversationUiTestAdapter angelaConversationUiTestAdapter)
         {
-            var logFileName = $"log_{DateTimeOffset.UtcNow.ToString("yyyyMMdd", CultureInfo.InvariantCulture)}.log";
+            var logFileName = $"log_{DateTimeOffset.Now.ToString("yyyyMMdd", CultureInfo.InvariantCulture)}.log";
             var fileLoggerTarget = new FileLoggerTarget(FileManager, logFileName);
             Logger = new Logger(fileLoggerTarget);
 

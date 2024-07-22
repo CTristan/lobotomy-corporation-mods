@@ -22,7 +22,7 @@ namespace LobotomyCorporationMods.Common.Implementations
         }
 
         [NotNull]
-        private static string Timestamp => DateTimeOffset.UtcNow.ToString("HH:mm:ss", CultureInfo.InvariantCulture);
+        private static string Timestamp => DateTimeOffset.Now.ToString("HH:mm:ss", CultureInfo.InvariantCulture);
 
         public void AddTarget(ILoggerTarget target)
         {

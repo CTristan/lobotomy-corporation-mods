@@ -6,7 +6,7 @@ namespace LobotomyCorporationMods.CrowdControl.CrowdControl
     {
         public TimedResponse(int id,
             int duration,
-            CrowdControlResponseStatus status = CrowdControlResponseStatus.STATUS_SUCCESS,
+            CrowdControlResponseStatus status = CrowdControlResponseStatus.Success,
             string message = "") : base(id, status, message)
         {
             TimeRemaining = duration;

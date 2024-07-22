@@ -19,7 +19,7 @@ public class LobotomyCorporation : SimpleTCPPack
 
     public override EffectList Effects { get; } = new Effect[]
     {
-        new("Example", "Example"),
+        new("Add Energy", "AddEnergy"),
         new("Flip Facility", "flip") { Duration = 15 },
     };
 }
