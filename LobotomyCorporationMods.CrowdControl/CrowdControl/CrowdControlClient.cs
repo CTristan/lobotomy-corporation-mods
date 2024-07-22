@@ -31,6 +31,12 @@ namespace LobotomyCorporationMods.CrowdControl.CrowdControl
             {
                 nameof(CrowdControlDelegates.AddEnergy), CrowdControlDelegates.AddEnergy
             },
+            {
+                nameof(CrowdControlDelegates.RemoveEnergy), CrowdControlDelegates.RemoveEnergy
+            },
+            {
+                nameof(CrowdControlDelegates.RandomMeltdown), CrowdControlDelegates.RandomMeltdown
+            },
         };
 
         private bool Paused { get; set; }

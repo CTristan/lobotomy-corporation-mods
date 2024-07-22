@@ -20,6 +20,8 @@ public class LobotomyCorporation : SimpleTCPPack
     public override EffectList Effects { get; } = new Effect[]
     {
         new("Add Energy", "AddEnergy"),
+        new("Remove Energy", "RemoveEnergy"),
+        new("Meltdown One Abnormality", "RandomMeltdown"),
         new("Flip Facility", "flip") { Duration = 15 },
     };
 }
