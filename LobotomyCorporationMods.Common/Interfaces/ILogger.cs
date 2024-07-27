@@ -12,5 +12,6 @@ namespace LobotomyCorporationMods.Common.Interfaces
     {
         void AddTarget(ILoggerTarget target);
         void WriteException(Exception exception);
+        void WriteInfo(string message);
     }
 }

@@ -30,8 +30,15 @@ namespace LobotomyCorporationMods.Common.Implementations
 
             foreach (var target in _targets)
             {
-                target.WriteToLoggerTarget(message);
+                target.WriteToLoggerTarget(message + Environment.NewLine);
             }
+        }
+
+        public void WriteInfo(string message)
+        {
+            message = $"INFO: {message}";
+
+            _targets[0].WriteToLoggerTarget(message + Environment.NewLine);
         }
     }
 }

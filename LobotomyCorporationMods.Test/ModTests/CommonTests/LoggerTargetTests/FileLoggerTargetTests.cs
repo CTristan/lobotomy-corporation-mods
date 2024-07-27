@@ -12,7 +12,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests.LoggerTargetTests
         [Fact]
         public void Logging_message_creates_file_and_writes_to_file()
         {
-            const string ExpectedLogFilename = "log.txt";
+            const string ExpectedLogFilename = "errors.log";
             const string ExpectedMessage = "MessageSentToLog";
             var mockFileManager = TestExtensions.GetMockFileManager();
             var sut = new FileLoggerTarget(mockFileManager.Object, ExpectedLogFilename);

@@ -96,6 +96,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             _ = mockFileManager.Setup(fm => fm.GetFile(It.IsAny<string>())).Returns((string fileName) => fileName.InCurrentDirectory());
             _ = mockFileManager.Setup(fm => fm.ReadAllText(It.IsAny<string>(), It.IsAny<bool>())).Returns((string fileName,
                 bool _) => File.ReadAllText(fileName.InCurrentDirectory()));
+
             _ = mockFileManager.Setup(fm => fm.WriteAllText(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>())).Callback<string, string, bool>((path,
                 contents,
                 append) =>

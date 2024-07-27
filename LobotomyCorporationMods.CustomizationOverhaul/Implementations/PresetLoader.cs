@@ -120,7 +120,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
             [NotNull] Appearance appearance)
         {
             var presetComparisonList = CreatePresetComparisonList(preset, appearance);
-            var areAllItemsSameSpriteName = presetComparisonList.TrueForAll(presetComparison => IsSameSpriteName(presetComparison.Key, presetComparison.Value?.name));
+            var areAllItemsSameSpriteName = presetComparisonList.TrueForAll(presetComparison => IsSameSpriteName(presetComparison.Key, presetComparison.Value.name));
             return areAllItemsSameSpriteName;
         }
 

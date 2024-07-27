@@ -1,92 +1,62 @@
 ﻿// SPDX-License-Identifier: MIT
 
+using System;
 using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Interfaces.UiComponents;
 using LobotomyCorporationMods.CustomizationOverhaul.Constants;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
 {
-    internal sealed class LoadPresetPanel : IUiImage
+    public sealed class LoadPresetPanel : Image
     {
-        internal LoadPresetPanel()
-        {
-            InitializeComponents();
-        }
-
         private UiPresetList UiPresetList { get; set; }
 
-        private IUiImage Image { get; set; }
-
-        public bool IsActive => Image.IsActive;
-
-        public T AddComponent<T>() where T : Component
+        public new void Awake()
         {
-            return Image.AddComponent<T>();
-        }
-
-        public bool AnyComponentIsNull()
-        {
-            return Image.AnyComponentIsNull();
-        }
-
-        public void SetActive(bool value)
-        {
-            if (value)
+            try
             {
-                UiPresetList.UpdatePage();
+                base.Awake();
+
+                gameObject.SetActive(true);
+                transform.SetParent(AgentInfoWindow.currentWindow.gameObject.transform.GetChild(0));
+                this.SetImage(Application.dataPath + "/Managed/BaseMod/Image/Back.png");
+                this.SetSize(PresetConstants.LoadPresetPanelSizeX, PresetConstants.LoadPresetPanelSizeY);
+                this.SetPosition(PresetConstants.LoadPresetPanelPositionX, PresetConstants.LoadPresetPanelPositionY);
+
+                UiPresetList = gameObject.AddComponent<UiPresetList>();
             }
-
-            Image.SetActive(value);
-        }
-
-        public void SetParent(Transform parent)
-        {
-            Image.SetParent(parent);
-        }
-
-        public void SetPosition(float x,
-            float y)
-        {
-            Image.SetPosition(x, y);
-        }
-
-        public void SetImageFromFile(string imagePath)
-        {
-            Image.SetImageFromFile(imagePath);
-        }
-
-        public void SetSize(float width,
-            float height)
-        {
-            Image.SetSize(width, height);
-        }
-
-        public bool IsNotNull()
-        {
-            return Image.IsNotNull();
-        }
-
-        private void InitializeComponents()
-        {
-            if (Image.IsUnityNull())
+            catch (Exception exception)
             {
-                Image = UiComponentFactory.CreateUiImage();
-                Image.SetActive(true);
-                Image.SetParent(AgentInfoWindow.currentWindow.gameObject.transform.GetChild(0));
-                Image.SetPosition(PresetConstants.LoadPresetPanelPositionX, PresetConstants.LoadPresetPanelPositionY);
-                Image.SetImageFromFile(Application.dataPath + "/Managed/BaseMod/Image/Back.png");
-                Image.SetSize(PresetConstants.LoadPresetPanelSizeX, PresetConstants.LoadPresetPanelSizeY);
+                Harmony_Patch.Instance.Logger.WriteException(exception);
+                throw;
             }
+        }
 
-            if (!UiPresetList.IsUnityNull())
+        public void Update()
+        {
+            var scrollData = Input.GetAxis("Mouse ScrollWheel");
+
+            if (scrollData > 0.0f)
             {
-                return;
+                UiPresetList.OnClickUpButton();
             }
+            else if (scrollData < 0.0f)
+            {
+                UiPresetList.OnClickDownButton();
+            }
+            // ReSharper disable once RedundantIfElseBlock
+            else
+            {
+                // Scroll wheel is not being used
+            }
+        }
 
-            UiPresetList = new UiPresetList();
-            UiPresetList = Image.AddComponent<UiPresetList>();
+        public new void OnEnable()
+        {
+            base.OnEnable();
+
+            UiPresetList.UpdatePage();
         }
     }
 }

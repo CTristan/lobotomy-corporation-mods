@@ -1,43 +1,47 @@
 ﻿// SPDX-License-Identifier: MIT
 
+using System;
 using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Interfaces.UiComponents;
 using LobotomyCorporationMods.CustomizationOverhaul.Constants;
 using LobotomyCorporationMods.CustomizationOverhaul.UiComponents.BaseComponents;
 using UnityEngine;
 
 namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
 {
-    internal sealed class LoadPresetButton : ButtonBase
+    public sealed class LoadPresetButton : AgentInfoWindowButton
     {
-        internal LoadPresetButton()
+        public new void Awake()
         {
-            Button = UiComponentFactory.CreateUiButton();
-            Button.OnClick.AddListener(ActionsOnClick);
-            Button.SetParent(AgentInfoWindow.currentWindow.gameObject.transform.GetChild(0));
-            Button.SetPosition(PresetConstants.LoadPresetButtonPositionX, PresetConstants.LoadPresetButtonPositionY);
+            try
+            {
+                base.Awake();
 
-            var imagePath = Harmony_Patch.Instance.FileManager.GetFile("Assets/preset-panel.png");
-            Button.SetButtonImage(imagePath);
+                transform.SetParent(AgentInfoWindow.currentWindow.gameObject.transform.GetChild(0));
+                onClick.AddListener(ActionsOnClick);
 
-            Button.SetSize(PresetConstants.ButtonSizeX, PresetConstants.ButtonSizeY);
-            Button.Text = LocalizationIds.LoadPresetIconText.GetLocalized();
-            Button.TextFont = DeployUI.instance.ordeal.font;
-            Button.TextFontSize = PresetConstants.ButtonTextFontSize;
-            Button.TextColor = PresetConstants.PresetTextColor;
-            Button.TextAlignment = TextAnchor.MiddleCenter;
+                var imagePath = Harmony_Patch.Instance.FileManager.GetFile("Assets/preset-panel.png");
+                SetButtonImage(imagePath);
+                image.SetSize(PresetConstants.ButtonSizeX, PresetConstants.ButtonSizeY);
+                image.SetPosition(PresetConstants.LoadPresetButtonPositionX, PresetConstants.LoadPresetButtonPositionY);
+
+                Text.text = LocalizationIds.LoadPresetIconText.GetLocalized();
+            }
+            catch (Exception exception)
+            {
+                Harmony_Patch.Instance.Logger.WriteException(exception);
+                throw;
+            }
         }
 
         private static void ActionsOnClick()
         {
             if (Harmony_Patch.Instance.LoadPresetPanel.IsUnityNull())
             {
-                Harmony_Patch.Instance.LoadPresetPanel = new LoadPresetPanel();
+                Harmony_Patch.Instance.LoadPresetPanel = new GameObject().AddComponent<LoadPresetPanel>();
                 return;
             }
 
-            Harmony_Patch.Instance.LoadPresetPanel.SetActive(!Harmony_Patch.Instance.LoadPresetPanel.IsActive);
+            Harmony_Patch.Instance.LoadPresetPanel.gameObject.SetActive(!Harmony_Patch.Instance.LoadPresetPanel.isActiveAndEnabled);
         }
     }
 }

@@ -2,10 +2,11 @@
 
 #region
 
+using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Interfaces.UiComponents;
 using LobotomyCorporationMods.CustomizationOverhaul.Implementations;
 using LobotomyCorporationMods.CustomizationOverhaul.Interfaces;
+using LobotomyCorporationMods.CustomizationOverhaul.UiComponents;
 
 #endregion
 
@@ -26,10 +27,10 @@ namespace LobotomyCorporationMods.CustomizationOverhaul
             PresetSaver = new PresetSaver(FileManager, PresetLoader);
         }
 
-        internal IUiButton LoadPresetButton { get; set; }
+        internal LoadPresetButton LoadPresetButton { get; set; }
 
-        internal IUiImage LoadPresetPanel { get; set; }
-        internal IUiButton SavePresetButton { get; set; }
+        internal LoadPresetPanel LoadPresetPanel { get; set; }
+        internal SavePresetButton SavePresetButton { get; set; }
         internal IPresetLoader PresetLoader { get; }
         internal IPresetSaver PresetSaver { get; }
 
@@ -37,17 +38,17 @@ namespace LobotomyCorporationMods.CustomizationOverhaul
         {
             if (!Instance.LoadPresetButton.IsUnityNull())
             {
-                Instance.LoadPresetButton.SetActive(false);
+                Instance.LoadPresetButton.gameObject.SetActive(false);
             }
 
             if (!Instance.SavePresetButton.IsUnityNull())
             {
-                Instance.SavePresetButton.SetActive(false);
+                Instance.SavePresetButton.gameObject.SetActive(false);
             }
 
             if (!Instance.LoadPresetPanel.IsUnityNull())
             {
-                Instance.LoadPresetPanel.SetActive(false);
+                Instance.LoadPresetPanel.gameObject.SetActive(false);
             }
         }
     }

@@ -1,34 +1,44 @@
 ﻿// SPDX-License-Identifier: MIT
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Customizing;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Interfaces.UiComponents;
-using LobotomyCorporationMods.CustomizationOverhaul.Constants;
+using LobotomyCorporationMods.Common.Implementations.UiComponents;
 using LobotomyCorporationMods.CustomizationOverhaul.Objects;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
 {
-    internal sealed class UiPresetList : MonoBehaviour
+    public sealed class UiPresetList : MonoBehaviour
     {
         private const int NumberOfPresetsPerPage = 5;
-        private readonly string _arrowIconPath = Application.dataPath + "/Managed/BaseMod/Image/Down.png";
+        private string _arrowIconPath;
         private int _currentPage;
         private GameObject _downArrow;
-        private List<IUiButton> _panelButtonList;
+        private List<UiButton> _panelButtonList;
         private List<KeyValuePair<string, PresetData>> _presets;
         private GameObject _upArrow;
 
         [UsedImplicitly]
-        internal void Awake()
+        public void Awake()
         {
-            UpdatePage();
+            try
+            {
+                InitializeArrows();
+                ReloadPresets();
+                InitializePanelButtonsList();
+                UpdatePage();
+            }
+            catch (Exception exception)
+            {
+                Harmony_Patch.Instance.Logger.WriteException(exception);
+                throw;
+            }
         }
 
         private void ReloadPresets()
@@ -36,15 +46,10 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
             _presets = new List<KeyValuePair<string, PresetData>>(Harmony_Patch.Instance.PresetLoader.Presets.OrderBy(x => x.Key));
         }
 
-        private void ReinitializeComponents()
-        {
-            ReloadPresets();
-            InitializeArrows();
-            InitializePanelButtonsList();
-        }
-
         private void InitializeArrows()
         {
+            _arrowIconPath = Application.dataPath + "/Managed/BaseMod/Image/Down.png";
+
             if (_downArrow.IsUnityNull())
             {
                 _downArrow = MakeDownButton();
@@ -58,71 +63,37 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
 
         private void InitializePanelButtonsList()
         {
-            if (_panelButtonList.IsNotNull())
-            {
-                return;
-            }
-
-            _panelButtonList = new List<IUiButton>();
+            _panelButtonList = new List<UiButton>();
             for (var presetNum = 0; presetNum < NumberOfPresetsPerPage; presetNum++)
             {
                 var hasPresetAtIndex = presetNum < _presets.Count;
                 var presetName = hasPresetAtIndex ? _presets[presetNum].Key : string.Empty;
-                _panelButtonList.Add(CreatePresetButton(presetNum, presetName));
+                var presetSlotButton = new GameObject().AddComponent<PresetSlotButton>();
+                presetSlotButton.transform.SetParent(transform);
+                presetSlotButton.Setup(presetNum, presetName);
+                _panelButtonList.Add(presetSlotButton);
             }
-        }
-
-        [NotNull]
-        internal IUiButton CreatePresetButton(int buttonNum,
-            string presetName)
-        {
-            var button = UiComponentFactory.CreateUiButton();
-            button.SetParent(gameObject.transform);
-            button.Text = presetName;
-            button.TextColor = PresetConstants.PresetTextColor;
-            button.TextFontSize = PresetConstants.ButtonTextFontSize;
-            button.TextFont = DeployUI.instance.ordeal.font;
-            button.TextAlignment = TextAnchor.MiddleCenter;
-
-            var fileManager = Harmony_Patch.Instance.FileManager;
-            var imagePath = fileManager.GetFile("Assets/preset-panel.png");
-            button.SetButtonImage(imagePath);
-            button.SetPosition(0.0f, PresetConstants.LoadPresetPanelPositionY - buttonNum * button.Height);
-
-            button.OnClick.AddListener(delegate
-            {
-                var loadedAgentData = Harmony_Patch.Instance.PresetLoader.LoadPreset(presetName);
-
-                var instance = CustomizingWindow.CurrentWindow.appearanceUI;
-                instance.palette.OnSetColor(loadedAgentData.appearance.HairColor);
-                instance.SetAppearanceSprite(loadedAgentData);
-                instance.SetCreditControl(true);
-
-                Harmony_Patch.Instance.PresetSaver.UpdateSavePresetButtonText(presetName, loadedAgentData.appearance);
-            });
-
-            return button;
         }
 
         /// <summary>Updates the page of the preset list.</summary>
         internal void UpdatePage()
         {
-            ReinitializeComponents();
+            ReloadPresets();
             var pageStartIndex = _currentPage * NumberOfPresetsPerPage;
 
             _upArrow.SetActive(_currentPage != 0);
 
             for (var presetPanelNum = 0; presetPanelNum < NumberOfPresetsPerPage; presetPanelNum++)
             {
-                _panelButtonList[presetPanelNum].OnClick.RemoveAllListeners();
+                _panelButtonList[presetPanelNum].onClick.RemoveAllListeners();
 
                 var presetIndex = pageStartIndex + presetPanelNum;
                 var hasPresetAtIndex = presetIndex < _presets.Count;
                 if (hasPresetAtIndex)
                 {
                     var presetName = _presets[presetIndex].Key;
-                    _panelButtonList[presetPanelNum].Text = _presets[presetIndex].Key;
-                    _panelButtonList[presetPanelNum].OnClick.AddListener(delegate
+                    _panelButtonList[presetPanelNum].SetText(_presets[presetIndex].Key);
+                    _panelButtonList[presetPanelNum].onClick.AddListener(delegate
                     {
                         var loadedAgentData = Harmony_Patch.Instance.PresetLoader.LoadPreset(presetName);
 
@@ -136,7 +107,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
                 }
                 else
                 {
-                    _panelButtonList[presetPanelNum].Text = string.Empty;
+                    _panelButtonList[presetPanelNum].SetText(string.Empty);
                 }
             }
 
@@ -156,8 +127,9 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
         }
 
         [NotNull]
-        internal GameObject MakeDownButton()
+        private GameObject MakeDownButton()
         {
+            const float YPosition = -300f;
             var downButtonGameObject = new GameObject("Down");
             var image = downButtonGameObject.AddComponent<Image>();
             downButtonGameObject.transform.SetParent(gameObject.transform);
@@ -170,7 +142,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
             var button = downButtonGameObject.AddComponent<Button>();
             button.targetGraphic = image;
             button.onClick.AddListener(OnClickDownButton);
-            downButtonGameObject.transform.localPosition = new Vector2(0.0f, -300f);
+            downButtonGameObject.transform.localPosition = new Vector2(0.0f, YPosition);
 
             return downButtonGameObject;
         }
@@ -187,7 +159,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
         }
 
         [NotNull]
-        internal GameObject MakeUpButton()
+        private GameObject MakeUpButton()
         {
             var upButtonGameObject = new GameObject("Down");
             var image = upButtonGameObject.AddComponent<Image>();

@@ -107,7 +107,7 @@ namespace LobotomyCorporationMods.Common.Implementations
 
         private void InitializeLogger(IAngelaConversationUiTestAdapter angelaConversationUiTestAdapter)
         {
-            var fileLoggerTarget = new FileLoggerTarget(FileManager, "log.txt");
+            var fileLoggerTarget = new FileLoggerTarget(FileManager, "errors.log");
             Logger = new Logger(fileLoggerTarget);
 
 #if DEBUG

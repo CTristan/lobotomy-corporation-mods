@@ -1,88 +1,54 @@
 ﻿// SPDX-License-Identifier: MIT
 
-using System;
 using System.IO;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Interfaces.UiComponents;
 using UnityEngine;
 using UnityEngine.UI;
-using Object = UnityEngine.Object;
 
 namespace LobotomyCorporationMods.Common.Implementations.UiComponents
 {
-    internal sealed class UiButton : UiComponent, IUiButton
+    /// <summary>Wrapper class to handle setting up the initial plumbing for a new button.</summary>
+    public class UiButton : Button
     {
-        internal UiButton()
+        protected Text Text { get; private set; }
+        public float Height => image.rectTransform.rect.height;
+        public float Width => image.rectTransform.rect.width;
+
+        public new void Awake()
         {
-            ButtonObject = GameObject.AddComponent<Button>();
-            ImageObject = GameObject.AddComponent<Image>();
-            TextObject = UiComponentFactory.CreateUiText();
-            InitializeComponents();
+            base.Awake();
+
+            image = gameObject.AddComponent<Image>();
+            SetButtonImage();
+
+            Text = CreateNewTextObject();
         }
 
-        private Button ButtonObject { get; }
-        private Image ImageObject { get; }
-        private IUiText TextObject { get; }
-
-        public override bool AnyComponentIsNull()
+        [NotNull]
+        private Text CreateNewTextObject()
         {
-            var uiElements = new Object[]
-            {
-                GameObject, ButtonObject, ImageObject,
-            };
+            var text = new GameObject().AddComponent<Text>();
+            text.transform.SetParent(gameObject.transform);
+            text.rectTransform.sizeDelta = new Vector2(0f, 0f);
+            text.rectTransform.anchoredPosition = new Vector2(0.0f, 0.0f);
+            text.rectTransform.anchorMin = new Vector2(0.0f, 0.0f);
+            text.rectTransform.anchorMax = new Vector2(1.0f, 1.0f);
 
-            var uiElementIsNull = Array.Exists(uiElements, uiElement => uiElement.IsUnityNull());
-            return uiElementIsNull || TextObject.AnyComponentIsNull();
+            return text;
         }
 
-        public string Text
+        public void SetText(string value)
         {
-            get =>
-                TextObject.Text;
-            set =>
-                TextObject.Text = value;
+            Text.text = value;
         }
 
-        public TextAnchor TextAlignment
+        public void SetTextColor(Color color)
         {
-            get =>
-                TextObject.Alignment;
-            set =>
-                TextObject.Alignment = value;
+            Text.color = color;
         }
 
-        public Color TextColor
-        {
-            get =>
-                TextObject.Color;
-            set =>
-                TextObject.Color = value;
-        }
-
-        public Font TextFont
-        {
-            get =>
-                TextObject.Font;
-            set =>
-                TextObject.Font = value;
-        }
-
-        public int TextFontSize
-        {
-            get =>
-                TextObject.FontSize;
-            set =>
-                TextObject.FontSize = value;
-        }
-
-        public float Width => ImageObject.rectTransform.rect.width;
-
-        public float Height => ImageObject.rectTransform.rect.height;
-
-        public Button.ButtonClickedEvent OnClick => ButtonObject.onClick;
-
-        public void SetButtonImage([NotNull] string imagePath)
+        protected void SetButtonImage([CanBeNull] string imagePath = null)
         {
             var texture2D = new Texture2D(2, 2);
 
@@ -91,45 +57,9 @@ namespace LobotomyCorporationMods.Common.Implementations.UiComponents
                 texture2D.LoadImage(File.ReadAllBytes(imagePath));
             }
 
-            var sprite = Sprite.Create(texture2D, new Rect(0.0f, 0.0f, texture2D.width, texture2D.height), new Vector2());
-            ImageObject.sprite = sprite;
-            ButtonObject.targetGraphic = ImageObject;
-            SetSize(texture2D.width, texture2D.height);
-        }
-
-        public void SetButtonImageColor(Color color)
-        {
-            ImageObject.color = color;
-        }
-
-        public void SetScale(float x,
-            float y)
-        {
-            ImageObject.rectTransform.localScale = new Vector3(x, y);
-        }
-
-        public void SetTextAnchor(float anchorX,
-            float anchorY,
-            float anchorMinX,
-            float anchorMinY,
-            float anchorMaxX,
-            float anchorMaxY)
-        {
-            TextObject.SetAnchor(anchorX, anchorY, anchorMinX, anchorMinY, anchorMaxX, anchorMaxY);
-        }
-
-        public void SetSize(float width,
-            float height)
-        {
-            ImageObject.rectTransform.sizeDelta = new Vector2(width, height);
-        }
-
-        private void InitializeComponents()
-        {
-            TextObject.SetParent(GameObject.transform);
-            TextObject.SetSize(0f, 0f);
-            SetTextAnchor(0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f);
-            SetButtonImage(string.Empty);
+            image.sprite = Sprite.Create(texture2D, new Rect(0.0f, 0.0f, texture2D.width, texture2D.height), new Vector2());
+            targetGraphic = image;
+            image.SetSize(texture2D.width, texture2D.height);
         }
     }
 }

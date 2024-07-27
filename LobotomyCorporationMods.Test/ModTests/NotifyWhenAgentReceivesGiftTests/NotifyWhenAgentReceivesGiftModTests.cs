@@ -21,9 +21,9 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
         protected const string DefaultAgentName = "DefaultAgentName";
         protected const long DefaultEquipmentId = 1L;
         protected const EGOgiftAttachRegion DefaultGiftAttachRegion = EGOgiftAttachRegion.HEAD;
-        protected const int DefaultGiftId = 1;
+        private const int DefaultGiftId = 1;
         protected const string DefaultGiftName = "DefaultGiftName";
-        protected const string NotificationLogMessage = "{0} has received the gift {1}.";
+        private const string NotificationLogMessage = "{0} has received the gift {1}.";
         protected const string TestNotificationLogMessage = " has received the gift ";
 
         protected NotifyWhenAgentReceivesGiftModTests()

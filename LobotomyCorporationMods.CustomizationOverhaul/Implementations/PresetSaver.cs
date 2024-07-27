@@ -4,7 +4,6 @@ using Customizing;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces;
-using LobotomyCorporationMods.Common.Interfaces.UiComponents;
 using LobotomyCorporationMods.CustomizationOverhaul.Constants;
 using LobotomyCorporationMods.CustomizationOverhaul.Extensions;
 using LobotomyCorporationMods.CustomizationOverhaul.Interfaces;
@@ -56,7 +55,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
             }
 
             _presetLoader.InitializeDefaultCustomPresetFile();
-            Harmony_Patch.Instance.SavePresetButton.TextColor = Harmony_Patch.Instance.PresetLoader.IsExactPreset(agentName, appearance) ? Color.grey : PresetConstants.PresetTextColor;
+            Harmony_Patch.Instance.SavePresetButton.SetTextColor(Harmony_Patch.Instance.PresetLoader.IsExactPreset(agentName, appearance) ? Color.grey : PresetConstants.PresetTextColor);
         }
     }
 }

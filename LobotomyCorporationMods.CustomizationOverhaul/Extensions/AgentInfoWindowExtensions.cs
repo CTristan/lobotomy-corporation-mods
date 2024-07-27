@@ -1,7 +1,8 @@
 ﻿// SPDX-License-Identifier: MIT
 
-using LobotomyCorporationMods.Common.Interfaces.UiComponents;
+using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.CustomizationOverhaul.UiComponents;
+using UnityEngine;
 
 namespace LobotomyCorporationMods.CustomizationOverhaul.Extensions
 {
@@ -13,11 +14,11 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Extensions
             {
                 if (Harmony_Patch.Instance.LoadPresetButton.IsUnityNull())
                 {
-                    Harmony_Patch.Instance.LoadPresetButton = new LoadPresetButton();
+                    Harmony_Patch.Instance.LoadPresetButton = new GameObject().AddComponent<LoadPresetButton>();
                 }
                 else
                 {
-                    Harmony_Patch.Instance.LoadPresetButton.SetActive(true);
+                    Harmony_Patch.Instance.LoadPresetButton.gameObject.SetActive(true);
                 }
             }
             else
@@ -27,7 +28,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Extensions
                     return;
                 }
 
-                Harmony_Patch.Instance.LoadPresetButton.SetActive(false);
+                Harmony_Patch.Instance.LoadPresetButton.gameObject.SetActive(false);
             }
         }
 
@@ -37,11 +38,11 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Extensions
             {
                 if (Harmony_Patch.Instance.SavePresetButton.IsUnityNull())
                 {
-                    Harmony_Patch.Instance.SavePresetButton = new SavePresetButton();
+                    Harmony_Patch.Instance.SavePresetButton = new GameObject().AddComponent<SavePresetButton>();
                 }
                 else
                 {
-                    Harmony_Patch.Instance.SavePresetButton.SetActive(true);
+                    Harmony_Patch.Instance.SavePresetButton.gameObject.SetActive(true);
                 }
             }
             else
@@ -51,7 +52,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Extensions
                     return;
                 }
 
-                Harmony_Patch.Instance.SavePresetButton.SetActive(false);
+                Harmony_Patch.Instance.SavePresetButton.gameObject.SetActive(false);
             }
         }
     }
