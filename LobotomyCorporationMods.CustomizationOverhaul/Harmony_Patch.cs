@@ -24,7 +24,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul
         private Harmony_Patch(bool initialize) : base(typeof(Harmony_Patch), "LobotomyCorporationMods.CustomizationOverhaul.dll", initialize)
         {
             PresetLoader = new PresetLoader(FileManager);
-            PresetSaver = new PresetSaver(FileManager, PresetLoader);
+            PresetWriter = new PresetWriter(FileManager, PresetLoader);
         }
 
         internal LoadPresetButton LoadPresetButton { get; set; }
@@ -32,7 +32,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul
         internal LoadPresetPanel LoadPresetPanel { get; set; }
         internal SavePresetButton SavePresetButton { get; set; }
         internal IPresetLoader PresetLoader { get; }
-        internal IPresetSaver PresetSaver { get; }
+        internal IPresetWriter PresetWriter { get; }
 
         internal static void DisableAllCustomUiComponents()
         {

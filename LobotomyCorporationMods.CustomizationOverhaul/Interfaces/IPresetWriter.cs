@@ -4,8 +4,9 @@ using Customizing;
 
 namespace LobotomyCorporationMods.CustomizationOverhaul.Interfaces
 {
-    public interface IPresetSaver
+    internal interface IPresetWriter
     {
+        void DeletePreset(string presetName);
         void SavePreset();
 
         void UpdateSavePresetButtonText(string agentName,

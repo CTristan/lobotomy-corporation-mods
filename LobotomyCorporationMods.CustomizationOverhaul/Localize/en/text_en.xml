@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <localize>
+    <text id="Delete_Preset_Confirmation">Delete {0}?</text>
     <text id="Load_Preset">Load Preset</text>
     <text id="Save_Preset">Save Preset</text>
 </localize>

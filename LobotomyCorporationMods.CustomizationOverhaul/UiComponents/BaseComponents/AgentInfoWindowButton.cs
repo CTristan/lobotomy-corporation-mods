@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents.BaseComponents
 {
-    public class AgentInfoWindowButton : UiButton
+    public class AgentInfoWindowButton : UiButtonWithText
     {
         public new void Awake()
         {

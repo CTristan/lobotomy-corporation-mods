@@ -9,13 +9,14 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Interfaces
     public interface IPresetLoader
     {
         Dictionary<string, PresetData> Presets { get; }
-
-        bool IsExactPreset(string agentName,
-            Appearance appearance);
-
+        IEnumerable<string> FindAllPresetFiles();
         bool HasPreset(string agentName);
         void InitializeDefaultCustomPresetFile();
         AgentData LoadPreset(string agentName);
-        PresetList LoadPresetsFromDefaultCustomFile();
+        PresetList LoadPresetsFromCustomFile(string fileName = null);
+        void ReloadPresetsFromFiles();
+
+        bool IsExactPreset(string agentName,
+            Appearance appearance);
     }
 }

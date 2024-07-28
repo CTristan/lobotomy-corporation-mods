@@ -18,8 +18,6 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
 {
     internal sealed class PresetLoader : IPresetLoader
     {
-        private const string PresetsDirectoryName = "Presets";
-        private const string AllJsonFiles = "*.json";
         private readonly IFileManager _fileManager;
 
         internal PresetLoader([NotNull] IFileManager fileManager)
@@ -34,6 +32,14 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
         }
 
         public Dictionary<string, PresetData> Presets { get; } = new Dictionary<string, PresetData>();
+
+        public IEnumerable<string> FindAllPresetFiles()
+        {
+            // Need to first make sure the Presets directory actually exists, and if not, then create it
+            _fileManager.CreateDirectoryIfNotExists(PresetConstants.PresetsDirectoryName);
+
+            return _fileManager.GetFilesFromDirectory(PresetConstants.PresetsDirectoryName, PresetConstants.JsonFileMask);
+        }
 
         public bool HasPreset([NotNull] string agentName)
         {
@@ -90,12 +96,10 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
             }
         }
 
-        [NotNull]
-        public PresetList LoadPresetsFromDefaultCustomFile()
+        public void ReloadPresetsFromFiles()
         {
-            var defaultCustomFile = _fileManager.GetFile(PresetConstants.CustomFileName);
-
-            return LoadPresetListFromFile(defaultCustomFile);
+            Presets.Clear();
+            InitializeAllPresetFiles();
         }
 
         public bool IsExactPreset([NotNull] string agentName,
@@ -114,6 +118,19 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
             }
 
             return IsSameSpriteName(preset.HairColor, appearance.HairColor.ToHtmlStringRgb()) && IsSameSpriteName(preset.EyeColor, appearance.EyeColor.ToHtmlStringRgb());
+        }
+
+        [NotNull]
+        public PresetList LoadPresetsFromCustomFile([CanBeNull] string fileName = null)
+        {
+            var presetFile = _fileManager.GetFile(fileName);
+
+            if (string.IsNullOrEmpty(fileName))
+            {
+                presetFile = _fileManager.GetFile(PresetConstants.CustomFileName);
+            }
+
+            return LoadPresetListFromFile(presetFile);
         }
 
         private static bool CheckAllItemsHaveSameSprite([NotNull] PresetData preset,
@@ -152,10 +169,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
 
         private void InitializeAllPresetFiles()
         {
-            // Need to first make sure the Presets directory actually exists, and if not, then create it
-            _fileManager.CreateDirectoryIfNotExists(PresetsDirectoryName);
-
-            var presetFiles = _fileManager.GetFilesFromDirectory(PresetsDirectoryName, AllJsonFiles);
+            var presetFiles = FindAllPresetFiles();
 
             foreach (var preset in presetFiles.Select(LoadPresetListFromFile).SelectMany(presetList => presetList.Presets))
             {
@@ -165,6 +179,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
             // Reload the default preset file last so that it overrules the presets from other files
             InitializeDefaultCustomPresetFile();
         }
+
 
         private static bool IsSameSpriteName([NotNull] string currentValue,
             string newValue)

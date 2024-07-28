@@ -4,10 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Customizing;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations.UiComponents;
 using LobotomyCorporationMods.CustomizationOverhaul.Objects;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,7 +18,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
         private string _arrowIconPath;
         private int _currentPage;
         private GameObject _downArrow;
-        private List<UiButton> _panelButtonList;
+        private List<PresetSlotButton> _panelButtonList;
         private List<KeyValuePair<string, PresetData>> _presets;
         private GameObject _upArrow;
 
@@ -63,14 +61,14 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
 
         private void InitializePanelButtonsList()
         {
-            _panelButtonList = new List<UiButton>();
+            _panelButtonList = new List<PresetSlotButton>();
             for (var presetNum = 0; presetNum < NumberOfPresetsPerPage; presetNum++)
             {
                 var hasPresetAtIndex = presetNum < _presets.Count;
                 var presetName = hasPresetAtIndex ? _presets[presetNum].Key : string.Empty;
                 var presetSlotButton = new GameObject().AddComponent<PresetSlotButton>();
                 presetSlotButton.transform.SetParent(transform);
-                presetSlotButton.Setup(presetNum, presetName);
+                presetSlotButton.UpdateButton(this, presetNum, presetName);
                 _panelButtonList.Add(presetSlotButton);
             }
         }
@@ -92,22 +90,11 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
                 if (hasPresetAtIndex)
                 {
                     var presetName = _presets[presetIndex].Key;
-                    _panelButtonList[presetPanelNum].SetText(_presets[presetIndex].Key);
-                    _panelButtonList[presetPanelNum].onClick.AddListener(delegate
-                    {
-                        var loadedAgentData = Harmony_Patch.Instance.PresetLoader.LoadPreset(presetName);
-
-                        var instance = CustomizingWindow.CurrentWindow.appearanceUI;
-                        instance.palette.OnSetColor(loadedAgentData.appearance.HairColor);
-                        instance.SetAppearanceSprite(loadedAgentData);
-                        instance.SetCreditControl(true);
-
-                        Harmony_Patch.Instance.PresetSaver.UpdateSavePresetButtonText(presetName, loadedAgentData.appearance);
-                    });
+                    _panelButtonList[presetPanelNum].UpdateButton(this, presetPanelNum, presetName);
                 }
                 else
                 {
-                    _panelButtonList[presetPanelNum].SetText(string.Empty);
+                    _panelButtonList[presetPanelNum].ClearButton();
                 }
             }
 

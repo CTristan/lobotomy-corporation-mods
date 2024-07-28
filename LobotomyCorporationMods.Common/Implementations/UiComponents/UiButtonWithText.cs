@@ -9,7 +9,7 @@ using UnityEngine.UI;
 namespace LobotomyCorporationMods.Common.Implementations.UiComponents
 {
     /// <summary>Wrapper class to handle setting up the initial plumbing for a new button.</summary>
-    public class UiButton : Button
+    public class UiButtonWithText : Button
     {
         protected Text Text { get; private set; }
         public float Height => image.rectTransform.rect.height;
@@ -22,25 +22,7 @@ namespace LobotomyCorporationMods.Common.Implementations.UiComponents
             image = gameObject.AddComponent<Image>();
             SetButtonImage();
 
-            Text = CreateNewTextObject();
-        }
-
-        [NotNull]
-        private Text CreateNewTextObject()
-        {
-            var text = new GameObject().AddComponent<Text>();
-            text.transform.SetParent(gameObject.transform);
-            text.rectTransform.sizeDelta = new Vector2(0f, 0f);
-            text.rectTransform.anchoredPosition = new Vector2(0.0f, 0.0f);
-            text.rectTransform.anchorMin = new Vector2(0.0f, 0.0f);
-            text.rectTransform.anchorMax = new Vector2(1.0f, 1.0f);
-
-            return text;
-        }
-
-        public void SetText(string value)
-        {
-            Text.text = value;
+            Text = gameObject.CreateNewTextObject();
         }
 
         public void SetTextColor(Color color)

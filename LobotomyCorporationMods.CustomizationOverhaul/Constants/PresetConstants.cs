@@ -7,6 +7,10 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Constants
 {
     internal static class PresetConstants
     {
+        internal const float AcceptDeletePresetButtonPositionX = 150f;
+        internal const float AcceptDeletePresetButtonPositionY = 0f;
+        internal const float DeletePresetButtonPositionX = 200f;
+        internal const float DeletePresetButtonPositionY = 0f;
         internal const float LoadPresetButtonPositionX = 570f;
         internal const float LoadPresetButtonPositionY = -300f;
         internal const float LoadPresetPanelPositionX = 340f;
@@ -23,8 +27,14 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Constants
         private const float PresetTextColorG = 0.54f;
         private const float PresetTextColorB = 0.15f;
 
+        internal const string JsonFileMask = "*.json";
+        internal const string PresetsDirectoryName = "Presets";
+
         [NotNull]
         internal static string CustomFileName => "Presets/presets.json";
+
+        [NotNull]
+        internal static string PresetPanelAcceptIconPath => "Assets/preset-panel-accept-icon.png";
 
         internal static Color PresetTextColor => new Color(PresetTextColorR, PresetTextColorG, PresetTextColorB);
     }
