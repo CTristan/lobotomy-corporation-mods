@@ -4,6 +4,7 @@ using System;
 using System.Globalization;
 using Customizing;
 using LobotomyCorporationMods.Common.Extensions;
+using LobotomyCorporationMods.Common.Implementations.UiComponents;
 using LobotomyCorporationMods.CustomizationOverhaul.Constants;
 using LobotomyCorporationMods.CustomizationOverhaul.UiComponents.BaseComponents;
 using UnityEngine;
@@ -14,8 +15,8 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
     public class PresetSlotButton : AgentInfoWindowButton
     {
         private Button _acceptButton;
-        private DeletePresetButton _deleteButton;
-        private bool _isDeleting;
+        private UiButton _deleteButton;
+        private DeletePresetConfirmationPanel _deletePresetConfirmationPanel;
         private string _presetName;
         private UiPresetList _uiPresetList;
 
@@ -25,12 +26,10 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
             {
                 base.Awake();
 
-                var imagePath = Harmony_Patch.Instance.FileManager.GetFile("Assets/preset-panel.png");
+                var imagePath = Harmony_Patch.Instance.FileManager.GetFile(PresetConstants.PresetPanelImagePath);
                 SetButtonImage(imagePath);
 
-                _deleteButton = new GameObject().AddComponent<DeletePresetButton>();
-                _deleteButton.transform.SetParent(transform);
-                _deleteButton.onClick.AddListener(ProcessDeleteButton);
+                SetUpDeleteButton();
             }
             catch (Exception exception)
             {
@@ -39,31 +38,27 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
             }
         }
 
-        /// <summary>When clicking the Delete button, we want to display a confirmation message, and then the Delete button becomes a cancel button.</summary>
-        /// <remarks>
-        ///     This method is called when the Delete button is clicked. It checks the state of the button, and if it's in the "deleting" state, it cancels the deletion. Otherwise, it
-        ///     displays a confirmation message to the user.
-        /// </remarks>
-        private void ProcessDeleteButton()
+        private void SetUpDeleteButton()
         {
             try
             {
-                if (_isDeleting)
+                if (_deleteButton.IsUnityNull())
                 {
-                    CancelDeletion();
-                    _acceptButton.gameObject.SetActive(false);
+                    _deleteButton = new GameObject().AddComponent<UiButton>();
+                    _deleteButton.transform.SetParent(transform);
+                    var imagePath = Harmony_Patch.Instance.FileManager.GetFile(PresetConstants.PresetDeleteIconPath);
+                    _deleteButton.SetButtonImage(imagePath);
+                    _deleteButton.SetPosition(PresetConstants.DeletePresetButtonPositionX, PresetConstants.DeletePresetButtonPositionY);
+                    _deleteButton.onClick.AddListener(DisplayDeleteConfirmMessage);
                 }
                 else
                 {
-                    DisplayDeleteConfirmMessage();
-                    EnableAcceptButton();
+                    _deleteButton.gameObject.SetActive(true);
                 }
-
-                _isDeleting = !_isDeleting;
             }
-            catch (Exception exception)
+            catch (Exception e)
             {
-                Harmony_Patch.Instance.Logger.WriteException(exception);
+                Harmony_Patch.Instance.Logger.WriteException(e);
                 throw;
             }
         }
@@ -77,9 +72,9 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
                     _acceptButton = new GameObject().AddComponent<Button>();
                     _acceptButton.transform.SetParent(transform);
                     _acceptButton.image = _acceptButton.gameObject.AddComponent<Image>();
-                    _acceptButton.image.SetImage(Harmony_Patch.Instance.FileManager.GetFile(PresetConstants.PresetPanelAcceptIconPath));
+                    _acceptButton.image.SetImage(Harmony_Patch.Instance.FileManager.GetFile(PresetConstants.PresetDeleteAcceptIconPath));
                     _acceptButton.image.SetPosition(PresetConstants.AcceptDeletePresetButtonPositionX, PresetConstants.AcceptDeletePresetButtonPositionY);
-                    _acceptButton.onClick.AddListener(ProcessAcceptDeletionButton);
+                    _acceptButton.onClick.AddListener(ProcessDeletion);
                 }
                 else
                 {
@@ -93,7 +88,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
             }
         }
 
-        private void ProcessAcceptDeletionButton()
+        internal void ProcessDeletion()
         {
             try
             {
@@ -108,14 +103,29 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
             }
         }
 
-        private void CancelDeletion()
+        internal void CancelDeletion()
         {
-            Text.text = _presetName;
+            SetUpDeleteButton();
         }
 
         private void DisplayDeleteConfirmMessage()
         {
-            Text.text = string.Format(CultureInfo.InvariantCulture, LocalizationIds.DeletePresetConfirmationText.GetLocalized(), _presetName);
+            if (_deletePresetConfirmationPanel.IsUnityNull())
+            {
+                _deletePresetConfirmationPanel = new GameObject().AddComponent<DeletePresetConfirmationPanel>();
+                _deletePresetConfirmationPanel.transform.SetParent(transform);
+                _deletePresetConfirmationPanel.SetImage(Harmony_Patch.Instance.FileManager.GetFile(PresetConstants.PresetPanelImagePath));
+                _deletePresetConfirmationPanel.SetPosition(0.0f, 0.0f);
+            }
+            else
+            {
+                _deletePresetConfirmationPanel.gameObject.SetActive(true);
+            }
+
+            _deletePresetConfirmationPanel.SetText(string.Format(CultureInfo.InvariantCulture, LocalizationIds.DeletePresetConfirmationText.GetLocalized(), _presetName));
+            _deletePresetConfirmationPanel.SwipeIn(this);
+
+            _deleteButton.gameObject.SetActive(false);
         }
 
         public void ClearButton()
@@ -160,6 +170,11 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
                 if (!_acceptButton.IsUnityNull())
                 {
                     _acceptButton.gameObject.SetActive(false);
+                }
+
+                if (!_deletePresetConfirmationPanel.IsUnityNull())
+                {
+                    _deletePresetConfirmationPanel.gameObject.SetActive(false);
                 }
 
                 _uiPresetList = uiPresetList;

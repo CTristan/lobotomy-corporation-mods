@@ -19,7 +19,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
                 transform.SetParent(AgentInfoWindow.currentWindow.gameObject.transform.GetChild(0));
                 onClick.AddListener(ActionsOnClick);
 
-                var imagePath = Harmony_Patch.Instance.FileManager.GetFile("Assets/preset-panel.png");
+                var imagePath = Harmony_Patch.Instance.FileManager.GetFile(PresetConstants.PresetPanelImagePath);
                 SetButtonImage(imagePath);
                 image.SetSize(PresetConstants.ButtonSizeX, PresetConstants.ButtonSizeY);
                 image.SetPosition(PresetConstants.LoadPresetButtonPositionX, PresetConstants.LoadPresetButtonPositionY);

@@ -1,6 +1,5 @@
 ﻿// SPDX-License-Identifier: MIT
 
-using JetBrains.Annotations;
 using UnityEngine;
 
 namespace LobotomyCorporationMods.CustomizationOverhaul.Constants
@@ -23,19 +22,16 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Constants
         internal const float ButtonSizeY = 120f;
         internal const int ButtonTextFontSize = 30;
 
+        internal const string JsonFileMask = "*.json";
+        internal const string PresetsDirectoryName = "Presets";
+        internal const string CustomFileName = "Presets/presets.json";
+        internal const string PresetPanelImagePath = "Assets/preset-panel.png";
+        internal const string PresetDeleteIconPath = "Assets/preset-delete-icon.png";
+        internal const string PresetDeleteAcceptIconPath = "Assets/preset-delete-confirm-icon.png";
+        internal const string PresetDeleteCancelIconPath = "Assets/preset-delete-cancel-icon.png";
         private const float PresetTextColorR = 0.93f;
         private const float PresetTextColorG = 0.54f;
         private const float PresetTextColorB = 0.15f;
-
-        internal const string JsonFileMask = "*.json";
-        internal const string PresetsDirectoryName = "Presets";
-
-        [NotNull]
-        internal static string CustomFileName => "Presets/presets.json";
-
-        [NotNull]
-        internal static string PresetPanelAcceptIconPath => "Assets/preset-panel-accept-icon.png";
-
         internal static Color PresetTextColor => new Color(PresetTextColorR, PresetTextColorG, PresetTextColorB);
     }
 }

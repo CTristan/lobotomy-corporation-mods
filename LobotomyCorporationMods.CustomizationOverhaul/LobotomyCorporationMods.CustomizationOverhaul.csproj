@@ -266,10 +266,13 @@
     <Content Include="Assets\preset-panel.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\preset-panel-accept-icon.png">
+    <Content Include="Assets\preset-delete-icon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\preset-panel-delete-icon.png">
+    <Content Include="Assets\preset-delete-confirm-icon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\preset-delete-cancel-icon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Presets\StandardPresets.json">

@@ -7,16 +7,18 @@ namespace LobotomyCorporationMods.Common.Implementations.UiComponents
 {
     public class UiImageWithText : Image
     {
-        public UiImageWithText()
-        {
-            InitializeText();
-        }
-
         protected Text Text { get; private set; }
 
-        protected void InitializeText()
+        public new void Awake()
         {
+            base.Awake();
+
             Text = gameObject.CreateNewTextObject();
+        }
+
+        public void SetText(string text)
+        {
+            Text.text = text;
         }
     }
 }
