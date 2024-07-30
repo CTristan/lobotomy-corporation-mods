@@ -7,6 +7,7 @@ using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.CustomizationOverhaul.Implementations;
 using LobotomyCorporationMods.CustomizationOverhaul.Interfaces;
 using LobotomyCorporationMods.CustomizationOverhaul.UiComponents;
+using UnityEngine;
 
 #endregion
 
@@ -33,6 +34,54 @@ namespace LobotomyCorporationMods.CustomizationOverhaul
         internal SavePresetButton SavePresetButton { get; set; }
         internal IPresetLoader PresetLoader { get; }
         internal IPresetWriter PresetWriter { get; }
+
+        internal static void DisplayLoadPresetButton()
+        {
+            if (!GameManager.currentGameManager.ManageStarted)
+            {
+                if (Instance.LoadPresetButton.IsUnityNull())
+                {
+                    Instance.LoadPresetButton = new GameObject().AddComponent<LoadPresetButton>();
+                }
+                else
+                {
+                    Instance.LoadPresetButton.gameObject.SetActive(true);
+                }
+            }
+            else
+            {
+                if (Instance.LoadPresetButton.IsUnityNull())
+                {
+                    return;
+                }
+
+                Instance.LoadPresetButton.gameObject.SetActive(false);
+            }
+        }
+
+        internal static void DisplaySavePresetButton()
+        {
+            if (!GameManager.currentGameManager.ManageStarted)
+            {
+                if (Instance.SavePresetButton.IsUnityNull())
+                {
+                    Instance.SavePresetButton = new GameObject().AddComponent<SavePresetButton>();
+                }
+                else
+                {
+                    Instance.SavePresetButton.gameObject.SetActive(true);
+                }
+            }
+            else
+            {
+                if (Instance.SavePresetButton.IsUnityNull())
+                {
+                    return;
+                }
+
+                Instance.SavePresetButton.gameObject.SetActive(false);
+            }
+        }
 
         internal static void DisableAllCustomUiComponents()
         {

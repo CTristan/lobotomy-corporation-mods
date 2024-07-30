@@ -22,6 +22,9 @@ namespace LobotomyCorporationMods.Common.Extensions
                 texture2D.LoadImage(File.ReadAllBytes(imagePath));
             }
 
+            image.type = Image.Type.Filled;
+            image.fillMethod = Image.FillMethod.Horizontal;
+            image.fillOrigin = (int)Image.OriginHorizontal.Left;
             image.sprite = Sprite.Create(texture2D, new Rect(0.0f, 0.0f, texture2D.width, texture2D.height), new Vector2());
             image.SetSize(texture2D.width, texture2D.height);
         }

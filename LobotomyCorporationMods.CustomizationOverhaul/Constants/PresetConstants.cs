@@ -6,10 +6,19 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Constants
 {
     internal static class PresetConstants
     {
-        internal const float AcceptDeletePresetButtonPositionX = 150f;
+        internal const string AcceptDeletePresetIconPath = "Assets/preset-delete-confirm-icon.png";
+        internal const float AcceptDeletePresetButtonPositionX = 200f;
         internal const float AcceptDeletePresetButtonPositionY = 0f;
-        internal const float DeletePresetButtonPositionX = 200f;
+
+        internal const string CancelDeletePresetIconPath = "Assets/preset-delete-cancel-icon.png";
+        internal const float CancelDeletePresetButtonPositionX = -200f;
+        internal const float CancelDeletePresetButtonPositionY = 0f;
+
+        internal const string DeletePresetIconPath = "Assets/preset-delete-icon.png";
+        internal const float DeletePresetButtonPositionX = -200f;
         internal const float DeletePresetButtonPositionY = 0f;
+
+        internal const string DeletePresetPanelImagePath = "Assets/delete-preset-panel.png";
         internal const float LoadPresetButtonPositionX = 570f;
         internal const float LoadPresetButtonPositionY = -300f;
         internal const float LoadPresetPanelPositionX = 340f;
@@ -26,9 +35,6 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Constants
         internal const string PresetsDirectoryName = "Presets";
         internal const string CustomFileName = "Presets/presets.json";
         internal const string PresetPanelImagePath = "Assets/preset-panel.png";
-        internal const string PresetDeleteIconPath = "Assets/preset-delete-icon.png";
-        internal const string PresetDeleteAcceptIconPath = "Assets/preset-delete-confirm-icon.png";
-        internal const string PresetDeleteCancelIconPath = "Assets/preset-delete-cancel-icon.png";
         private const float PresetTextColorR = 0.93f;
         private const float PresetTextColorG = 0.54f;
         private const float PresetTextColorB = 0.15f;

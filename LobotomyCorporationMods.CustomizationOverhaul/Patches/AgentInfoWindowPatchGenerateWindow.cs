@@ -13,7 +13,6 @@ using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Implementations.Facades;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
-using LobotomyCorporationMods.CustomizationOverhaul.Extensions;
 
 #endregion
 
@@ -31,8 +30,8 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
 
             instance.OpenAppearancePanel(agentInfoWindowUiComponentsTestAdapter, customizingWindowTestAdapter, gameObjectTestAdapter);
 
-            instance.CreateSavePresetButton();
-            instance.CreateLoadPresetButton();
+            Harmony_Patch.DisplayLoadPresetButton();
+            Harmony_Patch.DisplaySavePresetButton();
         }
 
         /// <summary>Runs after opening the Agent window to automatically open the appearance window, since there's no reason to hide it behind a button.</summary>

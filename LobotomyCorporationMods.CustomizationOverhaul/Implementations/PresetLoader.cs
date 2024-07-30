@@ -123,12 +123,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
         [NotNull]
         public PresetList LoadPresetsFromCustomFile([CanBeNull] string fileName = null)
         {
-            var presetFile = _fileManager.GetFile(fileName);
-
-            if (string.IsNullOrEmpty(fileName))
-            {
-                presetFile = _fileManager.GetFile(PresetConstants.CustomFileName);
-            }
+            var presetFile = _fileManager.GetFile(!string.IsNullOrEmpty(fileName) ? fileName : PresetConstants.CustomFileName);
 
             return LoadPresetListFromFile(presetFile);
         }
@@ -137,7 +132,9 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
             [NotNull] Appearance appearance)
         {
             var presetComparisonList = CreatePresetComparisonList(preset, appearance);
-            var areAllItemsSameSpriteName = presetComparisonList.TrueForAll(presetComparison => IsSameSpriteName(presetComparison.Key, presetComparison.Value.name));
+            var areAllItemsSameSpriteName = presetComparisonList.TrueForAll(presetComparison =>
+                IsSameSpriteName(presetComparison.Key, presetComparison.Value.IsUnityNull() ? string.Empty : presetComparison.Value.name));
+
             return areAllItemsSameSpriteName;
         }
 
@@ -184,7 +181,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
         private static bool IsSameSpriteName([NotNull] string currentValue,
             string newValue)
         {
-            // If either value is null, it can't be compared anyway, so just say it's good
+            // If either value is null, it can't be compared anyway, so let's say it's good
             if (currentValue.IsNull() || newValue.IsNull())
             {
                 return true;

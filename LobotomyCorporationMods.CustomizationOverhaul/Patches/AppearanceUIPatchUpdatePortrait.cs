@@ -32,6 +32,13 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
                 currentAgentName = instance.copied.agentName.GetName();
             }
 
+            var agentInfoWindow = AgentInfoWindow.currentWindow;
+            if (agentInfoWindow.IsUnityNull())
+            {
+                return;
+            }
+
+            Harmony_Patch.DisplaySavePresetButton();
             Harmony_Patch.Instance.PresetWriter.UpdateSavePresetButtonText(currentAgentName, instance.copied.appearance);
         }
 

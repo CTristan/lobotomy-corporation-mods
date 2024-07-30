@@ -38,7 +38,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
             {
                 Harmony_Patch.Instance.PresetWriter.SavePreset();
 
-                if (!Harmony_Patch.Instance.LoadPresetPanel.isActiveAndEnabled)
+                if (!Harmony_Patch.Instance.LoadPresetPanel.gameObject.activeSelf)
                 {
                     return;
                 }

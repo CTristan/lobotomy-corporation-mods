@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections;
+using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations.UiComponents;
 using LobotomyCorporationMods.CustomizationOverhaul.Constants;
 using LobotomyCorporationMods.CustomizationOverhaul.UiComponents.BaseComponents;
@@ -11,10 +12,10 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
 {
     public class DeletePresetConfirmationPanel : AgentInfoWindowImage
     {
-        private const float ExpandDuration = 0.1f; // Duration of the expansion in seconds
-
-        private PresetSlotButton _callingSlotButton;
-        private Vector2 _initialSizeDelta;
+        private const float ExpandDuration = 0.2f; // Duration of the expansion in seconds
+        private UiButton _acceptButton;
+        private UiButton _cancelButton;
+        private PresetSlotButton _parentButton;
 
         public new void Awake()
         {
@@ -24,11 +25,12 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
 
                 Text.font = DeployUI.instance.ordeal.font;
                 Text.fontSize = PresetConstants.ButtonTextFontSize;
-                Text.color = PresetConstants.PresetTextColor;
+                Text.color = Color.white;
                 Text.alignment = TextAnchor.MiddleCenter;
+                Text.PreventTextFromResizing();
 
-                SetUpAcceptButton();
-                SetUpCancelButton();
+                InitializeAcceptButton();
+                InitializeCancelButton();
             }
             catch (Exception exception)
             {
@@ -37,119 +39,93 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
             }
         }
 
-        private void SetUpAcceptButton()
+
+        private void InitializeAcceptButton()
         {
-            var acceptButton = new GameObject().AddComponent<UiButton>();
-            acceptButton.transform.SetParent(transform);
-            var imagePath = Harmony_Patch.Instance.FileManager.GetFile(PresetConstants.PresetDeleteAcceptIconPath);
-            acceptButton.SetButtonImage(imagePath);
-            acceptButton.SetPosition(PresetConstants.AcceptDeletePresetButtonPositionX, PresetConstants.AcceptDeletePresetButtonPositionY);
-            acceptButton.onClick.AddListener(ProcessDeletion);
+            var imagePath = Harmony_Patch.Instance.FileManager.GetFile(PresetConstants.AcceptDeletePresetIconPath);
+            _acceptButton = new GameObject().AddComponent<UiButton>();
+            _acceptButton.transform.SetParent(transform);
+            _acceptButton.SetButtonImage(imagePath);
+            _acceptButton.SetPosition(PresetConstants.AcceptDeletePresetButtonPositionX, PresetConstants.AcceptDeletePresetButtonPositionY);
+            _acceptButton.onClick.AddListener(ProcessDeletion);
         }
 
         private void ProcessDeletion()
         {
-            _callingSlotButton.ProcessDeletion();
+            _parentButton.ProcessDeletion();
         }
 
-        private void SetUpCancelButton()
+        private void InitializeCancelButton()
         {
-            var cancelButton = new GameObject().AddComponent<UiButton>();
-            cancelButton.transform.SetParent(transform);
-            var imagePath = Harmony_Patch.Instance.FileManager.GetFile(PresetConstants.PresetDeleteCancelIconPath);
-            cancelButton.SetButtonImage(imagePath);
-            cancelButton.SetPosition(PresetConstants.DeletePresetButtonPositionX, PresetConstants.DeletePresetButtonPositionY);
-            cancelButton.onClick.AddListener(CancelDeletion);
+            var imagePath = Harmony_Patch.Instance.FileManager.GetFile(PresetConstants.CancelDeletePresetIconPath);
+            _cancelButton = new GameObject().AddComponent<UiButton>();
+            _cancelButton.transform.SetParent(transform);
+            _cancelButton.SetButtonImage(imagePath);
+            _cancelButton.SetPosition(PresetConstants.CancelDeletePresetButtonPositionX, PresetConstants.CancelDeletePresetButtonPositionY);
+            _cancelButton.onClick.AddListener(CancelDeletion);
         }
 
         private void CancelDeletion()
         {
             SwipeOut();
-            _callingSlotButton.CancelDeletion();
+            _parentButton.CancelDeletion();
         }
 
-        public void SwipeIn(PresetSlotButton callingSlotButton)
+        public void SwipeIn(PresetSlotButton parentButton,
+            string text)
         {
             // Set the reference to the PresetSlotButton we came from
-            _callingSlotButton = callingSlotButton;
-
-            // Get the parent RectTransform
-            var parentRect = rectTransform.parent.GetComponent<RectTransform>();
-
-            // Store the button's initial size and position
-            _initialSizeDelta = rectTransform.sizeDelta;
-
-            // Set the button's initial width to zero
-            rectTransform.sizeDelta = new Vector2(0, _initialSizeDelta.y);
-
-            // Calculate the desired width of the button
-            var desiredWidth = parentRect.rect.width - rectTransform.anchoredPosition.x;
+            _parentButton = parentButton;
+            fillAmount = 0f;
 
             // Start the expansion animation
-            StartCoroutine(ExpandButton(desiredWidth));
+            StartCoroutine(SlowlyFillImage(text));
         }
 
-        private IEnumerator ExpandButton(float desiredWidth)
+        private IEnumerator SlowlyFillImage(string text)
         {
             float elapsedTime = 0;
             while (elapsedTime < ExpandDuration)
             {
                 elapsedTime += Time.deltaTime;
 
-                // Calculate the current width by interpolating between the initial width and the desired width
-                var currentWidth = Mathf.Lerp(0, desiredWidth, elapsedTime / ExpandDuration);
-
-                // Update the button's width
-                rectTransform.sizeDelta = new Vector2(currentWidth, _initialSizeDelta.y);
-
-                // Adjust the button's position to keep the right edge anchored
-                // No need to adjust the position here since we're expanding towards the left
+                fillAmount = Mathf.Lerp(0f, 1f, elapsedTime / ExpandDuration);
 
                 yield return null;
             }
 
-            // Ensure the button reaches the final width
-            rectTransform.sizeDelta = new Vector2(desiredWidth, _initialSizeDelta.y);
+            fillAmount = 1f;
+
+            // Add the text and buttons after animating
+            Text.text = text;
+            _acceptButton.gameObject.SetActive(true);
+            _cancelButton.gameObject.SetActive(true);
         }
 
         public void SwipeOut()
         {
+            // Empty the UI elements so that they don't look weird while trying to resize the text
+            _acceptButton.gameObject.SetActive(false);
+            _cancelButton.gameObject.SetActive(false);
             Text.text = string.Empty;
 
-            // Get the parent RectTransform
-            var parentRect = rectTransform.parent.GetComponent<RectTransform>();
-
-            // Store the button's initial size and position
-            _initialSizeDelta = rectTransform.sizeDelta;
-
-            // Calculate the desired width of the button
-            var desiredWidth = parentRect.rect.width - _initialSizeDelta.x;
-
             // Start the expansion animation
-            StartCoroutine(ShrinkButton(desiredWidth));
+            StartCoroutine(SlowlyEmptyImage());
         }
 
-        private IEnumerator ShrinkButton(float desiredWidth)
+        private IEnumerator SlowlyEmptyImage()
         {
             float elapsedTime = 0;
             while (elapsedTime < ExpandDuration)
             {
                 elapsedTime += Time.deltaTime;
 
-                // Calculate the current width by interpolating between the initial width and the desired width
-                var currentWidth = Mathf.Lerp(_initialSizeDelta.x, desiredWidth, elapsedTime / ExpandDuration);
-
-                // Update the button's width
-                rectTransform.sizeDelta = new Vector2(currentWidth, _initialSizeDelta.y);
-
-                // Adjust the button's position to keep the right edge anchored
-                // No need to adjust the position here since we're expanding towards the left
+                fillAmount = Mathf.Lerp(1f, 0f, elapsedTime / ExpandDuration);
 
                 yield return null;
             }
 
-            // Ensure the button reaches the final width
-            rectTransform.sizeDelta = new Vector2(desiredWidth, _initialSizeDelta.y);
+            fillAmount = 0f;
             gameObject.SetActive(false);
         }
     }

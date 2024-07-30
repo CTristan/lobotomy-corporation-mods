@@ -5,7 +5,6 @@ using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.CustomizationOverhaul.Constants;
-using LobotomyCorporationMods.CustomizationOverhaul.Extensions;
 using LobotomyCorporationMods.CustomizationOverhaul.Interfaces;
 using LobotomyCorporationMods.CustomizationOverhaul.Objects;
 using UnityEngine;
@@ -47,9 +46,14 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
 
         public void SavePreset()
         {
-            var customizingWindow = CustomizingWindow.CurrentWindow;
-            var agentName = customizingWindow.appearanceUI.copied.CustomName;
-            var appearanceData = customizingWindow.appearanceUI.copied.appearance;
+            var appearanceUi = CustomizingWindow.CurrentWindow.appearanceUI;
+            var agentName = appearanceUi.NameInput.text;
+            if (string.IsNullOrEmpty(agentName))
+            {
+                agentName = appearanceUi.copied.CustomName;
+            }
+
+            var appearanceData = appearanceUi.copied.appearance;
 
             // Reload the default custom preset file in case there are any missing changes before we overwrite the file.
             var data = _presetLoader.LoadPresetsFromCustomFile();
@@ -63,12 +67,8 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
         public void UpdateSavePresetButtonText(string agentName,
             Appearance appearance)
         {
-            if (Harmony_Patch.Instance.SavePresetButton.IsUnityNull())
-            {
-                AgentInfoWindow.currentWindow.CreateSavePresetButton();
-            }
-
             _presetLoader.InitializeDefaultCustomPresetFile();
+            Harmony_Patch.Instance.SavePresetButton.gameObject.SetActive(true);
             Harmony_Patch.Instance.SavePresetButton.SetTextColor(Harmony_Patch.Instance.PresetLoader.IsExactPreset(agentName, appearance) ? Color.grey : PresetConstants.PresetTextColor);
         }
 
