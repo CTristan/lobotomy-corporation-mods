@@ -22,7 +22,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents.BaseCompone
             }
             catch (Exception exception)
             {
-                Harmony_Patch.Instance.Logger.WriteException(exception);
+                Harmony_Patch.Instance.Logger.LogError(exception);
                 throw;
             }
         }

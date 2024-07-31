@@ -32,7 +32,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
             }
             catch (Exception exception)
             {
-                Harmony_Patch.Instance.Logger.WriteException(exception);
+                Harmony_Patch.Instance.Logger.LogError(exception);
                 throw;
             }
         }
@@ -50,7 +50,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
         {
             try
             {
-                if (_deleteButton.IsUnityNull())
+                if (_deleteButton == null)
                 {
                     _deleteButton = new GameObject().AddComponent<UiButton>();
                     _deleteButton.transform.SetParent(transform);
@@ -66,7 +66,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
             }
             catch (Exception e)
             {
-                Harmony_Patch.Instance.Logger.WriteException(e);
+                Harmony_Patch.Instance.Logger.LogError(e);
                 throw;
             }
         }
@@ -81,7 +81,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
             }
             catch (Exception exception)
             {
-                Harmony_Patch.Instance.Logger.WriteException(exception);
+                Harmony_Patch.Instance.Logger.LogError(exception);
                 throw;
             }
         }
@@ -111,7 +111,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
             }
             catch (Exception exception)
             {
-                Harmony_Patch.Instance.Logger.WriteException(exception);
+                Harmony_Patch.Instance.Logger.LogError(exception);
                 throw;
             }
         }
@@ -150,7 +150,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
             }
             catch (Exception e)
             {
-                Harmony_Patch.Instance.Logger.WriteException(e);
+                Harmony_Patch.Instance.Logger.LogError(e);
 
                 throw;
             }

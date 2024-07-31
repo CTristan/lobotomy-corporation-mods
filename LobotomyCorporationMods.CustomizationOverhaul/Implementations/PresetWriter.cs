@@ -2,7 +2,6 @@
 
 using Customizing;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.CustomizationOverhaul.Constants;
 using LobotomyCorporationMods.CustomizationOverhaul.Interfaces;
@@ -15,17 +14,15 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
     {
         private readonly IFileManager _fileManager;
         private readonly IPresetLoader _presetLoader;
+        private readonly IUiController _uiController;
 
         internal PresetWriter([NotNull] IFileManager fileManager,
-            IPresetLoader presetLoader)
+            IPresetLoader presetLoader,
+            IUiController uiController)
         {
-            if (fileManager.IsNull())
-            {
-                return;
-            }
-
             _fileManager = fileManager;
             _presetLoader = presetLoader;
+            _uiController = uiController;
         }
 
         /// <summary>Deletes the specified preset from all preset files.</summary>
@@ -68,8 +65,8 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
             Appearance appearance)
         {
             _presetLoader.InitializeDefaultCustomPresetFile();
-            Harmony_Patch.Instance.SavePresetButton.gameObject.SetActive(true);
-            Harmony_Patch.Instance.SavePresetButton.SetTextColor(Harmony_Patch.Instance.PresetLoader.IsExactPreset(agentName, appearance) ? Color.grey : PresetConstants.PresetTextColor);
+            _uiController.SavePresetButton.gameObject.SetActive(true);
+            _uiController.SavePresetButton.SetTextColor(Harmony_Patch.Instance.PresetLoader.IsExactPreset(agentName, appearance) ? Color.grey : PresetConstants.PresetTextColor);
         }
 
         private void SavePresetListToFile([NotNull] PresetList presetList,

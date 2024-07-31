@@ -28,7 +28,7 @@ namespace LobotomyCorporationMods.Common.Implementations
 
             var directory = directories.FirstOrDefault(directoryInfo => File.Exists(Path.Combine(directoryInfo.FullName, modFileName)));
 
-            if (directory.IsNotNull())
+            if (directory != null)
             {
                 _dataPath = directory;
 

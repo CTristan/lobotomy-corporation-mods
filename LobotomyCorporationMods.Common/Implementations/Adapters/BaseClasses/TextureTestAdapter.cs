@@ -4,7 +4,6 @@ using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
 using UnityEngine;
 
@@ -20,13 +19,5 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses
 
         public int Width => _gameObject.width;
         public int Height => _gameObject.height;
-
-        public override T GameObject
-        {
-            get =>
-                !_gameObject.IsUnityNull() ? _gameObject : null;
-            set =>
-                _gameObject = value;
-        }
     }
 }

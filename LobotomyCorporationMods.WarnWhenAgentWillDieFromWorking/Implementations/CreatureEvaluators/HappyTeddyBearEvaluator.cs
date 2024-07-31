@@ -1,7 +1,5 @@
 // SPDX-License-Identifier: MIT
 
-using LobotomyCorporationMods.Common.Extensions;
-
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators
 {
     internal sealed class HappyTeddyBearEvaluator : CreatureEvaluator
@@ -17,7 +15,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
             var agentWillDie = false;
 
             var script = (HappyTeddy)Creature.script;
-            if (script.lastAgent.IsNotNull())
+            if (script.lastAgent != null)
             {
                 agentWillDie = Agent.instanceId == script.lastAgent.instanceId;
             }

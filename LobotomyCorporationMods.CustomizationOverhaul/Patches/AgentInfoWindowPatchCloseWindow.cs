@@ -22,7 +22,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
         {
             Guard.Against.Null(instance, nameof(instance));
 
-            Harmony_Patch.DisableAllCustomUiComponents();
+            Harmony_Patch.Instance.UiController.DisableAllCustomUiComponents();
         }
 
         /// <summary>Runs after opening the Strengthen Agent window to force it to open the appearance window.</summary>
@@ -39,7 +39,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.WriteException(ex);
+                Harmony_Patch.Instance.Logger.LogError(ex);
 
                 throw;
             }

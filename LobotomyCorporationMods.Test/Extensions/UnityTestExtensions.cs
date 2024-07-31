@@ -640,7 +640,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             targetCreature = targetCreature.EnsureNotNullWithMethod(() => CreateCreatureModel());
 
             // Needed to avoid circular reference
-            if (targetCreature.currentSkill.IsNotNull())
+            if (targetCreature.currentSkill != null)
             {
                 return targetCreature.currentSkill;
             }
@@ -728,13 +728,13 @@ namespace LobotomyCorporationMods.Test.Extensions
         {
             var fields = new List<MemberInfo>();
 
-            while (type.IsNotNull() && type != typeof(object))
+            while (type != null && type != typeof(object))
             {
                 var typeFields = type.GetFields(BindingFlagsInstance);
                 fields.AddRange(typeFields.GetValidFields());
 
                 var baseType = type.BaseType;
-                if (baseType.IsNotNull())
+                if (baseType != null)
                 {
                     type = baseType;
                 }

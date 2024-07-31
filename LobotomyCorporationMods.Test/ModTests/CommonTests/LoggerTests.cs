@@ -20,7 +20,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
             var mockLoggerTarget = new Mock<ILoggerTarget>();
             var logger = new Logger(mockLoggerTarget.Object);
 
-            logger.WriteException(new InvalidOperationException());
+            logger.LogError(new InvalidOperationException());
 
             mockLoggerTarget.Verify(target => target.WriteToLoggerTarget(It.IsAny<string>()), Times.Once);
         }

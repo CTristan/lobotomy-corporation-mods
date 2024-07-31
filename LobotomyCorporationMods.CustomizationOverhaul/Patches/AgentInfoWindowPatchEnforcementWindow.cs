@@ -30,8 +30,8 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
 
             instance.OpenAppearancePanel(agentInfoWindowUiComponentsTestAdapter, customizingWindowTestAdapter, gameObjectTestAdapter);
 
-            Harmony_Patch.DisplayLoadPresetButton();
-            Harmony_Patch.DisplaySavePresetButton();
+            Harmony_Patch.Instance.UiController.DisplayLoadPresetButton();
+            Harmony_Patch.Instance.UiController.DisplaySavePresetButton();
         }
 
         /// <summary>Runs after opening the Strengthen Agent window to force it to open the appearance window.</summary>
@@ -48,7 +48,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.WriteException(ex);
+                Harmony_Patch.Instance.Logger.LogError(ex);
 
                 throw;
             }

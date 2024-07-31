@@ -1,7 +1,5 @@
 // SPDX-License-Identifier: MIT
 
-using LobotomyCorporationMods.Common.Extensions;
-
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators
 {
     internal sealed class NothingThereEvaluator : CreatureEvaluator
@@ -15,7 +13,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
         private bool IsDisguised()
         {
             var nothingThere = (Nothing)Creature.script;
-            var isDisguised = nothingThere.copiedWorker.IsNotNull();
+            var isDisguised = nothingThere.copiedWorker != null;
 
             return isDisguised;
         }

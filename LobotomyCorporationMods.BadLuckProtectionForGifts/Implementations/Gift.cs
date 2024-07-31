@@ -5,7 +5,6 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
-using LobotomyCorporationMods.Common.Extensions;
 
 #endregion
 
@@ -39,7 +38,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         {
             var agent = _agents.Find(a => a.GetId() == agentId);
 
-            if (agent.IsNotNull())
+            if (agent != null)
             {
                 return agent;
             }

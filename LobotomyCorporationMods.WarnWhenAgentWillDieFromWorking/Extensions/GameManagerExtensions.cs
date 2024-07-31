@@ -2,7 +2,6 @@
 
 using CommandWindow;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations.Facades;
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
@@ -13,7 +12,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
         /// <param name="currentGameManager">The current GameManager instance.</param>
         /// <param name="state">The AgentState to check.</param>
         /// <returns>True if the game stage is valid, false otherwise.</returns>
-        internal static bool IsValidGameStage([CanBeNull] this GameManager currentGameManager,
+        internal static bool IsValidGameStage([NotNull] this GameManager currentGameManager,
             AgentState state)
         {
             var commandWindow = CommandWindow.CommandWindow.CurrentWindow;
@@ -24,9 +23,9 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
         /// <summary>Checks if the day has already started.</summary>
         /// <param name="currentGameManager">The current GameManager instance.</param>
         /// <returns>True if the day has started, false otherwise.</returns>
-        private static bool IsDayStarted(GameManager currentGameManager)
+        private static bool IsDayStarted([NotNull] GameManager currentGameManager)
         {
-            return currentGameManager.IsNotNull() && currentGameManager.ManageStarted;
+            return currentGameManager.ManageStarted;
         }
 
         /// <summary>Checks if the agent is controllable.</summary>

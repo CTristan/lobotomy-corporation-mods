@@ -33,12 +33,12 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
             }
 
             var agentInfoWindow = AgentInfoWindow.currentWindow;
-            if (agentInfoWindow.IsUnityNull())
+            if (agentInfoWindow == null)
             {
                 return;
             }
 
-            Harmony_Patch.DisplaySavePresetButton();
+            Harmony_Patch.Instance.UiController.DisplaySavePresetButton();
             Harmony_Patch.Instance.PresetWriter.UpdateSavePresetButtonText(currentAgentName, instance.copied.appearance);
         }
 
@@ -53,7 +53,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.WriteException(ex);
+                Harmony_Patch.Instance.Logger.LogError(ex);
 
                 throw;
             }

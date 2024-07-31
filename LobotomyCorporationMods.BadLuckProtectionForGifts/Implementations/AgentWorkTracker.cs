@@ -9,7 +9,6 @@ using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces;
 
 #endregion
@@ -28,7 +27,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         public AgentWorkTracker([CanBeNull] IFileManager fileManager,
             string dataFileName)
         {
-            if (fileManager.IsNull())
+            if (fileManager == null)
             {
                 return;
             }
@@ -86,11 +85,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         private IAgent GetAgent(string giftName,
             long agentId)
         {
-            var gift = _gifts.Find(g => g.GetName().Equals(giftName, StringComparison.Ordinal));
-            if (gift.IsNull())
-            {
-                gift = CreateAndAddGift(giftName);
-            }
+            var gift = _gifts.Find(g => g.GetName().Equals(giftName, StringComparison.Ordinal)) ?? CreateAndAddGift(giftName);
 
             return gift.GetOrAddAgent(agentId);
         }

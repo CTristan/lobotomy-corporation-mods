@@ -11,7 +11,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
     {
         public static bool AbnormalityHasGift([NotNull] this ManagementSlot managementSlot)
         {
-            return managementSlot.GetAbnormalityGift().IsNotNull();
+            return managementSlot.GetAbnormalityGift() != null;
         }
 
         /// <summary>Gets the attachment type of the gift for the abnormality in the management slot if one exists.</summary>
@@ -81,7 +81,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
 
             var matchingGiftAtPosition = unitModel.FindGiftAtPosition(gift.metaInfo.attachPos);
 
-            return !matchingGiftAtPosition.IsNull() && unitModel.IsGiftLocked(matchingGiftAtPosition.metaInfo.id);
+            return matchingGiftAtPosition != null && unitModel.IsGiftLocked(matchingGiftAtPosition.metaInfo.id);
         }
     }
 }

@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Enums;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators;
@@ -28,7 +27,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
         /// <remarks>
         ///     GetCreatureEvaluator retrieves the creature evaluator based on the command window, agent, evaluators, beautyBeastAnimAdapter, and yggdrasilAnimAdapter parameters. If the
         ///     command window contains a creature, the evaluator will be retrieved from the evaluators dictionary using the creature's ID. If the command window does not contain a creature
-        ///     or it.IsUnityNull(), the evaluator will be set to null.
+        ///     or it == null, the evaluator will be set to null.
         /// </remarks>
         internal static ICreatureEvaluator GetCreatureEvaluator([NotNull] this CommandWindow.CommandWindow commandWindow,
             AgentModel agent,
@@ -38,7 +37,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
         {
             ICreatureEvaluator evaluator;
 
-            if (commandWindow.TryGetCreature(out var creature) && creature.IsNotNull())
+            if (commandWindow.TryGetCreature(out var creature) && creature != null)
             {
                 var skillType = commandWindow.CurrentSkill.rwbpType;
                 var evaluatorParameters = new CreatureEvaluatorParameters(agent, creature, skillType, beautyBeastAnimTestAdapter, yggdrasilAnimTestAdapter);
@@ -64,7 +63,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
                 creature = creatureModel;
             }
 
-            return creature.IsNotNull();
+            return creature != null;
         }
     }
 }

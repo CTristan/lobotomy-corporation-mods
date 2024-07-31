@@ -23,7 +23,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
         {
             Guard.Against.Null(instance, nameof(instance));
 
-            return instance.closeAction.IsNotNull();
+            return instance.closeAction != null;
         }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.WriteException(ex);
+                Harmony_Patch.Instance.Logger.LogError(ex);
 
                 throw;
             }

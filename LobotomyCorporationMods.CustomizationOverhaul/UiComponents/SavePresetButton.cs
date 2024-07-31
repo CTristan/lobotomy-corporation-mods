@@ -1,8 +1,10 @@
 ﻿// SPDX-License-Identifier: MIT
 
 using System;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.CustomizationOverhaul.Constants;
+using LobotomyCorporationMods.CustomizationOverhaul.Interfaces;
 using LobotomyCorporationMods.CustomizationOverhaul.UiComponents.BaseComponents;
 
 namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
@@ -16,7 +18,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
                 base.Awake();
 
                 transform.SetParent(AgentInfoWindow.currentWindow.gameObject.transform.GetChild(0));
-                onClick.AddListener(ActionsOnClick);
+                onClick.AddListener(() => ActionsOnClick(Harmony_Patch.Instance.UiController));
 
                 var imagePath = Harmony_Patch.Instance.FileManager.GetFile(PresetConstants.PresetPanelImagePath);
                 SetButtonImage(imagePath);
@@ -27,29 +29,29 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
             }
             catch (Exception exception)
             {
-                Harmony_Patch.Instance.Logger.WriteException(exception);
+                Harmony_Patch.Instance.Logger.LogError(exception);
                 throw;
             }
         }
 
-        private static void ActionsOnClick()
+        private static void ActionsOnClick([NotNull] IUiController uiController)
         {
             try
             {
                 Harmony_Patch.Instance.PresetWriter.SavePreset();
 
-                if (!Harmony_Patch.Instance.LoadPresetPanel.gameObject.activeSelf)
+                if (!uiController.LoadPresetPanel.gameObject.activeSelf)
                 {
                     return;
                 }
 
                 // Reset the Preset Panel to load in the new preset
-                Harmony_Patch.Instance.LoadPresetPanel.gameObject.SetActive(false);
-                Harmony_Patch.Instance.LoadPresetPanel.gameObject.SetActive(true);
+                uiController.LoadPresetPanel.gameObject.SetActive(false);
+                uiController.LoadPresetPanel.gameObject.SetActive(true);
             }
             catch (Exception exception)
             {
-                Harmony_Patch.Instance.Logger.WriteException(exception);
+                Harmony_Patch.Instance.Logger.LogError(exception);
                 throw;
             }
         }

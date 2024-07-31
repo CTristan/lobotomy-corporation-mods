@@ -11,7 +11,7 @@ namespace LobotomyCorporationMods.Common.Interfaces
     public interface ILogger
     {
         void AddTarget(ILoggerTarget target);
-        void WriteException(Exception exception);
-        void WriteInfo(string message);
+        void LogError(Exception exception);
+        void LogDebug(string message);
     }
 }

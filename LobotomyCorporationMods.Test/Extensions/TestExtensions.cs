@@ -102,7 +102,7 @@ namespace LobotomyCorporationMods.Test.Extensions
                 append) =>
             {
                 var directory = Path.GetDirectoryName(path);
-                if (directory.IsNotNull() && !Directory.Exists(directory))
+                if (directory != null && !Directory.Exists(directory))
                 {
                     Directory.CreateDirectory(directory);
                 }
@@ -229,7 +229,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             Times? numberOfTimes = null)
         {
             action.Should().Throw<ArgumentNullException>();
-            mockLogger.Verify(logger => logger.WriteException(It.IsAny<ArgumentNullException>()), numberOfTimes ?? Times.Once());
+            mockLogger.Verify(logger => logger.LogError(It.IsAny<ArgumentNullException>()), numberOfTimes ?? Times.Once());
         }
 
         internal static void VerifyNullReferenceException([NotNull] this Mock<ILogger> mockLogger,
@@ -237,7 +237,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             Times? numberOfTimes = null)
         {
             action.Should().Throw<NullReferenceException>();
-            mockLogger.Verify(logger => logger.WriteException(It.IsAny<NullReferenceException>()), numberOfTimes ?? Times.Once());
+            mockLogger.Verify(logger => logger.LogError(It.IsAny<NullReferenceException>()), numberOfTimes ?? Times.Once());
         }
     }
 }

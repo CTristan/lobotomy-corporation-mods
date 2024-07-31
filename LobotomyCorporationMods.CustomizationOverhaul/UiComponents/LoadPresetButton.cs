@@ -1,10 +1,11 @@
 ﻿// SPDX-License-Identifier: MIT
 
 using System;
+using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.CustomizationOverhaul.Constants;
+using LobotomyCorporationMods.CustomizationOverhaul.Interfaces;
 using LobotomyCorporationMods.CustomizationOverhaul.UiComponents.BaseComponents;
-using UnityEngine;
 
 namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
 {
@@ -17,7 +18,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
                 base.Awake();
 
                 transform.SetParent(AgentInfoWindow.currentWindow.gameObject.transform.GetChild(0));
-                onClick.AddListener(ActionsOnClick);
+                onClick.AddListener(() => ActionsOnClick(Harmony_Patch.Instance.UiController));
 
                 var imagePath = Harmony_Patch.Instance.FileManager.GetFile(PresetConstants.PresetPanelImagePath);
                 SetButtonImage(imagePath);
@@ -28,20 +29,20 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
             }
             catch (Exception exception)
             {
-                Harmony_Patch.Instance.Logger.WriteException(exception);
+                Harmony_Patch.Instance.Logger.LogError(exception);
                 throw;
             }
         }
 
-        private static void ActionsOnClick()
+        private static void ActionsOnClick([NotNull] IUiController uiController)
         {
-            if (Harmony_Patch.Instance.LoadPresetPanel.IsUnityNull())
+            if (uiController.LoadPresetPanel == null)
             {
-                Harmony_Patch.Instance.LoadPresetPanel = new GameObject().AddComponent<LoadPresetPanel>();
+                uiController.DisplayLoadPresetPanel();
                 return;
             }
 
-            Harmony_Patch.Instance.LoadPresetPanel.gameObject.SetActive(!Harmony_Patch.Instance.LoadPresetPanel.isActiveAndEnabled);
+            uiController.LoadPresetPanel.gameObject.SetActive(!uiController.LoadPresetPanel.isActiveAndEnabled);
         }
     }
 }

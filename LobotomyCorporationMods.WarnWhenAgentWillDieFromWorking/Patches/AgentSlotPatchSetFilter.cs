@@ -32,7 +32,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
 
         public static void PatchAfterSetFilter([NotNull] this AgentSlot instance,
             AgentState state,
-            [CanBeNull] GameManager currentGameManager,
+            [CanBeNull] GameManager gameManager,
             [CanBeNull] IBeautyBeastAnimTestAdapter beautyBeastAnimTestAdapter = null,
             [CanBeNull] IImageTestAdapter imageTestAdapter = null,
             [CanBeNull] ITextTestAdapter textTestAdapter = null,
@@ -40,7 +40,12 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
         {
             Guard.Against.Null(instance, nameof(instance));
 
-            if (!currentGameManager.IsValidGameStage(state))
+            if (gameManager.IsNull())
+            {
+                return;
+            }
+
+            if (!gameManager.IsValidGameStage(state))
             {
                 return;
             }
@@ -115,12 +120,11 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
         {
             try
             {
-                var currentGameManager = GameManager.currentGameManager;
-                __instance.PatchAfterSetFilter(state, currentGameManager);
+                __instance.PatchAfterSetFilter(state, GameManager.currentGameManager);
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.WriteException(ex);
+                Harmony_Patch.Instance.Logger.LogError(ex);
 
                 throw;
             }

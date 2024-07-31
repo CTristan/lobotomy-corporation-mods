@@ -13,9 +13,9 @@ namespace LobotomyCorporationMods.Common.Extensions
         public static T Null<T>([NotNull] [GuardClause] this Guard guardClause,
             [NotNull] [ValidatedNotNull] [NoEnumeration]
             T input,
-            [NotNull] [InvokerParameterName] string parameterName)
+            [NotNull] [InvokerParameterName] string parameterName) where T : class
         {
-            if (input.IsNull())
+            if (input == null)
             {
                 throw new ArgumentNullException(parameterName);
             }

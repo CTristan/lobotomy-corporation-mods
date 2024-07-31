@@ -7,7 +7,6 @@ using System.Runtime.Serialization;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces;
 
 namespace LobotomyCorporationMods.Common.Implementations
@@ -21,7 +20,7 @@ namespace LobotomyCorporationMods.Common.Implementations
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
     [Serializable]
-    public class UnityAdapterDictionary<TKey, TValue, TOther> : Dictionary<TKey, TValue> where TValue : ITestAdapter<TOther>
+    public class UnityAdapterDictionary<TKey, TValue, TOther> : Dictionary<TKey, TValue> where TValue : ITestAdapter<TOther> where TOther : class
     {
         public UnityAdapterDictionary()
         {
@@ -42,7 +41,7 @@ namespace LobotomyCorporationMods.Common.Implementations
         {
             var success = base.TryGetValue(key, out value);
 
-            return success && value.GameObject.IsNotNull();
+            return success && value.GameObject != null;
         }
     }
 }

@@ -7,7 +7,6 @@ using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces;
 
 #endregion
@@ -16,7 +15,7 @@ namespace LobotomyCorporationMods.Common.Implementations
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    internal class TestAdapter<T> : ITestAdapter<T>
+    internal class TestAdapter<T> : ITestAdapter<T> where T : class
     {
         private const string UninitializedGameObjectErrorMessage = "Please load the game object into the adapter before trying to use it.";
 
@@ -33,11 +32,11 @@ namespace LobotomyCorporationMods.Common.Implementations
         }
 
         [CanBeNull]
-        public virtual T GameObject
+        public T GameObject
         {
             get
             {
-                if (_gameObject.IsNull())
+                if (_gameObject == null)
                 {
                     throw new InvalidOperationException(UninitializedGameObjectErrorMessage);
                 }

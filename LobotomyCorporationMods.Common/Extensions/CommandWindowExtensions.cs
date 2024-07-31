@@ -27,7 +27,7 @@ namespace LobotomyCorporationMods.Common.Extensions
                 creature = creatureModel;
             }
 
-            return creature.IsNotNull();
+            return creature != null;
         }
     }
 }

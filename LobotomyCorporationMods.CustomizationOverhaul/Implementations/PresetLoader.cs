@@ -22,11 +22,6 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
 
         internal PresetLoader([NotNull] IFileManager fileManager)
         {
-            if (fileManager.IsNull())
-            {
-                return;
-            }
-
             _fileManager = fileManager;
             InitializeAllPresetFiles();
         }
@@ -133,7 +128,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
         {
             var presetComparisonList = CreatePresetComparisonList(preset, appearance);
             var areAllItemsSameSpriteName = presetComparisonList.TrueForAll(presetComparison =>
-                IsSameSpriteName(presetComparison.Key, presetComparison.Value.IsUnityNull() ? string.Empty : presetComparison.Value.name));
+                IsSameSpriteName(presetComparison.Key, presetComparison.Value == null ? string.Empty : presetComparison.Value.name));
 
             return areAllItemsSameSpriteName;
         }
@@ -179,10 +174,10 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
 
 
         private static bool IsSameSpriteName([NotNull] string currentValue,
-            string newValue)
+            [CanBeNull] string newValue)
         {
             // If either value is null, it can't be compared anyway, so let's say it's good
-            if (currentValue.IsNull() || newValue.IsNull())
+            if (string.IsNullOrEmpty(currentValue) || string.IsNullOrEmpty(newValue))
             {
                 return true;
             }
@@ -245,7 +240,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
             }
 
             var presetData = DecodeJsonToPresetData(jsonData);
-            if (presetData.IsNull() || presetData.Count == 0)
+            if (presetData == null || presetData.Count == 0)
             {
                 return new SerializablePresetList().ToPresetList();
             }

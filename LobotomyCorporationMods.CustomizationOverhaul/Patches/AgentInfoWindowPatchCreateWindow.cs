@@ -24,7 +24,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
 
             if (GameManager.currentGameManager.state != GameState.STOP)
             {
-                Harmony_Patch.DisableAllCustomUiComponents();
+                Harmony_Patch.Instance.UiController.DisableAllCustomUiComponents();
             }
         }
 
@@ -42,7 +42,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.WriteException(ex);
+                Harmony_Patch.Instance.Logger.LogError(ex);
 
                 throw;
             }

@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.CustomizationOverhaul.Objects;
 using UnityEngine;
 using UnityEngine.UI;
@@ -34,7 +33,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
             }
             catch (Exception exception)
             {
-                Harmony_Patch.Instance.Logger.WriteException(exception);
+                Harmony_Patch.Instance.Logger.LogError(exception);
                 throw;
             }
         }
@@ -48,15 +47,9 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
         {
             _arrowIconPath = Application.dataPath + "/Managed/BaseMod/Image/Down.png";
 
-            if (_downArrow.IsUnityNull())
-            {
-                _downArrow = MakeDownButton();
-            }
+            _downArrow = _downArrow ? _downArrow : MakeDownButton();
 
-            if (_upArrow.IsUnityNull())
-            {
-                _upArrow = MakeUpButton();
-            }
+            _upArrow = _upArrow ? _upArrow : MakeUpButton();
         }
 
         private void InitializePanelButtonsList()
