@@ -469,12 +469,18 @@ namespace LobotomyCorporationMods.Test.Extensions
         }
 
         [NotNull]
-        internal static GameManager CreateGameManager()
+        internal static GameManager CreateGameManager(GameState state = 0)
         {
             CreateUninitializedObject<GameManager>(out var gameManager);
 
             var fields = GetUninitializedFieldsIncludingBaseType(gameManager.GetType());
-            var newValues = new Dictionary<string, object>();
+            var newValues = new Dictionary<string, object>
+            {
+                {
+                    "state", state
+                },
+            };
+
             gameManager = GetPopulatedUninitializedObject(gameManager, fields, newValues);
             newValues.Add("_currentGameManager", gameManager);
 

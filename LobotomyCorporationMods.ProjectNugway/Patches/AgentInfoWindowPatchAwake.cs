@@ -10,6 +10,7 @@ using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
+using LobotomyCorporationMods.ProjectNugway.Interfaces;
 
 #endregion
 
@@ -23,13 +24,15 @@ namespace LobotomyCorporationMods.ProjectNugway.Patches
         ///     different agents.
         /// </summary>
         /// <param name="instance">An instance of AgentInfoWindow</param>
-        public static void PatchAfterAwake([NotNull] this AgentInfoWindow instance)
+        public static void PatchAfterAwake([NotNull] this AgentInfoWindow instance,
+            [NotNull] IUiController uiController)
         {
             Guard.Against.Null(instance, nameof(instance));
+            Guard.Against.Null(uiController, nameof(uiController));
 
             if (GameManager.currentGameManager.state != GameState.STOP)
             {
-                Harmony_Patch.Instance.UiController.DisableAllCustomUiComponents();
+                uiController.DisableAllCustomUiComponents();
             }
         }
 
@@ -42,7 +45,7 @@ namespace LobotomyCorporationMods.ProjectNugway.Patches
                 // EnforcementWindow is a static method, so we can't get an instance of the AgentInfoWindow through Harmony.
                 var agentInfoWindow = AgentInfoWindow.currentWindow;
 
-                agentInfoWindow.PatchAfterAwake();
+                agentInfoWindow.PatchAfterAwake(Harmony_Patch.Instance.UiController);
             }
             catch (Exception ex)
             {
