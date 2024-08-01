@@ -23,7 +23,6 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
         internal PresetLoader([NotNull] IFileManager fileManager)
         {
             _fileManager = fileManager;
-            InitializeAllPresetFiles();
         }
 
         public Dictionary<string, PresetData> Presets { get; } = new Dictionary<string, PresetData>();

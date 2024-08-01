@@ -1,7 +1,10 @@
 ﻿// SPDX-License-Identifier: MIT
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Attributes.ValidCodeCoverageExceptionAttributes;
+using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.CustomizationOverhaul.Constants;
 using LobotomyCorporationMods.CustomizationOverhaul.Interfaces;
@@ -9,6 +12,8 @@ using LobotomyCorporationMods.CustomizationOverhaul.UiComponents.BaseComponents;
 
 namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
 {
+    [UiComponent]
+    [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
     public sealed class LoadPresetButton : AgentInfoWindowButton
     {
         public new void Awake()

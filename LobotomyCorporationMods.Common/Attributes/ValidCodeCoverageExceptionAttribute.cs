@@ -1,15 +1,11 @@
-// SPDX-License-Identifier: MIT
-
-#region
+﻿// SPDX-License-Identifier: MIT
 
 using System;
-
-#endregion
 
 namespace LobotomyCorporationMods.Common.Attributes
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public sealed class AdapterClassAttribute : Attribute
+    public abstract class ValidCodeCoverageExceptionAttribute : Attribute
     {
     }
 }

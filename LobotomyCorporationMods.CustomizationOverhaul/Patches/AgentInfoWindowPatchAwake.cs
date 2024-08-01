@@ -18,6 +18,11 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
     [HarmonyPatch(typeof(AgentInfoWindow), PrivateMethods.AgentInfoWindow.Awake)]
     public static class AgentInfoWindowPatchAwake
     {
+        /// <summary>
+        ///     Runs after the AgentInfoWindow has been initialized to disable any custom UI components. Needed because otherwise the custom UI components will be visible when selecting
+        ///     different agents.
+        /// </summary>
+        /// <param name="instance">An instance of AgentInfoWindow</param>
         public static void PatchAfterAwake([NotNull] this AgentInfoWindow instance)
         {
             Guard.Against.Null(instance, nameof(instance));
@@ -28,7 +33,6 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
             }
         }
 
-        /// <summary>Runs after opening the Strengthen Agent window to force it to open the appearance window.</summary>
         [EntryPoint]
         [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
         public static void Postfix()

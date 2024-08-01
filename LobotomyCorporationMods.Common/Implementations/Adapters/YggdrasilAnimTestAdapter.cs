@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Attributes;
+using LobotomyCorporationMods.Common.Attributes.ValidCodeCoverageExceptionAttributes;
 using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;

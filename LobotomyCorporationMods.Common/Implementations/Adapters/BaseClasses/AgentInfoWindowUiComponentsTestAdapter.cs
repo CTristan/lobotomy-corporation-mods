@@ -5,7 +5,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Attributes;
+using LobotomyCorporationMods.Common.Attributes.ValidCodeCoverageExceptionAttributes;
 using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
 

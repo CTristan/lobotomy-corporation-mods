@@ -7,6 +7,7 @@ using Customizing;
 using FluentAssertions;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
+using LobotomyCorporationMods.CustomizationOverhaul.Interfaces;
 using LobotomyCorporationMods.CustomizationOverhaul.Patches;
 using LobotomyCorporationMods.Test.Extensions;
 using Moq;
@@ -20,7 +21,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests.Patch
     public sealed class CustomizingWindowPatchConfirmTests : CustomizationOverhaulModTests
     {
         private readonly Mock<IAgentLayerTestAdapter> _mockAgentLayerTestAdapter = new Mock<IAgentLayerTestAdapter>();
-
+        private readonly Mock<IUiController> _mockUiController = new Mock<IUiController>();
         private readonly Mock<IWorkerSpriteManagerTestAdapter> _mockWorkerSpriteManagerTestAdapter = new Mock<IWorkerSpriteManagerTestAdapter>();
 
         [Fact]
@@ -32,7 +33,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests.Patch
             agent.iscustom = false;
 
             // Act
-            sut.PatchBeforeConfirm(_mockAgentLayerTestAdapter.Object, _mockWorkerSpriteManagerTestAdapter.Object);
+            sut.PatchBeforeConfirm(_mockUiController.Object, _mockAgentLayerTestAdapter.Object, _mockWorkerSpriteManagerTestAdapter.Object);
 
             // Assert
             sut.CurrentAgent.iscustom.Should().Be(true);
@@ -74,7 +75,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests.Patch
             sut.CurrentData.appearance = expectedAppearance;
 
             // Act
-            sut.PatchBeforeConfirm(_mockAgentLayerTestAdapter.Object, _mockWorkerSpriteManagerTestAdapter.Object);
+            sut.PatchBeforeConfirm(_mockUiController.Object, _mockAgentLayerTestAdapter.Object, _mockWorkerSpriteManagerTestAdapter.Object);
 
             // Assert
             sut.CurrentAgent.spriteData.Should().BeEquivalentTo(expectedAppearance.spriteSet);
@@ -114,7 +115,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests.Patch
             sut.CurrentData = expectedData;
 
             // Act
-            sut.PatchBeforeConfirm(_mockAgentLayerTestAdapter.Object, _mockWorkerSpriteManagerTestAdapter.Object);
+            sut.PatchBeforeConfirm(_mockUiController.Object, _mockAgentLayerTestAdapter.Object, _mockWorkerSpriteManagerTestAdapter.Object);
 
             // Assert
             sut.CurrentAgent.name.Should().Be(expectedName);
@@ -130,7 +131,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests.Patch
             var sut = InitializeCustomizingWindow();
 
             // Act
-            sut.PatchBeforeConfirm(_mockAgentLayerTestAdapter.Object, _mockWorkerSpriteManagerTestAdapter.Object);
+            sut.PatchBeforeConfirm(_mockUiController.Object, _mockAgentLayerTestAdapter.Object, _mockWorkerSpriteManagerTestAdapter.Object);
 
             // Assert
             _mockWorkerSpriteManagerTestAdapter.Verify(x => x.SetAgentBasicData(It.IsAny<WorkerSprite.WorkerSprite>(), It.IsAny<Appearance>()), Times.Never);

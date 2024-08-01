@@ -13,6 +13,7 @@ using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Implementations.Facades;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
+using LobotomyCorporationMods.CustomizationOverhaul.Interfaces;
 
 #endregion
 
@@ -22,16 +23,18 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
     public static class AgentInfoWindowPatchGenerateWindow
     {
         public static void PatchAfterGenerateWindow([NotNull] this AgentInfoWindow instance,
+            [NotNull] IUiController uiController,
             [CanBeNull] IAgentInfoWindowUiComponentsTestAdapter agentInfoWindowUiComponentsTestAdapter = null,
             [CanBeNull] ICustomizingWindowTestAdapter customizingWindowTestAdapter = null,
             [CanBeNull] IGameObjectTestAdapter gameObjectTestAdapter = null)
         {
             Guard.Against.Null(instance, nameof(instance));
+            Guard.Against.Null(uiController, nameof(uiController));
 
             instance.OpenAppearancePanel(agentInfoWindowUiComponentsTestAdapter, customizingWindowTestAdapter, gameObjectTestAdapter);
 
-            Harmony_Patch.Instance.UiController.DisplayLoadPresetButton();
-            Harmony_Patch.Instance.UiController.DisplaySavePresetButton();
+            uiController.DisplayLoadPresetButton();
+            uiController.DisplaySavePresetButton();
         }
 
         /// <summary>Runs after opening the Agent window to automatically open the appearance window, since there's no reason to hide it behind a button.</summary>
@@ -44,7 +47,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
                 // GenerateWindow is a static method, so we can't get an instance of it through Harmony.
                 var agentInfoWindow = AgentInfoWindow.currentWindow;
 
-                agentInfoWindow.PatchAfterGenerateWindow();
+                agentInfoWindow.PatchAfterGenerateWindow(Harmony_Patch.Instance.UiController);
             }
             catch (Exception ex)
             {

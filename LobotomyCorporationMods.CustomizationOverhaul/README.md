@@ -25,7 +25,7 @@ that the name no longer made sense.
 I have now renamed it to "Customization Overhaul" to better match the new scope
 of the mod.
 
-As for why I created the mod in the first place, I don’t like when games require
+As for why I created the mod in the first place, I don't like when games require
 a cost for customizing a character in the first place.
 However, in this game customizing requires spending an additional LOB
 point which you only get a limited number of each day and is also used to hire

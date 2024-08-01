@@ -11,14 +11,24 @@ disabled.
 
 ## SonarLint
 
+### Changed Rules
+
+* S2436: Types and methods shouldn’t have too many generic parameters
+  * I've changed this rule to allow up to 3 generic parameters instead of the
+    default 2. This is because the game code uses a lot of generics, and I don't
+    want to have to suppress this rule every time I need to use a generic
+    method.
+
+### Disabled Rules
+
 * S101: Types should be named in PascalCase
   * This triggers off of the "Harmony_Patch" class names for each mod.
     Unfortunately, this is a hardcoded class name in Basemod, so we have no say
     here.
-* S2339: Public constant members shouldn’t be used
+* S2339: Public constant members shouldn't be used
   * Conflicts with Code Analysis
     rule [CA2211: Non-constant fields should not be visible](https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca2211).
-* S2360: Optional parameters shouldn’t be used
+* S2360: Optional parameters shouldn't be used
   * To enable unit testing, I've had to create interfaces for wrapper classes
     for actual game objects. As such, these test adapters are being passed
     around throughout the codebase. To simplify the actual game method calls to
@@ -27,7 +37,7 @@ disabled.
     I would either need to duplicate a lot of methods or have adapter setup code
     in every Harmony Patch method; both options would be unmaintainable over the
     long run.
-* S3011: Reflection shouldn’t be used to increase accessibility of classes,
+* S3011: Reflection shouldn't be used to increase accessibility of classes,
   methods, or fields
   * We need to be able to see and modify private properties and methods since
     the game code doesn't have a public way to interact with them.

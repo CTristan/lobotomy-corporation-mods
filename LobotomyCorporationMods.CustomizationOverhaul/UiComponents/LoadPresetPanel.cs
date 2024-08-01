@@ -1,6 +1,9 @@
 ﻿// SPDX-License-Identifier: MIT
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using LobotomyCorporationMods.Common.Attributes.ValidCodeCoverageExceptionAttributes;
+using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.CustomizationOverhaul.Constants;
 using UnityEngine;
@@ -8,6 +11,8 @@ using UnityEngine.UI;
 
 namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
 {
+    [UiComponent]
+    [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
     public sealed class LoadPresetPanel : Image
     {
         private UiPresetList UiPresetList { get; set; }

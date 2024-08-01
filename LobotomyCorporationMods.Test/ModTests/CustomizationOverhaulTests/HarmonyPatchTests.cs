@@ -18,6 +18,78 @@ namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests
     public sealed class HarmonyPatchTests
     {
         [Fact]
+        public void Class_AgentInfoWindow_Method_Awake_is_patched_correctly()
+        {
+            var patch = typeof(AgentInfoWindowPatchAwake);
+            var originalClass = typeof(AgentInfoWindow);
+            const string MethodName = nameof(PrivateMethods.AgentInfoWindow.Awake);
+
+            patch.ValidateHarmonyPatch(originalClass, MethodName);
+        }
+
+        [Fact]
+        public void Class_AgentInfoWindow_Method_Awake_logs_exceptions()
+        {
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
+
+            void Action()
+            {
+                AgentInfoWindowPatchAwake.Postfix();
+            }
+
+            mockLogger.VerifyArgumentNullException(Action);
+        }
+
+        [Fact]
+        public void Class_AgentInfoWindow_Method_CloseWindow_is_patched_correctly()
+        {
+            var patch = typeof(AgentInfoWindowPatchCloseWindow);
+            var originalClass = typeof(AgentInfoWindow);
+            const string MethodName = nameof(AgentInfoWindow.CloseWindow);
+
+            patch.ValidateHarmonyPatch(originalClass, MethodName);
+        }
+
+        [Fact]
+        public void Class_AgentInfoWindow_Method_CloseWindow_logs_exceptions()
+        {
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
+
+            void Action()
+            {
+                AgentInfoWindowPatchCloseWindow.Postfix();
+            }
+
+            mockLogger.VerifyArgumentNullException(Action);
+        }
+
+        [Fact]
+        public void Class_AgentInfoWindow_Method_CreateWindow_is_patched_correctly()
+        {
+            var patch = typeof(AgentInfoWindowPatchCreateWindow);
+            var originalClass = typeof(AgentInfoWindow);
+            const string MethodName = nameof(AgentInfoWindow.CreateWindow);
+
+            patch.ValidateHarmonyPatch(originalClass, MethodName);
+        }
+
+        [Fact]
+        public void Class_AgentInfoWindow_Method_CreateWindow_logs_exceptions()
+        {
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
+
+            void Action()
+            {
+                AgentInfoWindowPatchCreateWindow.Postfix();
+            }
+
+            mockLogger.VerifyArgumentNullException(Action);
+        }
+
+        [Fact]
         public void Class_AgentInfoWindow_Method_EnforcementWindow_is_patched_correctly()
         {
             var patch = typeof(AgentInfoWindowPatchEnforcementWindow);
@@ -86,6 +158,58 @@ namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests
                 // ReSharper disable once AssignNullToNotNullAttribute
                 // Forcing null argument to test exception logging.
                 AppearanceUiPatchCloseWindow.Prefix(null);
+            }
+
+            mockLogger.VerifyArgumentNullException(Action);
+        }
+
+        [Fact]
+        public void Class_AppearanceUI_Method_UpdatePortrait_is_patched_correctly()
+        {
+            var patch = typeof(AppearanceUIPatchUpdatePortrait);
+            var originalClass = typeof(AppearanceUI);
+            const string MethodName = nameof(AppearanceUI.UpdatePortrait);
+
+            patch.ValidateHarmonyPatch(originalClass, MethodName);
+        }
+
+        [Fact]
+        public void Class_AppearanceUI_Method_UpdatePortrait_logs_exceptions()
+        {
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
+
+            void Action()
+            {
+                // ReSharper disable once AssignNullToNotNullAttribute
+                // Forcing null argument to test exception logging.
+                AppearanceUIPatchUpdatePortrait.Postfix(null);
+            }
+
+            mockLogger.VerifyArgumentNullException(Action);
+        }
+
+        [Fact]
+        public void Class_CustomizingWindow_Method_Cancel_is_patched_correctly()
+        {
+            var patch = typeof(CustomizingWindowPatchCancel);
+            var originalClass = typeof(CustomizingWindow);
+            const string MethodName = nameof(CustomizingWindow.Cancel);
+
+            patch.ValidateHarmonyPatch(originalClass, MethodName);
+        }
+
+        [Fact]
+        public void Class_CustomizingWindow_Method_Cancel_logs_exceptions()
+        {
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
+
+            void Action()
+            {
+                // ReSharper disable once AssignNullToNotNullAttribute
+                // Forcing null argument to test exception logging.
+                CustomizingWindowPatchCancel.Postfix(null);
             }
 
             mockLogger.VerifyArgumentNullException(Action);

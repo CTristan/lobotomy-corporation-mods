@@ -2,15 +2,20 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Attributes.ValidCodeCoverageExceptionAttributes;
+using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.CustomizationOverhaul.Objects;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
 {
+    [UiComponent]
+    [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
     public sealed class UiPresetList : MonoBehaviour
     {
         private const int NumberOfPresetsPerPage = 5;

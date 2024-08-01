@@ -1,10 +1,15 @@
 ﻿// SPDX-License-Identifier: MIT
 
+using System.Diagnostics.CodeAnalysis;
+using LobotomyCorporationMods.Common.Attributes.ValidCodeCoverageExceptionAttributes;
+using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Extensions;
 using UnityEngine.UI;
 
 namespace LobotomyCorporationMods.Common.Implementations.UiComponents
 {
+    [UiComponent]
+    [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
     public class UiImageWithText : Image
     {
         protected Text Text { get; private set; }
@@ -12,7 +17,6 @@ namespace LobotomyCorporationMods.Common.Implementations.UiComponents
         public new void Awake()
         {
             base.Awake();
-
             Text = gameObject.CreateNewTextObject();
         }
 

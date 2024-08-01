@@ -13,6 +13,7 @@ using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Implementations.Facades;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
+using LobotomyCorporationMods.CustomizationOverhaul.Interfaces;
 
 #endregion
 
@@ -22,13 +23,15 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
     public static class CustomizingWindowPatchConfirm
     {
         public static void PatchBeforeConfirm([NotNull] this CustomizingWindow instance,
+            [NotNull] IUiController uiController,
             [CanBeNull] IAgentLayerTestAdapter agentLayerTestAdapter = null,
             [CanBeNull] IWorkerSpriteManagerTestAdapter workerSpriteManagerTestAdapter = null)
         {
             Guard.Against.Null(instance, nameof(instance));
+            Guard.Against.Null(uiController, nameof(uiController));
 
             instance.SaveAppearanceData(agentLayerTestAdapter, workerSpriteManagerTestAdapter);
-            Harmony_Patch.Instance.UiController.DisableAllCustomUiComponents();
+            uiController.DisableAllCustomUiComponents();
         }
 
         /// <summary>
@@ -43,7 +46,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
         {
             try
             {
-                __instance.PatchBeforeConfirm();
+                __instance.PatchBeforeConfirm(Harmony_Patch.Instance.UiController);
             }
             catch (Exception ex)
             {

@@ -2,6 +2,9 @@
 
 using System;
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
+using LobotomyCorporationMods.Common.Attributes.ValidCodeCoverageExceptionAttributes;
+using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations.UiComponents;
 using LobotomyCorporationMods.CustomizationOverhaul.Constants;
@@ -10,6 +13,8 @@ using UnityEngine;
 
 namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
 {
+    [UiComponent]
+    [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
     public class DeletePresetConfirmationPanel : AgentInfoWindowImage
     {
         private const float ExpandDuration = 0.2f; // Duration of the expansion in seconds

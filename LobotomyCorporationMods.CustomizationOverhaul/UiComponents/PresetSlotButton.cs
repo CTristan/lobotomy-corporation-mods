@@ -1,8 +1,11 @@
 ﻿// SPDX-License-Identifier: MIT
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Customizing;
+using LobotomyCorporationMods.Common.Attributes.ValidCodeCoverageExceptionAttributes;
+using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations.UiComponents;
 using LobotomyCorporationMods.CustomizationOverhaul.Constants;
@@ -11,6 +14,8 @@ using UnityEngine;
 
 namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
 {
+    [UiComponent]
+    [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
     public class PresetSlotButton : AgentInfoWindowButton
     {
         private UiButton _deleteButton;

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Attributes;
+using LobotomyCorporationMods.Common.Attributes.ValidCodeCoverageExceptionAttributes;
 using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Interfaces;
 
