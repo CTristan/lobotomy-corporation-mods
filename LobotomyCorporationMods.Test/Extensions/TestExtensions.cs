@@ -2,13 +2,9 @@
 
 #region
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using FluentAssertions;
-using Harmony;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Enums;
 using LobotomyCorporationMods.Common.Extensions;
@@ -211,33 +207,6 @@ namespace LobotomyCorporationMods.Test.Extensions
 
             creature.observeInfo.InitObserveRegion(observeRegions);
             creature.observeInfo.ObserveAll();
-        }
-
-        internal static void ValidateHarmonyPatch([NotNull] this MemberInfo patchClass,
-            Type originalClass,
-            string methodName)
-        {
-            var attribute = Attribute.GetCustomAttribute(patchClass, typeof(HarmonyPatch)) as HarmonyPatch;
-
-            attribute.Should().NotBeNull();
-            attribute?.info.originalType.Should().Be(originalClass);
-            attribute?.info.methodName.Should().Be(methodName);
-        }
-
-        internal static void VerifyArgumentNullException([NotNull] this Mock<ILogger> mockLogger,
-            Action action,
-            Times? numberOfTimes = null)
-        {
-            action.Should().Throw<ArgumentNullException>();
-            mockLogger.Verify(logger => logger.LogError(It.IsAny<ArgumentNullException>()), numberOfTimes ?? Times.Once());
-        }
-
-        internal static void VerifyNullReferenceException([NotNull] this Mock<ILogger> mockLogger,
-            Action action,
-            Times? numberOfTimes = null)
-        {
-            action.Should().Throw<NullReferenceException>();
-            mockLogger.Verify(logger => logger.LogError(It.IsAny<NullReferenceException>()), numberOfTimes ?? Times.Once());
         }
     }
 }

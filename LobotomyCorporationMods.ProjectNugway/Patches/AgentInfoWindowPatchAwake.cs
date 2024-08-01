@@ -24,6 +24,7 @@ namespace LobotomyCorporationMods.ProjectNugway.Patches
         ///     different agents.
         /// </summary>
         /// <param name="instance">An instance of AgentInfoWindow</param>
+        /// <param name="uiController">An instance of IUiController</param>
         public static void PatchAfterAwake([NotNull] this AgentInfoWindow instance,
             [NotNull] IUiController uiController)
         {

@@ -15,8 +15,13 @@ using Xunit;
 
 namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests
 {
-    public sealed class HarmonyPatchTests
+    public sealed class HarmonyPatchTests : HarmonyPatchTestBase
     {
+        public HarmonyPatchTests()
+        {
+            Harmony_Patch.Instance.AddLoggerTarget(MockLogger.Object);
+        }
+
         /// <summary>Harmony requires the constructor to be public.</summary>
         [Fact]
         public void BadLuckProtectionForGifts_Constructor_is_public_and_externally_accessible()
@@ -36,24 +41,17 @@ namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests
             var originalClass = typeof(ArmorCreature);
             const string MethodName = nameof(ArmorCreature.OnNotice);
 
-            patch.ValidateHarmonyPatch(originalClass, MethodName);
+            ValidatePatch(patch, originalClass, MethodName);
         }
 
         [Fact]
         public void Class_ArmorCreature_Method_OnNotice_logs_exceptions()
         {
-            var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
             var armorCreature = new ArmorCreature();
 
-            void Action()
-            {
-                // ReSharper disable once AssignNullToNotNullAttribute
-                // Forcing null argument to test exception logging.
-                ArmorCreaturePatchOnNotice.Postfix(armorCreature, string.Empty, null);
-            }
-
-            mockLogger.VerifyArgumentNullException(Action);
+            // ReSharper disable once AssignNullToNotNullAttribute
+            // Forcing null argument to test exception logging.
+            VerifyArgumentNullExceptionLogging(() => ArmorCreaturePatchOnNotice.Postfix(armorCreature, string.Empty, null));
         }
 
         [Fact]
@@ -63,29 +61,25 @@ namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests
             var originalClass = typeof(CustomizingWindow);
             const string MethodName = nameof(CustomizingWindow.SetAgentStatBonus);
 
-            patch.ValidateHarmonyPatch(originalClass, MethodName);
+            ValidatePatch(patch, originalClass, MethodName);
         }
 
         [Fact]
         public void Class_CustomizingWindow_Method_SetAgentStatBonus_logs_exceptions()
         {
-            var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
-            const int TwoLogs = 2;
-            const int ThreeLogs = 3;
+            var times = 1;
 
             // ReSharper disable AssignNullToNotNullAttribute
             // Forcing null argument to test exception logging.
-            Action action = () => CustomizingWindowPatchSetAgentStatBonus.Prefix(null, null, null);
+            VerifyArgumentNullExceptionLogging(() => CustomizingWindowPatchSetAgentStatBonus.Prefix(null, null, null), Times.Exactly(times++));
             // ReSharper enable AssignNullToNotNullAttribute
 
-            mockLogger.VerifyArgumentNullException(action);
-
             // Verify other arguments throw exception when null
-            action = () => CustomizingWindowPatchSetAgentStatBonus.Prefix(UnityTestExtensions.CreateCustomizingWindow(), null, UnityTestExtensions.CreateAgentData());
-            mockLogger.VerifyArgumentNullException(action, Times.Exactly(TwoLogs));
-            action = () => CustomizingWindowPatchSetAgentStatBonus.Prefix(UnityTestExtensions.CreateCustomizingWindow(), UnityTestExtensions.CreateAgentModel(), null);
-            mockLogger.VerifyArgumentNullException(action, Times.Exactly(ThreeLogs));
+            VerifyArgumentNullExceptionLogging(() => CustomizingWindowPatchSetAgentStatBonus.Prefix(UnityTestExtensions.CreateCustomizingWindow(), null, UnityTestExtensions.CreateAgentData()),
+                Times.Exactly(times++));
+
+            VerifyArgumentNullExceptionLogging(() => CustomizingWindowPatchSetAgentStatBonus.Prefix(UnityTestExtensions.CreateCustomizingWindow(), UnityTestExtensions.CreateAgentModel(), null),
+                Times.Exactly(times));
         }
     }
 }

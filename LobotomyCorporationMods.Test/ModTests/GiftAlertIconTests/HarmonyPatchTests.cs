@@ -15,32 +15,11 @@ using Xunit;
 
 namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests
 {
-    public sealed class HarmonyPatchTests
+    public sealed class HarmonyPatchTests : HarmonyPatchTestBase
     {
-        [Fact]
-        public void Class_ManagementSlot_Method_SetUi_is_patched_correctly()
+        public HarmonyPatchTests()
         {
-            var patch = typeof(ManagementSlotPatchSetUi);
-            var originalClass = typeof(ManagementSlot);
-            const string MethodName = nameof(ManagementSlot.SetUI);
-
-            patch.ValidateHarmonyPatch(originalClass, MethodName);
-        }
-
-        [Fact]
-        public void Class_ManagementSlot_Method_SetUi_logs_exceptions()
-        {
-            var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
-
-            // Forcing null arguments to test exception logging.
-            // ReSharper disable AssignNullToNotNullAttribute
-            var times = 1;
-            Action action = () => ManagementSlotPatchSetUi.Postfix(null, UnityTestExtensions.CreateUnitModel());
-            mockLogger.VerifyArgumentNullException(action, Times.Exactly(times++));
-            action = () => ManagementSlotPatchSetUi.Postfix(UnityTestExtensions.CreateManagementSlot(), null);
-            mockLogger.VerifyArgumentNullException(action, Times.Exactly(times));
-            // ReSharper enable AssignNullToNotNullAttribute
+            Harmony_Patch.Instance.AddLoggerTarget(MockLogger.Object);
         }
 
         /// <summary>Harmony requires the constructor to be public.</summary>
@@ -53,6 +32,27 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests
             };
 
             action.Should().NotThrow();
+        }
+
+        [Fact]
+        public void Class_ManagementSlot_Method_SetUi_is_patched_correctly()
+        {
+            var patch = typeof(ManagementSlotPatchSetUi);
+            var originalClass = typeof(ManagementSlot);
+            const string MethodName = nameof(ManagementSlot.SetUI);
+
+            ValidatePatch(patch, originalClass, MethodName);
+        }
+
+        [Fact]
+        public void Class_ManagementSlot_Method_SetUi_logs_exceptions()
+        {
+            // Forcing null arguments to test exception logging.
+            // ReSharper disable AssignNullToNotNullAttribute
+            var times = 1;
+            VerifyArgumentNullExceptionLogging(() => ManagementSlotPatchSetUi.Postfix(null, UnityTestExtensions.CreateUnitModel()), Times.Exactly(times++));
+            VerifyArgumentNullExceptionLogging(() => ManagementSlotPatchSetUi.Postfix(UnityTestExtensions.CreateManagementSlot(), null), Times.Exactly(times));
+            // ReSharper enable AssignNullToNotNullAttribute
         }
     }
 }

@@ -20,7 +20,7 @@ using Xunit;
 
 namespace LobotomyCorporationMods.Test.ModTests.CommonTests
 {
-    public sealed class HarmonyPatchBaseTests
+    public sealed class HarmonyPatchBaseTests : HarmonyPatchTestBase
     {
         private FakeHarmonyPatch _fakeHarmonyPatch = new FakeHarmonyPatch(false);
 
@@ -37,16 +37,11 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         [Fact]
         public void Harmony_patch_exceptions_are_logged()
         {
-            var mockLogger = new Mock<ILogger>();
+            _fakeHarmonyPatch.AddLoggerTarget(MockLogger.Object);
 
-            void Action()
-            {
-                // ReSharper disable once AssignNullToNotNullAttribute
-                // Forcing null argument to test exception logging.
-                _fakeHarmonyPatch.ApplyHarmonyPatch(null, string.Empty, mockLogger.Object);
-            }
-
-            mockLogger.VerifyArgumentNullException(Action);
+            // ReSharper disable once AssignNullToNotNullAttribute
+            // Forcing null argument to test exception logging.
+            VerifyArgumentNullExceptionLogging(() => _fakeHarmonyPatch.ApplyHarmonyPatch(null, string.Empty, MockLogger.Object));
         }
 
         [Theory]

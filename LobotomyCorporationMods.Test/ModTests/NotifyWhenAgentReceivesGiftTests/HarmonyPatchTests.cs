@@ -14,30 +14,11 @@ using Xunit;
 
 namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
 {
-    public sealed class HarmonyPatchTests
+    public sealed class HarmonyPatchTests : HarmonyPatchTestBase
     {
-        [Fact]
-        public void Class_AgentSlot_Method_SetFilter_logs_exceptions()
+        public HarmonyPatchTests()
         {
-            var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
-            const int NumberOfLogs = 2;
-
-            Action action = () => UnitModelPatchAttachEgoGift.Prefix(null, UnityTestExtensions.CreateEgoGiftModel());
-            mockLogger.VerifyArgumentNullException(action);
-            action = () => UnitModelPatchAttachEgoGift.Prefix(UnityTestExtensions.CreateAgentModel(), null);
-            mockLogger.VerifyArgumentNullException(action, Times.Exactly(NumberOfLogs));
-        }
-
-        [Fact]
-        public void Class_UnitModel_Method_AttachEgoGift_is_patched_correctly()
-        {
-            // ReSharper disable once StringLiteralTypo
-            var patch = typeof(UnitModelPatchAttachEgoGift);
-            var originalClass = typeof(UnitModel);
-            const string MethodName = nameof(UnitModel.AttachEGOgift);
-
-            patch.ValidateHarmonyPatch(originalClass, MethodName);
+            Harmony_Patch.Instance.AddLoggerTarget(MockLogger.Object);
         }
 
         /// <summary>Harmony requires the constructor to be public.</summary>
@@ -50,6 +31,25 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
             };
 
             action.Should().NotThrow();
+        }
+
+        [Fact]
+        public void Class_AgentSlot_Method_SetFilter_logs_exceptions()
+        {
+            var times = 1;
+            VerifyArgumentNullExceptionLogging(() => UnitModelPatchAttachEgoGift.Prefix(null, UnityTestExtensions.CreateEgoGiftModel()), Times.Exactly(times++));
+            VerifyArgumentNullExceptionLogging(() => UnitModelPatchAttachEgoGift.Prefix(UnityTestExtensions.CreateAgentModel(), null), Times.Exactly(times));
+        }
+
+        [Fact]
+        public void Class_UnitModel_Method_AttachEgoGift_is_patched_correctly()
+        {
+            // ReSharper disable once StringLiteralTypo
+            var patch = typeof(UnitModelPatchAttachEgoGift);
+            var originalClass = typeof(UnitModel);
+            const string MethodName = nameof(UnitModel.AttachEGOgift);
+
+            ValidatePatch(patch, originalClass, MethodName);
         }
     }
 }

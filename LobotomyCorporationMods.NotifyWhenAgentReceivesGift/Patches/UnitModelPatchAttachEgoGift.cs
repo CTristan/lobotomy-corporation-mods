@@ -66,6 +66,9 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches
         {
             try
             {
+                Guard.Against.Null(__instance, nameof(__instance));
+                Guard.Against.Null(gift, nameof(gift));
+
                 __instance.PatchBeforeAttachEgoGift(gift);
             }
             catch (Exception ex)

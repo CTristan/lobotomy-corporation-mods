@@ -1,9 +1,5 @@
 // SPDX-License-Identifier: MIT
 
-#region
-
-#endregion
-
 using LobotomyCorporationMods.ProjectNugway.Interfaces;
 using LobotomyCorporationMods.ProjectNugway.Patches;
 using LobotomyCorporationMods.Test.Extensions;

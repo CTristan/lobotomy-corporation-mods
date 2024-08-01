@@ -5,7 +5,6 @@
 using System;
 using CommandWindow;
 using FluentAssertions;
-using LobotomyCorporationMods.Test.Extensions;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches;
 using Xunit;
@@ -14,32 +13,11 @@ using Xunit;
 
 namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingTests
 {
-    public sealed class HarmonyPatchTests
+    public sealed class HarmonyPatchTests : HarmonyPatchTestBase
     {
-        [Fact]
-        public void Class_AgentSlot_Method_SetFilter_is_patched_correctly()
+        public HarmonyPatchTests()
         {
-            var patch = typeof(AgentSlotPatchSetFilter);
-            var originalClass = typeof(AgentSlot);
-            const string MethodName = nameof(AgentSlot.SetFilter);
-
-            patch.ValidateHarmonyPatch(originalClass, MethodName);
-        }
-
-        [Fact]
-        public void Class_AgentSlot_Method_SetFilter_logs_exceptions()
-        {
-            var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
-
-            void Action()
-            {
-                // ReSharper disable once AssignNullToNotNullAttribute
-                // Forcing null argument to test exception logging.
-                AgentSlotPatchSetFilter.Postfix(null, (AgentState)1);
-            }
-
-            mockLogger.VerifyArgumentNullException(Action);
+            Harmony_Patch.Instance.AddLoggerTarget(MockLogger.Object);
         }
 
         /// <summary>Harmony requires the constructor to be public.</summary>
@@ -52,6 +30,24 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
             };
 
             action.Should().NotThrow();
+        }
+
+        [Fact]
+        public void Class_AgentSlot_Method_SetFilter_is_patched_correctly()
+        {
+            var patch = typeof(AgentSlotPatchSetFilter);
+            var originalClass = typeof(AgentSlot);
+            const string MethodName = nameof(AgentSlot.SetFilter);
+
+            ValidatePatch(patch, originalClass, MethodName);
+        }
+
+        [Fact]
+        public void Class_AgentSlot_Method_SetFilter_logs_exceptions()
+        {
+            // ReSharper disable once AssignNullToNotNullAttribute
+            // Forcing null argument to test exception logging.
+            VerifyArgumentNullExceptionLogging(() => AgentSlotPatchSetFilter.Postfix(null, (AgentState)1));
         }
     }
 }
