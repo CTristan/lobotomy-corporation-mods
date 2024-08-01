@@ -1,10 +1,14 @@
 ﻿// SPDX-License-Identifier: MIT
 
+#region
+
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
+
+#endregion
 
 namespace LobotomyCorporationMods.Common.Implementations.LoggerTargets
 {

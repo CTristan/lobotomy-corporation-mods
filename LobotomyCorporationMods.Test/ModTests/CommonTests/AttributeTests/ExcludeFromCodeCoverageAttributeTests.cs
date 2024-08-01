@@ -73,6 +73,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests.AttributeTests
         private static string MethodIsIncorrectlyExcludedFromCodeCoverage([NotNull] MemberInfo method)
         {
             var attributes = method.GetCustomAttributes(false).ToList();
+
             return attributes.Exists(attribute => attribute.ToString() == ExcludeFromCodeCoverageAttributeTypeName && !attributes.Exists(o => o is EntryPointAttribute))
                 ? method.ToString()
                 : string.Empty;
@@ -85,6 +86,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests.AttributeTests
         private static string ClassIsIncorrectlyExcludedFromCodeCoverage([NotNull] Type reflectionClass)
         {
             var attributes = reflectionClass.GetCustomAttributes(false).ToList();
+
             return attributes.Exists(attribute => attribute.ToString() == ExcludeFromCodeCoverageAttributeTypeName && !attributes.Exists(o => o is ValidCodeCoverageExceptionAttribute))
                 ? reflectionClass.ToString()
                 : string.Empty;

@@ -1,7 +1,7 @@
 # Documentation Updating Checklist
 
-When a mod is updated, we need to make sure all the appropriate
-documentation is updated accordingly.
+When a mod is updated, we need to make sure all the appropriate documentation is
+updated accordingly.
 
 - [ ] LobotomyCorporationMods.Common.csproj file
 - [ ] CHANGELOG.md

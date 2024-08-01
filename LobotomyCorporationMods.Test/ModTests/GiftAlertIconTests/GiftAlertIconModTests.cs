@@ -1,7 +1,11 @@
 // SPDX-License-Identifier: MIT
 
+#region
+
 using LobotomyCorporationMods.GiftAlertIcon;
 using LobotomyCorporationMods.Test.Extensions;
+
+#endregion
 
 namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests
 {

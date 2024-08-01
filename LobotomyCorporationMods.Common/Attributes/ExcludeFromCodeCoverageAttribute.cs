@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 
+#region
+
 using JetBrains.Annotations;
+
+#endregion
 
 // ReSharper disable once CheckNamespace
 namespace System.Diagnostics.CodeAnalysis

@@ -1,10 +1,14 @@
 ﻿// SPDX-License-Identifier: MIT
 
+#region
+
 using CommandWindow;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
 using LobotomyCorporationMods.Common.ParameterContainers;
+
+#endregion
 
 // ReSharper disable UnusedParameter.Global
 

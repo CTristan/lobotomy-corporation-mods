@@ -1,5 +1,7 @@
 ﻿// SPDX-License-Identifier: MIT
 
+#region
+
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using JetBrains.Annotations;
@@ -8,6 +10,8 @@ using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Extensions;
 using UnityEngine;
 using UnityEngine.UI;
+
+#endregion
 
 namespace LobotomyCorporationMods.Common.Implementations.UiComponents
 {

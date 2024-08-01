@@ -1,9 +1,13 @@
 ﻿// SPDX-License-Identifier: MIT
 
+#region
+
 using FluentAssertions;
 using LobotomyCorporationMods.Common.Implementations.Facades;
 using LobotomyCorporationMods.Test.Extensions;
 using Xunit;
+
+#endregion
 
 namespace LobotomyCorporationMods.Test.ModTests.CommonTests.FacadeTests
 {

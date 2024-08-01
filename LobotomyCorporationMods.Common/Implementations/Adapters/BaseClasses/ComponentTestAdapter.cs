@@ -1,5 +1,7 @@
 ﻿// SPDX-License-Identifier: MIT
 
+#region
+
 using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes.ValidCodeCoverageExceptionAttributes;
@@ -7,6 +9,8 @@ using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
 using UnityEngine;
+
+#endregion
 
 namespace LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses
 {
