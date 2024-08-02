@@ -133,6 +133,24 @@ namespace LobotomyCorporationMods.Test.ModTests.ProjectNugwayTests
         }
 
         [Fact]
+        public void Class_AppearanceUI_Method_InitialDataLoad_is_patched_correctly()
+        {
+            var patch = typeof(AppearanceUiPatchInitialDataLoad);
+            var originalClass = typeof(AppearanceUI);
+            const string MethodName = nameof(AppearanceUI.InitialDataLoad);
+
+            ValidatePatch(patch, originalClass, MethodName);
+        }
+
+        [Fact]
+        public void Class_AppearanceUI_Method_InitialDataLoad_logs_exceptions()
+        {
+            // ReSharper disable once AssignNullToNotNullAttribute
+            // Forcing null argument to test exception logging.
+            VerifyArgumentNullExceptionLogging(() => AppearanceUiPatchInitialDataLoad.Postfix(null));
+        }
+
+        [Fact]
         public void Class_AppearanceUI_Method_UpdatePortrait_is_patched_correctly()
         {
             var patch = typeof(AppearanceUIPatchUpdatePortrait);

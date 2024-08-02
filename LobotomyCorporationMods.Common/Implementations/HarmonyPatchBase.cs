@@ -1,9 +1,6 @@
-// SPDX-License-Identifier: MIT
-
-#region
-
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Xml;
 using Harmony;
@@ -12,8 +9,6 @@ using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations.LoggerTargets;
 using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
-
-#endregion
 
 namespace LobotomyCorporationMods.Common.Implementations
 {
@@ -46,12 +41,9 @@ namespace LobotomyCorporationMods.Common.Implementations
         }
 
         // We load our properties when applying the patch, so they will be null in the constructor
-        // ReSharper disable once NullableWarningSuppressionIsUsed
         public IFileManager FileManager { get; private set; }
 
-        // ReSharper disable once NullableWarningSuppressionIsUsed
         public ILogger Logger { get; private set; }
-
 
         /// <summary>Entry point for testing.</summary>
         public void AddLoggerTarget(ILogger logger)
@@ -111,17 +103,16 @@ namespace LobotomyCorporationMods.Common.Implementations
 
         private void InitializeLogger(IAngelaConversationUiTestAdapter angelaConversationUiTestAdapter)
         {
-            var fileLoggerTarget = new FileLoggerTarget(FileManager, "errors.log");
+            var logFileName = $"log_{DateTimeOffset.Now.ToString("yyyyMMdd", CultureInfo.InvariantCulture)}.log";
+            var fileLoggerTarget = new FileLoggerTarget(FileManager, logFileName);
             Logger = new Logger(fileLoggerTarget);
 
 #if DEBUG
-            // ReSharper disable once InconsistentNaming
             const bool logToAngela = true;
 #else
             var logToAngela = File.Exists("log.config");
 #endif
 
-            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             var angelaLoggerTarget = new AngelaLoggerTarget(logToAngela, angelaConversationUiTestAdapter);
             Logger.AddTarget(angelaLoggerTarget);
         }
