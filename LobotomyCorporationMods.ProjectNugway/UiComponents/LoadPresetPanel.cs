@@ -41,6 +41,36 @@ namespace LobotomyCorporationMods.ProjectNugway.UiComponents
 
         public void Update()
         {
+            try
+            {
+                HandleScrollWheelInput();
+            }
+            catch (Exception exception)
+            {
+                Harmony_Patch.Instance.Logger.LogError(exception);
+
+                throw;
+            }
+        }
+
+        public new void OnEnable()
+        {
+            try
+            {
+                base.OnEnable();
+
+                UiPresetList.UpdatePage();
+            }
+            catch (Exception exception)
+            {
+                Harmony_Patch.Instance.Logger.LogError(exception);
+
+                throw;
+            }
+        }
+
+        private void HandleScrollWheelInput()
+        {
             var scrollData = Input.GetAxis("Mouse ScrollWheel");
 
             if (scrollData > 0.0f)
@@ -56,13 +86,6 @@ namespace LobotomyCorporationMods.ProjectNugway.UiComponents
             {
                 // Scroll wheel is not being used
             }
-        }
-
-        public new void OnEnable()
-        {
-            base.OnEnable();
-
-            UiPresetList.UpdatePage();
         }
     }
 }

@@ -10,6 +10,7 @@ using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
+using LobotomyCorporationMods.ProjectNugway.Interfaces;
 
 #endregion
 
@@ -18,11 +19,13 @@ namespace LobotomyCorporationMods.ProjectNugway.Patches
     [HarmonyPatch(typeof(AgentInfoWindow), nameof(AgentInfoWindow.CloseWindow))]
     public static class AgentInfoWindowPatchCloseWindow
     {
-        public static void PatchAfterCloseWindow([NotNull] this AgentInfoWindow instance)
+        public static void PatchAfterCloseWindow([NotNull] this AgentInfoWindow instance,
+            [NotNull] IUiController uiController)
         {
             Guard.Against.Null(instance, nameof(instance));
+            Guard.Against.Null(uiController, nameof(uiController));
 
-            Harmony_Patch.Instance.UiController.DisableAllCustomUiComponents();
+            uiController.DisableAllCustomUiComponents();
         }
 
         /// <summary>Runs after opening the Strengthen Agent window to force it to open the appearance window.</summary>
@@ -35,7 +38,7 @@ namespace LobotomyCorporationMods.ProjectNugway.Patches
                 // EnforcementWindow is a static method, so we can't get an instance of the AgentInfoWindow through Harmony.
                 var agentInfoWindow = AgentInfoWindow.currentWindow;
 
-                agentInfoWindow.PatchAfterCloseWindow();
+                agentInfoWindow.PatchAfterCloseWindow(Harmony_Patch.Instance.UiController);
             }
             catch (Exception ex)
             {

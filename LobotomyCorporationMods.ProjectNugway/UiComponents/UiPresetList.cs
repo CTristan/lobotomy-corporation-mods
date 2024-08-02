@@ -75,41 +75,65 @@ namespace LobotomyCorporationMods.ProjectNugway.UiComponents
         /// <summary>Updates the page of the preset list.</summary>
         internal void UpdatePage()
         {
-            ReloadPresets();
-            var pageStartIndex = _currentPage * NumberOfPresetsPerPage;
-
-            _upArrow.SetActive(_currentPage != 0);
-
-            for (var presetPanelNum = 0; presetPanelNum < NumberOfPresetsPerPage; presetPanelNum++)
+            try
             {
-                _panelButtonList[presetPanelNum].onClick.RemoveAllListeners();
+                ReloadPresets();
+                var pageStartIndex = _currentPage * NumberOfPresetsPerPage;
 
-                var presetIndex = pageStartIndex + presetPanelNum;
-                var hasPresetAtIndex = presetIndex < _presets.Count;
-                if (hasPresetAtIndex)
+                if (pageStartIndex >= _presets.Count)
                 {
-                    var presetName = _presets[presetIndex].Key;
-                    _panelButtonList[presetPanelNum].UpdateButton(this, presetPanelNum, presetName);
+                    _currentPage--;
+                    pageStartIndex = _currentPage * NumberOfPresetsPerPage;
+                }
+
+                _upArrow.SetActive(_currentPage != 0);
+                UpdatePresetButtons(pageStartIndex);
+                _downArrow.SetActive(pageStartIndex + NumberOfPresetsPerPage < _presets.Count);
+            }
+            catch (Exception exception)
+            {
+                Harmony_Patch.Instance.Logger.LogError(exception);
+
+                throw;
+            }
+        }
+
+        private void UpdatePresetButtons(int pageStartIndex)
+        {
+            for (var i = 0; i < NumberOfPresetsPerPage; i++)
+            {
+                _panelButtonList[i].onClick.RemoveAllListeners();
+
+                var presetIndex = pageStartIndex + i;
+                if (presetIndex < _presets.Count)
+                {
+                    _panelButtonList[i].UpdateButton(this, i, _presets[presetIndex].Key);
                 }
                 else
                 {
-                    _panelButtonList[presetPanelNum].ClearButton();
+                    _panelButtonList[i].ClearButton();
                 }
             }
-
-            var hasMorePagesToShow = pageStartIndex + NumberOfPresetsPerPage < _presets.Count;
-            _downArrow.SetActive(hasMorePagesToShow);
         }
 
         internal void OnClickDownButton()
         {
-            if ((_currentPage + 1) * NumberOfPresetsPerPage >= _presets.Count)
+            try
             {
-                return;
-            }
+                if ((_currentPage + 1) * NumberOfPresetsPerPage >= _presets.Count)
+                {
+                    return;
+                }
 
-            _currentPage++;
-            UpdatePage();
+                _currentPage++;
+                UpdatePage();
+            }
+            catch (Exception exception)
+            {
+                Harmony_Patch.Instance.Logger.LogError(exception);
+
+                throw;
+            }
         }
 
         [NotNull]
@@ -135,13 +159,22 @@ namespace LobotomyCorporationMods.ProjectNugway.UiComponents
 
         internal void OnClickUpButton()
         {
-            if (_currentPage == 0)
+            try
             {
-                return;
-            }
+                if (_currentPage == 0)
+                {
+                    return;
+                }
 
-            _currentPage--;
-            UpdatePage();
+                _currentPage--;
+                UpdatePage();
+            }
+            catch (Exception exception)
+            {
+                Harmony_Patch.Instance.Logger.LogError(exception);
+
+                throw;
+            }
         }
 
         [NotNull]

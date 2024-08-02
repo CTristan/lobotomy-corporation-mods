@@ -54,27 +54,18 @@ namespace LobotomyCorporationMods.ProjectNugway.UiComponents
 
         private void InitializeDeleteButton()
         {
-            try
+            if (_deleteButton == null)
             {
-                if (_deleteButton == null)
-                {
-                    _deleteButton = new GameObject().AddComponent<UiButton>();
-                    _deleteButton.transform.SetParent(transform);
-                    var imagePath = Harmony_Patch.Instance.FileManager.GetFile(PresetConstants.DeletePresetIconPath);
-                    _deleteButton.SetButtonImage(imagePath);
-                    _deleteButton.SetPosition(PresetConstants.DeletePresetButtonPositionX, PresetConstants.DeletePresetButtonPositionY);
-                    _deleteButton.onClick.AddListener(DisplayDeleteConfirmMessage);
-                }
-                else
-                {
-                    _deleteButton.gameObject.SetActive(true);
-                }
+                _deleteButton = new GameObject().AddComponent<UiButton>();
+                _deleteButton.transform.SetParent(transform);
+                var imagePath = Harmony_Patch.Instance.FileManager.GetFile(PresetConstants.DeletePresetIconPath);
+                _deleteButton.SetButtonImage(imagePath);
+                _deleteButton.SetPosition(PresetConstants.DeletePresetButtonPositionX, PresetConstants.DeletePresetButtonPositionY);
+                _deleteButton.onClick.AddListener(DisplayDeleteConfirmMessage);
             }
-            catch (Exception e)
+            else
             {
-                Harmony_Patch.Instance.Logger.LogError(e);
-
-                throw;
+                _deleteButton.gameObject.SetActive(true);
             }
         }
 
@@ -96,7 +87,16 @@ namespace LobotomyCorporationMods.ProjectNugway.UiComponents
 
         internal void CancelDeletion()
         {
-            InitializeDeleteButton();
+            try
+            {
+                InitializeDeleteButton();
+            }
+            catch (Exception exception)
+            {
+                Harmony_Patch.Instance.Logger.LogError(exception);
+
+                throw;
+            }
         }
 
         private void DisplayDeleteConfirmMessage()
@@ -152,6 +152,7 @@ namespace LobotomyCorporationMods.ProjectNugway.UiComponents
 
                 if (_deletePresetConfirmationPanel.gameObject.activeSelf)
                 {
+                    _deletePresetConfirmationPanel.SetText(string.Empty);
                     _deletePresetConfirmationPanel.gameObject.SetActive(false);
                 }
 

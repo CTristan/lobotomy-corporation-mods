@@ -62,11 +62,20 @@ namespace LobotomyCorporationMods.ProjectNugway.Implementations
 
         public void DisableAllCustomUiComponents()
         {
-            LoadPresetButton.gameObject.SetActive(false);
+            if (LoadPresetButton)
+            {
+                LoadPresetButton.gameObject.SetActive(false);
+            }
 
-            SavePresetButton.gameObject.SetActive(false);
+            if (SavePresetButton)
+            {
+                SavePresetButton.gameObject.SetActive(false);
+            }
 
-            LoadPresetPanel.gameObject.SetActive(false);
+            if (LoadPresetPanel)
+            {
+                LoadPresetPanel.gameObject.SetActive(false);
+            }
         }
 
         public void DisplayLoadPresetPanel()

@@ -58,6 +58,7 @@ namespace LobotomyCorporationMods.ProjectNugway.UiComponents
 
         private void ProcessDeletion()
         {
+            Text.text = string.Empty;
             _parentButton.ProcessDeletion();
         }
 
@@ -80,12 +81,21 @@ namespace LobotomyCorporationMods.ProjectNugway.UiComponents
         public void SwipeIn(PresetSlotButton parentButton,
             string text)
         {
-            // Set the reference to the PresetSlotButton we came from
-            _parentButton = parentButton;
-            fillAmount = 0f;
+            try
+            {
+                // Set the reference to the PresetSlotButton we came from
+                _parentButton = parentButton;
+                fillAmount = 0f;
 
-            // Start the expansion animation
-            StartCoroutine(SlowlyFillImage(text));
+                // Start the expansion animation
+                StartCoroutine(SlowlyFillImage(text));
+            }
+            catch (Exception exception)
+            {
+                Harmony_Patch.Instance.Logger.LogError(exception);
+
+                throw;
+            }
         }
 
         private IEnumerator SlowlyFillImage(string text)
@@ -110,13 +120,22 @@ namespace LobotomyCorporationMods.ProjectNugway.UiComponents
 
         public void SwipeOut()
         {
-            // Empty the UI elements so that they don't look weird while trying to resize the text
-            _acceptButton.gameObject.SetActive(false);
-            _cancelButton.gameObject.SetActive(false);
-            Text.text = string.Empty;
+            try
+            {
+                // Empty the UI elements so that they don't look weird while trying to resize the text
+                Text.text = string.Empty;
+                _acceptButton.gameObject.SetActive(false);
+                _cancelButton.gameObject.SetActive(false);
 
-            // Start the expansion animation
-            StartCoroutine(SlowlyEmptyImage());
+                // Start the expansion animation
+                StartCoroutine(SlowlyEmptyImage());
+            }
+            catch (Exception exception)
+            {
+                Harmony_Patch.Instance.Logger.LogError(exception);
+
+                throw;
+            }
         }
 
         private IEnumerator SlowlyEmptyImage()
