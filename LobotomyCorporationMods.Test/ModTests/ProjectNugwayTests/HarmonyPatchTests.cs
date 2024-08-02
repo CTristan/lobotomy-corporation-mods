@@ -245,5 +245,23 @@ namespace LobotomyCorporationMods.Test.ModTests.ProjectNugwayTests
             // Verify other arguments throw an exception if null
             VerifyArgumentNullExceptionLogging(() => CustomizingWindowPatchReviseOpenAction.Postfix(UnityTestExtensions.CreateCustomizingWindow(), null), Times.Exactly(times));
         }
+
+        [Fact]
+        public void Class_WorkerSpriteManager_Method_LoadCustomSprites_is_patched_correctly()
+        {
+            var patch = typeof(WorkerSpriteManagerPatchLoadCustomSprites);
+            var originalClass = typeof(WorkerSpriteManager);
+            const string MethodName = nameof(WorkerSpriteManager.LoadCustomSprites);
+
+            ValidatePatch(patch, originalClass, MethodName);
+        }
+
+        [Fact]
+        public void Class_WorkerSpriteManager_Method_LoadCustomSprites_logs_exceptions()
+        {
+            // Forcing null arguments to test exception logging.
+            // ReSharper disable once AssignNullToNotNullAttribute
+            VerifyArgumentNullExceptionLogging(() => WorkerSpriteManagerPatchLoadCustomSprites.Postfix(null));
+        }
     }
 }

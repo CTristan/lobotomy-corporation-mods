@@ -10,8 +10,8 @@ namespace LobotomyCorporationMods.Common.Interfaces
 {
     public interface IFileManager
     {
+        string ModFolder { get; }
         void CreateDirectoryIfNotExists(string path);
-
         string GetFile(string fileName);
 
         IEnumerable<string> GetFilesFromDirectory(string path,

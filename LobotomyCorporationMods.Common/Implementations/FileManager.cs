@@ -53,6 +53,9 @@ namespace LobotomyCorporationMods.Common.Implementations
             }
         }
 
+        [NotNull]
+        public string ModFolder => _dataPath.FullName;
+
         public void CreateDirectoryIfNotExists([NotNull] string path)
         {
             if (Directory.Exists(path))

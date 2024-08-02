@@ -42,6 +42,9 @@ namespace LobotomyCorporationMods.ProjectNugway.UiComponents
 
         private static void ActionsOnClick([NotNull] IUiController uiController)
         {
+            // Make sure that are presets are the most current whenever we click the load preset button
+            Harmony_Patch.Instance.PresetLoader.ReloadPresetsFromFiles();
+
             if (uiController.LoadPresetPanel == null)
             {
                 uiController.DisplayLoadPresetPanel();

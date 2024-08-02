@@ -24,8 +24,6 @@ namespace LobotomyCorporationMods.ProjectNugway
             UiController = new UiController();
 
             PresetLoader = new PresetLoader(FileManager);
-            PresetLoader.ReloadPresetsFromFiles();
-
             PresetWriter = new PresetWriter(FileManager, PresetLoader, UiController);
         }
 
