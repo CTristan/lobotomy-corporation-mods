@@ -14,7 +14,7 @@ namespace LobotomyCorporationMods.Common.Extensions
     internal static class DateTimeOffsetExtensions
     {
         [NotNull]
-        internal static string FormatDateTimeOffset(this DateTimeOffset dateTimeOffset)
+        internal static string FormatAsIsoDateFormat(this DateTimeOffset dateTimeOffset)
         {
             var sb = new StringBuilder(8);
             sb.Append(dateTimeOffset.Year.ToString("0000", CultureInfo.InvariantCulture));

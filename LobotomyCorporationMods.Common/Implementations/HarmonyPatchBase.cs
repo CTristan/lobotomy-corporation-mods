@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Xml;
 using Harmony;
@@ -103,7 +102,7 @@ namespace LobotomyCorporationMods.Common.Implementations
 
         private void InitializeLogger(IAngelaConversationUiTestAdapter angelaConversationUiTestAdapter)
         {
-            var logFileName = $"log_{DateTimeOffset.Now.ToString("yyyyMMdd", CultureInfo.InvariantCulture)}.log";
+            var logFileName = $"log_{DateTimeOffset.Now.FormatAsIsoDateFormat()}.log";
             var fileLoggerTarget = new FileLoggerTarget(FileManager, logFileName);
             Logger = new Logger(fileLoggerTarget);
 

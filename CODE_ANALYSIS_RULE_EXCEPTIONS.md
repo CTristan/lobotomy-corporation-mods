@@ -15,9 +15,8 @@ disabled.
 
 * S2436: Types and methods shouldn’t have too many generic parameters
   * I've changed this rule to allow up to 3 generic parameters instead of the
-    default 2. This is because the game code uses a lot of generics, and I don't
-    want to have to suppress this rule every time I need to use a generic
-    method.
+    default 2. This is because sometimes I need to use three generic parameters
+    for handling adapter classes for unit testing.
 
 ### Disabled Rules
 
