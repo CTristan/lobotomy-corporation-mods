@@ -21,9 +21,8 @@ namespace LobotomyCorporationMods.ProjectNugway
 
         private Harmony_Patch(bool initialize) : base(typeof(Harmony_Patch), "LobotomyCorporationMods.ProjectNugway.dll", initialize)
         {
-            UiController = new UiController();
-
             PresetLoader = new PresetLoader(FileManager);
+            UiController = new UiController(PresetLoader);
             PresetWriter = new PresetWriter(FileManager, PresetLoader, UiController);
         }
 

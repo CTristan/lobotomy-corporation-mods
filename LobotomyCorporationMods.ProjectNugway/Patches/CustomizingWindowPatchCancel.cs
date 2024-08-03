@@ -11,6 +11,7 @@ using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
+using LobotomyCorporationMods.ProjectNugway.Interfaces;
 
 #endregion
 
@@ -19,11 +20,13 @@ namespace LobotomyCorporationMods.ProjectNugway.Patches
     [HarmonyPatch(typeof(CustomizingWindow), nameof(CustomizingWindow.Cancel))]
     public static class CustomizingWindowPatchCancel
     {
-        public static void PatchAfterCancel([NotNull] this CustomizingWindow instance)
+        public static void PatchAfterCancel([NotNull] this CustomizingWindow instance,
+            [NotNull] IUiController uiController)
         {
             Guard.Against.Null(instance, nameof(instance));
+            Guard.Against.Null(uiController, nameof(uiController));
 
-            Harmony_Patch.Instance.UiController.DisableAllCustomUiComponents();
+            uiController.DisableAllCustomUiComponents();
         }
 
         /// <summary>
@@ -38,7 +41,7 @@ namespace LobotomyCorporationMods.ProjectNugway.Patches
         {
             try
             {
-                __instance.PatchAfterCancel();
+                __instance.PatchAfterCancel(Harmony_Patch.Instance.UiController);
             }
             catch (Exception ex)
             {

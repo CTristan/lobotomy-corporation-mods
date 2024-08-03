@@ -1,5 +1,6 @@
 ﻿// SPDX-License-Identifier: MIT
 
+using Customizing;
 using LobotomyCorporationMods.ProjectNugway.UiComponents;
 
 namespace LobotomyCorporationMods.ProjectNugway.Interfaces
@@ -14,5 +15,8 @@ namespace LobotomyCorporationMods.ProjectNugway.Interfaces
         void DisplayLoadPresetPanel();
         void DisplaySavePresetButton();
         void DisableAllCustomUiComponents();
+
+        void UpdateSavePresetButtonText(string agentName,
+            Appearance appearance);
     }
 }

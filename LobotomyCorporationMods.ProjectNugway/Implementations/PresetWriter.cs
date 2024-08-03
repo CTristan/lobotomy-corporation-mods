@@ -6,7 +6,6 @@ using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.ProjectNugway.Constants;
 using LobotomyCorporationMods.ProjectNugway.Interfaces;
 using LobotomyCorporationMods.ProjectNugway.Objects;
-using UnityEngine;
 
 namespace LobotomyCorporationMods.ProjectNugway.Implementations
 {
@@ -58,15 +57,7 @@ namespace LobotomyCorporationMods.ProjectNugway.Implementations
 
             SavePresetListToFile(data, _fileManager.GetFile(PresetConstants.CustomFileName));
 
-            UpdateSavePresetButtonText(agentName, appearanceData);
-        }
-
-        public void UpdateSavePresetButtonText(string agentName,
-            Appearance appearance)
-        {
-            _presetLoader.InitializeDefaultCustomPresetFile();
-            _uiController.SavePresetButton.gameObject.SetActive(true);
-            _uiController.SavePresetButton.SetTextColor(Harmony_Patch.Instance.PresetLoader.IsExactPreset(agentName, appearance) ? Color.grey : PresetConstants.PresetTextColor);
+            _uiController.UpdateSavePresetButtonText(agentName, appearanceData);
         }
 
         private void SavePresetListToFile([NotNull] PresetList presetList,

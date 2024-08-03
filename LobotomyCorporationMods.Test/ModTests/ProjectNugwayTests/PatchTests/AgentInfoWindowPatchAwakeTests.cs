@@ -10,16 +10,17 @@ namespace LobotomyCorporationMods.Test.ModTests.ProjectNugwayTests.PatchTests
 {
     public sealed class AgentInfoWindowPatchAwakeTests : ProjectNugwayModTests
     {
+        private readonly Mock<AgentInfoWindow> _sut = new Mock<AgentInfoWindow>();
+
         [Fact]
         public void UI_components_are_disabled_when_day_is_started()
         {
             // Arrange
-            var mockAgentInfoWindow = new Mock<AgentInfoWindow>();
             var mockUiController = new Mock<IUiController>();
             UnityTestExtensions.CreateGameManager();
 
             // Act
-            mockAgentInfoWindow.Object.PatchAfterAwake(mockUiController.Object);
+            _sut.Object.PatchAfterAwake(mockUiController.Object);
 
             // Assert
             mockUiController.Verify(ui => ui.DisableAllCustomUiComponents(), Times.Once);
@@ -29,12 +30,11 @@ namespace LobotomyCorporationMods.Test.ModTests.ProjectNugwayTests.PatchTests
         public void UI_components_are_not_disabled_when_day_is_not_started()
         {
             // Arrange
-            var mockAgentInfoWindow = new Mock<AgentInfoWindow>();
             var mockUiController = new Mock<IUiController>();
             UnityTestExtensions.CreateGameManager(GameState.STOP);
 
             // Act
-            mockAgentInfoWindow.Object.PatchAfterAwake(mockUiController.Object);
+            _sut.Object.PatchAfterAwake(mockUiController.Object);
 
             // Assert
             mockUiController.Verify(ui => ui.DisableAllCustomUiComponents(), Times.Never);

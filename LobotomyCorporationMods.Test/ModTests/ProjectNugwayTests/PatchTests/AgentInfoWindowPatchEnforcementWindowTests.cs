@@ -17,12 +17,13 @@ namespace LobotomyCorporationMods.Test.ModTests.ProjectNugwayTests.PatchTests
     /// <summary>Contains tests for verifying the behavior of the AgentInfoWindow patch in the ProjectNugway mod.</summary>
     public sealed class AgentInfoWindowPatchEnforcementWindowTests : ProjectNugwayModTests
     {
+        private readonly Mock<AgentInfoWindow> _sut = new Mock<AgentInfoWindow>();
+
         /// <summary>Tests that opening the strengthen employee window also opens the Appearance UI.</summary>
         [Fact]
         public void Opening_the_strengthen_employee_window_opens_the_Appearance_UI()
         {
             // Arrange
-            var sut = InitializeAgentInfoWindow();
             InitializeCustomizingWindow();
 
             var mockUiController = new Mock<IUiController>();
@@ -31,7 +32,7 @@ namespace LobotomyCorporationMods.Test.ModTests.ProjectNugwayTests.PatchTests
             var mockGameObject = new Mock<IGameObjectTestAdapter>();
 
             // Act
-            sut.PatchAfterEnforcementWindow(mockUiController.Object, mockAgentInfoWindowUiComponents.Object, mockCustomizingWindow.Object, mockGameObject.Object);
+            _sut.Object.PatchAfterEnforcementWindow(mockUiController.Object, mockAgentInfoWindowUiComponents.Object, mockCustomizingWindow.Object, mockGameObject.Object);
 
             // Assert
             mockAgentInfoWindowUiComponents.Verify(adapter => adapter.SetData(It.IsAny<AgentData>()), Times.Once);

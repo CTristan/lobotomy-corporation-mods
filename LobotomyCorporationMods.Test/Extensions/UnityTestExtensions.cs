@@ -196,9 +196,21 @@ namespace LobotomyCorporationMods.Test.Extensions
             };
         }
 
-        internal static AppearanceUI CreateAppearanceUi()
+        [NotNull]
+        internal static AppearanceUI CreateAppearanceUi([CanBeNull] InputField nameInput = null)
         {
+            nameInput = nameInput.EnsureNotNullWithMethod(() => CreateInputField());
+
             CreateUninitializedObject<AppearanceUI>(out var appearanceUi);
+            var fields = GetUninitializedFieldsIncludingBaseType(appearanceUi.GetType());
+            var newValues = new Dictionary<string, object>
+            {
+                {
+                    "NameInput", nameInput
+                },
+            };
+
+            appearanceUi = GetPopulatedUninitializedObject(appearanceUi, fields, newValues);
 
             return appearanceUi;
         }
@@ -352,7 +364,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             CustomizingType currentWindowType = (CustomizingType)1)
         {
             appearanceBlock = appearanceBlock.EnsureNotNullWithMethod(CreateGameObject);
-            appearanceUi = appearanceUi.EnsureNotNullWithMethod(CreateAppearanceUi);
+            appearanceUi = appearanceUi.EnsureNotNullWithMethod(() => CreateAppearanceUi());
             currentAgent = currentAgent.EnsureNotNullWithMethod(() => CreateAgentModel());
             currentData = currentData.EnsureNotNullWithMethod(() => CreateAgentData());
 
@@ -495,11 +507,42 @@ namespace LobotomyCorporationMods.Test.Extensions
             return gameObject;
         }
 
+        [NotNull]
+        internal static GlobalGameManager CreateGlobalGameManager()
+        {
+            CreateUninitializedObject<GlobalGameManager>(out var globalGameManager);
+
+            var fields = GetUninitializedFieldsIncludingBaseType(globalGameManager.GetType());
+            var newValues = new Dictionary<string, object>();
+
+            globalGameManager = GetPopulatedUninitializedObject(globalGameManager, fields, newValues);
+            newValues.Add("_instance", globalGameManager);
+
+            return GetPopulatedUninitializedObject(globalGameManager, fields, newValues);
+        }
+
         private static Image CreateImage()
         {
             CreateUninitializedObject<Image>(out var image);
 
             return image;
+        }
+
+        [NotNull]
+        internal static InputField CreateInputField(string text = "")
+        {
+            CreateUninitializedObject<InputField>(out var inputField);
+            var fields = GetUninitializedFieldsIncludingBaseType(inputField.GetType());
+            var newValues = new Dictionary<string, object>
+            {
+                {
+                    "m_Text", text
+                },
+            };
+
+            inputField = GetPopulatedUninitializedObject(inputField, fields, newValues);
+
+            return inputField;
         }
 
         internal static LittleWitchBuf CreateLittleWitchBuf()

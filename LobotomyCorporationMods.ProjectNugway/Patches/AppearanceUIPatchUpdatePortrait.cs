@@ -11,6 +11,7 @@ using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
+using LobotomyCorporationMods.ProjectNugway.Interfaces;
 
 #endregion
 
@@ -22,9 +23,11 @@ namespace LobotomyCorporationMods.ProjectNugway.Patches
     public static class AppearanceUIPatchUpdatePortrait
     {
         // ReSharper disable once IdentifierTypo
-        public static void PatchUpdatePortrait([NotNull] this AppearanceUI instance)
+        public static void PatchAfterUpdatePortrait([NotNull] this AppearanceUI instance,
+            [NotNull] IUiController uiController)
         {
             Guard.Against.Null(instance, nameof(instance));
+            Guard.Against.Null(uiController, nameof(uiController));
 
             var currentAgentName = instance.NameInput.text;
             if (string.IsNullOrEmpty(currentAgentName))
@@ -33,13 +36,13 @@ namespace LobotomyCorporationMods.ProjectNugway.Patches
             }
 
             var agentInfoWindow = AgentInfoWindow.currentWindow;
-            if (agentInfoWindow == null)
+            if (agentInfoWindow.IsNull())
             {
                 return;
             }
 
-            Harmony_Patch.Instance.UiController.DisplaySavePresetButton();
-            Harmony_Patch.Instance.PresetWriter.UpdateSavePresetButtonText(currentAgentName, instance.copied.appearance);
+            uiController.DisplaySavePresetButton();
+            uiController.UpdateSavePresetButtonText(currentAgentName, instance.copied.appearance);
         }
 
         [EntryPoint]
@@ -49,7 +52,7 @@ namespace LobotomyCorporationMods.ProjectNugway.Patches
         {
             try
             {
-                __instance.PatchUpdatePortrait();
+                __instance.PatchAfterUpdatePortrait(Harmony_Patch.Instance.UiController);
             }
             catch (Exception ex)
             {

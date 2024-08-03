@@ -10,7 +10,7 @@ namespace LobotomyCorporationMods.ProjectNugway.Patches
     [HarmonyPatch(typeof(WorkerSpriteManager), nameof(WorkerSpriteManager.LoadCustomSprites))]
     public static class WorkerSpriteManagerPatchLoadCustomSprites
     {
-        /// <summary>This is needed because the standalone version of Basemod does not have a way to load sprites from the mod folder.</summary>
+        /// <summary>We need this because the standalone version of Basemod does not have a way to load sprites from the mod folder.</summary>
         /// <param name="instance"></param>
         public static void PatchAfterLoadCustomSprites([NotNull] this WorkerSpriteManager instance)
         {
@@ -21,6 +21,7 @@ namespace LobotomyCorporationMods.ProjectNugway.Patches
         }
 
         [EntryPoint]
+        // ReSharper disable once InconsistentNaming
         public static void Postfix([NotNull] WorkerSpriteManager __instance)
         {
             try

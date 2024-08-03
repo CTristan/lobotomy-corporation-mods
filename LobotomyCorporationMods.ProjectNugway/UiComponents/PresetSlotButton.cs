@@ -145,7 +145,7 @@ namespace LobotomyCorporationMods.ProjectNugway.UiComponents
                     instance.SetAppearanceSprite(loadedAgentData);
                     instance.SetCreditControl(true);
 
-                    Harmony_Patch.Instance.PresetWriter.UpdateSavePresetButtonText(_presetName, loadedAgentData.appearance);
+                    Harmony_Patch.Instance.UiController.UpdateSavePresetButtonText(_presetName, loadedAgentData.appearance);
                 });
 
                 _deleteButton.gameObject.SetActive(true);

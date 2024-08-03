@@ -1,5 +1,7 @@
 ﻿// SPDX-License-Identifier: MIT
 
+using Customizing;
+using LobotomyCorporationMods.ProjectNugway.Constants;
 using LobotomyCorporationMods.ProjectNugway.Interfaces;
 using LobotomyCorporationMods.ProjectNugway.UiComponents;
 using UnityEngine;
@@ -8,6 +10,13 @@ namespace LobotomyCorporationMods.ProjectNugway.Implementations
 {
     internal sealed class UiController : IUiController
     {
+        private readonly IPresetLoader _presetLoader;
+
+        internal UiController(IPresetLoader presetLoader)
+        {
+            _presetLoader = presetLoader;
+        }
+
         public LoadPresetButton LoadPresetButton { get; private set; }
         public LoadPresetPanel LoadPresetPanel { get; private set; }
         public SavePresetButton SavePresetButton { get; private set; }
@@ -100,6 +109,14 @@ namespace LobotomyCorporationMods.ProjectNugway.Implementations
 
                 LoadPresetPanel.gameObject.SetActive(false);
             }
+        }
+
+        public void UpdateSavePresetButtonText(string agentName,
+            Appearance appearance)
+        {
+            _presetLoader.InitializeDefaultCustomPresetFile();
+            SavePresetButton.gameObject.SetActive(true);
+            SavePresetButton.SetTextColor(Harmony_Patch.Instance.PresetLoader.IsExactPreset(agentName, appearance) ? Color.grey : PresetConstants.PresetTextColor);
         }
     }
 }
