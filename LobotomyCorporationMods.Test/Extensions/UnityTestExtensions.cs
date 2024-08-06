@@ -62,6 +62,7 @@ namespace LobotomyCorporationMods.Test.Extensions
                     "UIComponents", uiComponents
                 },
             };
+
             agentInfoWindow = GetPopulatedUninitializedObject(agentInfoWindow, fields, newValues);
             newValues.Add("currentWindow", agentInfoWindow);
 
@@ -226,6 +227,7 @@ namespace LobotomyCorporationMods.Test.Extensions
                     "_selectedWork", selectedWork
                 },
             };
+
             commandWindow = GetPopulatedUninitializedObject(commandWindow, fields, newValues);
             newValues.Add("_currentWindow", commandWindow);
 
@@ -257,6 +259,7 @@ namespace LobotomyCorporationMods.Test.Extensions
                     "creatureDic", creatureDic
                 },
             };
+
             creatureLayer = GetPopulatedUninitializedObject(creatureLayer, fields, newValues);
             newValues.Add("<currentLayer>k__BackingField", creatureLayer);
 
@@ -292,6 +295,7 @@ namespace LobotomyCorporationMods.Test.Extensions
                     "_qliphothCounter", qliphothCounter
                 },
             };
+
             var newCreatureModel = GetPopulatedUninitializedObject(creatureModel, fields, newValues);
 
             // Needed to avoid a circular reference from currentSkill
@@ -375,6 +379,7 @@ namespace LobotomyCorporationMods.Test.Extensions
                     "_currentWindowType", currentWindowType
                 },
             };
+
             customizingWindow = GetPopulatedUninitializedObject(customizingWindow, fields, newValues);
             newValues.Add("_currentWindow", customizingWindow);
 
@@ -514,6 +519,7 @@ namespace LobotomyCorporationMods.Test.Extensions
                     "_list", list
                 },
             };
+
             localizeTextDataModel = GetPopulatedUninitializedObject(localizeTextDataModel, fields, newValues);
             newValues.Add("_instance", localizeTextDataModel);
 
@@ -651,6 +657,7 @@ namespace LobotomyCorporationMods.Test.Extensions
                 skillTypeInfo = skillTypeInfo,
                 targetCreature = targetCreature,
             };
+
             targetCreature.currentSkill = useSkill;
 
             return useSkill;
@@ -694,6 +701,7 @@ namespace LobotomyCorporationMods.Test.Extensions
                     "basicData", basicData
                 },
             };
+
             workerSpriteManager = GetPopulatedUninitializedObject(workerSpriteManager, fields, newValues);
             newValues.Add("_instance", workerSpriteManager);
 
@@ -765,6 +773,7 @@ namespace LobotomyCorporationMods.Test.Extensions
         {
             var hasValidHandle = typeField.FieldHandle.Value != IntPtr.Zero;
             var isNotInitOnly = !typeField.IsInitOnly;
+
             return hasValidHandle && isNotInitOnly;
         }
 

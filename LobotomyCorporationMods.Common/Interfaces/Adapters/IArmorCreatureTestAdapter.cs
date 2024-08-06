@@ -7,6 +7,6 @@ namespace LobotomyCorporationMods.Common.Interfaces.Adapters
     public interface IArmorCreatureTestAdapter
     {
         IList SpecialAgentList { get; }
-        void OnViewInit();
+        void ReloadSpecialAgentList();
     }
 }

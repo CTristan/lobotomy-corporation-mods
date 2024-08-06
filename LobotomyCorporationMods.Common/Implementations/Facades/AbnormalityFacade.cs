@@ -29,15 +29,20 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             return animationState == WeakenedState;
         }
 
-        public static void ResetCrumblingArmorAgentList([NotNull] this ArmorCreature armorCreature,
+        /// <summary>
+        ///     Forces Crumbling Armor's internal list of agents to be re-initialized. This fixes issues where Crumbling Armor's internal list of agents wasn't updated properly and
+        ///     either has agents it shouldn't or is missing agents it should have.
+        /// </summary>
+        /// <param name="armorCreature">The instance of Crumbling Armor.</param>
+        /// <param name="testAdapter">Optional test adapter to use. If not provided, a new instance will be created.</param>
+        public static void ReloadCrumblingArmorAgentList([NotNull] this ArmorCreature armorCreature,
             IArmorCreatureTestAdapter testAdapter = null)
         {
             Guard.Against.Null(armorCreature, nameof(armorCreature));
 
             testAdapter = testAdapter.EnsureNotNullWithMethod(() => new ArmorCreatureTestAdapter(armorCreature));
 
-            testAdapter.SpecialAgentList.Clear();
-            testAdapter.OnViewInit();
+            testAdapter.ReloadSpecialAgentList();
         }
     }
 }

@@ -57,6 +57,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             {
                 creatureEquipmentMakeInfo,
             });
+
             var creature = UnityTestExtensions.CreateCreatureModel(metaInfo: creatureTypeInfo, qliphothCounter: qliphothCounter);
             creature.instanceId = (long)creatureId;
             creature.metadataId = (long)creatureId;
@@ -85,6 +86,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             _ = mockFileManager.Setup(fm => fm.GetFile(It.IsAny<string>())).Returns((string fileName) => fileName.InCurrentDirectory());
             _ = mockFileManager.Setup(fm => fm.ReadAllText(It.IsAny<string>(), It.IsAny<bool>())).Returns((string fileName,
                 bool _) => File.ReadAllText(fileName.InCurrentDirectory()));
+
             _ = mockFileManager.Setup(fm => fm.WriteAllText(It.IsAny<string>(), It.IsAny<string>())).Callback<string, string>((path,
                 contents) =>
             {
@@ -155,6 +157,7 @@ namespace LobotomyCorporationMods.Test.Extensions
                     id = (long)rwbpType,
                 },
             };
+
             _ = UnityTestExtensions.CreateSkillTypeList(skillTypeInfos);
         }
 
@@ -187,6 +190,7 @@ namespace LobotomyCorporationMods.Test.Extensions
                     regionName = "work_p",
                 },
             };
+
             creature.observeInfo.InitObserveRegion(observeRegions);
             creature.observeInfo.ObserveAll();
         }

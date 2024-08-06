@@ -47,7 +47,9 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
                 id = DefaultEquipmentId + 1,
                 state = true,
             };
+
             unitModel.Equipment.gifts.lockState.Add(1, giftLockState);
+
             return unitModel;
         }
 
@@ -64,6 +66,7 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
                     giftName, giftName
                 },
             };
+
             InitializeTextData(textData);
 
             var equipmentNameDictionary = new Dictionary<string, string>
@@ -72,6 +75,7 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
                     "name", giftName
                 },
             };
+
             var metaInfo = UnityTestExtensions.CreateEquipmentTypeInfo(localizeData: equipmentNameDictionary);
             metaInfo.id = giftId;
             metaInfo.attachPos = attachRegion.ToString();

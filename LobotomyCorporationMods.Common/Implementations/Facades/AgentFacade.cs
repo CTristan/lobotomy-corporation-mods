@@ -20,6 +20,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         {
             Guard.Against.Null(agent, nameof(agent));
             var effects = agent.GetUnitBufList();
+
             return effects.OfType<FairyBuf>().Any();
         }
 
@@ -27,6 +28,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         {
             Guard.Against.Null(agent, nameof(agent));
             var effects = agent.GetUnitBufList();
+
             return effects.OfType<LittleWitchBuf>().Any();
         }
 
@@ -49,6 +51,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         {
             Guard.Against.Null(agent, nameof(agent));
             var effects = agent.GetUnitBufList();
+
             return effects.OfType<YggdrasilBlessBuf>().Any();
         }
 

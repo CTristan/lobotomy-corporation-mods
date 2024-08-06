@@ -27,6 +27,7 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Extensions
             if (!instance.AbnormalityHasGift())
             {
                 instance.HideImageObject(imageParameters, fileManager, testAdapterParameters);
+
                 return;
             }
 
