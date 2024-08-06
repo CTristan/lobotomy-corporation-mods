@@ -42,10 +42,12 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
                 {
                     FirstGiftData, DefaultGiftName, FirstAgentId, FirstAgentWorkCount,
                 };
+
                 var secondAgentFirstGift = new object[]
                 {
                     SecondGiftData, DefaultGiftName, SecondAgentId, SecondAgentWorkCount,
                 };
+
                 var firstAgentSecondGift = new object[]
                 {
                     ThirdGiftData, SecondGiftNameSet, FirstAgentId, ThirdAgentWorkCount,

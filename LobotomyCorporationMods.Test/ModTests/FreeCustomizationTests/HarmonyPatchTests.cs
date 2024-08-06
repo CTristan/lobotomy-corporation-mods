@@ -180,6 +180,7 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests
             {
                 _ = new Harmony_Patch();
             };
+
             action.Should().NotThrow();
         }
     }

@@ -156,6 +156,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
             {
                 new DirectoryInfo(currentDirectory),
             }, patchType);
+
             action.Should().NotThrow();
         }
 

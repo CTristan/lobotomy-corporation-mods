@@ -8,9 +8,10 @@ The LobotomyCorporationMods.Common project has a custom versioning system
 explained below, but each mod adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) unless spec.
 
-## Common-project version numbers
+## Common-library version numbers
 
-The LobotomyCorporationMods.Common project uses the following custom versioning:
+The LobotomyCorporationMods.Common library project uses the following custom
+versioning:
 
 Major.minor.patch.0
 
@@ -21,6 +22,13 @@ Major.minor.patch.0
 
 *This does not apply to the individual mod versions, as they adhere
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).*
+
+## [6.0.2] - 2024-08-06
+
+### Fixed
+
+* Unofficial Bug Fixes [3.0.1]
+  * Fixed a potential game slowdown when finishing work with Crumbling Armor.
 
 ## [6.0.1] - 2024-07-15
 
@@ -46,11 +54,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).*
 * New mod: Notify When Agent Receives Gift [1.0.0]
   * Whenever an agent receives a gift, a message will be displayed in the log.
 * Unofficial Bug Fixes [3.0.0]
-  * Added fix for Crumbling Armor bug where replacing ANY gift would cause
-    the agent to no longer die from doing Attachment work.
+  * Added fix for Crumbling Armor bug where replacing ANY gift would cause the
+    agent to no longer die from doing Attachment work.
 * Warn When Agent Will Die From Working [15.0.0]
-  * Added check for Snow Queen when the agent is wearing the Feather of
-    Honor armor.
+  * Added check for Snow Queen when the agent is wearing the Feather of Honor
+    armor.
 
 ## [4.1.0] - 2024-06-23
 
@@ -66,11 +74,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).*
   * Nothing There
     * No longer checks for Justice below Level 4 (does not kill the agent).
     * Only checks for Fortitude below Level 4 if Nothing There is already
-      disguised (before it would warn for
-      Fortitude below Level 4 even if Nothing There was not disguised).
+      disguised (before it would warn for Fortitude below Level 4 even if
+      Nothing There was not disguised).
     * No longer always warns when Nothing There is disguised (Nothing There only
-      kills while disguised if Fortitude
-      is below Level 4).
+      kills while disguised if Fortitude is below Level 4).
 
 ## [4.0.1] - 2023-02-10
 

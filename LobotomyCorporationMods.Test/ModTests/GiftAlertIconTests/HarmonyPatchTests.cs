@@ -51,6 +51,7 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests
             {
                 _ = new Harmony_Patch();
             };
+
             action.Should().NotThrow();
         }
     }

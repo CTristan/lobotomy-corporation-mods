@@ -159,6 +159,7 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
         private static OptionalTestAdapterParameters SetupTestParameters(string imageName)
         {
             var mockImageTestAdapter = GetMockImageTestAdapter();
+
             return CreateTestAdapterParameters(imageName, mockImageTestAdapter);
         }
 
@@ -220,6 +221,7 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
             var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1, newGiftPosition);
             var mockImageTestAdapter = GetMockImageTestAdapter();
             SetUpSlot(sut, agent, imageName, mockImageTestAdapter);
+
             return mockImageTestAdapter.Object.Color;
         }
 
