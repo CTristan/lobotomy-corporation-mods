@@ -7,6 +7,7 @@ using FluentAssertions;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches;
 using LobotomyCorporationMods.Test.Extensions;
+using LobotomyCorporationMods.Test.Parameters;
 using Moq;
 using Xunit;
 
@@ -73,7 +74,12 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
             [NotNull] string giftName)
         {
             var gift = GetGift(giftName);
-            var unitModel = UnityTestExtensions.CreateAgentModel(name: agentName);
+            var agentModelCreationParameters = new AgentModelCreationParameters
+            {
+                Name = agentName,
+            };
+
+            var unitModel = UnityTestExtensions.CreateAgentModel(agentModelCreationParameters);
             unitModel.Equipment.gifts.addedGifts.Add(gift);
 
             ExecutePatchAndVerifyNotification(unitModel, gift, Times.Never());
@@ -98,7 +104,12 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
             string expectedMessage)
         {
             var gift = GetGift(giftName);
-            var unitModel = UnityTestExtensions.CreateAgentModel(name: agentName);
+            var agentModelCreationParameters = new AgentModelCreationParameters
+            {
+                Name = agentName,
+            };
+
+            var unitModel = UnityTestExtensions.CreateAgentModel(agentModelCreationParameters);
             var noticeMessages = new List<string>();
             NoticeTestAdapter.Setup(adapter => adapter.Send(It.IsAny<string>(), It.IsAny<object[]>())).Callback((string _,
                 object[] objectArray) => noticeMessages.Add(objectArray[0].ToString()));

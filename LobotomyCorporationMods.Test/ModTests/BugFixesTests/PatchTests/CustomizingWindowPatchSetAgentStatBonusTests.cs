@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using LobotomyCorporationMods.BugFixes.Patches;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.Test.Extensions;
+using LobotomyCorporationMods.Test.Parameters;
 using Moq;
 using Xunit;
 
@@ -49,7 +50,13 @@ namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests.PatchTests
                 statBuff,
             };
 
-            var agent = UnityTestExtensions.CreateAgentModel(primaryStat: primaryStat, statBufList: statBuffList);
+            var agentModelCreationParameters = new AgentModelCreationParameters
+            {
+                PrimaryStat = primaryStat,
+                StatBufList = statBuffList,
+            };
+
+            var agent = UnityTestExtensions.CreateAgentModel(agentModelCreationParameters);
             var data = UnityTestExtensions.CreateAgentData();
 
 

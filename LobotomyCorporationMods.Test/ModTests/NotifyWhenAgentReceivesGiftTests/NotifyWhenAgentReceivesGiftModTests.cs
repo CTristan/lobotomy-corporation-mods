@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
 using LobotomyCorporationMods.Test.Extensions;
+using LobotomyCorporationMods.Test.Parameters;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking;
 using Moq;
 
@@ -39,7 +40,12 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
             EGOgiftAttachRegion attachRegion)
         {
             GetGift(DefaultGiftName);
-            var unitModel = UnityTestExtensions.CreateAgentModel(name: agentName);
+            var agentModelCreationParameters = new AgentModelCreationParameters
+            {
+                Name = agentName,
+            };
+
+            var unitModel = UnityTestExtensions.CreateAgentModel(agentModelCreationParameters);
             var oldGift = GetGift(DefaultGiftName, DefaultEquipmentId + 1, DefaultGiftId + 1, attachRegion);
             unitModel.Equipment.gifts.addedGifts.Add(oldGift);
             var giftLockState = new UnitEGOgiftSpace.GiftLockState

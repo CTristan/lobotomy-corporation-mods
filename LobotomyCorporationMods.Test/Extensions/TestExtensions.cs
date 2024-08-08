@@ -13,6 +13,7 @@ using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Enums;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces;
+using LobotomyCorporationMods.Test.Parameters;
 using Moq;
 using UnityEngine;
 using ILogger = LobotomyCorporationMods.Common.Interfaces.ILogger;
@@ -32,7 +33,12 @@ namespace LobotomyCorporationMods.Test.Extensions
         {
             unitBuffs = unitBuffs.EnsureNotNullWithMethod(() => new List<UnitBuf>());
 
-            var agent = UnityTestExtensions.CreateAgentModel(bufList: unitBuffs.ToList());
+            var agentModelCreationParameters = new AgentModelCreationParameters
+            {
+                BufList = unitBuffs.ToList(),
+            };
+
+            var agent = UnityTestExtensions.CreateAgentModel(agentModelCreationParameters);
             var gift = UnityTestExtensions.CreateEgoGiftModel();
             gift.metaInfo.id = (int)giftId;
             gift.metaInfo.attachPos = attachPosition.ToString();

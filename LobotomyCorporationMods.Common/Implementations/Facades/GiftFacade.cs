@@ -16,7 +16,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
 
         /// <summary>Gets the attachment type of the gift for the abnormality in the management slot if one exists.</summary>
         /// <param name="managementSlot">The management slot to check.</param>
-        /// <returns>The attachment type of the abnormality gift, or null if the gift doesn’t exist.</returns>
+        /// <returns>The attachment type of the abnormality gift, or null if the gift doesn't exist.</returns>
         public static EGOgiftAttachType GetAbnormalityGiftAttachmentType([NotNull] this ManagementSlot managementSlot)
         {
             return managementSlot.GetAbnormalityGiftInfo()?.attachType ?? 0;

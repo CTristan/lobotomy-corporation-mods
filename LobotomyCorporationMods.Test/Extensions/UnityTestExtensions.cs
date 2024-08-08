@@ -9,6 +9,7 @@ using CommandWindow;
 using Customizing;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
+using LobotomyCorporationMods.Test.Parameters;
 using UnityEngine;
 using UnityEngine.UI;
 using WorkerSprite;
@@ -70,50 +71,43 @@ namespace LobotomyCorporationMods.Test.Extensions
         }
 
         [NotNull]
-        internal static AgentModel CreateAgentModel(AgentName agentName = null,
-            List<UnitBuf> bufList = null,
-            UnitEquipSpace equipment = null,
-            long instanceId = 1L,
-            string name = "",
-            WorkerPrimaryStat primaryStat = null,
-            WorkerSprite.WorkerSprite spriteData = null,
-            List<UnitStatBuf> statBufList = null)
+        internal static AgentModel CreateAgentModel([CanBeNull] AgentModelCreationParameters parameters = null)
         {
-            agentName = agentName.EnsureNotNullWithMethod(() => CreateAgentName());
-            bufList = bufList.EnsureNotNullWithMethod(() => new List<UnitBuf>());
-            equipment = equipment.EnsureNotNullWithMethod(CreateUnitEquipSpace);
-            primaryStat = primaryStat.EnsureNotNullWithMethod(CreateWorkerPrimaryStat);
-            spriteData = spriteData.EnsureNotNullWithMethod(CreateWorkerSprite);
-            statBufList = statBufList.EnsureNotNullWithMethod(() => new List<UnitStatBuf>());
+            parameters = parameters.EnsureNotNullWithMethod(() => new AgentModelCreationParameters());
+            parameters.AgentName = parameters.AgentName.EnsureNotNullWithMethod(() => CreateAgentName());
+            parameters.BufList = parameters.BufList.EnsureNotNullWithMethod(() => new List<UnitBuf>());
+            parameters.Equipment = parameters.Equipment.EnsureNotNullWithMethod(CreateUnitEquipSpace);
+            parameters.PrimaryStat = parameters.PrimaryStat.EnsureNotNullWithMethod(CreateWorkerPrimaryStat);
+            parameters.SpriteData = parameters.SpriteData.EnsureNotNullWithMethod(CreateWorkerSprite);
+            parameters.StatBufList = parameters.StatBufList.EnsureNotNullWithMethod(() => new List<UnitStatBuf>());
 
             CreateUninitializedObject<AgentModel>(out var agentModel);
-
             var fields = GetUninitializedFieldsIncludingBaseType(agentModel.GetType());
             var newValues = new Dictionary<string, object>
             {
                 {
-                    "_agentName", agentName
+                    "_agentName", parameters.AgentName
                 },
                 {
-                    "_bufList", bufList
+                    "_bufList", parameters.BufList
                 },
                 {
-                    "_equipment", equipment
+                    "_equipment", parameters.Equipment
                 },
                 {
-                    "instanceId", instanceId
+                    "instanceId", parameters.InstanceId
                 },
                 {
-                    "name", name
+                    "name", parameters.Name
                 },
                 {
-                    "primaryStat", primaryStat
+                    "primaryStat", parameters.PrimaryStat
                 },
                 {
-                    "spriteData", spriteData
+                    "spriteData", parameters.SpriteData
                 },
                 {
-                    "_statBufList", statBufList
+                    "_statBufList", parameters.StatBufList
                 },
             };
 
