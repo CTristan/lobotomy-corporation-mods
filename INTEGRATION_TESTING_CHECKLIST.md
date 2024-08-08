@@ -1,8 +1,7 @@
 # Integration Testing Checklist
 
 A checklist for testing all the mods together in-game to verify that there are
-no incompatibilities and every mod works
-as expected.
+no incompatibilities and every mod works as expected.
 
 Note: this will contain spoilers.
 
@@ -11,25 +10,24 @@ Note: this will contain spoilers.
 - [ ] Creates BadLuckProtectionForGifts.dat file.
 - [ ] Completing the day records the number of times worked for each abnormality
   and agent.
-- [ ] Restarting the day doesn't add to number of times worked in dat file.
-- [ ] Working, restarting, then working and completing a day doesn't include
-  work counts from before the restart.
+- [ ] Restarting the day doesn't add to the number of times worked in dat file.
+- [ ] Working, restarting, starting, then completing a day doesn't include work
+  counts from before the restart.
 - [ ] Creating a new game empties the BadLuckProtectionForGifts.dat file.
 
 ## Unofficial Bugfixes
 
 - [ ] Wasted Stat Upgrades
   - [ ] Have an agent with a base Fortitude of 65 that has Crumbling Armor's
-    gift, causing the Fortitude level to be
-    level 3. Upgrade the agent's Fortitude and verify that the Fortitude level
-    is now level 4.
+    gift, causing the Fortitude level to be level 3. Upgrade the agent's
+    Fortitude and verify that the Fortitude level is now level 4.
 - [ ] Crumbling Armor Bugfixes
   - [ ] Start a day with an agent that has Crumbling Armor's gift, replace
-    Crumbling Armor's gift, then have the agent
-    do attachment work and make sure the agent doesn't die.
-  - [ ] Have an agent with multiple gifts get Crumbling Armor's gift,
-    replace one of the other gifts, then have the agent do attachment work
-    and make sure the agent dies.
+    Crumbling Armor's gift, then have the agent do attachment work and make sure
+    the agent doesn't die.
+  - [ ] Have an agent with multiple gifts get Crumbling Armor's gift, replace
+    one of the other gifts, then have the agent do attachment work and make sure
+    the agent dies.
 
 ## Free Customization
 
@@ -39,14 +37,13 @@ Note: this will contain spoilers.
   LOB.
 - [ ] Rename an agent to make sure changes stay.
 - [ ] Re-customize an existing agent (including a name change), load the day,
-  then restart the day and verify changes
-  stay.
+  then restart the day, and verify changes stay.
 
 ## Gift Alert Icon
 
 - [ ] A green gift icon appears if the slot is empty.
-- [ ] A gray gift icon appears if the agent has a gift in that slot but not
-  that specific gift.
+- [ ] A gray gift icon appears if the agent has a gift in that slot but not that
+  specific gift.
 - [ ] No gift icon appears if the agent already has that gift.
 
 ## Notify When Agent Receives Gift
@@ -54,7 +51,7 @@ Note: this will contain spoilers.
 - [ ] Displays a message for each condition:
   - [ ] Have an agent receive a gift in an empty slot.
   - [ ] Have an agent replace a gift in an existing slot.
-- [ ] Does NOT display a message for each condition:
+- [ ] Doesn't display a message for each condition:
   - [ ] An agent would receive a gift when they already have that gift.
   - [ ] An agent would receive a gift when that slot is locked with another
     gift.
@@ -85,19 +82,19 @@ Note: this will contain spoilers.
   - [ ] DEAD: Agent with effect works on another abnormality.
   - [ ] NOT dead: Agent with effect works on Laetitia.
 - [ ] Happy Teddy Bear
-  - [ ] DEAD: Same agent works on Happy Teddy Bear twice in a row.
+  - [ ] DEAD: The same agent works on Happy Teddy Bear twice in a row.
   - [ ] NOT dead: Different agent works on Happy Teddy Bear.
 - [ ] Nothing There
-  - [ ] DEAD: Agent has Fortitude below four while Nothing There is disguised.
-  - [ ] NOT dead: Agent has Fortitude below four while Nothing There is not
+  - [ ] DEAD: Agent has Fortitude below four while "Nothing There" is disguised.
+  - [ ] NOT dead: Agent has Fortitude below four while "Nothing There" is not
     disguised.
   - [ ] NOT dead: Agent has Fortitude above three while Nothing There is
     disguised.
 - [ ] Parasite Tree
-  - [ ] DEAD: Agent does not have effect and Parasite Tree has four flowers.
-  - [ ] NOT dead: Agent has effect and Parasite Tree has four flowers.
-  - [ ] NOT dead: Agent does not have effect and Parasite Tree has flowers below
-    four.
+  - [ ] DEAD: Agent doesn't have the effect and Parasite Tree has four flowers.
+  - [ ] NOT dead: Agent has the effect and Parasite Tree has four flowers.
+  - [ ] NOT dead: Agent doesn't have the effect, and Parasite Tree has flowers
+    below four.
 - [ ] Red Shoes
   - [ ] DEAD: Agent has Temperance below three.
   - [ ] NOT dead: Agent has Temperance above two.
@@ -105,11 +102,11 @@ Note: this will contain spoilers.
   - [ ] DEAD: Qliphoth counter is zero.
   - [ ] DEAD: Agent has Fortitude above three and Temperance above two.
   - [ ] DEAD: Agent has Fortitude below four and Temperance below three.
-  - [ ] DEAD: Agent has Fortitude from 57 to 64 and does not have gift.
+  - [ ] DEAD: Agent has Fortitude from 57 to 64 and doesn't have the gift.
   - [ ] NOT dead: Agent has Fortitude below four and Temperance above two.
 - [ ] Snow Queen
   - [ ] DEAD: Agent has the Feather of Honor armor equipped.
-  - [ ] NOT dead: Agent does not have the Feather of Honor equipped.
+  - [ ] NOT dead: Agent doesn't have the Feather of Honor equipped.
 - [ ] Spider Bud
   - [ ] DEAD: Agent has one Prudence and performs work other than Insight.
   - [ ] DEAD: Agent has Prudence above one and performs Insight work.
