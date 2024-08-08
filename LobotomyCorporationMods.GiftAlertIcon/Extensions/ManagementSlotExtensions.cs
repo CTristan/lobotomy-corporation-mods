@@ -32,7 +32,8 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Extensions
             }
 
             var giftSlot = instance.GetAbnormalityGiftPosition();
-            var giftsInSameSlot = agent.HasGiftInPosition(giftSlot);
+            var giftAttachType = instance.GetAbnormalityGiftAttachmentType();
+            var giftsInSameSlot = agent.HasGiftInPosition(giftSlot, giftAttachType);
             if (giftsInSameSlot)
             {
                 ProcessGiftInSameSlot(instance, agent, imageParameters, fileManager, testAdapterParameters);

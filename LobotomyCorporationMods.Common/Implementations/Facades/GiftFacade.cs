@@ -14,6 +14,14 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             return managementSlot.GetAbnormalityGift().IsNotNull();
         }
 
+        /// <summary>Gets the attachment type of the gift for the abnormality in the management slot if one exists.</summary>
+        /// <param name="managementSlot">The management slot to check.</param>
+        /// <returns>The attachment type of the abnormality gift, or null if the gift doesn’t exist.</returns>
+        public static EGOgiftAttachType GetAbnormalityGiftAttachmentType([NotNull] this ManagementSlot managementSlot)
+        {
+            return managementSlot.GetAbnormalityGiftInfo()?.attachType ?? 0;
+        }
+
         public static int? GetAbnormalityGiftId([NotNull] this ManagementSlot managementSlot)
         {
             return managementSlot.GetAbnormalityGiftInfo()?.id;
@@ -48,14 +56,15 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         }
 
         public static bool HasGiftInPosition([NotNull] this UnitModel unitModel,
-            string positionName)
+            string positionName,
+            EGOgiftAttachType attachType)
         {
             Guard.Against.Null(unitModel, nameof(unitModel));
 
-            return unitModel.GetEquippedGifts().Exists(model => model.metaInfo.attachPos.Equals(positionName, StringComparison.OrdinalIgnoreCase));
+            return unitModel.GetEquippedGifts().Exists(model => model.metaInfo.attachPos.Equals(positionName, StringComparison.OrdinalIgnoreCase) && model.metaInfo.attachType.Equals(attachType));
         }
 
-        /// <summary>Some gifts are in special slots that don't show up in an agent's gift window and are used for abnormality effect, for example Snow Queen's icicle</summary>
+        /// <summary>Some gifts are in special slots that don't show up in an agent's gift window and are used for abnormality effect, for example, Snow Queen's icicle</summary>
         /// <param name="equipmentModel">The equipment to check.</param>
         /// <returns>True if the equipment is in a valid slot, otherwise false.</returns>
         public static bool IsInValidSlot([NotNull] this EquipmentModel equipmentModel)
