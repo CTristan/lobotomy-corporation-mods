@@ -6,13 +6,13 @@ namespace LobotomyCorporationMods.Test.Parameters
 {
     internal sealed class AgentModelCreationParameters
     {
-        public AgentName AgentName { get; set; }
-        public List<UnitBuf> BufList { get; set; }
-        public UnitEquipSpace Equipment { get; set; }
-        public long InstanceId { get; set; } = 1L;
-        public string Name { get; set; } = "";
-        public WorkerPrimaryStat PrimaryStat { get; set; }
-        public WorkerSprite.WorkerSprite SpriteData { get; set; }
-        public List<UnitStatBuf> StatBufList { get; set; }
+        internal AgentName AgentName { get; set; }
+        internal List<UnitBuf> BufList { get; set; }
+        internal UnitEquipSpace Equipment { get; set; }
+        internal long InstanceId { get; set; } = 1L;
+        internal string Name { get; set; } = "";
+        internal WorkerPrimaryStat PrimaryStat { get; set; }
+        internal WorkerSprite.WorkerSprite SpriteData { get; set; }
+        internal List<UnitStatBuf> StatBufList { get; set; }
     }
 }
