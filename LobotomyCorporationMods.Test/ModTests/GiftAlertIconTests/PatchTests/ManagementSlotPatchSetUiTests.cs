@@ -152,8 +152,8 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
         }
 
         [Theory]
-        [InlineData((EGOgiftAttachType)0, (EGOgiftAttachType)2)]
-        [InlineData((EGOgiftAttachType)1, (EGOgiftAttachType)0)]
+        [InlineData(EGOgiftAttachType.ADD, EGOgiftAttachType.SPECIAL_ADD)]
+        [InlineData(EGOgiftAttachType.REPLACE, EGOgiftAttachType.ADD)]
         public void Shows_as_new_gift_when_gift_is_in_existing_slot_but_has_different_attachment_type(EGOgiftAttachType firstGiftAttachmentType,
             EGOgiftAttachType newGiftAttachmentType)
         {
