@@ -23,7 +23,7 @@ Major.minor.patch.0
 *This does not apply to the individual mod versions, as they adhere
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).*
 
-## [6.0.2] - 2024-08-06
+## [6.0.2] - 2024-08-07
 
 ### Fixed
 

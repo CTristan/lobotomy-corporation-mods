@@ -29,6 +29,12 @@ to notice them in the portrait or gift list for an agent.
 
 ## Changelog
 
+### [1.0.2] - 2024-08-07
+
+#### Fixed
+
+- Fixed "Mouth 1" and "Mouth 2" gifts being considered as the same slot.
+
 ### [1.0.1] - 2024-07-15
 
 #### Added
