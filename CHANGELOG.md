@@ -27,6 +27,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).*
 
 ### Fixed
 
+- Gift Alert Icon [1.0.2]
+  - 
 - Unofficial Bug Fixes [3.0.1]
   - Fixed a potential game slowdown when finishing work with Crumbling Armor.
 
