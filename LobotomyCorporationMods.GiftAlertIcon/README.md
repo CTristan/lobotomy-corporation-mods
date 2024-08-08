@@ -8,14 +8,14 @@ Shows an icon when a new or replacement gift is available for an agent.
 
 ## What does this mod do?
 
-* When assigning work for agents, it will show an icon if the agent doesn't
-  have that abnormality's gift.
-  * Shows green if the agent doesn't have a gift in that slot.
-  * Shows gray if the agent has a different gift in that slot already.
+- When assigning work for agents, it will show an icon if the agent doesn't have
+  that abnormality's gift.
+  - Shows green if the agent doesn't have a gift in that slot.
+  - Shows gray if the agent has a different gift in that slot already.
 
 ## Why create this mod?
 
-Later on in the game I’ll get abnormalities with gifts that I want on all of my
+Later on in the game I'll get abnormalities with gifts that I want on all of my
 agents. While I can watch the portrait to see when they receive it, some gifts
 are hard to distinguish visually along with the annoyance of having to visually
 check the agent after doing something else. Also, gifts in general feel special
@@ -25,18 +25,24 @@ to notice them in the portrait or gift list for an agent.
 
 ## Translations
 
-* Chinese translation provided by 21474836(Lin).
+- Chinese translation provided by 21474836(Lin).
 
 ## Changelog
+
+### [1.0.2] - 2024-08-07
+
+#### Fixed
+
+- Fixed "Mouth 1" and "Mouth 2" gifts being considered as the same slot.
 
 ### [1.0.1] - 2024-07-15
 
 #### Added
 
-* Added Chinese localization thanks to 21474836(Lin).
+- Added Chinese localization thanks to 21474836(Lin).
 
 ### [1.0.0] - 2024-07-14
 
 #### Added
 
-* Initial release.
+- Initial release.

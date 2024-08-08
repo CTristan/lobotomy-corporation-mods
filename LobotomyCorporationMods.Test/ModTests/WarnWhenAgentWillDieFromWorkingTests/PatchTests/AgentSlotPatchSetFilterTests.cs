@@ -106,6 +106,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
             {
                 UnityTestExtensions.CreateFairyBuf(),
             };
+
             var agentSlot = InitializeAgentSlot(CreatureIds.OneSin, buffList);
 
             // Act
@@ -334,6 +335,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
             {
                 UnityTestExtensions.CreateFairyBuf(),
             };
+
             var agentSlot = InitializeAgentSlot(CreatureIds.OneSin, buffList);
 
             VerifyAgentWillDie(agentSlot);
@@ -346,6 +348,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
             {
                 UnityTestExtensions.CreateFairyBuf(),
             };
+
             var agentSlot = InitializeAgentSlot(CreatureIds.FairyFestival, buffList);
 
             VerifyAgentWillNotDie(agentSlot);
@@ -362,6 +365,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
             {
                 UnityTestExtensions.CreateLittleWitchBuf(),
             };
+
             var agentSlot = InitializeAgentSlot(CreatureIds.OneSin, buffList);
 
             VerifyAgentWillDie(agentSlot);
@@ -374,6 +378,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
             {
                 UnityTestExtensions.CreateLittleWitchBuf(),
             };
+
             var agentSlot = InitializeAgentSlot(CreatureIds.Laetitia, buffList);
 
             VerifyAgentWillNotDie(agentSlot);
@@ -484,6 +489,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
             {
                 parasiteTreeBlessing,
             };
+
             var agentSlot = InitializeAgentSlot(CreatureIds.ParasiteTree, buffList);
             SetupParasiteTree(NumberOfFlowers);
 

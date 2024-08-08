@@ -34,7 +34,7 @@ namespace LobotomyCorporationMods.BugFixes.Patches
                 return;
             }
 
-            instance.ResetCrumblingArmorAgentList(armorCreatureTestAdapter);
+            instance.ReloadCrumblingArmorAgentList(armorCreatureTestAdapter);
         }
 
         /// <summary>Runs after the original OnNotice method to force Crumbling Armor to re-initialize it's internal list of agents.</summary>

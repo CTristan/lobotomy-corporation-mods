@@ -100,6 +100,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         {
             var gift = new Gift(giftName);
             _gifts.Add(gift);
+
             return gift;
         }
 

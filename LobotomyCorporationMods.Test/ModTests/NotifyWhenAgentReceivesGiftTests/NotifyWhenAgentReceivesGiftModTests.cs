@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
 using LobotomyCorporationMods.Test.Extensions;
+using LobotomyCorporationMods.Test.Parameters;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking;
 using Moq;
 
@@ -39,7 +40,12 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
             EGOgiftAttachRegion attachRegion)
         {
             GetGift(DefaultGiftName);
-            var unitModel = UnityTestExtensions.CreateAgentModel(name: agentName);
+            var agentModelCreationParameters = new AgentModelCreationParameters
+            {
+                Name = agentName,
+            };
+
+            var unitModel = UnityTestExtensions.CreateAgentModel(agentModelCreationParameters);
             var oldGift = GetGift(DefaultGiftName, DefaultEquipmentId + 1, DefaultGiftId + 1, attachRegion);
             unitModel.Equipment.gifts.addedGifts.Add(oldGift);
             var giftLockState = new UnitEGOgiftSpace.GiftLockState
@@ -47,7 +53,9 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
                 id = DefaultEquipmentId + 1,
                 state = true,
             };
+
             unitModel.Equipment.gifts.lockState.Add(1, giftLockState);
+
             return unitModel;
         }
 
@@ -64,6 +72,7 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
                     giftName, giftName
                 },
             };
+
             InitializeTextData(textData);
 
             var equipmentNameDictionary = new Dictionary<string, string>
@@ -72,6 +81,7 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
                     "name", giftName
                 },
             };
+
             var metaInfo = UnityTestExtensions.CreateEquipmentTypeInfo(localizeData: equipmentNameDictionary);
             metaInfo.id = giftId;
             metaInfo.attachPos = attachRegion.ToString();

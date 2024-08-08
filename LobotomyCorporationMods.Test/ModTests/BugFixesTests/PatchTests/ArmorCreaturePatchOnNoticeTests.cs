@@ -50,12 +50,12 @@ namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests.PatchTests
 
         private void VerifyListReset()
         {
-            _mockArmorCreatureTestAdapter.Verify(x => x.OnViewInit(), Times.Once);
+            _mockArmorCreatureTestAdapter.Verify(x => x.ReloadSpecialAgentList(), Times.Once);
         }
 
         private void VerifyListNotReset()
         {
-            _mockArmorCreatureTestAdapter.Verify(x => x.OnViewInit(), Times.Never);
+            _mockArmorCreatureTestAdapter.Verify(x => x.ReloadSpecialAgentList(), Times.Never);
         }
 
         #endregion

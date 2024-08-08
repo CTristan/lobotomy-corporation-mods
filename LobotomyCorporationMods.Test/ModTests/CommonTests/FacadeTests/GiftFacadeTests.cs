@@ -36,5 +36,19 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests.FacadeTests
             // Assert
             result.Should().BeNull();
         }
+
+        [Fact]
+        public void Abnormality_with_no_gift_returns_default_value_for_attachment_type()
+        {
+            // Arrange
+            var managementSlot = UnityTestExtensions.CreateManagementSlot();
+            _ = TestExtensions.InitializeCommandWindowWithAbnormality();
+
+            // Act
+            var result = managementSlot.GetAbnormalityGiftAttachmentType();
+
+            // Assert
+            result.Should().Be(0);
+        }
     }
 }

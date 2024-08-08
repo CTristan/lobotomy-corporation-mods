@@ -13,6 +13,7 @@ using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Enums;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces;
+using LobotomyCorporationMods.Test.Parameters;
 using Moq;
 using UnityEngine;
 using ILogger = LobotomyCorporationMods.Common.Interfaces.ILogger;
@@ -27,14 +28,21 @@ namespace LobotomyCorporationMods.Test.Extensions
         [NotNull]
         internal static AgentModel GetAgentWithGift(EquipmentIds giftId = EquipmentIds.None,
             EGOgiftAttachRegion attachPosition = EGOgiftAttachRegion.HEAD,
+            EGOgiftAttachType attachType = 0,
             IEnumerable<UnitBuf> unitBuffs = null)
         {
             unitBuffs = unitBuffs.EnsureNotNullWithMethod(() => new List<UnitBuf>());
 
-            var agent = UnityTestExtensions.CreateAgentModel(bufList: unitBuffs.ToList());
+            var agentModelCreationParameters = new AgentModelCreationParameters
+            {
+                BufList = unitBuffs.ToList(),
+            };
+
+            var agent = UnityTestExtensions.CreateAgentModel(agentModelCreationParameters);
             var gift = UnityTestExtensions.CreateEgoGiftModel();
             gift.metaInfo.id = (int)giftId;
             gift.metaInfo.attachPos = attachPosition.ToString();
+            gift.metaInfo.attachType = attachType;
             agent.Equipment.gifts.addedGifts.Add(gift);
 
             return agent;
@@ -44,6 +52,7 @@ namespace LobotomyCorporationMods.Test.Extensions
         internal static CreatureModel GetCreatureWithGift(CreatureIds creatureId = CreatureIds.OneSin,
             EquipmentIds giftId = EquipmentIds.None,
             EGOgiftAttachRegion attachPosition = EGOgiftAttachRegion.HEAD,
+            EGOgiftAttachType giftAttachType = 0,
             int qliphothCounter = 0,
             bool maxObservation = true)
         {
@@ -51,12 +60,14 @@ namespace LobotomyCorporationMods.Test.Extensions
             equipmentTypeInfo.id = (int)giftId;
             equipmentTypeInfo.type = EquipmentTypeInfo.EquipmentType.SPECIAL;
             equipmentTypeInfo.attachPos = attachPosition.ToString();
+            equipmentTypeInfo.attachType = giftAttachType;
 
             var creatureEquipmentMakeInfo = UnityTestExtensions.CreateCreatureEquipmentMakeInfo(equipmentTypeInfo);
             var creatureTypeInfo = UnityTestExtensions.CreateCreatureTypeInfo(new List<CreatureEquipmentMakeInfo>
             {
                 creatureEquipmentMakeInfo,
             });
+
             var creature = UnityTestExtensions.CreateCreatureModel(metaInfo: creatureTypeInfo, qliphothCounter: qliphothCounter);
             creature.instanceId = (long)creatureId;
             creature.metadataId = (long)creatureId;
@@ -85,6 +96,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             _ = mockFileManager.Setup(fm => fm.GetFile(It.IsAny<string>())).Returns((string fileName) => fileName.InCurrentDirectory());
             _ = mockFileManager.Setup(fm => fm.ReadAllText(It.IsAny<string>(), It.IsAny<bool>())).Returns((string fileName,
                 bool _) => File.ReadAllText(fileName.InCurrentDirectory()));
+
             _ = mockFileManager.Setup(fm => fm.WriteAllText(It.IsAny<string>(), It.IsAny<string>())).Callback<string, string>((path,
                 contents) =>
             {
@@ -155,6 +167,7 @@ namespace LobotomyCorporationMods.Test.Extensions
                     id = (long)rwbpType,
                 },
             };
+
             _ = UnityTestExtensions.CreateSkillTypeList(skillTypeInfos);
         }
 
@@ -187,6 +200,7 @@ namespace LobotomyCorporationMods.Test.Extensions
                     regionName = "work_p",
                 },
             };
+
             creature.observeInfo.InitObserveRegion(observeRegions);
             creature.observeInfo.ObserveAll();
         }

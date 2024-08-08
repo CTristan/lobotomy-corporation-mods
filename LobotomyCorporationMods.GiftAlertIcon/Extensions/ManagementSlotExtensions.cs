@@ -27,11 +27,13 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Extensions
             if (!instance.AbnormalityHasGift())
             {
                 instance.HideImageObject(imageParameters, fileManager, testAdapterParameters);
+
                 return;
             }
 
             var giftSlot = instance.GetAbnormalityGiftPosition();
-            var giftsInSameSlot = agent.HasGiftInPosition(giftSlot);
+            var giftAttachType = instance.GetAbnormalityGiftAttachmentType();
+            var giftsInSameSlot = agent.HasGiftInPosition(giftSlot, giftAttachType);
             if (giftsInSameSlot)
             {
                 ProcessGiftInSameSlot(instance, agent, imageParameters, fileManager, testAdapterParameters);

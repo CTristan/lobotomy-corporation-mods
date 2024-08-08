@@ -9,6 +9,7 @@ using CommandWindow;
 using Customizing;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
+using LobotomyCorporationMods.Test.Parameters;
 using UnityEngine;
 using UnityEngine.UI;
 using WorkerSprite;
@@ -62,6 +63,7 @@ namespace LobotomyCorporationMods.Test.Extensions
                     "UIComponents", uiComponents
                 },
             };
+
             agentInfoWindow = GetPopulatedUninitializedObject(agentInfoWindow, fields, newValues);
             newValues.Add("currentWindow", agentInfoWindow);
 
@@ -69,50 +71,43 @@ namespace LobotomyCorporationMods.Test.Extensions
         }
 
         [NotNull]
-        internal static AgentModel CreateAgentModel(AgentName agentName = null,
-            List<UnitBuf> bufList = null,
-            UnitEquipSpace equipment = null,
-            long instanceId = 1L,
-            string name = "",
-            WorkerPrimaryStat primaryStat = null,
-            WorkerSprite.WorkerSprite spriteData = null,
-            List<UnitStatBuf> statBufList = null)
+        internal static AgentModel CreateAgentModel([CanBeNull] AgentModelCreationParameters parameters = null)
         {
-            agentName = agentName.EnsureNotNullWithMethod(() => CreateAgentName());
-            bufList = bufList.EnsureNotNullWithMethod(() => new List<UnitBuf>());
-            equipment = equipment.EnsureNotNullWithMethod(CreateUnitEquipSpace);
-            primaryStat = primaryStat.EnsureNotNullWithMethod(CreateWorkerPrimaryStat);
-            spriteData = spriteData.EnsureNotNullWithMethod(CreateWorkerSprite);
-            statBufList = statBufList.EnsureNotNullWithMethod(() => new List<UnitStatBuf>());
+            parameters = parameters.EnsureNotNullWithMethod(() => new AgentModelCreationParameters());
+            parameters.AgentName = parameters.AgentName.EnsureNotNullWithMethod(() => CreateAgentName());
+            parameters.BufList = parameters.BufList.EnsureNotNullWithMethod(() => new List<UnitBuf>());
+            parameters.Equipment = parameters.Equipment.EnsureNotNullWithMethod(CreateUnitEquipSpace);
+            parameters.PrimaryStat = parameters.PrimaryStat.EnsureNotNullWithMethod(CreateWorkerPrimaryStat);
+            parameters.SpriteData = parameters.SpriteData.EnsureNotNullWithMethod(CreateWorkerSprite);
+            parameters.StatBufList = parameters.StatBufList.EnsureNotNullWithMethod(() => new List<UnitStatBuf>());
 
             CreateUninitializedObject<AgentModel>(out var agentModel);
-
             var fields = GetUninitializedFieldsIncludingBaseType(agentModel.GetType());
             var newValues = new Dictionary<string, object>
             {
                 {
-                    "_agentName", agentName
+                    "_agentName", parameters.AgentName
                 },
                 {
-                    "_bufList", bufList
+                    "_bufList", parameters.BufList
                 },
                 {
-                    "_equipment", equipment
+                    "_equipment", parameters.Equipment
                 },
                 {
-                    "instanceId", instanceId
+                    "instanceId", parameters.InstanceId
                 },
                 {
-                    "name", name
+                    "name", parameters.Name
                 },
                 {
-                    "primaryStat", primaryStat
+                    "primaryStat", parameters.PrimaryStat
                 },
                 {
-                    "spriteData", spriteData
+                    "spriteData", parameters.SpriteData
                 },
                 {
-                    "_statBufList", statBufList
+                    "_statBufList", parameters.StatBufList
                 },
             };
 
@@ -226,6 +221,7 @@ namespace LobotomyCorporationMods.Test.Extensions
                     "_selectedWork", selectedWork
                 },
             };
+
             commandWindow = GetPopulatedUninitializedObject(commandWindow, fields, newValues);
             newValues.Add("_currentWindow", commandWindow);
 
@@ -257,6 +253,7 @@ namespace LobotomyCorporationMods.Test.Extensions
                     "creatureDic", creatureDic
                 },
             };
+
             creatureLayer = GetPopulatedUninitializedObject(creatureLayer, fields, newValues);
             newValues.Add("<currentLayer>k__BackingField", creatureLayer);
 
@@ -292,6 +289,7 @@ namespace LobotomyCorporationMods.Test.Extensions
                     "_qliphothCounter", qliphothCounter
                 },
             };
+
             var newCreatureModel = GetPopulatedUninitializedObject(creatureModel, fields, newValues);
 
             // Needed to avoid a circular reference from currentSkill
@@ -375,6 +373,7 @@ namespace LobotomyCorporationMods.Test.Extensions
                     "_currentWindowType", currentWindowType
                 },
             };
+
             customizingWindow = GetPopulatedUninitializedObject(customizingWindow, fields, newValues);
             newValues.Add("_currentWindow", customizingWindow);
 
@@ -514,6 +513,7 @@ namespace LobotomyCorporationMods.Test.Extensions
                     "_list", list
                 },
             };
+
             localizeTextDataModel = GetPopulatedUninitializedObject(localizeTextDataModel, fields, newValues);
             newValues.Add("_instance", localizeTextDataModel);
 
@@ -651,6 +651,7 @@ namespace LobotomyCorporationMods.Test.Extensions
                 skillTypeInfo = skillTypeInfo,
                 targetCreature = targetCreature,
             };
+
             targetCreature.currentSkill = useSkill;
 
             return useSkill;
@@ -694,6 +695,7 @@ namespace LobotomyCorporationMods.Test.Extensions
                     "basicData", basicData
                 },
             };
+
             workerSpriteManager = GetPopulatedUninitializedObject(workerSpriteManager, fields, newValues);
             newValues.Add("_instance", workerSpriteManager);
 
@@ -765,6 +767,7 @@ namespace LobotomyCorporationMods.Test.Extensions
         {
             var hasValidHandle = typeField.FieldHandle.Value != IntPtr.Zero;
             var isNotInitOnly = !typeField.IsInitOnly;
+
             return hasValidHandle && isNotInitOnly;
         }
 
