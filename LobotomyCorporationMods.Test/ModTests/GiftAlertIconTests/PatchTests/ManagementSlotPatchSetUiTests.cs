@@ -27,12 +27,12 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
         private readonly Color _newGiftColor = Color.green;
         private readonly Color _noGiftColor = Color.clear;
         private readonly Color _replacementGiftColor = Color.grey;
+        private readonly ManagementSlot _sut = UnityTestExtensions.CreateManagementSlot();
 
         [Fact]
         public void Only_creates_image_object_once()
         {
             // Arrange
-            var sut = UnityTestExtensions.CreateManagementSlot();
             const string ImageName = nameof(Only_creates_image_object_once);
             var creature = UnityTestExtensions.CreateCreatureModel();
             _ = TestExtensions.InitializeCommandWindowWithAbnormality(creature);
@@ -42,8 +42,8 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
 
             // Act
             // Run twice to see if the image gets created a second time
-            sut.PatchAfterSetUi(agent, ImageName, fileManager.Object, testAdapterParameters);
-            sut.PatchAfterSetUi(agent, ImageName, fileManager.Object, testAdapterParameters);
+            _sut.PatchAfterSetUi(agent, ImageName, fileManager.Object, testAdapterParameters);
+            _sut.PatchAfterSetUi(agent, ImageName, fileManager.Object, testAdapterParameters);
 
             // Assert
             fileManager.Verify(x => x.GetFile(It.IsAny<string>()), Times.Once);
@@ -53,7 +53,6 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
         public void Errors_when_image_file_does_not_exist()
         {
             // Arrange
-            var sut = UnityTestExtensions.CreateManagementSlot();
             const string ImageName = nameof(Errors_when_image_file_does_not_exist);
             var agent = TestExtensions.GetAgentWithGift();
             var tool = UnityTestExtensions.CreateUnitModel();
@@ -64,7 +63,7 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
             mockFileManager.Setup(x => x.GetFile(ImageName)).Returns(string.Empty);
 
             // Act
-            Action action = () => sut.PatchAfterSetUi(agent, ImageName, mockFileManager.Object, testAdapterParameters);
+            Action action = () => _sut.PatchAfterSetUi(agent, ImageName, mockFileManager.Object, testAdapterParameters);
 
             // Assert
             action.Should().Throw<InvalidOperationException>().WithMessage("No image found with name " + ImageName);
@@ -74,13 +73,12 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
         public void Hides_image_when_abnormality_does_not_have_a_gift()
         {
             // Arrange
-            var sut = UnityTestExtensions.CreateManagementSlot();
             var creature = UnityTestExtensions.CreateCreatureModel();
             _ = TestExtensions.InitializeCommandWindowWithAbnormality(creature);
             var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1);
             var mockImageTestAdapter = GetMockImageTestAdapter();
 
-            SetUpSlot(sut, agent, nameof(Hides_image_when_abnormality_does_not_have_a_gift), mockImageTestAdapter);
+            SetUpSlot(_sut, agent, nameof(Hides_image_when_abnormality_does_not_have_a_gift), mockImageTestAdapter);
 
             mockImageTestAdapter.Object.Color.Should().Be(_noGiftColor);
         }
@@ -89,14 +87,13 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
         public void Hides_image_when_agent_already_has_the_gift()
         {
             // Arrange
-            var sut = UnityTestExtensions.CreateManagementSlot();
             var creature = TestExtensions.GetCreatureWithGift(giftId: EquipmentIds.CrumblingArmorGift1);
             _ = TestExtensions.InitializeCommandWindowWithAbnormality(creature);
             var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1);
             const string ImageName = nameof(Hides_image_when_abnormality_does_not_have_a_gift);
             var mockImageTestAdapter = GetMockImageTestAdapter();
 
-            SetUpSlot(sut, agent, ImageName, mockImageTestAdapter);
+            SetUpSlot(_sut, agent, ImageName, mockImageTestAdapter);
 
             mockImageTestAdapter.Object.Color.Should().Be(_noGiftColor);
         }
@@ -105,13 +102,12 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
         public void Hides_image_when_abnormality_is_a_tool()
         {
             // Arrange
-            var sut = UnityTestExtensions.CreateManagementSlot();
             var unitModel = UnityTestExtensions.CreateUnitModel();
             _ = UnityTestExtensions.CreateCommandWindow(unitModel);
             var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1);
             var mockImageTestAdapter = GetMockImageTestAdapter();
 
-            SetUpSlot(sut, agent, nameof(Hides_image_when_abnormality_is_a_tool), mockImageTestAdapter);
+            SetUpSlot(_sut, agent, nameof(Hides_image_when_abnormality_is_a_tool), mockImageTestAdapter);
 
             mockImageTestAdapter.Object.Color.Should().Be(_noGiftColor);
         }
@@ -119,23 +115,53 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
         [Theory]
         [InlineData(EGOgiftAttachRegion.EYE, EGOgiftAttachRegion.MOUTH)]
         [InlineData(EGOgiftAttachRegion.LEFTHAND, EGOgiftAttachRegion.MASK)]
-        public void Shows_as_new_gift_when_gift_is_in_a_new_slot(EGOgiftAttachRegion firstGiftPosition,
+        public void Shows_as_new_gift_when_gift_is_in_a_new_slot_and_same_attachment_type(EGOgiftAttachRegion firstGiftPosition,
             EGOgiftAttachRegion newGiftPosition)
         {
             // Act & Assert
-            var resultColor = SetupAndReturnImageColor(firstGiftPosition, newGiftPosition, nameof(Shows_as_new_gift_when_gift_is_in_a_new_slot));
+            var resultColor = SetupAndReturnImageColor(nameof(Shows_as_new_gift_when_gift_is_in_a_new_slot_and_same_attachment_type), firstGiftPosition, newGiftPosition);
             resultColor.Should().Be(_newGiftColor);
         }
 
         [Theory]
-        [InlineData(EGOgiftAttachRegion.EYE, EGOgiftAttachRegion.EYE)]
-        [InlineData(EGOgiftAttachRegion.LEFTHAND, EGOgiftAttachRegion.LEFTHAND)]
-        public void Shows_as_replacement_gift_when_gift_is_in_an_existing_slot(EGOgiftAttachRegion firstGiftPosition,
-            EGOgiftAttachRegion newGiftPosition)
+        [InlineData(EGOgiftAttachRegion.EYE, EGOgiftAttachRegion.MOUTH, EGOgiftAttachType.ADD, EGOgiftAttachType.REPLACE)]
+        [InlineData(EGOgiftAttachRegion.LEFTHAND, EGOgiftAttachRegion.MASK, EGOgiftAttachType.SPECIAL_ADD, EGOgiftAttachType.REPLACE)]
+        public void Shows_as_new_gift_when_gift_is_in_a_new_slot_and_different_attachment_type(EGOgiftAttachRegion firstGiftPosition,
+            EGOgiftAttachRegion newGiftPosition,
+            EGOgiftAttachType firstGiftAttachmentType,
+            EGOgiftAttachType newGiftAttachmentType)
         {
             // Act & Assert
-            var resultColor = SetupAndReturnImageColor(firstGiftPosition, newGiftPosition, nameof(Shows_as_replacement_gift_when_gift_is_in_an_existing_slot));
+            var resultColor = SetupAndReturnImageColor(nameof(Shows_as_new_gift_when_gift_is_in_a_new_slot_and_different_attachment_type), firstGiftPosition, newGiftPosition, firstGiftAttachmentType,
+                newGiftAttachmentType);
+
+            resultColor.Should().Be(_newGiftColor);
+        }
+
+        [Theory]
+        [InlineData(EGOgiftAttachRegion.EYE, EGOgiftAttachType.ADD)]
+        [InlineData(EGOgiftAttachRegion.LEFTHAND, EGOgiftAttachType.SPECIAL_ADD)]
+        public void Shows_as_replacement_gift_when_gift_is_in_an_existing_slot_and_has_same_attachment_type(EGOgiftAttachRegion giftPosition,
+            EGOgiftAttachType giftAttachmentType)
+        {
+            // Act & Assert
+            var resultColor = SetupAndReturnImageColor(nameof(Shows_as_replacement_gift_when_gift_is_in_an_existing_slot_and_has_same_attachment_type), giftPosition, giftPosition, giftAttachmentType,
+                giftAttachmentType);
+
             resultColor.Should().Be(_replacementGiftColor);
+        }
+
+        [Theory]
+        [InlineData((EGOgiftAttachType)0, (EGOgiftAttachType)2)]
+        [InlineData((EGOgiftAttachType)1, (EGOgiftAttachType)0)]
+        public void Shows_as_new_gift_when_gift_is_in_existing_slot_but_has_different_attachment_type(EGOgiftAttachType firstGiftAttachmentType,
+            EGOgiftAttachType newGiftAttachmentType)
+        {
+            // Act & Assert
+            var resultColor = SetupAndReturnImageColor(nameof(Shows_as_new_gift_when_gift_is_in_existing_slot_but_has_different_attachment_type), firstGiftAttachmentType: firstGiftAttachmentType,
+                newGiftAttachmentType: newGiftAttachmentType);
+
+            resultColor.Should().Be(_newGiftColor);
         }
 
         #region Helper Methods
@@ -210,17 +236,18 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
             return mockImageTestAdapter;
         }
 
-        private static Color SetupAndReturnImageColor(EGOgiftAttachRegion firstGiftPosition,
-            EGOgiftAttachRegion newGiftPosition,
-            string functionName)
+        private Color SetupAndReturnImageColor(string functionName,
+            EGOgiftAttachRegion firstGiftPosition = 0,
+            EGOgiftAttachRegion newGiftPosition = 0,
+            EGOgiftAttachType firstGiftAttachmentType = 0,
+            EGOgiftAttachType newGiftAttachmentType = 0)
         {
-            var sut = UnityTestExtensions.CreateManagementSlot();
-            var creature = TestExtensions.GetCreatureWithGift(attachPosition: firstGiftPosition);
+            var creature = TestExtensions.GetCreatureWithGift(attachPosition: firstGiftPosition, giftAttachType: firstGiftAttachmentType);
             _ = TestExtensions.InitializeCommandWindowWithAbnormality(creature);
-            var imageName = functionName + firstGiftPosition + newGiftPosition;
-            var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1, newGiftPosition);
+            var imageName = functionName + firstGiftPosition + newGiftPosition + firstGiftAttachmentType + newGiftAttachmentType;
+            var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1, newGiftPosition, newGiftAttachmentType);
             var mockImageTestAdapter = GetMockImageTestAdapter();
-            SetUpSlot(sut, agent, imageName, mockImageTestAdapter);
+            SetUpSlot(_sut, agent, imageName, mockImageTestAdapter);
 
             return mockImageTestAdapter.Object.Color;
         }
