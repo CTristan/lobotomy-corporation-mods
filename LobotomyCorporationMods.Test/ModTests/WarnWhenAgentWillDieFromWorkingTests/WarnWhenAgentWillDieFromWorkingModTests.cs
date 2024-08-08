@@ -13,6 +13,7 @@ using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
 using LobotomyCorporationMods.Test.Extensions;
+using LobotomyCorporationMods.Test.Parameters;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches;
 using Moq;
@@ -65,7 +66,12 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         {
             unitBuffs = unitBuffs.EnsureNotNullWithMethod(() => new List<UnitBuf>());
 
-            var agent = UnityTestExtensions.CreateAgentModel(bufList: unitBuffs.ToList());
+            var agentModelCreationParameters = new AgentModelCreationParameters
+            {
+                BufList = unitBuffs.ToList(),
+            };
+
+            var agent = UnityTestExtensions.CreateAgentModel(agentModelCreationParameters);
             var gift = UnityTestExtensions.CreateEgoGiftModel();
             gift.metaInfo.id = (int)giftIds;
             agent.Equipment.gifts.addedGifts.Add(gift);
