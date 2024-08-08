@@ -10,21 +10,18 @@ additional LOB points.
 ## What does this mod do?
 
 - Hiring new agents or changing existing ones will always have the customization
-  options available without requiring any
-  additional LOB.
+  options available without requiring any additional LOB.
 - Re-enables the Name box when changing an existing agent to allow for renames.
 
 ## Why create this mod?
 
 I do not like when games require a cost for customizing a character in the first
-place, but in this game customizing
-requires spending an additional LOB point which you only get a limited number of
-each day and is also used to hire
+place. However, in this game customizing requires spending an additional LOB
+point which you only get a limited number of each day and is also used to hire
 agents and improve stats.
 
 The fact that customizing an agent directly affects your gameplay bothers me, so
-this mod will make customizing agents
-not require any additional points.
+this mod will make customizing agents not require any additional points.
 
 ## Changelog
 
@@ -39,7 +36,7 @@ not require any additional points.
 
 #### Fixed
 
-- Fixed issue with renames not working for the initial starting agent when
+- Fixed an issue with renames not working for the initial starting agent when
   starting from Day 1.
 
 ### [2.0.0] - 2023-01-30
