@@ -8,7 +8,7 @@ using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations.Facades;
 using LobotomyCorporationMods.Common.Interfaces;
-using LobotomyCorporationMods.Common.ParameterObjects;
+using LobotomyCorporationMods.Common.ParameterContainers;
 using LobotomyCorporationMods.GiftAlertIcon.Constants;
 using UnityEngine;
 
@@ -20,9 +20,9 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Extensions
     {
         internal static void UpdateGiftIcon([NotNull] this ManagementSlot instance,
             UnitModel agent,
-            [NotNull] ImageParameters imageParameters,
+            [NotNull] ImageParametersContainer imageParameters,
             [NotNull] IFileManager fileManager,
-            OptionalTestAdapterParameters testAdapterParameters)
+            OptionalTestAdapterParametersContainer testAdapterParameters)
         {
             if (!instance.AbnormalityHasGift())
             {
@@ -45,12 +45,12 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Extensions
         }
 
         private static void ShowAsGift([NotNull] this ManagementSlot managementSlot,
-            [NotNull] ImageParameters imageParameters,
+            [NotNull] ImageParametersContainer imageParameters,
             Color color,
             string tooltipLine1,
             string tooltipLine2,
             [NotNull] IFileManager fileManager,
-            [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null)
+            [CanBeNull] OptionalTestAdapterParametersContainer testAdapterParameters = null)
         {
             var tooltipMessage = new StringBuilder();
             tooltipMessage.AppendLine(tooltipLine1);
@@ -61,9 +61,9 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Extensions
         }
 
         private static void ShowAsNewGift([NotNull] this ManagementSlot managementSlot,
-            [NotNull] ImageParameters imageParameters,
+            [NotNull] ImageParametersContainer imageParameters,
             [NotNull] IFileManager fileManager,
-            [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null)
+            [CanBeNull] OptionalTestAdapterParametersContainer testAdapterParameters = null)
         {
             var color = Color.green;
             var tooltipLine1 = LocalizationIds.NewGiftTooltip1.GetLocalized();
@@ -73,9 +73,9 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Extensions
         }
 
         private static void ShowAsReplacementGift([NotNull] this ManagementSlot managementSlot,
-            [NotNull] ImageParameters imageParameters,
+            [NotNull] ImageParametersContainer imageParameters,
             [NotNull] IFileManager fileManager,
-            [CanBeNull] OptionalTestAdapterParameters testAdapterParameters)
+            [CanBeNull] OptionalTestAdapterParametersContainer testAdapterParameters)
         {
             var color = Color.grey;
             var tooltipLine1 = LocalizationIds.ReplacementGiftTooltip1.GetLocalized();
@@ -86,9 +86,9 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Extensions
 
         private static void ProcessGiftInSameSlot([NotNull] this ManagementSlot instance,
             [NotNull] UnitModel agent,
-            [NotNull] ImageParameters imageParameters,
+            [NotNull] ImageParametersContainer imageParameters,
             [NotNull] IFileManager fileManager,
-            OptionalTestAdapterParameters testAdapterParameters)
+            OptionalTestAdapterParametersContainer testAdapterParameters)
         {
             var giftId = instance.GetAbnormalityGiftId();
             if (agent.HasGift(giftId))

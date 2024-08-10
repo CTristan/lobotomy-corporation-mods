@@ -12,6 +12,8 @@ namespace LobotomyCorporationMods.Common.Interfaces
     {
         void AddTarget(ILoggerTarget target);
         void LogError(Exception exception);
+
+        // ReSharper disable once UnusedMember.Global
         void LogDebug(string message);
     }
 }

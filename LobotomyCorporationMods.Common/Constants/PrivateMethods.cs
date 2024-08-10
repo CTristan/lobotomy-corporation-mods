@@ -14,6 +14,11 @@ namespace PrivateMethods
         public const string ReviseOpenAction = "ReviseOpenAction";
     }
 
+    public static class GameManager
+    {
+        public const string Update = "Update";
+    }
+
     public static class UseSkill
     {
         public const string FinishWorkSuccessfully = "FinishWorkSuccessfully";
