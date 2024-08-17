@@ -29,7 +29,7 @@ namespace LobotomyCorporationMods.ProjectNugway.UiComponents
             {
                 base.Awake();
 
-                var imagePath = Harmony_Patch.Instance.FileManager.GetFile(PresetConstants.PresetPanelImagePath);
+                var imagePath = Harmony_Patch.Instance.FileManager.GetFile(UiComponentConstants.PresetPanelImagePath);
                 SetButtonImage(imagePath);
 
                 InitializeDeleteButton();
@@ -47,7 +47,7 @@ namespace LobotomyCorporationMods.ProjectNugway.UiComponents
         {
             _deletePresetConfirmationPanel = new GameObject().AddComponent<DeletePresetConfirmationPanel>();
             _deletePresetConfirmationPanel.transform.SetParent(transform);
-            _deletePresetConfirmationPanel.SetImage(Harmony_Patch.Instance.FileManager.GetFile(PresetConstants.DeletePresetPanelImagePath));
+            _deletePresetConfirmationPanel.SetImage(Harmony_Patch.Instance.FileManager.GetFile(UiComponentConstants.DeletePresetPanelImagePath));
             _deletePresetConfirmationPanel.SetPosition(0.0f, 0.0f);
             _deletePresetConfirmationPanel.gameObject.SetActive(false);
         }
@@ -58,9 +58,9 @@ namespace LobotomyCorporationMods.ProjectNugway.UiComponents
             {
                 _deleteButton = new GameObject().AddComponent<UiButton>();
                 _deleteButton.transform.SetParent(transform);
-                var imagePath = Harmony_Patch.Instance.FileManager.GetFile(PresetConstants.DeletePresetIconPath);
+                var imagePath = Harmony_Patch.Instance.FileManager.GetFile(UiComponentConstants.DeletePresetIconPath);
                 _deleteButton.SetButtonImage(imagePath);
-                _deleteButton.SetPosition(PresetConstants.DeletePresetButtonPositionX, PresetConstants.DeletePresetButtonPositionY);
+                _deleteButton.SetPosition(UiComponentConstants.DeletePresetButtonPositionX, UiComponentConstants.DeletePresetButtonPositionY);
                 _deleteButton.onClick.AddListener(DisplayDeleteConfirmMessage);
             }
             else
@@ -134,7 +134,7 @@ namespace LobotomyCorporationMods.ProjectNugway.UiComponents
                 _presetName = presetName;
                 Text.text = _presetName;
 
-                image.SetPosition(0.0f, PresetConstants.LoadPresetPanelPositionY - buttonNum * Height);
+                image.SetPosition(0.0f, UiComponentConstants.LoadPresetPanelPositionY - buttonNum * Height);
 
                 onClick.AddListener(delegate
                 {

@@ -5,29 +5,30 @@
 using System.Diagnostics.CodeAnalysis;
 using LobotomyCorporationMods.Common.Attributes.ValidCodeCoverageExceptionAttributes;
 using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
 using UnityEngine;
 using UnityEngine.UI;
 
 #endregion
 
-namespace LobotomyCorporationMods.Common.Implementations.UiComponents
+namespace LobotomyCorporationMods.Common.UiComponents
 {
     [UiComponent]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    public class UiButtonWithText : UiButton
+    public class ImageWithText : Image
     {
         protected Text Text { get; private set; }
 
         public new void Awake()
         {
             base.Awake();
-            Text = gameObject.CreateNewTextObject();
+
+            Text = new GameObject("Text").AddComponent<Text>();
+            Text.transform.SetParent(transform);
         }
 
-        public void SetTextColor(Color color)
+        public void SetText(string text)
         {
-            Text.color = color;
+            Text.text = text;
         }
     }
 }

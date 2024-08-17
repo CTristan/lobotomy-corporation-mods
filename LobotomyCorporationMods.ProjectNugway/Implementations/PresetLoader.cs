@@ -30,9 +30,9 @@ namespace LobotomyCorporationMods.ProjectNugway.Implementations
         public IEnumerable<string> FindAllPresetFiles()
         {
             // Need to first make sure the Presets directory actually exists, and if not, then create it
-            _fileManager.CreateDirectoryIfNotExists(PresetConstants.PresetsDirectoryName);
+            _fileManager.CreateDirectoryIfNotExists(UiComponentConstants.PresetsDirectoryName);
 
-            return _fileManager.GetFilesFromDirectory(PresetConstants.PresetsDirectoryName, PresetConstants.JsonFileMask);
+            return _fileManager.GetFilesFromDirectory(UiComponentConstants.PresetsDirectoryName, UiComponentConstants.JsonFileMask);
         }
 
         public bool HasPreset([NotNull] string agentName)
@@ -83,7 +83,7 @@ namespace LobotomyCorporationMods.ProjectNugway.Implementations
 
         public void InitializeDefaultCustomPresetFile()
         {
-            var presetList = LoadPresetListFromFile(_fileManager.GetFile(PresetConstants.CustomFileName));
+            var presetList = LoadPresetListFromFile(_fileManager.GetFile(UiComponentConstants.CustomFileName));
             foreach (var preset in presetList.Presets)
             {
                 Presets[preset.Key] = preset.Value;
@@ -117,7 +117,7 @@ namespace LobotomyCorporationMods.ProjectNugway.Implementations
         [NotNull]
         public PresetList LoadPresetsFromCustomFile([CanBeNull] string fileName = null)
         {
-            var presetFile = _fileManager.GetFile(!string.IsNullOrEmpty(fileName) ? fileName : PresetConstants.CustomFileName);
+            var presetFile = _fileManager.GetFile(!string.IsNullOrEmpty(fileName) ? fileName : UiComponentConstants.CustomFileName);
 
             return LoadPresetListFromFile(presetFile);
         }

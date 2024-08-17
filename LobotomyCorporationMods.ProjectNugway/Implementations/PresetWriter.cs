@@ -55,7 +55,7 @@ namespace LobotomyCorporationMods.ProjectNugway.Implementations
             var data = _presetLoader.LoadPresetsFromCustomFile();
             data.Presets[agentName] = PresetData.FromAppearanceData(appearanceData);
 
-            SavePresetListToFile(data, _fileManager.GetFile(PresetConstants.CustomFileName));
+            SavePresetListToFile(data, _fileManager.GetFile(UiComponentConstants.CustomFileName));
 
             _uiController.UpdateSavePresetButtonText(agentName, appearanceData);
         }

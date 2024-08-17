@@ -9,6 +9,7 @@ using LobotomyCorporationMods.Common.Attributes.ValidCodeCoverageExceptionAttrib
 using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Extensions;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 #endregion
@@ -27,7 +28,44 @@ namespace LobotomyCorporationMods.Common.Implementations.UiComponents
         {
             base.Awake();
             image = gameObject.AddComponent<Image>();
-            SetButtonImage();
+        }
+
+        public void CopyButton([NotNull] Button buttonToCopy)
+        {
+            Guard.Against.Null(buttonToCopy, nameof(buttonToCopy));
+
+            colors = buttonToCopy.colors;
+            transition = buttonToCopy.transition;
+
+            if (buttonToCopy.image != null)
+            {
+                image.color = buttonToCopy.image.color;
+                image.rectTransform.CopyRectTransform(buttonToCopy.image.rectTransform);
+            }
+            else
+            {
+                image.color = Color.black;
+                transform.CopyTransform(buttonToCopy.transform);
+            }
+
+            var animatorToCopy = buttonToCopy.GetComponent<Animator>();
+            if (animatorToCopy != null)
+            {
+                var newAnimator = gameObject.AddComponent<Animator>();
+                newAnimator.runtimeAnimatorController = animatorToCopy.runtimeAnimatorController;
+                newAnimator.cullingMode = animatorToCopy.cullingMode;
+                newAnimator.updateMode = animatorToCopy.updateMode;
+            }
+
+            var eventTriggerToCopy = buttonToCopy.GetComponent<EventTrigger>();
+            if (eventTriggerToCopy != null)
+            {
+                var newEventTrigger = gameObject.AddComponent<EventTrigger>();
+                foreach (var entry in eventTriggerToCopy.triggers)
+                {
+                    newEventTrigger.triggers.Add(entry);
+                }
+            }
         }
 
         public void SetButtonImage([CanBeNull] string imagePath = null)

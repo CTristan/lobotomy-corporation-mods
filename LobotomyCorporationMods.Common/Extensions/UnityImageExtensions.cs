@@ -14,6 +14,20 @@ namespace LobotomyCorporationMods.Common.Extensions
 {
     public static class UnityImageExtensions
     {
+        public static float GetWidth([NotNull] this Image image)
+        {
+            Guard.Against.Null(image, nameof(image));
+
+            return image.rectTransform.rect.width;
+        }
+
+        public static float GetHeight([NotNull] this Image image)
+        {
+            Guard.Against.Null(image, nameof(image));
+
+            return image.rectTransform.rect.height;
+        }
+
         public static void SetImage([NotNull] this Image image,
             [NotNull] string imagePath)
         {
@@ -39,7 +53,15 @@ namespace LobotomyCorporationMods.Common.Extensions
         {
             Guard.Against.Null(image, nameof(image));
 
-            image.gameObject.transform.localPosition = new Vector2(x, y);
+            image.rectTransform.position = new Vector2(x, y);
+        }
+
+        public static void SetScale([NotNull] this Image image,
+            float scale)
+        {
+            Guard.Against.Null(image, nameof(image));
+
+            image.rectTransform.localScale = new Vector3(scale, scale, scale);
         }
 
         public static void SetSize([NotNull] this Image image,

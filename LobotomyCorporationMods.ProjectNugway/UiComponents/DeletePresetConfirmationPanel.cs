@@ -29,7 +29,7 @@ namespace LobotomyCorporationMods.ProjectNugway.UiComponents
                 base.Awake();
 
                 Text.font = DeployUI.instance.ordeal.font;
-                Text.fontSize = PresetConstants.ButtonTextFontSize;
+                Text.fontSize = UiComponentConstants.ButtonTextFontSize;
                 Text.color = Color.white;
                 Text.alignment = TextAnchor.MiddleCenter;
                 Text.PreventTextFromResizing();
@@ -48,11 +48,11 @@ namespace LobotomyCorporationMods.ProjectNugway.UiComponents
 
         private void InitializeAcceptButton()
         {
-            var imagePath = Harmony_Patch.Instance.FileManager.GetFile(PresetConstants.AcceptDeletePresetIconPath);
+            var imagePath = Harmony_Patch.Instance.FileManager.GetFile(UiComponentConstants.AcceptDeletePresetIconPath);
             _acceptButton = new GameObject().AddComponent<UiButton>();
             _acceptButton.transform.SetParent(transform);
             _acceptButton.SetButtonImage(imagePath);
-            _acceptButton.SetPosition(PresetConstants.AcceptDeletePresetButtonPositionX, PresetConstants.AcceptDeletePresetButtonPositionY);
+            _acceptButton.SetPosition(UiComponentConstants.AcceptDeletePresetButtonPositionX, UiComponentConstants.AcceptDeletePresetButtonPositionY);
             _acceptButton.onClick.AddListener(ProcessDeletion);
         }
 
@@ -64,11 +64,11 @@ namespace LobotomyCorporationMods.ProjectNugway.UiComponents
 
         private void InitializeCancelButton()
         {
-            var imagePath = Harmony_Patch.Instance.FileManager.GetFile(PresetConstants.CancelDeletePresetIconPath);
+            var imagePath = Harmony_Patch.Instance.FileManager.GetFile(UiComponentConstants.CancelDeletePresetIconPath);
             _cancelButton = new GameObject().AddComponent<UiButton>();
             _cancelButton.transform.SetParent(transform);
             _cancelButton.SetButtonImage(imagePath);
-            _cancelButton.SetPosition(PresetConstants.CancelDeletePresetButtonPositionX, PresetConstants.CancelDeletePresetButtonPositionY);
+            _cancelButton.SetPosition(UiComponentConstants.CancelDeletePresetButtonPositionX, UiComponentConstants.CancelDeletePresetButtonPositionY);
             _cancelButton.onClick.AddListener(CancelDeletion);
         }
 

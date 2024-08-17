@@ -29,6 +29,11 @@ namespace LobotomyCorporationMods.ProjectNugway.Patches
             {
                 uiController.DisableAllCustomUiComponents();
             }
+            else
+            {
+                uiController.DisplayLoadPresetButton();
+                uiController.DisplaySavePresetButton();
+            }
         }
 
         /// <summary>Runs after opening the Strengthen Agent window to force it to open the appearance window.</summary>

@@ -5,7 +5,6 @@
 using Customizing;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
-using LobotomyCorporationMods.ProjectNugway.Interfaces;
 using LobotomyCorporationMods.ProjectNugway.Patches;
 using Moq;
 using Xunit;
@@ -26,13 +25,12 @@ namespace LobotomyCorporationMods.Test.ModTests.ProjectNugwayTests.PatchTests
             // Arrange
             InitializeCustomizingWindow();
 
-            var mockUiController = new Mock<IUiController>();
             var mockAgentInfoWindowUiComponents = new Mock<IAgentInfoWindowUiComponentsTestAdapter>();
             var mockCustomizingWindow = new Mock<ICustomizingWindowTestAdapter>();
             var mockGameObject = new Mock<IGameObjectTestAdapter>();
 
             // Act
-            _sut.Object.PatchAfterEnforcementWindow(mockUiController.Object, mockAgentInfoWindowUiComponents.Object, mockCustomizingWindow.Object, mockGameObject.Object);
+            _sut.Object.PatchAfterEnforcementWindow(mockAgentInfoWindowUiComponents.Object, mockCustomizingWindow.Object, mockGameObject.Object);
 
             // Assert
             mockAgentInfoWindowUiComponents.Verify(adapter => adapter.SetData(It.IsAny<AgentData>()), Times.Once);
