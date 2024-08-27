@@ -50,6 +50,12 @@ namespace LobotomyCorporationMods.Common.UiComponents
             Text.resizeTextMaxSize = textToCopy.resizeTextMaxSize;
             Text.resizeTextMinSize = textToCopy.resizeTextMinSize;
             Text.text = textToCopy.text;
+
+            Text.rectTransform.offsetMax = textToCopy.rectTransform.offsetMax;
+            Text.rectTransform.offsetMin = textToCopy.rectTransform.offsetMin;
+            Text.rectTransform.sizeDelta = textToCopy.rectTransform.sizeDelta;
+
+            Text.transform.localScale = textToCopy.transform.localScale;
         }
 
         public void SetText(string text)

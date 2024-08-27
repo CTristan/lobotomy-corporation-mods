@@ -39,8 +39,7 @@ namespace LobotomyCorporationMods.Common.Implementations.UiComponents
 
             if (buttonToCopy.image != null)
             {
-                image.color = buttonToCopy.image.color;
-                image.rectTransform.CopyRectTransform(buttonToCopy.image.rectTransform);
+                image.CopyImage(buttonToCopy.image);
             }
             else
             {
@@ -84,7 +83,13 @@ namespace LobotomyCorporationMods.Common.Implementations.UiComponents
         public void SetPosition(float x,
             float y)
         {
-            image.SetPosition(x, y);
+            image.SetLocalPosition(x, y);
+        }
+
+        public void SetSize(float x,
+            float y)
+        {
+            image.SetSize(x, y);
         }
     }
 }

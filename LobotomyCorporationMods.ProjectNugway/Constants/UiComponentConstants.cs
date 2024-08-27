@@ -20,25 +20,23 @@ namespace LobotomyCorporationMods.ProjectNugway.Constants
 
         internal const string DeletePresetPanelImagePath = "Assets/delete-preset-panel.png";
 
+        // internal const string PresetButtonBorderTopImagePath = "Assets/preset-button-border-top.png";
+        // internal const string PresetButtonBorderBottomImagePath = "Assets/preset-button-border-bottom.png";
         internal const string PresetButtonBorderImagePath = "Assets/preset-button-border.png";
-        internal const float PresetButtonBorderPositionX = 340f;
+        internal const float PresetButtonBorderPositionX = 0f;
+        internal const float PresetButtonBorderPositionY = -53.51f;
         internal const float ButtonSizeX = 120f;
-        internal const float ButtonSizeY = 120f;
+        internal const float ButtonSizeY = 104f;
         internal const int ButtonTextFontSize = 30;
-        internal const float PresetButtonBorderScale = 1.5f;
+        internal const float PresetButtonBorderScale = 1.8096f;
         internal const float PresetButtonBorderSizeX = 67.6f;
         internal const float PresetButtonBorderSizeY = 8.9f;
-        internal const float LoadPresetButtonPositionY = 1296.083f;
-        internal const float LoadPresetButtonBorderTopPositionY = 43f;
-        internal const float LoadPresetButtonBorderBottomPositionY = -45f;
+        internal const float LoadPresetButtonPositionY = -171.8f;
         internal const float LoadPresetPanelPositionX = 340f;
         internal const float LoadPresetPanelPositionY = 180f;
         internal const float LoadPresetPanelSizeX = 520f;
         internal const float LoadPresetPanelSizeY = 600f;
-        internal const float SavePresetButtonPositionX = 570f;
-        internal const float SavePresetButtonPositionY = 1207f;
-        internal const float SavePresetButtonBorderTopPositionY = -435f;
-        internal const float SavePresetButtonBorderBottomPositionY = -516f;
+        internal const float SavePresetButtonPositionY = -282.1f;
 
         internal const string JsonFileMask = "*.json";
         internal const string PresetsDirectoryName = "Presets";

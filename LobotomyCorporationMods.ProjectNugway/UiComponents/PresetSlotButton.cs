@@ -48,7 +48,7 @@ namespace LobotomyCorporationMods.ProjectNugway.UiComponents
             _deletePresetConfirmationPanel = new GameObject().AddComponent<DeletePresetConfirmationPanel>();
             _deletePresetConfirmationPanel.transform.SetParent(transform);
             _deletePresetConfirmationPanel.SetImage(Harmony_Patch.Instance.FileManager.GetFile(UiComponentConstants.DeletePresetPanelImagePath));
-            _deletePresetConfirmationPanel.SetPosition(0.0f, 0.0f);
+            _deletePresetConfirmationPanel.SetLocalPosition(0.0f, 0.0f);
             _deletePresetConfirmationPanel.gameObject.SetActive(false);
         }
 
@@ -134,7 +134,7 @@ namespace LobotomyCorporationMods.ProjectNugway.UiComponents
                 _presetName = presetName;
                 Text.text = _presetName;
 
-                image.SetPosition(0.0f, UiComponentConstants.LoadPresetPanelPositionY - buttonNum * Height);
+                image.SetLocalPosition(0.0f, UiComponentConstants.LoadPresetPanelPositionY - buttonNum * Height);
 
                 onClick.AddListener(delegate
                 {

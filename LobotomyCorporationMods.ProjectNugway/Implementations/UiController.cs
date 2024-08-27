@@ -1,5 +1,6 @@
 ﻿// SPDX-License-Identifier: MIT
 
+using System;
 using Customizing;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
@@ -14,6 +15,9 @@ namespace LobotomyCorporationMods.ProjectNugway.Implementations
 {
     internal sealed class UiController : IUiController
     {
+        private static Button s_strengthenEmployeeButton;
+        private static Text s_strengthenEmployeeButtonText;
+        private static Image s_strengthenEmployeeButtonBorderImage;
         private readonly IPresetLoader _presetLoader;
 
         internal UiController(IPresetLoader presetLoader)
@@ -126,46 +130,100 @@ namespace LobotomyCorporationMods.ProjectNugway.Implementations
         private void InitializeLoadPresetButton()
         {
             var button = InitializeButton("LoadPresetButton");
-            button.SetPosition(button.transform.position.x, UiComponentConstants.LoadPresetButtonPositionY);
+            button.SetPosition(button.transform.localPosition.x, UiComponentConstants.LoadPresetButtonPositionY);
             button.SetText(LocalizationIds.LoadPresetIconText.GetLocalized());
+            button.onClick.AddListener(() => LoadButtonOnClick(Harmony_Patch.Instance.UiController));
 
             LoadPresetButton = button;
+        }
+
+        private static void LoadButtonOnClick([NotNull] IUiController uiController)
+        {
+            // Make sure that are presets are the most current whenever we click the load preset button
+            Harmony_Patch.Instance.PresetLoader.ReloadPresetsFromFiles();
+
+            if (uiController.LoadPresetPanel == null)
+            {
+                uiController.DisplayLoadPresetPanel();
+
+                return;
+            }
+
+            uiController.LoadPresetPanel.gameObject.SetActive(!uiController.LoadPresetPanel.isActiveAndEnabled);
         }
 
         private void InitializeSavePresetButton()
         {
             var button = InitializeButton("SavePresetButton");
-            button.SetPosition(button.transform.position.x, UiComponentConstants.SavePresetButtonPositionY);
+            button.SetPosition(button.transform.localPosition.x, UiComponentConstants.SavePresetButtonPositionY);
             button.SetText(LocalizationIds.SavePresetIconText.GetLocalized());
+            button.onClick.AddListener(() => SaveButtonOnClick(Harmony_Patch.Instance.UiController));
 
             SavePresetButton = button;
+        }
+
+        private static void SaveButtonOnClick([NotNull] IUiController uiController)
+        {
+            try
+            {
+                Harmony_Patch.Instance.PresetWriter.SavePreset();
+
+                if (!uiController.LoadPresetPanel.gameObject.activeSelf)
+                {
+                    return;
+                }
+
+                // Reset the Preset Panel to load in the new preset
+                uiController.LoadPresetPanel.gameObject.SetActive(false);
+                uiController.LoadPresetPanel.gameObject.SetActive(true);
+            }
+            catch (Exception exception)
+            {
+                Harmony_Patch.Instance.Logger.LogError(exception);
+
+                throw;
+            }
         }
 
         [NotNull]
         private static ButtonWithText InitializeButton(string buttonName)
         {
-            var strengthenEmployeeButton = AgentInfoWindow.currentWindow.EnforcenButton;
-            var strengthenEmployeeButtonText = strengthenEmployeeButton.GetComponentInChildren<Text>();
+            GetExistingGameObjectReferences();
 
             var newButton = new GameObject(buttonName).AddComponent<ButtonWithText>();
-            newButton.CopyButton(strengthenEmployeeButton);
-            newButton.CopyText(strengthenEmployeeButtonText);
+            newButton.CopyButton(s_strengthenEmployeeButton);
+            newButton.SetSize(newButton.Width, UiComponentConstants.ButtonSizeY);
+            newButton.CopyText(s_strengthenEmployeeButtonText);
 
-            // newButton.SetTextFont(DeployUI.instance.ordeal.font);
-            // newButton.SetTextFontSize(UiComponentConstants.ButtonTextFontSize);
-            // newButton.SetTextColor(UiComponentConstants.PresetTextColor);
-            // newButton.SetTextAlignment(TextAnchor.MiddleCenter);
-
-            var borderImagePath = Harmony_Patch.Instance.FileManager.GetFile(UiComponentConstants.PresetButtonBorderImagePath);
-            var border = new GameObject("TopBorder").AddComponent<Image>();
-            border.color = UiComponentConstants.PresetTextColor;
+            var border = new GameObject("BottomBorder").AddComponent<Image>();
+            border.CopyImage(s_strengthenEmployeeButtonBorderImage, true);
             border.transform.SetParent(newButton.image.transform);
-            border.SetImage(borderImagePath);
-            border.SetScale(UiComponentConstants.PresetButtonBorderScale);
-            border.SetSize(UiComponentConstants.PresetButtonBorderSizeX, UiComponentConstants.PresetButtonBorderSizeY);
-            border.SetPosition(UiComponentConstants.PresetButtonBorderPositionX, UiComponentConstants.LoadPresetButtonBorderTopPositionY);
+            border.SetLocalPosition(UiComponentConstants.PresetButtonBorderPositionX, UiComponentConstants.PresetButtonBorderPositionY);
 
             return newButton;
+        }
+
+        private static void GetExistingGameObjectReferences()
+        {
+            if (s_strengthenEmployeeButton != null)
+            {
+                return;
+            }
+
+            s_strengthenEmployeeButton = AgentInfoWindow.currentWindow.EnforcenButton;
+            s_strengthenEmployeeButtonText = s_strengthenEmployeeButton.GetComponentInChildren<Text>();
+            s_strengthenEmployeeButtonBorderImage = GetStrengthenEmployeeButtonBorderImage(s_strengthenEmployeeButton);
+        }
+
+        /// <summary>Uses the button's transform to find the border image that we want.</summary>
+        /// <param name="strengthenEmployeeButton"></param>
+        /// <returns></returns>
+        private static Image GetStrengthenEmployeeButtonBorderImage([NotNull] Button strengthenEmployeeButton)
+        {
+            const string BorderGameObjectName = "Line_lower";
+            var borderImageTransform = strengthenEmployeeButton.transform.Find(BorderGameObjectName);
+
+            return borderImageTransform.GetComponent<Image>();
         }
     }
 }

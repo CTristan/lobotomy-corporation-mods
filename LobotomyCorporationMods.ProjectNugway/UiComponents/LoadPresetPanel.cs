@@ -27,7 +27,7 @@ namespace LobotomyCorporationMods.ProjectNugway.UiComponents
                 transform.SetParent(AgentInfoWindow.currentWindow.gameObject.transform.GetChild(0));
                 this.SetImage(Application.dataPath + "/Managed/BaseMod/Image/Back.png");
                 this.SetSize(UiComponentConstants.LoadPresetPanelSizeX, UiComponentConstants.LoadPresetPanelSizeY);
-                this.SetPosition(UiComponentConstants.LoadPresetPanelPositionX, UiComponentConstants.LoadPresetPanelPositionY);
+                this.SetLocalPosition(UiComponentConstants.LoadPresetPanelPositionX, UiComponentConstants.LoadPresetPanelPositionY);
 
                 UiPresetList = gameObject.AddComponent<UiPresetList>();
             }

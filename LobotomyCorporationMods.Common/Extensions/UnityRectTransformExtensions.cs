@@ -14,6 +14,7 @@ namespace LobotomyCorporationMods.Common.Extensions
             Guard.Against.Null(rectTransform, nameof(rectTransform));
             Guard.Against.Null(rectTransformToCopy, nameof(rectTransformToCopy));
 
+            // ORDER MATTERS! Unity will change the RectTransform properties if we change the base Transform properties afterwards.
             rectTransform.CopyTransform(rectTransformToCopy);
 
             rectTransform.anchoredPosition = rectTransformToCopy.anchoredPosition;
