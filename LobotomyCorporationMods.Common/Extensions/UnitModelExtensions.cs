@@ -30,11 +30,14 @@ namespace LobotomyCorporationMods.Common.Extensions
         }
 
         internal static EGOgiftModel FindGiftAtPosition([NotNull] this UnitModel unitModel,
-            string position)
+            [NotNull] EquipmentTypeInfo equipmentTypeInfo)
         {
+            var position = equipmentTypeInfo.attachPos;
+            var attachType = equipmentTypeInfo.attachType;
+
             var equippedGifts = unitModel.GetEquippedGifts();
 
-            return equippedGifts.Find(g => g.metaInfo.attachPos == position);
+            return equippedGifts.Find(g => g.metaInfo.attachPos == position && g.metaInfo.attachType == attachType);
         }
 
         internal static bool IsGiftLocked([NotNull] this UnitModel unitModel,

@@ -64,22 +64,12 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             return unitModel.GetEquippedGifts().Exists(model => model.metaInfo.attachPos.Equals(positionName, StringComparison.OrdinalIgnoreCase) && model.metaInfo.attachType.Equals(attachType));
         }
 
-        /// <summary>Some gifts are in special slots that don't show up in an agent's gift window and are used for abnormality effect, for example, Snow Queen's icicle</summary>
-        /// <param name="equipmentModel">The equipment to check.</param>
-        /// <returns>True if the equipment is in a valid slot, otherwise false.</returns>
-        public static bool IsInValidSlot([NotNull] this EquipmentModel equipmentModel)
-        {
-            Guard.Against.Null(equipmentModel, nameof(equipmentModel));
-
-            return !equipmentModel.metaInfo.attachPos.Equals(EGOgiftAttachRegion.BODY_UP.ToString(), StringComparison.OrdinalIgnoreCase);
-        }
-
         public static bool PositionHasLockedGift([NotNull] this UnitModel unitModel,
             [NotNull] EquipmentModel gift)
         {
             Guard.Against.Null(gift, nameof(gift));
 
-            var matchingGiftAtPosition = unitModel.FindGiftAtPosition(gift.metaInfo.attachPos);
+            var matchingGiftAtPosition = unitModel.FindGiftAtPosition(gift.metaInfo);
 
             return !matchingGiftAtPosition.IsNull() && unitModel.IsGiftLocked(matchingGiftAtPosition.metaInfo.id);
         }
