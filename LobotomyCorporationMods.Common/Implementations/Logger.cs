@@ -24,6 +24,11 @@ namespace LobotomyCorporationMods.Common.Implementations
             _targets.Add(target);
         }
 
+        public IEnumerable<ILoggerTarget> GetTargets()
+        {
+            return _targets;
+        }
+
         public void WriteException(Exception exception)
         {
             var message = $"ERROR: {exception}";
@@ -31,6 +36,14 @@ namespace LobotomyCorporationMods.Common.Implementations
             foreach (var target in _targets)
             {
                 target.WriteToLoggerTarget(message);
+            }
+        }
+
+        public void WriteInfo(string message)
+        {
+            foreach (var target in _targets)
+            {
+                target.WriteToLoggerTarget($"INFO: {message}");
             }
         }
     }

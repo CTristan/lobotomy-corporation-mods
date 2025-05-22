@@ -6,9 +6,9 @@ Each mod is standalone and can be used independently or combined with others, de
 
 All mods are available for download
 on [my Nexus Mods page](https://next.nexusmods.com/profile/IsitChris/mods?gameId=2861).
+
 Requires either [Lobotomy Mod Manager](https://www.nexusmods.com/site/mods/765)
-or [Basemod](https://www.nexusmods.com/lobotomycorporation/mods/2) (included in
-LMM).
+or [Basemod](https://www.nexusmods.com/lobotomycorporation/mods/2) (included in LMM).
 
 ## Nexus Mods pages
 
@@ -52,13 +52,11 @@ See the [full changelog](CHANGELOG.md) for all changes.
 
 ![Bad Luck Protection for Gifts example](https://raw.githubusercontent.com/ctristan/lobotomy-corporation-mods/assets/bad-luck-protection.png)
 
-A mod that provides increasing bad luck protection for agents that work on
-abnormalities to receive a gift from that abnormality. After an agent finishes
-their work, you can see the modified chance in the Abnormality Details screen at
+A mod that provides increasing bad luck protection for agents that work on abnormalities to receive a gift from that
+abnormality. After an agent finishes their work, you can see the modified chance in the Abnormality Details screen at
 the E.G.O. Gift section next to Acquisition Probability.
 
-[Mod Readme](LobotomyCorporationMods.BadLuckProtectionForGifts/README.md) for
-full details.
+[Mod Readme](LobotomyCorporationMods.BadLuckProtectionForGifts/README.md) for full details.
 
 ---
 
@@ -66,11 +64,9 @@ full details.
 
 ![Free Customization example](https://raw.githubusercontent.com/ctristan/lobotomy-corporation-mods/assets/free-customization.png)
 
-Allows customizing (and re-customizing) agents without having to spend
-additional LOB points.
+Allows customizing (and re-customizing) agents without having to spend additional LOB points.
 
-[Mod Readme](LobotomyCorporationMods.FreeCustomization/README.md) for full
-details.
+[Mod Readme](LobotomyCorporationMods.FreeCustomization/README.md) for full details.
 
 ---
 
@@ -90,8 +86,7 @@ Shows an icon when a new or replacement gift is available for an agent.
 
 Whenever an agent receives a gift, a message will be displayed in the log.
 
-[Mod Readme](LobotomyCorporationMods.NotifyWhenAgentReceivesGift/README.md) for
-full details.
+[Mod Readme](LobotomyCorporationMods.NotifyWhenAgentReceivesGift/README.md) for full details.
 
 ---
 
@@ -112,10 +107,9 @@ Bugs fixed:
 
 ![Warn When Agent Will Die From Working example](https://raw.githubusercontent.com/ctristan/lobotomy-corporation-mods/assets/warn-when-agent-will-die-from-working.png)
 
-Provides a visual warning when an agent will be guaranteed to die to an
-instant-kill mechanic if assigned to work on an abnormality. The warning only
-appears when an abnormality has been fully observed to avoid spoiling newly
-acquired abnormalities.
+Provides a visual warning when an agent will be guaranteed to die to an instant-kill mechanic if assigned to work on an
+abnormality. The warning only appears when an abnormality has been fully observed to avoid spoiling newly acquired
+abnormalities.
 
 [Mod Readme](LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking/README.md)
 for full details.
@@ -124,25 +118,20 @@ for full details.
 
 ## Building
 
-The original game files are required but aren't provided. My development environment
-uses a "`src`" folder placed inside the BaseMods directory. For example,
-LobotomyCorp_Data/BaseMods/src/lobotomy-corporation-mods. If you follow this
-same structure, then the references should use the game's files and will build
-the output to the appropriate BaseMod folder e.g.,
-LobotomyCorp_Data/BaseMods/LobotomyCorporationMods.BadLuckProtectionForGifts.
+The original game files are required but aren't provided. My development environment uses a "`src`" folder placed inside
+the BaseMods directory. For example, LobotomyCorp_Data/BaseMods/src/lobotomy-corporation-mods. If you follow this same
+structure, then the references should use the game's files and will build the output to the appropriate BaseMod folder
+e.g., LobotomyCorp_Data/BaseMods/LobotomyCorporationMods.BadLuckProtectionForGifts.
 
-If you're running Linux, make sure mono-devel is installed. You should be able
-to open the solution in VSCode or VSCodium and build with xbuild. That said, I
-wouldn't recommend it as I haven't found a way to be able to debug Unity .NET
-Framework DLLs on Linux like I can on Windows with dnSpy, especially since the
-game has to run in Proton. If you're able to get debugging working on Linux, I
-would love to hear about it!
+If you're running Linux, make sure mono-devel is installed. You should be able to open the solution in VSCode or
+VSCodium and build with xbuild. That said, I wouldn't recommend it as I haven't found a way to be able to debug Unity
+.NET Framework DLLs on Linux like I can on Windows with dnSpy, especially since the game has to run in Proton. If you're
+able to get debugging working on Linux, I would love to hear about it!
 
 ## Debug Logging
 
-In the release versions errors are logged to a text file, but if you deploy as
-debug DLLs, they will also appear in-game in both the system log and as an
-Angela notification:
+In the release versions errors are logged to a text file, but if you deploy as debug DLLs, they will also appear in-game
+in both the system log and as an Angela notification:
 
 ![Debug Logging example](https://raw.githubusercontent.com/ctristan/lobotomy-corporation-mods/assets/debug-logging.png)
 

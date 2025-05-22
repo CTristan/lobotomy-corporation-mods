@@ -6,11 +6,17 @@ namespace PrivateMethods
 {
     public static class CustomizingWindow
     {
-        public const string ReviseOpenAction = "ReviseOpenAction";
+        public const string ReviseOpenAction = nameof(ReviseOpenAction);
+    }
+
+    public static class GameManager
+    {
+        public const string FixedUpdate = nameof(FixedUpdate);
+        public const string Update = nameof(Update);
     }
 
     public static class UseSkill
     {
-        public const string FinishWorkSuccessfully = "FinishWorkSuccessfully";
+        public const string FinishWorkSuccessfully = nameof(FinishWorkSuccessfully);
     }
 }

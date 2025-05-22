@@ -45,6 +45,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LobotomyCorporationMods.Not
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LobotomyCorporationMods.GiftAlertIcon", "LobotomyCorporationMods.GiftAlertIcon\LobotomyCorporationMods.GiftAlertIcon.csproj", "{0B066766-A14E-48C8-93CD-9813C22549F8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LobotomyCorporationMods.DontChatMe", "LobotomyCorporationMods.DontChatMe\LobotomyCorporationMods.DontChatMe.csproj", "{3383D297-D155-4625-9DAD-53AD1AFC4C15}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Docs", "Docs.csproj", "{FB63E792-9B37-4DE5-AAE3-2D4328647EF2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +87,14 @@ Global
 		{0B066766-A14E-48C8-93CD-9813C22549F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B066766-A14E-48C8-93CD-9813C22549F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B066766-A14E-48C8-93CD-9813C22549F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3383D297-D155-4625-9DAD-53AD1AFC4C15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3383D297-D155-4625-9DAD-53AD1AFC4C15}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3383D297-D155-4625-9DAD-53AD1AFC4C15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3383D297-D155-4625-9DAD-53AD1AFC4C15}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB63E792-9B37-4DE5-AAE3-2D4328647EF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB63E792-9B37-4DE5-AAE3-2D4328647EF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB63E792-9B37-4DE5-AAE3-2D4328647EF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB63E792-9B37-4DE5-AAE3-2D4328647EF2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
