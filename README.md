@@ -1,9 +1,8 @@
 # Lobotomy Corporation Mods
 
-Mods for the
-game [Lobotomy Corporation](https://store.steampowered.com/app/568220/Lobotomy_Corporation__Monster_Management_Simulation/).
-They're designed to be used either together or individually, so feel free to
-pick and choose.
+A collection of mods
+for [Lobotomy Corporation](https://store.steampowered.com/app/568220/Lobotomy_Corporation__Monster_Management_Simulation/).
+Each mod is standalone and can be used independently or combined with others, depending on your preferences.
 
 All mods are available for download
 on [my Nexus Mods page](https://next.nexusmods.com/profile/IsitChris/mods?gameId=2861).
@@ -14,17 +13,17 @@ LMM).
 ## Nexus Mods pages
 
 - [Bad Luck Protection for Gifts](https://www.nexusmods.com/lobotomycorporation/mods/476)
-  - ([Readme](LobotomyCorporationMods.BadLuckProtectionForGifts/README.md))
+    - ([Readme](LobotomyCorporationMods.BadLuckProtectionForGifts/README.md))
 - [Free Customization](https://www.nexusmods.com/lobotomycorporation/mods/477)
-  - ([Readme](LobotomyCorporationMods.FreeCustomization/README.md))
+    - ([Readme](LobotomyCorporationMods.FreeCustomization/README.md))
 - [Gift Alert Icon](https://www.nexusmods.com/lobotomycorporation/mods/494)
-  - ([Readme](LobotomyCorporationMods.GiftAlertIcon))
+    - ([Readme](LobotomyCorporationMods.GiftAlertIcon/README.md))
 - [Notify When Agent Receives Gift](https://www.nexusmods.com/lobotomycorporation/mods/487)
-  - ([Readme](LobotomyCorporationMods.NotifyWhenAgentReceivesGift/README.md))
+    - ([Readme](LobotomyCorporationMods.NotifyWhenAgentReceivesGift/README.md))
 - [Unofficial Bug Fixes](https://www.nexusmods.com/lobotomycorporation/mods/478)
-  - ([Readme](LobotomyCorporationMods.BugFixes/README.md))
+    - ([Readme](LobotomyCorporationMods.BugFixes/README.md))
 - [Warn When Agent Will Die From Working](https://www.nexusmods.com/lobotomycorporation/mods/479)
-  - ([Readme](LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking/README.md))
+    - ([Readme](LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking/README.md))
 
 ## Most Recent Change
 
@@ -33,17 +32,17 @@ LMM).
 #### Added
 
 - Gift Alert Icon [1.0.1]
-  - Added Chinese localization thanks to 21474836(Lin).
+    - Added Chinese localization thanks to 21474836(Lin).
 
 ### [6.0.0] - 2024-07-14
 
 #### Added
 
 - New mod: Gift Alert Icon [1.0.0]
-  - Shows an icon when a new or replacement gift is available for an agent.
+    - Shows an icon when a new or replacement gift is available for an agent.
 - Notify When Agent Receives Gift [1.1.0]
-  - Added localization through external text files.
-  - Added Chinese localization thanks to 21474836(Lin).
+    - Added localization through external text files.
+    - Added Chinese localization thanks to 21474836(Lin).
 
 See the [full changelog](CHANGELOG.md) for all changes.
 
@@ -125,9 +124,8 @@ for full details.
 
 ## Building
 
-The original game files are required but aren't provided. My current environment
-setup is a "`src`" folder in the BaseMods folder that I placed the repo in, so
-my folder structure for the repo is
+The original game files are required but aren't provided. My development environment
+uses a "`src`" folder placed inside the BaseMods directory. For example,
 LobotomyCorp_Data/BaseMods/src/lobotomy-corporation-mods. If you follow this
 same structure, then the references should use the game's files and will build
 the output to the appropriate BaseMod folder e.g.,
