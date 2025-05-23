@@ -2,6 +2,7 @@
 
 #region
 
+using System;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.DontChatMe.Implementations;
 using LobotomyCorporationMods.DontChatMe.Interfaces;
@@ -25,11 +26,24 @@ namespace LobotomyCorporationMods.DontChatMe
         private Harmony_Patch(bool initialize) : base(typeof(Harmony_Patch), "LobotomyCorporationMods.DontChatMe.dll",
             initialize)
         {
-            // Initialize the WebSocket client with the default server URL
-            WebSocketClient = new WebSocketClient(DefaultWebSocketServerUrl);
+            try
+            {
+                // Initialize the WebSocket client with the default server URL
+                WebSocketClient = new WebSocketClient(DefaultWebSocketServerUrl);
 
-            // Log initialization
-            Logger.WriteInfo("DontChatMe WebSocket client initialized with server URL: " + DefaultWebSocketServerUrl);
+                // Log initialization
+                Logger.Log(
+                    "DontChatMe WebSocket client initialized with server URL: " + DefaultWebSocketServerUrl);
+
+                WebSocketClient.Connect();
+
+                Logger.Log("Connected to WebSocket server.");
+            }
+            catch (Exception ex)
+            {
+                Logger.LogException(ex);
+                throw;
+            }
         }
 
         /// <summary>

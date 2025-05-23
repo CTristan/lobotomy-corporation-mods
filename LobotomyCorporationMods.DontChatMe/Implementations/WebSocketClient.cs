@@ -21,26 +21,29 @@ namespace LobotomyCorporationMods.DontChatMe.Implementations
 
         private readonly WebSocket _webSocket;
 
+        private bool _disposed;
+
         public WebSocketClient(string serverPath)
         {
             _webSocket = new WebSocket(serverPath);
-            _webSocket.OnClose += (sender, e) =>
-            {
-                Harmony_Patch.Instance.Logger.WriteInfo("Connection closed. Attempting reconnect...");
-                ThreadPool.QueueUserWorkItem(_ => ReconnectWithBackoff());
-            };
-            _webSocket.OnError += (sender, ex) => Harmony_Patch.Instance.Logger.WriteException(ex.Exception);
-            _webSocket.OnMessage += HandleMessage;
+            _webSocket.OnClose += WebSocket_OnClose;
+            _webSocket.OnError += WebSocket_OnError;
+            _webSocket.OnMessage += WebSocket_OnMessage;
         }
 
         public void Dispose()
         {
-            if (_webSocket != null)
-            {
-                _webSocket.Close();
-                _webSocket.OnMessage -= HandleMessage;
-            }
+            Dispose(true);
         }
+
+        public bool IsAlive
+        {
+            get => _webSocket.IsAlive;
+        }
+
+        public event EventHandler<MessageEventArgs> MessageReceived;
+        public event EventHandler<CloseEventArgs> ConnectionClosed;
+        public event EventHandler<ErrorEventArgs> ErrorOccurred;
 
         public void Connect()
         {
@@ -55,6 +58,50 @@ namespace LobotomyCorporationMods.DontChatMe.Implementations
         public void RegisterEffectHandler(string effectId, Func<EffectRequest, EffectResponse> handler)
         {
             _effectHandlers[effectId] = handler;
+        }
+
+
+        private void WebSocket_OnClose(object sender, CloseEventArgs e)
+        {
+            Harmony_Patch.Instance.Logger.Log("Connection closed. Attempting reconnect...");
+            ConnectionClosed?.Invoke(this, e);
+            ThreadPool.QueueUserWorkItem(_ => ReconnectWithBackoff());
+        }
+
+        private void WebSocket_OnError(object sender, ErrorEventArgs e)
+        {
+            Harmony_Patch.Instance.Logger.LogException(e.Exception);
+            ErrorOccurred?.Invoke(this, e);
+        }
+
+        private void WebSocket_OnMessage(object sender, MessageEventArgs e)
+        {
+            HandleMessage(sender, e);
+            MessageReceived?.Invoke(this, e);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                // Detach event handlers
+                _webSocket.OnClose -= WebSocket_OnClose;
+                _webSocket.OnError -= WebSocket_OnError;
+                _webSocket.OnMessage -= WebSocket_OnMessage;
+
+                // Dispose of managed resources
+                _webSocket.Close();
+                ((IDisposable)_webSocket).Dispose();
+            }
+
+            // No unmanaged resources to free
+
+            _disposed = true;
         }
 
         private void HandleMessage(object sender, MessageEventArgs e)
@@ -87,7 +134,7 @@ namespace LobotomyCorporationMods.DontChatMe.Implementations
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.WriteException(ex);
+                Harmony_Patch.Instance.Logger.LogException(ex);
                 SendJson(ErrorResponse("unknown", "Internal error"));
                 throw;
             }
@@ -119,22 +166,22 @@ namespace LobotomyCorporationMods.DontChatMe.Implementations
 
                     if (_webSocket.IsAlive)
                     {
-                        Harmony_Patch.Instance.Logger.WriteInfo("WebSocket reconnected successfully.");
+                        Harmony_Patch.Instance.Logger.Log("WebSocket reconnected successfully.");
                         return;
                     }
                 }
                 catch (Exception ex)
                 {
-                    Harmony_Patch.Instance.Logger.WriteException(ex);
+                    Harmony_Patch.Instance.Logger.LogException(ex);
                     throw;
                 }
 
-                Harmony_Patch.Instance.Logger.WriteInfo(
+                Harmony_Patch.Instance.Logger.Log(
                     $"Reconnect attempt {attempt} failed. Retrying in {DelayMilliseconds}ms...");
                 Thread.Sleep(DelayMilliseconds);
             }
 
-            Harmony_Patch.Instance.Logger.WriteInfo("WebSocket reconnect failed after all attempts.");
+            Harmony_Patch.Instance.Logger.Log("WebSocket reconnect failed after all attempts.");
         }
 
         private void SendJson(string json)
