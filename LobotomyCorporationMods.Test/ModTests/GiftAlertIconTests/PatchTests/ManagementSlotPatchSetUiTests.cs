@@ -46,7 +46,7 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
             _sut.PatchAfterSetUi(agent, ImageName, fileManager.Object, testAdapterParameters);
 
             // Assert
-            fileManager.Verify(x => x.GetFile(It.IsAny<string>()), Times.Once);
+            fileManager.Verify(x => x.GetFullPathForFile(It.IsAny<string>()), Times.Once);
         }
 
         [Fact]
@@ -60,7 +60,7 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
             var testAdapterParameters = SetupTestParameters(ImageName);
 
             var mockFileManager = new Mock<IFileManager>();
-            mockFileManager.Setup(x => x.GetFile(ImageName)).Returns(string.Empty);
+            mockFileManager.Setup(x => x.GetFullPathForFile(ImageName)).Returns(string.Empty);
 
             // Act
             Action action = () => _sut.PatchAfterSetUi(agent, ImageName, mockFileManager.Object, testAdapterParameters);
@@ -115,24 +115,32 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
         [Theory]
         [InlineData(EGOgiftAttachRegion.EYE, EGOgiftAttachRegion.MOUTH)]
         [InlineData(EGOgiftAttachRegion.LEFTHAND, EGOgiftAttachRegion.MASK)]
-        public void Shows_as_new_gift_when_gift_is_in_a_new_slot_and_same_attachment_type(EGOgiftAttachRegion firstGiftPosition,
+        public void Shows_as_new_gift_when_gift_is_in_a_new_slot_and_same_attachment_type(
+            EGOgiftAttachRegion firstGiftPosition,
             EGOgiftAttachRegion newGiftPosition)
         {
             // Act & Assert
-            var resultColor = SetupAndReturnImageColor(nameof(Shows_as_new_gift_when_gift_is_in_a_new_slot_and_same_attachment_type), firstGiftPosition, newGiftPosition);
+            var resultColor = SetupAndReturnImageColor(
+                nameof(Shows_as_new_gift_when_gift_is_in_a_new_slot_and_same_attachment_type), firstGiftPosition,
+                newGiftPosition);
             resultColor.Should().Be(_newGiftColor);
         }
 
         [Theory]
-        [InlineData(EGOgiftAttachRegion.EYE, EGOgiftAttachRegion.MOUTH, EGOgiftAttachType.ADD, EGOgiftAttachType.REPLACE)]
-        [InlineData(EGOgiftAttachRegion.LEFTHAND, EGOgiftAttachRegion.MASK, EGOgiftAttachType.SPECIAL_ADD, EGOgiftAttachType.REPLACE)]
-        public void Shows_as_new_gift_when_gift_is_in_a_new_slot_and_different_attachment_type(EGOgiftAttachRegion firstGiftPosition,
+        [InlineData(EGOgiftAttachRegion.EYE, EGOgiftAttachRegion.MOUTH, EGOgiftAttachType.ADD,
+            EGOgiftAttachType.REPLACE)]
+        [InlineData(EGOgiftAttachRegion.LEFTHAND, EGOgiftAttachRegion.MASK, EGOgiftAttachType.SPECIAL_ADD,
+            EGOgiftAttachType.REPLACE)]
+        public void Shows_as_new_gift_when_gift_is_in_a_new_slot_and_different_attachment_type(
+            EGOgiftAttachRegion firstGiftPosition,
             EGOgiftAttachRegion newGiftPosition,
             EGOgiftAttachType firstGiftAttachmentType,
             EGOgiftAttachType newGiftAttachmentType)
         {
             // Act & Assert
-            var resultColor = SetupAndReturnImageColor(nameof(Shows_as_new_gift_when_gift_is_in_a_new_slot_and_different_attachment_type), firstGiftPosition, newGiftPosition, firstGiftAttachmentType,
+            var resultColor = SetupAndReturnImageColor(
+                nameof(Shows_as_new_gift_when_gift_is_in_a_new_slot_and_different_attachment_type), firstGiftPosition,
+                newGiftPosition, firstGiftAttachmentType,
                 newGiftAttachmentType);
 
             resultColor.Should().Be(_newGiftColor);
@@ -141,11 +149,14 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
         [Theory]
         [InlineData(EGOgiftAttachRegion.EYE, EGOgiftAttachType.ADD)]
         [InlineData(EGOgiftAttachRegion.LEFTHAND, EGOgiftAttachType.SPECIAL_ADD)]
-        public void Shows_as_replacement_gift_when_gift_is_in_an_existing_slot_and_has_same_attachment_type(EGOgiftAttachRegion giftPosition,
+        public void Shows_as_replacement_gift_when_gift_is_in_an_existing_slot_and_has_same_attachment_type(
+            EGOgiftAttachRegion giftPosition,
             EGOgiftAttachType giftAttachmentType)
         {
             // Act & Assert
-            var resultColor = SetupAndReturnImageColor(nameof(Shows_as_replacement_gift_when_gift_is_in_an_existing_slot_and_has_same_attachment_type), giftPosition, giftPosition, giftAttachmentType,
+            var resultColor = SetupAndReturnImageColor(
+                nameof(Shows_as_replacement_gift_when_gift_is_in_an_existing_slot_and_has_same_attachment_type),
+                giftPosition, giftPosition, giftAttachmentType,
                 giftAttachmentType);
 
             resultColor.Should().Be(_replacementGiftColor);
@@ -154,11 +165,14 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
         [Theory]
         [InlineData(EGOgiftAttachType.ADD, EGOgiftAttachType.SPECIAL_ADD)]
         [InlineData(EGOgiftAttachType.REPLACE, EGOgiftAttachType.ADD)]
-        public void Shows_as_new_gift_when_gift_is_in_existing_slot_but_has_different_attachment_type(EGOgiftAttachType firstGiftAttachmentType,
+        public void Shows_as_new_gift_when_gift_is_in_existing_slot_but_has_different_attachment_type(
+            EGOgiftAttachType firstGiftAttachmentType,
             EGOgiftAttachType newGiftAttachmentType)
         {
             // Act & Assert
-            var resultColor = SetupAndReturnImageColor(nameof(Shows_as_new_gift_when_gift_is_in_existing_slot_but_has_different_attachment_type), firstGiftAttachmentType: firstGiftAttachmentType,
+            var resultColor = SetupAndReturnImageColor(
+                nameof(Shows_as_new_gift_when_gift_is_in_existing_slot_but_has_different_attachment_type),
+                firstGiftAttachmentType: firstGiftAttachmentType,
                 newGiftAttachmentType: newGiftAttachmentType);
 
             resultColor.Should().Be(_newGiftColor);
@@ -212,7 +226,8 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
 
             var mockManagementSlotTestAdapter = new Mock<IManagementSlotTestAdapter>();
             mockManagementSlotTestAdapter.Setup(x => x.Name).Returns(imageName);
-            mockManagementSlotTestAdapter.Setup(x => x.Transform.GetChild(It.IsAny<int>())).Returns(mockImageTestAdapter.Object.Transform);
+            mockManagementSlotTestAdapter.Setup(x => x.Transform.GetChild(It.IsAny<int>()))
+                .Returns(mockImageTestAdapter.Object.Transform);
             testAdapterParameters.ManagementSlotTestAdapter = mockManagementSlotTestAdapter.Object;
 
             return testAdapterParameters;
@@ -229,8 +244,10 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
 
             var mockImageTestAdapter = new Mock<IImageTestAdapter>();
             mockImageTestAdapter.SetupAllProperties();
-            mockImageTestAdapter.Setup(x => x.AddTooltipMouseOverComponent()).Returns(mockTooltipMouseOverTestAdapter.Object);
-            mockImageTestAdapter.Setup(x => x.TooltipMouseOverComponent).Returns(mockTooltipMouseOverTestAdapter.Object);
+            mockImageTestAdapter.Setup(x => x.AddTooltipMouseOverComponent())
+                .Returns(mockTooltipMouseOverTestAdapter.Object);
+            mockImageTestAdapter.Setup(x => x.TooltipMouseOverComponent)
+                .Returns(mockTooltipMouseOverTestAdapter.Object);
             mockImageTestAdapter.SetupGet(x => x.Transform).Returns(mockTransformTestAdapter.Object);
 
             return mockImageTestAdapter;
@@ -242,10 +259,13 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
             EGOgiftAttachType firstGiftAttachmentType = 0,
             EGOgiftAttachType newGiftAttachmentType = 0)
         {
-            var creature = TestExtensions.GetCreatureWithGift(attachPosition: firstGiftPosition, giftAttachType: firstGiftAttachmentType);
+            var creature = TestExtensions.GetCreatureWithGift(attachPosition: firstGiftPosition,
+                giftAttachType: firstGiftAttachmentType);
             _ = TestExtensions.InitializeCommandWindowWithAbnormality(creature);
-            var imageName = functionName + firstGiftPosition + newGiftPosition + firstGiftAttachmentType + newGiftAttachmentType;
-            var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1, newGiftPosition, newGiftAttachmentType);
+            var imageName = functionName + firstGiftPosition + newGiftPosition + firstGiftAttachmentType +
+                            newGiftAttachmentType;
+            var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1, newGiftPosition,
+                newGiftAttachmentType);
             var mockImageTestAdapter = GetMockImageTestAdapter();
             SetUpSlot(_sut, agent, imageName, mockImageTestAdapter);
 

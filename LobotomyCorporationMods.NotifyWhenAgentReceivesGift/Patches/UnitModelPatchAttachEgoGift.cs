@@ -53,11 +53,15 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches
             var giftColorCode = LocalizationIds.GiftColorCode.GetLocalized();
             var agentColoredName = $"<color={agentColorCode}>{instance.GetUnitName()}</color>";
             var giftColoredName = $"<color={giftColorCode}>{gift.metaInfo.Name}</color>";
-            var message = string.Format(CultureInfo.InvariantCulture, notificationMessage, agentColoredName, giftColoredName);
+            var message = string.Format(CultureInfo.InvariantCulture, notificationMessage, agentColoredName,
+                giftColoredName);
             instance.SendMessage(message, noticeTestAdapter);
         }
 
-        /// <summary>Needs to run before the method because we need to check ahead of time if the agent already has the gift or has another gift in the same position that is locked.</summary>
+        /// <summary>
+        ///     Needs to run before the method because we need to check ahead of time if the agent already has the gift or has
+        ///     another gift in the same position that is locked.
+        /// </summary>
         // ReSharper disable InconsistentNaming
         [EntryPoint]
         [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
@@ -70,7 +74,7 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.WriteException(ex);
+                Harmony_Patch.Instance.Logger.LogException(ex);
 
                 throw;
             }

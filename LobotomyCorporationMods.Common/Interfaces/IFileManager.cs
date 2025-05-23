@@ -4,14 +4,16 @@ namespace LobotomyCorporationMods.Common.Interfaces
 {
     public interface IFileManager
     {
-        string GetFile(string fileName);
+        void AppendAllText(string filePath, string contents);
+
+        string GetFullPathForFile(string fileName);
 
         byte[] ReadAllBytes(string filePath);
 
-        string ReadAllText(string fileWithPath,
+        string ReadAllText(string filePath,
             bool createIfNotExists);
 
-        void WriteAllText(string fileWithPath,
+        void WriteAllText(string filePath,
             string contents);
     }
 }

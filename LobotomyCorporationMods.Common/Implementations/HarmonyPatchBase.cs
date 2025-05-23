@@ -67,7 +67,7 @@ namespace LobotomyCorporationMods.Common.Implementations
             }
             catch (Exception ex)
             {
-                Logger.WriteException(ex);
+                Logger.LogException(ex);
 
                 throw;
             }
@@ -122,10 +122,13 @@ namespace LobotomyCorporationMods.Common.Implementations
             Logger.AddTarget(angelaLoggerTarget);
         }
 
-        /// <summary>Needed because Basemod doesn't use a localization file as a backup, so in other languages it will default everything to "UKNOWN".</summary>
+        /// <summary>
+        ///     Needed because Basemod doesn't use a localization file as a backup, so in other languages it will default
+        ///     everything to "UKNOWN".
+        /// </summary>
         private void AddDefaultLocalizedText()
         {
-            var defaultLocalizationFile = FileManager.GetFile("Localize/en/text_en.xml");
+            var defaultLocalizationFile = FileManager.GetFullPathForFile("Localize/en/text_en.xml");
 
             if (!File.Exists(defaultLocalizationFile))
             {
@@ -135,12 +138,12 @@ namespace LobotomyCorporationMods.Common.Implementations
             var xml = File.ReadAllText(defaultLocalizationFile);
             var xmlDocument = new XmlDocument
             {
-                XmlResolver = null,
+                XmlResolver = null
             };
 
             var xmlSettings = new XmlReaderSettings
             {
-                ProhibitDtd = true,
+                ProhibitDtd = true
             };
 
             using (var xmlReader = XmlReader.Create(new StringReader(xml), xmlSettings))

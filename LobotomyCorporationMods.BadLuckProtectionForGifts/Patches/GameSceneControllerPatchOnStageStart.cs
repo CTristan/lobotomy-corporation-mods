@@ -27,7 +27,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
         }
 
         /// <summary>
-        ///     Runs after the original OnStageStart method to reset our tracker progress. We reset the progress on restart because it doesn't make sense that an agent would remember
+        ///     Runs after the original OnStageStart method to reset our tracker progress. We reset the progress on restart because
+        ///     it doesn't make sense that an agent would remember
         ///     their creature experience if the day is reset.
         /// </summary>
         [EntryPoint]
@@ -40,7 +41,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.WriteException(ex);
+                Harmony_Patch.Instance.Logger.LogException(ex);
 
                 throw;
             }

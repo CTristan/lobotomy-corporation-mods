@@ -37,26 +37,39 @@ namespace LobotomyCorporationMods.BugFixes.Patches
             instance.ReloadCrumblingArmorAgentList(armorCreatureTestAdapter);
         }
 
-        /// <summary>Runs after the original OnNotice method to force Crumbling Armor to re-initialize it's internal list of agents.</summary>
+        /// <summary>
+        ///     Runs after the original OnNotice method to force Crumbling Armor to re-initialize it's internal list of
+        ///     agents.
+        /// </summary>
         /// <remarks>
         ///     Bugs fixed:
         ///     <list type="number">
         ///         <item>
         ///             <para>
-        ///                 Bug: When an agent that started the day with Crumbling Armor's gift but later replaced the gift with another one, they would still die when performing an
+        ///                 Bug: When an agent that started the day with Crumbling Armor's gift but later replaced the gift with
+        ///                 another one, they would still die when performing an
         ///                 Attachment work.
         ///             </para>
         ///             <para>
-        ///                 Reproduction: Start the day with an agent that has Crumbling Armor's gift. Have that agent work on One Sin and Hundreds of Good Deeds until they get One Sin's
-        ///                 gift, replacing Crumbling Armor's gift. Then have the agent perform an Attachment work on any abnormality other than Crumbling Armor.
+        ///                 Reproduction: Start the day with an agent that has Crumbling Armor's gift. Have that agent work on One
+        ///                 Sin and Hundreds of Good Deeds until they get One Sin's
+        ///                 gift, replacing Crumbling Armor's gift. Then have the agent perform an Attachment work on any
+        ///                 abnormality other than Crumbling Armor.
         ///             </para>
-        ///             <para>Expected result: Agent should not die from Crumbling Armor's effect when starting the Attachment work.</para>
+        ///             <para>
+        ///                 Expected result: Agent should not die from Crumbling Armor's effect when starting the Attachment
+        ///                 work.
+        ///             </para>
         ///             <para>Actual result: Agent dies from Crumbling Armor's effect.</para>
         ///         </item>
         ///         <item>
-        ///             <para>Bug: When an agent with Crumbling Armor's gift replaced a gift in a different slot (e.g. Hand or Face)</para>
         ///             <para>
-        ///                 Reproduction: Have an agent with Crumbling Armor's gift replace a gift in a slot that's not a Hat slot gift, the perform Attachment work on any abnormality other
+        ///                 Bug: When an agent with Crumbling Armor's gift replaced a gift in a different slot (e.g. Hand or
+        ///                 Face)
+        ///             </para>
+        ///             <para>
+        ///                 Reproduction: Have an agent with Crumbling Armor's gift replace a gift in a slot that's not a Hat slot
+        ///                 gift, the perform Attachment work on any abnormality other
         ///                 than Crumbling Armor.
         ///             </para>
         ///             <para>Expected result: Agent should die from Crumbling Armor's effect when starting the Attachment work.</para>
@@ -64,12 +77,18 @@ namespace LobotomyCorporationMods.BugFixes.Patches
         ///         </item>
         ///     </list>
         ///     <para>
-        ///         Technical notes: The root cause of the bug is that the trigger for killing the agent is separate from whether the agent actually has the gift or not. The armor keeps its
-        ///         own private list of agents that have either started the day with the gift or have acquired the gift during the day. Unfortunately it doesn't always correctly remove the
-        ///         agents from the list when they replace the gift, so the only guaranteed way to avoid the bug normally is to wait until the next day to perform Attachment work. Even
-        ///         weirder, there's actually an adjacent bug where replacing ANY gift on that agent triggers removing them from the list, so for example replacing an existing Hand gift will
-        ///         also cause the agent to not die from Crumbling Armor's gift (which is on the Head) even though they still have it. This fix will force Crumbling Armor to re-initialize its
-        ///         internal list of agents whenever anyone changes their gift so that it will always have the most up-to-date list of agents with the gift and so that we don't have to
+        ///         Technical notes: The root cause of the bug is that the trigger for killing the agent is separate from whether
+        ///         the agent actually has the gift or not. The armor keeps its
+        ///         own private list of agents that have either started the day with the gift or have acquired the gift during the
+        ///         day. Unfortunately it doesn't always correctly remove the
+        ///         agents from the list when they replace the gift, so the only guaranteed way to avoid the bug normally is to
+        ///         wait until the next day to perform Attachment work. Even
+        ///         weirder, there's actually an adjacent bug where replacing ANY gift on that agent triggers removing them from
+        ///         the list, so for example replacing an existing Hand gift will
+        ///         also cause the agent to not die from Crumbling Armor's gift (which is on the Head) even though they still have
+        ///         it. This fix will force Crumbling Armor to re-initialize its
+        ///         internal list of agents whenever anyone changes their gift so that it will always have the most up-to-date list
+        ///         of agents with the gift and so that we don't have to
         ///         babysit the death trigger.
         ///     </para>
         /// </remarks>
@@ -87,7 +106,7 @@ namespace LobotomyCorporationMods.BugFixes.Patches
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.WriteException(ex);
+                Harmony_Patch.Instance.Logger.LogException(ex);
 
                 throw;
             }

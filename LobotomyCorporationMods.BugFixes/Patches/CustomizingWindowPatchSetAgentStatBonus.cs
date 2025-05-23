@@ -37,22 +37,32 @@ namespace LobotomyCorporationMods.BugFixes.Patches
         /// <summary>Runs before SetAgentStatBonus to use the original stat levels instead of the modified stat levels.</summary>
         /// <remarks>
         ///     <para>
-        ///         Bug Fixed: If an agent has gifts that decrease a stat level to a lower level, then leveling up the agent with LOB points will use the lower stat level rather than the
+        ///         Bug Fixed: If an agent has gifts that decrease a stat level to a lower level, then leveling up the agent with
+        ///         LOB points will use the lower stat level rather than the
         ///         actual stat level.
         ///     </para>
         ///     <para>
-        ///         Reproduction: Test example was an agent with 76 Fortitude at Level 4 but has the Reckless Foolishness gift giving them -20 hp which brings their current Fortitude to
-        ///         Level 3. Opening the "Strengthen Employee" window shows Fortitude 4 and allows purchasing an upgrade to Fortitude 5. After purchasing the upgrade, the Fortitude stat
-        ///         increases by a few points but still shows Level 3 in the agent window and opening the "Strengthen Employee" window shows the Fortitude at Level 4 again.
+        ///         Reproduction: Test example was an agent with 76 Fortitude at Level 4 but has the Reckless Foolishness gift
+        ///         giving them -20 hp which brings their current Fortitude to
+        ///         Level 3. Opening the "Strengthen Employee" window shows Fortitude 4 and allows purchasing an upgrade to
+        ///         Fortitude 5. After purchasing the upgrade, the Fortitude stat
+        ///         increases by a few points but still shows Level 3 in the agent window and opening the "Strengthen Employee"
+        ///         window shows the Fortitude at Level 4 again.
         ///     </para>
         ///     <para>
-        ///         Expected result: Upgrading the agent's stat Fortitude level should have increased the actual unmodified stat level to the next level instead of remaining at the same
+        ///         Expected result: Upgrading the agent's stat Fortitude level should have increased the actual unmodified stat
+        ///         level to the next level instead of remaining at the same
         ///         level.
         ///     </para>
-        ///     <para>Actual result: Upgrading the agent's stat Fortitude level used the Level 3 bonus instead of the Level 4 bonus, causing the stat level to remain at Level 4.</para>
         ///     <para>
-        ///         Technical notes: Needs to run before the SetAgentStatBonus method runs because the bug is in the stat upgrade calculation itself since we're replacing the calculation
-        ///         with the fixed one. If we want to fix it after the original method runs then we would need to make things a lot more complicated to both validate that the upgrade didn't
+        ///         Actual result: Upgrading the agent's stat Fortitude level used the Level 3 bonus instead of the Level 4
+        ///         bonus, causing the stat level to remain at Level 4.
+        ///     </para>
+        ///     <para>
+        ///         Technical notes: Needs to run before the SetAgentStatBonus method runs because the bug is in the stat upgrade
+        ///         calculation itself since we're replacing the calculation
+        ///         with the fixed one. If we want to fix it after the original method runs then we would need to make things a lot
+        ///         more complicated to both validate that the upgrade didn't
         ///         work correctly and to perform another upgrade with the correct calculation.
         ///     </para>
         /// </remarks>
@@ -73,7 +83,7 @@ namespace LobotomyCorporationMods.BugFixes.Patches
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.WriteException(ex);
+                Harmony_Patch.Instance.Logger.LogException(ex);
 
                 throw;
             }

@@ -19,26 +19,18 @@ namespace LobotomyCorporationMods.Common.Implementations
     {
         private readonly DirectoryInfo _dataPath;
         private readonly object _fileLock = new object();
-        private readonly Dictionary<string, string> _filesCache;
 
         public FileManager([NotNull] string modFileName,
             [NotNull] ICollection<DirectoryInfo> directories)
         {
             Guard.Against.Null(directories, nameof(directories));
 
-            var directory = directories.FirstOrDefault(directoryInfo => File.Exists(Path.Combine(directoryInfo.FullName, modFileName)));
+            var directory = directories.FirstOrDefault(directoryInfo =>
+                File.Exists(Path.Combine(directoryInfo.FullName, modFileName)));
 
             if (directory.IsNotNull())
             {
                 _dataPath = directory;
-
-                var modFilePath = Path.Combine(_dataPath.FullName, modFileName);
-                _filesCache = new Dictionary<string, string>
-                {
-                    {
-                        modFileName, modFilePath
-                    },
-                };
             }
             else
             {
@@ -53,17 +45,17 @@ namespace LobotomyCorporationMods.Common.Implementations
             }
         }
 
-        public string GetFile([NotNull] string fileName)
+        public void AppendAllText(string filePath, string contents)
         {
-            if (_filesCache.TryGetValue(fileName, out var value))
+            lock (_fileLock)
             {
-                return value;
+                File.AppendAllText(filePath, contents);
             }
+        }
 
-            var fullFilePath = Path.Combine(_dataPath.FullName, fileName);
-            _filesCache.Add(fileName, fullFilePath);
-
-            return _filesCache[fileName];
+        public string GetFullPathForFile([NotNull] string fileName)
+        {
+            return Path.Combine(_dataPath.FullName, fileName);
         }
 
         [NotNull]
@@ -73,31 +65,26 @@ namespace LobotomyCorporationMods.Common.Implementations
         }
 
         [NotNull]
-        public string ReadAllText(string fileWithPath,
+        public string ReadAllText(string filePath,
             bool createIfNotExists)
         {
-            if (!File.Exists(fileWithPath))
-            {
-                if (!createIfNotExists)
-                {
-                    return string.Empty;
-                }
-
-                WriteAllText(fileWithPath, string.Empty);
-            }
-
             lock (_fileLock)
             {
-                return File.ReadAllText(fileWithPath);
+                if (!File.Exists(filePath) && createIfNotExists)
+                {
+                    File.WriteAllText(filePath, string.Empty);
+                }
+
+                return File.Exists(filePath) ? File.ReadAllText(filePath) : string.Empty;
             }
         }
 
-        public void WriteAllText([NotNull] string fileWithPath,
+        public void WriteAllText([NotNull] string filePath,
             string contents)
         {
             lock (_fileLock)
             {
-                File.WriteAllText(fileWithPath, contents);
+                File.WriteAllText(filePath, contents);
             }
         }
     }

@@ -20,7 +20,8 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
     public static class CustomizingWindowPatchOpenAppearanceWindow
     {
         /// <summary>
-        ///     Runs after opening the Appearance Window to make sure the IsCustomAppearance field is false, which is used by all of the private methods to check for increasing the cost
+        ///     Runs after opening the Appearance Window to make sure the IsCustomAppearance field is false, which is used by all
+        ///     of the private methods to check for increasing the cost
         ///     of custom agents.
         /// </summary>
         // ReSharper disable InconsistentNaming
@@ -34,7 +35,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.WriteException(ex);
+                Harmony_Patch.Instance.Logger.LogException(ex);
 
                 throw;
             }

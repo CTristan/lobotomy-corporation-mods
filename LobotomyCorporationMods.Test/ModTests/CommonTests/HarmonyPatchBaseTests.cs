@@ -29,7 +29,8 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         {
             var mockLogger = new Mock<ILogger>();
 
-            Action action = () => _fakeHarmonyPatch.ApplyHarmonyPatch(typeof(HarmonyPatchBase), string.Empty, mockLogger.Object);
+            Action action = () =>
+                _fakeHarmonyPatch.ApplyHarmonyPatch(typeof(HarmonyPatchBase), string.Empty, mockLogger.Object);
 
             action.Should().NotThrow();
         }
@@ -58,9 +59,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
             var key = nameof(Initializing_localized_text_returns_correct_value) + expectedValue;
             var dictionary = new Dictionary<string, string>
             {
-                {
-                    key, expectedValue
-                },
+                { key, expectedValue }
             };
 
             LocalizeTextDataModel.instance.Init(dictionary);
@@ -137,7 +136,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
 
             const string LocalizationFile = "Localize/en/text_en.xml";
             var fileManager = TestExtensions.GetMockFileManager();
-            var fileWithPath = fileManager.Object.GetFile(LocalizationFile);
+            var fileWithPath = fileManager.Object.GetFullPathForFile(LocalizationFile);
             fileManager.Object.WriteAllText(fileWithPath, xmlTextBuilder.ToString());
         }
 
@@ -154,7 +153,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
 
             Action action = () => _fakeHarmonyPatch.TestInitializePatchData(new List<DirectoryInfo>
             {
-                new DirectoryInfo(currentDirectory),
+                new DirectoryInfo(currentDirectory)
             }, patchType);
 
             action.Should().NotThrow();
@@ -168,7 +167,8 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
     {
         private const string FileNameThatExists = "FileNameThatExists.txt";
 
-        internal FakeHarmonyPatch(bool isNotDuplicating) : base(typeof(FakeHarmonyPatch), nameof(FakeHarmonyPatch), isNotDuplicating)
+        internal FakeHarmonyPatch(bool isNotDuplicating) : base(typeof(FakeHarmonyPatch), nameof(FakeHarmonyPatch),
+            isNotDuplicating)
         {
         }
 

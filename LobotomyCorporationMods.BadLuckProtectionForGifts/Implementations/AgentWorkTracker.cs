@@ -34,7 +34,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
             }
 
             _fileManager = fileManager;
-            _trackerFile = _fileManager.GetFile(dataFileName);
+            _trackerFile = _fileManager.GetFullPathForFile(dataFileName);
             Load();
         }
 
@@ -119,15 +119,19 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
                 for (var i = 1; i < giftData.Length; i++)
                 {
                     var agentData = giftData[i].Split(';');
-                    IncrementAgentWorkCount(giftName, long.Parse(agentData[0], CultureInfo.InvariantCulture), float.Parse(agentData[1], CultureInfo.InvariantCulture));
+                    IncrementAgentWorkCount(giftName, long.Parse(agentData[0], CultureInfo.InvariantCulture),
+                        float.Parse(agentData[1], CultureInfo.InvariantCulture));
                 }
             }
         }
 
         /// <summary>
-        ///     Converts the AgentWorkTracker object to a custom string format. The format delimits gifts by '|', agents for each gift by '^', and agent id and work count are separated
-        ///     by ';'. A gift can have multiple agents, and we don't duplicate the gift names. Example: (gift1)^(agent1);(work-count1)^(agent2);(work-count2)|(gift2)^(agent1);(work-count2) I
-        ///     would have preferred to use json, but the Unity json support is very minimal and does not support nested objects, so I had to make my own format.
+        ///     Converts the AgentWorkTracker object to a custom string format. The format delimits gifts by '|', agents for each
+        ///     gift by '^', and agent id and work count are separated
+        ///     by ';'. A gift can have multiple agents, and we don't duplicate the gift names. Example:
+        ///     (gift1)^(agent1);(work-count1)^(agent2);(work-count2)|(gift2)^(agent1);(work-count2) I
+        ///     would have preferred to use json, but the Unity json support is very minimal and does not support nested objects,
+        ///     so I had to make my own format.
         /// </summary>
         /// <returns></returns>
         public override string ToString()
@@ -156,7 +160,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         {
             var agentDataBuilder = new StringBuilder();
 
-            foreach (var agentData in gift.GetAgents().Select(agent => $"^{agent.GetId()};{agent.GetWorkCount().ToString(CultureInfo.InvariantCulture)}"))
+            foreach (var agentData in gift.GetAgents().Select(agent =>
+                         $"^{agent.GetId()};{agent.GetWorkCount().ToString(CultureInfo.InvariantCulture)}"))
             {
                 agentDataBuilder.Append(agentData);
             }

@@ -28,7 +28,8 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         {
             Guard.Against.Null(instance, nameof(instance));
 
-            instance.OpenAppearancePanel(agentInfoWindowUiComponentsTestAdapter, customizingWindowTestAdapter, gameObjectTestAdapter);
+            instance.OpenAppearancePanel(agentInfoWindowUiComponentsTestAdapter, customizingWindowTestAdapter,
+                gameObjectTestAdapter);
         }
 
         /// <summary>Runs after opening the Strengthen Agent window to open the appearance window.</summary>
@@ -45,7 +46,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.WriteException(ex);
+                Harmony_Patch.Instance.Logger.LogException(ex);
 
                 throw;
             }

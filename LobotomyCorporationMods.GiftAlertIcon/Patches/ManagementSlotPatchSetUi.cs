@@ -31,7 +31,8 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Patches
         {
             Guard.Against.Null(instance, nameof(instance));
             fileManager = fileManager.EnsureNotNullWithMethod(() => Harmony_Patch.Instance.FileManager);
-            testAdapterParameters = testAdapterParameters.EnsureNotNullWithMethod(() => new OptionalTestAdapterParameters());
+            testAdapterParameters =
+                testAdapterParameters.EnsureNotNullWithMethod(() => new OptionalTestAdapterParameters());
 
             const float LocalPositionX = -12f;
             const float LocalPositionY = 28f;
@@ -48,7 +49,7 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Patches
                 LocalPositionY = LocalPositionY,
                 LocalPositionZ = LocalPositionZ,
                 LocalScaleX = LocalScaleX,
-                LocalScaleY = LocalScaleY,
+                LocalScaleY = LocalScaleY
             };
 
             instance.UpdateGiftIcon(agent, imageProperties, fileManager, testAdapterParameters);
@@ -72,7 +73,7 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Patches
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.WriteException(ex);
+                Harmony_Patch.Instance.Logger.LogException(ex);
 
                 throw;
             }

@@ -18,8 +18,8 @@ namespace LobotomyCorporationMods.Common.Implementations.LoggerTargets
 
         public void WriteToLoggerTarget(string message)
         {
-            var logFile = _fileManager.GetFile(_logFileName);
-            _fileManager.WriteAllText(logFile, message);
+            var logFile = _fileManager.GetFullPathForFile(_logFileName);
+            _fileManager.AppendAllText(logFile, message);
         }
     }
 }

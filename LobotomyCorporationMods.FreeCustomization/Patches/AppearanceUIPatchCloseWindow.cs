@@ -27,8 +27,10 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         }
 
         /// <summary>
-        ///     Runs before the Close Window function of the AppearanceUI runs to verify if we actually want to close the window. The only reason we do this is there's a hardcoded call
-        ///     to a private method (CustomizingWindow.Start()) that closes the appearance window after the first agent window is generated.
+        ///     Runs before the Close Window function of the AppearanceUI runs to verify if we actually want to close the window.
+        ///     The only reason we do this is there's a hardcoded call
+        ///     to a private method (CustomizingWindow.Start()) that closes the appearance window after the first agent window is
+        ///     generated.
         /// </summary>
         /// <param name="__instance">An instance of the AppearanceUI class.</param>
         /// <returns>True if the prefix method successfully executed, otherwise false.</returns>
@@ -43,7 +45,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.WriteException(ex);
+                Harmony_Patch.Instance.Logger.LogException(ex);
 
                 throw;
             }

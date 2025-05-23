@@ -31,8 +31,10 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         }
 
         /// <summary>
-        ///     Runs before confirming the Strengthen Employee window to save appearance data. Needs to run before the Confirm method because the Confirm method unloads the CurrentAgent
-        ///     from the customizing window, so it would be too late for us to update the agent. This forcefully updates an agent's data because the game wasn't designed to allow you to
+        ///     Runs before confirming the Strengthen Employee window to save appearance data. Needs to run before the Confirm
+        ///     method because the Confirm method unloads the CurrentAgent
+        ///     from the customizing window, so it would be too late for us to update the agent. This forcefully updates an agent's
+        ///     data because the game wasn't designed to allow you to
         ///     customize existing agents, so the game assumes the agent was already created before this step.
         /// </summary>
         // ReSharper disable InconsistentNaming
@@ -46,7 +48,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.WriteException(ex);
+                Harmony_Patch.Instance.Logger.LogException(ex);
 
                 throw;
             }

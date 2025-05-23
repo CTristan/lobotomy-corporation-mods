@@ -29,16 +29,20 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             Guard.Against.Null(managementSlot, nameof(managementSlot));
             Guard.Against.Null(fileManager, nameof(fileManager));
 
-            s_imagesDictionary = s_imagesDictionary.EnsureNotNullWithMethod(() => new UnityAdapterDictionary<string, IImageTestAdapter, Image>());
-            testAdapterParameters = testAdapterParameters.EnsureNotNullWithMethod(() => new OptionalTestAdapterParameters());
-            testAdapterParameters.Texture2DTestAdapter = testAdapterParameters.Texture2DTestAdapter.EnsureNotNullWithMethod(() => new Texture2dTestAdapter());
+            s_imagesDictionary =
+                s_imagesDictionary.EnsureNotNullWithMethod(() =>
+                    new UnityAdapterDictionary<string, IImageTestAdapter, Image>());
+            testAdapterParameters =
+                testAdapterParameters.EnsureNotNullWithMethod(() => new OptionalTestAdapterParameters());
+            testAdapterParameters.Texture2DTestAdapter =
+                testAdapterParameters.Texture2DTestAdapter.EnsureNotNullWithMethod(() => new Texture2dTestAdapter());
 
             if (s_imagesDictionary.ContainsKey(imageParameters.ImageId))
             {
                 return;
             }
 
-            var fileWithPath = fileManager.GetFile(imageParameters.ImageFilePath);
+            var fileWithPath = fileManager.GetFullPathForFile(imageParameters.ImageFilePath);
             if (string.IsNullOrEmpty(fileWithPath))
             {
                 throw new InvalidOperationException("No image found with name " + imageParameters.ImageFilePath);
@@ -77,7 +81,8 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         }
 
         /// <summary>
-        ///     Determines whether the current CommandWindow is an abnormality work window. An abnormality work window is a CommandWindow in the Management phase with a non-null rwbpType
+        ///     Determines whether the current CommandWindow is an abnormality work window. An abnormality work window is a
+        ///     CommandWindow in the Management phase with a non-null rwbpType
         ///     in the CurrentSkill property.
         /// </summary>
         /// <param name="commandWindow">The current CommandWindow to check.</param>
@@ -87,7 +92,8 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             Guard.Against.Null(commandWindow, nameof(commandWindow));
 
             // Validation checks to confirm we have everything we need
-            var isAbnormalityWorkWindow = commandWindow.CurrentSkill.IsNotNull() && commandWindow.CurrentWindowType == CommandType.Management;
+            var isAbnormalityWorkWindow = commandWindow.CurrentSkill.IsNotNull() &&
+                                          commandWindow.CurrentWindowType == CommandType.Management;
 
             return isAbnormalityWorkWindow;
         }
@@ -100,8 +106,10 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         {
             Guard.Against.Null(agentSlot, nameof(agentSlot));
 
-            imageTestAdapter = imageTestAdapter.EnsureNotNullWithMethod(() => new ImageTestAdapter(agentSlot.WorkFilterFill));
-            textTestAdapter = textTestAdapter.EnsureNotNullWithMethod(() => new TextTestAdapter(agentSlot.WorkFilterText));
+            imageTestAdapter =
+                imageTestAdapter.EnsureNotNullWithMethod(() => new ImageTestAdapter(agentSlot.WorkFilterFill));
+            textTestAdapter =
+                textTestAdapter.EnsureNotNullWithMethod(() => new TextTestAdapter(agentSlot.WorkFilterText));
 
             imageTestAdapter.Color = slotColor;
             textTestAdapter.Text = slotText;

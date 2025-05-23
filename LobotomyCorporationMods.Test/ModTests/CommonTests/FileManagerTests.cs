@@ -23,7 +23,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         {
             var fileManager = new FileManager(DefaultModFileName, GetDirectories());
 
-            var result = fileManager.GetFile(DefaultModFileName);
+            var result = fileManager.GetFullPathForFile(DefaultModFileName);
 
             result.Should().NotBeNullOrWhiteSpace();
         }
@@ -33,7 +33,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         {
             var fileManager = new FileManager(DefaultModFileName, GetDirectories());
 
-            var result = fileManager.GetFile("NewFileName");
+            var result = fileManager.GetFullPathForFile("NewFileName");
 
             result.Should().NotBeNullOrWhiteSpace();
         }
@@ -44,7 +44,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         public void Reading_a_nonexistent_file_with_flag_not_set_does_not_create_the_file([NotNull] string fileName)
         {
             var fileManager = new FileManager(DefaultModFileName, GetDirectories());
-            var fileWithPath = fileManager.GetFile(fileName);
+            var fileWithPath = fileManager.GetFullPathForFile(fileName);
             DeleteFileIfExists(fileWithPath);
 
             var result = fileManager.ReadAllText(fileWithPath, false);
@@ -58,7 +58,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         public void Reading_a_nonexistent_file_with_flag_set_creates_the_file([NotNull] string fileName)
         {
             var fileManager = new FileManager(DefaultModFileName, GetDirectories());
-            var fileWithPath = fileManager.GetFile(fileName);
+            var fileWithPath = fileManager.GetFullPathForFile(fileName);
             DeleteFileIfExists(fileWithPath);
 
             _ = fileManager.ReadAllText(fileWithPath, true);
@@ -96,7 +96,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
 
             return new List<DirectoryInfo>
             {
-                new DirectoryInfo(currentDirectory),
+                new DirectoryInfo(currentDirectory)
             };
         }
 

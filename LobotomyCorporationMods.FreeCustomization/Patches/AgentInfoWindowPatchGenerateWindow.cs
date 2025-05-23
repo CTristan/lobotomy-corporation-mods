@@ -28,10 +28,14 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         {
             Guard.Against.Null(instance, nameof(instance));
 
-            instance.OpenAppearancePanel(agentInfoWindowUiComponentsTestAdapter, customizingWindowTestAdapter, gameObjectTestAdapter);
+            instance.OpenAppearancePanel(agentInfoWindowUiComponentsTestAdapter, customizingWindowTestAdapter,
+                gameObjectTestAdapter);
         }
 
-        /// <summary>Runs after opening the Agent window to automatically open the appearance window, since there's no reason to hide it behind a button.</summary>
+        /// <summary>
+        ///     Runs after opening the Agent window to automatically open the appearance window, since there's no reason to
+        ///     hide it behind a button.
+        /// </summary>
         [EntryPoint]
         [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
         public static void Postfix()
@@ -45,7 +49,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.WriteException(ex);
+                Harmony_Patch.Instance.Logger.LogException(ex);
 
                 throw;
             }
