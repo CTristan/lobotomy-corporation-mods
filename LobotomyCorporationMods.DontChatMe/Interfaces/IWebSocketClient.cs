@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: MIT
 
+using System;
+using LobotomyCorporationMods.DontChatMe.Models.EffectMessages;
+
 namespace LobotomyCorporationMods.DontChatMe.Interfaces
 {
     /// <summary>
@@ -9,5 +12,6 @@ namespace LobotomyCorporationMods.DontChatMe.Interfaces
     {
         void Connect();
         void Close();
+        void RegisterEffectHandler(string effectId, Func<EffectRequest, EffectResponse> handler);
     }
 }

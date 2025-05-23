@@ -4,6 +4,7 @@ namespace LobotomyCorporationMods.DontChatMe.Constants
 {
     internal static class MessageTypes
     {
-        internal const string Effect = "effect";
+        internal const string EffectRequest = "effect_request";
+        internal const string EffectResponse = "effect_response";
     }
 }

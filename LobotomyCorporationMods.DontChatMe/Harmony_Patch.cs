@@ -14,7 +14,7 @@ namespace LobotomyCorporationMods.DontChatMe
     public sealed class Harmony_Patch : HarmonyPatchBase
     {
         // Default WebSocket server URL - can be changed in configuration
-        private const string DefaultWebSocketServerUrl = "ws://localhost:8000/ws";
+        private const string DefaultWebSocketServerUrl = "ws://localhost:8002/effect/ws";
 
         public new static readonly Harmony_Patch Instance = new Harmony_Patch(true);
 

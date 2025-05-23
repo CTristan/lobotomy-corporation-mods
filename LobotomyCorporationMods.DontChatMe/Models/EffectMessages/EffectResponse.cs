@@ -3,16 +3,21 @@
 using System.Collections.Generic;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
+using LobotomyCorporationMods.DontChatMe.Constants;
 
 namespace LobotomyCorporationMods.DontChatMe.Models.EffectMessages
 {
-    public sealed class EffectResponse : EffectMessage
+    public sealed class EffectResponse : WebSocketMessage
     {
         public string EffectId { get; set; }
-        public string Message { get; set; }
         public string RequestId { get; set; }
-        public int? RetryHint { get; set; }
         public string Status { get; set; }
+        public string Message { get; set; }
+
+        public override string MessageType
+        {
+            get => MessageTypes.EffectResponse;
+        }
 
         public static EffectResponse FromJson(Dictionary<string, object> json)
         {
@@ -20,23 +25,22 @@ namespace LobotomyCorporationMods.DontChatMe.Models.EffectMessages
 
             return new EffectResponse
             {
-                RequestId = json.TryGetString(nameof(RequestId)),
-                EffectId = json.TryGetString(nameof(EffectId)),
-                Status = json.TryGetString(nameof(Status)),
-                Message = json.TryGetString(nameof(Message)),
-                RetryHint = json.TryGetNullableInt(nameof(RetryHint))
+                RequestId = json.TryGetString(JsonKeys.RequestId),
+                EffectId = json.TryGetString(JsonKeys.EffectId),
+                Status = json.TryGetString(JsonKeys.Status),
+                Message = json.TryGetString(JsonKeys.Message)
             };
         }
 
-        public string ToJson()
+        protected override Dictionary<string, object> SerializeFields()
         {
-            FieldDictionary.Add(nameof(RequestId), RequestId);
-            FieldDictionary.Add(nameof(EffectId), EffectId);
-            FieldDictionary.Add(nameof(Status), Status);
-            FieldDictionary.Add(nameof(Message), Message);
-            FieldDictionary.Add(nameof(RetryHint), RetryHint);
-
-            return JsonExtensions.BuildJson(FieldDictionary);
+            return new Dictionary<string, object>
+            {
+                [JsonKeys.RequestId] = RequestId,
+                [JsonKeys.EffectId] = EffectId,
+                [JsonKeys.Status] = Status,
+                [JsonKeys.Message] = Message
+            };
         }
     }
 }

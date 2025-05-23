@@ -2,20 +2,26 @@
 
 using System.Collections.Generic;
 using LobotomyCorporationMods.Common.Extensions;
+using LobotomyCorporationMods.DontChatMe.Constants;
 
 namespace LobotomyCorporationMods.DontChatMe.Models.EffectMessages
 {
-    public sealed class EffectRequest : EffectMessage
+    public sealed class EffectRequest : WebSocketMessage
     {
         public string EffectId { get; set; }
         public string RequestId { get; set; }
+
+        public override string MessageType
+        {
+            get => MessageTypes.EffectRequest;
+        }
 
         public static EffectRequest FromJson(Dictionary<string, object> json)
         {
             return new EffectRequest
             {
-                EffectId = json.TryGetString(nameof(EffectId)),
-                RequestId = json.TryGetString(nameof(RequestId))
+                EffectId = json.TryGetString(JsonKeys.EffectId),
+                RequestId = json.TryGetString(JsonKeys.RequestId)
             };
         }
 
@@ -23,8 +29,8 @@ namespace LobotomyCorporationMods.DontChatMe.Models.EffectMessages
         {
             return new Dictionary<string, object>
             {
-                { nameof(EffectId), EffectId },
-                { nameof(RequestId), RequestId }
+                [JsonKeys.EffectId] = EffectId,
+                [JsonKeys.RequestId] = RequestId
             };
         }
     }

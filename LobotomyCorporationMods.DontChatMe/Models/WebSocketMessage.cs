@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using LobotomyCorporationMods.Common.Extensions;
+using LobotomyCorporationMods.DontChatMe.Constants;
 
 namespace LobotomyCorporationMods.DontChatMe.Models
 {
@@ -14,7 +15,7 @@ namespace LobotomyCorporationMods.DontChatMe.Models
         public string ToJson()
         {
             var fields = SerializeFields();
-            fields["messageType"] = MessageType; // or "type", your call
+            fields[JsonKeys.Type] = MessageType;
             return JsonExtensions.BuildJson(fields);
         }
     }
