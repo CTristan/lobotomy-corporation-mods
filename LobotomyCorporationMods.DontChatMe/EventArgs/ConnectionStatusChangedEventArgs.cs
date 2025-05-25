@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: MIT
-namespace LobotomyCorporationMods.Common.EventArgs
-{
-    using System;
 
+namespace LobotomyCorporationMods.DontChatMe.EventArgs
+{
     /// <summary>
     ///     Event arguments for when the WebSocket connection status changes.
     /// </summary>
-    public class ConnectionStatusChangedEventArgs : EventArgs
+    public class ConnectionStatusChangedEventArgs : System.EventArgs
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="ConnectionStatusChangedEventArgs" /> class.
@@ -14,7 +13,7 @@ namespace LobotomyCorporationMods.Common.EventArgs
         /// <param name="isConnected"><c>true</c> if the WebSocket client is connected.</param>
         public ConnectionStatusChangedEventArgs(bool isConnected)
         {
-            this.IsConnected = isConnected;
+            IsConnected = isConnected;
         }
 
         /// <summary>

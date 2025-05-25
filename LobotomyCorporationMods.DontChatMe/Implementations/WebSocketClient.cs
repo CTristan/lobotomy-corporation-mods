@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using LobotomyCorporationMods.DontChatMe.EventArgs;
 using LobotomyCorporationMods.DontChatMe.Interfaces;
 using LobotomyCorporationMods.DontChatMe.Models.EffectMessages;
 using SharpJson;
@@ -22,6 +23,8 @@ namespace LobotomyCorporationMods.DontChatMe.Implementations
         private readonly WebSocket _webSocket;
 
         private bool _disposed;
+        private volatile bool _isReconnecting;
+        private volatile bool _shutdownRequested;
 
         public WebSocketClient(string serverPath)
         {
@@ -33,8 +36,40 @@ namespace LobotomyCorporationMods.DontChatMe.Implementations
 
         public void Dispose()
         {
+            _shutdownRequested = true;
             Dispose(true);
         }
+
+        public void Close()
+        {
+            _webSocket.Close();
+            _isReconnecting = false;
+            ConnectionStatusChanged?.Invoke(this, new ConnectionStatusChangedEventArgs(false));
+        }
+
+        public void Connect()
+        {
+            try
+            {
+                _webSocket.Connect();
+
+                if (_webSocket.IsAlive)
+                {
+                    ConnectionStatusChanged?.Invoke(this, new ConnectionStatusChangedEventArgs(true));
+                }
+            }
+#pragma warning disable CA1031
+            catch (Exception ex)
+#pragma warning restore CA1031
+            {
+                Harmony_Patch.Instance.Logger.Log($"Connect() threw: {ex.Message}");
+                Harmony_Patch.Instance.Logger.LogException(ex);
+            }
+        }
+
+        public event EventHandler<CloseEventArgs> ConnectionClosed;
+        public event EventHandler<ConnectionStatusChangedEventArgs> ConnectionStatusChanged;
+        public event EventHandler<ErrorEventArgs> ErrorOccurred;
 
         public bool IsAlive
         {
@@ -42,42 +77,10 @@ namespace LobotomyCorporationMods.DontChatMe.Implementations
         }
 
         public event EventHandler<MessageEventArgs> MessageReceived;
-        public event EventHandler<CloseEventArgs> ConnectionClosed;
-        public event EventHandler<ErrorEventArgs> ErrorOccurred;
-
-        public void Connect()
-        {
-            _webSocket.Connect();
-        }
-
-        public void Close()
-        {
-            _webSocket.Close();
-        }
 
         public void RegisterEffectHandler(string effectId, Func<EffectRequest, EffectResponse> handler)
         {
             _effectHandlers[effectId] = handler;
-        }
-
-
-        private void WebSocket_OnClose(object sender, CloseEventArgs e)
-        {
-            Harmony_Patch.Instance.Logger.Log("Connection closed. Attempting reconnect...");
-            ConnectionClosed?.Invoke(this, e);
-            ThreadPool.QueueUserWorkItem(_ => ReconnectWithBackoff());
-        }
-
-        private void WebSocket_OnError(object sender, ErrorEventArgs e)
-        {
-            Harmony_Patch.Instance.Logger.LogException(e.Exception);
-            ErrorOccurred?.Invoke(this, e);
-        }
-
-        private void WebSocket_OnMessage(object sender, MessageEventArgs e)
-        {
-            HandleMessage(sender, e);
-            MessageReceived?.Invoke(this, e);
         }
 
         private void Dispose(bool disposing)
@@ -104,7 +107,20 @@ namespace LobotomyCorporationMods.DontChatMe.Implementations
             _disposed = true;
         }
 
-        private void HandleMessage(object sender, MessageEventArgs e)
+        private static string ErrorResponse(string requestId, string message)
+        {
+            var error = new EffectResponse
+            {
+                RequestId = requestId,
+                EffectId = "unknown",
+                Status = "error",
+                Message = message
+            };
+
+            return error.ToJson();
+        }
+
+        private void HandleMessage(MessageEventArgs e)
         {
             try
             {
@@ -140,25 +156,13 @@ namespace LobotomyCorporationMods.DontChatMe.Implementations
             }
         }
 
-        private static string ErrorResponse(string requestId, string message)
-        {
-            var error = new EffectResponse
-            {
-                RequestId = requestId,
-                EffectId = "unknown",
-                Status = "error",
-                Message = message
-            };
-
-            return error.ToJson();
-        }
-
         private void ReconnectWithBackoff()
         {
+            Harmony_Patch.Instance.Logger.Log($"Reconnect thread {Thread.CurrentThread.ManagedThreadId} starting.");
             const int MaxAttempts = 5;
             const int DelayMilliseconds = 3000;
 
-            for (var attempt = 1; attempt <= MaxAttempts; attempt++)
+            for (var attempt = 1; attempt <= MaxAttempts && !_shutdownRequested; attempt++)
             {
                 try
                 {
@@ -167,17 +171,22 @@ namespace LobotomyCorporationMods.DontChatMe.Implementations
                     if (_webSocket.IsAlive)
                     {
                         Harmony_Patch.Instance.Logger.Log("WebSocket reconnected successfully.");
+                        ConnectionStatusChanged?.Invoke(this, new ConnectionStatusChangedEventArgs(true));
                         return;
                     }
+
+                    Harmony_Patch.Instance.Logger.Log(
+                        $"Reconnect attempt {attempt} failed. Retrying in {DelayMilliseconds}ms...");
                 }
+#pragma warning disable CA1031
                 catch (Exception ex)
+#pragma warning restore CA1031
                 {
                     Harmony_Patch.Instance.Logger.LogException(ex);
-                    throw;
+                    Harmony_Patch.Instance.Logger.Log(
+                        $"Reconnect attempt {attempt} threw an exception. Retrying in {DelayMilliseconds}ms...");
                 }
 
-                Harmony_Patch.Instance.Logger.Log(
-                    $"Reconnect attempt {attempt} failed. Retrying in {DelayMilliseconds}ms...");
                 Thread.Sleep(DelayMilliseconds);
             }
 
@@ -187,6 +196,45 @@ namespace LobotomyCorporationMods.DontChatMe.Implementations
         private void SendJson(string json)
         {
             _webSocket.Send(json);
+        }
+
+
+        private void WebSocket_OnClose(object sender, CloseEventArgs e)
+        {
+            Harmony_Patch.Instance.Logger.Log($"Connection closed. Code: {e.Code}, Reason: {e.Reason}");
+            ConnectionClosed?.Invoke(this, e);
+            ConnectionStatusChanged?.Invoke(this, new ConnectionStatusChangedEventArgs(false));
+
+            if (_isReconnecting)
+            {
+                return;
+            }
+
+            _isReconnecting = true;
+            ThreadPool.QueueUserWorkItem(_ =>
+            {
+                ReconnectWithBackoff();
+                _isReconnecting = false;
+            });
+        }
+
+        private void WebSocket_OnError(object sender, ErrorEventArgs e)
+        {
+            Harmony_Patch.Instance.Logger.Log($"WebSocket error: {e.Message}.");
+
+            if (e.Exception != null)
+            {
+                Harmony_Patch.Instance.Logger.LogException(e.Exception);
+            }
+
+            ErrorOccurred?.Invoke(this, e);
+            ConnectionStatusChanged?.Invoke(this, new ConnectionStatusChangedEventArgs(false));
+        }
+
+        private void WebSocket_OnMessage(object sender, MessageEventArgs e)
+        {
+            HandleMessage(e);
+            MessageReceived?.Invoke(this, e);
         }
     }
 }

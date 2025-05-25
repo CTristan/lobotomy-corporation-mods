@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 using System;
+using LobotomyCorporationMods.DontChatMe.EventArgs;
 using LobotomyCorporationMods.DontChatMe.Models.EffectMessages;
 using WebSocketSharp;
 
@@ -12,11 +13,12 @@ namespace LobotomyCorporationMods.DontChatMe.Interfaces
     public interface IWebSocketClient
     {
         bool IsAlive { get; }
-        event EventHandler<MessageEventArgs> MessageReceived;
-        event EventHandler<CloseEventArgs> ConnectionClosed;
-        event EventHandler<ErrorEventArgs> ErrorOccurred;
-        void Connect();
         void Close();
+        void Connect();
+        event EventHandler<CloseEventArgs> ConnectionClosed;
+        event EventHandler<ConnectionStatusChangedEventArgs> ConnectionStatusChanged;
+        event EventHandler<ErrorEventArgs> ErrorOccurred;
+        event EventHandler<MessageEventArgs> MessageReceived;
         void RegisterEffectHandler(string effectId, Func<EffectRequest, EffectResponse> handler);
     }
 }

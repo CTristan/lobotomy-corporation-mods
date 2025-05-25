@@ -12,6 +12,7 @@ namespace PrivateMethods
     public static class GameManager
     {
         public const string FixedUpdate = nameof(FixedUpdate);
+        public const string Start = nameof(Start);
         public const string Update = nameof(Update);
     }
 

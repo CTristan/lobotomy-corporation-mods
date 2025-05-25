@@ -2,8 +2,10 @@
 
 #region
 
+using LobotomyCorporationMods.Common.UiComponents;
 using LobotomyCorporationMods.DontChatMe.Interfaces;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 #endregion
@@ -13,55 +15,81 @@ namespace LobotomyCorporationMods.DontChatMe.UiComponents
     public class WebSocketUi : MonoBehaviour
     {
         private readonly IWebSocketClient _webSocketClient = Harmony_Patch.Instance.WebSocketClient;
+
         private Button _connectButton;
+
+        private bool _isConnected;
+        private string _lastMessage;
         private Text _statusText;
 
         private void Start()
         {
-            var modCanvas = new GameObject("ModCanvas");
-            DontDestroyOnLoad(modCanvas);
-            var canvas = modCanvas.AddComponent<Canvas>();
-            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            modCanvas.AddComponent<CanvasScaler>();
-            modCanvas.AddComponent<GraphicRaycaster>();
+            EnsureEventSystem();
 
-            // Button
-            var connectButton = new GameObject("ConnectBtn");
-            connectButton.transform.SetParent(modCanvas.transform);
-            _connectButton = connectButton.AddComponent<Button>();
-            var buttonText = new GameObject("BtnText");
-            buttonText.transform.SetParent(connectButton.transform);
-            var btnText = buttonText.AddComponent<Text>();
-            btnText.text = "Connect";
-            btnText.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
-            btnText.alignment = TextAnchor.MiddleCenter;
+            // Create a persistent overlay canvas
+            var canvas = UiFactory.CreateOverlayCanvas("DontChatMeOverlay");
 
-            var btnRect = connectButton.AddComponent<RectTransform>();
-            btnRect.sizeDelta = new Vector2(160, 30);
-            btnRect.anchoredPosition = new Vector2(100, -100);
+            // Create status text
+            _statusText = UiFactory.CreateText(canvas.transform, "Disconnected.", new Vector2(100, -100), 16);
 
-            // Textbox
-            var statusTextBox = new GameObject("StatusText");
-            statusTextBox.transform.SetParent(modCanvas.transform);
-            _statusText = statusTextBox.AddComponent<Text>();
-            _statusText.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
-            _statusText.alignment = TextAnchor.UpperLeft;
-            _statusText.rectTransform.sizeDelta = new Vector2(400, 200);
-            _statusText.rectTransform.anchoredPosition = new Vector2(100, -150);
-            _statusText.text = "Disconnected.";
+            // Create the Connect button
+            _connectButton = UiFactory.CreateButton(
+                canvas.transform,
+                "Connect",
+                new Vector2(300, -100),
+                new Vector2(160, 40),
+                OnConnectClicked
+            );
 
-            _connectButton.onClick.AddListener(OnConnectClicked);
+            // Subscribe to status changes
+            _webSocketClient.ConnectionStatusChanged += (sender, args) =>
+            {
+                _isConnected = args.IsConnected;
+                Invoke(nameof(UpdateUiStatus), 0f);
+            };
+
+            // Subscribe to messages
+            _webSocketClient.MessageReceived += (sender, args) =>
+            {
+                _lastMessage = args.Data;
+                Invoke(nameof(AppendMessage), 0f);
+            };
         }
 
         private void OnConnectClicked()
         {
+            Harmony_Patch.Instance.Logger.Log("Connect button clicked.");
             if (_webSocketClient.IsAlive)
             {
+                Harmony_Patch.Instance.Logger.Log("Disconnecting.");
                 _webSocketClient.Close();
             }
             else
             {
+                Harmony_Patch.Instance.Logger.Log("Connecting.");
                 _webSocketClient.Connect();
+            }
+        }
+
+        private void UpdateUiStatus()
+        {
+            _statusText.text += "\n[Status] " + (_isConnected ? "Connected" : "Disconnected");
+            _connectButton.GetComponentInChildren<Text>().text = _isConnected ? "Disconnect" : "Connect";
+        }
+
+        private void AppendMessage()
+        {
+            _statusText.text += "\n< " + _lastMessage;
+        }
+
+        private static void EnsureEventSystem()
+        {
+            if (FindObjectOfType<EventSystem>() == null)
+            {
+                var es = new GameObject("EventSystem");
+                es.AddComponent<EventSystem>();
+                es.AddComponent<StandaloneInputModule>();
+                DontDestroyOnLoad(es);
             }
         }
     }

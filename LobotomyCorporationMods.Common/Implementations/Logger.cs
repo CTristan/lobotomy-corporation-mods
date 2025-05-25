@@ -21,8 +21,6 @@ namespace LobotomyCorporationMods.Common.Implementations
             _targets.Add(loggerTarget);
         }
 
-        public LogLevels MinLevel { get; set; } = LogLevels.Warning;
-
         public void AddTarget(ILoggerTarget target)
         {
             _targets.Add(target);
@@ -31,16 +29,6 @@ namespace LobotomyCorporationMods.Common.Implementations
         public IEnumerable<ILoggerTarget> GetTargets()
         {
             return _targets;
-        }
-
-        public void LogException(Exception exception)
-        {
-            if (exception == null)
-            {
-                return;
-            }
-
-            Log(exception.ToString(), LogLevels.Error);
         }
 
         public void Log(string message, LogLevels loglevel = LogLevels.Info)
@@ -56,5 +44,17 @@ namespace LobotomyCorporationMods.Common.Implementations
                 target.WriteToLoggerTarget($"[{timestamp}] {loglevel.ToString().ToUpperInvariant()}: {message}");
             }
         }
+
+        public void LogException(Exception exception)
+        {
+            if (exception == null)
+            {
+                return;
+            }
+
+            Log(exception.ToString(), LogLevels.Error);
+        }
+
+        public LogLevels MinLevel { get; set; } = LogLevels.Info;
     }
 }

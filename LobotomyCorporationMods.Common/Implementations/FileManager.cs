@@ -49,7 +49,7 @@ namespace LobotomyCorporationMods.Common.Implementations
         {
             lock (_fileLock)
             {
-                File.AppendAllText(filePath, contents);
+                File.AppendAllText(filePath, contents + Environment.NewLine);
             }
         }
 
