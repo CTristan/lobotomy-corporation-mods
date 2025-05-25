@@ -10,10 +10,10 @@ using Object = UnityEngine.Object;
 
 namespace LobotomyCorporationMods.DontChatMe.Patches
 {
-    [HarmonyPatch(typeof(GameManager), nameof(PrivateMethods.GameManager.Start))]
-    public static class GameManagerPatchUpdate
+    [HarmonyPatch(typeof(GlobalGameManager), nameof(PrivateMethods.GlobalGameManager.Awake))]
+    public static class GameManagerPatchAwake
     {
-        private static void PatchAfterStart([NotNull] this GameManager instance)
+        private static void PatchAfterStart([NotNull] this GlobalGameManager instance)
         {
             var uiHost = new GameObject("DontChatMeUi");
             Object.DontDestroyOnLoad(uiHost);
@@ -22,7 +22,7 @@ namespace LobotomyCorporationMods.DontChatMe.Patches
 
         [EntryPoint]
         // ReSharper disable once InconsistentNaming
-        public static void Postfix([NotNull] GameManager __instance)
+        public static void Postfix([NotNull] GlobalGameManager __instance)
         {
             try
             {

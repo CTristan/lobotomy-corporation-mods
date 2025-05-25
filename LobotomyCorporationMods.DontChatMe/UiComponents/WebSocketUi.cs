@@ -1,7 +1,8 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier:MIT
 
 #region
 
+using LobotomyCorporationMods.Common.Enums;
 using LobotomyCorporationMods.Common.UiComponents;
 using LobotomyCorporationMods.DontChatMe.Interfaces;
 using UnityEngine;
@@ -30,16 +31,17 @@ namespace LobotomyCorporationMods.DontChatMe.UiComponents
             // Create a persistent overlay canvas
             _canvas = UiFactory.CreateOverlayCanvas("DontChatMeOverlay");
 
+            var panel = UiFactory.CreateVerticalGroup(_canvas.transform, nameof(WebSocketUi));
+
             // Create status text
-            _statusText = UiFactory.CreateText(_canvas.transform, "Disconnected.", new Vector2(100, -100), 16);
+            _statusText = UiFactory.CreateText(panel.transform, "Disconnected.", UiLayoutMode.Grouped);
 
             // Create the Connect button
             _connectButton = UiFactory.CreateButton(
-                _canvas.transform,
+                panel.transform,
                 "Connect",
-                new Vector2(300, -100),
-                new Vector2(160, 40),
-                OnConnectClicked
+                OnConnectClicked,
+                UiLayoutMode.Grouped
             );
 
             // Subscribe to status changes
