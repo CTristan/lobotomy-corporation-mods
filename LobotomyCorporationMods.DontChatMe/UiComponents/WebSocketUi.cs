@@ -22,6 +22,7 @@ namespace LobotomyCorporationMods.DontChatMe.UiComponents
 
         private bool _isConnected;
         private string _lastMessage;
+        private bool _settingsShown;
         private Text _statusText;
 
         private void Start()
@@ -43,6 +44,30 @@ namespace LobotomyCorporationMods.DontChatMe.UiComponents
                 OnConnectClicked,
                 UiLayoutMode.Grouped
             );
+
+            var settingsButton = UiFactory.CreateButton(
+                panel.transform,
+                "Settings",
+                () =>
+                {
+                    // Prevent duplicate settings panels
+                    if (_settingsShown)
+                    {
+                        return;
+                    }
+
+                    _settingsShown = true;
+
+                    var settingsObject = new GameObject("WebSocketSettings", typeof(RectTransform));
+                    settingsObject.transform.SetParent(panel.transform, false);
+
+                    settingsObject.AddComponent<ContentSizeFitter>().verticalFit =
+                        ContentSizeFitter.FitMode.PreferredSize;
+                    settingsObject.AddComponent<LayoutElement>().preferredHeight = 150f;
+
+                    settingsObject.AddComponent<WebSocketSettingsUi>();
+                },
+                UiLayoutMode.Grouped);
 
             // Subscribe to status changes
             _webSocketClient.ConnectionStatusChanged += (sender, args) =>

@@ -109,6 +109,76 @@ namespace LobotomyCorporationMods.Common.UiComponents
             return CreateLayoutGroup(parent, name, false, spacing, padding, childAlignment, expandWidth, expandHeight);
         }
 
+        public static InputField CreateLabeledInputField(
+            Transform parent,
+            string labelText,
+            string defaultValue = "",
+            string placeholderText = "",
+            UiLayoutMode layoutMode = UiLayoutMode.Grouped,
+            UnityAction<string> onValueChanged = null,
+            Font customFont = null)
+        {
+            var container = CreateUiElement("InputField_" + SanitizeName(labelText), parent);
+
+            if (layoutMode == UiLayoutMode.Grouped)
+            {
+                AddLayoutElement(container, new Vector2(300, 40)); // You can tweak this size
+            }
+
+            // Label
+            var labelObject = CreateUiElement("Label", container.transform);
+            var label = labelObject.AddComponent<Text>();
+            label.text = labelText;
+            label.font = customFont ?? Resources.GetBuiltinResource<Font>("Arial.ttf");
+            label.fontSize = 14;
+            label.alignment = TextAnchor.MiddleLeft;
+            label.color = Color.white;
+
+            ApplyStretch(labelObject.GetComponent<RectTransform>());
+            labelObject.AddComponent<ContentSizeFitter>().horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            // Input Background
+            var inputBackground = CreateUiElement("InputBackground", container.transform);
+            inputBackground.AddComponent<Image>().color = Color.white;
+
+            var inputField = inputBackground.AddComponent<InputField>();
+            var inputTextObj = CreateUiElement("Text", inputBackground.transform);
+            var inputText = inputTextObj.AddComponent<Text>();
+            inputText.font = customFont ?? Resources.GetBuiltinResource<Font>("Arial.ttf");
+            inputText.fontSize = 14;
+            inputText.color = Color.black;
+            inputText.alignment = TextAnchor.MiddleLeft;
+            inputText.supportRichText = false;
+            inputField.textComponent = inputText;
+
+            ApplyStretch(inputTextObj.GetComponent<RectTransform>());
+
+            // Placeholder
+            var placeholderObj = CreateUiElement("Placeholder", inputBackground.transform);
+            var placeholder = placeholderObj.AddComponent<Text>();
+            placeholder.text = placeholderText;
+            placeholder.font = customFont ?? Resources.GetBuiltinResource<Font>("Arial.ttf");
+            placeholder.fontSize = 14;
+            placeholder.fontStyle = FontStyle.Italic;
+            placeholder.color = new Color(0.5f, 0.5f, 0.5f);
+            placeholder.alignment = TextAnchor.MiddleLeft;
+            inputField.placeholder = placeholder;
+
+            ApplyStretch(placeholderObj.GetComponent<RectTransform>());
+
+            inputField.text = defaultValue;
+
+            if (onValueChanged != null)
+            {
+                inputField.onValueChanged.AddListener(onValueChanged);
+            }
+
+            ApplyStretch(inputBackground.GetComponent<RectTransform>());
+            inputBackground.AddComponent<LayoutElement>().preferredHeight = 30;
+
+            return inputField;
+        }
+
         private static GameObject CreateLayoutGroup(
             Transform parent,
             string name,
@@ -157,6 +227,41 @@ namespace LobotomyCorporationMods.Common.UiComponents
             canvasObject.AddComponent<GraphicRaycaster>();
 
             return canvas;
+        }
+
+        public static GameObject CreatePanel(
+            Transform parent,
+            string name = "Panel",
+            Color? backgroundColor = null,
+            UiLayoutMode layoutMode = UiLayoutMode.Grouped,
+            Vector2? preferredSize = null)
+        {
+            var panel = CreateUiElement(name, parent);
+
+            // Background image
+            var image = panel.AddComponent<Image>();
+            image.color = backgroundColor ?? new Color(0f, 0f, 0f, 0.5f); // default: 50% transparent black
+
+            // Layout hint for Vertical/Horizontal group
+            if (layoutMode == UiLayoutMode.Grouped)
+            {
+                AddLayoutElement(panel, preferredSize ?? new Vector2(300, 0));
+            }
+
+            // Add vertical layout for children
+            var group = panel.AddComponent<VerticalLayoutGroup>();
+            group.padding = new RectOffset(10, 10, 10, 10);
+            group.spacing = 6;
+            group.childAlignment = TextAnchor.UpperLeft;
+            group.childForceExpandHeight = false;
+            group.childForceExpandWidth = true;
+
+            // Auto-fit to contents
+            var fitter = panel.AddComponent<ContentSizeFitter>();
+            fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            return panel;
         }
 
         public static Text CreateText(
