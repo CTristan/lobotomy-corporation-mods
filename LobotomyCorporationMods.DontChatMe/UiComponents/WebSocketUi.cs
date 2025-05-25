@@ -1,8 +1,12 @@
 // SPDX-License-Identifier: MIT
 
+#region
+
 using LobotomyCorporationMods.DontChatMe.Interfaces;
 using UnityEngine;
 using UnityEngine.UI;
+
+#endregion
 
 namespace LobotomyCorporationMods.DontChatMe.UiComponents
 {
