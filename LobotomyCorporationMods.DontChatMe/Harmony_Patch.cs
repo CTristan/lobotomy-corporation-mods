@@ -4,6 +4,7 @@
 
 using System;
 using LobotomyCorporationMods.Common.Implementations;
+using LobotomyCorporationMods.DontChatMe.Configuration;
 using LobotomyCorporationMods.DontChatMe.Implementations;
 using LobotomyCorporationMods.DontChatMe.Interfaces;
 
@@ -14,9 +15,6 @@ namespace LobotomyCorporationMods.DontChatMe
     // ReSharper disable once InconsistentNaming
     public sealed class Harmony_Patch : HarmonyPatchBase
     {
-        // Default WebSocket server URL - can be changed in configuration
-        private const string DefaultWebSocketServerUrl = "ws://localhost:8000";
-
         public new static readonly Harmony_Patch Instance = new Harmony_Patch(true);
 
         private readonly object _syncLock = new object();
@@ -48,13 +46,15 @@ namespace LobotomyCorporationMods.DontChatMe
                 {
                     try
                     {
-                        // Initialize the WebSocket client with the default server URL
-                        _webSocketClient = new WebSocketClient(DefaultWebSocketServerUrl);
+                        // Initialize the WebSocket client with the server URL
+                        var serverPath = WebSocketSettings.ServerPath;
+
+                        _webSocketClient = new WebSocketClient(serverPath);
 
                         // Log initialization
                         Logger.Log(
                             "DontChatMe WebSocket client initialized with server URL: " +
-                            DefaultWebSocketServerUrl);
+                            serverPath);
                     }
                     catch (Exception ex)
                     {

@@ -15,11 +15,9 @@ namespace LobotomyCorporationMods.DontChatMe.Patches
     {
         private static void PatchAfterStart([NotNull] this GameManager instance)
         {
-            Harmony_Patch.Instance.Logger.Log("Patching GameManager.Start");
             var uiHost = new GameObject("DontChatMeUi");
             Object.DontDestroyOnLoad(uiHost);
             uiHost.AddComponent<WebSocketUi>();
-            Harmony_Patch.Instance.Logger.Log("Patched GameManager.Start");
         }
 
         [EntryPoint]

@@ -15,6 +15,7 @@ namespace LobotomyCorporationMods.DontChatMe.UiComponents
     public class WebSocketUi : MonoBehaviour
     {
         private readonly IWebSocketClient _webSocketClient = Harmony_Patch.Instance.WebSocketClient;
+        private Canvas _canvas;
 
         private Button _connectButton;
 
@@ -27,14 +28,14 @@ namespace LobotomyCorporationMods.DontChatMe.UiComponents
             EnsureEventSystem();
 
             // Create a persistent overlay canvas
-            var canvas = UiFactory.CreateOverlayCanvas("DontChatMeOverlay");
+            _canvas = UiFactory.CreateOverlayCanvas("DontChatMeOverlay");
 
             // Create status text
-            _statusText = UiFactory.CreateText(canvas.transform, "Disconnected.", new Vector2(100, -100), 16);
+            _statusText = UiFactory.CreateText(_canvas.transform, "Disconnected.", new Vector2(100, -100), 16);
 
             // Create the Connect button
             _connectButton = UiFactory.CreateButton(
-                canvas.transform,
+                _canvas.transform,
                 "Connect",
                 new Vector2(300, -100),
                 new Vector2(160, 40),
@@ -54,6 +55,14 @@ namespace LobotomyCorporationMods.DontChatMe.UiComponents
                 _lastMessage = args.Data;
                 Invoke(nameof(AppendMessage), 0f);
             };
+        }
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.F10))
+            {
+                _canvas.enabled = !_canvas.enabled;
+            }
         }
 
         private void OnConnectClicked()
@@ -84,13 +93,15 @@ namespace LobotomyCorporationMods.DontChatMe.UiComponents
 
         private static void EnsureEventSystem()
         {
-            if (FindObjectOfType<EventSystem>() == null)
+            if (FindObjectOfType<EventSystem>())
             {
-                var es = new GameObject("EventSystem");
-                es.AddComponent<EventSystem>();
-                es.AddComponent<StandaloneInputModule>();
-                DontDestroyOnLoad(es);
+                return;
             }
+
+            var eventSystem = new GameObject("EventSystem");
+            eventSystem.AddComponent<EventSystem>();
+            eventSystem.AddComponent<StandaloneInputModule>();
+            DontDestroyOnLoad(eventSystem);
         }
     }
 }
