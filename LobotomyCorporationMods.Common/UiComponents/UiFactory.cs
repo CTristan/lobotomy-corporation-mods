@@ -229,41 +229,6 @@ namespace LobotomyCorporationMods.Common.UiComponents
             return canvas;
         }
 
-        public static GameObject CreatePanel(
-            Transform parent,
-            string name = "Panel",
-            Color? backgroundColor = null,
-            UiLayoutMode layoutMode = UiLayoutMode.Grouped,
-            Vector2? preferredSize = null)
-        {
-            var panel = CreateUiElement(name, parent);
-
-            // Background image
-            var image = panel.AddComponent<Image>();
-            image.color = backgroundColor ?? new Color(0f, 0f, 0f, 0.5f); // default: 50% transparent black
-
-            // Layout hint for Vertical/Horizontal group
-            if (layoutMode == UiLayoutMode.Grouped)
-            {
-                AddLayoutElement(panel, preferredSize ?? new Vector2(300, 0));
-            }
-
-            // Add vertical layout for children
-            var group = panel.AddComponent<VerticalLayoutGroup>();
-            group.padding = new RectOffset(10, 10, 10, 10);
-            group.spacing = 6;
-            group.childAlignment = TextAnchor.UpperLeft;
-            group.childForceExpandHeight = false;
-            group.childForceExpandWidth = true;
-
-            // Auto-fit to contents
-            var fitter = panel.AddComponent<ContentSizeFitter>();
-            fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
-            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-
-            return panel;
-        }
-
         public static Text CreateText(
             Transform parent,
             string content,
