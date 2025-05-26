@@ -14,10 +14,10 @@ namespace LobotomyCorporationMods.DontChatMe.UiComponents
     {
         private void Start()
         {
-            var root = UiFactory.CreateVerticalGroup(transform, nameof(WebSocketSettingsUi));
+            // var root = UiFactory.CreateVerticalGroup(transform, nameof(WebSocketSettingsUi));
 
             UiFactory.CreateLabeledInputField(
-                root.transform,
+                transform,
                 "Server URL",
                 WebSocketSettings.ServerPath,
                 "wss://localhost:8080");

@@ -214,6 +214,39 @@ namespace LobotomyCorporationMods.Common.UiComponents
             return layoutGroupObject;
         }
 
+        public static GameObject CreateLayoutGroupWithBackground(
+            Transform parent,
+            string name,
+            bool vertical,
+            Color? backgroundColor = null)
+        {
+            // Create background panel
+            var panel = CreateUiElement(name, parent);
+            var image = panel.AddComponent<Image>();
+            image.color = backgroundColor ?? new Color(0f, 0f, 0f, 0.5f); // Default: 50% transparent black
+
+            // Add layout group
+            if (vertical)
+            {
+                var layout = panel.AddComponent<VerticalLayoutGroup>();
+                layout.childForceExpandWidth = false;
+                layout.childForceExpandHeight = false;
+            }
+            else
+            {
+                var layout = panel.AddComponent<HorizontalLayoutGroup>();
+                layout.childForceExpandWidth = false;
+                layout.childForceExpandHeight = false;
+            }
+
+            // Add ContentSizeFitter
+            var fitter = panel.AddComponent<ContentSizeFitter>();
+            fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            return panel;
+        }
+
         public static Canvas CreateOverlayCanvas(string name)
         {
             var canvasObject = new GameObject(name);

@@ -32,7 +32,7 @@ namespace LobotomyCorporationMods.DontChatMe.UiComponents
             // Create a persistent overlay canvas
             _canvas = UiFactory.CreateOverlayCanvas("DontChatMeOverlay");
 
-            var panel = UiFactory.CreateVerticalGroup(_canvas.transform, nameof(WebSocketUi));
+            var panel = UiFactory.CreateLayoutGroupWithBackground(_canvas.transform, nameof(WebSocketUi), true);
 
             // Create status text
             _statusText = UiFactory.CreateText(panel.transform, "Disconnected.", UiLayoutMode.Grouped);
