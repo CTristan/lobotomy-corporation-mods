@@ -47,7 +47,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LobotomyCorporationMods.Gif
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LobotomyCorporationMods.DontChatMe", "LobotomyCorporationMods.DontChatMe\LobotomyCorporationMods.DontChatMe.csproj", "{3383D297-D155-4625-9DAD-53AD1AFC4C15}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Docs", "Docs.csproj", "{FB63E792-9B37-4DE5-AAE3-2D4328647EF2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Docs", "docs\Docs.csproj", "{FB63E792-9B37-4DE5-AAE3-2D4328647EF2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

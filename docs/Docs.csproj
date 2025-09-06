@@ -8,6 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="docs\**"/>
+    <None Include="**\*.md"/>
   </ItemGroup>
 </Project>
