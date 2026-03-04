@@ -1,0 +1,6 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="BadLuckProtectionForGifts Debug" type="DotNetFolderPublish" factoryName="Publish to folder" folderName="Debug">
+    <riderPublish configuration="Debug" delete_existing_files="true" platform="Any CPU" target_folder="$USER_HOME$/Library/Application Support/CrossOver/Bottles/Steam/drive_c/Games/Steam/steamapps/common/LobotomyCorp/LobotomyCorp_Data/BaseMods/BadLuckProtectionForGifts" target_framework="net35" uuid_high="1861080780333796428" uuid_low="-6392915720112860289" />
+    <method v="2" />
+  </configuration>
+</component>

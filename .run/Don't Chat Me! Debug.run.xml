@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Don't Chat Me! Debug" type="DotNetFolderPublish" factoryName="Publish to folder" folderName="Debug">
+    <riderPublish configuration="Debug" delete_existing_files="true" platform="Any CPU" target_folder="$USER_HOME$/Library/Application Support/CrossOver/Bottles/Steam/drive_c/Games/Steam/steamapps/common/LobotomyCorp/LobotomyCorp_Data/BaseMods/DontChatMe" target_framework="net35" uuid_high="-1081988467167900416" uuid_low="-6324172201038904188">
+      <runtimes>
+        <item value="win-x64" />
+      </runtimes>
+    </riderPublish>
+    <method v="2">
+      <option name="CleanProject" default="false" projectName="LobotomyCorporationMods.DontChatMe" projectPath="$PROJECT_DIR$/LobotomyCorporationMods.DontChatMe/LobotomyCorporationMods.DontChatMe.csproj" />
+      <option name="Build" default="false" projectName="LobotomyCorporationMods.DontChatMe" projectPath="$PROJECT_DIR$/LobotomyCorporationMods.DontChatMe/LobotomyCorporationMods.DontChatMe.csproj" />
+    </method>
+  </configuration>
+</component>
