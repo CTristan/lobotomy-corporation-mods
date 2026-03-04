@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 
 using System;
 using System.Collections.Generic;
@@ -774,13 +774,13 @@ namespace LobotomyCorporationMods.Test.Extensions
         /// <summary>Populate the fields of an uninitialized object with a provided list of objects.</summary>
         [NotNull]
         private static TObject GetPopulatedUninitializedObject<TObject>([NotNull] TObject obj,
-            [NotNull] IReadOnlyList<MemberInfo> fields,
+            [NotNull] MemberInfo[] fields,
             Dictionary<string, object> newValues) where TObject : class
         {
             CreateUninitializedObject<TObject>(out var newObj);
-            var values = FormatterServices.GetObjectData(obj, fields.ToArray());
+            var values = FormatterServices.GetObjectData(obj, fields);
 
-            for (var i = 0; i < fields.Count; i++)
+            for (var i = 0; i < fields.Length; i++)
             {
                 if (newValues.TryGetValue(fields[i].Name, out var value))
                 {
@@ -788,7 +788,7 @@ namespace LobotomyCorporationMods.Test.Extensions
                 }
             }
 
-            FormatterServices.PopulateObjectMembers(newObj, fields.ToArray(), values);
+            FormatterServices.PopulateObjectMembers(newObj, fields, values);
 
             return newObj;
         }
