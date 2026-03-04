@@ -28,7 +28,7 @@ namespace LobotomyCorporationMods.Common.Extensions
         }
 
         [ContractAnnotation("null => true")]
-        public static bool IsNull([CanBeNull] [ValidatedNotNull] this object value)
+        public static bool IsNull([CanBeNull][ValidatedNotNull] this object value)
         {
 #pragma warning disable IDE0041
             return ReferenceEquals(value, null);
@@ -36,7 +36,7 @@ namespace LobotomyCorporationMods.Common.Extensions
         }
 
         [ContractAnnotation("null => false")]
-        public static bool IsNotNull([CanBeNull] [ValidatedNotNull] this object value)
+        public static bool IsNotNull([CanBeNull][ValidatedNotNull] this object value)
         {
             return !value.IsNull();
         }
