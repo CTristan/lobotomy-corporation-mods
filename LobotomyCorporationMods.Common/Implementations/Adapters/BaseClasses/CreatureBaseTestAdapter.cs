@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 
 using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;

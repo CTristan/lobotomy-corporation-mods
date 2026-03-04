@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 
 using LobotomyCorporationMods.Common.Attributes;
 
@@ -6,9 +6,10 @@ namespace LobotomyCorporationMods.Common.Implementations
 {
     public sealed class Guard
     {
-        private Guard() { }
+        private Guard()
+        {
+        }
 
-        [GuardClause]
-        public static Guard Against { get; } = new Guard();
+        [GuardClause] public static Guard Against { get; } = new Guard();
     }
 }

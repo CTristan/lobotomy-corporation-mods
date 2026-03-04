@@ -1,0 +1,21 @@
+root = true
+
+[*.cs]
+
+# CA1303: Do not pass literals as localized parameters
+dotnet_diagnostic.CA1303.severity = none
+
+# CA1515: Types should be internal
+dotnet_diagnostic.CA1515.severity = none
+
+# CA1852: Type can be sealed
+dotnet_diagnostic.CA1852.severity = none
+
+# CA1034: Do not nest type
+dotnet_diagnostic.CA1034.severity = none
+
+# CA1002: Do not expose generic lists
+dotnet_diagnostic.CA1002.severity = none
+
+# RCS1102: Mark class as static
+dotnet_diagnostic.RCS1102.severity = none

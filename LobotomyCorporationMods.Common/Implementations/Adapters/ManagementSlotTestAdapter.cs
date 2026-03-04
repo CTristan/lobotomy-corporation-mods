@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 
 using System.Diagnostics.CodeAnalysis;
 using CommandWindow;
@@ -19,6 +19,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
         }
 
         [NotNull]
-        public string Name => _gameObject.name;
+        public string Name =>
+            _gameObject.name;
     }
 }

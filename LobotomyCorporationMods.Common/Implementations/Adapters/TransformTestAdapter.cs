@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 
 using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
@@ -19,7 +19,8 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
         }
 
         [NotNull]
-        public ITransformTestAdapter Parent => new TransformTestAdapter(_gameObject.parent);
+        public ITransformTestAdapter Parent =>
+            new TransformTestAdapter(_gameObject.parent);
 
         [NotNull]
         public ITransformTestAdapter GetChild(int index)

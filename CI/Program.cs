@@ -1,0 +1,316 @@
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Text;
+
+namespace CI;
+
+#pragma warning disable RCS1102 // Make class static
+#pragma warning disable CA1303 // Do not pass literals as localized parameters
+#pragma warning disable CA1515 // Types need to be public for testability
+
+public interface IProcessRunner
+{
+    int Run(string fileName, string arguments, string? workingDirectory = null, Func<string?, bool>? outputFilter = null);
+}
+
+public class ProcessRunner : IProcessRunner
+{
+    public int Run(string fileName, string arguments, string? workingDirectory = null, Func<string?, bool>? outputFilter = null)
+    {
+        var processStartInfo = new ProcessStartInfo
+        {
+            FileName = fileName,
+            Arguments = arguments,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true,
+        };
+
+        if (workingDirectory != null)
+        {
+            processStartInfo.WorkingDirectory = workingDirectory;
+        }
+
+        try
+        {
+            using var process = new Process { StartInfo = processStartInfo };
+
+            process.OutputDataReceived += (sender, e) =>
+            {
+                if (e.Data != null && (outputFilter == null || outputFilter(e.Data)))
+                {
+                    Console.WriteLine(e.Data);
+                }
+            };
+
+            process.ErrorDataReceived += (sender, e) =>
+            {
+                if (e.Data != null && (outputFilter == null || outputFilter(e.Data)))
+                {
+                    Console.Error.WriteLine(e.Data);
+                }
+            };
+
+            process.Start();
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+            process.WaitForExit();
+
+            return process.ExitCode;
+        }
+        catch (System.ComponentModel.Win32Exception)
+        {
+            // If the process fails to start (e.g., command not found), return a non-zero exit code
+            return 1;
+        }
+        catch (FileNotFoundException)
+        {
+            // If the process file is not found, return a non-zero exit code
+            return 1;
+        }
+        catch (InvalidOperationException)
+        {
+            // If there's an invalid operation starting the process, return a non-zero exit code
+            return 1;
+        }
+    }
+}
+
+public interface IGitHookSetup
+{
+    void SetupPreCommitHook(string repoRoot);
+}
+
+public class GitHookSetup : IGitHookSetup
+{
+    private readonly IFileSystem _fileSystem;
+
+    public GitHookSetup()
+        : this(new FileSystem())
+    {
+    }
+
+    public GitHookSetup(IFileSystem fileSystem)
+    {
+        _fileSystem = fileSystem;
+    }
+
+    public void SetupPreCommitHook(string repoRoot)
+    {
+        var hookPath = Path.Combine(repoRoot, ".git", "hooks", "pre-commit");
+        var hookContent = GetHookContent();
+
+        _fileSystem.WriteAllText(hookPath, hookContent);
+
+        // Set as executable on Unix systems
+        if (Environment.OSVersion.Platform == PlatformID.Unix)
+        {
+            _fileSystem.SetFileExecutable(hookPath);
+        }
+    }
+
+    private static string GetHookContent()
+    {
+        return @"#!/usr/bin/env bash
+# Pre-commit hook that runs CI checks
+set -euo pipefail
+
+SCRIPT_DIR=""$(cd ""$(dirname ""$0"")"" && pwd)""
+REPO_ROOT=""$(cd ""$SCRIPT_DIR/../.."" && pwd)""
+
+echo ""Running pre-commit checks...""
+cd ""$REPO_ROOT""
+dotnet ci --check
+";
+    }
+}
+
+public interface IFileSystem
+{
+    void WriteAllText(string path, string contents);
+    void SetFileExecutable(string path);
+    bool DirectoryExists(string path);
+    bool FileExists(string path);
+}
+
+public class FileSystem : IFileSystem
+{
+    public void WriteAllText(string path, string contents)
+    {
+        File.WriteAllText(path, contents);
+    }
+
+    public void SetFileExecutable(string path)
+    {
+        // Use chmod to make the file executable on Unix systems
+        using var process = new Process
+        {
+            StartInfo = new ProcessStartInfo
+            {
+                FileName = "chmod",
+                Arguments = "+x \"" + path + "\"",
+                UseShellExecute = false,
+                CreateNoWindow = true,
+            }
+        };
+        process.Start();
+        process.WaitForExit();
+    }
+
+    public bool DirectoryExists(string path)
+    {
+        return Directory.Exists(path);
+    }
+
+    public bool FileExists(string path)
+    {
+        return File.Exists(path);
+    }
+}
+
+public class CiRunner
+{
+    private readonly IProcessRunner _processRunner;
+    private readonly IGitHookSetup _gitHookSetup;
+    private readonly IFileSystem _fileSystem;
+    private readonly string? _baseDirectory;
+
+    public CiRunner()
+        : this(new ProcessRunner(), new GitHookSetup(), new FileSystem())
+    {
+    }
+
+    public CiRunner(IProcessRunner processRunner, IGitHookSetup gitHookSetup, IFileSystem fileSystem)
+        : this(processRunner, gitHookSetup, fileSystem, null)
+    {
+    }
+
+    public CiRunner(IProcessRunner processRunner, IGitHookSetup gitHookSetup, IFileSystem fileSystem, string? baseDirectory)
+    {
+        _processRunner = processRunner;
+        _gitHookSetup = gitHookSetup;
+        _fileSystem = fileSystem;
+        _baseDirectory = baseDirectory;
+    }
+
+    public int Run(bool checkMode)
+    {
+        var repoRoot = FindRepositoryRoot();
+        if (repoRoot == null)
+        {
+            Console.Error.WriteLine("Error: Could not find .git directory. Are you in a git repository?");
+            return 1;
+        }
+
+        Console.WriteLine($"=== Running dotnet format ({(checkMode ? "verify" : "fix")}) ===");
+
+        var formatArgs = checkMode
+            ? "format --verify-no-changes LobotomyCorporationMods.sln"
+            : "format LobotomyCorporationMods.sln";
+
+        // Filter out the benign dotnet format workspace loading warning
+        var formatExitCode = _processRunner.Run("dotnet", formatArgs, repoRoot, outputFilter: line =>
+        {
+            if (line != null && line.Contains("Warnings were encountered while loading the workspace", StringComparison.Ordinal))
+            {
+                return false;
+            }
+            return true;
+        });
+
+        if (formatExitCode != 0)
+        {
+            return formatExitCode;
+        }
+
+        Console.WriteLine("=== Running dotnet test ===");
+        var testArgs = "test /p:CollectCoverage=true /p:CoverletOutput=\"./coverage.opencover.xml\" /p:CoverletOutputFormat=opencover --verbosity normal LobotomyCorporationMods.sln";
+        var testExitCode = _processRunner.Run("dotnet", testArgs, repoRoot);
+
+        return testExitCode;
+    }
+
+    public void SetupHooks()
+    {
+        var repoRoot = FindRepositoryRoot();
+        if (repoRoot == null)
+        {
+            throw new InvalidOperationException("Error: Could not find .git directory. Are you in a git repository?");
+        }
+
+        var hookPath = Path.Combine(repoRoot, ".git", "hooks", "pre-commit");
+        Console.WriteLine($"Setting up pre-commit hook at {hookPath}...");
+
+        _gitHookSetup.SetupPreCommitHook(repoRoot);
+
+        Console.WriteLine("Pre-commit hook installed successfully!");
+    }
+
+    private string? FindRepositoryRoot()
+    {
+        var currentDir = _baseDirectory ?? Directory.GetCurrentDirectory();
+        var dir = new DirectoryInfo(currentDir);
+
+        while (dir != null)
+        {
+            if (_fileSystem.DirectoryExists(Path.Combine(dir.FullName, ".git")))
+            {
+                return dir.FullName;
+            }
+
+            dir = dir.Parent;
+        }
+
+        return null;
+    }
+}
+
+public sealed class Program
+{
+    public static int Main(string[] args)
+    {
+        args ??= Array.Empty<string>();
+
+        var checkMode = false;
+        var setupHooks = false;
+
+        foreach (var arg in args)
+        {
+            switch (arg)
+            {
+                case "--check":
+                    checkMode = true;
+                    break;
+                case "--setup-hooks":
+                    setupHooks = true;
+                    break;
+                default:
+                    Console.Error.WriteLine($"Error: Unknown argument '{arg}'");
+                    Console.Error.WriteLine("Usage: CI [--check] [--setup-hooks]");
+                    Console.Error.WriteLine("  --check         Run in verification mode (no auto-fix)");
+                    Console.Error.WriteLine("  --setup-hooks   Install pre-commit git hook");
+                    return 1;
+            }
+        }
+
+        var runner = new CiRunner();
+
+        if (setupHooks)
+        {
+            try
+            {
+                runner.SetupHooks();
+                return 0;
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.Error.WriteLine(ex.Message);
+                return 1;
+            }
+        }
+
+        return runner.Run(checkMode);
+    }
+}

@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 
 using LobotomyCorporationMods.Common.Implementations.LoggerTargets;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;

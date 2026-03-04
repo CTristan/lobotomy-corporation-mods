@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 
 using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
@@ -18,8 +18,11 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses
         {
         }
 
-        public int Width => _gameObject.width;
-        public int Height => _gameObject.height;
+        public int Width =>
+            _gameObject.width;
+
+        public int Height =>
+            _gameObject.height;
 
         public override T GameObject
         {
