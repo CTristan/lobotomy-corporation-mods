@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Serialization;
+using System.Runtime.CompilerServices;
 using CommandWindow;
 using Customizing;
 using JetBrains.Annotations;
@@ -719,7 +719,7 @@ namespace LobotomyCorporationMods.Test.Extensions
         /// </summary>
         private static void CreateUninitializedObject<TObject>(out TObject obj)
         {
-            obj = (TObject)FormatterServices.GetUninitializedObject(typeof(TObject));
+            obj = (TObject)RuntimeHelpers.GetUninitializedObject(typeof(TObject));
         }
 
         /// <summary>Gets the fields of the specified type, including those of its base types, for uninitialized object.</summary>
@@ -778,7 +778,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             Dictionary<string, object> newValues) where TObject : class
         {
             CreateUninitializedObject<TObject>(out var newObj);
-            var values = FormatterServices.GetObjectData(obj, fields);
+            var values = fields.Select(m => ((FieldInfo)m).GetValue(obj)).ToArray();
 
             for (var i = 0; i < fields.Length; i++)
             {
@@ -788,7 +788,10 @@ namespace LobotomyCorporationMods.Test.Extensions
                 }
             }
 
-            FormatterServices.PopulateObjectMembers(newObj, fields, values);
+            for (var i = 0; i < fields.Length; i++)
+            {
+                ((FieldInfo)fields[i]).SetValue(newObj, values[i]);
+            }
 
             return newObj;
         }
