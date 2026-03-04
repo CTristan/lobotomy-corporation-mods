@@ -6,14 +6,13 @@
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
     <ProjectGuid>{5186F30E-9617-4955-BE97-0E496DE2148B}</ProjectGuid>
-    <TargetFramework>net481</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <AnalysisLevel>latest-all</AnalysisLevel>
     <Deterministic>true</Deterministic>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <OutputPath>bin\</OutputPath>
     <OutputType>Library</OutputType>
-    <RuntimeIdentifiers>win</RuntimeIdentifiers>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -30,10 +29,6 @@
     </PackageReference>
     <PackageReference Include="FluentAssertions" Version="6.12.0"/>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0"/>
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net35" Version="1.0.3">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="Moq" Version="4.20.70"/>
     <PackageReference Include="xunit" Version="2.8.1"/>
     <PackageReference Include="xunit.runner.console" Version="2.8.1">
@@ -80,8 +75,5 @@
     <None Remove="TestResults\**"/>
     <None Remove="coverage.opencover.net35.xml"/>
     <None Remove="coverage.opencover.net48.xml"/>
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
-    <PackageReference Include="Microsoft.CodeCoverage" Version="17.5.0"/>
   </ItemGroup>
 </Project>
