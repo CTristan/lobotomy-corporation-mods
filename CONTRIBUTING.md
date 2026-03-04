@@ -13,12 +13,19 @@ set up your development environment:
    cd lobotomy-corporation-mods
    ```
 
-2. First, install ilspycmd (decompiler tool):
+2. Install the .NET 10 SDK (required for test projects and CI parity):
+   ```sh
+   dotnet --version
+   ```
+
+   The output should start with `10.`.
+
+3. Install ilspycmd (decompiler tool):
    ```sh
    dotnet tool install --global ilspycmd
    ```
 
-3. Run the SetupExternal tool to copy game DLLs and decompile the main assembly:
+4. Run the SetupExternal tool to copy game DLLs and decompile the main assembly:
    ```sh
    dotnet tool restore
    dotnet setup
@@ -44,7 +51,7 @@ If the game isn't found in these locations, specify the path manually:
    dotnet setup --path "/path/to/LobotomyCorp"
    ```
 
-4. Build the solution:
+5. Build the solution:
    ```sh
    dotnet build LobotomyCorporationMods.sln
    ```
