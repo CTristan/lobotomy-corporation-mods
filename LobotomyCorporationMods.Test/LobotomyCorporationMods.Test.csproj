@@ -14,6 +14,8 @@
     <OutputPath>bin\</OutputPath>
     <OutputType>Library</OutputType>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- CA1515: test classes must remain public for xUnit discovery; NU1702: net35 project references intentionally loaded via modern .NET compatibility -->
+    <NoWarn>$(NoWarn);CA1515;NU1702</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugType>full</DebugType>
