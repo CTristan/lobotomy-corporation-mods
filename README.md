@@ -1,12 +1,13 @@
 # Lobotomy Corporation Mods
 
-Mods for the
-game [Lobotomy Corporation](https://store.steampowered.com/app/568220/Lobotomy_Corporation__Monster_Management_Simulation/).
-They're designed to be used either together or individually, so feel free to
-pick and choose.
+A collection of mods
+for [Lobotomy Corporation](https://store.steampowered.com/app/568220/Lobotomy_Corporation__Monster_Management_Simulation/).
+Each mod is standalone and can be used independently or combined with others,
+depending on your preferences.
 
 All mods are available for download
 on [my Nexus Mods page](https://next.nexusmods.com/profile/IsitChris/mods?gameId=2861).
+
 Requires either [Lobotomy Mod Manager](https://www.nexusmods.com/site/mods/765)
 or [Basemod](https://www.nexusmods.com/lobotomycorporation/mods/2) (included in
 LMM).
@@ -18,7 +19,7 @@ LMM).
 - [Free Customization](https://www.nexusmods.com/lobotomycorporation/mods/477)
   - ([Readme](LobotomyCorporationMods.FreeCustomization/README.md))
 - [Gift Alert Icon](https://www.nexusmods.com/lobotomycorporation/mods/494)
-  - ([Readme](LobotomyCorporationMods.GiftAlertIcon))
+  - ([Readme](LobotomyCorporationMods.GiftAlertIcon/README.md))
 - [Notify When Agent Receives Gift](https://www.nexusmods.com/lobotomycorporation/mods/487)
   - ([Readme](LobotomyCorporationMods.NotifyWhenAgentReceivesGift/README.md))
 - [Unofficial Bug Fixes](https://www.nexusmods.com/lobotomycorporation/mods/478)
@@ -125,9 +126,53 @@ for full details.
 
 ## Building
 
-The original game files are required but aren't provided. My current environment
-setup is a "`src`" folder in the BaseMods folder that I placed the repo in, so
-my folder structure for the repo is
+The original game files are required but aren't provided. To set up your build
+environment:
+
+1. First, install ilspycmd (decompiler tool):
+   ```sh
+   dotnet tool install --global ilspycmd
+   ```
+
+2. Run the SetupExternal tool to copy game DLLs and decompile the main
+   assemblies:
+   ```sh
+   dotnet tool restore
+   dotnet setup
+   ```
+
+   Optional: Enable debug logging with `--debug` flag for troubleshooting:
+   ```sh
+   dotnet setup --debug
+   ```
+
+   The tool will automatically search for your Lobotomy Corporation installation
+   on:
+
+- **Windows**: `C:\Program Files (x86)\Steam\steamapps\common\LobotomyCorp`
+- **Linux**: `~/.steam/steam/steamapps/common/LobotomyCorp/` or
+  `~/.local/share/Steam/steamapps/common/LobotomyCorp/`
+- **macOS (CrossOver)**: CrossOver bottles AND external Steam libraries (
+  mounted volumes like `/Volumes/*`)
+
+If the game isn't found in these locations, specify the path manually:
+
+   ```sh
+   dotnet setup --path "/path/to/LobotomyCorp"
+   ```
+
+2. Build the solution:
+   ```sh
+   dotnet build LobotomyCorporationMods.sln
+   ```
+
+The SetupExternal tool copies the required game DLLs to the `external/`
+directory and creates a decompiled view of
+`Assembly-CSharp.dll` and `LobotomyBaseModLib.dll` in `external/decompiled/` for
+reference while developing mods.
+
+My development environment uses a "`src`" folder placed inside the BaseMods
+directory. For example,
 LobotomyCorp_Data/BaseMods/src/lobotomy-corporation-mods. If you follow this
 same structure, then the references should use the game's files and will build
 the output to the appropriate BaseMod folder e.g.,
