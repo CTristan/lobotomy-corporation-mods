@@ -200,3 +200,5 @@ $RECYCLE.BIN/
 
 # WPF temp projects
 *wpftmp.*
+
+.fix-die-repeat/
