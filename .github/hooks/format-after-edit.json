@@ -1,0 +1,12 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "type": "command",
+        "command": "dotnet format LobotomyCorporationMods.sln --no-restore --verbosity quiet",
+        "timeout": 30,
+        "matchers": ["create_file", "replace_string_in_file", "multi_replace_string_in_file"]
+      }
+    ]
+  }
+}
