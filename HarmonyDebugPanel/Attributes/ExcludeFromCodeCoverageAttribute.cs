@@ -1,0 +1,13 @@
+// SPDX-License-Identifier: MIT
+
+using System;
+
+// ReSharper disable once CheckNamespace
+namespace System.Diagnostics.CodeAnalysis
+{
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = false)]
+    public sealed class ExcludeFromCodeCoverageAttribute : Attribute
+    {
+        public string Justification { get; set; }
+    }
+}
