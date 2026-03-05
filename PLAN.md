@@ -52,18 +52,37 @@ programmatically.
 - The plugin is lightweight and does not interfere with normal gameplay or other
   mods.
 
+### Testing policy
+
+**Every phase requires ≥80% test coverage before it is considered complete.**
+This applies to both the C# plugin and the Python pi skill independently:
+
+- **Plugin (.NET 3.5)**: xUnit + FluentAssertions + Moq, measured by Coverlet.
+  Unity runtime entry points (`Plugin.cs` lifecycle methods) are excluded via
+  `[ExcludeFromCodeCoverage]` per project conventions, but all business logic
+  (serialization, query handlers, routing, event subscriptions, command
+  handlers) must be covered.
+- **Pi skill (Python)**: pytest, measured by `pytest-cov`. TCP client library,
+  CLI tools, and output formatting must all be covered.
+- **Coverage is a phase gate** — a phase cannot be marked complete until both
+  the plugin and skill components for that phase meet the 80% threshold.
+- Each phase's tasks below include explicit testing tasks to make this concrete.
+
 ### Phase 1 — Read-only foundation
 
 - The plugin starts a TCP server and responds to state queries.
 - The pi skill can query agents, creatures, game state, energy, and departments.
 - End-to-end pipeline is proven: pi agent → skill → Python client → TCP →
   plugin → game state → response.
+- **≥80% test coverage** on plugin query/routing/serialization logic and Python
+  client/CLI code.
 
 ### Phase 2 — Event streaming
 
 - The plugin streams game events from the Notice system over TCP.
 - The pi skill can wait for specific events with configurable timeouts.
 - The agent can react to in-game happenings in real time.
+- **≥80% test coverage** on event subscription, streaming, and the wait CLI.
 
 ### Phase 3 — Commands
 
@@ -71,12 +90,15 @@ programmatically.
   simulate player actions.
 - The pi skill exposes command tools for both low-level state manipulation and
   high-level player action simulation.
+- **≥80% test coverage** on command routing, each command handler, and the
+  command CLI.
 
 ### Phase 4 — Mod testing workflows
 
 - Higher-level automation: load a mod, start a day, assign work, verify patch
   results.
 - The agent can run reproducible mod test scenarios against a live game.
+- **≥80% test coverage** on workflow orchestration logic and scenario scripts.
 
 ## Architecture
 
@@ -269,20 +291,28 @@ debugging tools and avoids race conditions or crashes.
     field
   - Return structured error responses for unknown targets
 
-#### Plugin: Tests
+#### Plugin: Tests (≥80% coverage gate)
 
 - [ ] Create `LobotomyPlaywright.Plugin.Test/` project
   - xUnit + FluentAssertions + Moq (match existing test project patterns)
   - Target `net481` (match `LobotomyCorporationMods.Test` pattern)
   - Add to `LobotomyCorporationMods.sln`
+  - Configure Coverlet for coverage measurement (`opencover` format)
 
 - [ ] Test message serialization round-trips
-- [ ] Test query routing logic
+- [ ] Test query routing logic (valid targets, unknown targets, error responses)
 - [ ] Test each query handler with mocked game managers
+  - AgentQueries: list, get by ID, agent not found
+  - CreatureQueries: list, get by ID, creature not found
+  - GameStateQueries: all fields populated, null manager handling
+  - SefiraQueries: list, department details
 - [ ] Test TCP server connection handling (connect, send, receive, disconnect)
-- [ ] Test main-thread queue processing
-- [ ] Target 100% coverage on testable logic (exclude Unity runtime code with
-  `[ExcludeFromCodeCoverage]` per project conventions)
+- [ ] Test main-thread queue processing (enqueue, dequeue, response dispatch)
+- [ ] Verify ≥80% line coverage on all non-excluded plugin code
+  - Exclude Unity runtime entry points (`Plugin.cs` lifecycle) via
+    `[ExcludeFromCodeCoverage]` per project conventions
+  - All business logic (serialization, queries, routing, server) must be
+    covered
 
 #### Pi skill: Foundation
 
@@ -314,11 +344,21 @@ debugging tools and avoids race conditions or crashes.
     easily digest it
   - `--json` flag for raw JSON output when structured data is needed
 
-- [ ] Python tests for the client library and CLI
-  - Use pytest
+#### Pi skill: Tests (≥80% coverage gate)
+
+- [ ] Python tests for the client library
+  - Use pytest + pytest-cov
   - Mock TCP connections for unit tests
-  - Test serialization, error handling, timeout behavior
-  - Test CLI output formatting
+  - Test connection, send/receive, request ID correlation
+  - Test timeout behavior and retry logic
+  - Test error handling (connection refused, malformed responses)
+
+- [ ] Python tests for the query CLI
+  - Test each subcommand output formatting (agents, creatures, game, departments)
+  - Test `--json` flag output
+  - Test error display (game not running, invalid arguments)
+
+- [ ] Verify ≥80% line coverage on all Python code (`pytest --cov`)
 
 #### Integration verification
 
@@ -326,6 +366,12 @@ debugging tools and avoids race conditions or crashes.
   from a running Lobotomy Corporation instance
 - [ ] Document the setup process in the skill's `SKILL.md` and the plugin's
   `README.md`
+
+#### Phase 1 completion checklist
+
+- [ ] Plugin coverage ≥80% (Coverlet report)
+- [ ] Python skill coverage ≥80% (pytest-cov report)
+- [ ] End-to-end query works from pi agent to live game and back
 
 ### Phase 2 — Event streaming
 
@@ -347,7 +393,30 @@ debugging tools and avoids race conditions or crashes.
   - Timeout with clear error message
 
 - [ ] Add `lobcorp_wait` tool documentation to `SKILL.md`
-- [ ] Tests for event subscription, streaming, and the wait CLI
+
+#### Phase 2: Tests (≥80% coverage gate)
+
+- [ ] Plugin tests for event system
+  - Test NoticeSubscriber: subscribe, unsubscribe, duplicate subscribe
+  - Test event message serialization (event name, data payload, timestamp)
+  - Test multi-client event broadcasting
+  - Test subscription cleanup on client disconnect
+  - Test handling of Notice callbacks on main thread vs TCP thread
+
+- [ ] Python tests for wait CLI
+  - Test event wait with mock TCP event stream
+  - Test condition-based polling with mock query responses
+  - Test timeout behavior (event not received within timeout)
+  - Test output formatting of received events
+
+- [ ] Verify ≥80% line coverage on all new Phase 2 code (plugin + Python)
+
+#### Phase 2 completion checklist
+
+- [ ] Plugin coverage ≥80% including event code (Coverlet report)
+- [ ] Python skill coverage ≥80% including wait CLI (pytest-cov report)
+- [ ] Agent can wait for a real game event (e.g., pause, then `wait event
+  OnStageStart`, then unpause manually)
 
 ### Phase 3 — Commands
 
@@ -379,7 +448,32 @@ debugging tools and avoids race conditions or crashes.
   - `command.py set-agent-stats --agent 3 --hp 100 --mental 100`
   - `command.py fill-energy`
 - [ ] Add `lobcorp_command` tool documentation to `SKILL.md`
-- [ ] Tests for command routing, each command handler, and the command CLI
+
+#### Phase 3: Tests (≥80% coverage gate)
+
+- [ ] Plugin tests for command system
+  - Test CommandRouter: valid commands, unknown commands, error responses
+  - Test each debug command handler with mocked game state
+    - set-agent-stats, add-gift, remove-gift, set-qliphoth, fill-energy,
+      set-game-speed, spawn-creature, trigger-ordeal, set-agent-invincible
+  - Test each player-action command handler with mocked game state
+    - assign-work, pause, unpause, deploy-agent, recall-agent, suppress
+  - Test command validation (missing params, invalid IDs, out-of-range values)
+  - Test command idempotency where applicable
+
+- [ ] Python tests for command CLI
+  - Test each subcommand argument parsing and request construction
+  - Test success/error response display
+  - Test invalid argument handling
+
+- [ ] Verify ≥80% line coverage on all new Phase 3 code (plugin + Python)
+
+#### Phase 3 completion checklist
+
+- [ ] Plugin coverage ≥80% including command code (Coverlet report)
+- [ ] Python skill coverage ≥80% including command CLI (pytest-cov report)
+- [ ] Agent can issue a command and observe its effect via a follow-up query
+  (e.g., `command pause` → `query game` shows paused state)
 
 ### Phase 4 — Mod testing workflows
 
@@ -396,6 +490,27 @@ debugging tools and avoids race conditions or crashes.
 - [ ] Explore screenshot/visual state capture if feasible
   - Would allow the agent to "see" the game visually (useful for UI mods like
     GiftAlertIcon)
+
+#### Phase 4: Tests (≥80% coverage gate)
+
+- [ ] Tests for scenario orchestration logic
+  - Test scenario step sequencing (command → wait → query → assert)
+  - Test scenario failure handling (assertion failed, timeout, command error)
+  - Test scenario reporting (pass/fail summary, step-by-step log)
+
+- [ ] Example scenario tests using existing mods
+  - BadLuckProtectionForGifts: verify gift probability increases after work
+  - WarnWhenAgentWillDieFromWorking: verify warning appears for observed
+    abnormalities with instant-kill mechanics
+  - FreeCustomization: verify customization cost is zero
+
+- [ ] Verify ≥80% line coverage on all new Phase 4 code (plugin + Python)
+
+#### Phase 4 completion checklist
+
+- [ ] Plugin coverage ≥80% overall (Coverlet report)
+- [ ] Python skill coverage ≥80% overall (pytest-cov report)
+- [ ] At least one full mod test scenario runs end-to-end against a live game
 
 ## Key Game References
 

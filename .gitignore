@@ -202,3 +202,12 @@ $RECYCLE.BIN/
 *wpftmp.*
 
 .fix-die-repeat/
+
+# Python cache and coverage files
+__pycache__/
+*.py[cod]
+.Python
+.coverage
+.coverage.*
+.coverage.*
+coverage.json

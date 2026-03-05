@@ -61,6 +61,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HarmonyDebugPanel", "Harmon
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HarmonyDebugPanel.Test", "HarmonyDebugPanel.Test\HarmonyDebugPanel.Test.csproj", "{E5F6A7B8-9C0D-1E2F-3A4B-5C6D7E8F9A0B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LobotomyPlaywright.Plugin", "LobotomyPlaywright.Plugin\LobotomyPlaywright.Plugin.csproj", "{F1A2B3C4-D5E6-7A8B-9C0D-1E2F3A4B5C6D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -131,6 +133,10 @@ Global
 		{E5F6A7B8-9C0D-1E2F-3A4B-5C6D7E8F9A0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E5F6A7B8-9C0D-1E2F-3A4B-5C6D7E8F9A0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E5F6A7B8-9C0D-1E2F-3A4B-5C6D7E8F9A0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1A2B3C4-D5E6-7A8B-9C0D-1E2F3A4B5C6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1A2B3C4-D5E6-7A8B-9C0D-1E2F3A4B5C6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1A2B3C4-D5E6-7A8B-9C0D-1E2F3A4B5C6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1A2B3C4-D5E6-7A8B-9C0D-1E2F3A4B5C6D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
