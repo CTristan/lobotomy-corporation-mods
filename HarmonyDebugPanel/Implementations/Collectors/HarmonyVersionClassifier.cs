@@ -1,0 +1,57 @@
+// SPDX-License-Identifier: MIT
+
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using HarmonyDebugPanel.Interfaces;
+using HarmonyDebugPanel.Models;
+
+namespace HarmonyDebugPanel.Implementations.Collectors
+{
+    public sealed class HarmonyVersionClassifier : IHarmonyVersionClassifier
+    {
+        private const string Harmony1AssemblyName = "0Harmony109";
+        private const string Harmony2AssemblyName = "0Harmony";
+
+        public HarmonyVersion Classify(IList<AssemblyName> references)
+        {
+            if (references == null || references.Count == 0)
+            {
+                return HarmonyVersion.Unknown;
+            }
+
+            var hasHarmony1 = false;
+            var hasHarmony2 = false;
+
+            foreach (var reference in references)
+            {
+                if (reference == null)
+                {
+                    continue;
+                }
+
+                var referenceName = reference.Name ?? string.Empty;
+                if (referenceName.Equals(Harmony1AssemblyName, StringComparison.OrdinalIgnoreCase))
+                {
+                    hasHarmony1 = true;
+                }
+                else if (referenceName.Equals(Harmony2AssemblyName, StringComparison.OrdinalIgnoreCase))
+                {
+                    hasHarmony2 = true;
+                }
+            }
+
+            if (hasHarmony1)
+            {
+                return HarmonyVersion.Harmony1;
+            }
+
+            if (hasHarmony2)
+            {
+                return HarmonyVersion.Harmony2;
+            }
+
+            return HarmonyVersion.Unknown;
+        }
+    }
+}
