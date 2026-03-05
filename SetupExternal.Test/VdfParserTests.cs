@@ -4,7 +4,7 @@ using FluentAssertions;
 using SetupExternal;
 using Xunit;
 
-namespace SetupExternal.Test;
+namespace SetupExternal.Tests;
 
 #pragma warning disable CA1303 // Do not pass literals as localized parameters
 #pragma warning disable CA1515 // Types need to be public for testability

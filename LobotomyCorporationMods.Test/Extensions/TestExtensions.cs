@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using FluentAssertions;
-using Harmony;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Enums;
 using LobotomyCorporationMods.Common.Extensions;
@@ -209,11 +208,41 @@ namespace LobotomyCorporationMods.Test.Extensions
             Type originalClass,
             string methodName)
         {
-            var attribute = Attribute.GetCustomAttribute(patchClass, typeof(HarmonyPatch)) as HarmonyPatch;
+            // Use reflection to access HarmonyPatch attributes since we can't reference 0Harmony.dll in net10.0
+            var declaringAssembly = patchClass.DeclaringType?.Assembly
+                ?? (patchClass is Type t ? t.Assembly : null);
 
-            attribute.Should().NotBeNull();
-            attribute?.info.originalType.Should().Be(originalClass);
-            attribute?.info.methodName.Should().Be(methodName);
+            declaringAssembly.Should().NotBeNull("Unable to determine assembly from MemberInfo");
+
+            // Search all loaded assemblies to find HarmonyPatch attribute type
+            var harmonyPatchAttributeType = AppDomain.CurrentDomain.GetAssemblies()
+                .Select(a => a.GetType("HarmonyLib.HarmonyPatch") ?? a.GetType("Harmony.HarmonyPatch"))
+                .FirstOrDefault(t => t != null);
+
+            harmonyPatchAttributeType.Should().NotBeNull("HarmonyPatch attribute type not found in loaded assemblies");
+
+            var attribute = Attribute.GetCustomAttribute(patchClass, harmonyPatchAttributeType);
+            attribute.Should().NotBeNull("HarmonyPatch attribute not found on member");
+
+            // Harmony 1.x stores patch info in a public 'info' field of type HarmonyMethod
+            var infoField = harmonyPatchAttributeType?.GetField("info", BindingFlags.Public | BindingFlags.Instance);
+            infoField.Should().NotBeNull("HarmonyPatch info field not found");
+
+            var info = infoField?.GetValue(attribute);
+            info.Should().NotBeNull("HarmonyPatch info is null");
+
+            // HarmonyMethod has public originalType and methodName fields
+            var originalTypeField = info?.GetType().GetField("originalType", BindingFlags.Public | BindingFlags.Instance);
+            var methodNameField = info?.GetType().GetField("methodName", BindingFlags.Public | BindingFlags.Instance);
+
+            originalTypeField.Should().NotBeNull("HarmonyMethod originalType field not found");
+            methodNameField.Should().NotBeNull("HarmonyMethod methodName field not found");
+
+            var originalTypeValue = originalTypeField?.GetValue(info) as Type;
+            var methodNameValue = methodNameField?.GetValue(info) as string;
+
+            originalTypeValue.Should().Be(originalClass);
+            methodNameValue.Should().Be(methodName);
         }
 
         internal static void VerifyArgumentNullException([NotNull] this Mock<ILogger> mockLogger,

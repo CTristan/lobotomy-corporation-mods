@@ -3,9 +3,10 @@ using System.IO;
 using System.Linq;
 using FluentAssertions;
 using Mono.Cecil;
+using SetupExternal;
 using Xunit;
 
-namespace SetupExternal.Test;
+namespace SetupExternal.Tests;
 
 #pragma warning disable CA1515 // Types need to be public for testability
 

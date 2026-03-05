@@ -1,4 +1,5 @@
 using System;
+using CI;
 using FluentAssertions;
 using Xunit;
 
@@ -51,4 +52,3 @@ public sealed class ProgramTests
         // We can't run the full CI in tests because we need a git repository
     }
 }
-

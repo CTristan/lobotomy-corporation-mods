@@ -3,7 +3,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
-    <ProjectGuid>{A1B2C3D4-E5F6-7A8B-9C0D-1E2F3A4B5C6D}</ProjectGuid>
+    <ProjectGuid>{D4E5F6A7-8B9C-0D1E-2F3A-4B5C6D7E8F9A}</ProjectGuid>
     <AnalysisLevel>latest-all</AnalysisLevel>
     <Deterministic>true</Deterministic>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
@@ -11,13 +11,17 @@
     <OutputPath>bin\</OutputPath>
     <OutputType>Library</OutputType>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <!-- NU1702: net35 project references intentionally loaded via modern .NET compatibility -->
-    <NoWarn>$(NoWarn);NU1702</NoWarn>
+    <!-- NU1605: RetargetHarmony project (net35) uses Mono.Cecil 0.10.4; BepInEx transitive deps require 0.11.4+, but 0.10.4 is needed for net35 compatibility -->
+    <NoWarn>$(NoWarn);NU1702;NU1605</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugType>full</DebugType>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="BepInEx.BaseLib" Version="5.4.21"/>
+    <PackageReference Include="BepInEx.Core" Version="5.4.21"/>
     <PackageReference Include="coverlet.collector" Version="6.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -28,7 +32,9 @@
     </PackageReference>
     <PackageReference Include="FluentAssertions" Version="6.12.0"/>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0"/>
-    <PackageReference Include="Moq" Version="4.20.70"/>
+    <PackageReference Include="Mono.Cecil" Version="0.10.4">
+      <IncludeAssets>compile; runtime</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="xunit" Version="2.8.1"/>
     <PackageReference Include="xunit.runner.console" Version="2.8.1">
       <PrivateAssets>all</PrivateAssets>
@@ -40,12 +46,24 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CI\CI.csproj"/>
+    <ProjectReference Include="..\RetargetHarmony\RetargetHarmony.csproj"/>
   </ItemGroup>
   <ItemGroup>
-    <!-- Disable localization analyzer for test output -->
-    <NoAnalyzer Include="CA1303"/>
     <!-- Disable CA1515 for test projects as tests must be public for xUnit -->
     <NoAnalyzer Include="CA1515"/>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="0Harmony">
+      <HintPath>..\external\LobotomyCorp_Data\Managed\0Harmony.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\external\LobotomyCorp_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>..\external\LobotomyCorp_Data\Managed\UnityEngine.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
 </Project>
