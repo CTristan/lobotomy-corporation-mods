@@ -133,6 +133,7 @@ public interface IFileSystem
     void SetFileExecutable(string path);
     bool DirectoryExists(string path);
     bool FileExists(string path);
+    string? ReadAllText(string path);
 }
 
 public class FileSystem : IFileSystem
@@ -140,6 +141,11 @@ public class FileSystem : IFileSystem
     public void WriteAllText(string path, string contents)
     {
         File.WriteAllText(path, contents);
+    }
+
+    public string? ReadAllText(string path)
+    {
+        return File.Exists(path) ? File.ReadAllText(path) : null;
     }
 
     public void SetFileExecutable(string path)
@@ -175,23 +181,32 @@ public class CiRunner
     private readonly IProcessRunner _processRunner;
     private readonly IGitHookSetup _gitHookSetup;
     private readonly IFileSystem _fileSystem;
+    private readonly ICoverageConfigReader _coverageConfigReader;
+    private readonly ICoverageThresholdChecker _coverageThresholdChecker;
     private readonly string? _baseDirectory;
 
     public CiRunner()
-        : this(new ProcessRunner(), new GitHookSetup(), new FileSystem())
+        : this(new ProcessRunner(), new GitHookSetup(), new FileSystem(), new CoverageConfigReader(), new CoverageThresholdChecker())
     {
     }
 
     public CiRunner(IProcessRunner processRunner, IGitHookSetup gitHookSetup, IFileSystem fileSystem)
-        : this(processRunner, gitHookSetup, fileSystem, null)
+        : this(processRunner, gitHookSetup, fileSystem, new CoverageConfigReader(), new CoverageThresholdChecker())
     {
     }
 
-    public CiRunner(IProcessRunner processRunner, IGitHookSetup gitHookSetup, IFileSystem fileSystem, string? baseDirectory)
+    public CiRunner(IProcessRunner processRunner, IGitHookSetup gitHookSetup, IFileSystem fileSystem, ICoverageConfigReader coverageConfigReader, ICoverageThresholdChecker coverageThresholdChecker)
+        : this(processRunner, gitHookSetup, fileSystem, coverageConfigReader, coverageThresholdChecker, null)
+    {
+    }
+
+    public CiRunner(IProcessRunner processRunner, IGitHookSetup gitHookSetup, IFileSystem fileSystem, ICoverageConfigReader coverageConfigReader, ICoverageThresholdChecker coverageThresholdChecker, string? baseDirectory)
     {
         _processRunner = processRunner;
         _gitHookSetup = gitHookSetup;
         _fileSystem = fileSystem;
+        _coverageConfigReader = coverageConfigReader;
+        _coverageThresholdChecker = coverageThresholdChecker;
         _baseDirectory = baseDirectory;
     }
 
@@ -229,7 +244,24 @@ public class CiRunner
         var testArgs = "test /p:CollectCoverage=true /p:CoverletOutput=\"./coverage.opencover.xml\" /p:CoverletOutputFormat=opencover --verbosity normal LobotomyCorporationMods.sln";
         var testExitCode = _processRunner.Run("dotnet", testArgs, repoRoot);
 
-        return testExitCode;
+        if (testExitCode != 0)
+        {
+            return testExitCode;
+        }
+
+        // Check coverage thresholds
+        Console.WriteLine("=== Checking coverage thresholds ===");
+        if (_coverageThresholdChecker.CheckThresholds(repoRoot, out var failureMessage))
+        {
+            Console.WriteLine("=== Coverage thresholds met ===");
+            return 0;
+        }
+        else
+        {
+            Console.Error.WriteLine("=== Coverage thresholds NOT met ===");
+            Console.Error.WriteLine(failureMessage);
+            return 1;
+        }
     }
 
     public void SetupHooks()

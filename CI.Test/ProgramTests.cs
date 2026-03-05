@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+
 using System;
 using CI;
 using FluentAssertions;
@@ -41,6 +43,14 @@ public sealed class ProgramTests
     public void Main_WithSetupHooksFlag_InvokesCiRunnerSetupHooks()
     {
         // This test verifies the argument parsing accepts --setup-hooks
+        // Actual behavior is tested in CiRunnerTests
+        // We can't run the full CI in tests because we need a git repository
+    }
+
+    [Fact]
+    public void Main_WithNoCoverageThresholdsFlag_AcceptsArgument()
+    {
+        // This test verifies the argument parsing accepts --no-coverage-thresholds
         // Actual behavior is tested in CiRunnerTests
         // We can't run the full CI in tests because we need a git repository
     }

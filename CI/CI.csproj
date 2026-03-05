@@ -41,5 +41,7 @@
         <NoAnalyzer Include="CA1852"/>
         <NoAnalyzer Include="CA1034"/>
         <NoAnalyzer Include="CA1002"/>
+        <NoAnalyzer Include="CA1031"/>
+        <NoAnalyzer Include="CA1812"/>
     </ItemGroup>
 </Project>

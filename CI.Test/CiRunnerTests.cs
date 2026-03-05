@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+
 using System;
 using CI;
 using FluentAssertions;
@@ -16,10 +18,17 @@ public sealed class CiRunnerTests
         var mockProcessRunner = new Mock<IProcessRunner>();
         var mockFileSystem = new Mock<IFileSystem>();
         var mockGitHookSetup = new Mock<IGitHookSetup>();
+        var mockCoverageConfigReader = new Mock<ICoverageConfigReader>();
+        var mockCoverageThresholdChecker = new Mock<ICoverageThresholdChecker>();
 
         mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
+        mockProcessRunner
+            .Setup(pr => pr.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string, bool>>()))
+            .Returns(0);
+        mockCoverageThresholdChecker.Setup(c => c.CheckThresholds(It.IsAny<string>(), out It.Ref<string>.IsAny))
+            .Returns(true);
 
-        var runner = new CiRunner(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object);
+        var runner = new CiRunner(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageConfigReader.Object, mockCoverageThresholdChecker.Object);
 
         _ = runner.Run(checkMode: true);
 
@@ -38,10 +47,17 @@ public sealed class CiRunnerTests
         var mockProcessRunner = new Mock<IProcessRunner>();
         var mockFileSystem = new Mock<IFileSystem>();
         var mockGitHookSetup = new Mock<IGitHookSetup>();
+        var mockCoverageConfigReader = new Mock<ICoverageConfigReader>();
+        var mockCoverageThresholdChecker = new Mock<ICoverageThresholdChecker>();
 
         mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
+        mockProcessRunner
+            .Setup(pr => pr.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string, bool>>()))
+            .Returns(0);
+        mockCoverageThresholdChecker.Setup(c => c.CheckThresholds(It.IsAny<string>(), out It.Ref<string>.IsAny))
+            .Returns(true);
 
-        var runner = new CiRunner(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object);
+        var runner = new CiRunner(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageConfigReader.Object, mockCoverageThresholdChecker.Object);
 
         _ = runner.Run(checkMode: false);
 
@@ -60,13 +76,17 @@ public sealed class CiRunnerTests
         var mockProcessRunner = new Mock<IProcessRunner>();
         var mockFileSystem = new Mock<IFileSystem>();
         var mockGitHookSetup = new Mock<IGitHookSetup>();
+        var mockCoverageConfigReader = new Mock<ICoverageConfigReader>();
+        var mockCoverageThresholdChecker = new Mock<ICoverageThresholdChecker>();
 
         mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
         mockProcessRunner
             .Setup(pr => pr.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string, bool>>()))
             .Returns(0);
+        mockCoverageThresholdChecker.Setup(c => c.CheckThresholds(It.IsAny<string>(), out It.Ref<string>.IsAny))
+            .Returns(true);
 
-        var runner = new CiRunner(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object);
+        var runner = new CiRunner(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageConfigReader.Object, mockCoverageThresholdChecker.Object);
 
         _ = runner.Run(checkMode: true);
 
@@ -81,13 +101,15 @@ public sealed class CiRunnerTests
         var mockProcessRunner = new Mock<IProcessRunner>();
         var mockFileSystem = new Mock<IFileSystem>();
         var mockGitHookSetup = new Mock<IGitHookSetup>();
+        var mockCoverageConfigReader = new Mock<ICoverageConfigReader>();
+        var mockCoverageThresholdChecker = new Mock<ICoverageThresholdChecker>();
 
         mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
         mockProcessRunner
             .Setup(pr => pr.Run("dotnet", It.Is<string>(s => s.Contains("format", StringComparison.Ordinal)), It.IsAny<string>(), It.IsAny<Func<string, bool>>()))
             .Returns(1);
 
-        var runner = new CiRunner(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object);
+        var runner = new CiRunner(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageConfigReader.Object, mockCoverageThresholdChecker.Object);
 
         var exitCode = runner.Run(checkMode: true);
 
@@ -103,6 +125,8 @@ public sealed class CiRunnerTests
         var mockProcessRunner = new Mock<IProcessRunner>();
         var mockFileSystem = new Mock<IFileSystem>();
         var mockGitHookSetup = new Mock<IGitHookSetup>();
+        var mockCoverageConfigReader = new Mock<ICoverageConfigReader>();
+        var mockCoverageThresholdChecker = new Mock<ICoverageThresholdChecker>();
 
         mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
         mockProcessRunner
@@ -110,7 +134,7 @@ public sealed class CiRunnerTests
             .Returns(0)
             .Returns(1);
 
-        var runner = new CiRunner(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object);
+        var runner = new CiRunner(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageConfigReader.Object, mockCoverageThresholdChecker.Object);
 
         var exitCode = runner.Run(checkMode: true);
 
@@ -123,10 +147,12 @@ public sealed class CiRunnerTests
         var mockProcessRunner = new Mock<IProcessRunner>();
         var mockFileSystem = new Mock<IFileSystem>();
         var mockGitHookSetup = new Mock<IGitHookSetup>();
+        var mockCoverageConfigReader = new Mock<ICoverageConfigReader>();
+        var mockCoverageThresholdChecker = new Mock<ICoverageThresholdChecker>();
 
         mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(false);
 
-        var runner = new CiRunner(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object);
+        var runner = new CiRunner(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageConfigReader.Object, mockCoverageThresholdChecker.Object);
 
         var exitCode = runner.Run(checkMode: true);
 
@@ -137,15 +163,67 @@ public sealed class CiRunnerTests
     }
 
     [Fact]
+    public void Run_ThresholdsMet_ReturnsZeroExitCode()
+    {
+        var mockProcessRunner = new Mock<IProcessRunner>();
+        var mockFileSystem = new Mock<IFileSystem>();
+        var mockGitHookSetup = new Mock<IGitHookSetup>();
+        var mockCoverageConfigReader = new Mock<ICoverageConfigReader>();
+        var mockCoverageThresholdChecker = new Mock<ICoverageThresholdChecker>();
+
+        mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
+        mockProcessRunner
+            .Setup(pr => pr.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string, bool>>()))
+            .Returns(0);
+        mockCoverageThresholdChecker.Setup(c => c.CheckThresholds(It.IsAny<string>(), out It.Ref<string>.IsAny))
+            .Returns(true)
+            .Verifiable();
+
+        var runner = new CiRunner(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageConfigReader.Object, mockCoverageThresholdChecker.Object);
+
+        var exitCode = runner.Run(checkMode: true);
+
+        exitCode.Should().Be(0);
+        mockCoverageThresholdChecker.Verify();
+    }
+
+    [Fact]
+    public void Run_ThresholdsNotMet_ReturnsNonZeroExitCode()
+    {
+        var mockProcessRunner = new Mock<IProcessRunner>();
+        var mockFileSystem = new Mock<IFileSystem>();
+        var mockGitHookSetup = new Mock<IGitHookSetup>();
+        var mockCoverageConfigReader = new Mock<ICoverageConfigReader>();
+        var mockCoverageThresholdChecker = new Mock<ICoverageThresholdChecker>();
+
+        mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
+        mockProcessRunner
+            .Setup(pr => pr.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string, bool>>()))
+            .Returns(0);
+        mockCoverageThresholdChecker.Setup(c => c.CheckThresholds(It.IsAny<string>(), out It.Ref<string>.IsAny))
+            .Returns(false)
+            .Verifiable();
+
+        var runner = new CiRunner(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageConfigReader.Object, mockCoverageThresholdChecker.Object);
+
+        var exitCode = runner.Run(checkMode: true);
+
+        exitCode.Should().Be(1);
+        mockCoverageThresholdChecker.Verify();
+    }
+
+    [Fact]
     public void SetupHooks_CallsGitHookSetup()
     {
         var mockProcessRunner = new Mock<IProcessRunner>();
         var mockFileSystem = new Mock<IFileSystem>();
         var mockGitHookSetup = new Mock<IGitHookSetup>();
+        var mockCoverageConfigReader = new Mock<ICoverageConfigReader>();
+        var mockCoverageThresholdChecker = new Mock<ICoverageThresholdChecker>();
 
         mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
 
-        var runner = new CiRunner(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object);
+        var runner = new CiRunner(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageConfigReader.Object, mockCoverageThresholdChecker.Object);
 
         runner.SetupHooks();
 
@@ -158,10 +236,12 @@ public sealed class CiRunnerTests
         var mockProcessRunner = new Mock<IProcessRunner>();
         var mockFileSystem = new Mock<IFileSystem>();
         var mockGitHookSetup = new Mock<IGitHookSetup>();
+        var mockCoverageConfigReader = new Mock<ICoverageConfigReader>();
+        var mockCoverageThresholdChecker = new Mock<ICoverageThresholdChecker>();
 
         mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(false);
 
-        var runner = new CiRunner(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object);
+        var runner = new CiRunner(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageConfigReader.Object, mockCoverageThresholdChecker.Object);
 
         Action action = () => runner.SetupHooks();
         action.Should().Throw<InvalidOperationException>();

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using CI;
 using FluentAssertions;
@@ -73,5 +74,58 @@ public sealed class ProcessRunnerTests
         // Assert - The exit code should be non-zero
         // Note: The exact behavior depends on the OS and shell
         exitCode.Should().NotBe(0);
+    }
+
+    [Fact]
+    public void Run_WithNullWorkingDirectory_DoesNotThrow()
+    {
+        // Arrange
+        var runner = new ProcessRunner();
+
+        // Act & Assert - This should work without setting a working directory
+        int exitCode;
+
+        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+        {
+            exitCode = runner.Run("cmd", "/c echo test", null);
+        }
+        else
+        {
+            exitCode = runner.Run("echo", "test", null);
+        }
+
+        exitCode.Should().Be(0);
+    }
+
+    [Fact]
+    public void Run_WithOutputFilter_FiltersOutput()
+    {
+        // Arrange
+        var runner = new ProcessRunner();
+        var filteredLines = new System.Collections.Generic.List<string>();
+
+        // Act - Run a command with an output filter
+        int exitCode;
+
+        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+        {
+            exitCode = runner.Run("cmd", "/c echo test-output", null, line =>
+            {
+                filteredLines.Add(line);
+                return !line.Contains("should-filter", System.StringComparison.Ordinal);
+            });
+        }
+        else
+        {
+            exitCode = runner.Run("echo", "test-output", null, line =>
+            {
+                filteredLines.Add(line);
+                return !line.Contains("should-filter", System.StringComparison.Ordinal);
+            });
+        }
+
+        // Assert - The command should succeed and output should be captured
+        exitCode.Should().Be(0);
+        filteredLines.Should().Contain(line => line != null && line.Contains("test-output", System.StringComparison.Ordinal));
     }
 }

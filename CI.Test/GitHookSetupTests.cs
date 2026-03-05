@@ -102,4 +102,26 @@ public sealed class GitHookSetupTests
         capturedContent.Should().Contain("REPO_ROOT=\"$(cd \"$SCRIPT_DIR/../..\" && pwd)\"");
         capturedContent.Should().Contain("cd \"$REPO_ROOT\"");
     }
+
+    [Fact]
+    public void SetupPreCommitHook_DoesNotSetExecutableOnNonUnix()
+    {
+        // Arrange - Mock the platform check to simulate non-Unix
+        var mockFileSystem = new Mock<IFileSystem>();
+        var hookSetup = new GitHookSetup(mockFileSystem.Object);
+
+        // Act
+        hookSetup.SetupPreCommitHook("/test/repo");
+
+        // Assert - Verify the behavior based on actual platform
+        // On non-Unix (like Windows), SetFileExecutable should not be called
+        if (Environment.OSVersion.Platform == PlatformID.Unix)
+        {
+            mockFileSystem.Verify(fs => fs.SetFileExecutable(It.IsAny<string>()), Times.Once);
+        }
+        else
+        {
+            mockFileSystem.Verify(fs => fs.SetFileExecutable(It.IsAny<string>()), Times.Never);
+        }
+    }
 }

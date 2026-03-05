@@ -98,6 +98,29 @@ To run the same checks that the GitHub Actions workflow runs, use the CI tool:
   dotnet ci --setup-hooks
   ```
 
+#### Coverage Thresholds
+
+The CI tool enforces code coverage thresholds based on the configuration in
+`coverlet.json` at the repository root. If the file is missing, coverage thresholds
+will not be enforced.
+
+The configuration supports three coverage types (line, branch, and method) with
+independent thresholds:
+
+```json
+{
+  "lineThreshold": 80,
+  "branchThreshold": 70,
+  "methodThreshold": 75
+}
+```
+
+- `lineThreshold`: Minimum percentage of lines that must be covered (default: 80%)
+- `branchThreshold`: Minimum percentage of branches that must be covered (default: 70%)
+- `methodThreshold`: Minimum percentage of methods that must be covered (default: 75%)
+
+The CI tool calculates coverage across all test projects and fails the build if **any** module's coverage falls below the configured thresholds.
+
 ### Rebuilding local dotnet tools
 
 The repository includes two local dotnet tools (CI and SetupExternal) that are
@@ -106,14 +129,21 @@ rebuild and update them:
 
 1. Build the tool projects and create NuGet packages:
    ```sh
+   # It's important to clear the local NuGet cache first to ensure the tool updates
+   rm -rf ~/.nuget/packages/lobotomycorporationmods.ci
+   rm -rf ~/.nuget/packages/lobotomycorporationmods.setup
+   
    dotnet pack CI/CI.csproj -o nupkg
    dotnet pack SetupExternal/SetupExternal.csproj -o nupkg
    ```
 
 2. Update the tools to use the newly built versions:
    ```sh
-   dotnet tool update lobotomycorporationmods.ci --add-source ./nupkg
-   dotnet tool update lobotomycorporationmods.setup --add-source ./nupkg
+   dotnet tool uninstall lobotomycorporationmods.ci
+   dotnet tool install lobotomycorporationmods.ci --add-source ./nupkg
+   
+   dotnet tool uninstall lobotomycorporationmods.setup
+   dotnet tool install lobotomycorporationmods.setup --add-source ./nupkg
    ```
 
 The tools are defined in `.config/dotnet-tools.json` and reference the locally
