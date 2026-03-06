@@ -28,19 +28,43 @@ The compiled DLL will be at:
 
 ### Deploy
 
-Copy the built DLL to your game's BepInEx installation:
+Copy the built DLL and the Harmony interop DLLs to your game's BepInEx
+installation:
 
 ```bash
 # From the project root directory
+
+# Patcher DLL
 cp RetargetHarmony/bin/Release/net35/RetargetHarmony.dll /path/to/LobotomyCorp/BepInEx/patchers/
+
+# Harmony interop DLLs (required for assembly resolution)
+cp RetargetHarmony/lib/0Harmony109.dll /path/to/LobotomyCorp/BepInEx/core/
+cp RetargetHarmony/lib/0Harmony12.dll /path/to/LobotomyCorp/BepInEx/core/
 ```
+
+### Harmony Interop DLLs
+
+RetargetHarmony requires two Harmony interop DLLs from
+[BepInEx/HarmonyInteropDlls](https://github.com/BepInEx/HarmonyInteropDlls) to
+be present in `BepInEx/core/`:
+
+| DLL | Purpose |
+|-----|---------|
+| `0Harmony109.dll` | Harmony 1.09 interop — the retarget destination for LMM/Basemod references |
+| `0Harmony12.dll` | Harmony 1.2 interop — supports mods built against Harmony 1.2 |
+
+These are vendored in `RetargetHarmony/lib/` and must be deployed alongside the
+patcher. Without them, the retargeted assembly references will fail to resolve
+at runtime.
 
 ### Uninstall
 
-Simply delete the file:
+Simply delete the files:
 
 ```bash
 rm /path/to/LobotomyCorp/BepInEx/patchers/RetargetHarmony.dll
+rm /path/to/LobotomyCorp/BepInEx/core/0Harmony109.dll
+rm /path/to/LobotomyCorp/BepInEx/core/0Harmony12.dll
 ```
 
 ## How It Works
