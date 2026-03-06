@@ -63,11 +63,11 @@ namespace LobotomyPlaywright.Plugin.Test.Commands
             try
             {
                 var response = CommandRouter.HandleCommand(request);
-                
+
                 // Assert - If we got here, BepInEx was available
                 response.Should().NotBeNull();
                 response.status.Should().Be("ok");
-                response.data.Should().NotBeNull();
+                response.DataObject.Should().NotBeNull();
             }
             catch (System.IO.FileNotFoundException)
             {

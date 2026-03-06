@@ -43,6 +43,12 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
         [Fact]
         public void SerializeResponse_error_response_produces_valid_json()
         {
+            if (!UnityTestHelper.IsUnityAvailable)
+            {
+                _output.WriteLine("Skipping test - Unity runtime not available");
+                return;
+            }
+
             // Arrange
             var response = Response.CreateError("req-2", "Agent not found", "NOT_FOUND");
 
@@ -61,6 +67,12 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
         [Fact]
         public void SerializeResponse_event_response_produces_valid_json()
         {
+            if (!UnityTestHelper.IsUnityAvailable)
+            {
+                _output.WriteLine("Skipping test - Unity runtime not available");
+                return;
+            }
+
             // Arrange
             var response = Response.CreateEvent("OnAgentDead", new { agentId = 3, agentName = "Sarah" });
 
@@ -80,6 +92,12 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
         [Fact]
         public void DeserializeRequest_valid_json_produces_request_object()
         {
+            if (!UnityTestHelper.IsUnityAvailable)
+            {
+                _output.WriteLine("Skipping test - Unity runtime not available");
+                return;
+            }
+
             // Arrange
             var json = "{\"id\":\"req-1\",\"type\":\"query\",\"target\":\"agents\",\"params\":{}}";
 
@@ -97,6 +115,12 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
         [Fact]
         public void DeserializeRequest_with_params_produces_request_with_params()
         {
+            if (!UnityTestHelper.IsUnityAvailable)
+            {
+                _output.WriteLine("Skipping test - Unity runtime not available");
+                return;
+            }
+
             // Arrange
             var json = "{\"id\":\"req-2\",\"type\":\"query\",\"target\":\"agents\",\"params\":{\"id\":3}}";
 
@@ -111,6 +135,12 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
         [Fact]
         public void DeserializeRequest_null_json_throws_exception()
         {
+            if (!UnityTestHelper.IsUnityAvailable)
+            {
+                _output.WriteLine("Skipping test - Unity runtime not available");
+                return;
+            }
+
             // Arrange
             string json = null;
 
@@ -125,6 +155,12 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
         [Fact]
         public void DeserializeRequest_empty_json_throws_exception()
         {
+            if (!UnityTestHelper.IsUnityAvailable)
+            {
+                _output.WriteLine("Skipping test - Unity runtime not available");
+                return;
+            }
+
             // Arrange
             var json = "";
 
@@ -138,6 +174,12 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
         [Fact]
         public void DeserializeRequest_invalid_json_throws_exception()
         {
+            if (!UnityTestHelper.IsUnityAvailable)
+            {
+                _output.WriteLine("Skipping test - Unity runtime not available");
+                return;
+            }
+
             // Arrange
             var json = "not valid json";
 
@@ -151,6 +193,12 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
         [Fact]
         public void Serialize_deserialize_round_trip_preserves_data()
         {
+            if (!UnityTestHelper.IsUnityAvailable)
+            {
+                _output.WriteLine("Skipping test - Unity runtime not available");
+                return;
+            }
+
             // Arrange
             var originalResponse = Response.CreateSuccess("req-1", new { name = "Test", value = 42 });
 

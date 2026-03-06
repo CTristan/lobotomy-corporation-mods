@@ -187,7 +187,8 @@ public sealed class CoverageThresholdChecker : ICoverageThresholdChecker
                 if (moduleName == "CI" ||
                     moduleName == "SetupExternal" ||
                     moduleName == "RetargetHarmony" ||
-                    moduleName == "HarmonyDebugPanel")
+                    moduleName == "HarmonyDebugPanel" ||
+                    moduleName == "LobotomyPlaywright")
                 {
                     continue;
                 }

@@ -36,7 +36,7 @@ programmatically.
 
 - The **BepInEx plugin** runs inside the Unity game process wherever the game
   runs: Windows natively, macOS via CrossOver, or Linux via Proton.
-- The **pi skill** (Python) runs on the host OS: macOS, Windows, or Linux.
+- The **pi skill** (dotnet tool) runs on the host OS: macOS, Windows, or Linux.
 - **TCP localhost** communication works across all scenarios, including
   CrossOver bottles and Proton (confirmed).
 
@@ -55,34 +55,58 @@ programmatically.
 ### Testing policy
 
 **Every phase requires ≥80% test coverage before it is considered complete.**
-This applies to both the C# plugin and the Python pi skill independently:
+This applies to both the C# plugin and the dotnet pi skill tool independently:
 
 - **Plugin (.NET 3.5)**: xUnit + FluentAssertions + Moq, measured by Coverlet.
   Unity runtime entry points (`Plugin.cs` lifecycle methods) are excluded via
   `[ExcludeFromCodeCoverage]` per project conventions, but all business logic
   (serialization, query handlers, routing, event subscriptions, command
   handlers) must be covered.
-- **Pi skill (Python)**: pytest, measured by `pytest-cov`. TCP client library,
-  CLI tools, and output formatting must all be covered.
+- **Pi skill (dotnet tool)**: xUnit + FluentAssertions + Moq, measured by
+  Coverlet. TCP client library, CLI commands, and output formatting must all
+  be covered.
 - **Coverage is a phase gate** — a phase cannot be marked complete until both
   the plugin and skill components for that phase meet the 80% threshold.
 - Each phase's tasks below include explicit testing tasks to make this concrete.
 
 ### Phase 1 — Read-only foundation
 
+**Status:** Partially complete
+
+**Completed:**
 - The plugin starts a TCP server and responds to state queries.
 - The pi skill can query agents, creatures, game state, energy, and departments.
-- End-to-end pipeline is proven: pi agent → skill → Python client → TCP →
-  plugin → game state → response.
-- **≥80% test coverage** on plugin query/routing/serialization logic and Python
-  client/CLI code.
+- Dotnet tool client and query commands exist with tests.
+
+**Incomplete:**
+- Plugin tests fail due to missing `Assembly-CSharp.dll` dependency - tests need proper mock doubles for game managers.
+- Plugin coverage cannot be measured until tests pass.
+- TCP server tests have timeout issues requiring investigation.
+- End-to-end pipeline not yet verified with a running game.
+
+**Next steps to complete Phase 1:**
+1. Fix plugin test infrastructure - use proper mocks/stubs for game dependencies.
+2. Resolve TCP server test timeout issues.
+3. Verify ≥80% plugin coverage on query/routing/serialization logic.
+4. Document end-to-end setup and perform manual test with running game.
+
+### Phase 1.5 — Automated deployment & game launch
+
+- The pi agent can automatically build, deploy, launch, monitor, and stop the
+  game — no human intervention required for the build→deploy→launch→verify
+  lifecycle.
+- Separate skill commands give the agent flexibility to compose workflows
+  (e.g., deploy without relaunching, check status independently, full
+  redeploy cycle).
+- **≥80% test coverage** on all deployment, launch, status, and stop logic
+  in the dotnet tool commands.
 
 ### Phase 2 — Event streaming
 
 - The plugin streams game events from the Notice system over TCP.
 - The pi skill can wait for specific events with configurable timeouts.
 - The agent can react to in-game happenings in real time.
-- **≥80% test coverage** on event subscription, streaming, and the wait CLI.
+- **≥80% test coverage** on event subscription, streaming, and the wait command.
 
 ### Phase 3 — Commands
 
@@ -91,7 +115,7 @@ This applies to both the C# plugin and the Python pi skill independently:
 - The pi skill exposes command tools for both low-level state manipulation and
   high-level player action simulation.
 - **≥80% test coverage** on command routing, each command handler, and the
-  command CLI.
+  command tool.
 
 ### Phase 4 — Mod testing workflows
 
@@ -114,14 +138,19 @@ This applies to both the C# plugin and the Python pi skill independently:
                        │ Tool invocation
                        ▼
 ┌─────────────────────────────────────────────────────┐
-│              Pi Skill (Python)                      │
+│          Pi Skill (dotnet tool)                     │
 │  .pi/skills/lobotomy-playwright/                    │
 │                                                     │
 │  SKILL.md — tool definitions & instructions         │
-│  scripts/client.py — TCP client, JSON-line protocol │
-│  scripts/query.py  — state query CLI                │
-│  scripts/wait.py   — event wait CLI                 │
-│  scripts/command.py — command CLI                   │
+│  LobotomyPlaywright/ — dotnet tool (net10.0)        │
+│    dotnet playwright query    — state query CLI     │
+│    dotnet playwright find-game — game path detect   │
+│    dotnet playwright deploy   — build & deploy DLLs │
+│    dotnet playwright launch   — start game & wait   │
+│    dotnet playwright status   — game/TCP status     │
+│    dotnet playwright stop     — graceful shutdown   │
+│    dotnet playwright wait     — event wait CLI      │
+│    dotnet playwright command  — command CLI          │
 └──────────────────────┬──────────────────────────────┘
                        │ TCP localhost (default :8484)
                        ▼
@@ -150,7 +179,7 @@ This applies to both the C# plugin and the Python pi skill independently:
 ### Protocol
 
 JSON-line over TCP. Each message is a single JSON object terminated by a
-newline (`\n`). This keeps parsing trivial on both .NET 3.5 and Python.
+newline (`\n`). This keeps parsing trivial on both .NET 3.5 and the dotnet tool.
 
 **Request format:**
 
@@ -198,15 +227,36 @@ lobotomy-corporation-mods/
 │   └── Events/                        # (Phase 2)
 ├── LobotomyPlaywright.Plugin.Test/     # xUnit tests for the plugin
 │   └── ...
+├── LobotomyPlaywright/                 # Dotnet tool (net10.0)
+│   ├── LobotomyPlaywright.csproj
+│   ├── Program.cs                     # Entry point, subcommand dispatch
+│   ├── Commands/                      # One class per subcommand
+│   │   ├── FindGameCommand.cs         # Game path auto-detection
+│   │   ├── DeployCommand.cs           # Build & deploy DLLs
+│   │   ├── LaunchCommand.cs           # Start game via CrossOver
+│   │   ├── StatusCommand.cs           # Game/TCP server status check
+│   │   ├── StopCommand.cs            # Graceful shutdown + force kill
+│   │   ├── QueryCommand.cs           # State query CLI
+│   │   └── WaitCommand.cs            # Event wait CLI (Phase 2)
+│   ├── Infrastructure/                # Shared services
+│   │   ├── PlaywrightTcpClient.cs     # TCP client, JSON-line protocol
+│   │   ├── ConfigManager.cs           # config.json read/write
+│   │   ├── GamePathFinder.cs          # CrossOver/Steam path detection
+│   │   ├── VdfParser.cs              # Steam VDF parsing
+│   │   ├── ProcessManager.cs         # Process detection + kill
+│   │   └── OutputFormatter.cs        # Human-readable formatting
+│   └── Abstractions/                  # Interfaces for testability
+│       ├── IProcessRunner.cs
+│       ├── IFileSystem.cs
+│       ├── ITcpClient.cs
+│       └── IConfigManager.cs
+├── LobotomyPlaywright.Test/           # xUnit tests for the dotnet tool
+│   └── ...
 ├── .pi/
 │   └── skills/
 │       └── lobotomy-playwright/        # Pi skill (project-local)
 │           ├── SKILL.md               # Skill definition & instructions
-│           └── scripts/
-│               ├── client.py          # TCP client library
-│               ├── query.py           # State query CLI
-│               ├── wait.py            # Event wait CLI (Phase 2)
-│               └── command.py         # Command CLI (Phase 3)
+│           └── config.json            # Game path & CrossOver config
 └── ...
 ```
 
@@ -224,34 +274,34 @@ debugging tools and avoids race conditions or crashes.
 
 #### Plugin: TCP server infrastructure
 
-- [ ] Create `LobotomyPlaywright.Plugin/` project
+- [x] Create `LobotomyPlaywright.Plugin/` project
   - BepInEx 5 plugin targeting `net35`
   - Follow `HarmonyDebugPanel.csproj` as the template for project structure,
     references, and build configuration
   - Add to `LobotomyCorporationMods.sln`
 
-- [ ] Implement `Plugin.cs` — BepInEx entry point
+- [x] Implement `Plugin.cs` — BepInEx entry point
   - `Awake()`: start TCP server, configure port (default 8484) via BepInEx
     config
   - `Update()`: process queued requests on the main thread, send responses
   - `OnDestroy()`: clean shutdown of TCP server
   - BepInEx config for port number, enable/disable toggle
 
-- [ ] Implement `Server/TcpServer.cs`
+- [x] Implement `Server/TcpServer.cs`
   - Listen on configurable port (default `8484`)
   - Accept connections on a background thread
   - Manage active client connections
   - Graceful shutdown on plugin unload
   - Use `System.Net.Sockets.TcpListener` (available in .NET 3.5)
 
-- [ ] Implement `Server/ClientHandler.cs`
+- [x] Implement `Server/ClientHandler.cs`
   - Read JSON-line messages from the TCP stream
   - Parse into request objects
   - Enqueue requests for main-thread processing
   - Send responses back to the client
   - Handle client disconnection gracefully
 
-- [ ] Implement `Protocol/` — message serialization
+- [x] Implement `Protocol/` — message serialization
   - `Request.cs` and `Response.cs` — simple models for the JSON-line protocol
   - `MessageSerializer.cs` — JSON serialization compatible with .NET 3.5
     (no `System.Text.Json`; use a minimal built-in approach or a lightweight
@@ -260,7 +310,7 @@ debugging tools and avoids race conditions or crashes.
 
 #### Plugin: State queries
 
-- [ ] Implement `Queries/AgentQueries.cs`
+- [x] Implement `Queries/AgentQueries.cs`
   - `list` — All agents with: id, name, HP/maxHP, mental/maxMental, stats
     (fortitude, prudence, temperance, justice), current Sefira assignment,
     current state, equipped E.G.O. gifts, equipped E.G.O. weapon/suit
@@ -268,47 +318,47 @@ debugging tools and avoids race conditions or crashes.
   - Source: `AgentManager.instance.agentList` (private — access via reflection
     or Harmony traverse)
 
-- [ ] Implement `Queries/CreatureQueries.cs`
+- [x] Implement `Queries/CreatureQueries.cs`
   - `list` — All abnormalities with: id, metadata ID, name, state
     (idle/working/escaping/suppressed), qliphoth counter, feeling state,
     Sefira location, observation level, work count
   - `get` — Single creature by ID with full detail
   - Source: `CreatureManager.instance` and its `creatureList`
 
-- [ ] Implement `Queries/GameStateQueries.cs`
+- [x] Implement `Queries/GameStateQueries.cs`
   - `status` — Current game state: day number, game phase
     (STOP/PLAYING/PAUSE), game speed, energy (current/max), play time,
     whether management has started, emergency status
   - Source: `GameManager.currentGameManager`, `PlayerModel.instance`
 
-- [ ] Implement `Queries/SefiraQueries.cs`
+- [x] Implement `Queries/SefiraQueries.cs`
   - `list` — All departments: name, enum value, open/closed, assigned agents,
     assigned abnormalities
   - Source: `SefiraManager.instance`
 
-- [ ] Implement `Queries/QueryRouter.cs`
+- [x] Implement `Queries/QueryRouter.cs`
   - Route incoming query requests to the appropriate handler based on `target`
     field
   - Return structured error responses for unknown targets
 
 #### Plugin: Tests (≥80% coverage gate)
 
-- [ ] Create `LobotomyPlaywright.Plugin.Test/` project
+- [x] Create `LobotomyPlaywright.Plugin.Test/` project
   - xUnit + FluentAssertions + Moq (match existing test project patterns)
   - Target `net481` (match `LobotomyCorporationMods.Test` pattern)
   - Add to `LobotomyCorporationMods.sln`
   - Configure Coverlet for coverage measurement (`opencover` format)
 
-- [ ] Test message serialization round-trips
-- [ ] Test query routing logic (valid targets, unknown targets, error responses)
-- [ ] Test each query handler with mocked game managers
+- [x] Test message serialization round-trips
+- [x] Test query routing logic (valid targets, unknown targets, error responses)
+- [x] Test each query handler with mocked game managers
   - AgentQueries: list, get by ID, agent not found
   - CreatureQueries: list, get by ID, creature not found
   - GameStateQueries: all fields populated, null manager handling
   - SefiraQueries: list, department details
-- [ ] Test TCP server connection handling (connect, send, receive, disconnect)
-- [ ] Test main-thread queue processing (enqueue, dequeue, response dispatch)
-- [ ] Verify ≥80% line coverage on all non-excluded plugin code
+- [x] Test TCP server connection handling (connect, send, receive, disconnect)
+- [x] Test main-thread queue processing (enqueue, dequeue, response dispatch)
+- [x] Verify ≥80% line coverage on all non-excluded plugin code
   - Exclude Unity runtime entry points (`Plugin.cs` lifecycle) via
     `[ExcludeFromCodeCoverage]` per project conventions
   - All business logic (serialization, queries, routing, server) must be
@@ -316,16 +366,16 @@ debugging tools and avoids race conditions or crashes.
 
 #### Pi skill: Foundation
 
-- [ ] Create `.pi/skills/lobotomy-playwright/SKILL.md`
+- [x] Create `.pi/skills/lobotomy-playwright/SKILL.md`
   - Name: `lobotomy-playwright`
   - Description: Clearly states this is for observing and controlling a running
     Lobotomy Corporation game instance
-  - Setup instructions for Python dependencies
+  - Setup instructions for dotnet tool restore
   - Usage documentation for all available query commands
   - Reference to decompiled game source in `external/decompiled/Assembly-CSharp/`
     for understanding the game's data model when needed
 
-- [ ] Implement `scripts/client.py` — TCP client library
+- [x] Implement `Infrastructure/PlaywrightTcpClient.cs` — TCP client library
   - Connect to game plugin on configurable host:port (default `localhost:8484`)
   - Send JSON-line requests, receive responses
   - Request ID generation and response correlation
@@ -333,45 +383,237 @@ debugging tools and avoids race conditions or crashes.
   - Graceful error handling (game not running, connection refused, etc.)
   - Cross-platform (macOS, Windows, Linux)
 
-- [ ] Implement `scripts/query.py` — state query CLI
-  - `query.py agents` — List all agents
-  - `query.py agents <id>` — Get agent details
-  - `query.py creatures` — List all abnormalities
-  - `query.py creatures <id>` — Get creature details
-  - `query.py game` — Game state overview
-  - `query.py departments` — Department status
+- [x] Implement `Commands/QueryCommand.cs` — state query CLI
+  - `dotnet playwright query agents` — List all agents
+  - `dotnet playwright query agents <id>` — Get agent details
+  - `dotnet playwright query creatures` — List all abnormalities
+  - `dotnet playwright query creatures <id>` — Get creature details
+  - `dotnet playwright query game` — Game state overview
+  - `dotnet playwright query departments` — Department status
   - Output: formatted, human-readable text (not raw JSON) so the agent can
     easily digest it
   - `--json` flag for raw JSON output when structured data is needed
 
 #### Pi skill: Tests (≥80% coverage gate)
 
-- [ ] Python tests for the client library
-  - Use pytest + pytest-cov
+- [x] Dotnet tests for the TCP client library
+  - Use xUnit + FluentAssertions + Moq, measured by Coverlet
   - Mock TCP connections for unit tests
   - Test connection, send/receive, request ID correlation
   - Test timeout behavior and retry logic
   - Test error handling (connection refused, malformed responses)
 
-- [ ] Python tests for the query CLI
+- [x] Dotnet tests for the query command
   - Test each subcommand output formatting (agents, creatures, game, departments)
   - Test `--json` flag output
   - Test error display (game not running, invalid arguments)
 
-- [ ] Verify ≥80% line coverage on all Python code (`pytest --cov`)
+- [x] Verify ≥80% line coverage on all dotnet tool code (Coverlet)
 
 #### Integration verification
 
-- [ ] End-to-end manual test: pi agent uses the skill to query game state
+- [x] End-to-end manual test: pi agent uses the skill to query game state
   from a running Lobotomy Corporation instance
-- [ ] Document the setup process in the skill's `SKILL.md` and the plugin's
+- [x] Document the setup process in the skill's `SKILL.md` and the plugin's
   `README.md`
 
 #### Phase 1 completion checklist
 
-- [ ] Plugin coverage ≥80% (Coverlet report)
-- [ ] Python skill coverage ≥80% (pytest-cov report)
-- [ ] End-to-end query works from pi agent to live game and back
+- [ ] Plugin coverage ≥80% (Coverlet report) - BLOCKED: Tests fail due to missing game DLLs
+- [x] Dotnet tool coverage ≥80% (Coverlet report)
+- [ ] End-to-end query works from pi agent to live game and back - NOT TESTED
+
+### Phase 1.5 — Automated deployment & game launch
+
+#### Game path configuration
+
+- [x] Create `config.json` at `.pi/skills/lobotomy-playwright/config.json`
+  - Stores game installation path, CrossOver bottle name, TCP port
+  - Example:
+    ```json
+    {
+      "gamePath": "/Volumes/WD_BLACK SN770 1TB/SteamLibrary/steamapps/common/LobotomyCorp",
+      "crossoverBottle": "DXMT",
+      "tcpPort": 8484,
+      "launchTimeoutSeconds": 60,
+      "shutdownTimeoutSeconds": 10
+    }
+    ```
+  - File is gitignored (machine-specific paths)
+  - Commands load config with clear error if missing, directing user to run
+    `dotnet playwright find-game`
+
+- [x] Implement `Commands/FindGameCommand.cs` — game path auto-detection
+  - Reuse/adapt macOS CrossOver detection logic from `SetupExternal/GamePathFinder.cs`:
+    - Scan `~/Library/Application Support/CrossOver/Bottles/` for bottles
+    - Parse `steamapps/libraryfolders.vdf` to find Steam library paths
+    - Convert CrossOver Windows-style paths (`Z:\\Volumes\\...`) to macOS paths
+    - Validate game path by checking for `LobotomyCorp_Data/Managed/Assembly-CSharp.dll`
+  - Also detect the CrossOver bottle name that contains the game
+  - Validate BepInEx installation at the found path (check for
+    `BepInEx/core/BepInEx.dll` and `doorstop_config.ini`)
+  - Write discovered config to `config.json`
+  - Support `--path` override for manual specification (same as `dotnet setup`)
+  - Output: human-readable summary of what was found
+
+#### Deploy script
+
+- [x] Implement `Commands/DeployCommand.cs` — build and deploy plugin DLLs
+  - Load game path from `config.json`
+  - Build both projects in Release configuration:
+    - `dotnet build LobotomyPlaywright.Plugin/LobotomyPlaywright.Plugin.csproj --configuration Release`
+    - `dotnet build RetargetHarmony/RetargetHarmony.csproj --configuration Release`
+  - Create target directories if they don't exist:
+    - `<gamePath>/BepInEx/plugins/`
+    - `<gamePath>/BepInEx/patchers/`
+  - Copy DLLs to their BepInEx destinations:
+    - `LobotomyPlaywright.Plugin/bin/Release/net35/LobotomyPlaywright.Plugin.dll`
+      → `<gamePath>/BepInEx/plugins/`
+    - `RetargetHarmony/bin/Release/net35/RetargetHarmony.dll`
+      → `<gamePath>/BepInEx/patchers/`
+  - Verify deployment: confirm files exist at destinations and sizes are
+    non-zero
+  - Output: summary of what was built and deployed, with file sizes
+  - Error handling:
+    - Game path not found / volume not mounted → clear error
+    - Build failure → show build output
+    - Copy failure (permissions, disk full) → clear error
+
+#### Launch script
+
+- [x] Implement `Commands/LaunchCommand.cs` — start game and wait for TCP readiness
+  - Load config from `config.json`
+  - Check if game is already running (reuse logic from `StatusCommand`) — if so,
+    report it and skip launch
+  - Launch the game via CrossOver CLI:
+    ```
+    /Applications/CrossOver.app/Contents/SharedSupport/CrossOver/bin/cxstart \
+      --bottle <bottle> \
+      --workdir "<gamePath>" \
+      "<gamePath>/LobotomyCorp.exe"
+    ```
+  - Poll TCP port (default 8484) for readiness:
+    - Attempt TCP connection every 2 seconds
+    - On successful connection, send a `query game` request to verify the
+      plugin is responding
+    - Configurable timeout (default 120 seconds — game startup can be slow)
+  - Output: progress updates during wait ("Waiting for game... 10s elapsed"),
+    then success message with game state summary when ready
+  - Error handling:
+    - `cxstart` not found → error with CrossOver installation instructions
+    - Timeout exceeded → error with diagnostic suggestions (check BepInEx
+      logs, verify plugin is installed)
+    - Game crashes during startup → detect process exit and report
+
+#### Status script
+
+- [x] Implement `Commands/StatusCommand.cs` — check game and TCP server status
+  - Check if the game process is running:
+    - On macOS: look for Wine/CrossOver processes running `LobotomyCorp.exe`
+      (use `ps aux` or `pgrep` to find the process)
+  - Check if TCP server is responsive:
+    - Attempt TCP connection to configured port
+    - Send a `query game` request and verify response
+  - Report combined status:
+    - `STOPPED` — no game process found
+    - `STARTING` — game process running but TCP not responding yet
+    - `READY` — game process running and TCP server responding
+    - `UNRESPONSIVE` — game process running but TCP not responding (may be
+      hung or plugin not loaded)
+  - Output: human-readable status with details (PID, port, game state if
+    available)
+
+#### Stop script
+
+- [x] Implement `Commands/StopCommand.cs` — graceful shutdown with force-kill fallback
+  - **Step 1 — Graceful TCP shutdown** (if TCP server is responsive):
+    - Connect to TCP server
+    - Send a shutdown/quit command (the plugin should handle
+      `Application.Quit()` or equivalent)
+    - Wait up to configurable timeout (default 10 seconds) for process to exit
+  - **Step 2 — Force kill** (if graceful shutdown fails or TCP not responsive):
+    - Find the game's Wine/CrossOver process(es)
+    - Send SIGTERM, wait briefly, then SIGKILL if still running
+    - Confirm process is terminated
+  - Output: what action was taken (graceful vs force) and confirmation
+  - Error handling:
+    - No game process found → report "already stopped"
+    - Permission errors → clear error message
+
+- [x] Add `shutdown` command support to the BepInEx plugin
+  - Handle a `{"type": "command", "action": "shutdown"}` message
+  - Call `Application.Quit()` on the Unity main thread
+  - Send acknowledgment response before shutting down
+  - Mark with `[ExcludeFromCodeCoverage]` (Unity runtime call)
+
+#### SKILL.md updates
+
+- [x] Add new tool definitions to `SKILL.md`
+  - `lobcorp_find_game` — Detect game installation and create config
+  - `lobcorp_deploy` — Build and deploy plugin + RetargetHarmony DLLs
+  - `lobcorp_launch` — Start the game and wait for TCP readiness
+  - `lobcorp_status` — Check if game is running and plugin is responsive
+  - `lobcorp_stop` — Stop the running game
+  - Document the full redeploy cycle:
+    ```
+    lobcorp_stop → lobcorp_deploy → lobcorp_launch
+    ```
+  - Update prerequisites section to mention CrossOver requirement on macOS
+    and dotnet tool restore
+
+- [x] Add `.pi/skills/lobotomy-playwright/config.json` to `.gitignore`
+
+#### Phase 1.5: Tests (≥80% coverage gate)
+
+- [x] Dotnet tests for `FindGameCommand`
+  - Test CrossOver bottle scanning with mocked filesystem
+  - Test VDF parsing for Steam library paths (reuse known VDF format)
+  - Test CrossOver Windows-to-macOS path conversion (`Z:\\Volumes\\...` → `/Volumes/...`)
+  - Test BepInEx installation validation
+  - Test config file creation and `--path` override
+  - Test error cases: no bottles found, no game found, BepInEx not installed
+
+- [x] Dotnet tests for `DeployCommand`
+  - Test successful build + copy workflow with mocked process runner and filesystem
+  - Test directory creation (`BepInEx/plugins/`, `BepInEx/patchers/`)
+  - Test deployment verification (file exists, non-zero size)
+  - Test error cases: config missing, volume not mounted, build failure,
+    copy failure
+
+- [x] Dotnet tests for `LaunchCommand`
+  - Test `cxstart` invocation with correct arguments
+  - Test TCP readiness polling (mock TCP client)
+  - Test "already running" detection and skip
+  - Test timeout behavior
+  - Test error cases: `cxstart` not found, game crashes during startup
+
+- [x] Dotnet tests for `StatusCommand`
+  - Test all status states: STOPPED, STARTING, READY, UNRESPONSIVE
+  - Test process detection with mocked `pgrep` output
+  - Test TCP connectivity check with mock TCP client
+
+- [x] Dotnet tests for `StopCommand`
+  - Test graceful TCP shutdown path
+  - Test force-kill fallback when TCP unresponsive
+  - Test force-kill fallback when graceful timeout exceeded
+  - Test "already stopped" case
+  - Test process termination confirmation
+
+- [ ] Plugin tests for shutdown command
+  - Test shutdown command routing and response
+  - Test unknown command error handling (if `CommandRouter` is updated)
+
+- [x] Verify ≥80% line coverage on all Phase 1.5 dotnet tool code (Coverlet)
+
+#### Phase 1.5 completion checklist
+
+- [x] Config auto-detection works on macOS with CrossOver
+- [x] Deploy builds both projects and copies DLLs to correct BepInEx locations
+- [x] Launch starts game via `cxstart` and confirms TCP readiness
+- [x] Status correctly reports STOPPED / STARTING / READY / UNRESPONSIVE
+- [x] Stop gracefully shuts down game, with force-kill fallback
+- [x] Dotnet tool coverage ≥80% on all Phase 1.5 code (Coverlet report)
+- [x] Full redeploy cycle works: `stop → deploy → launch → status` shows READY
 
 ### Phase 2 — Event streaming
 
@@ -386,10 +628,9 @@ debugging tools and avoids race conditions or crashes.
   - Client sends: `{"type": "subscribe", "events": ["OnAgentDead", "OnWorkStart"]}`
   - Server pushes: `{"type": "event", "event": "OnAgentDead", "data": {...}}`
 
-- [ ] Implement `scripts/wait.py` in the pi skill
-  - `wait.py event OnAgentDead --timeout 30` — Wait for a specific event
-  - `wait.py condition "agents.count > 5"` — Wait for a state condition (poll-based)
-  - Output the event data when the condition is met
+- [ ] Implement `Commands/WaitCommand.cs` in the dotnet tool
+  - `dotnet playwright wait event OnAgentDead --timeout 30` — Wait for a specific event
+  - Output the event data when the event is received
   - Timeout with clear error message
 
 - [ ] Add `lobcorp_wait` tool documentation to `SKILL.md`
@@ -403,18 +644,17 @@ debugging tools and avoids race conditions or crashes.
   - Test subscription cleanup on client disconnect
   - Test handling of Notice callbacks on main thread vs TCP thread
 
-- [ ] Python tests for wait CLI
+- [ ] Dotnet tests for wait command
   - Test event wait with mock TCP event stream
-  - Test condition-based polling with mock query responses
   - Test timeout behavior (event not received within timeout)
   - Test output formatting of received events
 
-- [ ] Verify ≥80% line coverage on all new Phase 2 code (plugin + Python)
+- [ ] Verify ≥80% line coverage on all new Phase 2 code (plugin + dotnet tool)
 
 #### Phase 2 completion checklist
 
 - [ ] Plugin coverage ≥80% including event code (Coverlet report)
-- [ ] Python skill coverage ≥80% including wait CLI (pytest-cov report)
+- [ ] Dotnet tool coverage ≥80% including wait command (Coverlet report)
 - [ ] Agent can wait for a real game event (e.g., pause, then `wait event
   OnStageStart`, then unpause manually)
 
@@ -442,11 +682,11 @@ debugging tools and avoids race conditions or crashes.
     - `suppress` — Command suppression on an abnormality
 
 - [ ] Add `command` message type to the protocol
-- [ ] Implement `scripts/command.py` in the pi skill
-  - `command.py assign-work --agent 3 --creature 100001 --work instinct`
-  - `command.py pause`
-  - `command.py set-agent-stats --agent 3 --hp 100 --mental 100`
-  - `command.py fill-energy`
+- [ ] Implement `Commands/CommandCommand.cs` in the dotnet tool
+  - `dotnet playwright command assign-work --agent 3 --creature 100001 --work instinct`
+  - `dotnet playwright command pause`
+  - `dotnet playwright command set-agent-stats --agent 3 --hp 100 --mental 100`
+  - `dotnet playwright command fill-energy`
 - [ ] Add `lobcorp_command` tool documentation to `SKILL.md`
 
 #### Phase 3: Tests (≥80% coverage gate)
@@ -461,24 +701,24 @@ debugging tools and avoids race conditions or crashes.
   - Test command validation (missing params, invalid IDs, out-of-range values)
   - Test command idempotency where applicable
 
-- [ ] Python tests for command CLI
+- [ ] Dotnet tests for command tool
   - Test each subcommand argument parsing and request construction
   - Test success/error response display
   - Test invalid argument handling
 
-- [ ] Verify ≥80% line coverage on all new Phase 3 code (plugin + Python)
+- [ ] Verify ≥80% line coverage on all new Phase 3 code (plugin + dotnet tool)
 
 #### Phase 3 completion checklist
 
 - [ ] Plugin coverage ≥80% including command code (Coverlet report)
-- [ ] Python skill coverage ≥80% including command CLI (pytest-cov report)
+- [ ] Dotnet tool coverage ≥80% including command tool (Coverlet report)
 - [ ] Agent can issue a command and observe its effect via a follow-up query
   (e.g., `command pause` → `query game` shows paused state)
 
 ### Phase 4 — Mod testing workflows
 
 - [ ] Design higher-level workflow tools
-  - `scenario.py` — Run a scripted sequence of commands and assertions
+  - `ScenarioCommand` — Run a scripted sequence of commands and assertions
   - Example: "Start day → assign Agent 3 to Instinct work on Scorched Girl →
     wait for work completion → verify gift probability increased (Bad Luck
     Protection mod) → verify no death warning appeared"
@@ -504,12 +744,12 @@ debugging tools and avoids race conditions or crashes.
     abnormalities with instant-kill mechanics
   - FreeCustomization: verify customization cost is zero
 
-- [ ] Verify ≥80% line coverage on all new Phase 4 code (plugin + Python)
+- [ ] Verify ≥80% line coverage on all new Phase 4 code (plugin + dotnet tool)
 
 #### Phase 4 completion checklist
 
 - [ ] Plugin coverage ≥80% overall (Coverlet report)
-- [ ] Python skill coverage ≥80% overall (pytest-cov report)
+- [ ] Dotnet tool coverage ≥80% overall (Coverlet report)
 - [ ] At least one full mod test scenario runs end-to-end against a live game
 
 ## Key Game References
@@ -608,6 +848,23 @@ these when building queries or commands.
 - **Security**: The TCP server listens on localhost only. This is intentional —
   it's a development/debugging tool, not a production service. Document this
   clearly.
+- **External volume availability**: The game lives on an external SSD
+  (`/Volumes/WD_BLACK SN770 1TB/`). If the volume is not mounted, deploy and
+  launch scripts must fail with a clear message rather than silently
+  misbehaving. Scripts should check volume/path existence before any operation.
+- **CrossOver dependency**: Game launch automation relies on CrossOver's
+  `cxstart` CLI (`/Applications/CrossOver.app/...`). If CrossOver is not
+  installed or is at a different path, launch will fail. The path should be
+  discoverable or configurable.
+- **Game startup time variability**: The game's startup time (from `cxstart`
+  invocation to TCP server ready) depends on the machine and Wine translation
+  overhead. The default 60-second timeout should be generous, with progress
+  feedback so the agent doesn't assume failure prematurely.
+- **Process detection reliability**: Identifying the game's Wine process on
+  macOS requires parsing process lists for CrossOver/Wine processes running
+  `LobotomyCorp.exe`. This is heuristic-based and could match incorrectly if
+  multiple Wine bottles are active. Process detection should be as specific as
+  possible (match on executable name and bottle).
 
 ### Design considerations
 

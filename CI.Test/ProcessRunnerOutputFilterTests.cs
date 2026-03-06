@@ -18,20 +18,20 @@ public sealed class ProcessRunnerOutputFilterTests
         var runner = new ProcessRunner();
 
         // Act - Run a command without an output filter (null)
-        int exitCode;
+        ProcessResult result;
 
         if (Environment.OSVersion.Platform == PlatformID.Win32NT)
         {
-            exitCode = runner.Run("cmd", "/c echo test-output");
+            result = runner.Run("cmd", "/c echo test-output");
         }
         else
         {
-            exitCode = runner.Run("echo", "test-output");
+            result = runner.Run("echo", "test-output");
         }
 
         // Assert - The command should succeed
         // This test verifies the `outputFilter == null` branch is covered
-        exitCode.Should().Be(0);
+        result.ExitCode.Should().Be(0);
     }
 
     [Fact]
@@ -41,19 +41,19 @@ public sealed class ProcessRunnerOutputFilterTests
         var runner = new ProcessRunner();
 
         // Act - Run a command with a null filter function
-        int exitCode;
+        ProcessResult result;
 
         if (Environment.OSVersion.Platform == PlatformID.Win32NT)
         {
-            exitCode = runner.Run("cmd", "/c echo more-output", null, null);
+            result = runner.Run("cmd", "/c echo more-output", null, null);
         }
         else
         {
-            exitCode = runner.Run("echo", "more-output", null, null);
+            result = runner.Run("echo", "more-output", null, null);
         }
 
         // Assert - The command should succeed
         // This verifies the `outputFilter(e.Data)` is called when filter is null
-        exitCode.Should().Be(0);
+        result.ExitCode.Should().Be(0);
     }
 }

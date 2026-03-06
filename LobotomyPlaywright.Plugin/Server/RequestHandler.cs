@@ -10,7 +10,7 @@ namespace LobotomyPlaywright.Server
     /// </summary>
     public static class RequestHandler
     {
-        public static Protocol.Response ProcessRequest(Protocol.Request request)
+        public static Protocol.Response ProcessRequest(Protocol.Request request, ClientHandler clientHandler)
         {
             if (request == null)
             {
@@ -28,10 +28,10 @@ namespace LobotomyPlaywright.Server
                         return Commands.CommandRouter.HandleCommand(request);
 
                     case "subscribe":
-                        return Events.EventSubscriptionManager.HandleSubscribe(request);
+                        return Events.EventSubscriptionManager.HandleSubscribe(request, clientHandler);
 
                     case "unsubscribe":
-                        return Events.EventSubscriptionManager.HandleUnsubscribe(request);
+                        return Events.EventSubscriptionManager.HandleUnsubscribe(request, clientHandler);
 
                     default:
                         return Protocol.Response.CreateError(

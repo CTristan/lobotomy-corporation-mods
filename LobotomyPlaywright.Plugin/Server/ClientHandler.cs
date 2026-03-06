@@ -5,6 +5,7 @@ using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using LobotomyPlaywright.Events;
 using UnityEngine;
 
 namespace LobotomyPlaywright.Server
@@ -61,7 +62,12 @@ namespace LobotomyPlaywright.Server
             }
             catch (Exception ex)
             {
-                UnityEngine.Debug.LogError($"[LobotomyPlaywright] Error disconnecting client: {ex.Message}");
+                TcpServer.LogError($"[LobotomyPlaywright] Error disconnecting client: {ex.Message}");
+            }
+            finally
+            {
+                // Clean up event subscriptions
+                EventSubscriptionManager.RemoveClient(this);
             }
         }
 
@@ -81,7 +87,7 @@ namespace LobotomyPlaywright.Server
             }
             catch (Exception ex)
             {
-                UnityEngine.Debug.LogError($"[LobotomyPlaywright] Failed to send to client: {ex.Message}");
+                TcpServer.LogError($"[LobotomyPlaywright] Failed to send to client: {ex.Message}");
                 Disconnect();
             }
         }
@@ -101,6 +107,10 @@ namespace LobotomyPlaywright.Server
                 {
                     if (networkStream != null && !networkStream.DataAvailable)
                     {
+                        if (_client.Client != null && _client.Client.Poll(0, System.Net.Sockets.SelectMode.SelectRead))
+                        {
+                            break;
+                        }
                         Thread.Sleep(10);
                         continue;
                     }
@@ -138,12 +148,12 @@ namespace LobotomyPlaywright.Server
                 // Client disconnected normally
                 if (_isRunning)
                 {
-                    UnityEngine.Debug.Log($"[LobotomyPlaywright] Client disconnected: {ex.Message}");
+                    TcpServer.LogDebug($"[LobotomyPlaywright] Client disconnected: {ex.Message}");
                 }
             }
             catch (Exception ex)
             {
-                UnityEngine.Debug.LogError($"[LobotomyPlaywright] Client error: {ex.Message}");
+                TcpServer.LogError($"[LobotomyPlaywright] Client error: {ex.Message}");
             }
             finally
             {
@@ -160,7 +170,7 @@ namespace LobotomyPlaywright.Server
         {
             try
             {
-                UnityEngine.Debug.Log($"[ClientHandler] Received JSON: {json}");
+                TcpServer.LogDebug($"[ClientHandler] Received JSON: {json}");
                 var request = Protocol.MessageSerializer.DeserializeRequest(json);
 
                 if (string.IsNullOrEmpty(request.Type))
@@ -174,12 +184,12 @@ namespace LobotomyPlaywright.Server
                     return;
                 }
 
-                UnityEngine.Debug.Log($"[ClientHandler] Enqueueing request: id={request.Id}, type={request.Type}, target={request.Target}");
+                TcpServer.LogDebug($"[ClientHandler] Enqueueing request: id={request.Id}, type={request.Type}, target={request.Target}");
                 _server.EnqueueRequest(request, _client, _thread);
             }
             catch (Exception ex)
             {
-                UnityEngine.Debug.LogError($"[ClientHandler] Failed to parse request: {ex.Message}");
+                TcpServer.LogError($"[ClientHandler] Failed to parse request: {ex.Message}");
                 var errorResponse = Protocol.Response.CreateError(
                     null,
                     $"Failed to parse request: {ex.Message}",

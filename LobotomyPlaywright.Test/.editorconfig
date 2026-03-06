@@ -1,0 +1,12 @@
+# SPDX-License-Identifier: MIT
+
+# Test classes must be public for xUnit
+dotnet_style_qualify_for_access = false:suggestion
+dotnet_code_quality_unused_parameters = all:suggestion
+dotnet_diagnostic.CA1515.severity = none
+dotnet_diagnostic.CA1812.severity = none
+dotnet_diagnostic.CA1852.severity = none
+
+# Disable internal class auto-fix for test classes
+dotnet_diagnostic.IDE0051.severity = none
+dotnet_diagnostic.CS1051.severity = none

@@ -213,3 +213,15 @@ resharper_place_accessorholder_attribute_on_same_line = false
 resharper_place_expr_property_on_single_line = true
 resharper_use_heuristics_for_body_style = true
 resharper_wrap_object_and_collection_initializer_style = chop_always
+
+# Test classes in LobotomyPlaywright.Test must be public for xUnit
+[**/LobotomyPlaywright.Test/**/*.cs]
+dotnet_diagnostic.CA1515.severity = none
+
+# Explicitly disable internal class code fixer for LobotomyPlaywright test classes
+[**/LobotomyPlaywright.Test/**/*Tests.cs]
+dotnet_style_prefer_internal_class_over_private_class = false:silent
+
+# Disable internal class preference globally for test projects
+dotnet_style_prefer_internal_class_over_private_class = false:silent
+dotnet_style_prefer_internal_class = false:silent

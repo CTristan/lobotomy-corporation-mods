@@ -48,7 +48,7 @@ namespace LobotomyPlaywright.Queries
             try
             {
                 var sceneName = CurrentScene;
-                UnityEngine.Debug.Log($"[LobotomyPlaywright] GetStatus called, scene={sceneName}");
+                LobotomyPlaywright.Server.TcpServer.LogDebug($"[LobotomyPlaywright] GetStatus called, scene={sceneName}");
 
                 var gameManager = GameManager.currentGameManager;
                 var playerModel = PlayerModel.instance;

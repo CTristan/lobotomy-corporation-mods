@@ -13,7 +13,7 @@ namespace LobotomyPlaywright.Queries
     {
         public static Protocol.Response HandleQuery(Protocol.Request request)
         {
-            UnityEngine.Debug.Log($"[LobotomyPlaywright] HandleQuery called: target={request.Target}, id={request.Id}");
+            LobotomyPlaywright.Server.TcpServer.LogDebug($"[LobotomyPlaywright] HandleQuery called: target={request?.Target}, id={request?.Id}");
 
             if (request == null || string.IsNullOrEmpty(request.Target))
             {
@@ -48,7 +48,7 @@ namespace LobotomyPlaywright.Queries
 
                 if (!GameStateQueries.IsGameQueryable())
                 {
-                    UnityEngine.Debug.Log("[LobotomyPlaywright] Game not queryable!");
+                    LobotomyPlaywright.Server.TcpServer.LogDebug("[LobotomyPlaywright] Game not queryable!");
                     return Protocol.Response.CreateError(
                         request.Id,
                         "Game is not in a queryable state",
@@ -58,7 +58,7 @@ namespace LobotomyPlaywright.Queries
 
                 var paramsDict = request.Params ?? new Dictionary<string, object>();
 
-                UnityEngine.Debug.Log($"[LobotomyPlaywright] Routing query: target={target}, isQueryable=true");
+                LobotomyPlaywright.Server.TcpServer.LogDebug($"[LobotomyPlaywright] Routing query: target={target}, isQueryable=true");
 
                 switch (target)
                 {

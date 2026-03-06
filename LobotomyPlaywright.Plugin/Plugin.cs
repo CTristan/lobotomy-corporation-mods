@@ -2,6 +2,7 @@
 
 using BepInEx;
 using BepInEx.Logging;
+using LobotomyPlaywright.Events;
 using LobotomyPlaywright.Server;
 using UnityEngine;
 
@@ -38,6 +39,10 @@ namespace LobotomyPlaywright
             {
                 _tcpServer = new TcpServer(_configuration.Port.Value);
                 _tcpServer.Start();
+
+                // Initialize event streaming
+                EventSubscriptionManager.Initialize(_tcpServer);
+
                 Logger.LogInfo($"LobotomyPlaywright v{PluginConstants.PluginVersion} initialized.");
                 Logger.LogInfo($"TCP server listening on 127.0.0.1:{_configuration.Port.Value}");
             }
@@ -75,8 +80,12 @@ namespace LobotomyPlaywright
             {
                 _tcpServer.Stop();
                 _tcpServer = null;
-                Logger.LogInfo("LobotomyPlaywright TCP server stopped.");
             }
+
+            // Shutdown event streaming
+            EventSubscriptionManager.Shutdown();
+
+            Logger.LogInfo("LobotomyPlaywright TCP server stopped.");
         }
     }
 }

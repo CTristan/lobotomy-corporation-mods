@@ -23,18 +23,18 @@ public sealed class ProcessRunnerTests
         // Act & Assert - This should work on both Unix and Windows
         // On Windows, "cmd /c echo test" should work
         // On Unix, "echo test" should work
-        int exitCode;
+        ProcessResult result;
 
         if (Environment.OSVersion.Platform == PlatformID.Win32NT)
         {
-            exitCode = runner.Run("cmd", "/c echo test");
+            result = runner.Run("cmd", "/c echo test");
         }
         else
         {
-            exitCode = runner.Run("echo", "test");
+            result = runner.Run("echo", "test");
         }
 
-        exitCode.Should().Be(0);
+        result.ExitCode.Should().Be(0);
     }
 
     [Fact]
@@ -48,18 +48,18 @@ public sealed class ProcessRunnerTests
         var currentDir = Environment.CurrentDirectory;
 
         // Act & Assert
-        int exitCode;
+        ProcessResult result;
 
         if (Environment.OSVersion.Platform == PlatformID.Win32NT)
         {
-            exitCode = runner.Run("cmd", "/c echo test", currentDir);
+            result = runner.Run("cmd", "/c echo test", currentDir);
         }
         else
         {
-            exitCode = runner.Run("echo", "test", currentDir);
+            result = runner.Run("echo", "test", currentDir);
         }
 
-        exitCode.Should().Be(0);
+        result.ExitCode.Should().Be(0);
     }
 
     [Fact]
@@ -69,11 +69,11 @@ public sealed class ProcessRunnerTests
         var runner = new ProcessRunner();
 
         // Act - Try to run a command that doesn't exist
-        var exitCode = runner.Run("thiscommanddefinitelydoesnotexist12345", "");
+        var result = runner.Run("thiscommanddefinitelydoesnotexist12345", "");
 
         // Assert - The exit code should be non-zero
         // Note: The exact behavior depends on the OS and shell
-        exitCode.Should().NotBe(0);
+        result.ExitCode.Should().NotBe(0);
     }
 
     [Fact]
@@ -83,18 +83,18 @@ public sealed class ProcessRunnerTests
         var runner = new ProcessRunner();
 
         // Act & Assert - This should work without setting a working directory
-        int exitCode;
+        ProcessResult result;
 
         if (Environment.OSVersion.Platform == PlatformID.Win32NT)
         {
-            exitCode = runner.Run("cmd", "/c echo test", null);
+            result = runner.Run("cmd", "/c echo test", null);
         }
         else
         {
-            exitCode = runner.Run("echo", "test", null);
+            result = runner.Run("echo", "test", null);
         }
 
-        exitCode.Should().Be(0);
+        result.ExitCode.Should().Be(0);
     }
 
     [Fact]
@@ -105,11 +105,11 @@ public sealed class ProcessRunnerTests
         var filteredLines = new System.Collections.Generic.List<string>();
 
         // Act - Run a command with an output filter
-        int exitCode;
+        ProcessResult result;
 
         if (Environment.OSVersion.Platform == PlatformID.Win32NT)
         {
-            exitCode = runner.Run("cmd", "/c echo test-output", null, line =>
+            result = runner.Run("cmd", "/c echo test-output", null, line =>
             {
                 filteredLines.Add(line);
                 return !line.Contains("should-filter", System.StringComparison.Ordinal);
@@ -117,7 +117,7 @@ public sealed class ProcessRunnerTests
         }
         else
         {
-            exitCode = runner.Run("echo", "test-output", null, line =>
+            result = runner.Run("echo", "test-output", null, line =>
             {
                 filteredLines.Add(line);
                 return !line.Contains("should-filter", System.StringComparison.Ordinal);
@@ -125,7 +125,7 @@ public sealed class ProcessRunnerTests
         }
 
         // Assert - The command should succeed and output should be captured
-        exitCode.Should().Be(0);
+        result.ExitCode.Should().Be(0);
         filteredLines.Should().Contain(line => line != null && line.Contains("test-output", System.StringComparison.Ordinal));
     }
 }

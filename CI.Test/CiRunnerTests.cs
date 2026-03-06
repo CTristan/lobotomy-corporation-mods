@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 using System;
+using System.Collections.Generic;
 using CI;
 using FluentAssertions;
 using Moq;
@@ -12,6 +13,16 @@ namespace CI.Tests;
 
 public sealed class CiRunnerTests
 {
+    private static ProcessResult Success()
+    {
+        return new ProcessResult { ExitCode = 0 };
+    }
+
+    private static ProcessResult Failure(params string[] errorLines)
+    {
+        return new ProcessResult { ExitCode = 1, ErrorLines = new List<string>(errorLines) };
+    }
+
     [Fact]
     public void Run_CheckMode_RunsDotnetFormatWithVerifyFlag()
     {
@@ -24,7 +35,7 @@ public sealed class CiRunnerTests
         mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
         mockProcessRunner
             .Setup(pr => pr.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string, bool>>()))
-            .Returns(0);
+            .Returns(Success());
         mockCoverageThresholdChecker.Setup(c => c.CheckThresholds(It.IsAny<string>(), out It.Ref<string>.IsAny))
             .Returns(true);
 
@@ -53,7 +64,7 @@ public sealed class CiRunnerTests
         mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
         mockProcessRunner
             .Setup(pr => pr.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string, bool>>()))
-            .Returns(0);
+            .Returns(Success());
         mockCoverageThresholdChecker.Setup(c => c.CheckThresholds(It.IsAny<string>(), out It.Ref<string>.IsAny))
             .Returns(true);
 
@@ -82,7 +93,7 @@ public sealed class CiRunnerTests
         mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
         mockProcessRunner
             .Setup(pr => pr.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string, bool>>()))
-            .Returns(0);
+            .Returns(Success());
         mockCoverageThresholdChecker.Setup(c => c.CheckThresholds(It.IsAny<string>(), out It.Ref<string>.IsAny))
             .Returns(true);
 
@@ -107,7 +118,7 @@ public sealed class CiRunnerTests
         mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
         mockProcessRunner
             .Setup(pr => pr.Run("dotnet", It.Is<string>(s => s.Contains("format", StringComparison.Ordinal)), It.IsAny<string>(), It.IsAny<Func<string, bool>>()))
-            .Returns(1);
+            .Returns(Failure("error: formatting issue"));
 
         var runner = new CiRunner(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageConfigReader.Object, mockCoverageThresholdChecker.Object);
 
@@ -131,8 +142,8 @@ public sealed class CiRunnerTests
         mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
         mockProcessRunner
             .SetupSequence(pr => pr.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string, bool>>()))
-            .Returns(0)
-            .Returns(1);
+            .Returns(Success())
+            .Returns(Failure("error CS1234: some build error"));
 
         var runner = new CiRunner(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageConfigReader.Object, mockCoverageThresholdChecker.Object);
 
@@ -174,7 +185,7 @@ public sealed class CiRunnerTests
         mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
         mockProcessRunner
             .Setup(pr => pr.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string, bool>>()))
-            .Returns(0);
+            .Returns(Success());
         mockCoverageThresholdChecker.Setup(c => c.CheckThresholds(It.IsAny<string>(), out It.Ref<string>.IsAny))
             .Returns(true)
             .Verifiable();
@@ -199,7 +210,7 @@ public sealed class CiRunnerTests
         mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
         mockProcessRunner
             .Setup(pr => pr.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string, bool>>()))
-            .Returns(0);
+            .Returns(Success());
         mockCoverageThresholdChecker.Setup(c => c.CheckThresholds(It.IsAny<string>(), out It.Ref<string>.IsAny))
             .Returns(false)
             .Verifiable();

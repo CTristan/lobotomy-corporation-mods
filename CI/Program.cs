@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -9,14 +10,20 @@ namespace CI;
 #pragma warning disable CA1303 // Do not pass literals as localized parameters
 #pragma warning disable CA1515 // Types need to be public for testability
 
+public sealed class ProcessResult
+{
+    public int ExitCode { get; init; }
+    public IList<string> ErrorLines { get; init; } = new List<string>();
+}
+
 public interface IProcessRunner
 {
-    int Run(string fileName, string arguments, string? workingDirectory = null, Func<string?, bool>? outputFilter = null);
+    ProcessResult Run(string fileName, string arguments, string? workingDirectory = null, Func<string?, bool>? outputFilter = null);
 }
 
 public class ProcessRunner : IProcessRunner
 {
-    public int Run(string fileName, string arguments, string? workingDirectory = null, Func<string?, bool>? outputFilter = null)
+    public ProcessResult Run(string fileName, string arguments, string? workingDirectory = null, Func<string?, bool>? outputFilter = null)
     {
         var processStartInfo = new ProcessStartInfo
         {
@@ -32,6 +39,8 @@ public class ProcessRunner : IProcessRunner
         {
             processStartInfo.WorkingDirectory = workingDirectory;
         }
+
+        var errorLines = new List<string>();
 
         try
         {
@@ -50,6 +59,7 @@ public class ProcessRunner : IProcessRunner
                 if (e.Data != null && (outputFilter == null || outputFilter(e.Data)))
                 {
                     Console.Error.WriteLine(e.Data);
+                    errorLines.Add(e.Data);
                 }
             };
 
@@ -58,22 +68,22 @@ public class ProcessRunner : IProcessRunner
             process.BeginErrorReadLine();
             process.WaitForExit();
 
-            return process.ExitCode;
+            return new ProcessResult { ExitCode = process.ExitCode, ErrorLines = errorLines };
         }
         catch (System.ComponentModel.Win32Exception)
         {
             // If the process fails to start (e.g., command not found), return a non-zero exit code
-            return 1;
+            return new ProcessResult { ExitCode = 1, ErrorLines = errorLines };
         }
         catch (FileNotFoundException)
         {
             // If the process file is not found, return a non-zero exit code
-            return 1;
+            return new ProcessResult { ExitCode = 1, ErrorLines = errorLines };
         }
         catch (InvalidOperationException)
         {
             // If there's an invalid operation starting the process, return a non-zero exit code
-            return 1;
+            return new ProcessResult { ExitCode = 1, ErrorLines = errorLines };
         }
     }
 }
@@ -226,7 +236,7 @@ public class CiRunner
             : "format LobotomyCorporationMods.sln";
 
         // Filter out the benign dotnet format workspace loading warning
-        var formatExitCode = _processRunner.Run("dotnet", formatArgs, repoRoot, outputFilter: line =>
+        var formatResult = _processRunner.Run("dotnet", formatArgs, repoRoot, outputFilter: line =>
         {
             if (line != null && line.Contains("Warnings were encountered while loading the workspace", StringComparison.Ordinal))
             {
@@ -235,18 +245,20 @@ public class CiRunner
             return true;
         });
 
-        if (formatExitCode != 0)
+        if (formatResult.ExitCode != 0)
         {
-            return formatExitCode;
+            ReplayErrors("FORMAT FAILED", formatResult.ErrorLines);
+            return formatResult.ExitCode;
         }
 
         Console.WriteLine("=== Running dotnet test ===");
         var testArgs = "test /p:CollectCoverage=true /p:CoverletOutput=\"./coverage.opencover.xml\" /p:CoverletOutputFormat=opencover --verbosity normal LobotomyCorporationMods.sln";
-        var testExitCode = _processRunner.Run("dotnet", testArgs, repoRoot);
+        var testResult = _processRunner.Run("dotnet", testArgs, repoRoot);
 
-        if (testExitCode != 0)
+        if (testResult.ExitCode != 0)
         {
-            return testExitCode;
+            ReplayErrors("TESTS FAILED", testResult.ErrorLines);
+            return testResult.ExitCode;
         }
 
         // Check coverage thresholds
@@ -278,6 +290,20 @@ public class CiRunner
         _gitHookSetup.SetupPreCommitHook(repoRoot);
 
         Console.WriteLine("Pre-commit hook installed successfully!");
+    }
+
+    private static void ReplayErrors(string banner, IList<string> errorLines)
+    {
+        Console.Error.WriteLine();
+        Console.Error.WriteLine($"=== {banner} ===");
+
+        if (errorLines.Count > 0)
+        {
+            foreach (var line in errorLines)
+            {
+                Console.Error.WriteLine(line);
+            }
+        }
     }
 
     private string? FindRepositoryRoot()

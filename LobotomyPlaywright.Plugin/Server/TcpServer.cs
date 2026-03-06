@@ -24,6 +24,8 @@ namespace LobotomyPlaywright.Server
         private readonly object _clientsLock = new object();
         private readonly Queue<QueuedRequest> _requestQueue = new Queue<QueuedRequest>();
         private readonly object _queueLock = new object();
+        private readonly Dictionary<System.Net.Sockets.TcpClient, ClientHandler> _clientHandlers =
+            new Dictionary<System.Net.Sockets.TcpClient, ClientHandler>();
         private static MethodInfo s_debugLogMethod;
         private static MethodInfo s_debugLogErrorMethod;
         private static bool s_methodsInitialized;
@@ -56,7 +58,7 @@ namespace LobotomyPlaywright.Server
             s_methodsInitialized = true;
         }
 
-        private static void LogDebug(string message)
+        internal static void LogDebug(string message)
         {
             InitializeDebugMethods();
 
@@ -73,7 +75,7 @@ namespace LobotomyPlaywright.Server
             }
         }
 
-        private static void LogError(string message)
+        internal static void LogError(string message)
         {
             InitializeDebugMethods();
 
@@ -162,6 +164,19 @@ namespace LobotomyPlaywright.Server
             }
         }
 
+        /// <summary>
+        /// Broadcasts an event to all subscribed clients.
+        /// </summary>
+        public void BroadcastEvent(string eventName, object eventData)
+        {
+            if (!_isRunning)
+            {
+                return;
+            }
+
+            Events.EventSubscriptionManager.BroadcastEvent(eventName, eventData);
+        }
+
         public void ProcessQueuedRequests()
         {
             QueuedRequest[] requestsToProcess;
@@ -176,7 +191,14 @@ namespace LobotomyPlaywright.Server
             {
                 try
                 {
-                    var response = RequestHandler.ProcessRequest(queued.Request);
+                    // Get the ClientHandler for this request
+                    ClientHandler clientHandler;
+                    lock (_clientsLock)
+                    {
+                        _clientHandlers.TryGetValue(queued.Client, out clientHandler);
+                    }
+
+                    var response = RequestHandler.ProcessRequest(queued.Request, clientHandler);
                     SendResponse(queued.Client, response);
                 }
                 catch (Exception ex)
@@ -187,27 +209,6 @@ namespace LobotomyPlaywright.Server
                         "PROCESSING_ERROR"
                     );
                     SendResponse(queued.Client, errorResponse);
-                }
-            }
-        }
-
-        public void BroadcastEvent(string eventName, object eventData)
-        {
-            ClientHandler[] clients;
-
-            lock (_clientsLock)
-            {
-                clients = _clients.ToArray();
-            }
-
-            var eventMessage = Protocol.Response.CreateEvent(eventName, eventData);
-            var json = Protocol.MessageSerializer.Serialize(eventMessage) + "\n";
-
-            foreach (var client in clients)
-            {
-                if (client.IsConnected)
-                {
-                    client.Send(json);
                 }
             }
         }
@@ -234,6 +235,7 @@ namespace LobotomyPlaywright.Server
                             lock (_clientsLock)
                             {
                                 _clients.Add(handler);
+                                _clientHandlers[client] = handler;
                             }
 
                             LogDebug($"[LobotomyPlaywright] Client connected. Total clients: {_clients.Count}");
@@ -301,6 +303,16 @@ namespace LobotomyPlaywright.Server
             lock (_clientsLock)
             {
                 _clients.Remove(handler);
+                // Also remove from the client handler mapping
+                // We need to find the TcpClient associated with this handler
+                foreach (var kvp in _clientHandlers)
+                {
+                    if (kvp.Value == handler)
+                    {
+                        _clientHandlers.Remove(kvp.Key);
+                        break;
+                    }
+                }
             }
 
             LogDebug($"[LobotomyPlaywright] Client disconnected. Total clients: {_clients.Count}");
