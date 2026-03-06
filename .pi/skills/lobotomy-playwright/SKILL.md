@@ -7,13 +7,42 @@ description: Full observability and control bridge between a pi agent and a runn
 
 LobotomyPlaywright is a Playwright-inspired system for observing and controlling a running Lobotomy Corporation game instance through a pi agent.
 
+## Important Rules
+
+1. **Always stop the game when finished.** When you are done with the game — whether your task succeeded, failed, or you encountered an error — you **must** run `{baseDir}/scripts/stop.py` before completing your response. Leaving the game running wastes system resources and blocks future launches.
+
 ## Prerequisites
 
-The Lobotomy Corporation game must be running with the LobotomyPlaywright BepInX plugin installed.
+The Lobotomy Corporation game must be running with the LobotomyPlaywright BepInEx plugin installed.
 
-1. Build and copy `LobotomyPlaywright.Plugin.dll` to the game's BepInX plugins folder
-2. Launch the game
-3. The plugin will start a TCP server on `localhost:8484` (configurable via BepInEx config)
+### macOS with CrossOver
+
+1. CrossOver must be installed (for running the Windows game on macOS)
+   - Download from https://www.codeweavers.com/crossover
+   - Default path: `/Applications/CrossOver.app`
+
+2. Game must be installed in a CrossOver bottle
+
+3. BepInEx must be installed in the game directory
+
+### Initial Setup
+
+Run the auto-detection script to create configuration:
+
+```bash
+{baseDir}/scripts/find_game.py
+```
+
+This will:
+- Scan CrossOver bottles for the game installation
+- Validate BepInEx installation
+- Create `config.json` with game path and settings
+
+For manual configuration, use:
+
+```bash
+{baseDir}/scripts/find_game.py --path "/path/to/game" --bottle "BottleName"
+```
 
 ## Python Dependencies
 
@@ -22,6 +51,87 @@ pip install -r {baseDir}/requirements.txt
 ```
 
 ## Usage
+
+### Full Lifecycle Workflow
+
+The complete build → deploy → launch → verify → stop workflow:
+
+```bash
+# First-time setup (auto-detect game path)
+{baseDir}/scripts/find_game.py
+
+# Deploy plugin to game
+{baseDir}/scripts/deploy.py
+
+# Launch game and wait for TCP readiness
+{baseDir}/scripts/launch.py
+
+# Check status
+{baseDir}/scripts/status.py
+
+# Query game state
+{baseDir}/scripts/query.py game
+{baseDir}/scripts/query.py agents
+
+# Stop game when done
+{baseDir}/scripts/stop.py
+```
+
+### Quick Redeploy
+
+To rebuild, redeploy, and relaunch the game:
+
+```bash
+{baseDir}/scripts/stop.py
+{baseDir}/scripts/deploy.py
+{baseDir}/scripts/launch.py
+{baseDir}/scripts/status.py
+```
+
+### Find Game (Auto-Detection)
+
+```bash
+{baseDir}/scripts/find_game.py                    # Auto-detect game path
+{baseDir}/scripts/find_game.py --path "/path"     # Manual path specification
+{baseDir}/scripts/find_game.py --check            # Validate existing config
+{baseDir}/scripts/find_game.py --verbose          # Show detailed search output
+```
+
+### Deploy Plugin
+
+```bash
+{baseDir}/scripts/deploy.py                       # Build and deploy (Release)
+{baseDir}/scripts/deploy.py --configuration Debug  # Build Debug config
+{baseDir}/scripts/deploy.py --skip-build          # Deploy existing DLLs
+{baseDir}/scripts/deploy.py --dry-run             # Show what would be done
+```
+
+### Launch Game
+
+```bash
+{baseDir}/scripts/launch.py                       # Launch and wait for ready
+{baseDir}/scripts/launch.py --no-wait            # Launch without waiting
+{baseDir}/scripts/launch.py --force              # Relaunch (kill existing)
+{baseDir}/scripts/launch.py --timeout 60         # Custom timeout (seconds)
+```
+
+### Check Status
+
+```bash
+{baseDir}/scripts/status.py                       # Current status (human-readable)
+{baseDir}/scripts/status.py --json                # Status as JSON
+{baseDir}/scripts/status.py --exit-code           # Exit non-zero if not READY
+{baseDir}/scripts/status.py --wait-for ready     # Wait for READY status
+{baseDir}/scripts/status.py --wait-for stopped    # Wait for STOPPED status
+```
+
+### Stop Game
+
+```bash
+{baseDir}/scripts/stop.py                         # Graceful shutdown, then force kill
+{baseDir}/scripts/stop.py --force                 # Skip graceful shutdown
+{baseDir}/scripts/stop.py --wait                  # Wait for processes to exit
+```
 
 ### Query Game State
 
@@ -126,8 +236,10 @@ Communication uses JSON-line protocol over TCP. Each message is a JSON object fo
 
 ### Phase 3 - Commands (Not Yet Implemented)
 
-- Debug commands (set stats, add gifts, fill energy, etc.)
-- Player-action simulation (assign work, pause/unpause, suppress)
+- Debug commands (set stats, add gifts, fill energy, set qliphoth, spawn creature, etc.)
+- Player-action simulation (assign work, pause/unpause, deploy/recall agents, suppress)
+
+**Note:** The `shutdown` command is already implemented in Phase 1.5 for graceful game shutdown.
 
 ### Phase 4 - Mod Testing Workflows (Not Yet Implemented)
 

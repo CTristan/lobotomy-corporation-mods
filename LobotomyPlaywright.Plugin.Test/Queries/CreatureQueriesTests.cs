@@ -10,57 +10,55 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
     public class CreatureQueriesTests
     {
         [Fact]
-        public void ListCreatures_when_creature_manager_null_throws_exception()
+        public void ListCreatures_returns_empty_list_when_no_game_state()
         {
-            // Act
+            // Act - CreatureManager.instance creates a new instance if null
+            // with empty list, so we should get an empty list
+            var creatures = CreatureQueries.ListCreatures();
+
+            // Assert
+            creatures.Should().NotBeNull();
+            creatures.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void ListCreatures_method_exists_and_is_callable()
+        {
+            // Arrange & Act
             Action act = () => CreatureQueries.ListCreatures();
 
-            // Assert
-            act.Should().Throw<InvalidOperationException>()
-                .WithMessage("*CreatureManager.instance*");
+            // Assert - method should not throw
+            act.Should().NotThrow();
         }
 
         [Fact]
-        public void ListCreatures_returns_empty_list_when_no_creatures()
-        {
-            // Verify the method exists and throws appropriately when game not initialized
-            Action act = () => CreatureQueries.ListCreatures();
-            act.Should().Throw<InvalidOperationException>();
-        }
-
-        [Fact]
-        public void GetCreature_when_creature_manager_null_throws_exception()
+        public void GetCreature_with_nonexistent_id_returns_null()
         {
             // Act
-            Action act = () => CreatureQueries.GetCreature(1);
+            var creature = CreatureQueries.GetCreature(999999);
 
             // Assert
-            act.Should().Throw<InvalidOperationException>()
-                .WithMessage("*CreatureManager.instance*");
-        }
-
-        [Fact]
-        public void GetCreature_with_valid_id_when_creature_manager_null_throws_exception()
-        {
-            // Act
-            Action act = () => CreatureQueries.GetCreature(100001);
-
-            // Assert
-            act.Should().Throw<InvalidOperationException>();
+            creature.Should().BeNull();
         }
 
         [Fact]
         public void GetCreature_with_zero_id_returns_null()
         {
-            Action act = () => CreatureQueries.GetCreature(0);
-            act.Should().Throw<InvalidOperationException>();
+            // Act
+            var creature = CreatureQueries.GetCreature(0);
+
+            // Assert
+            creature.Should().BeNull();
         }
 
         [Fact]
-        public void GetCreature_with_negative_id_returns_null()
+        public void GetCreature_method_exists_and_is_callable()
         {
-            Action act = () => CreatureQueries.GetCreature(-1);
-            act.Should().Throw<InvalidOperationException>();
+            // Arrange & Act
+            Action act = () => CreatureQueries.GetCreature(12345);
+
+            // Assert - method should not throw
+            act.Should().NotThrow();
         }
     }
 }

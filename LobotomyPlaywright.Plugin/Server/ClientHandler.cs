@@ -160,6 +160,7 @@ namespace LobotomyPlaywright.Server
         {
             try
             {
+                UnityEngine.Debug.Log($"[ClientHandler] Received JSON: {json}");
                 var request = Protocol.MessageSerializer.DeserializeRequest(json);
 
                 if (string.IsNullOrEmpty(request.Type))
@@ -173,10 +174,12 @@ namespace LobotomyPlaywright.Server
                     return;
                 }
 
+                UnityEngine.Debug.Log($"[ClientHandler] Enqueueing request: id={request.Id}, type={request.Type}, target={request.Target}");
                 _server.EnqueueRequest(request, _client, _thread);
             }
             catch (Exception ex)
             {
+                UnityEngine.Debug.LogError($"[ClientHandler] Failed to parse request: {ex.Message}");
                 var errorResponse = Protocol.Response.CreateError(
                     null,
                     $"Failed to parse request: {ex.Message}",

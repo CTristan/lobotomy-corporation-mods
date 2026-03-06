@@ -13,6 +13,8 @@ namespace LobotomyPlaywright.Queries
     {
         public static Protocol.Response HandleQuery(Protocol.Request request)
         {
+            UnityEngine.Debug.Log($"[LobotomyPlaywright] HandleQuery called: target={request.Target}, id={request.Id}");
+
             if (request == null || string.IsNullOrEmpty(request.Target))
             {
                 return Protocol.Response.CreateError(
@@ -24,8 +26,29 @@ namespace LobotomyPlaywright.Queries
 
             try
             {
+                var target = request.Target.ToLowerInvariant();
+
+                // Check for unknown targets first
+                if (target != "agents" && target != "creatures" && target != "game" &&
+                    target != "status" && target != "sefira" && target != "departments" &&
+                    target != "titlemenu" && target != "title")
+                {
+                    return Protocol.Response.CreateError(
+                        request.Id,
+                        $"Unknown query target: {request.Target}",
+                        "UNKNOWN_TARGET"
+                    );
+                }
+
+                // Title menu queries are always available on the title screen
+                if ((target == "titlemenu" || target == "title") && GameStateQueries.IsOnTitleScreen())
+                {
+                    return HandleTitleMenuQuery(request.Id);
+                }
+
                 if (!GameStateQueries.IsGameQueryable())
                 {
+                    UnityEngine.Debug.Log("[LobotomyPlaywright] Game not queryable!");
                     return Protocol.Response.CreateError(
                         request.Id,
                         "Game is not in a queryable state",
@@ -33,8 +56,9 @@ namespace LobotomyPlaywright.Queries
                     );
                 }
 
-                var target = request.Target.ToLowerInvariant();
                 var paramsDict = request.Params ?? new Dictionary<string, object>();
+
+                UnityEngine.Debug.Log($"[LobotomyPlaywright] Routing query: target={target}, isQueryable=true");
 
                 switch (target)
                 {
@@ -51,6 +75,10 @@ namespace LobotomyPlaywright.Queries
                     case "sefira":
                     case "departments":
                         return HandleSefiraQuery(request.Id, paramsDict);
+
+                    case "titlemenu":
+                    case "title":
+                        return HandleTitleMenuQuery(request.Id);
 
                     default:
                         return Protocol.Response.CreateError(
@@ -202,6 +230,23 @@ namespace LobotomyPlaywright.Queries
             // List all sefira
             var sefiraList = SefiraQueries.ListSefira();
             return Protocol.Response.CreateSuccess(requestId, sefiraList);
+        }
+
+        private static Protocol.Response HandleTitleMenuQuery(string requestId)
+        {
+            try
+            {
+                var status = TitleMenuQueries.GetTitleMenuStatus();
+                return Protocol.Response.CreateSuccess(requestId, status);
+            }
+            catch (Exception ex)
+            {
+                return Protocol.Response.CreateError(
+                    requestId,
+                    $"Failed to get title menu status: {ex.Message}",
+                    "QUERY_ERROR"
+                );
+            }
         }
     }
 }

@@ -211,3 +211,6 @@ __pycache__/
 .coverage.*
 .coverage.*
 coverage.json
+
+# Pi skill configuration (machine-specific paths)
+.pi/skills/lobotomy-playwright/config.json

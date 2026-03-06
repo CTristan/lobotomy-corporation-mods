@@ -328,6 +328,20 @@ class TestQueryMain:
         mock_client.query.assert_called_once_with("creatures")
 
     @patch("scripts.query.LobotomyPlaywrightClient")
+    def test_main_creatures_by_id(self, mock_client_class):
+        """Test querying a specific creature by ID."""
+        mock_client = Mock()
+        mock_client.query.return_value = {"name": "Creature1", "riskLevel": 5}
+        mock_client_class.return_value.__enter__ = Mock(return_value=mock_client)
+        mock_client_class.return_value.__exit__ = Mock(return_value=False)
+
+        with patch("sys.argv", ["query.py", "creatures", "123"]):
+            with patch("sys.stdout", new_callable=StringIO):
+                query.main()
+
+        mock_client.query.assert_called_once_with("creatures", {"id": 123})
+
+    @patch("scripts.query.LobotomyPlaywrightClient")
     def test_main_game_status(self, mock_client_class):
         """Test querying game status."""
         mock_client = Mock()

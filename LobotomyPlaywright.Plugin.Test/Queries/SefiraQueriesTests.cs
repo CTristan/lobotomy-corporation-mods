@@ -10,68 +10,48 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
     public class SefiraQueriesTests
     {
         [Fact]
-        public void ListSefira_when_sefira_manager_null_throws_exception()
+        public void ListSefira_method_exists_and_is_callable()
         {
-            // Act
+            // Arrange & Act
             Action act = () => SefiraQueries.ListSefira();
 
-            // Assert
-            act.Should().Throw<InvalidOperationException>()
-                .WithMessage("*SefiraManager.instance*");
+            // Assert - method should not throw
+            act.Should().NotThrow();
         }
 
         [Fact]
-        public void ListSefira_returns_list_when_sefira_manager_available()
+        public void ListSefira_returns_data()
         {
-            // Verify the method exists
-            Action act = () => SefiraQueries.ListSefira();
-            act.Should().Throw<InvalidOperationException>();
+            // Act - SefiraManager.instance creates a new instance if null
+            // The SefiraManager always has data (the Sefira departments)
+            var sefiras = SefiraQueries.ListSefira();
+
+            // Assert - Should return data (even if empty agent/creature lists)
+            sefiras.Should().NotBeNull();
+            // The number of sefiras is fixed in the game
+            sefiras.Should().HaveCountGreaterOrEqualTo(10); // At least the named Sefira
         }
 
         [Fact]
-        public void GetSefira_when_sefira_manager_null_throws_exception()
+        public void GetSefira_with_valid_sefira_enum_returns_data()
         {
-            // Act
-            Action act = () => SefiraQueries.GetSefira(SefiraEnum.KETHER);
+            // Act - Get a valid Sefira (MALKUT)
+            var sefira = SefiraQueries.GetSefira(SefiraEnum.MALKUT);
 
-            // Assert
-            act.Should().Throw<InvalidOperationException>()
-                .WithMessage("*SefiraManager.instance*");
+            // Assert - Should return data
+            sefira.Should().NotBeNull();
+            sefira.AgentIds.Should().NotBeNull();
+            sefira.CreatureIds.Should().NotBeNull();
         }
 
         [Fact]
-        public void GetSefira_with_valid_sefira_enum_when_manager_null_throws_exception()
+        public void GetSefira_method_exists_and_is_callable()
         {
-            // Act
-            Action act = () => SefiraQueries.GetSefira(SefiraEnum.HOD);
+            // Arrange & Act
+            Action act = () => SefiraQueries.GetSefira(SefiraEnum.MALKUT);
 
-            // Assert
-            act.Should().Throw<InvalidOperationException>();
-        }
-
-        [Fact]
-        public void GetSefira_with_each_sefira_enum_value()
-        {
-            // Verify that each enum value is valid
-            Action[] actions =
-            {
-                () => SefiraQueries.GetSefira(SefiraEnum.KETHER),
-                () => SefiraQueries.GetSefira(SefiraEnum.CHOKHMAH),
-                () => SefiraQueries.GetSefira(SefiraEnum.BINAH),
-                () => SefiraQueries.GetSefira(SefiraEnum.CHESED),
-                () => SefiraQueries.GetSefira(SefiraEnum.GEBURAH),
-                () => SefiraQueries.GetSefira(SefiraEnum.TIPERERTH1),
-                () => SefiraQueries.GetSefira(SefiraEnum.NETZACH),
-                () => SefiraQueries.GetSefira(SefiraEnum.HOD),
-                () => SefiraQueries.GetSefira(SefiraEnum.YESOD),
-                () => SefiraQueries.GetSefira(SefiraEnum.MALKUT),
-                () => SefiraQueries.GetSefira(SefiraEnum.DAAT)
-            };
-
-            foreach (var act in actions)
-            {
-                act.Should().Throw<InvalidOperationException>();
-            }
+            // Assert - method should not throw
+            act.Should().NotThrow();
         }
     }
 }

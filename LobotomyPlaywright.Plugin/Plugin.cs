@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 using BepInEx;
+using BepInEx.Logging;
 using LobotomyPlaywright.Server;
 using UnityEngine;
 
@@ -28,6 +29,11 @@ namespace LobotomyPlaywright
                 return;
             }
 
+            // Force MessageSerializer to initialize
+            var testResponse = Protocol.Response.CreateSuccess("init", new { test = true });
+            var testJson = Protocol.MessageSerializer.Serialize(testResponse);
+            Logger.LogInfo($"MessageSerializer test: {testJson}");
+
             try
             {
                 _tcpServer = new TcpServer(_configuration.Port.Value);
@@ -46,6 +52,20 @@ namespace LobotomyPlaywright
             if (_tcpServer != null && _tcpServer.IsRunning)
             {
                 _tcpServer.ProcessQueuedRequests();
+
+                // Debug: Log current scene once per second
+                if (Time.frameCount % 60 == 0)
+                {
+                    try
+                    {
+                        var sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+                        Logger.LogInfo($"Current scene: {sceneName}, clientCount={_tcpServer.ClientCount}");
+                    }
+                    catch (System.Exception ex)
+                    {
+                        Logger.LogWarning($"Could not get scene name: {ex.Message}");
+                    }
+                }
             }
         }
 

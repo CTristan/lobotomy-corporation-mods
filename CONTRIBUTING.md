@@ -78,6 +78,26 @@ Framework DLLs on Linux like I can on Windows with dnSpy, especially since the
 game has to run in Proton. If you're able to get debugging working on Linux, I
 would love to hear about it!
 
+### CrossOver (macOS) configuration
+
+If you're running the game through CrossOver on macOS, you need to configure the
+Wine bottle so that Doorstop (the mod loader used by BepInEx/BaseMods) can
+bootstrap correctly. Without this, the `winhttp.dll` proxy that Doorstop ships
+will be ignored and mods won't load.
+
+1. Open CrossOver and select the bottle containing Lobotomy Corporation.
+2. Open the bottle settings and run **winecfg**.
+3. Go to the **Libraries** tab.
+4. In the "New override for library" field, type `winhttp` and click **Add**.
+5. Select `winhttp` in the list, click **Edit**, and set the load order to
+   **Native then Builtin** (`native,builtin`).
+6. Click **OK** to save and close winecfg.
+
+This is the standard Doorstop/BepInEx fix referenced by the
+[BepInEx documentation](https://docs.bepinex.dev/articles/advanced/steam_interop.html)
+and community maintainers. It ensures Wine uses the proxy `winhttp.dll` shipped
+with the mod loader instead of its own built-in version.
+
 ### CI Checks
 
 To run the same checks that the GitHub Actions workflow runs, use the CI tool:

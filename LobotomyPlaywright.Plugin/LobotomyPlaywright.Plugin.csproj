@@ -40,10 +40,6 @@
       <HintPath>..\external\LobotomyCorp_Data\Managed\0Harmony.dll</HintPath>
       <Private>false</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\external\LobotomyCorp_Data\Managed\Newtonsoft.Json.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
