@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: MIT
 
+using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
+
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators
 {
     internal sealed class SpiderBudEvaluator : CreatureEvaluator
     {
-        internal SpiderBudEvaluator(AgentModel agent,
-            CreatureModel creature,
+        internal SpiderBudEvaluator(IAgentData agent,
+            ICreatureData creature,
             RwbpType skillType) : base(agent, creature, skillType)
         {
         }

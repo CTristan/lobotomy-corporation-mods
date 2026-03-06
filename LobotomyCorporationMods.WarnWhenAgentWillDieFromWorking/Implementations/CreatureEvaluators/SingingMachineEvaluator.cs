@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: MIT
 
+using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
+
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators
 {
     internal sealed class SingingMachineEvaluator : CreatureEvaluator
     {
-        internal SingingMachineEvaluator(AgentModel agent,
-            CreatureModel creature,
+        internal SingingMachineEvaluator(IAgentData agent,
+            ICreatureData creature,
             RwbpType skillType) : base(agent, creature, skillType)
         {
         }

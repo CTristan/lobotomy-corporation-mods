@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: MIT
 
+using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
+
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators
 {
     internal sealed class BlueStarEvaluator : CreatureEvaluator
     {
-        internal BlueStarEvaluator(AgentModel agent,
-            CreatureModel creature,
+        internal BlueStarEvaluator(IAgentData agent,
+            ICreatureData creature,
             RwbpType skillType) : base(agent, creature, skillType)
         {
         }

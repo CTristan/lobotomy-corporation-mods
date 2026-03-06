@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: MIT
 
 using LobotomyCorporationMods.Common.Extensions;
+using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators
 {
     internal sealed class NothingThereEvaluator : CreatureEvaluator
     {
-        internal NothingThereEvaluator(AgentModel agent,
-            CreatureModel creature,
+        internal NothingThereEvaluator(IAgentData agent,
+            ICreatureData creature,
             RwbpType skillType) : base(agent, creature, skillType)
         {
         }

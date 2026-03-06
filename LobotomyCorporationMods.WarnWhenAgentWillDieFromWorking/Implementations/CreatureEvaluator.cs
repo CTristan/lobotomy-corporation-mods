@@ -12,8 +12,8 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 {
     internal abstract class CreatureEvaluator : ICreatureEvaluator
     {
-        protected CreatureEvaluator(AgentModel agent,
-            CreatureModel creature,
+        protected CreatureEvaluator(IAgentData agent,
+            ICreatureData creature,
             RwbpType skillType)
         {
             Agent = agent;
@@ -21,8 +21,8 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
             SkillType = skillType;
         }
 
-        protected AgentModel Agent { get; }
-        protected CreatureModel Creature { get; }
+        protected IAgentData Agent { get; }
+        protected ICreatureData Creature { get; }
         protected RwbpType SkillType { get; }
 
         public bool WillAgentDie()
@@ -30,7 +30,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
             var agentWillDie = false;
 
             // Make sure we have completed observation so that we can't cheat
-            if (Creature.observeInfo.IsMaxObserved())
+            if (Creature.IsMaxObserved())
             {
                 agentWillDie = WillAgentDieFromThisCreature() || WillAgentDieFromOtherCreatures();
             }

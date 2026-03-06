@@ -1,0 +1,49 @@
+// SPDX-License-Identifier: MIT
+
+#region
+
+using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Attributes;
+using LobotomyCorporationMods.Common.Constants;
+using LobotomyCorporationMods.Common.Extensions;
+using LobotomyCorporationMods.Common.Implementations;
+using LobotomyCorporationMods.Common.Implementations.Facades;
+using LobotomyCorporationMods.Common.Interfaces.Adapters;
+using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
+
+#endregion
+
+namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.Adapters
+{
+    [AdapterClass]
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
+    public sealed class CreatureDataAdapter : ICreatureData
+    {
+        private readonly CreatureModel _creature;
+
+        public CreatureDataAdapter([NotNull] CreatureModel creature)
+        {
+            Guard.Against.Null(creature, nameof(creature));
+            _creature = creature;
+        }
+
+        public long metadataId => _creature.metadataId;
+        public int qliphothCounter => _creature.qliphothCounter;
+        public object script => _creature.script;
+
+        public bool IsMaxObserved()
+        {
+            return _creature.observeInfo.IsMaxObserved();
+        }
+
+        public bool IsBeautyAndTheBeastWeakened(IBeautyBeastAnimTestAdapter beautyBeastAnimTestAdapter)
+        {
+            return _creature.IsBeautyAndTheBeastWeakened(beautyBeastAnimTestAdapter);
+        }
+
+        public int GetParasiteTreeNumberOfFlowers(IYggdrasilAnimTestAdapter yggdrasilAnimTestAdapter)
+        {
+            return _creature.GetParasiteTreeNumberOfFlowers(yggdrasilAnimTestAdapter);
+        }
+    }
+}

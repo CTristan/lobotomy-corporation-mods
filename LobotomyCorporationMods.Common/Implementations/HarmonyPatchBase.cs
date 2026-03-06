@@ -7,6 +7,7 @@ using System.Xml;
 using Harmony;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
+using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Common.Implementations.LoggerTargets;
 using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
@@ -102,7 +103,15 @@ namespace LobotomyCorporationMods.Common.Implementations
             [NotNull] string modFileName)
         {
             // Try to get Basemod directory list if we don't have one
-            FileManager = new FileManager(modFileName, directories ?? Add_On.instance.DirList);
+            var directoryInfos = directories ?? Add_On.instance.DirList;
+            var wrappedDirectories = new List<IDirectoryInfo>();
+
+            foreach (var directoryInfo in directoryInfos)
+            {
+                wrappedDirectories.Add(new DirectoryInfoAdapter(directoryInfo));
+            }
+
+            FileManager = new FileManager(modFileName, wrappedDirectories);
         }
 
         private void InitializeLogger(IAngelaConversationUiTestAdapter angelaConversationUiTestAdapter)

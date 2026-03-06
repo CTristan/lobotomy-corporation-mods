@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: MIT
 
+using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
+
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators
 {
     internal sealed class WarmHeartedWoodsmanEvaluator : CreatureEvaluator
     {
-        internal WarmHeartedWoodsmanEvaluator(AgentModel agent,
-            CreatureModel creature,
+        internal WarmHeartedWoodsmanEvaluator(IAgentData agent,
+            ICreatureData creature,
             RwbpType skillType) : base(agent, creature, skillType)
         {
         }

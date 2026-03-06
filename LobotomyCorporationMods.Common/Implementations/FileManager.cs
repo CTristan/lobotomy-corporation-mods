@@ -17,12 +17,12 @@ namespace LobotomyCorporationMods.Common.Implementations
 {
     public sealed class FileManager : IFileManager
     {
-        private readonly DirectoryInfo _dataPath;
+        private readonly IDirectoryInfo _dataPath;
         private readonly object _fileLock = new object();
         private readonly Dictionary<string, string> _filesCache;
 
         public FileManager([NotNull] string modFileName,
-            [NotNull] ICollection<DirectoryInfo> directories)
+            [NotNull] ICollection<IDirectoryInfo> directories)
         {
             Guard.Against.Null(directories, nameof(directories));
 
@@ -46,7 +46,7 @@ namespace LobotomyCorporationMods.Common.Implementations
                 sb.AppendLine($"Data path was not found, unable to find {modFileName} in the following directories:");
                 foreach (var directoryInfo in directories)
                 {
-                    sb.AppendLine(directoryInfo.ToString());
+                    sb.AppendLine(directoryInfo.FullName);
                 }
 
                 throw new InvalidOperationException(sb.ToString());

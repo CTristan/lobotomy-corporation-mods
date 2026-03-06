@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: MIT
 
+using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
+
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators
 {
     internal sealed class CrumblingArmorEvaluator : CreatureEvaluator
     {
-        internal CrumblingArmorEvaluator(AgentModel agent,
-            CreatureModel creature,
+        internal CrumblingArmorEvaluator(IAgentData agent,
+            ICreatureData creature,
             RwbpType skillType) : base(agent, creature, skillType)
         {
         }

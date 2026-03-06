@@ -3,8 +3,8 @@
 #region
 
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Implementations.Facades;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
+using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
 
 #endregion
 
@@ -14,8 +14,8 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
     {
         private readonly IBeautyBeastAnimTestAdapter _beautyBeastAnimTestAdapter;
 
-        internal BeautyAndTheBeastEvaluator(AgentModel agent,
-            CreatureModel creature,
+        internal BeautyAndTheBeastEvaluator(IAgentData agent,
+            ICreatureData creature,
             RwbpType skillType,
             [CanBeNull] IBeautyBeastAnimTestAdapter animationScriptBeautyBeastAnimTestAdapter = null) : base(agent, creature, skillType)
         {

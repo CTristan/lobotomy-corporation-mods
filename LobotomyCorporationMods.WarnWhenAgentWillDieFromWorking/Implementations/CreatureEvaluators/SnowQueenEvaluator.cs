@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: MIT
 
 using LobotomyCorporationMods.Common.Enums;
+using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators
 {
     internal sealed class SnowQueenEvaluator : CreatureEvaluator
     {
-        internal SnowQueenEvaluator(AgentModel agent,
-            CreatureModel creature,
+        internal SnowQueenEvaluator(IAgentData agent,
+            ICreatureData creature,
             RwbpType skillType) : base(agent, creature, skillType)
         {
         }

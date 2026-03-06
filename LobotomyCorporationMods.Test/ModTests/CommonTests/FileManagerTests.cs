@@ -8,6 +8,8 @@ using System.IO;
 using FluentAssertions;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Implementations;
+using LobotomyCorporationMods.Common.Implementations.Adapters;
+using LobotomyCorporationMods.Common.Interfaces;
 using Xunit;
 
 #endregion
@@ -90,13 +92,13 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         #region Helper Methods
 
         [NotNull]
-        private static List<DirectoryInfo> GetDirectories()
+        private static List<IDirectoryInfo> GetDirectories()
         {
             var currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
-            return new List<DirectoryInfo>
+            return new List<IDirectoryInfo>
             {
-                new DirectoryInfo(currentDirectory),
+                new DirectoryInfoAdapter(new DirectoryInfo(currentDirectory)),
             };
         }
 

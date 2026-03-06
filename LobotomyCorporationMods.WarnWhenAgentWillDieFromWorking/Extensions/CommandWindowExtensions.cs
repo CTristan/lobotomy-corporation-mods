@@ -9,6 +9,7 @@ using LobotomyCorporationMods.Common.Enums;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations;
+using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.Adapters;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
 
@@ -41,9 +42,11 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
             if (commandWindow.TryGetCreature(out var creature) && !creature.IsNull())
             {
                 var skillType = commandWindow.CurrentSkill.rwbpType;
-                var evaluatorParameters = new CreatureEvaluatorParameters(agent, creature, skillType, beautyBeastAnimTestAdapter, yggdrasilAnimTestAdapter);
+                var agentDataAdapter = new AgentDataAdapter(agent);
+                var creatureDataAdapter = new CreatureDataAdapter(creature);
+                var evaluatorParameters = new CreatureEvaluatorParameters(agentDataAdapter, creatureDataAdapter, skillType, beautyBeastAnimTestAdapter, yggdrasilAnimTestAdapter);
 
-                evaluator = evaluators.TryGetValue((CreatureIds)creature.metadataId, out var factoryMethod) ? factoryMethod(evaluatorParameters) : new DefaultEvaluator(agent, creature, skillType);
+                evaluator = evaluators.TryGetValue((CreatureIds)creature.metadataId, out var factoryMethod) ? factoryMethod(evaluatorParameters) : new DefaultEvaluator(agentDataAdapter, creatureDataAdapter, skillType);
             }
             else
             {
