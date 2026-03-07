@@ -615,6 +615,112 @@ debugging tools and avoids race conditions or crashes.
 - [x] Dotnet tool coverage ≥80% on all Phase 1.5 code (Coverlet report)
 - [x] Full redeploy cycle works: `stop → deploy → launch → status` shows READY
 
+### Phase 1.75 — UI accessibility tree
+
+The pi agent is a text-only LLM and cannot interpret screenshot images. This
+phase adds a structured `query ui` command — analogous to Playwright's
+accessibility tree — so the agent can "see" the game's visual/UI state as text.
+
+#### Approach: Two-tier UI introspection
+
+- **Tier 1 (summary):** Poll a curated list of ~12 known game window singletons
+  for open/closed state. Cheap — just reading boolean properties.
+- **Tier 2 (full):** For windows that are currently open, extract child elements
+  using `GetComponentsInChildren<Text>()`, `<Button>()`, `<Toggle>()`,
+  `<Slider>()`. Scoped to each open window's GameObject, not a full scene
+  traversal.
+
+#### Plugin: UI data classes
+
+- [ ] Create `Queries/UiNodeData.cs`
+  - `[Serializable]` data class following `GameStateData.cs` pattern
+  - Fields: `path` (string), `type` (string: "text"/"button"/"toggle"/"slider"/"image"),
+    `value` (string), `interactable` (bool)
+
+- [ ] Create `Queries/UiWindowData.cs`
+  - Fields: `name` (string), `isOpen` (bool), `windowType` (string),
+    `children` (List\<UiNodeData\>)
+
+- [ ] Create `Queries/UiStateData.cs`
+  - Fields: `windows` (List\<UiWindowData\>), `activatedSlots` (string[]),
+    `modElements` (List\<UiNodeData\>)
+
+#### Plugin: UI query implementation
+
+- [ ] Create `Queries/UiQueries.cs`
+  - `GetUiState(string depth, string windowFilter)` — main entry point
+  - `CheckKnownWindows()` — polls curated singleton list with null guards
+  - `ExtractChildren(GameObject root, int maxNodes)` — walks
+    `GetComponentsInChildren` for Text, Button, Toggle, Slider
+  - `BuildNodePath(Transform node, Transform root)` — slash-delimited path
+    capped at 3–4 levels
+  - Curated window list (each with null guard + try/catch):
+    1. `AgentInfoWindow.currentWindow`
+    2. `CommandWindow.CommandWindow.CurrentWindow`
+    3. `CreatureInfoWindow.CurrentWindow`
+    4. `ManualUI.Instance`
+    5. `OptionUI.Instance`
+    6. `DeployUI.instance`
+    7. `ResearchWindow` (FindObjectOfType)
+    8. `GlobalBulletWindow.CurrentWindow`
+    9. `CustomizingWindow.CurrentWindow`
+    10. `EscapeUI` (FindObjectOfType)
+    11. `MissionUI` / `MissionPopupUI`
+    12. `AgentGiftWindow` (InGameUI namespace)
+  - `UIActivateManager.instance.activated[0..4]` for slot occupancy
+  - Depth modes:
+    - `"summary"` — Tier 1 only (window open/closed states)
+    - `"full"` (default) — Tier 1 + Tier 2 (children of open windows)
+    - `"window"` with `"name"` param — single window with deeper detail
+  - Mod element detection: scan for known mod UI patterns (e.g., GiftAlertIcon)
+    via GameObject name conventions
+
+- [ ] Update `Queries/QueryRouter.cs`
+  - Add `"ui"` to known query targets
+  - Add `HandleUiQuery` method extracting `depth` and `name` params
+
+#### Plugin: Fix base64 screenshot pipeline
+
+- [ ] Update `Commands/ScreenshotHandler.cs`
+  - After `ScreenCapture.CaptureScreenshot()`, poll for the PNG file to exist
+    (short delay, capped at ~2 seconds)
+  - Read the PNG file bytes and encode as base64
+  - Include `base64` field in the response when format is "base64"
+  - Keep `path` format as-is (metadata only)
+
+- [ ] Update `Protocol/ScreenshotData.cs`
+  - Add `base64` string field
+
+#### Pi skill: CLI support
+
+- [ ] Verify `QueryCommand.cs` handles `dotnet playwright query ui` (it should
+  pass any target to TCP client)
+  - Add output formatting for UI state if needed
+
+- [ ] Update `SKILL.md` with `query ui` documentation
+  - Usage examples for summary, full, and window-specific queries
+  - Document that `query ui` is the primary way the agent "sees" the game
+  - Screenshot remains supplementary for human debugging
+
+#### Phase 1.75: Tests (≥80% coverage gate)
+
+- [ ] Add routing tests in `QueryRouterTests.cs` for `"ui"` target
+- [ ] Create `UiQueriesTests.cs`
+  - Test data class construction and field assignment
+  - Test `BuildNodePath` logic (pure function)
+  - Mark Unity-dependent tests with `[Trait("Category", "RequiresUnity")]`
+- [ ] Add dotnet tool tests for `query ui` output formatting if custom
+  formatting is added
+- [ ] Verify existing `ScreenshotCommandTests.cs` work with now-populated base64
+
+#### Phase 1.75 completion checklist
+
+- [ ] `dotnet playwright query ui` returns structured UI state from running game
+- [ ] `dotnet playwright query ui --json` returns valid JSON
+- [ ] `dotnet playwright screenshot --format base64` includes base64 image data
+- [ ] Plugin coverage ≥80% on UI query code
+- [ ] Dotnet tool coverage ≥80% on UI query formatting
+
 ### Phase 2 — Event streaming
 
 - [ ] Implement `Events/NoticeSubscriber.cs` in the plugin
@@ -717,7 +823,7 @@ debugging tools and avoids race conditions or crashes.
 
 ### Phase 4 — Mod testing workflows
 
-- [x] Screenshot/visual state capture implemented
+- [x] Screenshot file capture implemented (metadata only — base64 fix in Phase 1.75)
 - [ ] Design higher-level workflow tools
   - `ScenarioCommand` — Run a scripted sequence of commands and assertions
   - Example: "Start day → assign Agent 3 to Instinct work on Scorched Girl →
@@ -728,10 +834,13 @@ debugging tools and avoids race conditions or crashes.
   - Patterns for common mod testing scenarios
   - Examples using each existing mod in the repo
 
-- [x] Implement screenshot/visual state capture
-  - Agent can now "see" the game visually (useful for UI mods like
-    GiftAlertIcon)
-  - **Implementation complete:**
+- [x] Implement screenshot/visual state capture (partially complete)
+  - Screenshot captures PNG files for human inspection
+  - **Note:** The pi agent is text-only and cannot interpret images. The primary
+    way the agent "sees" the game is via `query ui` (Phase 1.75), which returns
+    a structured text representation of UI state (open panels, text content,
+    buttons, interactable elements, mod-added UI).
+  - **Implementation status:**
     - Added `Commands/ScreenshotHandler.cs` plugin component using `ScreenCapture.CaptureScreenshot()`
     - Added `Protocol/ScreenshotData.cs` for JSON-serializable screenshot metadata
     - Added `Commands/ScreenshotCommand.cs` CLI command with `--format`, `--display`, `--output` options
@@ -740,7 +849,7 @@ debugging tools and avoids race conditions or crashes.
     - Updated `PlaywrightTcpClient` to handle JSON data responses (not just dictionaries)
     - Added `ScreenshotCommandTests.cs` with 10 test cases
     - Updated `SKILL.md` with screenshot command documentation
-    - **Status:** Working - successfully captures screenshots and returns metadata (filename, path, size, timestamp)
+    - **Status:** File-path capture works. Base64 encoding pipeline incomplete — plugin returns metadata only, never sends base64 data. Fix tracked in Phase 1.75.
     - **Note:** Unity's `ScreenCapture` is asynchronous; file is written shortly after response is sent
     - **Launch command fix:** Fixed false negative when game starts slowly (removed aggressive process death check)
 
