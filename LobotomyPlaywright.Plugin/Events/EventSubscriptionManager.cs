@@ -19,6 +19,7 @@ namespace LobotomyPlaywright.Events
         private static readonly object s_lock = new object();
         private static Server.TcpServer s_server;
         private static NoticeSubscriber s_noticeSubscriber;
+        private static bool s_hasSubscribed;
 
         /// <summary>
         /// Initialize the event subscription system.
@@ -32,9 +33,42 @@ namespace LobotomyPlaywright.Events
 
             s_server = server;
 
-            // Create and start the Notice subscriber
+            // Create Notice subscriber but defer subscription
+            // Subscription will happen when Notice system is ready
             s_noticeSubscriber = new NoticeSubscriber();
-            s_noticeSubscriber.SubscribeToAllEvents();
+            s_hasSubscribed = false;
+        }
+
+        /// <summary>
+        /// Attempt to subscribe to events if not already subscribed and Notice is ready.
+        /// Should be called periodically (e.g., from Update).
+        /// </summary>
+        public static void TrySubscribeToEvents()
+        {
+            // Check if Notice instance is ready and NoticeName is initialized
+            // (Done outside the lock to avoid holding it during potential blocking operations)
+            if (Notice.instance == null || NoticeName.OnStageStart == null)
+            {
+                return;
+            }
+
+            lock (s_lock)
+            {
+                if (s_hasSubscribed)
+                {
+                    return;
+                }
+
+                try
+                {
+                    s_noticeSubscriber.SubscribeToAllEvents();
+                    s_hasSubscribed = true;
+                }
+                catch (Exception ex)
+                {
+                    LobotomyPlaywright.Server.TcpServer.LogError($"[LobotomyPlaywright] Failed to subscribe to events: {ex.Message}");
+                }
+            }
         }
 
         /// <summary>

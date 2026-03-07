@@ -5,7 +5,7 @@ HarmonyDebugPanel is a BepInEx 5 plugin for diagnosing Harmony usage in Lobotomy
 ## What it does
 
 - Logs a full Harmony diagnostic report on startup (`BepInEx/LogOutput.log`)
-- Adds an in-game overlay (default hotkey: `F9`)
+- Adds an in-game overlay (visible by default, toggled with `F9`)
 - Supports on-demand refresh (default hotkey: `F10`)
 
 The report includes:
@@ -39,7 +39,7 @@ Configuration file is generated at:
 
 Settings:
 
-- `OverlayToggleHotkey` (default `F9`)
+- `OverlayToggleHotkey` (default `F9`) - Toggle overlay visibility (off by default if overlay is shown on startup)
 - `RefreshHotkey` (default `F10`)
 - `ShowBepInExPlugins` (default `true`)
 - `ShowLmmMods` (default `true`)

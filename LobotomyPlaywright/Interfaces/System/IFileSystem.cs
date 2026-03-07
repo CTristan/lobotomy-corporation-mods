@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: MIT
 
+using System;
+
 namespace LobotomyPlaywright.Interfaces.System;
 
 /// <summary>
@@ -40,6 +42,28 @@ public interface IFileSystem
     /// <param name="path">The file path.</param>
     /// <returns>True if the file exists.</returns>
     bool FileExists(string path);
+
+    /// <summary>
+    /// Gets files matching a pattern in a directory.
+    /// </summary>
+    /// <param name="path">The directory path.</param>
+    /// <param name="searchPattern">The search pattern (e.g., "*.log").</param>
+    /// <returns>The array of file paths.</returns>
+    string[] GetFiles(string path, string searchPattern);
+
+    /// <summary>
+    /// Gets the last write time of a file.
+    /// </summary>
+    /// <param name="path">The file path.</param>
+    /// <returns>The last write time.</returns>
+    DateTime GetLastWriteTime(string path);
+
+    /// <summary>
+    /// Gets the size of a file in bytes.
+    /// </summary>
+    /// <param name="path">The file path.</param>
+    /// <returns>The file size in bytes.</returns>
+    long GetFileSize(string path);
 
     /// <summary>
     /// Sets a file as executable on Unix systems.

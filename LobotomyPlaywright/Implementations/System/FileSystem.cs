@@ -37,6 +37,21 @@ internal sealed class FileSystem : IFileSystem
         return File.Exists(path);
     }
 
+    public string[] GetFiles(string path, string searchPattern)
+    {
+        return Directory.GetFiles(path, searchPattern);
+    }
+
+    public DateTime GetLastWriteTime(string path)
+    {
+        return File.GetLastWriteTime(path);
+    }
+
+    public long GetFileSize(string path)
+    {
+        return new FileInfo(path).Length;
+    }
+
     public void SetFileExecutable(string path)
     {
         if (Environment.OSVersion.Platform == PlatformID.Unix)

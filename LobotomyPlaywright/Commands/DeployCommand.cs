@@ -17,6 +17,7 @@ namespace LobotomyPlaywright.Commands;
 internal class DeployCommand
 {
     private const string PluginDllName = "LobotomyPlaywright.Plugin.dll";
+    private const string HarmonyDebugPanelDllName = "HarmonyDebugPanel.dll";
     private const string RetargetHarmonyDllName = "RetargetHarmony.dll";
     private static readonly string[] HarmonyInteropDlls = { "0Harmony109.dll", "0Harmony12.dll" };
 
@@ -81,11 +82,18 @@ internal class DeployCommand
         var repoRoot = FindRepositoryRoot() ?? throw new InvalidOperationException("Could not find repository root");
 
         var pluginProject = Path.Combine(repoRoot, "LobotomyPlaywright.Plugin", "LobotomyPlaywright.Plugin.csproj");
+        var harmonyDebugPanelProject = Path.Combine(repoRoot, "HarmonyDebugPanel", "HarmonyDebugPanel.csproj");
         var retharmonyProject = Path.Combine(repoRoot, "RetargetHarmony", "RetargetHarmony.csproj");
 
         if (!_fileSystem.FileExists(pluginProject))
         {
             Console.Error.WriteLine($"ERROR: Plugin project not found: {pluginProject}");
+            return 1;
+        }
+
+        if (!_fileSystem.FileExists(harmonyDebugPanelProject))
+        {
+            Console.Error.WriteLine($"ERROR: HarmonyDebugPanel project not found: {harmonyDebugPanelProject}");
             return 1;
         }
 
@@ -97,6 +105,7 @@ internal class DeployCommand
 
         // Build projects
         string pluginDllPath;
+        string harmonyDebugPanelDllPath;
         string retharmonyDllPath;
 
         if (!skipBuild)
@@ -108,6 +117,7 @@ internal class DeployCommand
             try
             {
                 pluginDllPath = BuildProject(pluginProject, configuration);
+                harmonyDebugPanelDllPath = BuildProject(harmonyDebugPanelProject, configuration);
                 retharmonyDllPath = BuildProject(retharmonyProject, configuration);
             }
             catch (Exception ex) when (ex is BuildFailedException || ex is FileNotFoundException)
@@ -131,6 +141,14 @@ internal class DeployCommand
                 PluginDllName
             );
 
+            harmonyDebugPanelDllPath = Path.Combine(
+                Path.GetDirectoryName(harmonyDebugPanelProject) ?? string.Empty,
+                "bin",
+                configuration,
+                "net35",
+                HarmonyDebugPanelDllName
+            );
+
             retharmonyDllPath = Path.Combine(
                 Path.GetDirectoryName(retharmonyProject) ?? string.Empty,
                 "bin",
@@ -146,6 +164,13 @@ internal class DeployCommand
                 return 1;
             }
 
+            if (!_fileSystem.FileExists(harmonyDebugPanelDllPath))
+            {
+                Console.Error.WriteLine($"ERROR: HarmonyDebugPanel DLL not found: {harmonyDebugPanelDllPath}");
+                Console.Error.WriteLine("Run without --skip-build to build the project first.");
+                return 1;
+            }
+
             if (!_fileSystem.FileExists(retharmonyDllPath))
             {
                 Console.Error.WriteLine($"ERROR: RetargetHarmony DLL not found: {retharmonyDllPath}");
@@ -154,6 +179,7 @@ internal class DeployCommand
             }
 
             Console.WriteLine($"Using existing plugin DLL: {pluginDllPath}");
+            Console.WriteLine($"Using existing HarmonyDebugPanel DLL: {harmonyDebugPanelDllPath}");
             Console.WriteLine($"Using existing RetargetHarmony DLL: {retharmonyDllPath}");
         }
 
@@ -168,6 +194,9 @@ internal class DeployCommand
             Console.WriteLine();
             Console.WriteLine($"Would deploy {PluginDllName} to:");
             Console.WriteLine($"  {Path.Combine(gamePath, "BepInEx", "plugins", PluginDllName)}");
+            Console.WriteLine();
+            Console.WriteLine($"Would deploy {HarmonyDebugPanelDllName} to:");
+            Console.WriteLine($"  {Path.Combine(gamePath, "BepInEx", "plugins", HarmonyDebugPanelDllName)}");
             Console.WriteLine();
             Console.WriteLine($"Would deploy {RetargetHarmonyDllName} to:");
             Console.WriteLine($"  {Path.Combine(gamePath, "BepInEx", "patchers", RetargetHarmonyDllName)}");
@@ -186,6 +215,7 @@ internal class DeployCommand
         try
         {
             var deployPluginPath = DeployDll(pluginDllPath, gamePath, "plugins");
+            var deployHarmonyDebugPanelPath = DeployDll(harmonyDebugPanelDllPath, gamePath, "plugins");
             var deployRetharmonyPath = DeployDll(retharmonyDllPath, gamePath, "patchers");
 
             Console.WriteLine();
@@ -194,6 +224,8 @@ internal class DeployCommand
             Console.WriteLine("".PadRight(60, '='));
             Console.WriteLine($"Plugin: {deployPluginPath}");
             Console.WriteLine($"Size: {new FileInfo(deployPluginPath).Length:N0} bytes");
+            Console.WriteLine($"HarmonyDebugPanel: {deployHarmonyDebugPanelPath}");
+            Console.WriteLine($"Size: {new FileInfo(deployHarmonyDebugPanelPath).Length:N0} bytes");
             Console.WriteLine($"RetargetHarmony: {deployRetharmonyPath}");
             Console.WriteLine($"Size: {new FileInfo(deployRetharmonyPath).Length:N0} bytes");
 

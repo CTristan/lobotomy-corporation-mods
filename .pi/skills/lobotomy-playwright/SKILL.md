@@ -112,6 +112,12 @@ dotnet playwright deploy --skip-build          # Deploy existing DLLs
 dotnet playwright deploy --dry-run             # Show what would be done
 ```
 
+The deploy command builds and copies the following DLLs:
+- `LobotomyPlaywright.Plugin.dll` → `BepInEx/plugins/`
+- `HarmonyDebugPanel.dll` → `BepInEx/plugins/`
+- `RetargetHarmony.dll` → `BepInEx/patchers/`
+- Harmony interop DLLs → `BepInEx/core/`
+
 ### Launch Game
 
 ```bash
@@ -138,6 +144,22 @@ dotnet playwright stop                         # Graceful shutdown, then force k
 dotnet playwright stop --force                 # Skip graceful shutdown
 dotnet playwright stop --wait                  # Wait for processes to exit
 ```
+
+### Read BepInX Logs
+
+```bash
+dotnet playwright read-log                      # Read main log file
+dotnet playwright read-log --file LogOutput.log # Specify log file
+dotnet playwright read-log --tail 50            # Show last 50 lines
+dotnet playwright read-log --filter "Harmony"   # Filter lines containing "Harmony"
+dotnet playwright read-log --list               # List available log files
+```
+
+Options:
+- `--file FILE` - Specific log file to read (default: `LogOutput.log`)
+- `--tail N` - Show only the last N lines
+- `--filter TEXT` - Filter lines to only show those containing TEXT (case-insensitive)
+- `--list` - List all available log files with sizes and timestamps
 
 ### Query Game State
 

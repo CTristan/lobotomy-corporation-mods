@@ -43,6 +43,8 @@ public sealed class Program
                     return new StopCommand().Run(commandArgs);
                 case "query":
                     return new QueryCommand().Run(commandArgs);
+                case "read-log":
+                    return new ReadLogCommand().Run(commandArgs);
                 case "wait":
                     return new WaitCommand().Run(commandArgs);
                 default:
@@ -77,6 +79,7 @@ public sealed class Program
         Console.WriteLine("  status              Check game status");
         Console.WriteLine("  stop                Stop the game");
         Console.WriteLine("  query <target>      Query game state");
+        Console.WriteLine("  read-log            Read BepInEx log files");
         Console.WriteLine("  wait event <names>  Wait for specific game events");
         Console.WriteLine();
         Console.WriteLine("Use 'dotnet playwright <command> --help' for command-specific help.");

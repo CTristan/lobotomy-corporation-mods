@@ -58,6 +58,9 @@ namespace LobotomyPlaywright
             {
                 _tcpServer.ProcessQueuedRequests();
 
+                // Try to subscribe to events if not already done
+                Events.EventSubscriptionManager.TrySubscribeToEvents();
+
                 // Debug: Log current scene once per second
                 if (Time.frameCount % 60 == 0)
                 {

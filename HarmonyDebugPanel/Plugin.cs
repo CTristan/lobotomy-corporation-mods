@@ -20,7 +20,7 @@ namespace HarmonyDebugPanel
         private DiagnosticReportBuilder _reportBuilder;
         private DiagnosticOverlay _diagnosticOverlay;
         private DiagnosticReport _report;
-        private bool _isOverlayVisible;
+        private bool _isOverlayVisible = true;
 
         private void Awake()
         {
@@ -30,7 +30,8 @@ namespace HarmonyDebugPanel
 
             RefreshReport();
 
-            Logger.LogInfo("HarmonyDebugPanel initialized. Press " + _configuration.OverlayToggleHotkey.Value + " to toggle the overlay.");
+            Logger.LogInfo("HarmonyDebugPanel initialized. Overlay is visible by default.");
+            Logger.LogInfo("Press " + _configuration.OverlayToggleHotkey.Value + " to toggle the overlay.");
             Logger.LogInfo("Press " + _configuration.RefreshHotkey.Value + " to refresh diagnostic information.");
         }
 
