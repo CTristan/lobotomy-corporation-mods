@@ -40,6 +40,14 @@ internal interface ITcpClient : IDisposable
     bool SendCommand(string action, Dictionary<string, object>? parameters = null);
 
     /// <summary>
+    /// Sends a command to the server and returns the response data.
+    /// </summary>
+    /// <param name="action">The command action.</param>
+    /// <param name="parameters">Optional command parameters.</param>
+    /// <returns>The response data.</returns>
+    Dictionary<string, object> SendCommandWithData(string action, Dictionary<string, object>? parameters = null);
+
+    /// <summary>
     /// Subscribes to game events.
     /// </summary>
     /// <param name="events">List of event names to subscribe to.</param>

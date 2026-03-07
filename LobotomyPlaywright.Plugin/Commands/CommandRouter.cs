@@ -36,6 +36,9 @@ namespace LobotomyPlaywright.Commands
                 case "shutdown":
                     return HandleShutdown(request);
 
+                case "screenshot":
+                    return ScreenshotHandler.HandleScreenshot(request);
+
                 default:
                     return Protocol.Response.CreateError(
                         request.Id,

@@ -717,6 +717,7 @@ debugging tools and avoids race conditions or crashes.
 
 ### Phase 4 — Mod testing workflows
 
+- [x] Screenshot/visual state capture implemented
 - [ ] Design higher-level workflow tools
   - `ScenarioCommand` — Run a scripted sequence of commands and assertions
   - Example: "Start day → assign Agent 3 to Instinct work on Scorched Girl →
@@ -727,9 +728,21 @@ debugging tools and avoids race conditions or crashes.
   - Patterns for common mod testing scenarios
   - Examples using each existing mod in the repo
 
-- [ ] Explore screenshot/visual state capture if feasible
-  - Would allow the agent to "see" the game visually (useful for UI mods like
+- [x] Implement screenshot/visual state capture
+  - Agent can now "see" the game visually (useful for UI mods like
     GiftAlertIcon)
+  - **Implementation complete:**
+    - Added `Commands/ScreenshotHandler.cs` plugin component using `ScreenCapture.CaptureScreenshot()`
+    - Added `Protocol/ScreenshotData.cs` for JSON-serializable screenshot metadata
+    - Added `Commands/ScreenshotCommand.cs` CLI command with `--format`, `--display`, `--output` options
+    - Updated `CommandRouter.cs` to route `screenshot` action
+    - Updated `ITcpClient` interface with `SendCommandWithData()` method
+    - Updated `PlaywrightTcpClient` to handle JSON data responses (not just dictionaries)
+    - Added `ScreenshotCommandTests.cs` with 10 test cases
+    - Updated `SKILL.md` with screenshot command documentation
+    - **Status:** Working - successfully captures screenshots and returns metadata (filename, path, size, timestamp)
+    - **Note:** Unity's `ScreenCapture` is asynchronous; file is written shortly after response is sent
+    - **Launch command fix:** Fixed false negative when game starts slowly (removed aggressive process death check)
 
 #### Phase 4: Tests (≥80% coverage gate)
 

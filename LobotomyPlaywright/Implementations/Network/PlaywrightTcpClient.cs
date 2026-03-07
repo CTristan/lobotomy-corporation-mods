@@ -74,6 +74,19 @@ internal sealed class PlaywrightTcpClient : ITcpClient
 
     public bool SendCommand(string action, Dictionary<string, object>? parameters = null)
     {
+        try
+        {
+            var response = SendCommandWithData(action, parameters);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public Dictionary<string, object> SendCommandWithData(string action, Dictionary<string, object>? parameters = null)
+    {
         var requestId = GenerateRequestId();
         var request = new Dictionary<string, object>
         {
@@ -84,17 +97,23 @@ internal sealed class PlaywrightTcpClient : ITcpClient
         };
 
         Send(request);
+        var response = Receive();
 
-        try
+        var responseId = GetResponseId(response);
+        if (responseId != requestId)
         {
-            var response = Receive();
-            var status = GetResponseStatus(response);
-            return status == "ok";
+            throw new InvalidOperationException($"Response ID mismatch: expected {requestId}, got {responseId}");
         }
-        catch
+
+        var status = GetResponseStatus(response);
+        if (status != "ok")
         {
-            return false;
+            var error = GetResponseError(response);
+            var code = GetResponseCode(response);
+            throw new InvalidOperationException($"Command failed: {error} (code: {code})");
         }
+
+        return GetResponseData(response);
     }
 
     public bool Subscribe(string[] events)
@@ -255,9 +274,48 @@ internal sealed class PlaywrightTcpClient : ITcpClient
 
     private static Dictionary<string, object> GetResponseData(Dictionary<string, object> response)
     {
-        if (response.TryGetValue("data", out var data) && data is Dictionary<string, object> dataDict)
+        if (response.TryGetValue("data", out var data))
         {
-            return dataDict;
+            if (data is Dictionary<string, object> dataDict)
+            {
+                return dataDict;
+            }
+            if (data is string dataString)
+            {
+                // Data might be serialized as a JSON string - try to parse it
+                try
+                {
+                    var parsed = JsonSerializer.Deserialize<Dictionary<string, object>>(dataString);
+                    if (parsed != null)
+                    {
+                        return parsed;
+                    }
+                }
+                catch
+                {
+                    // Return empty dict if parsing fails
+                }
+            }
+            if (data == null)
+            {
+                // Data is null - return empty dict
+                return new Dictionary<string, object>();
+            }
+            // Handle JsonElement case (System.Text.Json deserializes objects as JsonElement)
+            var dataType = data.GetType();
+            if (dataType.FullName != null && dataType.FullName.Contains("JsonElement", StringComparison.OrdinalIgnoreCase))
+            {
+                try
+                {
+                    var jsonElementString = JsonSerializer.Serialize(data);
+                    var result = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonElementString);
+                    return result ?? new Dictionary<string, object>();
+                }
+                catch
+                {
+                    // Return empty dict if parsing fails
+                }
+            }
         }
 
         return new Dictionary<string, object>();

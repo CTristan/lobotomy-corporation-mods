@@ -291,14 +291,6 @@ internal class LaunchCommand
                 Console.WriteLine($"[{elapsed}s] Port open but plugin not responding yet...");
             }
 
-            // Check if process died
-            if (ProcessManagerStatic.FindGameProcessesStatic().Count == 0)
-            {
-                Console.WriteLine();
-                Console.WriteLine("ERROR: Game process terminated unexpectedly");
-                return (false, null);
-            }
-
             Console.Write($"[{elapsed}s] Waiting for TCP server...\r");
             Thread.Sleep(2000);
             elapsed = (int)(DateTime.UtcNow - startTime).TotalSeconds;
@@ -449,12 +441,13 @@ internal class LaunchCommand
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                 {
+                    // Use ps command instead of pgrep for better reliability with Wine/CrossOver
                     using var process = new Process
                     {
                         StartInfo = new ProcessStartInfo
                         {
-                            FileName = "pgrep",
-                            Arguments = "-f LobotomyCorp.exe",
+                            FileName = "/bin/sh",
+                            Arguments = "-c \"ps aux | grep -i 'LobotomyCorp.exe' | grep -v grep | awk '{print $2}'\"",
                             RedirectStandardOutput = true,
                             UseShellExecute = false,
                             CreateNoWindow = true,
@@ -476,7 +469,8 @@ internal class LaunchCommand
             }
             catch
             {
-                // Ignore errors
+                // Ignore errors - if we can't detect the process, assume it's not running
+                // This is safer than crashing the launch command
             }
 
             return pids;

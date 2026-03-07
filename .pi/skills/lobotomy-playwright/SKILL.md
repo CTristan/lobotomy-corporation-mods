@@ -178,6 +178,62 @@ dotnet playwright query departments               # Department status
 - `--host HOST` - Connect to specific host (default: localhost)
 - `--port PORT` - Connect to specific port (default: 8484)
 
+### Capture Screenshot
+
+```bash
+dotnet playwright screenshot                      # Capture screenshot (base64 by default)
+dotnet playwright screenshot --format path       # Return only file path
+dotnet playwright screenshot --format base64     # Return base64-encoded image data (default)
+dotnet playwright screenshot --display text       # Display as formatted text (default)
+dotnet playwright screenshot --display json       # Display as JSON
+dotnet playwright screenshot --output image.png  # Save image to specific path
+dotnet playwright screenshot --host localhost --port 8484  # Custom connection
+```
+
+**Format options:**
+- `base64` - Returns base64-encoded PNG image data along with file info (default)
+- `path` - Returns only the file path without the image data
+
+**Display options:**
+- `text` - Human-readable formatted output (default)
+- `json` - Raw JSON output for programmatic parsing
+
+**Output examples:**
+
+Text output (default):
+```
+============================================================
+Screenshot Captured
+============================================================
+  Filename: screenshot_20260306_180234_123.png
+  Path: /path/to/game/LobotomyPlaywrightScreenshots/screenshot_20260306_180234_123.png
+  Size: 1,234,567 bytes
+  Timestamp (UTC): 2026-03-06T18:02:34.1234567Z
+  Base64 (truncated): iVBORw0KGgoAAAANSUhEUgAA...
+
+To decode and display the image:
+  echo "iVBORw0KGgoAAAANSUhEUgAA..." | base64 -d > screenshot.png
+  open screenshot.png  # macOS
+============================================================
+```
+
+JSON output:
+```json
+{
+  "status": "ok",
+  "filename": "screenshot_20260306_180234_123.png",
+  "path": "/path/to/game/.../screenshot_20260306_180234_123.png",
+  "size": 1234567,
+  "timestamp": "2026-03-06T18:02:34.1234567Z",
+  "base64": "iVBORw0KGgoAAAANSUhEUgAA..."
+}
+```
+
+**Notes:**
+- Screenshots are saved to `<gamePath>/LobotomyPlaywrightScreenshots/`
+- For the pi agent to display the image, use `--format base64 --display json` and decode the base64 data
+- The `--output` option allows saving the image to any path; when combined with base64 format, the image is decoded and saved locally
+
 ### Wait for Events (Phase 2)
 
 ```bash
@@ -305,6 +361,11 @@ dotnet playwright command <action> [options]
 - Run scripted test scenarios
 - Verify mod behavior in live game
 - Visual state capture
+
+**Screenshot Capture (Implemented):**
+- `dotnet playwright screenshot` - Capture the current game screen
+- Returns base64-encoded image data for display by the pi agent
+- Useful for visual verification of UI mods (e.g., GiftAlertIcon)
 
 ## Troubleshooting
 
