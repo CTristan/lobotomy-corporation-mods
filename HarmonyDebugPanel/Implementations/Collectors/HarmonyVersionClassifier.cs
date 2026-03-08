@@ -12,6 +12,8 @@ namespace HarmonyDebugPanel.Implementations.Collectors
     {
         private const string Harmony1AssemblyName = "0Harmony109";
         private const string Harmony2AssemblyName = "0Harmony";
+        private const string Harmony12AssemblyName = "12Harmony";
+        private const string Harmony012AssemblyName = "0Harmony12";
 
         public HarmonyVersion Classify(IList<AssemblyName> references)
         {
@@ -31,7 +33,9 @@ namespace HarmonyDebugPanel.Implementations.Collectors
                 }
 
                 var referenceName = reference.Name ?? string.Empty;
-                if (referenceName.Equals(Harmony1AssemblyName, StringComparison.OrdinalIgnoreCase))
+                if (referenceName.Equals(Harmony1AssemblyName, StringComparison.OrdinalIgnoreCase) ||
+                    referenceName.Equals(Harmony12AssemblyName, StringComparison.OrdinalIgnoreCase) ||
+                    referenceName.Equals(Harmony012AssemblyName, StringComparison.OrdinalIgnoreCase))
                 {
                     hasHarmony1 = true;
                 }

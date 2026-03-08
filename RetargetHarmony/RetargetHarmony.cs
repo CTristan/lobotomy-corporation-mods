@@ -74,7 +74,11 @@ namespace RetargetHarmony
             var changed = false;
 
             // 1) Find all Harmony references (both old and potentially already retargeted)
-            var harmonyRefs = refs.Where(r => r.Name == "0Harmony" || r.Name == "0Harmony109").ToList();
+            var harmonyRefs = refs.Where(r =>
+                r.Name == "0Harmony" ||
+                r.Name == "0Harmony109" ||
+                r.Name == "12Harmony" ||
+                r.Name == "0Harmony12").ToList();
 
             // Defensive check: ToList() should never return null, but guard against unexpected behavior
             if (harmonyRefs != null && harmonyRefs.Count > 0)
@@ -97,11 +101,11 @@ namespace RetargetHarmony
 
             if (changed)
             {
-                Log.LogInfo($"Rewrote reference 0Harmony -> 0Harmony109 in {asm.Name.Name}");
+                Log.LogInfo($"Rewrote Harmony reference(s) -> 0Harmony109 in {asm.Name.Name}");
             }
             else
             {
-                Log.LogInfo($"No 0Harmony reference found in {asm.Name.Name}; nothing changed.");
+                Log.LogInfo($"No Harmony reference found in {asm.Name.Name}; nothing changed.");
             }
         }
 
