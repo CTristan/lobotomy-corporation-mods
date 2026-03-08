@@ -4,7 +4,8 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using LobotomyPlaywright.Commands;
 
-[assembly: ExcludeFromCodeCoverage]
+// Only exclude specific classes from coverage, not the entire assembly
+// [assembly: ExcludeFromCodeCoverage]
 
 namespace LobotomyPlaywright;
 

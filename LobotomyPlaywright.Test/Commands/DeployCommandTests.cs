@@ -61,6 +61,7 @@ public sealed class DeployCommandTests
         result.Should().Be(0);
 
         // Verify file copy calls via IFileSystem
+        // Note: 12Harmony.dll uses 0Harmony12.dll as source, so 0Harmony12.dll gets copied twice
         // Plugin DLLs
         _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyPlaywright.Plugin.dll")), It.IsAny<string>(), true), Times.Once);
         _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("HarmonyDebugPanel.dll")), It.IsAny<string>(), true), Times.Once);
@@ -68,7 +69,8 @@ public sealed class DeployCommandTests
 
         // Interop DLLs
         _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("0Harmony109.dll")), It.IsAny<string>(), true), Times.Once);
-        _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("0Harmony12.dll")), It.IsAny<string>(), true), Times.Once);
+        // 0Harmony12.dll is copied twice: once from loop item "0Harmony12.dll", once from loop item "12Harmony.dll" (which uses 0Harmony12.dll as source)
+        _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("0Harmony12.dll")), It.IsAny<string>(), true), Times.Exactly(2));
     }
 
     [Fact]

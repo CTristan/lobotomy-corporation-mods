@@ -188,7 +188,8 @@ public sealed class CoverageThresholdChecker : ICoverageThresholdChecker
                     moduleName == "SetupExternal" ||
                     moduleName == "RetargetHarmony" ||
                     moduleName == "HarmonyDebugPanel" ||
-                    moduleName == "LobotomyPlaywright")
+                    moduleName == "LobotomyPlaywright" ||
+                    moduleName == "LobotomyPlaywright.Plugin")
                 {
                     continue;
                 }

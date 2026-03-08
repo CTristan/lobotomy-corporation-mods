@@ -13,6 +13,7 @@ This is a **Lobotomy Corporation mod collection** — standalone Harmony mods fo
 | `LobotomyCorporationMods.Test` | net481 | Single test project covering all mods |
 | `CI` / `CI.Test` | net10.0 | Local dotnet tool for CI checks |
 | `SetupExternal` / `SetupExternal.Test` | net10.0 | Local dotnet tool for project setup |
+| `scripts/` | — | Helper shell/C# scripts for development workflows |
 
 Game DLLs live in `external/LobotomyCorp_Data/Managed/` (not committed — set up via `dotnet setup`). The `external/decompiled/` directory contains decompiled game source for reference.
 
@@ -75,6 +76,18 @@ public static class OriginalClassPatchMethod
 - `PrivateMethods` class holds string constants for non-public game methods patched via Harmony
 
 ## Build and Test
+
+### Helper scripts
+
+The `scripts/` directory contains workflow shortcuts (run from the repo root):
+
+| Script | Purpose |
+|--------|---------|
+| `tool-reinstall.sh [name]` | Clean-build, repack, cache-clear, and reinstall a local dotnet tool (default: `playwright`) |
+| `setup-reinstall.sh [name]` | Same workflow for the SetupExternal tool (default: `setup`) |
+| `rename-assembly.csx` | Mono.Cecil script to rename a DLL's assembly name — usage: `dotnet script scripts/rename-assembly.csx <dll> <newName>` |
+
+The reinstall scripts exist because `dotnet tool install --local` will silently use the NuGet cache instead of a freshly packed nupkg unless the cache is cleared first.
 
 ```sh
 # Initial setup (requires game installation + ilspycmd)

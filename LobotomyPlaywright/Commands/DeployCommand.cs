@@ -19,7 +19,7 @@ internal class DeployCommand
     private const string PluginDllName = "LobotomyPlaywright.Plugin.dll";
     private const string HarmonyDebugPanelDllName = "HarmonyDebugPanel.dll";
     private const string RetargetHarmonyDllName = "RetargetHarmony.dll";
-    private static readonly string[] HarmonyInteropDlls = { "0Harmony109.dll", "0Harmony12.dll" };
+    private static readonly string[] HarmonyInteropDlls = { "0Harmony109.dll", "0Harmony12.dll", "12Harmony.dll" };
 
     private readonly IConfigManager _configManager;
     private readonly IFileSystem _fileSystem;
@@ -231,6 +231,7 @@ internal class DeployCommand
 
             foreach (var dllName in HarmonyInteropDlls)
             {
+                Console.WriteLine($"DEBUG: Deploying interop DLL: {dllName}");
                 DeployInteropDll(repoRoot, dllName, gamePath);
             }
 
@@ -329,7 +330,17 @@ internal class DeployCommand
 
     private void DeployInteropDll(string repoRoot, string dllName, string gamePath)
     {
-        var sourceDll = Path.Combine(repoRoot, "RetargetHarmony", "lib", dllName);
+        // Special case: 12Harmony.dll is needed for mods that reference Harmony 1.2 by that name
+        // Copy from 0Harmony12.dll since they're the same library
+        string sourceDll;
+        if (dllName == "12Harmony.dll")
+        {
+            sourceDll = Path.Combine(repoRoot, "RetargetHarmony", "lib", "0Harmony12.dll");
+        }
+        else
+        {
+            sourceDll = Path.Combine(repoRoot, "RetargetHarmony", "lib", dllName);
+        }
 
         if (!_fileSystem.FileExists(sourceDll))
         {
@@ -392,7 +403,7 @@ internal class DeployCommand
         return false;
     }
 
-    private class BuildFailedException : Exception
+    public class BuildFailedException : Exception
     {
         public BuildFailedException(string message) : base(message)
         {

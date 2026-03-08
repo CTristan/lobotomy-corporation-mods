@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 
+using System;
 using BepInEx;
 using BepInEx.Logging;
 using LobotomyPlaywright.Events;
@@ -16,6 +17,7 @@ namespace LobotomyPlaywright
         private static Plugin _instance;
         private PluginConfiguration _configuration;
         private TcpServer _tcpServer;
+        private bool _shutdownQueued;
 
         internal static Plugin Instance => _instance;
 
@@ -96,6 +98,18 @@ namespace LobotomyPlaywright
 
         private void Update()
         {
+            // Process shutdown if queued
+            if (_shutdownQueued)
+            {
+                _shutdownQueued = false;
+                LogInfo("LobotomyPlaywright: Processing queued shutdown...");
+                Application.Quit();
+#if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+#endif
+                return;
+            }
+
             if (_tcpServer != null && _tcpServer.IsRunning)
             {
                 _tcpServer.ProcessQueuedRequests();
@@ -103,6 +117,15 @@ namespace LobotomyPlaywright
                 // Try to subscribe to events if not already done
                 Events.EventSubscriptionManager.TrySubscribeToEvents();
             }
+        }
+
+        /// <summary>
+        /// Queues a shutdown to be processed on the main thread.
+        /// </summary>
+        public void QueueShutdown()
+        {
+            _shutdownQueued = true;
+            LogInfo("LobotomyPlaywright: Shutdown queued.");
         }
 
         private void OnDestroy()

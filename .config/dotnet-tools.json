@@ -9,13 +9,6 @@
       ],
       "rollForward": false
     },
-    "lobotomycorporationmods.ci": {
-      "version": "1.0.0",
-      "commands": [
-        "ci"
-      ],
-      "rollForward": false
-    },
     "lobotomycorporationmods.setup": {
       "version": "1.0.0",
       "commands": [
@@ -27,6 +20,13 @@
       "version": "1.0.0",
       "commands": [
         "playwright"
+      ],
+      "rollForward": false
+    },
+    "lobotomycorporationmods.ci": {
+      "version": "1.0.0",
+      "commands": [
+        "ci"
       ],
       "rollForward": false
     }

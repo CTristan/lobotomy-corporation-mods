@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 
+using System;
 using UnityEngine;
 
 namespace LobotomyPlaywright.Commands
@@ -52,16 +53,28 @@ namespace LobotomyPlaywright.Commands
         /// Handle the shutdown command - gracefully quit the game.
         /// </summary>
         // Excluded from code coverage - Unity runtime call
+        // Pragma warning disable needed because Unity's Application.Quit has no effect in tests
         private static Protocol.Response HandleShutdown(Protocol.Request request)
         {
-            // Schedule Application.Quit on the next frame
-            // This allows the response to be sent before quitting
-            // Plugin.Instance?.QueueShutdown();
+            try
+            {
+                // Schedule Application.Quit on the next frame
+                // This allows the response to be sent before quitting
+                Plugin.Instance?.QueueShutdown();
 
-            return Protocol.Response.CreateSuccess(
-                request.Id,
-                new { result = "shutdown scheduled" }
-            );
+                return Protocol.Response.CreateSuccess(
+                    request.Id,
+                    new { result = "shutdown scheduled" }
+                );
+            }
+            catch (Exception ex)
+            {
+                return Protocol.Response.CreateError(
+                    request.Id,
+                    $"Failed to queue shutdown: {ex.Message}",
+                    "SHUTDOWN_ERROR"
+                );
+            }
         }
     }
 }
