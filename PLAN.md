@@ -67,6 +67,16 @@ This applies to both the C# plugin and the dotnet pi skill tool independently:
   be covered.
 - **Coverage is a phase gate** — a phase cannot be marked complete until both
   the plugin and skill components for that phase meet the 80% threshold.
+
+**Unity UI vs IMGUI:**
+
+- Unity UI (uGUI) elements are fully queryable via `query ui` (Phase 1.75)
+- IMGUI (`OnGUI()`) elements are NOT queryable via `query ui` — they create no
+  GameObjects or Components, so `GetComponentsInChildren` cannot find them
+- IMGUI-using plugins can be introspected via reflection-based `query imgui`
+  (Phase 1.75.5)
+- Mods using IMGUI should expose state via public properties or
+  reflection-friendly attributes for best introspection results
 - Each phase's tasks below include explicit testing tasks to make this concrete.
 
 ### Phase 1 — Read-only foundation
@@ -101,6 +111,22 @@ This applies to both the C# plugin and the dotnet pi skill tool independently:
 - **≥80% test coverage** on all deployment, launch, status, and stop logic
   in the dotnet tool commands.
 
+### Phase 1.75 — UI accessibility tree
+
+- The plugin exposes a structured `query ui` command returning open/closed
+  window states and child elements (Text, Button, Toggle, Slider) — the agent's
+  primary way to "see" the game UI as text.
+- Screenshot base64 pipeline for supplementary visual debugging.
+- **≥80% test coverage** on UI query and screenshot code.
+
+### Phase 1.75.5 — IMGUI query support
+
+- The plugin exposes a `query imgui` command that uses reflection to inspect
+  BepInEx plugins using `OnGUI()`, surfacing their internal state (field values,
+  toggle flags, enabled status).
+- Complements `query ui` which only covers Unity UI (uGUI) components.
+- **≥80% test coverage** on IMGUI query and formatting code.
+
 ### Phase 2 — Event streaming
 
 - The plugin streams game events from the Notice system over TCP.
@@ -116,6 +142,13 @@ This applies to both the C# plugin and the dotnet pi skill tool independently:
   high-level player action simulation.
 - **≥80% test coverage** on command routing, each command handler, and the
   command tool.
+
+### Phase 3.5 — Input simulation
+
+- The plugin accepts `send-key` commands to simulate keyboard input, enabling
+  the agent to trigger hotkeys (e.g., HarmonyDebugPanel's F9) and interact with
+  IMGUI elements indirectly.
+- **≥80% test coverage** on input simulation and CLI command code.
 
 ### Phase 4 — Mod testing workflows
 
@@ -739,6 +772,106 @@ accessibility tree — so the agent can "see" the game's visual/UI state as text
 - [x] Plugin coverage on UI query code (limited by Unity runtime requirements)
 - [x] Dotnet tool coverage on UI query formatting
 
+### Phase 1.75.5 — IMGUI query support
+
+**Status:** Not started
+
+LobotomyPlaywright's Phase 1.75 UI accessibility tree targets Unity UI (uGUI)
+components — persistent GameObjects with `Button`, `Text`, `Toggle`, `Slider`
+Components queryable via `GetComponentsInChildren`. However, some plugins
+(notably HarmonyDebugPanel) use Unity's **IMGUI** (Immediate Mode GUI) system,
+which is architecturally different and invisible to uGUI queries.
+
+#### IMGUI vs Unity UI (uGUI)
+
+| Aspect | IMGUI (`OnGUI()`) | Unity UI (uGUI) |
+|--------|-------------------|------------------|
+| Rendering | Method calls every frame (`GUILayout.Button()`) | Persistent GameObjects with Components |
+| State | Script variables (private fields) | Component properties (`button.interactable`) |
+| Discoverability | Cannot use `GameObject.Find()` or `GetComponentsInChildren` | Fully queryable via component traversal |
+| LobotomyPlaywright | NOT supported by `query ui` | Supported by `query ui` (Phase 1.75) |
+
+**Affected components:**
+
+| Component | UI System | `query ui` | `query imgui` (this phase) |
+|-----------|-----------|------------|----------------------------|
+| HarmonyDebugPanel overlay | IMGUI | No | Yes |
+| AgentInfoWindow | Unity UI | Yes | N/A |
+| CreatureInfoWindow | Unity UI | Yes | N/A |
+| CustomizingWindow | Unity UI | Yes | N/A |
+| DeployUI | Unity UI | Yes | N/A |
+| CommandWindow | Unity UI (legacy mixed) | Partial | N/A |
+
+#### Approach: Reflection-based IMGUI introspection
+
+Rather than trying to intercept IMGUI draw calls, inspect the state of BepInEx
+plugins that use `OnGUI()` via reflection. This surfaces the plugin's internal
+state (field values, toggle flags, enabled status) even though the rendered UI
+elements themselves cannot be enumerated.
+
+#### Plugin: IMGUI query implementation
+
+- [ ] Create `Queries/ImguiPluginData.cs`
+  - `[Serializable]` data class following `GameStateData.cs` pattern
+  - Fields: `pluginName` (string), `pluginType` (string), `hasOnGui` (bool),
+    `fields` (List\<ImguiFieldData\>)
+  - `ImguiFieldData`: `name` (string), `type` (string), `value` (string),
+    `access` (string: "public"/"private")
+
+- [ ] Create `Queries/ImguiStateData.cs`
+  - Fields: `plugins` (List\<ImguiPluginData\>), `pluginCount` (int)
+
+- [ ] Create `Queries/ImguiQueries.cs`
+  - `GetImguiState()` — main entry point
+  - Iterate BepInEx plugins via `BepInEx.Bootstrap.Chainloader.Plugins` or
+    `UnityEngine.Object.FindObjectsOfType<BaseUnityPlugin>()`
+  - For each plugin, check if it overrides `OnGUI()` (reflection on method
+    declaration)
+  - For OnGUI-using plugins, reflect over fields and properties to build state
+    snapshot:
+    - Include public fields/properties directly
+    - Include private fields with `[SerializeField]` or custom
+      `[InspectableField]` attribute
+    - Optionally include all private fields with a `depth=full` parameter
+  - Return `ImguiStateData` with all discovered plugins and their state
+
+- [ ] Update `Queries/QueryRouter.cs`
+  - Add `"imgui"` to known query targets
+  - Route to `ImguiQueries.GetImguiState()`
+  - Pass `depth` param if provided
+
+#### Pi skill: CLI support
+
+- [ ] Verify `QueryCommand.cs` handles `dotnet playwright query imgui`
+  (existing architecture passes any target string to TCP — should work
+  automatically)
+- [ ] Add output formatting for IMGUI state in `OutputFormatter.cs` if needed
+- [ ] Update `SKILL.md` with `query imgui` documentation
+  - Document IMGUI vs uGUI limitation
+  - Usage examples
+  - Note that IMGUI introspection shows plugin state, not rendered UI elements
+
+#### Phase 1.75.5: Tests (≥80% coverage gate)
+
+- [ ] Create `ImguiQueriesTests.cs` in plugin test project
+  - Test plugin detection with mocked BepInEx chainloader
+  - Test reflection inspection of plugin fields
+  - Test no-plugins-found case
+  - Test depth parameter (summary vs full)
+- [ ] Add routing tests in `QueryRouterTests.cs` for `"imgui"` target
+- [ ] Add dotnet tool tests for `query imgui` output formatting
+- [ ] Verify ≥80% line coverage on all Phase 1.75.5 code
+
+#### Phase 1.75.5 completion checklist
+
+- [ ] `dotnet playwright query imgui` returns list of IMGUI-using plugins with
+  state
+- [ ] HarmonyDebugPanel fields (overlay visibility, log state) are visible in
+  query results
+- [ ] Plugin coverage ≥80% on IMGUI query code
+- [ ] Dotnet tool coverage ≥80% on IMGUI formatting code
+- [ ] SKILL.md documents IMGUI limitations and `query imgui` usage
+
 ### Phase 2 — Event streaming
 
 - [ ] Implement `Events/NoticeSubscriber.cs` in the plugin
@@ -837,6 +970,59 @@ accessibility tree — so the agent can "see" the game's visual/UI state as text
 - [ ] Dotnet tool coverage ≥80% including command tool (Coverlet report)
 - [ ] Agent can issue a command and observe its effect via a follow-up query
   (e.g., `command pause` → `query game` shows paused state)
+
+### Phase 3.5 — Input simulation
+
+**Status:** Not started
+
+Adds keyboard (and optionally mouse) input simulation so the pi agent can
+trigger hotkeys and interact with UI elements that cannot be clicked
+programmatically (e.g., IMGUI buttons, game hotkeys). This is particularly
+useful for testing HarmonyDebugPanel's F9 hotkey and similar debug shortcuts.
+
+#### Plugin: Input simulation
+
+- [ ] Create `Commands/InputHandler.cs`
+  - Handle `send-key` command:
+    `{"type": "command", "action": "send-key", "params": {"key": "F9"}}`
+  - Map string key names to `UnityEngine.KeyCode` enum values
+  - Queue key simulation for main-thread execution during `Update()`
+  - Implementation approach: set a flag that the plugin checks in `Update()`
+    and simulates via Unity's input system or direct method invocation
+  - Support modifier keys: `shift`, `ctrl`, `alt` (optional `modifiers` param)
+
+- [ ] Update `Commands/CommandRouter.cs`
+  - Add `"send-key"` to known command actions
+  - Route to `InputHandler`
+
+#### Pi skill: CLI support
+
+- [ ] Add `send-key` subcommand to `CommandCommand.cs`
+  - `dotnet playwright command send-key --key F9`
+  - `dotnet playwright command send-key --key G --modifiers shift`
+- [ ] Update `SKILL.md` with input simulation documentation
+  - Document available key names (map to Unity `KeyCode` enum)
+  - Usage examples for triggering HarmonyDebugPanel hotkeys
+
+#### Phase 3.5: Tests (≥80% coverage gate)
+
+- [ ] Plugin tests for `InputHandler`
+  - Test key name to `KeyCode` mapping (valid keys, invalid keys)
+  - Test command routing for `send-key` action
+  - Test modifier key handling
+  - Test unknown key error response
+- [ ] Dotnet tool tests for `send-key` subcommand
+  - Test argument parsing (`--key`, `--modifiers`)
+  - Test success/error response display
+- [ ] Verify ≥80% line coverage on all Phase 3.5 code
+
+#### Phase 3.5 completion checklist
+
+- [ ] `dotnet playwright command send-key --key F9` triggers F9 in the game
+- [ ] HarmonyDebugPanel's GenerateLog can be triggered via `send-key`
+- [ ] Plugin coverage ≥80% on input simulation code
+- [ ] Dotnet tool coverage ≥80% on send-key command code
+- [ ] SKILL.md documents input simulation usage
 
 ### Phase 4 — Mod testing workflows
 
