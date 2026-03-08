@@ -205,6 +205,66 @@ dotnet playwright screenshot [options]
 
 Screenshots saved to `<gamePath>/LobotomyPlaywrightScreenshots/`.
 
+### command
+
+Send commands to manipulate game state or simulate player actions. This is how you interact with the game programmatically.
+
+```bash
+dotnet playwright command <action> [options]
+```
+
+**Debug Commands (state manipulation):**
+
+```bash
+# Set agent stats
+dotnet playwright command set-agent-stats --agent <id> [--hp <value>] [--mental <value>] [--fortitude <value>] [--prudence <value>] [--temperance <value>] [--justice <value>]
+
+# Add/remove E.G.O. gifts
+dotnet playwright command add-gift --agent <id> --gift <gift-id>
+dotnet playwright command remove-gift --agent <id> --gift <gift-id>
+
+# Set qliphoth counter
+dotnet playwright command set-qliphoth --creature <id> --counter <value>
+
+# Fill energy
+dotnet playwright command fill-energy
+
+# Set game speed (1-5)
+dotnet playwright command set-game-speed --speed <1-5>
+
+# Toggle agent invincibility
+dotnet playwright command set-agent-invincible --agent <id> [--invincible true|false]
+```
+
+**Player Action Simulation:**
+
+```bash
+# Pause/unpause game
+dotnet playwright command pause
+dotnet playwright command unpause
+
+# Assign agent to work
+dotnet playwright command assign-work --agent <id> --creature <id> --work <work-type>
+
+# Deploy/recall agents
+dotnet playwright command deploy-agent --agent <id> --sefira <department>
+dotnet playwright command recall-agent --agent <id>
+
+# Command suppression
+dotnet playwright command suppress --creature <id>
+```
+
+**Common Options:**
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `--host HOST` | localhost | TCP host |
+| `--port PORT` | from config | TCP port |
+
+**Work types:** `instinct`, `insight`, `attachment`, `repression`
+
+**Departments:** `BINAH`, `CHESED`, `GEBURAH`, `TIPHERETH`, `NETZACH`, `YESOD`, `MALKUTH`
+
 ## Data Model
 
 ### Agent

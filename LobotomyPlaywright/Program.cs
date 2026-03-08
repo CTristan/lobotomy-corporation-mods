@@ -50,6 +50,8 @@ public sealed class Program
                     return new WaitCommand().Run(commandArgs);
                 case "screenshot":
                     return new ScreenshotCommand().Run(commandArgs);
+                case "command":
+                    return new CommandCommand().Run(commandArgs);
                 default:
                     return HandleUnknownCommand(command);
             }
@@ -85,6 +87,7 @@ public sealed class Program
         Console.WriteLine("  read-log             Read BepInEx log files");
         Console.WriteLine("  wait event <names>   Wait for specific game events");
         Console.WriteLine("  screenshot           Capture a screenshot of the current game state");
+        Console.WriteLine("  command <action>     Send commands to the game");
         Console.WriteLine();
         Console.WriteLine("Use 'dotnet playwright <command> --help' for command-specific help.");
     }

@@ -4,24 +4,28 @@ This directory contains helper scripts to streamline common development workflow
 
 ## tool-reinstall.sh
 
-Reinstalls the **playwright** local dotnet tool with proper cache clearing.
+Reinstalls **all** local dotnet tools (ci, playwright) with proper cache clearing.
 
 ```bash
-./scripts/tool-reinstall.sh              # Reinstall playwright (default)
-./scripts/tool-reinstall.sh playwright   # Reinstall playwright explicitly
+./scripts/tool-reinstall.sh              # Reinstall all local tools (default)
+./scripts/tool-reinstall.sh all         # Reinstall all local tools
+./scripts/tool-reinstall.sh ci          # Reinstall ci only
+./scripts/tool-reinstall.sh playwright  # Reinstall playwright only
 ```
 
 ### What it does
 
-1. Cleans and rebuilds the LobotomyPlaywright project
+For each tool:
+
+1. Cleans and rebuilds the project
 2. Packs the new version to `nupkg/`
-3. Removes the NuGet cache (`~/.nuget/packages/lobotomycorporationmods.playwright/1.0.0`)
+3. Removes the NuGet cache (`~/.nuget/packages/lobotomycorporationmods.{tool}/1.0.0`)
 4. Uninstalls the local tool
 5. Reinstalls from the packed nupkg
 
 ### Why this script is necessary
 
-When you update the LobotomyPlaywright dotnet tool, the following steps are required:
+When you update any local dotnet tool, the following steps are required:
 
 1. **Clean and rebuild** - Changes need to be compiled
 2. **Repack** - The nupkg needs the new compiled DLL
@@ -30,6 +34,14 @@ When you update the LobotomyPlaywright dotnet tool, the following steps are requ
 5. **Reinstall** - Install the new version
 
 Without clearing the NuGet cache, `dotnet tool install --local` will reinstall the cached old version instead of the newly built one.
+
+### When to use
+
+**Use this script whenever you update local tools:**
+
+- After modifying `CI/` project code → run `./scripts/tool-reinstall.sh`
+- After modifying `LobotomyPlaywright/` project code → run `./scripts/tool-reinstall.sh`
+- After modifying both → run `./scripts/tool-reinstall.sh` (no arguments, reinstalls all)
 
 ## setup-reinstall.sh
 
@@ -42,16 +54,27 @@ Reinstalls the **setup** local dotnet tool with proper cache clearing.
 
 This follows the same workflow as `tool-reinstall.sh` but for the SetupExternal project.
 
+### When to use
+
+**Use this script whenever you update the setup tool:**
+
+- After modifying `SetupExternal/` project code → run `./scripts/setup-reinstall.sh`
+
 ## Usage Example
 
 ```bash
 # After making changes to LobotomyPlaywright or its plugins:
 ./scripts/tool-reinstall.sh
 
+# After making changes to CI:
+./scripts/tool-reinstall.sh
+
 # After making changes to SetupExternal:
 ./scripts/setup-reinstall.sh
 
-# Now the tool is ready to use with the latest changes:
+# Now the tools are ready to use with the latest changes:
+dotnet ci
 dotnet playwright deploy
 dotnet playwright launch
+dotnet setup
 ```

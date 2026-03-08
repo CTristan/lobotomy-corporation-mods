@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>net10.0</TargetFramework>
-        <OutputType>Library</OutputType>
+        <OutputType>Exe</OutputType>
         <IsPackable>true</IsPackable>
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>playwright</ToolCommandName>
@@ -15,7 +15,6 @@
         <Deterministic>true</Deterministic>
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-        <OutputPath>bin\</OutputPath>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <Nullable>enable</Nullable>
         <LangVersion>latest</LangVersion>
@@ -30,6 +29,7 @@
         <WarningLevel>4</WarningLevel>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     </PropertyGroup>
+
     <ItemGroup>
         <PackageReference Include="Roslynator.Analyzers" Version="1.4.0">
             <PrivateAssets>all</PrivateAssets>

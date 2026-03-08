@@ -143,31 +143,27 @@ The CI tool calculates coverage across all test projects and fails the build if 
 
 ### Rebuilding local dotnet tools
 
-The repository includes two local dotnet tools (CI and SetupExternal) that are
-packaged as NuGet packages. If you make changes to these tools, you'll need to
-rebuild and update them:
+The repository includes local dotnet tools (CI and SetupExternal) that are
+packaged as NuGet packages. Use the helper scripts in `scripts/` to rebuild and
+update these tools automatically with proper cache clearing:
 
-1. Build the tool projects and create NuGet packages:
-   ```sh
-   # It's important to clear the local NuGet cache first to ensure the tool updates
-   rm -rf ~/.nuget/packages/lobotomycorporationmods.ci
-   rm -rf ~/.nuget/packages/lobotomycorporationmods.setup
-   
-   dotnet pack CI/CI.csproj -o nupkg
-   dotnet pack SetupExternal/SetupExternal.csproj -o nupkg
-   ```
+```sh
+# Reinstall all local tools (CI, Playwright) - use this after updating any tool
+./scripts/tool-reinstall.sh
 
-2. Update the tools to use the newly built versions:
-   ```sh
-   dotnet tool uninstall lobotomycorporationmods.ci
-   dotnet tool install lobotomycorporationmods.ci --add-source ./nupkg
-   
-   dotnet tool uninstall lobotomycorporationmods.setup
-   dotnet tool install lobotomycorporationmods.setup --add-source ./nupkg
-   ```
+# Reinstall a specific tool
+./scripts/tool-reinstall.sh ci
+./scripts/tool-reinstall.sh playwright
 
-The tools are defined in `.config/dotnet-tools.json` and reference the locally
-built packages in the `nupkg` directory via `nuget.config`.
+# Reinstall the setup tool
+./scripts/setup-reinstall.sh
+```
+
+The reinstall scripts exist because `dotnet tool install --local` will silently use
+the NuGet cache instead of a freshly packed nupkg unless the cache is cleared first.
+Always use these scripts when updating local tools to ensure the latest changes are picked up.
+
+For more details, see `scripts/README.md`.
 
 ### Coding standards
 

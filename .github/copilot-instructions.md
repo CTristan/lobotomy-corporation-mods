@@ -83,11 +83,13 @@ The `scripts/` directory contains workflow shortcuts (run from the repo root):
 
 | Script | Purpose |
 |--------|---------|
-| `tool-reinstall.sh [name]` | Clean-build, repack, cache-clear, and reinstall a local dotnet tool (default: `playwright`) |
+| `tool-reinstall.sh [name|all]` | Clean-build, repack, cache-clear, and reinstall local dotnet tools. No arguments reinstalls all (ci, playwright). Specify a name to reinstall just that tool. |
 | `setup-reinstall.sh [name]` | Same workflow for the SetupExternal tool (default: `setup`) |
 | `rename-assembly.csx` | Mono.Cecil script to rename a DLL's assembly name — usage: `dotnet script scripts/rename-assembly.csx <dll> <newName>` |
 
 The reinstall scripts exist because `dotnet tool install --local` will silently use the NuGet cache instead of a freshly packed nupkg unless the cache is cleared first.
+
+**Always run `./scripts/tool-reinstall.sh` after updating any local tool (CI or Playwright).**
 
 ```sh
 # Initial setup (requires game installation + ilspycmd)
@@ -105,6 +107,11 @@ dotnet ci
 
 # CI checks — verify mode (no auto-fix)
 dotnet ci --check
+
+# After updating local tools, reinstall them
+./scripts/tool-reinstall.sh          # Reinstalls all local tools (ci, playwright)
+./scripts/tool-reinstall.sh ci       # Reinstalls just ci
+./scripts/tool-reinstall.sh playwright  # Reinstalls just playwright
 ```
 
 ### Testing conventions

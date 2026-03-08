@@ -165,23 +165,43 @@ namespace LobotomyPlaywright.Plugin.Test.Server
             var server = new TcpServer(18491);
             server.Start();
 
+            TcpClient client = null;
             try
             {
-                // Act - Connect a client
-                var client = new TcpClient();
-                client.Connect(IPAddress.Loopback, 18491);
+                // Wait for server to be ready to accept connections
+                // The server starts on a background thread, so we need to give it time to start listening
+                // We retry the connection with a delay to handle the race condition
+                var retryCount = 0;
+                const int maxRetries = 20;
+                const int retryDelayMs = 50;
 
-                // Give server time to accept
-                System.Threading.Thread.Sleep(100);
+                while (retryCount < maxRetries && client == null)
+                {
+                    try
+                    {
+                        var tempClient = new TcpClient();
+                        tempClient.Connect(IPAddress.Loopback, 18491);
+                        client = tempClient; // Connection succeeded
+                    }
+                    catch (SocketException)
+                    {
+                        retryCount++;
+                        if (retryCount < maxRetries)
+                        {
+                            System.Threading.Thread.Sleep(retryDelayMs);
+                        }
+                    }
+                }
+
+                // Give server time to accept the connection
+                System.Threading.Thread.Sleep(200);
 
                 // Assert
                 server.ClientCount.Should().BeGreaterOrEqualTo(1);
-
-                // Cleanup
-                client.Close();
             }
             finally
             {
+                client?.Close();
                 server.Stop();
             }
         }
