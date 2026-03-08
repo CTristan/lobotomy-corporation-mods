@@ -2,6 +2,10 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
+using System.Reflection;
+using System.Text;
 using BepInEx;
 using HarmonyDebugPanel.Formatting;
 using HarmonyDebugPanel.Models;
@@ -18,6 +22,10 @@ namespace HarmonyDebugPanel
     {
         private const int AutoRefreshFrameInterval = 60;
         private const int AutoRefreshDurationSeconds = 60;
+        private const string LogFolderName = "logs";
+        private const string LogFileName = "HarmonyDebugPanel.log";
+
+        private string _logFilePath;
 
         private PluginConfiguration _configuration;
         private DiagnosticReportBuilder _reportBuilder;
@@ -33,9 +41,26 @@ namespace HarmonyDebugPanel
         {
             try
             {
+                // Logger may not be initialized yet - use Debug.Log as fallback
+                if (Logger != null)
+                {
+                    Logger.LogInfo("HarmonyDebugPanel: Awake starting...");
+                }
+                else
+                {
+                    Debug.Log("HarmonyDebugPanel: Awake starting...");
+                }
+
                 if (Config == null)
                 {
-                    LogWarning("HarmonyDebugPanel: BepInEx Config is null (constructor bug?). Using defaults.");
+                    if (Logger != null)
+                    {
+                        Logger.LogWarning("HarmonyDebugPanel: BepInEx Config is null (constructor bug?). Using defaults.");
+                    }
+                    else
+                    {
+                        Debug.LogWarning("HarmonyDebugPanel: BepInEx Config is null (constructor bug?). Using defaults.");
+                    }
                 }
 
                 _startTime = Time.time;
@@ -43,51 +68,123 @@ namespace HarmonyDebugPanel
                 _reportBuilder = new DiagnosticReportBuilder();
                 _diagnosticOverlay = new DiagnosticOverlay();
 
+                // Initialize log file path
+                InitializeLogFile();
+
                 // Build initial report immediately
                 _report = _reportBuilder.BuildReport();
 
-                LogInfo("HarmonyDebugPanel fully initialized.");
+                if (Logger != null)
+                {
+                    Logger.LogInfo("HarmonyDebugPanel fully initialized.");
+                }
+                else
+                {
+                    Debug.Log("HarmonyDebugPanel fully initialized.");
+                }
             }
             catch (Exception ex)
             {
-                LogError("HarmonyDebugPanel initialization error: " + ex);
+                if (Logger != null)
+                {
+                    Logger.LogError("HarmonyDebugPanel initialization error: " + ex);
+                }
+                else
+                {
+                    Debug.LogError("HarmonyDebugPanel initialization error: " + ex);
+                }
+            }
+        }
+#pragma warning restore CA1031
+
+#pragma warning disable CA1031
+        private void InitializeLogFile()
+        {
+            try
+            {
+                // Use Assembly.GetExecutingAssembly().Location instead of Info.Location
+                // which may not be available during early startup in BaseMods context
+                var location = Assembly.GetExecutingAssembly().Location;
+
+                // Find the plugin directory - handle both Unix and Windows path separators
+                string pluginDirectory;
+                var lastSep = Math.Max(location.LastIndexOf('/'), location.LastIndexOf('\\'));
+                if (lastSep > 0)
+                {
+                    pluginDirectory = location.Substring(0, lastSep);
+                }
+                else
+                {
+                    pluginDirectory = Environment.CurrentDirectory;
+                }
+
+                var logDirectory = Path.Combine(pluginDirectory, LogFolderName);
+
+                if (!Directory.Exists(logDirectory))
+                {
+                    Directory.CreateDirectory(logDirectory);
+                }
+
+                _logFilePath = Path.Combine(logDirectory, LogFileName);
+
+                // Write initial message to log file
+                var timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
+                File.WriteAllText(_logFilePath, $"[{timestamp}] INFO: HarmonyDebugPanel log file initialized{Environment.NewLine}");
+            }
+            catch (Exception ex)
+            {
+                if (Logger != null)
+                {
+                    Logger.LogWarning("HarmonyDebugPanel: Could not initialize log file: " + ex.Message);
+                }
+                _logFilePath = null;
             }
         }
 #pragma warning restore CA1031
 
         private void LogInfo(string message)
         {
+            WriteToLogFile("INFO", message);
             if (Logger != null)
             {
                 Logger.LogInfo(message);
-            }
-            else
-            {
-                Debug.Log(message);
             }
         }
 
         private void LogWarning(string message)
         {
+            WriteToLogFile("WARN", message);
             if (Logger != null)
             {
                 Logger.LogWarning(message);
-            }
-            else
-            {
-                Debug.LogWarning(message);
             }
         }
 
         private void LogError(string message)
         {
+            WriteToLogFile("ERROR", message);
             if (Logger != null)
             {
                 Logger.LogError(message);
             }
-            else
+        }
+
+        private void WriteToLogFile(string level, string message)
+        {
+            if (string.IsNullOrEmpty(_logFilePath))
             {
-                Debug.LogError(message);
+                return;
+            }
+
+            try
+            {
+                var timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
+                var logLine = $"[{timestamp}] [{level}] {message}{Environment.NewLine}";
+                File.AppendAllText(_logFilePath, logLine, Encoding.UTF8);
+            }
+            catch (IOException)
+            {
+                // Silently ignore file write errors to prevent cascading failures
             }
         }
 
@@ -125,13 +222,12 @@ namespace HarmonyDebugPanel
                     RefreshReport();
                 }
             }
-            catch (Exception)
+            catch
             {
                 // Silently ignore Update errors to prevent cascading failures
             }
         }
 
-#pragma warning disable CA1031
         private void OnGUI()
         {
             // ALWAYS draw this test box first - no conditions
@@ -163,9 +259,7 @@ namespace HarmonyDebugPanel
                 GUI.Box(new Rect(10, 50, 400, 30), "Draw error: " + ex.Message);
             }
         }
-#pragma warning restore CA1031
 
-#pragma warning disable CA1031
         private void RefreshReport()
         {
             if (_reportBuilder == null)
@@ -182,6 +276,5 @@ namespace HarmonyDebugPanel
                 LogError("RefreshReport error: " + ex);
             }
         }
-#pragma warning restore CA1031
     }
 }
