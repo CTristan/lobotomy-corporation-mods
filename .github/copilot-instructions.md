@@ -30,6 +30,17 @@ ModName/
   Info/                 # Mod metadata XML
 ```
 
+### BepInEx patcher projects
+
+`RetargetHarmony` is a BepInEx **preloader patcher** (not a standard plugin). Key API differences from standard .NET:
+
+- **`TypeLoader.AssemblyResolve`** is a BepInEx-specific event that uses **Mono.Cecil types**, NOT the standard .NET `AppDomain.AssemblyResolve`. Its delegate signature is:
+  ```csharp
+  AssemblyDefinition handler(object sender, AssemblyNameReference reference)
+  ```
+  This is correct — do NOT change it to `System.Reflection.ResolveEventArgs` / `Assembly`.
+- **`Patch(AssemblyDefinition asm)`** receives Mono.Cecil `AssemblyDefinition` objects for IL-level modification before the runtime loads the assembly.
+
 ## Code Style
 
 ### File header

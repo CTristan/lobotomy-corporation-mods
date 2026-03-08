@@ -199,7 +199,7 @@ internal class DeployCommand
             Console.WriteLine($"  {Path.Combine(gamePath, "LobotomyCorp_Data", "BaseMods", "HarmonyDebugPanel", HarmonyDebugPanelDllName)}");
             Console.WriteLine();
             Console.WriteLine($"Would deploy {RetargetHarmonyDllName} to:");
-            Console.WriteLine($"  {Path.Combine(gamePath, "BepInEx", "patchers", RetargetHarmonyDllName)}");
+            Console.WriteLine($"  {Path.Combine(gamePath, "BepInEx", "patchers", "RetargetHarmony", RetargetHarmonyDllName)}");
             foreach (var dllName in HarmonyInteropDlls)
             {
                 Console.WriteLine();
@@ -216,7 +216,7 @@ internal class DeployCommand
         {
             var deployPluginPath = DeployDll(pluginDllPath, gamePath, "BaseMods/LobotomyPlaywright");
             var deployHarmonyDebugPanelPath = DeployDll(harmonyDebugPanelDllPath, gamePath, "BaseMods/HarmonyDebugPanel");
-            var deployRetharmonyPath = DeployDll(retharmonyDllPath, gamePath, "patchers");
+            var deployRetharmonyPath = DeployDll(retharmonyDllPath, gamePath, "patchers/RetargetHarmony");
 
             Console.WriteLine();
             Console.WriteLine("".PadRight(60, '='));
