@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using FluentAssertions;
 using Mono.Cecil;
 using Xunit;
@@ -172,6 +173,27 @@ public sealed class RetargetHarmonyTests
         targetDlls.Should().HaveCount(2, "there should be 2 target DLLs");
         targetDlls.Should().Contain("Assembly-CSharp.dll");
         targetDlls.Should().Contain("LobotomyBaseModLib.dll");
+    }
+
+    [Fact]
+    public void Finish_MethodExists()
+    {
+        // Verify Finish() method exists via reflection (BepInEx preloader contract)
+        var finishMethod = typeof(RetargetHarmony).GetMethod("Finish", BindingFlags.Public | BindingFlags.Static);
+
+        finishMethod.Should().NotBeNull("Finish() method should exist for BepInEx preloader lifecycle");
+        finishMethod.GetParameters().Should().BeEmpty("Finish() should take no parameters");
+    }
+
+    [Fact]
+    public void BaseModsPath_ComputesCorrectPath()
+    {
+        // Verify BaseModsPath computes a valid path structure
+        var baseModsPath = RetargetHarmony.BaseModsPath;
+
+        baseModsPath.Should().NotBeNullOrEmpty("BaseModsPath should not be empty");
+        baseModsPath.Should().EndWith("BaseMods", "BaseModsPath should end with BaseMods");
+        baseModsPath.Should().Contain("LobotomyCorp_Data", "BaseModsPath should contain LobotomyCorp_Data");
     }
 
     private static string GetManagedAssemblyPath(string fileName)
