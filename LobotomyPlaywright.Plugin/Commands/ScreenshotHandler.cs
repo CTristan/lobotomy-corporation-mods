@@ -2,6 +2,7 @@
 
 using System;
 using System.IO;
+using System.Threading;
 using UnityEngine;
 
 namespace LobotomyPlaywright.Commands
@@ -29,7 +30,7 @@ namespace LobotomyPlaywright.Commands
                 );
             }
 
-            // Get format parameter (base64 or path), default to path for now
+            // Get format parameter (base64 or path), default to path
             string format = "path";
             if (request.Params != null && request.Params.ContainsKey("format"))
             {
@@ -49,12 +50,83 @@ namespace LobotomyPlaywright.Commands
                 // Build expected path - typically in the game's root directory
                 string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), filename);
 
-                // Try to read the file immediately (it might not be ready yet)
+                // For base64 format, poll for the file to exist and read it
+                string base64Data = null;
                 long fileSize = 0;
-                if (File.Exists(expectedPath))
+
+                if (format == "base64")
                 {
-                    byte[] imageBytes = File.ReadAllBytes(expectedPath);
-                    fileSize = imageBytes.Length;
+                    // Poll for the file to exist on a background thread to avoid blocking Unity main thread
+                    byte[] imageBytes = null;
+                    string base64Result = null;
+                    long sizeResult = 0;
+
+                    using (var doneEvent = new ManualResetEvent(false))
+                    {
+                        ThreadPool.QueueUserWorkItem(_ =>
+                        {
+                            try
+                            {
+                                int maxAttempts = 40; // 2 seconds total (40 * 50ms)
+                                int attempt = 0;
+
+                                while (attempt < maxAttempts)
+                                {
+                                    if (File.Exists(expectedPath))
+                                    {
+                                        try
+                                        {
+                                            imageBytes = File.ReadAllBytes(expectedPath);
+                                            sizeResult = imageBytes.Length;
+                                            base64Result = Convert.ToBase64String(imageBytes);
+                                            break;
+                                        }
+                                        catch (IOException)
+                                        {
+                                            // File might be locked, retry
+                                        }
+                                    }
+                                    attempt++;
+                                    Thread.Sleep(50); // Poll every 50ms on background thread
+                                }
+                            }
+                            finally
+                            {
+                                doneEvent.Set();
+                            }
+                        });
+
+                        // Wait for background thread to complete (with timeout)
+                        if (!doneEvent.WaitOne(3000)) // 3 second timeout (extra margin)
+                        {
+                            return Protocol.Response.CreateError(
+                                request.Id,
+                                "Screenshot file not available after timeout",
+                                "SCREENSHOT_TIMEOUT"
+                            );
+                        }
+                    }
+
+                    base64Data = base64Result;
+                    fileSize = sizeResult;
+
+                    if (base64Data == null)
+                    {
+                        return Protocol.Response.CreateError(
+                            request.Id,
+                            "Screenshot file not available after 2 seconds",
+                            "SCREENSHOT_TIMEOUT"
+                        );
+                    }
+                }
+                else
+                {
+                    // For path format, try to read the file immediately (it might not be ready yet)
+                    if (File.Exists(expectedPath))
+                    {
+                        byte[] imageBytes = File.ReadAllBytes(expectedPath);
+                        fileSize = imageBytes.Length;
+                    }
                 }
 
                 string timestampUtc = DateTime.UtcNow.ToString("O");
@@ -66,8 +138,11 @@ namespace LobotomyPlaywright.Commands
                     path = expectedPath,
                     size = fileSize,
                     timestamp = timestampUtc,
-                    format = "path",
-                    note = "Screenshot capture initiated. File may not be ready immediately due to Unity's async capture."
+                    format = format,
+                    base64 = base64Data,
+                    note = format == "base64"
+                        ? "Base64-encoded screenshot data"
+                        : "Screenshot capture initiated. File may not be ready immediately due to Unity's async capture."
                 };
 
                 return Protocol.Response.CreateSuccess(request.Id, data);

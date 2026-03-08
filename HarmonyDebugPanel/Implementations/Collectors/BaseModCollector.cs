@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using HarmonyDebugPanel.Interfaces;
 using HarmonyDebugPanel.Models;
 
@@ -10,132 +9,131 @@ namespace HarmonyDebugPanel.Implementations.Collectors
 {
     public sealed class BaseModCollector : IInfoCollector<IList<ModInfo>>
     {
-        private static readonly char[] s_pathSeparators = { '/' };
+        private static readonly HashSet<string> s_frameworkAssemblies = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "mscorlib",
+            "System",
+            "System.Core",
+            "Microsoft.Xna.Framework",
+            "Microsoft.Xna.Framework.Game",
+            "UnityEditor",
+            "UnityEngine",
+            "UnityEngine.CoreModule",
+            "UnityEngine.UI",
+            "UnityEngine.Networking",
+            "0Harmony",
+            "0Harmony12",
+            "0Harmony109",
+            "BepInEx",
+            "BepInEx.Core",
+            "LobotomyBaseModLib",
+            "BepInEx.ConfigurationManager",
+            "Assembly-CSharp",
+        };
 
-        private readonly ICollectorFileSystem _fileSystem;
-        private readonly IBaseDirectoryProvider _baseDirectoryProvider;
-        private readonly IAssemblyInspectionSource _assemblySource;
+        private readonly IPatchInspectionSource _patchInspectionSource;
         private readonly IHarmonyVersionClassifier _harmonyVersionClassifier;
 
         public BaseModCollector()
-            : this(
-                new CollectorFileSystem(),
-                new AppDomainBaseDirectoryProvider(),
-                new AppDomainAssemblyInspectionSource(),
-                new HarmonyVersionClassifier())
+            : this(new HarmonyPatchInspectionSource(), new HarmonyVersionClassifier())
         {
         }
 
         public BaseModCollector(
-            ICollectorFileSystem fileSystem,
-            IBaseDirectoryProvider baseDirectoryProvider,
-            IAssemblyInspectionSource assemblySource,
+            IPatchInspectionSource patchInspectionSource,
             IHarmonyVersionClassifier harmonyVersionClassifier)
         {
-            _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
-            _baseDirectoryProvider = baseDirectoryProvider ?? throw new ArgumentNullException(nameof(baseDirectoryProvider));
-            _assemblySource = assemblySource ?? throw new ArgumentNullException(nameof(assemblySource));
+            _patchInspectionSource = patchInspectionSource ?? throw new ArgumentNullException(nameof(patchInspectionSource));
             _harmonyVersionClassifier = harmonyVersionClassifier ?? throw new ArgumentNullException(nameof(harmonyVersionClassifier));
         }
 
         public IList<ModInfo> Collect()
         {
-            var knownDirectories = GetKnownBaseModDirectories();
-            var collected = new List<ModInfo>();
-            var discoveredByAssembly = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var patches = _patchInspectionSource.GetPatches();
+            var patchesByAssembly = GroupPatchesByAssembly(patches);
+            var mods = new List<ModInfo>();
 
-            foreach (var assembly in _assemblySource.GetAssemblies())
+            foreach (var kvp in patchesByAssembly)
             {
-                if (assembly == null || string.IsNullOrEmpty(assembly.Location))
+                var assemblyName = kvp.Key;
+                var assemblyPatches = kvp.Value;
+
+                if (ShouldSkipAssembly(assemblyName))
                 {
                     continue;
                 }
 
-                string modName;
-                if (!TryGetBaseModNameFromPath(assembly.Location, out modName))
+                // Use the first patch's assembly info for version and references
+                var firstPatch = assemblyPatches[0];
+                var harmonyVersion = _harmonyVersionClassifier.Classify(firstPatch.PatchAssemblyReferences);
+
+                // Only include Harmony 1 mods
+                if (harmonyVersion != HarmonyVersion.Harmony1)
                 {
                     continue;
                 }
 
-                discoveredByAssembly.Add(modName);
-                collected.Add(new ModInfo(
-                    modName,
-                    assembly.Version,
+                mods.Add(new ModInfo(
+                    assemblyName,
+                    firstPatch.PatchAssemblyVersion,
                     ModSource.Lmm,
-                    _harmonyVersionClassifier.Classify(assembly.References),
-                    assembly.Name,
-                    string.Empty));
+                    harmonyVersion,
+                    assemblyName,
+                    string.Empty,
+                    true,
+                    assemblyPatches.Count));
             }
 
-            foreach (var knownDirectory in knownDirectories)
-            {
-                if (!discoveredByAssembly.Contains(knownDirectory))
-                {
-                    collected.Add(new ModInfo(
-                        knownDirectory,
-                        "Unknown",
-                        ModSource.Lmm,
-                        HarmonyVersion.Unknown,
-                        string.Empty,
-                        string.Empty));
-                }
-            }
-
-            return collected;
+            return mods;
         }
 
-        private List<string> GetKnownBaseModDirectories()
+        private static Dictionary<string, List<PatchInspectionInfo>> GroupPatchesByAssembly(IEnumerable<PatchInspectionInfo> patches)
         {
-            var baseDirectory = _baseDirectoryProvider.GetBaseDirectory();
-            var roots = new List<string>
-            {
-                Path.Combine(Path.Combine(baseDirectory, "LobotomyCorp_Data"), "BaseMods"),
-                Path.Combine(baseDirectory, "BaseMods"),
-            };
+            var grouped = new Dictionary<string, List<PatchInspectionInfo>>(StringComparer.OrdinalIgnoreCase);
 
-            var knownDirectories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            foreach (var root in roots)
+            foreach (var patch in patches)
             {
-                if (!_fileSystem.DirectoryExists(root))
+                // Skip null patches (defensive)
+                if (patch == null)
                 {
                     continue;
                 }
 
-                foreach (var directory in _fileSystem.EnumerateDirectories(root))
-                {
-                    var directoryName = Path.GetFileName(directory);
-                    if (!string.IsNullOrEmpty(directoryName))
-                    {
-                        knownDirectories.Add(directoryName);
-                    }
-                }
-            }
-
-            return new List<string>(knownDirectories);
-        }
-
-        public static bool TryGetBaseModNameFromPath(string path, out string modName)
-        {
-            modName = string.Empty;
-            if (string.IsNullOrEmpty(path))
-            {
-                return false;
-            }
-
-            var normalized = path.Replace('\\', '/');
-            var segments = normalized.Split(s_pathSeparators, StringSplitOptions.RemoveEmptyEntries);
-            for (var index = 0; index < segments.Length - 1; index++)
-            {
-                if (!segments[index].Equals("BaseMods", StringComparison.OrdinalIgnoreCase))
+                // Skip patches with empty assembly names
+                // Note: null is not allowed by PatchInspectionInfo constructor (throws ArgumentNullException)
+                if (string.IsNullOrEmpty(patch.PatchAssemblyName))
                 {
                     continue;
                 }
 
-                modName = segments[index + 1];
-                return !string.IsNullOrEmpty(modName);
+                if (!grouped.TryGetValue(patch.PatchAssemblyName, out var patchList))
+                {
+                    patchList = new List<PatchInspectionInfo>();
+                    grouped[patch.PatchAssemblyName] = patchList;
+                }
+
+                patchList.Add(patch);
             }
 
-            return false;
+            return grouped;
+        }
+
+        private static bool ShouldSkipAssembly(string assemblyName)
+        {
+            // Empty string indicates "no assembly name" - skip these
+            if (string.IsNullOrEmpty(assemblyName))
+            {
+                return true;
+            }
+
+            if (s_frameworkAssemblies.Contains(assemblyName))
+            {
+                return true;
+            }
+
+            return assemblyName.StartsWith("UnityEngine.", StringComparison.OrdinalIgnoreCase) ||
+                   assemblyName.StartsWith("System.", StringComparison.OrdinalIgnoreCase) ||
+                   assemblyName.StartsWith("Microsoft.", StringComparison.OrdinalIgnoreCase);
         }
     }
 }

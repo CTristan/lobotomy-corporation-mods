@@ -27,13 +27,14 @@ public sealed class ModelTests
     [Fact]
     public void PatchInfo_Constructor_AssignsValues()
     {
-        var model = new PatchInfo("TargetType", "TargetMethod", PatchType.Postfix, "owner", "PatchType.Method");
+        var model = new PatchInfo("TargetType", "TargetMethod", PatchType.Postfix, "owner", "PatchType.Method", "PatchAssembly");
 
         model.TargetType.Should().Be("TargetType");
         model.TargetMethod.Should().Be("TargetMethod");
         model.PatchType.Should().Be(PatchType.Postfix);
         model.Owner.Should().Be("owner");
         model.PatchMethod.Should().Be("PatchType.Method");
+        model.PatchAssemblyName.Should().Be("PatchAssembly");
     }
 
     [Fact]

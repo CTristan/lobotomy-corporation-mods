@@ -52,6 +52,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>BepInEx.dll</Link>
     </Content>
+    <Content Include="$(NuGetPackageRoot)harmonyx/2.7.0/lib/netstandard2.0/0Harmony.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>0Harmony.dll</Link>
+    </Content>
     <Content Include="..\external\LobotomyCorp_Data\Managed\UnityEngine.CoreModule.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>UnityEngine.CoreModule.dll</Link>

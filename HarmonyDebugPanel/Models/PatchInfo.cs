@@ -7,17 +7,18 @@ namespace HarmonyDebugPanel.Models
     public sealed class PatchInfo
     {
         public PatchInfo()
-            : this(string.Empty, string.Empty, PatchType.Prefix, string.Empty, string.Empty)
+            : this(string.Empty, string.Empty, PatchType.Prefix, string.Empty, string.Empty, string.Empty)
         {
         }
 
-        public PatchInfo(string targetType, string targetMethod, PatchType patchType, string owner, string patchMethod)
+        public PatchInfo(string targetType, string targetMethod, PatchType patchType, string owner, string patchMethod, string patchAssemblyName)
         {
             TargetType = targetType ?? throw new ArgumentNullException(nameof(targetType));
             TargetMethod = targetMethod ?? throw new ArgumentNullException(nameof(targetMethod));
             PatchType = patchType;
             Owner = owner ?? throw new ArgumentNullException(nameof(owner));
             PatchMethod = patchMethod ?? throw new ArgumentNullException(nameof(patchMethod));
+            PatchAssemblyName = patchAssemblyName ?? string.Empty;
         }
 
         public string TargetType { get; private set; }
@@ -29,5 +30,7 @@ namespace HarmonyDebugPanel.Models
         public string Owner { get; private set; }
 
         public string PatchMethod { get; private set; }
+
+        public string PatchAssemblyName { get; private set; }
     }
 }

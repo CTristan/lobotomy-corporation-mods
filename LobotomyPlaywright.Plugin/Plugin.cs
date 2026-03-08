@@ -21,34 +21,76 @@ namespace LobotomyPlaywright
 
         private void Awake()
         {
-            _instance = this;
-            _configuration = PluginConfiguration.Bind(Config);
-
-            if (!_configuration.Enabled.Value)
-            {
-                Logger.LogInfo("LobotomyPlaywright is disabled via configuration.");
-                return;
-            }
-
-            // Force MessageSerializer to initialize
-            var testResponse = Protocol.Response.CreateSuccess("init", new { test = true });
-            var testJson = Protocol.MessageSerializer.Serialize(testResponse);
-            Logger.LogInfo($"MessageSerializer test: {testJson}");
-
             try
             {
-                _tcpServer = new TcpServer(_configuration.Port.Value);
+                _instance = this;
+
+                if (Config == null)
+                {
+                    LogWarning("LobotomyPlaywright: BepInEx Config is null (constructor bug?). Using defaults.");
+                }
+
+                _configuration = PluginConfiguration.Bind(Config);
+
+                if (!_configuration.Enabled)
+                {
+                    LogInfo("LobotomyPlaywright is disabled via configuration.");
+                    return;
+                }
+
+                // Force MessageSerializer to initialize
+                var testResponse = Protocol.Response.CreateSuccess("init", new { test = true });
+                var testJson = Protocol.MessageSerializer.Serialize(testResponse);
+                LogInfo($"MessageSerializer test: {testJson}");
+
+                _tcpServer = new TcpServer(_configuration.Port);
                 _tcpServer.Start();
 
                 // Initialize event streaming
                 EventSubscriptionManager.Initialize(_tcpServer);
 
-                Logger.LogInfo($"LobotomyPlaywright v{PluginConstants.PluginVersion} initialized.");
-                Logger.LogInfo($"TCP server listening on 127.0.0.1:{_configuration.Port.Value}");
+                LogInfo($"LobotomyPlaywright v{PluginConstants.PluginVersion} initialized.");
+                LogInfo($"TCP server listening on 127.0.0.1:{_configuration.Port}");
             }
             catch (System.Exception ex)
             {
-                Logger.LogError($"Failed to start TCP server: {ex.Message}");
+                LogError($"LobotomyPlaywright initialization error: {ex.Message}");
+            }
+        }
+
+        private void LogInfo(string message)
+        {
+            if (Logger != null)
+            {
+                Logger.LogInfo(message);
+            }
+            else
+            {
+                Debug.Log(message);
+            }
+        }
+
+        private void LogWarning(string message)
+        {
+            if (Logger != null)
+            {
+                Logger.LogWarning(message);
+            }
+            else
+            {
+                Debug.LogWarning(message);
+            }
+        }
+
+        private void LogError(string message)
+        {
+            if (Logger != null)
+            {
+                Logger.LogError(message);
+            }
+            else
+            {
+                Debug.LogError(message);
             }
         }
 
@@ -60,20 +102,6 @@ namespace LobotomyPlaywright
 
                 // Try to subscribe to events if not already done
                 Events.EventSubscriptionManager.TrySubscribeToEvents();
-
-                // Debug: Log current scene once per second
-                if (Time.frameCount % 60 == 0)
-                {
-                    try
-                    {
-                        var sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
-                        Logger.LogInfo($"Current scene: {sceneName}, clientCount={_tcpServer.ClientCount}");
-                    }
-                    catch (System.Exception ex)
-                    {
-                        Logger.LogWarning($"Could not get scene name: {ex.Message}");
-                    }
-                }
             }
         }
 
@@ -88,7 +116,7 @@ namespace LobotomyPlaywright
             // Shutdown event streaming
             EventSubscriptionManager.Shutdown();
 
-            Logger.LogInfo("LobotomyPlaywright TCP server stopped.");
+            LogInfo("LobotomyPlaywright TCP server stopped.");
         }
     }
 }

@@ -14,6 +14,8 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
         public QueryRouterTests()
         {
             SetGameReady(false);
+            // Disable thread check for testing - tests run on thread pool threads
+            UiQueries.DisableThreadCheckForTesting();
         }
 
         public void Dispose()
@@ -306,6 +308,120 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             response.Should().NotBeNull();
             response.status.Should().Be("error");
             response.error.Should().NotBeNullOrEmpty();
+        }
+
+        [Fact]
+        public void HandleQuery_ui_target_returns_success()
+        {
+            // Arrange - UI queries work regardless of game state
+            var request = new Request
+            {
+                id = "req-1",
+                type = "query",
+                target = "ui",
+                @params = new Dictionary<string, object>()
+            };
+
+            // Act
+            var response = QueryRouter.HandleQuery(request);
+
+            // Assert
+            response.Should().NotBeNull();
+            if (response.status == "error")
+            {
+                System.Console.WriteLine($"UI query error: {response.error}, code: {response.code}");
+            }
+            response.status.Should().Be("ok");
+            response.DataObject.Should().NotBeNull();
+            response.id.Should().Be("req-1");
+        }
+
+        [Fact]
+        public void HandleQuery_ui_target_case_insensitive()
+        {
+            // Arrange
+            var request = new Request
+            {
+                id = "req-1",
+                type = "query",
+                target = "UI",
+                @params = new Dictionary<string, object>()
+            };
+
+            // Act
+            var response = QueryRouter.HandleQuery(request);
+
+            // Assert
+            response.Should().NotBeNull();
+            response.status.Should().Be("ok");
+            response.DataObject.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void HandleQuery_ui_with_depth_summary()
+        {
+            // Arrange
+            var request = new Request
+            {
+                id = "req-1",
+                type = "query",
+                target = "ui",
+                @params = new Dictionary<string, object> { { "depth", "summary" } }
+            };
+
+            // Act
+            var response = QueryRouter.HandleQuery(request);
+
+            // Assert
+            response.Should().NotBeNull();
+            response.status.Should().Be("ok");
+            response.DataObject.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void HandleQuery_ui_with_window_filter()
+        {
+            // Arrange
+            var request = new Request
+            {
+                id = "req-1",
+                type = "query",
+                target = "ui",
+                @params = new Dictionary<string, object>
+                {
+                    { "depth", "window" },
+                    { "name", "AgentInfoWindow" }
+                }
+            };
+
+            // Act
+            var response = QueryRouter.HandleQuery(request);
+
+            // Assert
+            response.Should().NotBeNull();
+            response.status.Should().Be("ok");
+            response.DataObject.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void HandleQuery_ui_data_has_expected_structure()
+        {
+            // Arrange
+            var request = new Request
+            {
+                id = "req-1",
+                type = "query",
+                target = "ui"
+            };
+
+            // Act
+            var response = QueryRouter.HandleQuery(request);
+
+            // Assert - The data should be a UiStateData object
+            response.Should().NotBeNull();
+            response.status.Should().Be("ok");
+            response.DataObject.Should().NotBeNull();
+            response.DataObject.Should().BeOfType<UiStateData>();
         }
     }
 }

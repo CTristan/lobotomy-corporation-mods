@@ -36,7 +36,8 @@ namespace HarmonyDebugPanel.Implementations.Collectors
                     patch.TargetMethod,
                     patch.PatchType,
                     patch.Owner,
-                    patch.PatchMethod));
+                    patch.PatchMethod,
+                    patch.PatchAssemblyName));
             }
 
             return results;

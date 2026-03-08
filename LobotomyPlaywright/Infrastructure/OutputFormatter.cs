@@ -171,6 +171,106 @@ public static class OutputFormatter
             """.Trim();
     }
 
+    /// <summary>
+    /// Formats UI state for display.
+    /// </summary>
+    /// <param name="uiState">UI state dictionary.</param>
+    /// <returns>Formatted string.</returns>
+    public static string FormatUiState(Dictionary<string, object> uiState)
+    {
+        ArgumentNullException.ThrowIfNull(uiState, nameof(uiState));
+
+        var windows = GetList<Dictionary<string, object>>(uiState, "windows");
+        var activatedSlots = GetList<string>(uiState, "activatedSlots");
+        var modElements = GetList<Dictionary<string, object>>(uiState, "modElements");
+
+        var result = new System.Text.StringBuilder();
+        result.AppendLine("UI Accessibility Tree:");
+        result.AppendLine();
+
+        // Format windows
+        result.AppendLine($"Windows ({windows.Count}):");
+        foreach (var window in windows)
+        {
+            var name = GetValue<string>(window, "name", "Unknown");
+            var isOpen = GetValue<bool>(window, "isOpen", false);
+            var windowType = GetValue<string>(window, "windowType", "Unknown");
+            var children = GetList<Dictionary<string, object>>(window, "children");
+
+            var status = isOpen ? "OPEN" : "CLOSED";
+            result.AppendLine($"  [{status}] {name} ({windowType})");
+
+            if (isOpen && children.Count > 0)
+            {
+                var displayChildren = children.Count > 10 ? children.GetRange(0, 10) : children;
+                foreach (var child in displayChildren)
+                {
+                    var path = GetValue<string>(child, "path", "");
+                    var type = GetValue<string>(child, "type", "other");
+                    var value = GetValue<string>(child, "value", "");
+                    var interactable = GetValue<bool>(child, "interactable", false);
+
+                    var interactableSymbol = interactable ? "[*]" : "[ ]";
+                    var displayValue = value.Length > 30 ? string.Concat(value.AsSpan(0, 27), "...") : value;
+
+                    if (!string.IsNullOrEmpty(value))
+                    {
+                        result.AppendLine($"    {interactableSymbol} {type}: {path} = \"{displayValue}\"");
+                    }
+                    else
+                    {
+                        result.AppendLine($"    {interactableSymbol} {type}: {path}");
+                    }
+                }
+
+                if (children.Count > 10)
+                {
+                    result.AppendLine($"    ... and {children.Count - 10} more elements");
+                }
+            }
+        }
+
+        result.AppendLine();
+
+        // Format activated slots
+        result.AppendLine("Activated Slots (0-4):");
+        for (int i = 0; i < 5; i++)
+        {
+            var slot = i < activatedSlots.Count ? activatedSlots[i] : null;
+            var slotDisplay = slot ?? "Empty";
+            result.AppendLine($"  Slot {i}: {slotDisplay}");
+        }
+
+        result.AppendLine();
+
+        // Format mod elements
+        if (modElements.Count > 0)
+        {
+            result.AppendLine($"Mod Elements ({modElements.Count}):");
+            foreach (var mod in modElements)
+            {
+                var path = GetValue<string>(mod, "path", "");
+                var type = GetValue<string>(mod, "type", "other");
+                var value = GetValue<string>(mod, "value", "");
+
+                if (!string.IsNullOrEmpty(value))
+                {
+                    result.AppendLine($"  {type}: {path} = \"{value}\"");
+                }
+                else
+                {
+                    result.AppendLine($"  {type}: {path}");
+                }
+            }
+        }
+        else
+        {
+            result.AppendLine("Mod Elements: None detected");
+        }
+
+        return result.ToString().TrimEnd();
+    }
+
     private static T GetValue<T>(Dictionary<string, object> dict, string key, T defaultValue)
     {
         if (dict.TryGetValue(key, out var value) && value is T typedValue)

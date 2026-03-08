@@ -11,30 +11,28 @@ namespace LobotomyPlaywright
         {
         }
 
-        public ConfigEntry<bool> Enabled { get; private set; }
+        public bool Enabled { get; private set; } = true;
 
-        public ConfigEntry<int> Port { get; private set; }
+        public int Port { get; private set; } = 8484;
 
         public static PluginConfiguration Bind(ConfigFile config)
         {
+            var settings = new PluginConfiguration();
             if (config == null)
             {
-                throw new ArgumentNullException(nameof(config));
+                return settings;
             }
 
-            var settings = new PluginConfiguration
-            {
-                Enabled = config.Bind(
-                    "General",
-                    "Enabled",
-                    true,
-                    new ConfigDescription("Whether the LobotomyPlaywright TCP server is enabled.")),
-                Port = config.Bind(
-                    "General",
-                    "Port",
-                    8484,
-                    new ConfigDescription("TCP port for the LobotomyPlaywright server.")),
-            };
+            settings.Enabled = config.Bind(
+                "General",
+                "Enabled",
+                true,
+                new ConfigDescription("Whether the LobotomyPlaywright TCP server is enabled.")).Value;
+            settings.Port = config.Bind(
+                "General",
+                "Port",
+                8484,
+                new ConfigDescription("TCP port for the LobotomyPlaywright server.")).Value;
 
             return settings;
         }

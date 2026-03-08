@@ -146,14 +146,7 @@ internal class ReadLogCommand
 
         try
         {
-            var content = _fileSystem.ReadAllText(logPath);
-
-            if (content == null)
-            {
-                Console.Error.WriteLine("ERROR: Failed to read log file (null content returned).");
-                return;
-            }
-
+            var content = _fileSystem.ReadAllText(logPath) ?? string.Empty;
             var lines = content.Split('\n');
 
             if (string.IsNullOrEmpty(filter))

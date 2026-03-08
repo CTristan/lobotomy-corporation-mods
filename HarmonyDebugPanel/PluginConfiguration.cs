@@ -12,58 +12,56 @@ namespace HarmonyDebugPanel
         {
         }
 
-        public ConfigEntry<KeyCode> OverlayToggleHotkey { get; private set; }
+        public KeyCode OverlayToggleHotkey { get; private set; } = KeyCode.F9;
 
-        public ConfigEntry<KeyCode> RefreshHotkey { get; private set; }
+        public KeyCode RefreshHotkey { get; private set; } = KeyCode.F10;
 
-        public ConfigEntry<bool> ShowBepInExPlugins { get; private set; }
+        public bool ShowBepInExPlugins { get; private set; } = true;
 
-        public ConfigEntry<bool> ShowLmmMods { get; private set; }
+        public bool ShowLmmMods { get; private set; } = true;
 
-        public ConfigEntry<bool> ShowActivePatches { get; private set; }
+        public bool ShowActivePatches { get; private set; } = true;
 
-        public ConfigEntry<bool> ShowAssemblyInfo { get; private set; }
+        public bool ShowAssemblyInfo { get; private set; } = true;
 
         public static PluginConfiguration Bind(ConfigFile config)
         {
+            var settings = new PluginConfiguration();
             if (config == null)
             {
-                throw new ArgumentNullException(nameof(config));
+                return settings;
             }
 
-            var settings = new PluginConfiguration
-            {
-                OverlayToggleHotkey = config.Bind(
-                    "General",
-                    "OverlayToggleHotkey",
-                    KeyCode.F9,
-                    new ConfigDescription("Hotkey used to toggle the Harmony diagnostic overlay.")),
-                RefreshHotkey = config.Bind(
-                    "General",
-                    "RefreshHotkey",
-                    KeyCode.F10,
-                    new ConfigDescription("Hotkey used to refresh diagnostic data.")),
-                ShowBepInExPlugins = config.Bind(
-                    "Sections",
-                    "ShowBepInExPlugins",
-                    true,
-                    new ConfigDescription("Show the BepInEx plugins section in the overlay.")),
-                ShowLmmMods = config.Bind(
-                    "Sections",
-                    "ShowLmmMods",
-                    true,
-                    new ConfigDescription("Show the LMM/Basemod mods section in the overlay.")),
-                ShowActivePatches = config.Bind(
-                    "Sections",
-                    "ShowActivePatches",
-                    true,
-                    new ConfigDescription("Show the active Harmony patches section in the overlay.")),
-                ShowAssemblyInfo = config.Bind(
-                    "Sections",
-                    "ShowAssemblyInfo",
-                    true,
-                    new ConfigDescription("Show the loaded assembly info section in the overlay.")),
-            };
+            settings.OverlayToggleHotkey = config.Bind(
+                "General",
+                "OverlayToggleHotkey",
+                KeyCode.F9,
+                new ConfigDescription("Hotkey used to toggle the Harmony diagnostic overlay.")).Value;
+            settings.RefreshHotkey = config.Bind(
+                "General",
+                "RefreshHotkey",
+                KeyCode.F10,
+                new ConfigDescription("Hotkey used to refresh diagnostic data.")).Value;
+            settings.ShowBepInExPlugins = config.Bind(
+                "Sections",
+                "ShowBepInExPlugins",
+                true,
+                new ConfigDescription("Show the BepInEx plugins section in the overlay.")).Value;
+            settings.ShowLmmMods = config.Bind(
+                "Sections",
+                "ShowLmmMods",
+                true,
+                new ConfigDescription("Show the LMM/Basemod mods section in the overlay.")).Value;
+            settings.ShowActivePatches = config.Bind(
+                "Sections",
+                "ShowActivePatches",
+                true,
+                new ConfigDescription("Show the active Harmony patches section in the overlay.")).Value;
+            settings.ShowAssemblyInfo = config.Bind(
+                "Sections",
+                "ShowAssemblyInfo",
+                true,
+                new ConfigDescription("Show the loaded assembly info section in the overlay.")).Value;
 
             return settings;
         }

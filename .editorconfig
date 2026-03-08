@@ -217,6 +217,7 @@ resharper_wrap_object_and_collection_initializer_style = chop_always
 # Test classes in LobotomyPlaywright.Test must be public for xUnit
 [**/LobotomyPlaywright.Test/**/*.cs]
 dotnet_diagnostic.CA1515.severity = none
+dotnet_diagnostic.CA1861.severity = none
 
 # Explicitly disable internal class code fixer for LobotomyPlaywright test classes
 [**/LobotomyPlaywright.Test/**/*Tests.cs]

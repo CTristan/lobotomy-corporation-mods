@@ -172,9 +172,36 @@ internal class QueryCommand
                     }
                     break;
 
+                case "ui":
+                    var depth = GetArgValue(args, "--depth") ?? "full";
+                    var windowName = GetArgValue(args, "--name");
+                    var uiParams = new Dictionary<string, object>();
+
+                    if (depth != "full")
+                    {
+                        uiParams["depth"] = depth;
+                    }
+
+                    if (windowName != null)
+                    {
+                        uiParams["name"] = windowName;
+                    }
+
+                    var uiData = client.Query("ui", uiParams);
+
+                    if (jsonOutput)
+                    {
+                        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(uiData, new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
+                    }
+                    else
+                    {
+                        Console.WriteLine(OutputFormatter.FormatUiState(uiData));
+                    }
+                    break;
+
                 default:
                     Console.Error.WriteLine($"Unknown target: {target}");
-                    Console.Error.WriteLine("Valid targets: agents, creatures, game, departments");
+                    Console.Error.WriteLine("Valid targets: agents, creatures, game, departments, ui");
                     return 1;
             }
 
@@ -197,11 +224,17 @@ internal class QueryCommand
         Console.WriteLine("  creatures [id]      Query all abnormalities or a specific one by ID");
         Console.WriteLine("  game                Query game state overview");
         Console.WriteLine("  departments         Query department status");
+        Console.WriteLine("  ui                  Query UI accessibility tree (how the agent \"sees\" the game)");
         Console.WriteLine();
         Console.WriteLine("Options:");
         Console.WriteLine("  --host HOST         Connect to specific host (default: localhost)");
         Console.WriteLine("  --port PORT         Connect to specific port (default: from config)");
         Console.WriteLine("  --json              Output raw JSON instead of formatted text");
+        Console.WriteLine();
+        Console.WriteLine("UI query options:");
+        Console.WriteLine("  --depth summary     Show window states only (Tier 1)");
+        Console.WriteLine("  --depth full        Show windows + child elements (default, Tier 1 + Tier 2)");
+        Console.WriteLine("  --name <window>     Query only the specified window (e.g., AgentInfoWindow)");
     }
 
     private static string? GetArgValue(string[] args, string argName)

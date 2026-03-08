@@ -85,43 +85,51 @@ internal class LaunchCommand
 
         // Check if game is already running
         var existingPids = _processManager.FindGameProcesses();
-        if (existingPids.Count > 0 && !force)
+        if (existingPids.Count > 0)
         {
-            Console.WriteLine($"Game is already running (PID: {existingPids[0]})");
+            Console.WriteLine($"Game is already running (PID: {string.Join(", ", existingPids)}). Stopping it first...");
 
-            if (noWait)
+            bool stopped = false;
+            if (!force && IsTcpPortOpen(host, port))
             {
-                return 0;
+                stopped = TryGracefulShutdown(host, port, config.ShutdownTimeoutSeconds);
             }
 
-            // Check if it's ready
-            if (IsTcpPortOpen(host, port))
+            if (!stopped)
             {
-                Console.WriteLine("TCP server is already responsive");
-
-                var (success, gameState) = WaitPluginReady(host, port, 5);
-                if (success)
+                if (!force)
                 {
-                    if (gameState != null)
-                    {
-                        Console.WriteLine();
-                        PrintGameState((Dictionary<string, object>)gameState);
-                    }
-
-                    return 0;
+                    Console.WriteLine("Graceful shutdown failed or not available, force killing...");
                 }
+                else
+                {
+                    Console.WriteLine("Force flag set, killing processes immediately...");
+                }
+
+                _processManager.KillProcesses(existingPids, force: true);
             }
 
-            Console.WriteLine("Use --force to relaunch (will kill existing process)");
-            return 1;
-        }
+            // Wait for processes to fully exit
+            var stopWaitStartTime = DateTime.UtcNow;
+            var stopSuccess = false;
+            while ((DateTime.UtcNow - stopWaitStartTime).TotalSeconds < 10)
+            {
+                if (_processManager.FindGameProcesses().Count == 0)
+                {
+                    stopSuccess = true;
+                    break;
+                }
+                Thread.Sleep(500);
+            }
 
-        // Kill existing process if --force
-        if (existingPids.Count > 0 && force)
-        {
-            Console.WriteLine($"Killing existing game process (PID: {existingPids[0]})...");
-            _processManager.KillProcesses(existingPids, force: true);
-            Thread.Sleep(1000);
+            if (!stopSuccess)
+            {
+                Console.Error.WriteLine("ERROR: Failed to stop existing game process. Cannot launch new instance.");
+                return 1;
+            }
+
+            Console.WriteLine("Existing game instance stopped.");
+            Thread.Sleep(1000); // Small buffer
         }
 
         // Launch the game
@@ -187,6 +195,71 @@ internal class LaunchCommand
         }
 
         return 0;
+    }
+
+    private static bool TryGracefulShutdown(string host, int port, double timeout)
+    {
+        Console.WriteLine("Attempting graceful TCP shutdown...");
+
+        try
+        {
+            using var client = new TcpClient();
+            client.ReceiveTimeout = 2000;
+            client.SendTimeout = 2000;
+            client.Connect(host, port);
+
+            var stream = client.GetStream();
+            var command = new { type = "command", action = "shutdown", @params = new { } };
+            var message = JsonSerializer.Serialize(command) + "\n";
+            var bytes = System.Text.Encoding.UTF8.GetBytes(message);
+            stream.Write(bytes, 0, bytes.Length);
+
+            // Wait for acknowledgment
+            try
+            {
+                var buffer = new byte[4096];
+                var bytesRead = stream.Read(buffer, 0, buffer.Length);
+
+                if (bytesRead > 0)
+                {
+                    var responseJson = System.Text.Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                    var response = JsonSerializer.Deserialize<Dictionary<string, object>>(responseJson);
+                    if (response != null && response.TryGetValue("status", out var status) && status?.ToString() == "ok")
+                    {
+                        Console.WriteLine("  Shutdown command acknowledged");
+                    }
+                }
+            }
+            catch
+            {
+                // Ignore acknowledgment errors
+            }
+        }
+        catch (Exception ex) when (ex is SocketException || ex is InvalidOperationException)
+        {
+            Console.WriteLine($"  ⚠ TCP connection failed: {ex.Message}");
+            Console.WriteLine("  Proceeding to force kill");
+            return false;
+        }
+
+        // Wait for process to exit
+        Console.WriteLine($"  Waiting for process to exit (timeout: {timeout}s)...");
+        var startTime = DateTime.UtcNow;
+
+        while ((DateTime.UtcNow - startTime).TotalSeconds < timeout)
+        {
+            var pids = ProcessManagerStatic.FindGameProcessesStatic();
+            if (pids.Count == 0)
+            {
+                Console.WriteLine("  ✓ Game stopped gracefully");
+                return true;
+            }
+
+            Thread.Sleep(500);
+        }
+
+        Console.WriteLine("  ⚠ Timeout exceeded, proceeding to force kill");
+        return false;
     }
 
     private static void LaunchGame(string gamePath, string? bottleName)

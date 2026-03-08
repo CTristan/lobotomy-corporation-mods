@@ -223,11 +223,11 @@ internal class DeployCommand
             Console.WriteLine("Deployment Summary");
             Console.WriteLine("".PadRight(60, '='));
             Console.WriteLine($"Plugin: {deployPluginPath}");
-            Console.WriteLine($"Size: {new FileInfo(deployPluginPath).Length:N0} bytes");
+            Console.WriteLine($"Size: {_fileSystem.GetFileSize(deployPluginPath):N0} bytes");
             Console.WriteLine($"HarmonyDebugPanel: {deployHarmonyDebugPanelPath}");
-            Console.WriteLine($"Size: {new FileInfo(deployHarmonyDebugPanelPath).Length:N0} bytes");
+            Console.WriteLine($"Size: {_fileSystem.GetFileSize(deployHarmonyDebugPanelPath):N0} bytes");
             Console.WriteLine($"RetargetHarmony: {deployRetharmonyPath}");
-            Console.WriteLine($"Size: {new FileInfo(deployRetharmonyPath).Length:N0} bytes");
+            Console.WriteLine($"Size: {_fileSystem.GetFileSize(deployRetharmonyPath):N0} bytes");
 
             foreach (var dllName in HarmonyInteropDlls)
             {
@@ -286,7 +286,7 @@ internal class DeployCommand
         }
 
         Console.WriteLine($"Built: {dllPath}");
-        Console.WriteLine($"Size: {new FileInfo(dllPath).Length:N0} bytes");
+        Console.WriteLine($"Size: {_fileSystem.GetFileSize(dllPath):N0} bytes");
 
         return dllPath;
     }
@@ -303,11 +303,11 @@ internal class DeployCommand
         // Create destination directory if it doesn't exist
         if (!_fileSystem.DirectoryExists(destDir))
         {
-            Directory.CreateDirectory(destDir);
+            _fileSystem.CreateDirectory(destDir);
         }
 
         // Copy the DLL
-        File.Copy(sourceDll, destDll, true);
+        _fileSystem.CopyFile(sourceDll, destDll, true);
 
         // Verify deployment
         if (!_fileSystem.FileExists(destDll))
@@ -315,14 +315,14 @@ internal class DeployCommand
             throw new IOException($"Failed to copy {Path.GetFileName(sourceDll)} to {destDll}");
         }
 
-        var fileInfo = new FileInfo(destDll);
-        if (fileInfo.Length == 0)
+        var fileSize = _fileSystem.GetFileSize(destDll);
+        if (fileSize == 0)
         {
             throw new IOException($"Deployed DLL is empty: {destDll}");
         }
 
         Console.WriteLine($"Deployed: {destDll}");
-        Console.WriteLine($"Size: {fileInfo.Length:N0} bytes");
+        Console.WriteLine($"Size: {fileSize:N0} bytes");
 
         return destDll;
     }
@@ -340,33 +340,31 @@ internal class DeployCommand
 
         var destPath = DeployDll(sourceDll, gamePath, "core");
         Console.WriteLine($"Interop: {destPath}");
-        Console.WriteLine($"Size: {new FileInfo(destPath).Length:N0} bytes");
+        Console.WriteLine($"Size: {_fileSystem.GetFileSize(destPath):N0} bytes");
     }
 
-    private static string? FindRepositoryRoot()
+    private string? FindRepositoryRoot()
     {
-        var currentDir = Directory.GetCurrentDirectory();
-        var dir = new DirectoryInfo(currentDir);
+        var currentDir = _fileSystem.GetCurrentDirectory();
+        var dir = currentDir;
 
-        while (dir != null)
+        while (!string.IsNullOrEmpty(dir))
         {
-            if (_fileSystemStatic.DirectoryExists(Path.Combine(dir.FullName, ".git")))
+            if (_fileSystem.DirectoryExists(Path.Combine(dir, ".git")))
             {
-                return dir.FullName;
+                return dir;
             }
 
-            if (_fileSystemStatic.FileExists(Path.Combine(dir.FullName, "LobotomyCorporationMods.sln")))
+            if (_fileSystem.FileExists(Path.Combine(dir, "LobotomyCorporationMods.sln")))
             {
-                return dir.FullName;
+                return dir;
             }
 
-            dir = dir.Parent;
+            dir = Path.GetDirectoryName(dir);
         }
 
         return null;
     }
-
-    private static readonly FileSystem _fileSystemStatic = new();
 
     private static string? GetArgValue(string[] args, string argName)
     {

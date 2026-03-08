@@ -23,7 +23,7 @@ public sealed class DiagnosticLogFormatterTests
 
         report.Mods.Add(new ModInfo("Plugin", "1.0.0", ModSource.BepInExPlugin, HarmonyVersion.Harmony2, "PluginAssembly", "plugin.id"));
         report.Mods.Add(new ModInfo("BaseMod", "1.0.0", ModSource.Lmm, HarmonyVersion.Harmony1, "BaseModAssembly", string.Empty));
-        report.Patches.Add(new PatchInfo("Type", "Method", PatchType.Postfix, "owner", "patch"));
+        report.Patches.Add(new PatchInfo("Type", "Method", PatchType.Postfix, "owner", "patch", "PatchAssembly"));
         report.Warnings.Add("collector warning");
 
         var lines = DiagnosticLogFormatter.Format(report);

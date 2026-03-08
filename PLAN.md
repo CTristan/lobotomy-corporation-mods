@@ -124,6 +124,24 @@ This applies to both the C# plugin and the dotnet pi skill tool independently:
 - The agent can run reproducible mod test scenarios against a live game.
 - **≥80% test coverage** on workflow orchestration logic and scenario scripts.
 
+### Phase 5 — OCR & template matching
+
+- The dotnet tool can extract text from game screenshots via OCR (Tesseract)
+  and locate UI elements via template matching (NCC with ImageSharp).
+- The pi agent uses these as tools for agent-driven automation: screenshot →
+  find UI elements → read text → make decisions.
+- All vision processing runs on the CLI side (net10.0), not in the Unity plugin.
+- **≥80% test coverage** on OCR engine, template matcher, image loader, and
+  CLI commands.
+
+### Phase 6 — Named vision regions
+
+- A `regions.json` config maps named regions to ROI coordinates and/or template
+  image paths, so the agent can use `--region energy_bar` instead of raw
+  coordinates.
+- Integrates with both `ocr` and `match` commands via `--region <name>`.
+- **≥80% test coverage** on region config loading and resolution.
+
 ## Architecture
 
 ### Components
@@ -632,16 +650,16 @@ accessibility tree — so the agent can "see" the game's visual/UI state as text
 
 #### Plugin: UI data classes
 
-- [ ] Create `Queries/UiNodeData.cs`
+- [x] Create `Queries/UiNodeData.cs`
   - `[Serializable]` data class following `GameStateData.cs` pattern
   - Fields: `path` (string), `type` (string: "text"/"button"/"toggle"/"slider"/"image"),
     `value` (string), `interactable` (bool)
 
-- [ ] Create `Queries/UiWindowData.cs`
+- [x] Create `Queries/UiWindowData.cs`
   - Fields: `name` (string), `isOpen` (bool), `windowType` (string),
     `children` (List\<UiNodeData\>)
 
-- [ ] Create `Queries/UiStateData.cs`
+- [x] Create `Queries/UiStateData.cs`
   - Fields: `windows` (List\<UiWindowData\>), `activatedSlots` (string[]),
     `modElements` (List\<UiNodeData\>)
 
@@ -715,11 +733,11 @@ accessibility tree — so the agent can "see" the game's visual/UI state as text
 
 #### Phase 1.75 completion checklist
 
-- [ ] `dotnet playwright query ui` returns structured UI state from running game
-- [ ] `dotnet playwright query ui --json` returns valid JSON
-- [ ] `dotnet playwright screenshot --format base64` includes base64 image data
-- [ ] Plugin coverage ≥80% on UI query code
-- [ ] Dotnet tool coverage ≥80% on UI query formatting
+- [x] `dotnet playwright query ui` returns structured UI state from running game
+- [x] `dotnet playwright query ui --json` returns valid JSON
+- [x] `dotnet playwright screenshot --format base64` includes base64 image data
+- [x] Plugin coverage ≥80% on UI query code
+- [x] Dotnet tool coverage ≥80% on UI query formatting
 
 ### Phase 2 — Event streaming
 
@@ -874,6 +892,187 @@ accessibility tree — so the agent can "see" the game's visual/UI state as text
 - [ ] Dotnet tool coverage ≥80% overall (Coverlet report)
 - [ ] At least one full mod test scenario runs end-to-end against a live game
 
+### Phase 5 — OCR & template matching
+
+**Status:** Not started
+
+Inspired by [MaaAssistantArknights](https://github.com/MaaAssistantArknights/MaaAssistantArknights)
+which uses PaddleOCR + OpenCV to drive game automation via screenshots, this
+phase adds OCR and template matching as CLI tools for agent-driven automation.
+Unlike MAA's pre-scripted JSON task sequences, our system is agent-driven —
+Claude decides what to do based on OCR/match results.
+
+**Technology choices:**
+- **OCR engine:** Tesseract via `Tesseract` NuGet package — LSTM-based
+  recognition, English only, macOS support via `brew install tesseract`,
+  requires `eng.traineddata` (~4MB). PaddleOCR/ONNX was considered but adds
+  significant complexity (3+ model files, custom inference pipeline) for
+  comparable accuracy on clean English game UI text.
+- **Image processing:** `SixLabors.ImageSharp` — pure managed C#, no native
+  dependencies, works on macOS ARM64. Handles ROI cropping, grayscale
+  conversion, thresholding.
+- **Template matching:** Normalized cross-correlation (NCC) implemented with
+  ImageSharp pixel access. Sufficient for matching known game UI elements
+  against screenshots. OpenCvSharp was considered but requires native OpenCV
+  binaries (complex on macOS Apple Silicon).
+
+**New CLI commands:**
+- `dotnet playwright ocr` — capture screenshot → optional ROI crop →
+  preprocess → Tesseract OCR → return text + bounding boxes as JSON
+- `dotnet playwright match` — capture screenshot → optional ROI crop → NCC
+  template matching → return locations + confidence as JSON
+
+#### Phase 5a: Image loading foundation
+
+- [ ] Add `SixLabors.ImageSharp` to `LobotomyPlaywright.csproj`
+- [ ] Create `Vision/RoiSpec.cs` — ROI data model (`X`, `Y`, `Width`, `Height`)
+- [ ] Create `Vision/IImageLoader.cs` — interface for image acquisition and
+  preprocessing
+- [ ] Create `Vision/ImageLoader.cs` — load from file path or base64, crop ROI,
+  grayscale/threshold preprocessing
+- [ ] Write `LobotomyPlaywright.Test/Vision/ImageLoaderTests.cs`
+
+#### Phase 5b: OCR command
+
+- [ ] Add `Tesseract` NuGet package to `LobotomyPlaywright.csproj`
+- [ ] Create `Vision/OcrResult.cs` — data models:
+  - `OcrTextBlock`: `Text`, `Confidence`, `X`, `Y`, `Width`, `Height`
+  - `OcrResult`: `FullText`, `Blocks[]`, `ImageWidth`, `ImageHeight`, `Roi?`,
+    `ElapsedMs`
+- [ ] Create `Vision/IOcrEngine.cs` — interface for OCR (testability)
+- [ ] Create `Vision/TesseractOcrEngine.cs` — Tesseract wrapper implementation
+- [ ] Create `Commands/OcrCommand.cs` — CLI command following
+  `ScreenshotCommand` pattern (constructor injection with `IConfigManager`,
+  `Func<ITcpClient>`, arg parsing via `GetArgValue()`)
+  - Args: `--roi x,y,w,h`, `--display text|json`, `--host`, `--port`,
+    `--input <path>`, `--threshold 0-100`,
+    `--preprocess none|grayscale|threshold`, `--region <name>`
+  - Pipeline: acquire image → crop ROI → preprocess → Tesseract → filter by
+    confidence → format output
+- [ ] Extend `OutputFormatter` with `FormatOcrResult` (text table + JSON modes)
+- [ ] Add `"ocr"` case to `Program.cs` switch + update `PrintUsage()`
+- [ ] Write `LobotomyPlaywright.Test/Commands/OcrCommandTests.cs`
+- [ ] Write `LobotomyPlaywright.Test/Vision/TesseractOcrEngineTests.cs`
+  (skip if `eng.traineddata` not found)
+
+#### Phase 5c: Template matching command
+
+- [ ] Create `Vision/MatchResult.cs` — data models:
+  - `MatchLocation`: `X`, `Y`, `Width`, `Height`, `Confidence`, `CenterX`,
+    `CenterY`
+  - `MatchResult`: `Found`, `BestMatch?`, `AllMatches[]`, `TemplatePath`,
+    `ImageWidth`, `ImageHeight`, `Roi?`, `ElapsedMs`
+- [ ] Create `Vision/ITemplateMatcher.cs` — interface
+- [ ] Create `Vision/ImageSharpTemplateMatcher.cs` — NCC algorithm with
+  non-maximum suppression
+- [ ] Create `Commands/MatchCommand.cs` — CLI command
+  - Args: `--template <path>` (required), `--roi x,y,w,h`,
+    `--display text|json`, `--host`, `--port`, `--input <path>`,
+    `--threshold 0-100`, `--all`, `--region <name>`
+  - Pipeline: acquire image → crop ROI → slide template with NCC → filter by
+    threshold → non-max suppression → adjust coordinates back to full image →
+    format output
+- [ ] Extend `OutputFormatter` with `FormatMatchResult`
+- [ ] Add `"match"` case to `Program.cs` switch + update `PrintUsage()`
+- [ ] Write `LobotomyPlaywright.Test/Commands/MatchCommandTests.cs`
+- [ ] Write `LobotomyPlaywright.Test/Vision/ImageSharpTemplateMatcherTests.cs`
+  (synthetic test images)
+
+#### Phase 5: Files
+
+**New files:**
+
+| File | Purpose |
+|------|---------|
+| `LobotomyPlaywright/Vision/RoiSpec.cs` | ROI data model |
+| `LobotomyPlaywright/Vision/IImageLoader.cs` | Image acquisition interface |
+| `LobotomyPlaywright/Vision/ImageLoader.cs` | Load/preprocess images |
+| `LobotomyPlaywright/Vision/IOcrEngine.cs` | OCR engine interface |
+| `LobotomyPlaywright/Vision/TesseractOcrEngine.cs` | Tesseract implementation |
+| `LobotomyPlaywright/Vision/OcrResult.cs` | OCR result models |
+| `LobotomyPlaywright/Vision/ITemplateMatcher.cs` | Template matcher interface |
+| `LobotomyPlaywright/Vision/ImageSharpTemplateMatcher.cs` | NCC template matching |
+| `LobotomyPlaywright/Vision/MatchResult.cs` | Match result models |
+| `LobotomyPlaywright/Commands/OcrCommand.cs` | OCR CLI command |
+| `LobotomyPlaywright/Commands/MatchCommand.cs` | Match CLI command |
+
+**Modified files:**
+
+| File | Change |
+|------|--------|
+| `LobotomyPlaywright/LobotomyPlaywright.csproj` | Add `Tesseract` + `SixLabors.ImageSharp` packages |
+| `LobotomyPlaywright/Program.cs` | Add `"ocr"` + `"match"` cases, update `PrintUsage()` |
+| `LobotomyPlaywright/Infrastructure/OutputFormatter.cs` | Add `FormatOcrResult` + `FormatMatchResult` |
+
+#### Phase 5: Tests (≥80% coverage gate)
+
+- [ ] `ImageLoaderTests.cs` — load from file, load from base64, ROI crop,
+  grayscale/threshold preprocessing, invalid inputs
+- [ ] `OcrCommandTests.cs` — config loading, invalid args, connection errors,
+  successful OCR (mocked engine), ROI parsing, display formats
+- [ ] `TesseractOcrEngineTests.cs` — text extraction with test images,
+  confidence thresholding, ROI (skip if Tesseract not installed)
+- [ ] `MatchCommandTests.cs` — missing template arg, connection errors,
+  successful match (mocked matcher), display formats
+- [ ] `ImageSharpTemplateMatcherTests.cs` — synthetic images: perfect match,
+  no match, multiple matches, ROI constraint
+- [ ] `OutputFormatterTests.cs` — extend with `FormatOcrResult` and
+  `FormatMatchResult` text/JSON modes
+
+#### Phase 5 completion checklist
+
+- [ ] Dotnet tool coverage ≥80% overall (Coverlet report)
+- [ ] `dotnet playwright ocr --input <screenshot.png>` returns recognized text
+- [ ] `dotnet playwright match --template <button.png> --input <screenshot.png>`
+  returns match location
+- [ ] End-to-end: launch game → `dotnet playwright ocr` captures live screenshot
+  and returns text
+
+### Phase 6 — Named vision regions
+
+**Status:** Not started
+
+A `regions.json` config file maps named regions to ROI coordinates and/or
+template image paths. This lets the agent use `--region energy_bar` instead of
+`--roi 800,20,300,40`.
+
+- [ ] Create `Interfaces/Configuration/IRegionsConfig.cs`
+- [ ] Create `Implementations/Configuration/RegionsConfig.cs` — loads
+  `regions.json` following existing `IConfigManager` pattern
+- [ ] `regions.json` schema:
+  ```json
+  {
+    "regions": {
+      "energy_bar": {
+        "roi": { "x": 800, "y": 20, "width": 300, "height": 40 }
+      },
+      "work_button": {
+        "template": "templates/work_button.png"
+      },
+      "agent_panel": {
+        "roi": { "x": 0, "y": 100, "width": 400, "height": 800 },
+        "template": "templates/agent_panel_header.png"
+      }
+    }
+  }
+  ```
+- [ ] Wire `--region <name>` into `OcrCommand` and `MatchCommand`
+- [ ] Write region config tests
+- [ ] Create sample `regions.json` template
+
+#### Phase 6: Tests (≥80% coverage gate)
+
+- [ ] `RegionsConfigTests.cs` — load valid config, missing file, invalid JSON,
+  region lookup by name, region with ROI only, template only, both
+- [ ] `OcrCommandTests.cs` — extend with `--region` resolution tests
+- [ ] `MatchCommandTests.cs` — extend with `--region` resolution tests
+
+#### Phase 6 completion checklist
+
+- [ ] Dotnet tool coverage ≥80% overall (Coverlet report)
+- [ ] `--region <name>` resolves to correct ROI/template in both commands
+- [ ] Sample `regions.json` ships with the tool
+
 ## Key Game References
 
 These decompiled files in `external/decompiled/Assembly-CSharp/` are the most
@@ -987,6 +1186,21 @@ these when building queries or commands.
   `LobotomyCorp.exe`. This is heuristic-based and could match incorrectly if
   multiple Wine bottles are active. Process detection should be as specific as
   possible (match on executable name and bottle).
+
+### Vision / OCR risks
+
+- **Tesseract native dependency**: Requires `brew install tesseract` on macOS.
+  Must document this prerequisite. Tests that need Tesseract should skip
+  gracefully when not installed.
+- **Template matching performance**: NCC is O(W×H×tw×th). For 1920×1080
+  screenshots with ~100px templates, this should complete in <1 second. If too
+  slow, can add pyramid/multi-scale optimization later.
+- **Game resolution variability**: ROI coordinates depend on screen resolution.
+  Named regions may need resolution-aware scaling in the future, but for now
+  assume fixed resolution.
+- **Tesseract accuracy on stylized text**: If the game uses heavily stylized
+  fonts, Tesseract may struggle. Preprocessing (grayscale + threshold) helps.
+  Could fine-tune a custom traineddata file if needed.
 
 ### Design considerations
 

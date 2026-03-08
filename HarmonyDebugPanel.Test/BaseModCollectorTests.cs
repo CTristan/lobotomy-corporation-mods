@@ -15,109 +15,232 @@ namespace HarmonyDebugPanel.Test;
 public sealed class BaseModCollectorTests
 {
     [Fact]
-    public void TryGetBaseModNameFromPath_ReturnsTrue_WhenPathContainsBaseModsSegment()
+    public void Collect_ReturnsHarmony1Mod_WhenPatchAssemblyReferencesHarmony109()
     {
-        var found = BaseModCollector.TryGetBaseModNameFromPath("C:/Games/LobotomyCorp_Data/BaseMods/MyMod/MyMod.dll", out var modName);
-
-        found.Should().BeTrue();
-        modName.Should().Be("MyMod");
-    }
-
-    [Fact]
-    public void TryGetBaseModNameFromPath_ReturnsFalse_WhenBaseModsSegmentMissing()
-    {
-        var found = BaseModCollector.TryGetBaseModNameFromPath("C:/Games/LobotomyCorp_Data/Managed/SomeAssembly.dll", out var modName);
-
-        found.Should().BeFalse();
-        modName.Should().BeEmpty();
-    }
-
-    [Fact]
-    public void Collect_ReturnsLoadedAssemblyModAndUnloadedDirectoryMod()
-    {
-        var fileSystem = new StubCollectorFileSystem(
-            existingDirectories: new HashSet<string> { "/game/LobotomyCorp_Data/BaseMods", "/game/BaseMods" },
-            directoriesByRoot: new Dictionary<string, IEnumerable<string>>
-            {
-                {
-                    "/game/LobotomyCorp_Data/BaseMods",
-                    new List<string>
-                    {
-                        "/game/LobotomyCorp_Data/BaseMods/LoadedMod",
-                        "/game/LobotomyCorp_Data/BaseMods/UnloadedMod",
-                    }
-                },
-                { "/game/BaseMods", System.Array.Empty<string>() },
-            });
-
-        var baseDirectoryProvider = new StubBaseDirectoryProvider("/game");
-        var assemblySource = new StubAssemblySource(new List<AssemblyInspectionInfo>
+        var patchSource = new StubPatchInspectionSource(new List<PatchInspectionInfo>
         {
             new(
-                "LoadedModAssembly",
+                "TargetType",
+                "Method",
+                PatchType.Prefix,
+                "owner",
+                "ModAssembly.PatchClass.PatchMethod",
+                "ModAssembly",
                 "1.0.0",
-                "/game/LobotomyCorp_Data/BaseMods/LoadedMod/LoadedModAssembly.dll",
                 new List<AssemblyName> { new("0Harmony109") }),
         });
 
-        var collector = new BaseModCollector(fileSystem, baseDirectoryProvider, assemblySource, new HarmonyVersionClassifier());
+        var collector = new BaseModCollector(patchSource, new HarmonyVersionClassifier());
+
+        var mods = collector.Collect();
+
+        mods.Should().HaveCount(1);
+        mods[0].Name.Should().Be("ModAssembly");
+        mods[0].Version.Should().Be("1.0.0");
+        mods[0].Source.Should().Be(ModSource.Lmm);
+        mods[0].HarmonyVersion.Should().Be(HarmonyVersion.Harmony1);
+        mods[0].AssemblyName.Should().Be("ModAssembly");
+        mods[0].HasActivePatches.Should().BeTrue();
+        mods[0].ActivePatchCount.Should().Be(1);
+    }
+
+    [Fact]
+    public void Collect_DoesNotIncludeHarmony2Mod_WhenPatchAssemblyReferencesHarmony2()
+    {
+        var patchSource = new StubPatchInspectionSource(new List<PatchInspectionInfo>
+        {
+            new(
+                "TargetType",
+                "Method",
+                PatchType.Prefix,
+                "owner",
+                "Harmony2Mod.PatchClass.PatchMethod",
+                "Harmony2Mod",
+                "1.0.0",
+                new List<AssemblyName> { new("0Harmony") }),
+        });
+
+        var collector = new BaseModCollector(patchSource, new HarmonyVersionClassifier());
+
+        var mods = collector.Collect();
+
+        mods.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void Collect_CombinesPatchesFromSameAssembly_IntoSingleModWithCorrectCount()
+    {
+        var patchSource = new StubPatchInspectionSource(new List<PatchInspectionInfo>
+        {
+            new(
+                "TargetType1",
+                "Method1",
+                PatchType.Prefix,
+                "owner1",
+                "ModAssembly.PatchClass.PatchMethod1",
+                "ModAssembly",
+                "1.0.0",
+                new List<AssemblyName> { new("0Harmony109") }),
+            new(
+                "TargetType2",
+                "Method2",
+                PatchType.Postfix,
+                "owner2",
+                "ModAssembly.PatchClass.PatchMethod2",
+                "ModAssembly",
+                "1.0.0",
+                new List<AssemblyName> { new("0Harmony109") }),
+            new(
+                "TargetType3",
+                "Method3",
+                PatchType.Transpiler,
+                "owner3",
+                "ModAssembly.PatchClass.PatchMethod3",
+                "ModAssembly",
+                "1.0.0",
+                new List<AssemblyName> { new("0Harmony109") }),
+        });
+
+        var collector = new BaseModCollector(patchSource, new HarmonyVersionClassifier());
+
+        var mods = collector.Collect();
+
+        mods.Should().HaveCount(1);
+        mods[0].Name.Should().Be("ModAssembly");
+        mods[0].ActivePatchCount.Should().Be(3);
+    }
+
+    [Fact]
+    public void Collect_ReturnsEmpty_WhenNoPatches()
+    {
+        var patchSource = new StubPatchInspectionSource(new List<PatchInspectionInfo>());
+
+        var collector = new BaseModCollector(patchSource, new HarmonyVersionClassifier());
+
+        var mods = collector.Collect();
+
+        mods.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void Collect_ExcludesFrameworkAssemblies_FromResults()
+    {
+        var patchSource = new StubPatchInspectionSource(new List<PatchInspectionInfo>
+        {
+            new(
+                "TargetType",
+                "Method",
+                PatchType.Prefix,
+                "owner",
+                "mscorlib.PatchClass.PatchMethod",
+                "mscorlib",
+                "2.0.0.0",
+                new List<AssemblyName>()),
+            new(
+                "TargetType",
+                "Method",
+                PatchType.Prefix,
+                "owner",
+                "System.PatchClass.PatchMethod",
+                "System",
+                "2.0.0.0",
+                new List<AssemblyName>()),
+            new(
+                "TargetType",
+                "Method",
+                PatchType.Prefix,
+                "owner",
+                "UnityEngine.PatchClass.PatchMethod",
+                "UnityEngine",
+                "1.0.0.0",
+                new List<AssemblyName>()),
+            new(
+                "TargetType",
+                "Method",
+                PatchType.Prefix,
+                "owner",
+                "0Harmony109.PatchClass.PatchMethod",
+                "0Harmony109",
+                "1.2.0.1",
+                new List<AssemblyName>()),
+        });
+
+        var collector = new BaseModCollector(patchSource, new HarmonyVersionClassifier());
+
+        var mods = collector.Collect();
+
+        mods.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void Collect_ReturnsMultipleHarmony1Mods_WhenPatchesFromDifferentAssemblies()
+    {
+        var patchSource = new StubPatchInspectionSource(new List<PatchInspectionInfo>
+        {
+            new(
+                "TargetType1",
+                "Method1",
+                PatchType.Prefix,
+                "owner1",
+                "Mod1.PatchClass.PatchMethod",
+                "Mod1",
+                "1.0.0",
+                new List<AssemblyName> { new("0Harmony109") }),
+            new(
+                "TargetType2",
+                "Method2",
+                PatchType.Postfix,
+                "owner2",
+                "Mod2.PatchClass.PatchMethod",
+                "Mod2",
+                "2.0.0",
+                new List<AssemblyName> { new("0Harmony109") }),
+        });
+
+        var collector = new BaseModCollector(patchSource, new HarmonyVersionClassifier());
 
         var mods = collector.Collect();
 
         mods.Should().HaveCount(2);
-        mods.Should().ContainSingle(m => m.Name == "LoadedMod" && m.HarmonyVersion == HarmonyVersion.Harmony1 && m.Version == "1.0.0");
-        mods.Should().ContainSingle(m => m.Name == "UnloadedMod" && m.HarmonyVersion == HarmonyVersion.Unknown && m.Version == "Unknown");
+        mods.Should().ContainSingle(m => m.Name == "Mod1" && m.Version == "1.0.0");
+        mods.Should().ContainSingle(m => m.Name == "Mod2" && m.Version == "2.0.0");
     }
 
-    private sealed class StubCollectorFileSystem : ICollectorFileSystem
+    [Fact]
+    public void Collect_SkipsPatchesWithNullAssemblyName()
     {
-        private readonly HashSet<string> _existingDirectories;
-        private readonly Dictionary<string, IEnumerable<string>> _directoriesByRoot;
-
-        public StubCollectorFileSystem(HashSet<string> existingDirectories, Dictionary<string, IEnumerable<string>> directoriesByRoot)
+        var patchSource = new StubPatchInspectionSource(new List<PatchInspectionInfo>
         {
-            _existingDirectories = existingDirectories;
-            _directoriesByRoot = directoriesByRoot;
-        }
+            new(
+                "TargetType",
+                "Method",
+                PatchType.Prefix,
+                "owner",
+                "ModAssembly.PatchClass.PatchMethod",
+                string.Empty,
+                "1.0.0",
+                new List<AssemblyName> { new("0Harmony109") }),
+        });
 
-        public bool DirectoryExists(string path)
-        {
-            return _existingDirectories.Contains(path);
-        }
+        var collector = new BaseModCollector(patchSource, new HarmonyVersionClassifier());
 
-        public IEnumerable<string> EnumerateDirectories(string path)
-        {
-            return _directoriesByRoot[path];
-        }
+        var mods = collector.Collect();
+
+        mods.Should().BeEmpty();
     }
 
-    private sealed class StubBaseDirectoryProvider : IBaseDirectoryProvider
+    private sealed class StubPatchInspectionSource : IPatchInspectionSource
     {
-        private readonly string _baseDirectory;
+        private readonly IEnumerable<PatchInspectionInfo> _patches;
 
-        public StubBaseDirectoryProvider(string baseDirectory)
+        public StubPatchInspectionSource(IEnumerable<PatchInspectionInfo> patches)
         {
-            _baseDirectory = baseDirectory;
+            _patches = patches;
         }
 
-        public string GetBaseDirectory()
+        public IEnumerable<PatchInspectionInfo> GetPatches()
         {
-            return _baseDirectory;
-        }
-    }
-
-    private sealed class StubAssemblySource : IAssemblyInspectionSource
-    {
-        private readonly IEnumerable<AssemblyInspectionInfo> _assemblies;
-
-        public StubAssemblySource(IEnumerable<AssemblyInspectionInfo> assemblies)
-        {
-            _assemblies = assemblies;
-        }
-
-        public IEnumerable<AssemblyInspectionInfo> GetAssemblies()
-        {
-            return _assemblies;
+            return _patches;
         }
     }
 }

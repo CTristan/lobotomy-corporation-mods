@@ -31,7 +31,7 @@ namespace LobotomyPlaywright.Queries
                 // Check for unknown targets first
                 if (target != "agents" && target != "creatures" && target != "game" &&
                     target != "status" && target != "sefira" && target != "departments" &&
-                    target != "titlemenu" && target != "title")
+                    target != "titlemenu" && target != "title" && target != "ui")
                 {
                     return Protocol.Response.CreateError(
                         request.Id,
@@ -44,6 +44,13 @@ namespace LobotomyPlaywright.Queries
                 if ((target == "titlemenu" || target == "title") && GameStateQueries.IsOnTitleScreen())
                 {
                     return HandleTitleMenuQuery(request.Id);
+                }
+
+                // UI queries can be made at any time (not just when game is queryable)
+                if (target == "ui")
+                {
+                    var uiParams = request.Params ?? new Dictionary<string, object>();
+                    return HandleUiQuery(request.Id, uiParams);
                 }
 
                 if (!GameStateQueries.IsGameQueryable())
@@ -244,6 +251,32 @@ namespace LobotomyPlaywright.Queries
                 return Protocol.Response.CreateError(
                     requestId,
                     $"Failed to get title menu status: {ex.Message}",
+                    "QUERY_ERROR"
+                );
+            }
+        }
+
+        private static Protocol.Response HandleUiQuery(string requestId, Dictionary<string, object> parameters)
+        {
+            try
+            {
+                // UI queries can be made at any time (not just when game is queryable)
+                var depth = parameters.ContainsKey("depth")
+                    ? parameters["depth"].ToString()
+                    : "full";
+
+                var windowFilter = parameters.ContainsKey("name")
+                    ? parameters["name"].ToString()
+                    : null;
+
+                var uiState = UiQueries.GetUiState(depth, windowFilter);
+                return Protocol.Response.CreateSuccess(requestId, uiState);
+            }
+            catch (Exception ex)
+            {
+                return Protocol.Response.CreateError(
+                    requestId,
+                    $"Failed to get UI state: {ex.Message}",
                     "QUERY_ERROR"
                 );
             }

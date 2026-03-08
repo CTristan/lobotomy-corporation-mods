@@ -21,5 +21,6 @@ namespace LobotomyPlaywright.Protocol
         public string timestamp;
         public string format;
         public string note;
+        public string base64;
     }
 }

@@ -52,6 +52,21 @@ internal sealed class FileSystem : IFileSystem
         return new FileInfo(path).Length;
     }
 
+    public string GetCurrentDirectory()
+    {
+        return Directory.GetCurrentDirectory();
+    }
+
+    public string[] GetDirectories(string path, string searchPattern)
+    {
+        return Directory.GetDirectories(path, searchPattern);
+    }
+
+    public void CopyFile(string sourceFileName, string destFileName, bool overwrite)
+    {
+        File.Copy(sourceFileName, destFileName, overwrite);
+    }
+
     public void SetFileExecutable(string path)
     {
         if (Environment.OSVersion.Platform == PlatformID.Unix)

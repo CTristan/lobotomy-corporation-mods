@@ -27,12 +27,12 @@ public sealed class PluginConfigurationTests
 
             var configuration = PluginConfiguration.Bind(configFile);
 
-            configuration.OverlayToggleHotkey.Value.Should().Be(KeyCode.F9);
-            configuration.RefreshHotkey.Value.Should().Be(KeyCode.F10);
-            configuration.ShowBepInExPlugins.Value.Should().BeTrue();
-            configuration.ShowLmmMods.Value.Should().BeTrue();
-            configuration.ShowActivePatches.Value.Should().BeTrue();
-            configuration.ShowAssemblyInfo.Value.Should().BeTrue();
+            configuration.OverlayToggleHotkey.Should().Be(KeyCode.F9);
+            configuration.RefreshHotkey.Should().Be(KeyCode.F10);
+            configuration.ShowBepInExPlugins.Should().BeTrue();
+            configuration.ShowLmmMods.Should().BeTrue();
+            configuration.ShowActivePatches.Should().BeTrue();
+            configuration.ShowAssemblyInfo.Should().BeTrue();
         }
         finally
         {

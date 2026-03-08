@@ -66,6 +66,28 @@ public interface IFileSystem
     long GetFileSize(string path);
 
     /// <summary>
+    /// Gets the current working directory.
+    /// </summary>
+    /// <returns>The current working directory.</returns>
+    string GetCurrentDirectory();
+
+    /// <summary>
+    /// Gets directories matching a pattern.
+    /// </summary>
+    /// <param name="path">The directory path.</param>
+    /// <param name="searchPattern">The search pattern.</param>
+    /// <returns>The array of directory paths.</returns>
+    string[] GetDirectories(string path, string searchPattern);
+
+    /// <summary>
+    /// Copies a file.
+    /// </summary>
+    /// <param name="sourceFileName">The source file path.</param>
+    /// <param name="destFileName">The destination file path.</param>
+    /// <param name="overwrite">True to overwrite the destination file.</param>
+    void CopyFile(string sourceFileName, string destFileName, bool overwrite);
+
+    /// <summary>
     /// Sets a file as executable on Unix systems.
     /// </summary>
     /// <param name="path">The file path.</param>

@@ -33,9 +33,24 @@ namespace HarmonyDebugPanel.Formatting
             lines.Add("RetargetHarmony: " + report.RetargetHarmonyStatus.Message);
             lines.Add("Active Harmony Patches: " + report.Patches.Count + " patches");
 
+            if (report.MissingPatches.Count > 0)
+            {
+                lines.Add("Missing Harmony Patches (" + report.MissingPatches.Count + "):");
+                AddMissingPatches(lines, report.MissingPatches);
+            }
+
             foreach (var warning in report.Warnings)
             {
                 lines.Add("Warning: " + warning);
+            }
+
+            if (report.DebugInfo.Count > 0)
+            {
+                lines.Add("Debug Info (" + report.DebugInfo.Count + "):");
+                foreach (var debug in report.DebugInfo)
+                {
+                    lines.Add("  - " + debug);
+                }
             }
 
             lines.Add("===============================");
@@ -69,7 +84,39 @@ namespace HarmonyDebugPanel.Formatting
                 var identifierSuffix = string.IsNullOrEmpty(mod.Identifier)
                     ? string.Empty
                     : " [" + mod.Identifier + "]";
-                lines.Add("  - " + mod.Name + " v" + mod.Version + " [" + ToHarmonyVersionLabel(mod.HarmonyVersion) + "]" + identifierSuffix);
+
+                string patchStatus;
+                if (mod.ExpectedPatchCount >= 0)
+                {
+                    var failedCount = mod.ActivePatchCount < mod.ExpectedPatchCount ? (mod.ExpectedPatchCount - mod.ActivePatchCount) : 0;
+                    if (mod.ActivePatchCount == mod.ExpectedPatchCount)
+                    {
+                        patchStatus = $" [{mod.ActivePatchCount} loaded/{mod.ExpectedPatchCount} expected, {failedCount} failed]";
+                    }
+                    else if (mod.ActivePatchCount < mod.ExpectedPatchCount)
+                    {
+                        patchStatus = $" [{mod.ActivePatchCount} loaded/{mod.ExpectedPatchCount} expected, {failedCount} failed]";
+                    }
+                    else
+                    {
+                        patchStatus = $" [{mod.ActivePatchCount} loaded/{mod.ExpectedPatchCount} expected, {failedCount} failed]";
+                    }
+                }
+                else
+                {
+                    patchStatus = mod.HasActivePatches ? $" [{mod.ActivePatchCount} loaded]" : " [0 loaded]";
+                }
+
+                lines.Add("  - " + mod.Name + " v" + mod.Version + " [" + ToHarmonyVersionLabel(mod.HarmonyVersion) + "]" + patchStatus + identifierSuffix);
+            }
+        }
+
+        private static void AddMissingPatches(List<string> lines, IList<MissingPatchInfo> missingPatches)
+        {
+            foreach (var missing in missingPatches)
+            {
+                var prefix = missing.PatchType == PatchType.Prefix ? "Prefix" : missing.PatchType == PatchType.Postfix ? "Postfix" : "Transpiler";
+                lines.Add("  - [" + missing.PatchAssembly + "] " + prefix + " for " + missing.TargetMethod + " in " + missing.TargetType);
             }
         }
 

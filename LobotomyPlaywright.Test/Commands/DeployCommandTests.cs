@@ -1,0 +1,92 @@
+// SPDX-License-Identifier: MIT
+
+#nullable enable
+#pragma warning disable CA1515 // Test classes must be public for xUnit
+
+using System;
+using System.IO;
+using System.Linq;
+using FluentAssertions;
+using LobotomyPlaywright.Commands;
+using LobotomyPlaywright.Implementations.Configuration;
+using LobotomyPlaywright.Interfaces.Configuration;
+using LobotomyPlaywright.Interfaces.System;
+using Moq;
+using Xunit;
+
+namespace LobotomyPlaywright.Tests.Commands;
+
+public sealed class DeployCommandTests
+{
+    private readonly Mock<IFileSystem> _mockFileSystem;
+    private readonly Mock<IConfigManager> _mockConfigManager;
+    private readonly Mock<IProcessRunner> _mockProcessRunner;
+    private readonly DeployCommand _deployCommand;
+    private readonly string _gamePath = "/test/game/path";
+    private readonly string _repoRoot = "/test/repo/root";
+
+    public DeployCommandTests()
+    {
+        _mockFileSystem = new Mock<IFileSystem>();
+        _mockConfigManager = new Mock<IConfigManager>();
+        _mockProcessRunner = new Mock<IProcessRunner>();
+        _deployCommand = new DeployCommand(_mockConfigManager.Object, _mockFileSystem.Object, _mockProcessRunner.Object);
+
+        // Setup default config
+        var config = new Config
+        {
+            GamePath = _gamePath
+        };
+        _mockConfigManager.Setup(c => c.Load()).Returns(config);
+        _mockFileSystem.Setup(f => f.DirectoryExists(_gamePath)).Returns(true);
+        _mockFileSystem.Setup(f => f.GetCurrentDirectory()).Returns(_repoRoot);
+        _mockFileSystem.Setup(f => f.FileExists(Path.Combine(_repoRoot, "LobotomyCorporationMods.sln"))).Returns(true);
+        _mockFileSystem.Setup(f => f.GetFileSize(It.IsAny<string>())).Returns(100);
+    }
+
+    [Fact]
+    public void Run_Deployment_CopiesAllRequiredFiles()
+    {
+        // Arrange
+        _mockFileSystem.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
+        _mockFileSystem.Setup(f => f.FileExists(It.IsAny<string>())).Returns(true);
+
+        _mockProcessRunner.Setup(p => p.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string?, bool>>()))
+            .Returns(0);
+
+        // Act
+        var result = _deployCommand.Run(Array.Empty<string>());
+
+        // Assert
+        result.Should().Be(0);
+
+        // Verify file copy calls via IFileSystem
+        // Plugin DLLs
+        _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyPlaywright.Plugin.dll")), It.IsAny<string>(), true), Times.Once);
+        _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("HarmonyDebugPanel.dll")), It.IsAny<string>(), true), Times.Once);
+        _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("RetargetHarmony.dll")), It.IsAny<string>(), true), Times.Once);
+
+        // Interop DLLs
+        _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("0Harmony109.dll")), It.IsAny<string>(), true), Times.Once);
+        _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("0Harmony12.dll")), It.IsAny<string>(), true), Times.Once);
+    }
+
+    [Fact]
+    public void Run_BuildPhase_HandlesBuildFailures()
+    {
+        // Arrange
+        var repoRoot = Directory.GetCurrentDirectory();
+        _mockFileSystem.Setup(f => f.FileExists(It.Is<string>(s => s.EndsWith("LobotomyCorporationMods.sln")))).Returns(true);
+        _mockFileSystem.Setup(f => f.FileExists(It.IsAny<string>())).Returns(true);
+        _mockFileSystem.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
+
+        _mockProcessRunner.Setup(p => p.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string?, bool>>()))
+            .Returns(1); // Failure
+
+        // Act
+        var result = _deployCommand.Run(Array.Empty<string>());
+
+        // Assert
+        result.Should().Be(1);
+    }
+}

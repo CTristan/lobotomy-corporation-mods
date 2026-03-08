@@ -12,7 +12,9 @@ namespace HarmonyDebugPanel.Models
             Mods = new List<ModInfo>();
             Patches = new List<PatchInfo>();
             Assemblies = new List<AssemblyInfo>();
+            MissingPatches = new List<MissingPatchInfo>();
             Warnings = new List<string>();
+            DebugInfo = new List<string>();
             RetargetHarmonyStatus = new RetargetHarmonyStatus();
             CollectedAt = DateTime.UtcNow;
         }
@@ -22,6 +24,10 @@ namespace HarmonyDebugPanel.Models
         public IList<PatchInfo> Patches { get; private set; }
 
         public IList<AssemblyInfo> Assemblies { get; private set; }
+
+        public IList<MissingPatchInfo> MissingPatches { get; private set; }
+
+        public IList<string> DebugInfo { get; private set; }
 
         public RetargetHarmonyStatus RetargetHarmonyStatus { get; set; }
 

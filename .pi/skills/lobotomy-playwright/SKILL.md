@@ -163,6 +163,8 @@ Options:
 
 ### Query Game State
 
+**Note:** The pi agent is text-only and cannot interpret screenshot images. The `query ui` command is the primary way the agent "sees" the game's visual/UI state, returning a structured text representation of open panels, text content, buttons, interactable elements, and mod-added UI. Screenshot commands (`dotnet playwright screenshot`) are supplementary for human debugging only.
+
 ```bash
 dotnet playwright query agents                    # List all agents
 dotnet playwright query agents <id>               # Get agent details
@@ -170,6 +172,10 @@ dotnet playwright query creatures                # List all abnormalities
 dotnet playwright query creatures <id>            # Get creature details
 dotnet playwright query game                     # Game state overview
 dotnet playwright query departments               # Department status
+dotnet playwright query ui                       # UI accessibility tree (primary way agent "sees" game)
+dotnet playwright query ui --depth summary        # Window states only
+dotnet playwright query ui --depth full          # Windows + child elements (default)
+dotnet playwright query ui --name AgentInfoWindow # Single window details
 ```
 
 ### Query Parameters
@@ -177,6 +183,11 @@ dotnet playwright query departments               # Department status
 - `--json` - Output raw JSON instead of formatted text
 - `--host HOST` - Connect to specific host (default: localhost)
 - `--port PORT` - Connect to specific port (default: 8484)
+
+**UI query additional parameters:**
+- `--depth summary` - Show window open/closed states only (Tier 1)
+- `--depth full` - Show windows + child elements (default) (Tier 1 + Tier 2)
+- `--name <window>` - Query only the specified window (e.g., `AgentInfoWindow`)
 
 ### Capture Screenshot
 
