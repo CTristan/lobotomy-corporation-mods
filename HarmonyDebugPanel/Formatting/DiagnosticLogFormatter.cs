@@ -120,6 +120,49 @@ namespace HarmonyDebugPanel.Formatting
             }
         }
 
+        public static IList<string> FormatExtended(DiagnosticReport report, string runtimeLogContent)
+        {
+            if (report == null)
+            {
+                throw new ArgumentNullException(nameof(report));
+            }
+
+            var lines = Format(report) as List<string> ?? new List<string>(Format(report));
+
+            // Add Loaded Assemblies section
+            lines.Add("Loaded Assemblies (" + report.Assemblies.Count + "):");
+            if (report.Assemblies.Count == 0)
+            {
+                lines.Add("  - None");
+            }
+            else
+            {
+                foreach (var assembly in report.Assemblies)
+                {
+                    var harmonyLabel = assembly.IsHarmonyRelated ? " [Harmony]" : string.Empty;
+                    lines.Add("  - " + assembly.Name + " v" + assembly.Version + " :: " + assembly.Location + harmonyLabel);
+                }
+            }
+
+            // Add Runtime Log section
+            lines.Add("Runtime Log:");
+            if (string.IsNullOrEmpty(runtimeLogContent))
+            {
+                lines.Add("  - No runtime log entries");
+            }
+            else
+            {
+                var runtimeLines = runtimeLogContent.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var line in runtimeLines)
+                {
+                    lines.Add("  " + line);
+                }
+            }
+
+            lines.Add("===============================");
+            return lines;
+        }
+
         public static string ToHarmonyVersionLabel(HarmonyVersion harmonyVersion)
         {
             switch (harmonyVersion)

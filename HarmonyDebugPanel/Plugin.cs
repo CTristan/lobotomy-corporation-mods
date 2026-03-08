@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using BepInEx;
@@ -11,6 +12,8 @@ using HarmonyDebugPanel.Formatting;
 using HarmonyDebugPanel.Models;
 using HarmonyDebugPanel.Rendering;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
+using Process = System.Diagnostics.Process;
 
 namespace HarmonyDebugPanel
 {
@@ -252,7 +255,7 @@ namespace HarmonyDebugPanel
 
             try
             {
-                _diagnosticOverlay.Draw(_report, _configuration, RefreshReport);
+                _diagnosticOverlay.Draw(_report, _configuration, RefreshReport, GenerateLog);
             }
             catch (Exception ex)
             {
@@ -274,6 +277,60 @@ namespace HarmonyDebugPanel
             catch (Exception ex)
             {
                 LogError("RefreshReport error: " + ex);
+            }
+        }
+
+        private void GenerateLog()
+        {
+            try
+            {
+                if (_report == null)
+                {
+                    LogError("GenerateLog: Report is null");
+                    return;
+                }
+
+                // Build timestamped filename
+                var timestamp = DateTime.Now.ToString("yyyy-MM-dd_HHmmss", CultureInfo.InvariantCulture);
+                var logFileName = "HarmonyDebugPanel_" + timestamp + ".log";
+                var logFilePath = Path.Combine(Path.GetDirectoryName(_logFilePath) ?? Environment.CurrentDirectory, logFileName);
+
+                // Read runtime log content
+                var runtimeLogContent = string.Empty;
+                if (!string.IsNullOrEmpty(_logFilePath) && File.Exists(_logFilePath))
+                {
+                    try
+                    {
+                        runtimeLogContent = File.ReadAllText(_logFilePath, Encoding.UTF8);
+                    }
+                    catch (Exception ex)
+                    {
+                        LogWarning("GenerateLog: Could not read runtime log file: " + ex.Message);
+                    }
+                }
+
+                // Format the extended log
+                var logLines = DiagnosticLogFormatter.FormatExtended(_report, runtimeLogContent);
+                var logContent = string.Join(Environment.NewLine, logLines.ToArray());
+
+                // Write to file
+                File.WriteAllText(logFilePath, logContent, Encoding.UTF8);
+
+                LogInfo("Generated log file: " + logFilePath);
+
+                // Open in Notepad
+                try
+                {
+                    Process.Start("notepad.exe", logFilePath);
+                }
+                catch (Exception ex)
+                {
+                    LogError("GenerateLog: Could not open Notepad: " + ex.Message);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogError("GenerateLog error: " + ex);
             }
         }
     }

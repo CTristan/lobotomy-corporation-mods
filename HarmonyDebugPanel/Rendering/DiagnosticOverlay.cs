@@ -14,7 +14,7 @@ namespace HarmonyDebugPanel.Rendering
         private Rect _windowRect = new Rect(20f, 20f, 600f, 450f);
         private Vector2 _scrollPosition = Vector2.zero;
 
-        public void Draw(DiagnosticReport report, PluginConfiguration configuration, Action refreshAction)
+        public void Draw(DiagnosticReport report, PluginConfiguration configuration, Action refreshAction, Action generateLogAction = null)
         {
             if (report == null)
             {
@@ -32,10 +32,10 @@ namespace HarmonyDebugPanel.Rendering
             }
 
             string title = "Harmony Debug Panel (" + configuration.OverlayToggleHotkey + " to hide)";
-            _windowRect = GUI.Window(0xD1349, _windowRect, id => DrawWindowContents(id, report, configuration, refreshAction), title);
+            _windowRect = GUI.Window(0xD1349, _windowRect, id => DrawWindowContents(id, report, configuration, refreshAction, generateLogAction), title);
         }
 
-        private void DrawWindowContents(int windowId, DiagnosticReport report, PluginConfiguration configuration, Action refreshAction)
+        private void DrawWindowContents(int windowId, DiagnosticReport report, PluginConfiguration configuration, Action refreshAction, Action generateLogAction = null)
         {
             GUILayout.BeginVertical();
 
@@ -44,6 +44,11 @@ namespace HarmonyDebugPanel.Rendering
             if (GUILayout.Button("Refresh", GUILayout.Width(100f)))
             {
                 refreshAction();
+            }
+
+            if (generateLogAction != null && GUILayout.Button("Generate Log", GUILayout.Width(120f)))
+            {
+                generateLogAction();
             }
 
             GUILayout.EndHorizontal();
