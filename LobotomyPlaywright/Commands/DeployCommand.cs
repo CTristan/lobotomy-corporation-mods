@@ -193,10 +193,10 @@ internal class DeployCommand
         {
             Console.WriteLine();
             Console.WriteLine($"Would deploy {PluginDllName} to:");
-            Console.WriteLine($"  {Path.Combine(gamePath, "BepInEx", "plugins", PluginDllName)}");
+            Console.WriteLine($"  {Path.Combine(gamePath, "LobotomyCorp_Data", "BaseMods", "LobotomyPlaywright", PluginDllName)}");
             Console.WriteLine();
             Console.WriteLine($"Would deploy {HarmonyDebugPanelDllName} to:");
-            Console.WriteLine($"  {Path.Combine(gamePath, "BepInEx", "plugins", HarmonyDebugPanelDllName)}");
+            Console.WriteLine($"  {Path.Combine(gamePath, "LobotomyCorp_Data", "BaseMods", "HarmonyDebugPanel", HarmonyDebugPanelDllName)}");
             Console.WriteLine();
             Console.WriteLine($"Would deploy {RetargetHarmonyDllName} to:");
             Console.WriteLine($"  {Path.Combine(gamePath, "BepInEx", "patchers", RetargetHarmonyDllName)}");
@@ -214,8 +214,8 @@ internal class DeployCommand
 
         try
         {
-            var deployPluginPath = DeployDll(pluginDllPath, gamePath, "plugins");
-            var deployHarmonyDebugPanelPath = DeployDll(harmonyDebugPanelDllPath, gamePath, "plugins");
+            var deployPluginPath = DeployDll(pluginDllPath, gamePath, "BaseMods/LobotomyPlaywright");
+            var deployHarmonyDebugPanelPath = DeployDll(harmonyDebugPanelDllPath, gamePath, "BaseMods/HarmonyDebugPanel");
             var deployRetharmonyPath = DeployDll(retharmonyDllPath, gamePath, "patchers");
 
             Console.WriteLine();
@@ -294,8 +294,27 @@ internal class DeployCommand
 
     private string DeployDll(string sourceDll, string gamePath, string destSubdir)
     {
-        var bepinexPath = Path.Combine(gamePath, "BepInEx");
-        var destDir = Path.Combine(bepinexPath, destSubdir);
+        // Handle BaseMods separately (goes to LobotomyCorp_Data/BaseMods/[PluginName])
+        // All other folders go under BepInEx/
+        string destDir;
+        if (destSubdir.StartsWith("BaseMods", StringComparison.OrdinalIgnoreCase))
+        {
+            // Extract optional subfolder name from "BaseMods/SubFolder"
+            var subFolder = destSubdir.Length > 8 ? destSubdir.Substring(9) : null;
+            if (!string.IsNullOrEmpty(subFolder))
+            {
+                destDir = Path.Combine(gamePath, "LobotomyCorp_Data", "BaseMods", subFolder);
+            }
+            else
+            {
+                destDir = Path.Combine(gamePath, "LobotomyCorp_Data", "BaseMods");
+            }
+        }
+        else
+        {
+            destDir = Path.Combine(gamePath, "BepInEx", destSubdir);
+        }
+
         var destDll = Path.Combine(destDir, Path.GetFileName(sourceDll) ?? string.Empty);
 
         Console.WriteLine();
