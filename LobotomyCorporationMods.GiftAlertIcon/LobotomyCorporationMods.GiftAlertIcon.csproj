@@ -6,6 +6,7 @@
     <RuntimeIdentifiers>win</RuntimeIdentifiers>
     <TargetFramework>net35</TargetFramework>
     <RootNamespace>LobotomyCorporationMods.GiftAlertIcon</RootNamespace>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">

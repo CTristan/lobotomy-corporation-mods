@@ -6,6 +6,7 @@
     <ProjectGuid>{B3C4D5E6-F7A8-9B0C-1D2E-3F4A5B6C7D8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="8.0.0">
