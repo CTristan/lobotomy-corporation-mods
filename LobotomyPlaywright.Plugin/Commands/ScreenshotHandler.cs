@@ -3,6 +3,7 @@
 using System;
 using System.IO;
 using System.Threading;
+using LobotomyPlaywright.JsonModels;
 using UnityEngine;
 
 namespace LobotomyPlaywright.Commands
@@ -19,11 +20,11 @@ namespace LobotomyPlaywright.Commands
         /// </summary>
         /// <param name="request">The request object containing parameters.</param>
         /// <returns>A response containing screenshot information.</returns>
-        public static Protocol.Response HandleScreenshot(Protocol.Request request)
+        public static Response HandleScreenshot(Request request)
         {
             if (request == null)
             {
-                return Protocol.Response.CreateError(
+                return Response.CreateError(
                     null,
                     "Request is null",
                     "INVALID_REQUEST"
@@ -99,7 +100,7 @@ namespace LobotomyPlaywright.Commands
                         // Wait for background thread to complete (with timeout)
                         if (!doneEvent.WaitOne(3000)) // 3 second timeout (extra margin)
                         {
-                            return Protocol.Response.CreateError(
+                            return Response.CreateError(
                                 request.Id,
                                 "Screenshot file not available after timeout",
                                 "SCREENSHOT_TIMEOUT"
@@ -112,7 +113,7 @@ namespace LobotomyPlaywright.Commands
 
                     if (base64Data == null)
                     {
-                        return Protocol.Response.CreateError(
+                        return Response.CreateError(
                             request.Id,
                             "Screenshot file not available after 2 seconds",
                             "SCREENSHOT_TIMEOUT"
@@ -132,7 +133,7 @@ namespace LobotomyPlaywright.Commands
                 string timestampUtc = DateTime.UtcNow.ToString("O");
 
                 // Use concrete class for proper JsonUtility serialization
-                var data = new Protocol.ScreenshotData
+                var data = new ScreenshotData
                 {
                     filename = filename,
                     path = expectedPath,
@@ -145,11 +146,11 @@ namespace LobotomyPlaywright.Commands
                         : "Screenshot capture initiated. File may not be ready immediately due to Unity's async capture."
                 };
 
-                return Protocol.Response.CreateSuccess(request.Id, data);
+                return Response.CreateSuccess(request.Id, data);
             }
             catch (Exception ex)
             {
-                return Protocol.Response.CreateError(
+                return Response.CreateError(
                     request.Id,
                     "Failed to capture screenshot: " + ex.Message,
                     "SCREENSHOT_ERROR"

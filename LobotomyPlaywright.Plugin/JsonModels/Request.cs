@@ -2,17 +2,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 
-namespace LobotomyPlaywright.Protocol
+namespace LobotomyPlaywright.JsonModels
 {
     /// <summary>
     /// Represents an inbound request message.
     /// Use lowercase field names for JSON compatibility with both JsonUtility and Newtonsoft.Json.
     /// </summary>
-    [SuppressMessage("Naming", "CA1708:Identifiers should differ by more than case")]
-    [SuppressMessage("Style", "IDE1006:Naming Styles")]
-    [SuppressMessage("Design", "CA1051:Do not declare visible instance fields")]
     [Serializable]
     public class Request
     {

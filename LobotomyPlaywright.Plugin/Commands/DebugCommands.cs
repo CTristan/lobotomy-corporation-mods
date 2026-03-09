@@ -2,8 +2,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using LobotomyPlaywright.JsonModels;
 using LobotomyPlaywright.Protocol;
 using UnityEngine;
 
@@ -23,8 +23,6 @@ namespace LobotomyPlaywright.Commands
     ///
     /// Note: These field names are based on Lobotomy Corporation game internals and may change with game updates.
     /// </summary>
-    [SuppressMessage("Reflection", "IL2046:'RequiresUnreferencedCodeAttribute' annotations are not honored for members of interfaces implemented by dynamically generated types.", Justification = "Reflection is required to access private game fields. Field names are documented for maintainability.")]
-    [SuppressMessage("Design", "CA1051:Do not declare visible instance fields", Justification = "We interact with game types via reflection; we cannot modify the game's field declarations.")]
     public static class DebugCommands
     {
         /// <summary>

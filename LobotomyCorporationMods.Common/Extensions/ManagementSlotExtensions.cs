@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: MIT
 
-using System.Diagnostics.CodeAnalysis;
 using CommandWindow;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
@@ -11,7 +10,6 @@ using LobotomyCorporationMods.Common.ParameterObjects;
 
 namespace LobotomyCorporationMods.Common.Extensions
 {
-    [SuppressMessage("Style", "IDE0060:Remove unused parameter")]
     internal static class ManagementSlotExtensions
     {
         [NotNull]

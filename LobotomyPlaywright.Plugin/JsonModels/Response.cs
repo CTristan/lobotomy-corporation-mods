@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: MIT
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 
-namespace LobotomyPlaywright.Protocol
+namespace LobotomyPlaywright.JsonModels
 {
     /// <summary>
     /// Represents an outbound response message.
@@ -11,9 +10,6 @@ namespace LobotomyPlaywright.Protocol
     /// Note: data is a string field to work around JsonUtility limitations.
     /// It is used as a placeholder during serialization.
     /// </summary>
-    [SuppressMessage("Naming", "CA1708:Identifiers should differ by more than case")]
-    [SuppressMessage("Style", "IDE1006:Naming Styles")]
-    [SuppressMessage("Design", "CA1051:Do not declare visible instance fields")]
     [Serializable]
     public class Response
     {

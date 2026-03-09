@@ -2,6 +2,7 @@
 
 using System;
 using AwesomeAssertions;
+using LobotomyPlaywright.JsonModels;
 using LobotomyPlaywright.Protocol;
 using Xunit;
 using Xunit.Abstractions;

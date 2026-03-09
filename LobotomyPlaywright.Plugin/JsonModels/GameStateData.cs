@@ -1,12 +1,10 @@
 // SPDX-License-Identifier: MIT
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 
-namespace LobotomyPlaywright.Queries
+namespace LobotomyPlaywright.JsonModels
 {
     [Serializable]
-    [SuppressMessage("Design", "CA1051:Do not declare visible instance fields")]
     public class GameStateData
     {
         public int day;

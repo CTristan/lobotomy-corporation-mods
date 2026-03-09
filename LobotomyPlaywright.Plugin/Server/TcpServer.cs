@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Threading;
+using LobotomyPlaywright.JsonModels;
 using UnityEngine;
 
 namespace LobotomyPlaywright.Server
@@ -203,7 +204,7 @@ namespace LobotomyPlaywright.Server
                 }
                 catch (Exception ex)
                 {
-                    var errorResponse = Protocol.Response.CreateError(
+                    var errorResponse = Response.CreateError(
                         queued.Request.Id,
                         ex.Message,
                         "PROCESSING_ERROR"
@@ -270,7 +271,7 @@ namespace LobotomyPlaywright.Server
             }
         }
 
-        internal void EnqueueRequest(Protocol.Request request, TcpClient client, Thread thread)
+        internal void EnqueueRequest(Request request, TcpClient client, Thread thread)
         {
             lock (_queueLock)
             {
@@ -278,7 +279,7 @@ namespace LobotomyPlaywright.Server
             }
         }
 
-        private void SendResponse(TcpClient client, Protocol.Response response)
+        private void SendResponse(TcpClient client, Response response)
         {
             var json = Protocol.MessageSerializer.Serialize(response) + "\n";
 

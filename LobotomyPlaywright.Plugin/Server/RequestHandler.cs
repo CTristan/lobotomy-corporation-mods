@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 using System;
+using LobotomyPlaywright.JsonModels;
 
 namespace LobotomyPlaywright.Server
 {
@@ -10,7 +11,7 @@ namespace LobotomyPlaywright.Server
     /// </summary>
     public static class RequestHandler
     {
-        public static Protocol.Response ProcessRequest(Protocol.Request request, ClientHandler clientHandler)
+        public static Response ProcessRequest(Request request, ClientHandler clientHandler)
         {
             if (request == null)
             {
@@ -34,7 +35,7 @@ namespace LobotomyPlaywright.Server
                         return Events.EventSubscriptionManager.HandleUnsubscribe(request, clientHandler);
 
                     default:
-                        return Protocol.Response.CreateError(
+                        return Response.CreateError(
                             request.Id,
                             $"Unknown message type: {request.Type}",
                             "UNKNOWN_TYPE"
@@ -43,7 +44,7 @@ namespace LobotomyPlaywright.Server
             }
             catch (Exception ex)
             {
-                return Protocol.Response.CreateError(
+                return Response.CreateError(
                     request.Id,
                     $"Error processing request: {ex.Message}",
                     "PROCESSING_ERROR"

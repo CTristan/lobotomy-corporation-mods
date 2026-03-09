@@ -26,6 +26,7 @@ If a project needs to **override** a shared property, it may do so in its own `.
 - `<NoWarn>` in csproj for CA/IDE/RCS codes
 - `<NoAnalyzer>` ItemGroups in csproj
 - `.ruleset` files
+- `[SuppressMessage]` attributes in source code (see `warning-suppression.instructions.md`)
 
 ### NuGet warnings (NU prefix)
 

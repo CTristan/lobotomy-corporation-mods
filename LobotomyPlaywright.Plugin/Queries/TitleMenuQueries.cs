@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 using System;
+using LobotomyPlaywright.JsonModels;
 using UnityEngine.SceneManagement;
 
 namespace LobotomyPlaywright.Queries

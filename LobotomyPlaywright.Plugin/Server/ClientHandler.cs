@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using LobotomyPlaywright.Events;
+using LobotomyPlaywright.JsonModels;
 using UnityEngine;
 
 namespace LobotomyPlaywright.Server
@@ -175,7 +176,7 @@ namespace LobotomyPlaywright.Server
 
                 if (string.IsNullOrEmpty(request.Type))
                 {
-                    var errorResponse = Protocol.Response.CreateError(
+                    var errorResponse = Response.CreateError(
                         null,
                         "Missing message type",
                         "INVALID_MESSAGE"
@@ -190,7 +191,7 @@ namespace LobotomyPlaywright.Server
             catch (Exception ex)
             {
                 TcpServer.LogError($"[ClientHandler] Failed to parse request: {ex.Message}");
-                var errorResponse = Protocol.Response.CreateError(
+                var errorResponse = Response.CreateError(
                     null,
                     $"Failed to parse request: {ex.Message}",
                     "PARSE_ERROR"

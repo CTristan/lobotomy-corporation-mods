@@ -7,18 +7,33 @@ applyTo: "**/*.cs"
 
 Unity's `JsonUtility` cannot serialize dictionaries, anonymous objects, or properties. All JSON-serializable types must follow these rules.
 
+## Folder Convention
+
+All JsonUtility data classes **must** live in a `JsonModels/` folder within their project. This is mandatory — `.editorconfig` suppresses CA1051, IDE1006, and CA1708 globally via the `[**/JsonModels/**.cs]` glob, so placing classes elsewhere means they won't get the correct suppressions.
+
+```
+MyProject/
+  JsonModels/          # All [Serializable] data classes go here
+    GameStateData.cs
+    ScreenshotData.cs
+  OtherCode/           # Non-serialization code stays outside
+```
+
+Do **not** place non-JsonUtility classes in `JsonModels/` — the relaxed analyzer rules only make sense for serialization data classes.
+
 ## Data Classes
 
 Every class serialized by `JsonUtility` must:
 
-1. Be marked `[Serializable]`
-2. Use **public lowercase fields only** — no properties
-3. Suppress `CA1051` with `[SuppressMessage("Design", "CA1051:Do not declare visible instance fields")]`
+1. Live in the project's `JsonModels/` folder
+2. Be marked `[Serializable]`
+3. Use **public lowercase fields only** — no properties
 4. Use only supported types: `string`, `int`, `float`, `double`, `bool`, `long`, `byte`, enum types, arrays of serializable types, or nested `[Serializable]` classes
+
+Do **not** use `[SuppressMessage]` for CA1051, IDE1006, or CA1708 — the `JsonModels/` folder convention handles this via `.editorconfig` (see `warning-suppression.instructions.md`).
 
 ```csharp
 [Serializable]
-[SuppressMessage("Design", "CA1051:Do not declare visible instance fields")]
 public class GameStateData
 {
     public int day;

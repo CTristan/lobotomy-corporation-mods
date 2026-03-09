@@ -1,14 +1,12 @@
 // SPDX-License-Identifier: MIT
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 
-namespace LobotomyPlaywright.Commands
+namespace LobotomyPlaywright.JsonModels
 {
     /// <summary>
     /// Data class for set-agent-stats command parameters.
     /// </summary>
-    [SuppressMessage("Design", "CA1051:Do not declare visible instance fields")]
     [Serializable]
     public class SetAgentStatsParams
     {
@@ -24,7 +22,6 @@ namespace LobotomyPlaywright.Commands
     /// <summary>
     /// Data class for add-gift/remove-gift command parameters.
     /// </summary>
-    [SuppressMessage("Design", "CA1051:Do not declare visible instance fields")]
     [Serializable]
     public class GiftParams
     {
@@ -35,7 +32,6 @@ namespace LobotomyPlaywright.Commands
     /// <summary>
     /// Data class for set-qliphoth command parameters.
     /// </summary>
-    [SuppressMessage("Design", "CA1051:Do not declare visible instance fields")]
     [Serializable]
     public class SetQliphothParams
     {
@@ -46,7 +42,6 @@ namespace LobotomyPlaywright.Commands
     /// <summary>
     /// Data class for set-game-speed command parameters.
     /// </summary>
-    [SuppressMessage("Design", "CA1051:Do not declare visible instance fields")]
     [Serializable]
     public class SetGameSpeedParams
     {
@@ -56,7 +51,6 @@ namespace LobotomyPlaywright.Commands
     /// <summary>
     /// Data class for spawn-creature command parameters.
     /// </summary>
-    [SuppressMessage("Design", "CA1051:Do not declare visible instance fields")]
     [Serializable]
     public class SpawnCreatureParams
     {
@@ -67,7 +61,6 @@ namespace LobotomyPlaywright.Commands
     /// <summary>
     /// Data class for trigger-ordeal command parameters.
     /// </summary>
-    [SuppressMessage("Design", "CA1051:Do not declare visible instance fields")]
     [Serializable]
     public class TriggerOrdealParams
     {
@@ -77,7 +70,6 @@ namespace LobotomyPlaywright.Commands
     /// <summary>
     /// Data class for set-agent-invincible command parameters.
     /// </summary>
-    [SuppressMessage("Design", "CA1051:Do not declare visible instance fields")]
     [Serializable]
     public class SetAgentInvincibleParams
     {
@@ -88,7 +80,6 @@ namespace LobotomyPlaywright.Commands
     /// <summary>
     /// Data class for assign-work command parameters.
     /// </summary>
-    [SuppressMessage("Design", "CA1051:Do not declare visible instance fields")]
     [Serializable]
     public class AssignWorkParams
     {
@@ -100,7 +91,6 @@ namespace LobotomyPlaywright.Commands
     /// <summary>
     /// Data class for deploy-agent command parameters.
     /// </summary>
-    [SuppressMessage("Design", "CA1051:Do not declare visible instance fields")]
     [Serializable]
     public class DeployAgentParams
     {
@@ -111,7 +101,6 @@ namespace LobotomyPlaywright.Commands
     /// <summary>
     /// Data class for recall-agent command parameters.
     /// </summary>
-    [SuppressMessage("Design", "CA1051:Do not declare visible instance fields")]
     [Serializable]
     public class RecallAgentParams
     {
@@ -121,7 +110,6 @@ namespace LobotomyPlaywright.Commands
     /// <summary>
     /// Data class for suppress command parameters.
     /// </summary>
-    [SuppressMessage("Design", "CA1051:Do not declare visible instance fields")]
     [Serializable]
     public class SuppressParams
     {

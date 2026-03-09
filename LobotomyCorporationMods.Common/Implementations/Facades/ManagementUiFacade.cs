@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using CommandWindow;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
@@ -16,7 +15,6 @@ using UnityEngine.UI;
 
 namespace LobotomyCorporationMods.Common.Implementations.Facades
 {
-    [SuppressMessage("Style", "IDE0060:Remove unused parameter")]
     public static class ManagementUiFacade
     {
         [ThreadStatic] private static UnityAdapterDictionary<string, IImageTestAdapter, Image> s_imagesDictionary;

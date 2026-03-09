@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using LobotomyPlaywright.JsonModels;
 using LobotomyPlaywright.Server;
 
 namespace LobotomyPlaywright.Events
@@ -87,7 +88,7 @@ namespace LobotomyPlaywright.Events
                 var subscribedClients = GetSubscribersForEvent(eventName);
 
                 // Create the event message
-                var eventMessage = Protocol.Response.CreateEvent(eventName, eventData);
+                var eventMessage = Response.CreateEvent(eventName, eventData);
                 var json = Protocol.MessageSerializer.Serialize(eventMessage) + "\n";
 
                 // Send to each subscribed client
@@ -108,11 +109,11 @@ namespace LobotomyPlaywright.Events
         /// <summary>
         /// Handle a subscribe request from a client.
         /// </summary>
-        public static Protocol.Response HandleSubscribe(Protocol.Request request, ClientHandler clientHandler)
+        public static Response HandleSubscribe(Request request, ClientHandler clientHandler)
         {
             if (request.Events == null || request.Events.Count == 0)
             {
-                return Protocol.Response.CreateError(
+                return Response.CreateError(
                     request.Id,
                     "No events specified in subscribe request",
                     "NO_EVENTS"
@@ -137,7 +138,7 @@ namespace LobotomyPlaywright.Events
                 }
             }
 
-            return Protocol.Response.CreateSuccess(
+            return Response.CreateSuccess(
                 request.Id,
                 new { subscribed = request.Events }
             );
@@ -146,11 +147,11 @@ namespace LobotomyPlaywright.Events
         /// <summary>
         /// Handle an unsubscribe request from a client.
         /// </summary>
-        public static Protocol.Response HandleUnsubscribe(Protocol.Request request, ClientHandler clientHandler)
+        public static Response HandleUnsubscribe(Request request, ClientHandler clientHandler)
         {
             if (request.Events == null || request.Events.Count == 0)
             {
-                return Protocol.Response.CreateError(
+                return Response.CreateError(
                     request.Id,
                     "No events specified in unsubscribe request",
                     "NO_EVENTS"
@@ -163,7 +164,7 @@ namespace LobotomyPlaywright.Events
                 RemoveClientEvents(clientHandler, request.Events);
             }
 
-            return Protocol.Response.CreateSuccess(
+            return Response.CreateSuccess(
                 request.Id,
                 new { unsubscribed = request.Events }
             );

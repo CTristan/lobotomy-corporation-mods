@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using AwesomeAssertions;
+using LobotomyPlaywright.JsonModels;
 using LobotomyPlaywright.Protocol;
 using LobotomyPlaywright.Queries;
 using Xunit;

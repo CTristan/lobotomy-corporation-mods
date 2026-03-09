@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using LobotomyPlaywright.JsonModels;
 using UnityEngine;
 
 namespace LobotomyPlaywright.Queries
@@ -16,13 +17,13 @@ namespace LobotomyPlaywright.Queries
             "agents", "creatures", "game", "status", "sefira", "departments", "titlemenu", "title", "ui"
         };
 
-        public static Protocol.Response HandleQuery(Protocol.Request request)
+        public static Response HandleQuery(Request request)
         {
             LobotomyPlaywright.Server.TcpServer.LogDebug($"[LobotomyPlaywright] HandleQuery called: target={request?.Target}, id={request?.Id}");
 
             if (request == null || string.IsNullOrEmpty(request.Target))
             {
-                return Protocol.Response.CreateError(
+                return Response.CreateError(
                     request?.Id,
                     "Missing target parameter",
                     "MISSING_TARGET"
@@ -35,7 +36,7 @@ namespace LobotomyPlaywright.Queries
 
                 if (!IsValidTarget(target))
                 {
-                    return Protocol.Response.CreateError(
+                    return Response.CreateError(
                         request.Id,
                         $"Unknown query target: {request.Target}",
                         "UNKNOWN_TARGET"
@@ -59,7 +60,7 @@ namespace LobotomyPlaywright.Queries
                 if (!GameStateQueries.IsGameQueryable())
                 {
                     LobotomyPlaywright.Server.TcpServer.LogDebug("[LobotomyPlaywright] Game not queryable!");
-                    return Protocol.Response.CreateError(
+                    return Response.CreateError(
                         request.Id,
                         "Game is not in a queryable state",
                         "GAME_NOT_READY"
@@ -73,7 +74,7 @@ namespace LobotomyPlaywright.Queries
             }
             catch (Exception ex)
             {
-                return Protocol.Response.CreateError(
+                return Response.CreateError(
                     request.Id,
                     $"Query failed: {ex.Message}",
                     "QUERY_ERROR"
@@ -85,7 +86,7 @@ namespace LobotomyPlaywright.Queries
 
         private static bool IsTitleMenuTarget(string target) => target == "titlemenu" || target == "title";
 
-        private static Protocol.Response RouteQuery(string target, string requestId, Dictionary<string, object> parameters)
+        private static Response RouteQuery(string target, string requestId, Dictionary<string, object> parameters)
         {
             switch (target)
             {
@@ -103,7 +104,7 @@ namespace LobotomyPlaywright.Queries
                 case "title":
                     return HandleTitleMenuQuery(requestId);
                 default:
-                    return Protocol.Response.CreateError(requestId, $"Unknown query target: {target}", "UNKNOWN_TARGET");
+                    return Response.CreateError(requestId, $"Unknown query target: {target}", "UNKNOWN_TARGET");
             }
         }
 
@@ -120,7 +121,7 @@ namespace LobotomyPlaywright.Queries
             return Convert.ToInt64(idValue);
         }
 
-        private static Protocol.Response HandleAgentsQuery(string requestId, Dictionary<string, object> parameters)
+        private static Response HandleAgentsQuery(string requestId, Dictionary<string, object> parameters)
         {
             // Check if we're querying a specific agent
             if (parameters.ContainsKey("id") || parameters.ContainsKey("instanceId"))
@@ -130,22 +131,22 @@ namespace LobotomyPlaywright.Queries
                 var agent = AgentQueries.GetAgent(instanceId);
                 if (agent == null)
                 {
-                    return Protocol.Response.CreateError(
+                    return Response.CreateError(
                         requestId,
                         $"Agent not found: {instanceId}",
                         "NOT_FOUND"
                     );
                 }
 
-                return Protocol.Response.CreateSuccess(requestId, agent);
+                return Response.CreateSuccess(requestId, agent);
             }
 
             // List all agents
             var agents = AgentQueries.ListAgents();
-            return Protocol.Response.CreateSuccess(requestId, agents);
+            return Response.CreateSuccess(requestId, agents);
         }
 
-        private static Protocol.Response HandleCreaturesQuery(string requestId, Dictionary<string, object> parameters)
+        private static Response HandleCreaturesQuery(string requestId, Dictionary<string, object> parameters)
         {
             // Check if we're querying a specific creature
             if (parameters.ContainsKey("id") || parameters.ContainsKey("instanceId"))
@@ -155,28 +156,28 @@ namespace LobotomyPlaywright.Queries
                 var creature = CreatureQueries.GetCreature(instanceId);
                 if (creature == null)
                 {
-                    return Protocol.Response.CreateError(
+                    return Response.CreateError(
                         requestId,
                         $"Creature not found: {instanceId}",
                         "NOT_FOUND"
                     );
                 }
 
-                return Protocol.Response.CreateSuccess(requestId, creature);
+                return Response.CreateSuccess(requestId, creature);
             }
 
             // List all creatures
             var creatures = CreatureQueries.ListCreatures();
-            return Protocol.Response.CreateSuccess(requestId, creatures);
+            return Response.CreateSuccess(requestId, creatures);
         }
 
-        private static Protocol.Response HandleGameStatusQuery(string requestId)
+        private static Response HandleGameStatusQuery(string requestId)
         {
             var status = GameStateQueries.GetStatus();
-            return Protocol.Response.CreateSuccess(requestId, status);
+            return Response.CreateSuccess(requestId, status);
         }
 
-        private static Protocol.Response HandleSefiraQuery(string requestId, Dictionary<string, object> parameters)
+        private static Response HandleSefiraQuery(string requestId, Dictionary<string, object> parameters)
         {
             // Check if we're querying a specific sefira
             if (parameters.ContainsKey("name") || parameters.ContainsKey("sefira"))
@@ -189,11 +190,11 @@ namespace LobotomyPlaywright.Queries
                 {
                     var sefiraEnum = (SefiraEnum)Enum.Parse(typeof(SefiraEnum), sefiraName, true);
                     var sefira = SefiraQueries.GetSefira(sefiraEnum);
-                    return Protocol.Response.CreateSuccess(requestId, sefira);
+                    return Response.CreateSuccess(requestId, sefira);
                 }
                 catch (ArgumentException)
                 {
-                    return Protocol.Response.CreateError(
+                    return Response.CreateError(
                         requestId,
                         $"Unknown sefira: {sefiraName}",
                         "NOT_FOUND"
@@ -203,19 +204,19 @@ namespace LobotomyPlaywright.Queries
 
             // List all sefira
             var sefiraList = SefiraQueries.ListSefira();
-            return Protocol.Response.CreateSuccess(requestId, sefiraList);
+            return Response.CreateSuccess(requestId, sefiraList);
         }
 
-        private static Protocol.Response HandleTitleMenuQuery(string requestId)
+        private static Response HandleTitleMenuQuery(string requestId)
         {
             try
             {
                 var status = TitleMenuQueries.GetTitleMenuStatus();
-                return Protocol.Response.CreateSuccess(requestId, status);
+                return Response.CreateSuccess(requestId, status);
             }
             catch (Exception ex)
             {
-                return Protocol.Response.CreateError(
+                return Response.CreateError(
                     requestId,
                     $"Failed to get title menu status: {ex.Message}",
                     "QUERY_ERROR"
@@ -223,7 +224,7 @@ namespace LobotomyPlaywright.Queries
             }
         }
 
-        private static Protocol.Response HandleUiQuery(string requestId, Dictionary<string, object> parameters)
+        private static Response HandleUiQuery(string requestId, Dictionary<string, object> parameters)
         {
             try
             {
@@ -237,11 +238,11 @@ namespace LobotomyPlaywright.Queries
                     : null;
 
                 var uiState = UiQueries.GetUiState(depth, windowFilter);
-                return Protocol.Response.CreateSuccess(requestId, uiState);
+                return Response.CreateSuccess(requestId, uiState);
             }
             catch (Exception ex)
             {
-                return Protocol.Response.CreateError(
+                return Response.CreateError(
                     requestId,
                     $"Failed to get UI state: {ex.Message}",
                     "QUERY_ERROR"

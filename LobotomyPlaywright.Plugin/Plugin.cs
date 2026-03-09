@@ -4,6 +4,7 @@ using System;
 using BepInEx;
 using BepInEx.Logging;
 using LobotomyPlaywright.Events;
+using LobotomyPlaywright.JsonModels;
 using LobotomyPlaywright.Server;
 using UnityEngine;
 
@@ -41,7 +42,7 @@ namespace LobotomyPlaywright
                 }
 
                 // Force MessageSerializer to initialize
-                var testResponse = Protocol.Response.CreateSuccess("init", new { test = true });
+                var testResponse = Response.CreateSuccess("init", new { test = true });
                 var testJson = Protocol.MessageSerializer.Serialize(testResponse);
                 LogInfo($"MessageSerializer test: {testJson}");
 

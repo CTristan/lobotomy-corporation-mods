@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 using System;
-using System.Diagnostics.CodeAnalysis;
+using LobotomyPlaywright.JsonModels;
 using LobotomyPlaywright.Protocol;
 using UnityEngine;
 
@@ -14,11 +14,11 @@ namespace LobotomyPlaywright.Commands
     /// </summary>
     public static class CommandRouter
     {
-        public static Protocol.Response HandleCommand(Protocol.Request request)
+        public static Response HandleCommand(Request request)
         {
             if (request == null)
             {
-                return Protocol.Response.CreateError(
+                return Response.CreateError(
                     null,
                     "Request is null",
                     "INVALID_REQUEST"
@@ -27,7 +27,7 @@ namespace LobotomyPlaywright.Commands
 
             if (string.IsNullOrEmpty(request.Action))
             {
-                return Protocol.Response.CreateError(
+                return Response.CreateError(
                     request.Id,
                     "Missing action",
                     "MISSING_ACTION"
@@ -87,7 +87,7 @@ namespace LobotomyPlaywright.Commands
                     return PlayerActionCommands.HandleSuppress(request);
 
                 default:
-                    return Protocol.Response.CreateError(
+                    return Response.CreateError(
                         request.Id,
                         $"Unknown action: {request.Action}",
                         "UNKNOWN_ACTION"
@@ -100,8 +100,7 @@ namespace LobotomyPlaywright.Commands
         /// </summary>
         // Excluded from code coverage - Unity runtime call
         // Note: net35 doesn't have ExcludeFromCodeCoverage attribute, handled via code analysis
-        [SuppressMessage("Usage", "CA1806:Do not ignore method results", Justification = "Application.Quit has no return value to check")]
-        private static Protocol.Response HandleShutdown(Protocol.Request request)
+        private static Response HandleShutdown(Request request)
         {
             try
             {
@@ -109,14 +108,14 @@ namespace LobotomyPlaywright.Commands
                 // This allows the response to be sent before quitting
                 Plugin.Instance?.QueueShutdown();
 
-                return Protocol.Response.CreateSuccess(
+                return Response.CreateSuccess(
                     request.Id,
                     new { result = "shutdown scheduled" }
                 );
             }
             catch (Exception ex)
             {
-                return Protocol.Response.CreateError(
+                return Response.CreateError(
                     request.Id,
                     $"Failed to queue shutdown: {ex.Message}",
                     "SHUTDOWN_ERROR"

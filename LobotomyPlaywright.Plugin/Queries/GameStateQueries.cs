@@ -3,6 +3,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using LobotomyPlaywright.JsonModels;
 using UnityEngine.SceneManagement;
 
 namespace LobotomyPlaywright.Queries
