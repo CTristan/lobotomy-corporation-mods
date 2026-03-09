@@ -10,7 +10,7 @@ namespace LobotomyPlaywright.Implementations.System;
 /// <summary>
 /// Implementation of IFileSystem using System.IO.
 /// </summary>
-internal sealed class FileSystem : IFileSystem
+public sealed class FileSystem : IFileSystem
 {
     public void WriteAllText(string path, string contents)
     {

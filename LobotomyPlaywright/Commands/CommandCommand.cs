@@ -14,7 +14,7 @@ namespace LobotomyPlaywright.Commands;
 /// <summary>
 /// Command to send commands to the game.
 /// </summary>
-internal class CommandCommand
+public class CommandCommand
 {
     private readonly IConfigManager _configManager;
     private readonly Func<ITcpClient> _tcpClientFactory;
@@ -45,6 +45,8 @@ internal class CommandCommand
     /// <returns>Exit code (0 for success, non-zero for failure).</returns>
     public int Run(string[] args)
     {
+        ArgumentNullException.ThrowIfNull(args);
+
         if (args.Length == 0)
         {
             PrintUsage();

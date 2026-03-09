@@ -14,7 +14,7 @@ namespace LobotomyPlaywright.Commands;
 /// <summary>
 /// Command to build and deploy the plugin DLLs to the game.
 /// </summary>
-internal class DeployCommand
+public class DeployCommand
 {
     private const string PluginDllName = "LobotomyPlaywright.Plugin.dll";
     private const string HarmonyDebugPanelDllName = "HarmonyDebugPanel.dll";
@@ -53,6 +53,8 @@ internal class DeployCommand
     /// <returns>Exit code (0 for success, non-zero for failure).</returns>
     public int Run(string[] args)
     {
+        ArgumentNullException.ThrowIfNull(args);
+
         var configuration = GetArgValue(args, "--configuration") ?? "Release";
         var skipBuild = HasArg(args, "--skip-build");
         var dryRun = HasArg(args, "--dry-run");

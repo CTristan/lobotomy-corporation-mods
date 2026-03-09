@@ -28,6 +28,7 @@ Apply these rules across projects in this repository.
 - Use `internal` for mod-private contracts and implementations that should not leak outside a specific mod assembly.
 - Prefer `sealed` for concrete leaf implementations.
 - Keep non-sealed classes only when they are intentional base classes (for example generic adapter base classes or abstract evaluator bases).
+- **Never** use `InternalsVisibleTo`. If something needs to be tested, it must be `public`. If a type or member cannot be made `public`, restructure so testable logic lives in a public surface.
 
 ## Inheritance And Composition Patterns
 

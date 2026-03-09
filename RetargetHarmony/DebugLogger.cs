@@ -5,6 +5,8 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using BepInEx;
+using BepInEx.Bootstrap;
 using BepInEx.Logging;
 using Mono.Cecil;
 #pragma warning disable CA1031 // Intentionally catching broad exceptions for Unity Debug availability
@@ -30,6 +32,7 @@ namespace RetargetHarmony
         /// </summary>
         public enum LogLevel
         {
+            None = 0,
             Trace,
             Debug,
             Info,
@@ -65,10 +68,43 @@ namespace RetargetHarmony
 
             s_bepInExLog = log;
 
-            // Determine config directory from executing assembly location
-            var configDir = ConfigDirectoryOverride ?? GetAssemblyDirectory();
+            // Determine config directory - check assembly directory first (patcher's own folder),
+            // then fall back to BepInEx config path
+            // This ensures patcher logs go in the patcher folder, not the shared config folder
+            string configDir;
+            string configPath;
 
-            var configPath = Path.Combine(configDir, ConfigFileName);
+            // First check the patcher's own directory (assembly location)
+            var assemblyDir = ConfigDirectoryOverride ?? GetAssemblyDirectory();
+            var assemblyConfigPath = Path.Combine(assemblyDir, ConfigFileName);
+
+            if (File.Exists(assemblyConfigPath))
+            {
+                // Config found in assembly directory - use that
+                configDir = assemblyDir;
+                configPath = assemblyConfigPath;
+            }
+            else if (!string.IsNullOrEmpty(Paths.ConfigPath))
+            {
+                // Fall back to BepInEx config path
+                configPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
+                if (File.Exists(configPath))
+                {
+                    configDir = Paths.ConfigPath;
+                }
+                else
+                {
+                    // No config file exists yet - use assembly directory for the default config
+                    configDir = assemblyDir;
+                    configPath = assemblyConfigPath;
+                }
+            }
+            else
+            {
+                // No BepInEx paths available - use assembly directory
+                configDir = assemblyDir;
+                configPath = assemblyConfigPath;
+            }
 
             if (File.Exists(configPath))
             {
@@ -77,17 +113,21 @@ namespace RetargetHarmony
             }
             else
             {
-                s_debugEnabled = false;
+                // Default to Warn level (warnings and errors) when no config file exists
+                // This ensures users can see important issues without needing to create a config
+                s_debugEnabled = true;
+                s_minLevel = LogLevel.Warn;
             }
 
-            // Set up log file path
+            // Set up log file path - ALWAYS use the patcher's own folder (assembly directory)
+            // for logs, regardless of where the config file is found
             if (LogFilePathOverride != null)
             {
                 s_logFilePath = LogFilePathOverride;
             }
             else if (s_debugEnabled)
             {
-                var logDir = Path.Combine(configDir, LogFolderName);
+                var logDir = Path.Combine(assemblyDir, LogFolderName);
                 if (!Directory.Exists(logDir))
                 {
                     Directory.CreateDirectory(logDir);
@@ -112,6 +152,38 @@ namespace RetargetHarmony
             s_unityAvailable = true;
             ConfigDirectoryOverride = null;
             LogFilePathOverride = null;
+        }
+
+        /// <summary>
+        /// Sets the log level from config file value.
+        /// Called by RetargetHarmony.InitializeConfig when parsing the shared config file.
+        /// </summary>
+        /// <param name="level">The log level string from config.</param>
+        public static void SetLogLevelFromConfig(string level)
+        {
+            if (string.IsNullOrEmpty(level))
+            {
+                return;
+            }
+
+            try
+            {
+                var parsedLevel = (LogLevel)Enum.Parse(typeof(LogLevel), level, true);
+                if (parsedLevel == LogLevel.None)
+                {
+                    s_debugEnabled = false;
+                    s_minLevel = LogLevel.None;
+                }
+                else
+                {
+                    s_debugEnabled = true;
+                    s_minLevel = parsedLevel;
+                }
+            }
+            catch (ArgumentException)
+            {
+                // Invalid log level - ignore and keep current settings
+            }
         }
 
         /// <summary>
@@ -287,11 +359,22 @@ namespace RetargetHarmony
                         try
                         {
                             s_minLevel = (LogLevel)Enum.Parse(typeof(LogLevel), value, true);
+
+                            // If LogLevel is None, disable debug logging entirely
+                            if (s_minLevel == LogLevel.None)
+                            {
+                                s_debugEnabled = false;
+                            }
+                            else
+                            {
+                                s_debugEnabled = true;
+                            }
                         }
                         catch (ArgumentException)
                         {
                             // Default to Debug if unparseable
                             s_minLevel = LogLevel.Debug;
+                            s_debugEnabled = true;
                         }
                     }
                 }
@@ -300,6 +383,7 @@ namespace RetargetHarmony
             {
                 // If config parsing fails, default to Debug level
                 s_minLevel = LogLevel.Debug;
+                s_debugEnabled = true;
             }
         }
 

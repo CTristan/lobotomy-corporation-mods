@@ -13,7 +13,7 @@ namespace LobotomyPlaywright.Commands;
 /// <summary>
 /// Command to capture a screenshot of the current game state.
 /// </summary>
-internal class ScreenshotCommand
+public class ScreenshotCommand
 {
     private readonly IConfigManager _configManager;
     private readonly Func<ITcpClient> _tcpClientFactory;
@@ -44,6 +44,8 @@ internal class ScreenshotCommand
     /// <returns>Exit code (0 for success, non-zero for failure).</returns>
     public int Run(string[] args)
     {
+        ArgumentNullException.ThrowIfNull(args);
+
         var formatArg = GetArgValue(args, "--format") ?? "base64";
         var outputPath = GetArgValue(args, "--output");
         var displayFormat = GetArgValue(args, "--display") ?? "text";

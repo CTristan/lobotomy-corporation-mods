@@ -196,6 +196,84 @@ public sealed class RetargetHarmonyTests
         baseModsPath.Should().Contain("LobotomyCorp_Data", "BaseModsPath should contain LobotomyCorp_Data");
     }
 
+    [Fact]
+    public void PatchBaseModsEnabled_DefaultsToFalse()
+    {
+        // Clear any override and config
+        RetargetHarmony.PatchBaseModsOverride = false;
+        RetargetHarmony.ClearPatchBaseModsConfig();
+
+        // Without config initialized, should default to false
+        RetargetHarmony.PatchBaseModsEnabled.Should().BeFalse("by default PatchBaseMods should be disabled");
+    }
+
+    [Fact]
+    public void PatchBaseModsEnabled_ReturnsTrue_WhenOverrideIsSet()
+    {
+        // Set override to true
+        RetargetHarmony.PatchBaseModsOverride = true;
+
+        try
+        {
+            RetargetHarmony.PatchBaseModsEnabled.Should().BeTrue("when override is set, PatchBaseModsEnabled should return true");
+        }
+        finally
+        {
+            // Clean up
+            RetargetHarmony.PatchBaseModsOverride = false;
+        }
+    }
+
+    [Fact]
+    public void TargetDLLs_ExcludesBaseModsDlls_WhenPatchBaseModsDisabled()
+    {
+        // Ensure patch base mods is disabled
+        RetargetHarmony.PatchBaseModsOverride = false;
+        RetargetHarmony.ClearPatchBaseModsConfig();
+
+        var targetDlls = RetargetHarmony.TargetDLLs.ToList();
+
+        // Should only contain the Managed DLLs
+        targetDlls.Should().HaveCount(2, "only Managed DLLs should be included when PatchBaseMods is disabled");
+        targetDlls.Should().Contain("Assembly-CSharp.dll");
+        targetDlls.Should().Contain("LobotomyBaseModLib.dll");
+    }
+
+    [Fact]
+    public void TargetDLLs_IncludesBaseModsDlls_WhenPatchBaseModsEnabled()
+    {
+        // Set override to true to enable BaseMods patching
+        RetargetHarmony.PatchBaseModsOverride = true;
+
+        try
+        {
+            // Note: BaseMods directory may not exist in test environment
+            // The property should handle this gracefully
+            var targetDlls = RetargetHarmony.TargetDLLs.ToList();
+
+            // Should contain Managed DLLs
+            targetDlls.Should().Contain("Assembly-CSharp.dll");
+            targetDlls.Should().Contain("LobotomyBaseModLib.dll");
+
+            // If BaseMods directory exists, should also contain those DLLs
+            var baseModsPath = RetargetHarmony.BaseModsPath;
+            if (Directory.Exists(baseModsPath))
+            {
+                var baseModsDlls = Directory.GetFiles(baseModsPath, "*.dll", SearchOption.TopDirectoryOnly);
+                foreach (var dll in baseModsDlls)
+                {
+                    var dllName = Path.GetFileName(dll);
+                    targetDlls.Should().Contain(dllName, $"BaseMods DLL {dllName} should be included when PatchBaseMods is enabled");
+                }
+            }
+        }
+        finally
+        {
+            // Clean up
+            RetargetHarmony.PatchBaseModsOverride = false;
+        }
+    }
+
     private static string GetManagedAssemblyPath(string fileName)
     {
         return Path.Combine(ManagedDir, fileName);

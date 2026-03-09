@@ -8,7 +8,7 @@ namespace LobotomyPlaywright.Interfaces.Network;
 /// <summary>
 /// Interface for TCP communication with the game plugin.
 /// </summary>
-internal interface ITcpClient : IDisposable
+public interface ITcpClient : IDisposable
 {
     /// <summary>
     /// Connects to the TCP server.

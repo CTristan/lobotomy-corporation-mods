@@ -8,7 +8,7 @@ namespace LobotomyPlaywright.Interfaces.System;
 /// <summary>
 /// Interface for running external processes.
 /// </summary>
-internal interface IProcessRunner
+public interface IProcessRunner
 {
     /// <summary>
     /// Runs a process and returns the exit code.

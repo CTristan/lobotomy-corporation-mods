@@ -54,6 +54,14 @@ namespace RetargetHarmony
         // Guard flag to prevent recursion in PostFindPluginTypes
         private static volatile bool s_isProcessing;
 
+        // Configuration: enable patching of DLLs in BaseMods directory
+        // Set via BepInEx config file (RetargetHarmony.cfg)
+        private static bool s_patchBaseMods;
+        private static bool s_configInitialized;
+
+        // Public override for testing - bypasses config file
+        public static bool PatchBaseModsOverride { get; set; }
+
         // BepInEx 5 requires static property returning names of assemblies to patch
         public static IEnumerable<string> TargetDLLs
         {
@@ -61,6 +69,49 @@ namespace RetargetHarmony
             {
                 yield return "Assembly-CSharp.dll";
                 yield return "LobotomyBaseModLib.dll";
+
+                // Optionally include BaseMods DLLs if enabled via configuration
+                if (PatchBaseModsEnabled && Directory.Exists(BaseModsPath))
+                {
+                    SafeTrace("Including BaseMods DLLs in TargetDLLs");
+                    foreach (var dll in GetBaseModsDlls())
+                    {
+                        yield return dll;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Publicly accessible config value for PatchBaseMods setting.
+        /// Returns override value if set for testing, otherwise returns config value.
+        /// </summary>
+        public static bool PatchBaseModsEnabled => PatchBaseModsOverride || s_patchBaseMods;
+
+        /// <summary>
+        /// Clears the PatchBaseMods configuration to force re-initialization.
+        /// Used for testing purposes.
+        /// </summary>
+        public static void ClearPatchBaseModsConfig()
+        {
+            s_configInitialized = false;
+            s_patchBaseMods = false;
+        }
+
+        /// <summary>
+        /// Gets the list of DLL filenames from the BaseMods directory.
+        /// </summary>
+        private static IEnumerable<string> GetBaseModsDlls()
+        {
+            if (!Directory.Exists(BaseModsPath))
+            {
+                yield break;
+            }
+
+            // Use GetFiles instead of EnumerateFiles for .NET 3.5 compatibility
+            foreach (var file in Directory.GetFiles(BaseModsPath, "*.dll", SearchOption.TopDirectoryOnly))
+            {
+                yield return Path.GetFileName(file);
             }
         }
 
@@ -95,6 +146,125 @@ namespace RetargetHarmony
             catch (Exception ex) { Log?.LogWarning($"SafeError failed: {ex.Message}"); }
         }
 
+        // Lazy initialization for configuration - must be called from early entry point
+        private static void InitializeConfig()
+        {
+            if (s_configInitialized)
+            {
+                return; // Already initialized
+            }
+
+            try
+            {
+                // Determine config path - check assembly directory first (patcher's own folder),
+                // then fall back to BepInEx config path
+                var assemblyDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? "";
+                var assemblyConfigPath = Path.Combine(assemblyDir, "RetargetHarmony.cfg");
+
+                string configPath;
+
+                if (File.Exists(assemblyConfigPath))
+                {
+                    // Config found in assembly directory
+                    configPath = assemblyConfigPath;
+                }
+                else if (!string.IsNullOrEmpty(Paths.ConfigPath))
+                {
+                    configPath = Path.Combine(Paths.ConfigPath, "RetargetHarmony.cfg");
+                }
+                else
+                {
+                    // Fall back to assembly directory
+                    configPath = assemblyConfigPath;
+                }
+
+                // Generate default config file if it doesn't exist
+                if (!File.Exists(configPath))
+                {
+                    var defaultConfig = @"# RetargetHarmony Configuration File
+# Generated on first run
+
+# Logging level: None, Trace, Debug, Info, Warn, Error
+LogLevel = Warn
+
+# Enable patching of DLLs in the BaseMods directory
+PatchBaseMods = false
+";
+                    File.WriteAllText(configPath, defaultConfig);
+                    SafeInfo(string.Format(CultureInfo.InvariantCulture, "Generated default config file: {0}", configPath));
+                }
+
+                // Parse the config file manually
+                ParseConfigFile(configPath);
+
+                SafeDebug(string.Format(CultureInfo.InvariantCulture,
+                    "Configuration initialized: PatchBaseMods={0}",
+                    s_patchBaseMods));
+            }
+            catch (Exception ex)
+            {
+                SafeWarn(string.Format(CultureInfo.InvariantCulture,
+                    "Failed to initialize configuration, using defaults: {0}",
+                    ex.Message));
+            }
+            finally
+            {
+                s_configInitialized = true;
+            }
+        }
+
+        // Parse the config file and set config values
+        private static void ParseConfigFile(string configPath)
+        {
+            if (!File.Exists(configPath))
+            {
+                return;
+            }
+
+            try
+            {
+                var lines = File.ReadAllLines(configPath);
+                foreach (var line in lines)
+                {
+                    var trimmed = line.Trim();
+                    // Skip comments and empty lines
+                    if (string.IsNullOrEmpty(trimmed) || trimmed.StartsWith("#", StringComparison.Ordinal))
+                    {
+                        continue;
+                    }
+
+                    var separator = new[] { '=' };
+                    var parts = trimmed.Split(separator, 2);
+                    if (parts.Length != 2)
+                    {
+                        continue;
+                    }
+
+                    var key = parts[0].Trim();
+                    var value = parts[1].Trim();
+
+                    switch (key)
+                    {
+                        case "PatchBaseMods":
+                            if (bool.TryParse(value, out var patchBaseMods))
+                            {
+                                s_patchBaseMods = patchBaseMods;
+                            }
+                            break;
+
+                        case "LogLevel":
+                            // Pass to DebugLogger
+                            DebugLogger.SetLogLevelFromConfig(value);
+                            break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                SafeWarn(string.Format(CultureInfo.InvariantCulture, "Error parsing config file: {0}", ex.Message));
+            }
+        }
+
         // BepInEx 5 requires static Patch method
         public static void Patch(AssemblyDefinition asm)
         {
@@ -102,6 +272,9 @@ namespace RetargetHarmony
             {
                 // Lazy initialize debug logger
                 DebugLogger.Initialize(Log);
+
+                // Lazy initialize configuration
+                InitializeConfig();
 
                 if (asm == null)
                 {
