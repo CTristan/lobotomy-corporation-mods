@@ -7,7 +7,7 @@ using HarmonyDebugPanel.Interfaces;
 using HarmonyDebugPanel.Models;
 using Xunit;
 
-namespace HarmonyDebugPanel.Test
+namespace HarmonyDebugPanel.Test.Tests
 {
     public sealed class AssemblyInfoCollectorTests
     {

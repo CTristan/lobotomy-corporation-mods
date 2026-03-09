@@ -5,7 +5,7 @@ using AwesomeAssertions;
 using Moq;
 using Xunit;
 
-namespace CI.Tests
+namespace CI.Test.Tests
 {
     public sealed class CiRunnerTests
     {

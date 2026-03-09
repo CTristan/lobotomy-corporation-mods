@@ -5,7 +5,7 @@ using AwesomeAssertions;
 using HarmonyDebugPanel.Models;
 using Xunit;
 
-namespace HarmonyDebugPanel.Test
+namespace HarmonyDebugPanel.Test.Tests
 {
     public sealed class ModelTests
     {

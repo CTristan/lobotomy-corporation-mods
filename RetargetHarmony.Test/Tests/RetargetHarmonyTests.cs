@@ -11,7 +11,7 @@ using Xunit;
 using Xunit.Abstractions;
 using static RetargetHarmony.RetargetHarmony;
 
-namespace RetargetHarmony.Test
+namespace RetargetHarmony.Test.Tests
 {
     public sealed class RetargetHarmonyTests(ITestOutputHelper output)
     {

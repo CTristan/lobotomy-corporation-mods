@@ -8,7 +8,7 @@ using BepInEx.Logging;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace RetargetHarmony.Test
+namespace RetargetHarmony.Test.Tests
 {
     public sealed class DebugLoggerTests : IDisposable
     {

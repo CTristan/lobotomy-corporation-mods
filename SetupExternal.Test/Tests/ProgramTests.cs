@@ -3,7 +3,7 @@
 using AwesomeAssertions;
 using Xunit;
 
-namespace SetupExternal.Tests
+namespace SetupExternal.Test.Tests
 {
     public sealed class ProgramTests
     {
