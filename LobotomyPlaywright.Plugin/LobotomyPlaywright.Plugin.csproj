@@ -28,6 +28,14 @@
     <PackageReference Include="BepInEx.BaseLib" Version="5.4.21" ExcludeAssets="runtime"/>
     <PackageReference Include="BepInEx.Core" Version="5.4.21" ExcludeAssets="runtime"/>
     <PackageReference Include="BepInEx.PluginInfoProps" Version="2.1.0" ExcludeAssets="runtime"/>
+    <PackageReference Include="Roslynator.Analyzers" Version="4.15.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Roslynator.Formatting.Analyzers" Version="4.15.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="UnityEngine.Modules" Version="2017.4.7" IncludeAssets="compile" ExcludeAssets="runtime"/>
   </ItemGroup>
 
