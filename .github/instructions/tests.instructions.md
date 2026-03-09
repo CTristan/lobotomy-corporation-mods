@@ -7,7 +7,9 @@ applyTo: "LobotomyCorporationMods.Test/**"
 
 ## Structure
 
-- Tests live in `ModTests/{ModName}Tests/` mirroring the mod's structure
+- **Test files must never be placed directly in the test project root** — every test file must be in at least one subfolder
+- Mirroring the source project's folder structure is preferred but not required — use a more logical grouping when it improves clarity (e.g., shared helpers in a `Helpers/` folder, or grouping related tests differently than their source layout)
+- Mod tests live in `ModTests/{ModName}Tests/` mirroring the mod's structure
 - Each mod has a base class `{ModName}ModTests` with shared setup (instantiates `Harmony_Patch`, configures mock logger)
 - Patch tests go in `PatchTests/{ClassName}Patch{MethodName}Tests.cs`
 - `HarmonyPatchTests.cs` at the mod level verifies all patch registrations and exception logging

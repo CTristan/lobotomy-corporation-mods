@@ -18,10 +18,6 @@ dotnet_diagnostic.IDE0130.severity = suggestion
 dotnet_diagnostic.IDE0051.severity = none
 dotnet_diagnostic.IDE0052.severity = none
 
-[**/LobotomyPlaywright/Infrastructure/ProcessManager.cs]
-# WHY: ProcessManager has virtual members for test mocking, so it cannot be sealed
-dotnet_diagnostic.CA1852.severity = none
-
 # WHY: All test projects share these conventions
 [**/*.Test/**/*.cs]
 # WHY: Tests should not have unused private members (opposite of earlier exclusion for Unity private methods)
