@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 using LobotomyCorporationMods.Common.Implementations.LoggerTargets;
+using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.Test.Extensions;
 using Moq;
 using Xunit;
@@ -14,8 +15,8 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests.LoggerTargetTests
         {
             const string ExpectedLogFilename = "log.txt";
             const string ExpectedMessage = "MessageSentToLog";
-            var mockFileManager = TestExtensions.GetMockFileManager();
-            var sut = new FileLoggerTarget(mockFileManager.Object, ExpectedLogFilename);
+            Mock<IFileManager> mockFileManager = TestExtensions.GetMockFileManager();
+            FileLoggerTarget sut = new(mockFileManager.Object, ExpectedLogFilename);
 
             sut.WriteToLoggerTarget(ExpectedMessage);
 

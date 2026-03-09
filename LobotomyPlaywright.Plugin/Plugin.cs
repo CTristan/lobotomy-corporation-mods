@@ -10,9 +10,7 @@ using UnityEngine;
 
 namespace LobotomyPlaywright
 {
-#pragma warning disable CA2243 // BepInEx uses reverse-domain IDs, not RFC GUID strings
     [BepInPlugin(PluginConstants.PluginGuid, PluginConstants.PluginName, PluginConstants.PluginVersion)]
-#pragma warning restore CA2243
     public sealed class Plugin : BaseUnityPlugin
     {
         private static Plugin _instance;

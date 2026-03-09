@@ -33,14 +33,14 @@ namespace LobotomyPlaywright.Plugin.Test.Server
         public void ClientHandler_with_valid_tcp_client_starts_successfully()
         {
             // Arrange
-            var tcpClient = new TcpClient();
+            TcpClient tcpClient = new();
             tcpClient.Connect(IPAddress.Loopback, _port);
 
             // Give server time to accept
             Thread.Sleep(100);
 
             // Act & Assert - if we got here, the client connected successfully
-            tcpClient.Connected.Should().BeTrue();
+            _ = tcpClient.Connected.Should().BeTrue();
 
             // Cleanup
             tcpClient.Close();
@@ -53,7 +53,7 @@ namespace LobotomyPlaywright.Plugin.Test.Server
         public void ClientHandler_disconnects_gracefully_on_client_close()
         {
             // Arrange
-            var tcpClient = new TcpClient();
+            TcpClient tcpClient = new();
             tcpClient.Connect(IPAddress.Loopback, _port);
 
             Thread.Sleep(100);
@@ -65,7 +65,7 @@ namespace LobotomyPlaywright.Plugin.Test.Server
             Thread.Sleep(100);
 
             // Assert
-            _server.ClientCount.Should().Be(0);
+            _ = _server.ClientCount.Should().Be(0);
         }
 
         [Fact]
@@ -77,28 +77,28 @@ namespace LobotomyPlaywright.Plugin.Test.Server
             }
 
             // Arrange
-            var tcpClient = new TcpClient();
+            TcpClient tcpClient = new();
             tcpClient.Connect(IPAddress.Loopback, _port);
             tcpClient.ReceiveTimeout = 5000;
             tcpClient.SendTimeout = 5000;
 
             Thread.Sleep(100);
 
-            var request = "{\"id\":\"req-1\",\"type\":\"query\",\"target\":\"agents\"}";
-            var requestBytes = Encoding.UTF8.GetBytes(request);
+            string request = /*lang=json,strict*/ "{\"id\":\"req-1\",\"type\":\"query\",\"target\":\"agents\"}";
+            byte[] requestBytes = Encoding.UTF8.GetBytes(request);
 
             // Act
-            var stream = tcpClient.GetStream();
+            NetworkStream stream = tcpClient.GetStream();
             stream.Write(requestBytes, 0, requestBytes.Length);
             stream.Flush();
 
             // Assert - Response should be received (even if error due to no game running)
-            var buffer = new byte[4096];
-            var readCount = stream.Read(buffer, 0, buffer.Length);
+            byte[] buffer = new byte[4096];
+            int readCount = stream.Read(buffer, 0, buffer.Length);
 
-            readCount.Should().BeGreaterThan(0);
-            var response = Encoding.UTF8.GetString(buffer, 0, readCount);
-            response.Should().Contain("\"type\":\"response\"");
+            _ = readCount.Should().BeGreaterThan(0);
+            string response = Encoding.UTF8.GetString(buffer, 0, readCount);
+            _ = response.Should().Contain("\"type\":\"response\"");
 
             // Cleanup
             tcpClient.Close();
@@ -113,34 +113,37 @@ namespace LobotomyPlaywright.Plugin.Test.Server
             }
 
             // Arrange
-            var tcpClient = new TcpClient();
+            TcpClient tcpClient = new();
             tcpClient.Connect(IPAddress.Loopback, _port);
             tcpClient.ReceiveTimeout = 5000;
             tcpClient.SendTimeout = 5000;
 
             Thread.Sleep(100);
 
-            var stream = tcpClient.GetStream();
+            NetworkStream stream = tcpClient.GetStream();
 
             // Act - Send multiple requests
-            var requests = new[]
-            {
-                "{\"id\":\"req-1\",\"type\":\"query\",\"target\":\"agents\"}",
-                "{\"id\":\"req-2\",\"type\":\"query\",\"target\":\"creatures\"}",
-                "{\"id\":\"req-3\",\"type\":\"query\",\"target\":\"game\"}"
-            };
+            string[] requests =
+            [
+                /*lang=json,strict*/
+                                     "{\"id\":\"req-1\",\"type\":\"query\",\"target\":\"agents\"}",
+                /*lang=json,strict*/
+                                     "{\"id\":\"req-2\",\"type\":\"query\",\"target\":\"creatures\"}",
+                /*lang=json,strict*/
+                                     "{\"id\":\"req-3\",\"type\":\"query\",\"target\":\"game\"}"
+            ];
 
-            foreach (var request in requests)
+            foreach (string request in requests)
             {
-                var requestBytes = Encoding.UTF8.GetBytes(request);
+                byte[] requestBytes = Encoding.UTF8.GetBytes(request);
                 stream.Write(requestBytes, 0, requestBytes.Length);
                 stream.Flush();
 
                 // Read response
-                var buffer = new byte[4096];
-                var readCount = stream.Read(buffer, 0, buffer.Length);
+                byte[] buffer = new byte[4096];
+                int readCount = stream.Read(buffer, 0, buffer.Length);
 
-                readCount.Should().BeGreaterThan(0);
+                _ = readCount.Should().BeGreaterThan(0);
             }
 
             // Cleanup
@@ -156,23 +159,23 @@ namespace LobotomyPlaywright.Plugin.Test.Server
             }
 
             // Arrange
-            var tcpClient = new TcpClient();
+            TcpClient tcpClient = new();
             tcpClient.Connect(IPAddress.Loopback, _port);
             tcpClient.ReceiveTimeout = 5000;
             tcpClient.SendTimeout = 5000;
 
             Thread.Sleep(100);
 
-            var malformedRequest = "not valid json";
-            var requestBytes = Encoding.UTF8.GetBytes(malformedRequest);
+            string malformedRequest = "not valid json";
+            byte[] requestBytes = Encoding.UTF8.GetBytes(malformedRequest);
 
             // Act
-            var stream = tcpClient.GetStream();
+            NetworkStream stream = tcpClient.GetStream();
             stream.Write(requestBytes, 0, requestBytes.Length);
             stream.Flush();
 
             // Assert - Connection should still be open for next request
-            tcpClient.Connected.Should().BeTrue();
+            _ = tcpClient.Connected.Should().BeTrue();
 
             // Cleanup
             tcpClient.Close();
@@ -187,7 +190,7 @@ namespace LobotomyPlaywright.Plugin.Test.Server
             }
 
             // Arrange
-            var tcpClient = new TcpClient();
+            TcpClient tcpClient = new();
             tcpClient.Connect(IPAddress.Loopback, _port);
             tcpClient.ReceiveTimeout = 5000;
             tcpClient.SendTimeout = 5000;
@@ -195,20 +198,20 @@ namespace LobotomyPlaywright.Plugin.Test.Server
             Thread.Sleep(100);
 
             // Create a request with a large params object
-            var largeParams = new string('x', 10000);
-            var request = $"{{\"id\":\"req-1\",\"type\":\"query\",\"target\":\"agents\",\"params\":{{\"data\":\"{largeParams}\"}}}}";
-            var requestBytes = Encoding.UTF8.GetBytes(request);
+            string largeParams = new('x', 10000);
+            string request = $"{{\"id\":\"req-1\",\"type\":\"query\",\"target\":\"agents\",\"params\":{{\"data\":\"{largeParams}\"}}}}";
+            byte[] requestBytes = Encoding.UTF8.GetBytes(request);
 
             // Act
-            var stream = tcpClient.GetStream();
+            NetworkStream stream = tcpClient.GetStream();
             stream.Write(requestBytes, 0, requestBytes.Length);
             stream.Flush();
 
             // Assert - Should still receive a response
-            var buffer = new byte[4096];
-            var readCount = stream.Read(buffer, 0, buffer.Length);
+            byte[] buffer = new byte[4096];
+            int readCount = stream.Read(buffer, 0, buffer.Length);
 
-            readCount.Should().BeGreaterThan(0);
+            _ = readCount.Should().BeGreaterThan(0);
 
             // Cleanup
             tcpClient.Close();
@@ -223,28 +226,28 @@ namespace LobotomyPlaywright.Plugin.Test.Server
             }
 
             // Arrange
-            var tcpClient = new TcpClient();
+            TcpClient tcpClient = new();
             tcpClient.Connect(IPAddress.Loopback, _port);
             tcpClient.ReceiveTimeout = 5000;
             tcpClient.SendTimeout = 5000;
 
             Thread.Sleep(100);
 
-            var request = "{\"id\":\"req-1\",\"type\":\"query\",\"target\":\"agents\"}\n";
-            var requestBytes = Encoding.UTF8.GetBytes(request);
+            string request = /*lang=json,strict*/ "{\"id\":\"req-1\",\"type\":\"query\",\"target\":\"agents\"}\n";
+            byte[] requestBytes = Encoding.UTF8.GetBytes(request);
 
             // Act
-            var stream = tcpClient.GetStream();
+            NetworkStream stream = tcpClient.GetStream();
             stream.Write(requestBytes, 0, requestBytes.Length);
             stream.Flush();
 
             // Assert
-            var buffer = new byte[4096];
-            var readCount = stream.Read(buffer, 0, buffer.Length);
+            byte[] buffer = new byte[4096];
+            int readCount = stream.Read(buffer, 0, buffer.Length);
 
-            readCount.Should().BeGreaterThan(0);
-            var response = Encoding.UTF8.GetString(buffer, 0, readCount);
-            response.Should().EndWith("\n");
+            _ = readCount.Should().BeGreaterThan(0);
+            string response = Encoding.UTF8.GetString(buffer, 0, readCount);
+            _ = response.Should().EndWith("\n");
 
             // Cleanup
             tcpClient.Close();
@@ -259,8 +262,8 @@ namespace LobotomyPlaywright.Plugin.Test.Server
             }
 
             // Arrange
-            var client1 = new TcpClient();
-            var client2 = new TcpClient();
+            TcpClient client1 = new();
+            TcpClient client2 = new();
 
             client1.Connect(IPAddress.Loopback, _port);
             client2.Connect(IPAddress.Loopback, _port);
@@ -273,11 +276,11 @@ namespace LobotomyPlaywright.Plugin.Test.Server
             Thread.Sleep(100);
 
             // Act - Send requests from both clients
-            var request = "{\"id\":\"req-1\",\"type\":\"query\",\"target\":\"agents\"}\n";
-            var requestBytes = Encoding.UTF8.GetBytes(request);
+            string request = /*lang=json,strict*/ "{\"id\":\"req-1\",\"type\":\"query\",\"target\":\"agents\"}\n";
+            byte[] requestBytes = Encoding.UTF8.GetBytes(request);
 
-            var stream1 = client1.GetStream();
-            var stream2 = client2.GetStream();
+            NetworkStream stream1 = client1.GetStream();
+            NetworkStream stream2 = client2.GetStream();
 
             stream1.Write(requestBytes, 0, requestBytes.Length);
             stream1.Flush();
@@ -286,14 +289,14 @@ namespace LobotomyPlaywright.Plugin.Test.Server
             stream2.Flush();
 
             // Assert - Both clients should receive responses
-            var buffer1 = new byte[4096];
-            var readCount1 = stream1.Read(buffer1, 0, buffer1.Length);
+            byte[] buffer1 = new byte[4096];
+            int readCount1 = stream1.Read(buffer1, 0, buffer1.Length);
 
-            var buffer2 = new byte[4096];
-            var readCount2 = stream2.Read(buffer2, 0, buffer2.Length);
+            byte[] buffer2 = new byte[4096];
+            int readCount2 = stream2.Read(buffer2, 0, buffer2.Length);
 
-            readCount1.Should().BeGreaterThan(0);
-            readCount2.Should().BeGreaterThan(0);
+            _ = readCount1.Should().BeGreaterThan(0);
+            _ = readCount2.Should().BeGreaterThan(0);
 
             // Cleanup
             client1.Close();

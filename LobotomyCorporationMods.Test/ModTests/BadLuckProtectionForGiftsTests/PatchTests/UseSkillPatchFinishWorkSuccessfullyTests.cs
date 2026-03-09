@@ -20,9 +20,9 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
         [InlineData(10)]
         public void Working_on_an_abnormality_increases_the_number_of_successes_for_that_agent(int numberOfSuccesses)
         {
-            var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
-            var useSkill = UnityTestExtensions.CreateUseSkill();
-            var creatureEquipmentMakeInfo = GetCreatureEquipmentMakeInfo(GiftName);
+            Mock<IAgentWorkTracker> mockAgentWorkTracker = new();
+            UseSkill useSkill = UnityTestExtensions.CreateUseSkill();
+            CreatureEquipmentMakeInfo creatureEquipmentMakeInfo = GetCreatureEquipmentMakeInfo(GiftName);
             useSkill.targetCreature.metaInfo.equipMakeInfos.Add(creatureEquipmentMakeInfo);
             useSkill.successCount = numberOfSuccesses;
 
@@ -34,8 +34,8 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
         [Fact]
         public void Working_on_an_abnormality_with_no_gift_does_not_increase_the_number_of_successes()
         {
-            var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
-            var useSkill = UnityTestExtensions.CreateUseSkill();
+            Mock<IAgentWorkTracker> mockAgentWorkTracker = new();
+            UseSkill useSkill = UnityTestExtensions.CreateUseSkill();
 
             useSkill.PatchAfterFinishWorkSuccessfully(mockAgentWorkTracker.Object);
 

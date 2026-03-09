@@ -19,33 +19,33 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests.PatchTest
 {
     public sealed class CustomizingWindowPatchConfirmTests : FreeCustomizationModTests
     {
-        private readonly Mock<IAgentLayerTestAdapter> _mockAgentLayerTestAdapter = new Mock<IAgentLayerTestAdapter>();
+        private readonly Mock<IAgentLayerTestAdapter> _mockAgentLayerTestAdapter = new();
 
-        private readonly Mock<IWorkerSpriteManagerTestAdapter> _mockWorkerSpriteManagerTestAdapter = new Mock<IWorkerSpriteManagerTestAdapter>();
+        private readonly Mock<IWorkerSpriteManagerTestAdapter> _mockWorkerSpriteManagerTestAdapter = new();
 
         [Fact]
         public void Changing_random_generated_agent_marks_them_as_custom()
         {
             // Arrange
-            var sut = InitializeCustomizingWindow(CustomizingType.REVISE);
-            var agent = UnityTestExtensions.CreateAgentModel();
+            CustomizingWindow sut = InitializeCustomizingWindow(CustomizingType.REVISE);
+            AgentModel agent = UnityTestExtensions.CreateAgentModel();
             agent.iscustom = false;
 
             // Act
             sut.PatchBeforeConfirm(_mockAgentLayerTestAdapter.Object, _mockWorkerSpriteManagerTestAdapter.Object);
 
             // Assert
-            sut.CurrentAgent.iscustom.Should().Be(true);
+            _ = sut.CurrentAgent.iscustom.Should().Be(true);
         }
 
         [Fact]
         public void Customizing_existing_agent_changes_agent_appearance_successfully()
         {
             // Arrange
-            var currentAppearance = UnityTestExtensions.CreateWorkerSprite();
-            var expectedSprite = UnityTestExtensions.CreateSprite();
-            var expectedColor = Color.black;
-            var expectedAppearance = new Appearance
+            WorkerSprite.WorkerSprite currentAppearance = UnityTestExtensions.CreateWorkerSprite();
+            Sprite expectedSprite = UnityTestExtensions.CreateSprite();
+            Color expectedColor = Color.black;
+            Appearance expectedAppearance = new()
             {
                 spriteSet = UnityTestExtensions.CreateWorkerSprite(),
                 Eyebrow_Battle = expectedSprite,
@@ -63,13 +63,13 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests.PatchTest
                 EyeColor = expectedColor,
             };
 
-            var currentAgent = UnityTestExtensions.CreateAgentModel();
+            AgentModel currentAgent = UnityTestExtensions.CreateAgentModel();
             currentAgent.spriteData = currentAppearance;
 
-            var agentData = UnityTestExtensions.CreateAgentData();
+            AgentData agentData = UnityTestExtensions.CreateAgentData();
             agentData.appearance = expectedAppearance;
 
-            var sut = InitializeCustomizingWindow(CustomizingType.REVISE);
+            CustomizingWindow sut = InitializeCustomizingWindow(CustomizingType.REVISE);
             sut.appearanceUI.copied = agentData;
             sut.CurrentData.appearance = expectedAppearance;
 
@@ -77,9 +77,9 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests.PatchTest
             sut.PatchBeforeConfirm(_mockAgentLayerTestAdapter.Object, _mockWorkerSpriteManagerTestAdapter.Object);
 
             // Assert
-            sut.CurrentAgent.spriteData.Should().BeEquivalentTo(expectedAppearance.spriteSet);
-            sut.CurrentAgent.spriteData.BattleEyeBrow.GetHashCode().Should().Be(expectedSprite.GetHashCode());
-            sut.CurrentAgent.spriteData.HairColor.Should().Be(expectedColor);
+            _ = sut.CurrentAgent.spriteData.Should().BeEquivalentTo(expectedAppearance.spriteSet);
+            _ = sut.CurrentAgent.spriteData.BattleEyeBrow.GetHashCode().Should().Be(expectedSprite.GetHashCode());
+            _ = sut.CurrentAgent.spriteData.HairColor.Should().Be(expectedColor);
         }
 
         [Theory]
@@ -89,7 +89,7 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests.PatchTest
             [NotNull] string expectedName)
         {
             // Arrange
-            var currentAgent = UnityTestExtensions.CreateAgentModel();
+            AgentModel currentAgent = UnityTestExtensions.CreateAgentModel();
             currentAgent.name = currentName;
             currentAgent._agentName.nameDic = new Dictionary<string, string>
             {
@@ -98,7 +98,7 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests.PatchTest
                 },
             };
 
-            var expectedAgentName = UnityTestExtensions.CreateAgentName();
+            AgentName expectedAgentName = UnityTestExtensions.CreateAgentName();
             expectedAgentName.nameDic = new Dictionary<string, string>
             {
                 {
@@ -106,20 +106,20 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests.PatchTest
                 },
             };
 
-            var expectedData = UnityTestExtensions.CreateAgentData();
+            AgentData expectedData = UnityTestExtensions.CreateAgentData();
             expectedData.CustomName = expectedName;
             expectedData.agentName = expectedAgentName;
 
-            var sut = InitializeCustomizingWindow(currentAgent, CustomizingType.REVISE);
+            CustomizingWindow sut = InitializeCustomizingWindow(currentAgent, CustomizingType.REVISE);
             sut.CurrentData = expectedData;
 
             // Act
             sut.PatchBeforeConfirm(_mockAgentLayerTestAdapter.Object, _mockWorkerSpriteManagerTestAdapter.Object);
 
             // Assert
-            sut.CurrentAgent.name.Should().Be(expectedName);
-            sut.CurrentAgent._agentName.metaInfo.nameDic.Should().ContainValue(expectedName);
-            sut.CurrentAgent._agentName.nameDic.Should().ContainValue(expectedName);
+            _ = sut.CurrentAgent.name.Should().Be(expectedName);
+            _ = sut.CurrentAgent._agentName.metaInfo.nameDic.Should().ContainValue(expectedName);
+            _ = sut.CurrentAgent._agentName.nameDic.Should().ContainValue(expectedName);
         }
 
         [Fact]
@@ -127,7 +127,7 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests.PatchTest
         {
             // Arrange
             // Default for CustomizingWindow is Generate
-            var sut = InitializeCustomizingWindow();
+            CustomizingWindow sut = InitializeCustomizingWindow();
 
             // Act
             sut.PatchBeforeConfirm(_mockAgentLayerTestAdapter.Object, _mockWorkerSpriteManagerTestAdapter.Object);

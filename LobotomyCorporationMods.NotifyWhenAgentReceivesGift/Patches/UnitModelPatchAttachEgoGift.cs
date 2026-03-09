@@ -25,8 +25,8 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches
             EquipmentModel gift,
             INoticeTestAdapter noticeTestAdapter = null)
         {
-            Guard.Against.Null(instance, nameof(instance));
-            Guard.Against.Null(gift, nameof(gift));
+            _ = Guard.Against.Null(instance, nameof(instance));
+            _ = Guard.Against.Null(gift, nameof(gift));
 
             // Some gifts are in special slots that don't show up in an agent's gift window and are used for abnormality effects.
             // For example, Snow Queen's icicle
@@ -48,12 +48,12 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches
             }
 
             // Send notification that the agent acquired the gift
-            var notificationMessage = LocalizationIds.LogMessage.GetLocalized();
-            var agentColorCode = LocalizationIds.AgentColorCode.GetLocalized();
-            var giftColorCode = LocalizationIds.GiftColorCode.GetLocalized();
-            var agentColoredName = $"<color={agentColorCode}>{instance.GetUnitName()}</color>";
-            var giftColoredName = $"<color={giftColorCode}>{gift.metaInfo.Name}</color>";
-            var message = string.Format(CultureInfo.InvariantCulture, notificationMessage, agentColoredName, giftColoredName);
+            string notificationMessage = LocalizationIds.LogMessage.GetLocalized();
+            string agentColorCode = LocalizationIds.AgentColorCode.GetLocalized();
+            string giftColorCode = LocalizationIds.GiftColorCode.GetLocalized();
+            string agentColoredName = $"<color={agentColorCode}>{instance.GetUnitName()}</color>";
+            string giftColoredName = $"<color={giftColorCode}>{gift.metaInfo.Name}</color>";
+            string message = string.Format(CultureInfo.InvariantCulture, notificationMessage, agentColoredName, giftColoredName);
             instance.SendMessage(message, noticeTestAdapter);
         }
 

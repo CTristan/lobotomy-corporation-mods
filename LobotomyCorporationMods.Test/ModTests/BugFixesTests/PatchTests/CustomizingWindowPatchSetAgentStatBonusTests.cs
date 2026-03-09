@@ -3,6 +3,7 @@
 #region
 
 using System.Collections.Generic;
+using Customizing;
 using LobotomyCorporationMods.BugFixes.Patches;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.Test.Extensions;
@@ -26,12 +27,12 @@ namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests.PatchTests
             // Arrange
             const int BaseStatValue = 1;
             const int BuffStatBonus = 100;
-            var customizingWindow = UnityTestExtensions.CreateCustomizingWindow();
-            var mockTestAdapter = new Mock<ICustomizingWindowTestAdapter>();
+            CustomizingWindow customizingWindow = UnityTestExtensions.CreateCustomizingWindow();
+            Mock<ICustomizingWindowTestAdapter> mockTestAdapter = new();
 
             // The base stat level is primary stat + title bonus
             // We'll ignore the title bonus
-            var primaryStat = UnityTestExtensions.CreateWorkerPrimaryStat();
+            WorkerPrimaryStat primaryStat = UnityTestExtensions.CreateWorkerPrimaryStat();
             primaryStat.battle = BaseStatValue;
             primaryStat.hp = BaseStatValue;
             primaryStat.mental = BaseStatValue;
@@ -39,25 +40,25 @@ namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests.PatchTests
 
             // The current stat level is the base stat level + buffs + equipment/gift bonuses
             // We'll add a generic buff to increase all stats
-            var statBonus = UnityTestExtensions.CreateWorkerPrimaryStatBonus();
+            WorkerPrimaryStatBonus statBonus = UnityTestExtensions.CreateWorkerPrimaryStatBonus();
             statBonus.battle = BuffStatBonus;
             statBonus.hp = BuffStatBonus;
             statBonus.mental = BuffStatBonus;
             statBonus.work = BuffStatBonus;
-            var statBuff = UnityTestExtensions.CreateUnitStatBuf(statBonus);
-            var statBuffList = new List<UnitStatBuf>
-            {
+            UnitStatBuf statBuff = UnityTestExtensions.CreateUnitStatBuf(statBonus);
+            List<UnitStatBuf> statBuffList =
+            [
                 statBuff,
-            };
+            ];
 
-            var agentModelCreationParameters = new AgentModelCreationParameters
+            AgentModelCreationParameters agentModelCreationParameters = new()
             {
                 PrimaryStat = primaryStat,
                 StatBufList = statBuffList,
             };
 
-            var agent = UnityTestExtensions.CreateAgentModel(agentModelCreationParameters);
-            var data = UnityTestExtensions.CreateAgentData();
+            AgentModel agent = UnityTestExtensions.CreateAgentModel(agentModelCreationParameters);
+            AgentData data = UnityTestExtensions.CreateAgentData();
 
 
             // Act

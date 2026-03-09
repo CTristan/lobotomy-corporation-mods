@@ -35,15 +35,7 @@ namespace LobotomyCorporationMods.Common.Implementations
         [CanBeNull]
         public virtual T GameObject
         {
-            get
-            {
-                if (!_gameObject.IsNotNull())
-                {
-                    throw new InvalidOperationException(UninitializedGameObjectErrorMessage);
-                }
-
-                return _gameObject;
-            }
+            get => !_gameObject.IsNotNull() ? throw new InvalidOperationException(UninitializedGameObjectErrorMessage) : _gameObject;
             set =>
                 _gameObject = value;
         }

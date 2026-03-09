@@ -3,6 +3,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
+using BepInEx;
 using BepInEx.Bootstrap;
 using HarmonyDebugPanel.Interfaces;
 
@@ -13,25 +15,25 @@ namespace HarmonyDebugPanel.Implementations.Collectors
     {
         public IEnumerable<BepInExPluginInspectionInfo> GetPlugins()
         {
-            var results = new List<BepInExPluginInspectionInfo>();
+            List<BepInExPluginInspectionInfo> results = [];
 
-            foreach (var pluginInfoEntry in Chainloader.PluginInfos)
+            foreach (KeyValuePair<string, PluginInfo> pluginInfoEntry in Chainloader.PluginInfos)
             {
-                var pluginInfo = pluginInfoEntry.Value;
+                PluginInfo pluginInfo = pluginInfoEntry.Value;
                 if (pluginInfo == null)
                 {
                     continue;
                 }
 
-                var metadata = pluginInfo.Metadata;
+                BepInPlugin metadata = pluginInfo.Metadata;
                 if (metadata == null || pluginInfo.Instance == null)
                 {
                     continue;
                 }
 
-                var pluginAssembly = pluginInfo.Instance.GetType().Assembly;
-                var assemblyName = pluginAssembly.GetName();
-                var assemblyVersion = assemblyName.Version != null
+                Assembly pluginAssembly = pluginInfo.Instance.GetType().Assembly;
+                AssemblyName assemblyName = pluginAssembly.GetName();
+                string assemblyVersion = assemblyName.Version != null
                     ? assemblyName.Version.ToString()
                     : "Unknown";
                 string location;
@@ -45,7 +47,7 @@ namespace HarmonyDebugPanel.Implementations.Collectors
                     location = string.Empty;
                 }
 
-                var assemblyInfo = new AssemblyInspectionInfo(
+                AssemblyInspectionInfo assemblyInfo = new(
                     assemblyName.Name ?? "Unknown",
                     assemblyVersion,
                     location,

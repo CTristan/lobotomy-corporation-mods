@@ -26,7 +26,7 @@ namespace LobotomyCorporationMods.Common.Extensions
         [CanBeNull]
         internal static CreatureEquipmentMakeInfo GetAbnormalityGift(this ManagementSlot managementSlot)
         {
-            var commandWindow = CommandWindow.CommandWindow.CurrentWindow;
+            CommandWindow.CommandWindow commandWindow = CommandWindow.CommandWindow.CurrentWindow;
 
             return commandWindow.GetAbnormalityGift();
         }

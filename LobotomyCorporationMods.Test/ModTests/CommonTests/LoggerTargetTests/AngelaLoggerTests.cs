@@ -13,8 +13,8 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests.LoggerTargetTests
         public void Logging_message_sends_to_Angela()
         {
             const string ExpectedMessage = "MessageSentToLog";
-            var mockAngelaConversationUiTestAdapter = new Mock<IAngelaConversationUiTestAdapter>();
-            var sut = new AngelaLoggerTarget(true, mockAngelaConversationUiTestAdapter.Object);
+            Mock<IAngelaConversationUiTestAdapter> mockAngelaConversationUiTestAdapter = new();
+            AngelaLoggerTarget sut = new(true, mockAngelaConversationUiTestAdapter.Object);
 
             sut.WriteToLoggerTarget(ExpectedMessage);
 
@@ -25,8 +25,8 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests.LoggerTargetTests
         public void Disabling_Angela_logging_does_not_send_messages_to_Angela()
         {
             const string ExpectedMessage = "MessageSentToLog";
-            var mockAngelaConversationUiTestAdapter = new Mock<IAngelaConversationUiTestAdapter>();
-            var sut = new AngelaLoggerTarget(false, mockAngelaConversationUiTestAdapter.Object);
+            Mock<IAngelaConversationUiTestAdapter> mockAngelaConversationUiTestAdapter = new();
+            AngelaLoggerTarget sut = new(false, mockAngelaConversationUiTestAdapter.Object);
 
             sut.WriteToLoggerTarget(ExpectedMessage);
 

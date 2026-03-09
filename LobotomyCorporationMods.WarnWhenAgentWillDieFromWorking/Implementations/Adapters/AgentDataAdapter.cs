@@ -10,7 +10,6 @@ using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Enums;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
 
 #endregion
@@ -25,7 +24,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 
         public AgentDataAdapter([NotNull] AgentModel agent)
         {
-            Guard.Against.Null(agent, nameof(agent));
+            _ = Guard.Against.Null(agent, nameof(agent));
             _agent = agent;
         }
 
@@ -37,7 +36,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 
         public bool HasCrumblingArmor()
         {
-            var crumblingArmorGiftsId = new List<int>
+            List<int> crumblingArmorGiftsId = new List<int>
             {
                 (int)EquipmentIds.CrumblingArmorGift1,
                 (int)EquipmentIds.CrumblingArmorGift2,
@@ -50,21 +49,21 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 
         public bool HasFairyFestivalEffect()
         {
-            var effects = _agent.GetUnitBufList();
+            List<UnitBuf> effects = _agent.GetUnitBufList();
 
             return effects.OfType<FairyBuf>().Any();
         }
 
         public bool HasLaetitiaEffect()
         {
-            var effects = _agent.GetUnitBufList();
+            List<UnitBuf> effects = _agent.GetUnitBufList();
 
             return effects.OfType<LittleWitchBuf>().Any();
         }
 
         public bool HasParasiteTreeEffect()
         {
-            var effects = _agent.GetUnitBufList();
+            List<UnitBuf> effects = _agent.GetUnitBufList();
 
             return effects.OfType<YggdrasilBlessBuf>().Any();
         }

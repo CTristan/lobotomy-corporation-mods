@@ -23,21 +23,21 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         [Fact]
         public void Able_to_find_existing_file_in_mod_folder()
         {
-            var fileManager = new FileManager(DefaultModFileName, GetDirectories());
+            FileManager fileManager = new(DefaultModFileName, GetDirectories());
 
-            var result = fileManager.GetFile(DefaultModFileName);
+            string result = fileManager.GetFile(DefaultModFileName);
 
-            result.Should().NotBeNullOrWhiteSpace();
+            _ = result.Should().NotBeNullOrWhiteSpace();
         }
 
         [Fact]
         public void Adds_new_file_if_file_name_not_found_in_mod_folder()
         {
-            var fileManager = new FileManager(DefaultModFileName, GetDirectories());
+            FileManager fileManager = new(DefaultModFileName, GetDirectories());
 
-            var result = fileManager.GetFile("NewFileName");
+            string result = fileManager.GetFile("NewFileName");
 
-            result.Should().NotBeNullOrWhiteSpace();
+            _ = result.Should().NotBeNullOrWhiteSpace();
         }
 
         [Theory]
@@ -45,13 +45,13 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         [InlineData("DoesNotExist")]
         public void Reading_a_nonexistent_file_with_flag_not_set_does_not_create_the_file([NotNull] string fileName)
         {
-            var fileManager = new FileManager(DefaultModFileName, GetDirectories());
-            var fileWithPath = fileManager.GetFile(fileName);
+            FileManager fileManager = new(DefaultModFileName, GetDirectories());
+            string fileWithPath = fileManager.GetFile(fileName);
             DeleteFileIfExists(fileWithPath);
 
-            var result = fileManager.ReadAllText(fileWithPath, false);
+            string result = fileManager.ReadAllText(fileWithPath, false);
 
-            result.Should().BeEmpty();
+            _ = result.Should().BeEmpty();
         }
 
         [Theory]
@@ -59,13 +59,13 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         [InlineData("CreateThenDeleteMe")]
         public void Reading_a_nonexistent_file_with_flag_set_creates_the_file([NotNull] string fileName)
         {
-            var fileManager = new FileManager(DefaultModFileName, GetDirectories());
-            var fileWithPath = fileManager.GetFile(fileName);
+            FileManager fileManager = new(DefaultModFileName, GetDirectories());
+            string fileWithPath = fileManager.GetFile(fileName);
             DeleteFileIfExists(fileWithPath);
 
             _ = fileManager.ReadAllText(fileWithPath, true);
 
-            File.Exists(fileWithPath).Should().BeTrue();
+            _ = File.Exists(fileWithPath).Should().BeTrue();
         }
 
         [Fact]
@@ -76,17 +76,17 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
                 _ = new FileManager(string.Empty, GetDirectories());
             };
 
-            action.Should().Throw<InvalidOperationException>();
+            _ = action.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
         public void Able_to_read_bytes_from_file()
         {
-            var fileManager = new FileManager(DefaultModFileName, GetDirectories());
+            FileManager fileManager = new(DefaultModFileName, GetDirectories());
 
-            var result = fileManager.ReadAllBytes(DefaultModFileName);
+            byte[] result = fileManager.ReadAllBytes(DefaultModFileName);
 
-            result.Should().NotBeNull();
+            _ = result.Should().NotBeNull();
         }
 
         #region Helper Methods
@@ -94,12 +94,12 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         [NotNull]
         private static List<IDirectoryInfo> GetDirectories()
         {
-            var currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            string currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
-            return new List<IDirectoryInfo>
-            {
+            return
+            [
                 new DirectoryInfoAdapter(new DirectoryInfo(currentDirectory)),
-            };
+            ];
         }
 
         private static void DeleteFileIfExists(string fileWithPath)

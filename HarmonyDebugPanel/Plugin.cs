@@ -17,9 +17,7 @@ using Process = System.Diagnostics.Process;
 
 namespace HarmonyDebugPanel
 {
-#pragma warning disable CA2243 // BepInEx uses reverse-domain IDs, not RFC GUID strings
     [BepInPlugin(PluginConstants.PluginGuid, PluginConstants.PluginName, PluginConstants.PluginVersion)]
-#pragma warning restore CA2243
     [ExcludeFromCodeCoverage(Justification = "Unity/BepInEx runtime integration")]
     public sealed class Plugin : BaseUnityPlugin
     {
@@ -39,7 +37,6 @@ namespace HarmonyDebugPanel
         private float _startTime;
         private int _frameCount;
 
-#pragma warning disable CA1031
         private void Awake()
         {
             try
@@ -98,9 +95,7 @@ namespace HarmonyDebugPanel
                 }
             }
         }
-#pragma warning restore CA1031
 
-#pragma warning disable CA1031
         private void InitializeLogFile()
         {
             try
@@ -143,7 +138,6 @@ namespace HarmonyDebugPanel
                 _logFilePath = null;
             }
         }
-#pragma warning restore CA1031
 
         private void LogInfo(string message)
         {
@@ -191,7 +185,6 @@ namespace HarmonyDebugPanel
             }
         }
 
-#pragma warning disable CA1031
         private void Update()
         {
             try

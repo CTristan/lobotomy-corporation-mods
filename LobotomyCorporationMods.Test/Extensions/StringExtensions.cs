@@ -10,9 +10,9 @@ namespace LobotomyCorporationMods.Test.Extensions
         internal static string ShortenBy([NotNull] this string value,
             int lengthToRemove)
         {
-            var length = value.Length;
+            int length = value.Length;
 
-            return value.Remove(length - lengthToRemove);
+            return value[..(length - lengthToRemove)];
         }
     }
 }

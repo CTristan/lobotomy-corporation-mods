@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 using System;
+using System.Collections.Generic;
 using AwesomeAssertions;
 using LobotomyPlaywright.Queries;
 using Xunit;
@@ -14,11 +15,11 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
         {
             // Act - AgentManager.instance creates a new instance if null
             // with empty agentList, so we should get an empty list
-            var agents = AgentQueries.ListAgents();
+            List<AgentData> agents = AgentQueries.ListAgents();
 
             // Assert
-            agents.Should().NotBeNull();
-            agents.Should().BeEmpty();
+            _ = agents.Should().NotBeNull();
+            _ = agents.Should().BeEmpty();
         }
 
         [Fact]
@@ -28,37 +29,37 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             Action act = () => AgentQueries.ListAgents();
 
             // Assert - method should not throw
-            act.Should().NotThrow();
+            _ = act.Should().NotThrow();
         }
 
         [Fact]
         public void GetAgent_with_nonexistent_id_returns_null()
         {
             // Act
-            var agent = AgentQueries.GetAgent(999999);
+            AgentData agent = AgentQueries.GetAgent(999999);
 
             // Assert
-            agent.Should().BeNull();
+            _ = agent.Should().BeNull();
         }
 
         [Fact]
         public void GetAgent_with_zero_id_returns_null()
         {
             // Act
-            var agent = AgentQueries.GetAgent(0);
+            AgentData agent = AgentQueries.GetAgent(0);
 
             // Assert
-            agent.Should().BeNull();
+            _ = agent.Should().BeNull();
         }
 
         [Fact]
         public void GetAgent_with_negative_id_returns_null()
         {
             // Act
-            var agent = AgentQueries.GetAgent(-1);
+            AgentData agent = AgentQueries.GetAgent(-1);
 
             // Assert
-            agent.Should().BeNull();
+            _ = agent.Should().BeNull();
         }
 
         [Fact]
@@ -68,7 +69,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             Action act = () => AgentQueries.GetAgent(12345);
 
             // Assert - method should not throw
-            act.Should().NotThrow();
+            _ = act.Should().NotThrow();
         }
     }
 }

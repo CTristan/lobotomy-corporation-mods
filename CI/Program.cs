@@ -6,10 +6,6 @@ using System.Text;
 
 namespace CI;
 
-#pragma warning disable RCS1102 // Make class static
-#pragma warning disable CA1303 // Do not pass literals as localized parameters
-#pragma warning disable CA1515 // Types need to be public for testability
-
 public sealed class ProcessResult
 {
     public int ExitCode { get; init; }

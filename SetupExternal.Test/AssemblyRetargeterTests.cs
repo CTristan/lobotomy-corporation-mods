@@ -1,136 +1,133 @@
 // SPDX-License-Identifier: MIT
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using AwesomeAssertions;
 using Mono.Cecil;
-using SetupExternal;
 using Xunit;
 
-namespace SetupExternal.Tests;
-
-public sealed class AssemblyRetargeterTests : IDisposable
+namespace SetupExternal.Tests
 {
-    private readonly string _testAssemblyPath;
-
-    public AssemblyRetargeterTests()
+    public sealed class AssemblyRetargeterTests : IDisposable
     {
-        _testAssemblyPath = Path.Combine(Path.GetTempPath(), $"TestAssembly_{Guid.NewGuid()}.dll");
-    }
+        private readonly string _testAssemblyPath;
 
-    public void Dispose()
-    {
-        if (File.Exists(_testAssemblyPath))
+        public AssemblyRetargeterTests()
         {
-            try
-            {
-                File.Delete(_testAssemblyPath);
-            }
-#pragma warning disable CA1031 // Do not catch general exception types
-            catch
-            {
-                // Ignore errors during cleanup
-            }
-#pragma warning restore CA1031 // Do not catch general exception types
-        }
-    }
-
-    [Fact]
-    public void Retarget_DuplicateMscorlib_ConsolidatesToV2()
-    {
-        // Arrange
-        CreateTestAssembly(new[] { new Version(2, 0, 0, 0), new Version(4, 0, 0, 0) });
-
-        // Act
-        var result = AssemblyRetargeter.Retarget(_testAssemblyPath);
-
-        // Assert
-        result.Should().BeTrue();
-        VerifyMscorlibVersion(new Version(2, 0, 0, 0), 1);
-    }
-
-    [Fact]
-    public void Retarget_SingleMscorlibV4_DowngradesToV2()
-    {
-        // Arrange
-        CreateTestAssembly(new[] { new Version(4, 0, 0, 0) });
-
-        // Act
-        var result = AssemblyRetargeter.Retarget(_testAssemblyPath);
-
-        // Assert
-        result.Should().BeTrue();
-        VerifyMscorlibVersion(new Version(2, 0, 0, 0), 1);
-    }
-
-    [Fact]
-    public void Retarget_CorrectMscorlibV2_NoChanges()
-    {
-        // Arrange
-        CreateTestAssembly(new[] { new Version(2, 0, 0, 0) });
-        var lastWriteTime = File.GetLastWriteTime(_testAssemblyPath);
-
-        // Act
-        var result = AssemblyRetargeter.Retarget(_testAssemblyPath);
-
-        // Assert
-        result.Should().BeFalse();
-
-        // Ensure the file wasn't rewritten (last write time should be the same)
-        File.GetLastWriteTime(_testAssemblyPath).Should().Be(lastWriteTime);
-    }
-
-    [Fact]
-    public void Retarget_NoMscorlib_NoChanges()
-    {
-        // Arrange
-        CreateTestAssembly(Array.Empty<Version>());
-
-        // Act
-        var result = AssemblyRetargeter.Retarget(_testAssemblyPath);
-
-        // Assert
-        result.Should().BeFalse();
-    }
-
-    [Fact]
-    public void Retarget_NonExistentFile_ReturnsFalse()
-    {
-        // Act
-        var result = AssemblyRetargeter.Retarget("non_existent_file.dll");
-
-        // Assert
-        result.Should().BeFalse();
-    }
-
-    private void CreateTestAssembly(Version[] mscorlibVersions)
-    {
-        using var assembly = AssemblyDefinition.CreateAssembly(
-            new AssemblyNameDefinition("TestAssembly", new Version(1, 0, 0, 0)),
-            "TestModule",
-            ModuleKind.Dll);
-
-        // Mono.Cecil might add a default mscorlib ref when creating assembly
-        assembly.MainModule.AssemblyReferences.Clear();
-
-        foreach (var version in mscorlibVersions)
-        {
-            var mscorlibRef = new AssemblyNameReference("mscorlib", version);
-            assembly.MainModule.AssemblyReferences.Add(mscorlibRef);
+            _testAssemblyPath = Path.Combine(Path.GetTempPath(), $"TestAssembly_{Guid.NewGuid()}.dll");
         }
 
-        assembly.Write(_testAssemblyPath);
-    }
+        public void Dispose()
+        {
+            if (File.Exists(_testAssemblyPath))
+            {
+                try
+                {
+                    File.Delete(_testAssemblyPath);
+                }
+                catch
+                {
+                    // Ignore errors during cleanup
+                }
+            }
+        }
 
-    private void VerifyMscorlibVersion(Version expectedVersion, int expectedCount)
-    {
-        using var assembly = AssemblyDefinition.ReadAssembly(_testAssemblyPath);
-        var mscorlibRefs = assembly.MainModule.AssemblyReferences
-            .Where(r => r.Name.Equals("mscorlib", StringComparison.OrdinalIgnoreCase))
-            .ToList();
+        [Fact]
+        public void Retarget_DuplicateMscorlib_ConsolidatesToV2()
+        {
+            // Arrange
+            CreateTestAssembly([new Version(2, 0, 0, 0), new Version(4, 0, 0, 0)]);
 
-        mscorlibRefs.Should().HaveCount(expectedCount);
-        mscorlibRefs.All(r => r.Version == expectedVersion).Should().BeTrue();
+            // Act
+            bool result = AssemblyRetargeter.Retarget(_testAssemblyPath);
+
+            // Assert
+            _ = result.Should().BeTrue();
+            VerifyMscorlibVersion(new Version(2, 0, 0, 0), 1);
+        }
+
+        [Fact]
+        public void Retarget_SingleMscorlibV4_DowngradesToV2()
+        {
+            // Arrange
+            CreateTestAssembly([new Version(4, 0, 0, 0)]);
+
+            // Act
+            bool result = AssemblyRetargeter.Retarget(_testAssemblyPath);
+
+            // Assert
+            _ = result.Should().BeTrue();
+            VerifyMscorlibVersion(new Version(2, 0, 0, 0), 1);
+        }
+
+        [Fact]
+        public void Retarget_CorrectMscorlibV2_NoChanges()
+        {
+            // Arrange
+            CreateTestAssembly([new Version(2, 0, 0, 0)]);
+            DateTime lastWriteTime = File.GetLastWriteTime(_testAssemblyPath);
+
+            // Act
+            bool result = AssemblyRetargeter.Retarget(_testAssemblyPath);
+
+            // Assert
+            _ = result.Should().BeFalse();
+
+            // Ensure the file wasn't rewritten (last write time should be the same)
+            _ = File.GetLastWriteTime(_testAssemblyPath).Should().Be(lastWriteTime);
+        }
+
+        [Fact]
+        public void Retarget_NoMscorlib_NoChanges()
+        {
+            // Arrange
+            CreateTestAssembly([]);
+
+            // Act
+            bool result = AssemblyRetargeter.Retarget(_testAssemblyPath);
+
+            // Assert
+            _ = result.Should().BeFalse();
+        }
+
+        [Fact]
+        public void Retarget_NonExistentFile_ReturnsFalse()
+        {
+            // Act
+            bool result = AssemblyRetargeter.Retarget("non_existent_file.dll");
+
+            // Assert
+            _ = result.Should().BeFalse();
+        }
+
+        private void CreateTestAssembly(Version[] mscorlibVersions)
+        {
+            using AssemblyDefinition assembly = AssemblyDefinition.CreateAssembly(
+                new AssemblyNameDefinition("TestAssembly", new Version(1, 0, 0, 0)),
+                "TestModule",
+                ModuleKind.Dll);
+
+            // Mono.Cecil might add a default mscorlib ref when creating assembly
+            assembly.MainModule.AssemblyReferences.Clear();
+
+            foreach (Version version in mscorlibVersions)
+            {
+                AssemblyNameReference mscorlibRef = new("mscorlib", version);
+                assembly.MainModule.AssemblyReferences.Add(mscorlibRef);
+            }
+
+            assembly.Write(_testAssemblyPath);
+        }
+
+        private void VerifyMscorlibVersion(Version expectedVersion, int expectedCount)
+        {
+            using AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(_testAssemblyPath);
+            List<AssemblyNameReference> mscorlibRefs = [.. assembly.MainModule.AssemblyReferences.Where(r => r.Name.Equals("mscorlib", StringComparison.OrdinalIgnoreCase))];
+
+            _ = mscorlibRefs.Should().HaveCount(expectedCount);
+            _ = mscorlibRefs.All(r => r.Version == expectedVersion).Should().BeTrue();
+        }
     }
 }

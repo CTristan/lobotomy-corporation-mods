@@ -7,6 +7,7 @@ using AwesomeAssertions;
 using Customizing;
 using LobotomyCorporationMods.BugFixes;
 using LobotomyCorporationMods.BugFixes.Patches;
+using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.Test.Extensions;
 using Moq;
 using Xunit;
@@ -26,14 +27,14 @@ namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests
                 _ = new Harmony_Patch();
             };
 
-            act.Should().NotThrow();
+            _ = act.Should().NotThrow();
         }
 
         [Fact]
         public void Class_ArmorCreature_Method_OnNotice_is_patched_correctly()
         {
-            var patch = typeof(ArmorCreaturePatchOnNotice);
-            var originalClass = typeof(ArmorCreature);
+            Type patch = typeof(ArmorCreaturePatchOnNotice);
+            Type originalClass = typeof(ArmorCreature);
             const string MethodName = nameof(ArmorCreature.OnNotice);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
@@ -42,9 +43,9 @@ namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests
         [Fact]
         public void Class_ArmorCreature_Method_OnNotice_logs_exceptions()
         {
-            var mockLogger = TestExtensions.GetMockLogger();
+            Mock<ILogger> mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
-            var armorCreature = new ArmorCreature();
+            ArmorCreature armorCreature = new();
 
             void Action()
             {
@@ -59,8 +60,8 @@ namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests
         [Fact]
         public void Class_CustomizingWindow_Method_SetAgentStatBonus_is_patched_correctly()
         {
-            var patch = typeof(CustomizingWindowPatchSetAgentStatBonus);
-            var originalClass = typeof(CustomizingWindow);
+            Type patch = typeof(CustomizingWindowPatchSetAgentStatBonus);
+            Type originalClass = typeof(CustomizingWindow);
             const string MethodName = nameof(CustomizingWindow.SetAgentStatBonus);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
@@ -69,7 +70,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests
         [Fact]
         public void Class_CustomizingWindow_Method_SetAgentStatBonus_logs_exceptions()
         {
-            var mockLogger = TestExtensions.GetMockLogger();
+            Mock<ILogger> mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
             const int TwoLogs = 2;
             const int ThreeLogs = 3;

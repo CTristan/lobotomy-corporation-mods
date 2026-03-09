@@ -57,7 +57,6 @@ namespace HarmonyDebugPanel
             report.CollectedAt = DateTime.UtcNow;
 
             // Collect expected patches and compare with actual patches
-#pragma warning disable CA1031
             IList<ExpectedPatchInfo> expectedPatches;
             try
             {
@@ -68,7 +67,6 @@ namespace HarmonyDebugPanel
                 report.Warnings.Add("ExpectedPatchSource failed: " + ex.Message);
                 expectedPatches = new List<ExpectedPatchInfo>();
             }
-#pragma warning restore CA1031
             CompareExpectedWithActual(report, expectedPatches, report.Patches);
 
             // Correlate patches with their originating mods
@@ -188,7 +186,6 @@ namespace HarmonyDebugPanel
             }
         }
 
-#pragma warning disable CA1031 // Diagnostics should tolerate individual collector failures and continue
         private static IList<T> CollectSafe<T>(IInfoCollector<IList<T>> collector, string collectorName, IList<string> warnings)
         {
             try
@@ -265,6 +262,5 @@ namespace HarmonyDebugPanel
                 }
             }
         }
-#pragma warning restore CA1031
     }
 }

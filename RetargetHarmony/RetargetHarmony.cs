@@ -1,8 +1,5 @@
 // SPDX-License-Identifier: MIT
 
-#pragma warning disable CA1724 // Type name conflicts with namespace name (required by BepInEx contract)
-#pragma warning disable CA1031 // Intentionally catching broad exceptions for safety
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -14,6 +11,7 @@ using BepInEx.Bootstrap;
 using BepInEx.Logging;
 using HarmonyLib;
 using Mono.Cecil;
+using Mono.Collections.Generic;
 
 namespace RetargetHarmony
 {
@@ -74,7 +72,7 @@ namespace RetargetHarmony
                 if (PatchBaseModsEnabled && Directory.Exists(BaseModsPath))
                 {
                     SafeTrace("Including BaseMods DLLs in TargetDLLs");
-                    foreach (var dll in GetBaseModsDlls())
+                    foreach (string dll in GetBaseModsDlls())
                     {
                         yield return dll;
                     }
@@ -109,9 +107,9 @@ namespace RetargetHarmony
             }
 
             // Use GetFiles instead of EnumerateFiles for .NET 3.5 compatibility
-            foreach (var file in Directory.GetFiles(BaseModsPath, "*.dll", SearchOption.AllDirectories))
+            foreach (string file in Directory.GetFiles(BaseModsPath, "*.dll", SearchOption.AllDirectories))
             {
-                var fileName = Path.GetFileName(file);
+                string fileName = Path.GetFileName(file);
                 SafeTrace(string.Format(CultureInfo.InvariantCulture, "Checking BaseMods DLL: {0}", fileName));
                 yield return fileName;
             }
@@ -160,8 +158,8 @@ namespace RetargetHarmony
             {
                 // Determine config path - check assembly directory first (patcher's own folder),
                 // then fall back to BepInEx config path
-                var assemblyDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? "";
-                var assemblyConfigPath = Path.Combine(assemblyDir, "RetargetHarmony.cfg");
+                string assemblyDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? "";
+                string assemblyConfigPath = Path.Combine(assemblyDir, "RetargetHarmony.cfg");
 
                 string configPath;
 
@@ -183,7 +181,7 @@ namespace RetargetHarmony
                 // Generate default config file if it doesn't exist
                 if (!File.Exists(configPath))
                 {
-                    var defaultConfig = @"# RetargetHarmony Configuration File
+                    string defaultConfig = @"# RetargetHarmony Configuration File
 # Generated on first run
 
 # Logging level: None, Trace, Debug, Info, Warn, Error
@@ -225,30 +223,30 @@ PatchBaseMods = false
 
             try
             {
-                var lines = File.ReadAllLines(configPath);
-                foreach (var line in lines)
+                string[] lines = File.ReadAllLines(configPath);
+                foreach (string line in lines)
                 {
-                    var trimmed = line.Trim();
+                    string trimmed = line.Trim();
                     // Skip comments and empty lines
                     if (string.IsNullOrEmpty(trimmed) || trimmed.StartsWith("#", StringComparison.Ordinal))
                     {
                         continue;
                     }
 
-                    var separator = new[] { '=' };
-                    var parts = trimmed.Split(separator, 2);
+                    char[] separator = new[] { '=' };
+                    string[] parts = trimmed.Split(separator, 2);
                     if (parts.Length != 2)
                     {
                         continue;
                     }
 
-                    var key = parts[0].Trim();
-                    var value = parts[1].Trim();
+                    string key = parts[0].Trim();
+                    string value = parts[1].Trim();
 
                     switch (key)
                     {
                         case "PatchBaseMods":
-                            if (bool.TryParse(value, out var patchBaseMods))
+                            if (bool.TryParse(value, out bool patchBaseMods))
                             {
                                 s_patchBaseMods = patchBaseMods;
                             }
@@ -257,6 +255,8 @@ PatchBaseMods = false
                         case "LogLevel":
                             // Pass to DebugLogger
                             DebugLogger.SetLogLevelFromConfig(value);
+                            break;
+                        default:
                             break;
                     }
                 }
@@ -280,21 +280,21 @@ PatchBaseMods = false
 
                 if (asm == null)
                 {
-                    throw new System.ArgumentNullException(nameof(asm));
+                    throw new ArgumentNullException(nameof(asm));
                 }
 
                 SafeTrace(string.Format(CultureInfo.InvariantCulture, "Patch() entry with assembly: {0}", asm.Name.Name));
 
-                var refs = asm.MainModule.AssemblyReferences;
+                Collection<AssemblyNameReference> refs = asm.MainModule.AssemblyReferences;
 
                 // List all assembly references for debugging
-                var allRefNames = refs.Select(r => r.Name).ToArray();
+                string[] allRefNames = refs.Select(r => r.Name).ToArray();
                 SafeTrace(string.Format(CultureInfo.InvariantCulture, "Assembly references: [{0}]", string.Join(", ", allRefNames)));
 
-                var changed = false;
+                bool changed = false;
 
                 // 1) Find all Harmony references (both old and potentially already retargeted)
-                var harmonyRefs = refs.Where(r =>
+                List<AssemblyNameReference> harmonyRefs = refs.Where(r =>
                     r.Name == "0Harmony" ||
                     r.Name == "0Harmony109" ||
                     r.Name == "12Harmony" ||
@@ -318,7 +318,7 @@ PatchBaseMods = false
                     for (int i = 1; i < harmonyRefs.Count; i++)
                     {
                         SafeTrace(string.Format(CultureInfo.InvariantCulture, "Removing duplicate Harmony reference: {0}", harmonyRefs[i].Name));
-                        refs.Remove(harmonyRefs[i]);
+                        _ = refs.Remove(harmonyRefs[i]);
                         changed = true;
                     }
                 }
@@ -359,25 +359,25 @@ PatchBaseMods = false
                 SafeDebug("Registered AssemblyResolve handler");
 
                 // Create Harmony instance to patch TypeLoader
-                var harmony = new Harmony("com.lobotomycorp.retargetharmony.chainloaderhook");
+                Harmony harmony = new Harmony("com.lobotomycorp.retargetharmony.chainloaderhook");
 
                 SafeDebug("Created Harmony instance");
 
                 // Patch FindPluginTypes to include BaseMods directory
-                var findPluginTypesMethod = AccessTools.Method(typeof(TypeLoader), nameof(TypeLoader.FindPluginTypes))
+                MethodInfo findPluginTypesMethod = AccessTools.Method(typeof(TypeLoader), nameof(TypeLoader.FindPluginTypes))
                     .MakeGenericMethod(typeof(PluginInfo));
                 SafeTrace("Patching TypeLoader.FindPluginTypes (prefix)");
-                harmony.Patch(
+                _ = harmony.Patch(
                     findPluginTypesMethod,
                     new HarmonyMethod(AccessTools.Method(typeof(RetargetHarmony), nameof(PreFindPluginTypes))),
                     new HarmonyMethod(AccessTools.Method(typeof(RetargetHarmony), nameof(PostFindPluginTypes))));
                 SafeDebug("Patched TypeLoader.FindPluginTypes successfully");
 
                 // Patch SaveAssemblyCache to prevent premature cache writes
-                var saveAssemblyCacheMethod = AccessTools.Method(typeof(TypeLoader), nameof(TypeLoader.SaveAssemblyCache))
+                MethodInfo saveAssemblyCacheMethod = AccessTools.Method(typeof(TypeLoader), nameof(TypeLoader.SaveAssemblyCache))
                     .MakeGenericMethod(typeof(PluginInfo));
                 SafeTrace("Patching TypeLoader.SaveAssemblyCache (prefix)");
-                harmony.Patch(
+                _ = harmony.Patch(
                     saveAssemblyCacheMethod,
                     new HarmonyMethod(AccessTools.Method(typeof(RetargetHarmony), nameof(OnSaveAssemblyCache))));
                 SafeDebug("Patched TypeLoader.SaveAssemblyCache successfully");
@@ -447,16 +447,16 @@ PatchBaseMods = false
                 try
                 {
                     // Find plugins in BaseMods directory
-                    var baseModsResult = TypeLoader.FindPluginTypes(BaseModsPath, typeSelector, assemblyFilter, cacheName);
+                    Dictionary<string, List<PluginInfo>> baseModsResult = TypeLoader.FindPluginTypes(BaseModsPath, typeSelector, assemblyFilter, cacheName);
 
                     SafeDebug(string.Format(CultureInfo.InvariantCulture, "Merged count after loop: {0}", baseModsResult.Count));
-                    foreach (var kv in baseModsResult)
+                    foreach (KeyValuePair<string, List<PluginInfo>> kv in baseModsResult)
                     {
                         SafeTrace(string.Format(CultureInfo.InvariantCulture, "Merged entry key: {0}", kv.Key));
                     }
 
                     // Merge results from BaseMods into the main results
-                    foreach (var kv in baseModsResult)
+                    foreach (KeyValuePair<string, List<PluginInfo>> kv in baseModsResult)
                     {
                         __result[kv.Key] = kv.Value;
                     }
@@ -508,7 +508,7 @@ PatchBaseMods = false
                 try
                 {
                     // Try to resolve from BaseMods directory
-                    var result = TryResolveCecilAssembly(reference.Name, BaseModsPath);
+                    AssemblyDefinition result = TryResolveCecilAssembly(reference.Name, BaseModsPath);
                     if (result != null)
                     {
                         SafeDebug(string.Format(CultureInfo.InvariantCulture, "Successfully resolved assembly: {0}", reference.Name));
@@ -555,7 +555,7 @@ PatchBaseMods = false
                     return null;
                 }
 
-                var dllPath = Path.Combine(directory, assemblyName + ".dll");
+                string dllPath = Path.Combine(directory, assemblyName + ".dll");
                 if (!File.Exists(dllPath))
                 {
                     SafeTrace(string.Format(CultureInfo.InvariantCulture, "DLL not found: {0}", dllPath));
@@ -564,7 +564,7 @@ PatchBaseMods = false
 
                 try
                 {
-                    var result = AssemblyDefinition.ReadAssembly(dllPath);
+                    AssemblyDefinition result = AssemblyDefinition.ReadAssembly(dllPath);
                     SafeDebug(string.Format(CultureInfo.InvariantCulture, "Loaded assembly successfully: {0}", assemblyName));
                     return result;
                 }

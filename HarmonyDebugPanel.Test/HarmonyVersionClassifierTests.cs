@@ -1,64 +1,62 @@
 // SPDX-License-Identifier: MIT
 
-using System.Collections.Generic;
-using System.Reflection;
 using AwesomeAssertions;
 using HarmonyDebugPanel.Implementations.Collectors;
-using HarmonyDebugPanel.Interfaces;
 using HarmonyDebugPanel.Models;
 using Xunit;
 
-namespace HarmonyDebugPanel.Test;
-
-public sealed class HarmonyVersionClassifierTests
+namespace HarmonyDebugPanel.Test
 {
-    [Fact]
-    public void Classify_ReturnsUnknown_WhenReferencesNull()
+    public sealed class HarmonyVersionClassifierTests
     {
-        var classifier = new HarmonyVersionClassifier();
-
-        var version = classifier.Classify(null);
-
-        version.Should().Be(HarmonyVersion.Unknown);
-    }
-
-    [Fact]
-    public void Classify_ReturnsHarmony1_When0Harmony109ReferencePresent()
-    {
-        var classifier = new HarmonyVersionClassifier();
-
-        var version = classifier.Classify(new List<AssemblyName>
+        [Fact]
+        public void Classify_ReturnsUnknown_WhenReferencesNull()
         {
-            new("0Harmony109"),
-        });
+            HarmonyVersionClassifier classifier = new();
 
-        version.Should().Be(HarmonyVersion.Harmony1);
-    }
+            HarmonyVersion version = classifier.Classify(null);
 
-    [Fact]
-    public void Classify_ReturnsHarmony2_When0HarmonyReferencePresent()
-    {
-        var classifier = new HarmonyVersionClassifier();
+            _ = version.Should().Be(HarmonyVersion.Unknown);
+        }
 
-        var version = classifier.Classify(new List<AssemblyName>
+        [Fact]
+        public void Classify_ReturnsHarmony1_When0Harmony109ReferencePresent()
         {
-            new("0Harmony"),
-        });
+            HarmonyVersionClassifier classifier = new();
 
-        version.Should().Be(HarmonyVersion.Harmony2);
-    }
+            HarmonyVersion version = classifier.Classify(
+            [
+                new("0Harmony109"),
+            ]);
 
-    [Fact]
-    public void Classify_PrefersHarmony1_WhenBothReferencesPresent()
-    {
-        var classifier = new HarmonyVersionClassifier();
+            _ = version.Should().Be(HarmonyVersion.Harmony1);
+        }
 
-        var version = classifier.Classify(new List<AssemblyName>
+        [Fact]
+        public void Classify_ReturnsHarmony2_When0HarmonyReferencePresent()
         {
-            new("0Harmony"),
-            new("0Harmony109"),
-        });
+            HarmonyVersionClassifier classifier = new();
 
-        version.Should().Be(HarmonyVersion.Harmony1);
+            HarmonyVersion version = classifier.Classify(
+            [
+                new("0Harmony"),
+            ]);
+
+            _ = version.Should().Be(HarmonyVersion.Harmony2);
+        }
+
+        [Fact]
+        public void Classify_PrefersHarmony1_WhenBothReferencesPresent()
+        {
+            HarmonyVersionClassifier classifier = new();
+
+            HarmonyVersion version = classifier.Classify(
+            [
+                new("0Harmony"),
+                new("0Harmony109"),
+            ]);
+
+            _ = version.Should().Be(HarmonyVersion.Harmony1);
+        }
     }
 }

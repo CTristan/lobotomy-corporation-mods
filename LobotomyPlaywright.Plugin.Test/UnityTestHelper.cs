@@ -22,20 +22,20 @@ namespace LobotomyPlaywright.Plugin.Test
                     try
                     {
                         // Try to access a Unity type to check if Unity runtime is available
-                        var unityObjectType = Type.GetType("UnityEngine.Object, UnityEngine.CoreModule");
+                        Type unityObjectType = Type.GetType("UnityEngine.Object, UnityEngine.CoreModule");
                         if (unityObjectType != null)
                         {
                             // Try to use JsonUtility which is an internal call
-                            var jsonUtilityType = Type.GetType("UnityEngine.JsonUtility, UnityEngine.CoreModule");
+                            Type jsonUtilityType = Type.GetType("UnityEngine.JsonUtility, UnityEngine.CoreModule");
                             if (jsonUtilityType != null)
                             {
-                                var toJsonMethod = jsonUtilityType.GetMethod("ToJson", new[] { typeof(object) });
+                                MethodInfo toJsonMethod = jsonUtilityType.GetMethod("ToJson", [typeof(object)]);
                                 if (toJsonMethod != null)
                                 {
                                     // Try to call it - if it works, Unity runtime is available
                                     try
                                     {
-                                        toJsonMethod.Invoke(null, new object[] { new { test = true } });
+                                        _ = toJsonMethod.Invoke(null, [new { test = true }]);
                                         s_isUnityAvailable = true;
                                         return true;
                                     }

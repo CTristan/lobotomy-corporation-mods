@@ -22,7 +22,7 @@ namespace LobotomyCorporationMods.Common.Extensions
         public static T EnsureNotNullWithMethod<T>([CanBeNull] this T value,
             [NotNull] Func<T> defaultMethod) where T : class
         {
-            Guard.Against.Null(defaultMethod, nameof(defaultMethod));
+            _ = Guard.Against.Null(defaultMethod, nameof(defaultMethod));
 
             return value ?? defaultMethod();
         }
@@ -30,9 +30,7 @@ namespace LobotomyCorporationMods.Common.Extensions
         [ContractAnnotation("null => true")]
         public static bool IsNull([CanBeNull][ValidatedNotNull] this object value)
         {
-#pragma warning disable IDE0041
-            return ReferenceEquals(value, null);
-#pragma warning restore IDE0041
+            return value is null;
         }
 
         [ContractAnnotation("null => false")]

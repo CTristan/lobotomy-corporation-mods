@@ -31,7 +31,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
         {
             get
             {
-                var fieldInfo = typeof(ArmorCreature).GetField("_specialAgentList", BindingFlags.NonPublic | BindingFlags.Instance);
+                FieldInfo fieldInfo = typeof(ArmorCreature).GetField("_specialAgentList", BindingFlags.NonPublic | BindingFlags.Instance);
 
                 return fieldInfo?.GetValue(GameObject) as IList;
             }
@@ -47,17 +47,17 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
             }
 
             SpecialAgentList.Clear();
-            foreach (var stackAgent in AgentManager.instance.GetAgentList().Where(agent => agent.HasCrumblingArmor()).Select(CreateStackAgent))
+            foreach (object stackAgent in AgentManager.instance.GetAgentList().Where(agent => agent.HasCrumblingArmor()).Select(CreateStackAgent))
             {
-                SpecialAgentList.Add(stackAgent);
+                _ = SpecialAgentList.Add(stackAgent);
             }
         }
 
         private static object CreateStackAgent(object agent)
         {
-            var stackAgentType = typeof(ArmorCreature).GetNestedType("StackAgent", BindingFlags.NonPublic | BindingFlags.Instance);
-            var stackAgent = Activator.CreateInstance(stackAgentType, true);
-            var agentProperty = stackAgentType.GetProperty("agent");
+            Type stackAgentType = typeof(ArmorCreature).GetNestedType("StackAgent", BindingFlags.NonPublic | BindingFlags.Instance);
+            object stackAgent = Activator.CreateInstance(stackAgentType, true);
+            PropertyInfo agentProperty = stackAgentType.GetProperty("agent");
             agentProperty?.SetValue(stackAgent, agent, null);
 
             return stackAgent;

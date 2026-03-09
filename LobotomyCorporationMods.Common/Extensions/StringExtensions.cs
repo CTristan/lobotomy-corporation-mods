@@ -13,14 +13,14 @@ namespace LobotomyCorporationMods.Common.Extensions
         {
             const string MissingLocalizationText = LocalizeTextDataModel.Failed;
 
-            var localizedText = LocalizeTextDataModel.instance.GetText(localizeTextId);
+            string localizedText = LocalizeTextDataModel.instance.GetText(localizeTextId);
 
             if (!localizedText.Equals(MissingLocalizationText, StringComparison.OrdinalIgnoreCase))
             {
                 return localizedText;
             }
 
-            DefaultLocalizedValues.TryGetDefaultLocalizedValue(localizeTextId, out localizedText);
+            _ = DefaultLocalizedValues.TryGetDefaultLocalizedValue(localizeTextId, out localizedText);
 
             return localizedText ?? MissingLocalizationText;
         }

@@ -25,7 +25,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
             [CanBeNull] IAgentLayerTestAdapter agentLayerTestAdapter = null,
             [CanBeNull] IWorkerSpriteManagerTestAdapter workerSpriteManagerTestAdapter = null)
         {
-            Guard.Against.Null(instance, nameof(instance));
+            _ = Guard.Against.Null(instance, nameof(instance));
 
             instance.SaveAppearanceData(agentLayerTestAdapter, workerSpriteManagerTestAdapter);
         }

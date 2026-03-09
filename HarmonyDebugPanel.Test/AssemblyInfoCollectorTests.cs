@@ -1,45 +1,41 @@
 // SPDX-License-Identifier: MIT
 
 using System.Collections.Generic;
-using System.Reflection;
 using AwesomeAssertions;
 using HarmonyDebugPanel.Implementations.Collectors;
 using HarmonyDebugPanel.Interfaces;
+using HarmonyDebugPanel.Models;
 using Xunit;
 
-namespace HarmonyDebugPanel.Test;
-
-public sealed class AssemblyInfoCollectorTests
+namespace HarmonyDebugPanel.Test
 {
-    [Fact]
-    public void Collect_FlagsHarmonyAssemblies()
+    public sealed class AssemblyInfoCollectorTests
     {
-        var collector = new AssemblyInfoCollector(new StubAssemblySource(new List<AssemblyInspectionInfo>
+        [Fact]
+        public void Collect_FlagsHarmonyAssemblies()
         {
-            new("0Harmony", "2.7.0", "0Harmony.dll", new List<AssemblyName>()),
-            null,
-            new("SomeOtherAssembly", "1.0.0", "SomeOtherAssembly.dll", new List<AssemblyName>()),
-        }));
+            AssemblyInfoCollector collector = new(new StubAssemblySource(
+            [
+                new("0Harmony", "2.7.0", "0Harmony.dll", []),
+                null,
+                new("SomeOtherAssembly", "1.0.0", "SomeOtherAssembly.dll", []),
+            ]));
 
-        var results = collector.Collect();
+            IList<AssemblyInfo> results = collector.Collect();
 
-        results.Should().HaveCount(2);
-        results.Should().ContainSingle(a => a.Name == "0Harmony" && a.IsHarmonyRelated);
-        results.Should().ContainSingle(a => a.Name == "SomeOtherAssembly" && !a.IsHarmonyRelated);
-    }
-
-    private sealed class StubAssemblySource : IAssemblyInspectionSource
-    {
-        private readonly IEnumerable<AssemblyInspectionInfo> _assemblies;
-
-        public StubAssemblySource(IEnumerable<AssemblyInspectionInfo> assemblies)
-        {
-            _assemblies = assemblies;
+            _ = results.Should().HaveCount(2);
+            _ = results.Should().ContainSingle(a => a.Name == "0Harmony" && a.IsHarmonyRelated);
+            _ = results.Should().ContainSingle(a => a.Name == "SomeOtherAssembly" && !a.IsHarmonyRelated);
         }
 
-        public IEnumerable<AssemblyInspectionInfo> GetAssemblies()
+        private sealed class StubAssemblySource(IEnumerable<AssemblyInspectionInfo> assemblies) : IAssemblyInspectionSource
         {
-            return _assemblies;
+            private readonly IEnumerable<AssemblyInspectionInfo> _assemblies = assemblies;
+
+            public IEnumerable<AssemblyInspectionInfo> GetAssemblies()
+            {
+                return _assemblies;
+            }
         }
     }
 }

@@ -11,6 +11,7 @@ using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
+using UnityEngine;
 
 #endregion
 
@@ -29,7 +30,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
         {
             get
             {
-                var flowers = _gameObject.flowers;
+                GameObject[] flowers = _gameObject.flowers;
 
                 return flowers.Select(flower => new GameObjectTestAdapter(flower)).Cast<IGameObjectTestAdapter>();
             }

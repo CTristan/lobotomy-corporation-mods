@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 using System;
+using System.Collections.Generic;
 using AwesomeAssertions;
 using LobotomyPlaywright.Queries;
 using Xunit;
@@ -14,11 +15,11 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
         {
             // Act - CreatureManager.instance creates a new instance if null
             // with empty list, so we should get an empty list
-            var creatures = CreatureQueries.ListCreatures();
+            List<CreatureData> creatures = CreatureQueries.ListCreatures();
 
             // Assert
-            creatures.Should().NotBeNull();
-            creatures.Should().BeEmpty();
+            _ = creatures.Should().NotBeNull();
+            _ = creatures.Should().BeEmpty();
         }
 
         [Fact]
@@ -28,27 +29,27 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             Action act = () => CreatureQueries.ListCreatures();
 
             // Assert - method should not throw
-            act.Should().NotThrow();
+            _ = act.Should().NotThrow();
         }
 
         [Fact]
         public void GetCreature_with_nonexistent_id_returns_null()
         {
             // Act
-            var creature = CreatureQueries.GetCreature(999999);
+            CreatureData creature = CreatureQueries.GetCreature(999999);
 
             // Assert
-            creature.Should().BeNull();
+            _ = creature.Should().BeNull();
         }
 
         [Fact]
         public void GetCreature_with_zero_id_returns_null()
         {
             // Act
-            var creature = CreatureQueries.GetCreature(0);
+            CreatureData creature = CreatureQueries.GetCreature(0);
 
             // Assert
-            creature.Should().BeNull();
+            _ = creature.Should().BeNull();
         }
 
         [Fact]
@@ -58,7 +59,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             Action act = () => CreatureQueries.GetCreature(12345);
 
             // Assert - method should not throw
-            act.Should().NotThrow();
+            _ = act.Should().NotThrow();
         }
     }
 }

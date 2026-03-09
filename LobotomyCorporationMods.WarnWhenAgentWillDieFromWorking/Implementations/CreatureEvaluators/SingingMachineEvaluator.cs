@@ -24,8 +24,8 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
             const int GiftIncrease = 8;
             const int FortitudeThreshold = 65;
             const int MinTemperance = 3;
-            var fortitudeStatTooHigh = Agent.fortitudeStat >= FortitudeThreshold - GiftIncrease;
-            var qliphothCounter = Creature.qliphothCounter;
+            bool fortitudeStatTooHigh = Agent.fortitudeStat >= FortitudeThreshold - GiftIncrease;
+            int qliphothCounter = Creature.qliphothCounter;
 
             return qliphothCounter == 0 || fortitudeStatTooHigh || Agent.temperanceLevel < MinTemperance;
         }

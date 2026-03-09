@@ -13,5 +13,6 @@
     <ProjectGuid>{A2B3C4D5-E6F7-8A9B-0C1D-2E3F4A5B6C7D}</ProjectGuid>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 </Project>

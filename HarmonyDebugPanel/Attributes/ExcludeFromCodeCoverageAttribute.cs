@@ -1,7 +1,5 @@
 // SPDX-License-Identifier: MIT
 
-using System;
-
 // ReSharper disable once CheckNamespace
 namespace System.Diagnostics.CodeAnalysis
 {

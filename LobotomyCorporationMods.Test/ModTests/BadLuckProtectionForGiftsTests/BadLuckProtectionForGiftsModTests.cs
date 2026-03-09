@@ -10,7 +10,7 @@ using LobotomyCorporationMods.Test.Extensions;
 
 namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
 {
-    public class BadLuckProtectionForGiftsModTests
+    internal class BadLuckProtectionForGiftsModTests
     {
         protected const string GiftName = "DefaultGiftName";
 
@@ -21,7 +21,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
         [NotNull]
         protected static CreatureEquipmentMakeInfo GetCreatureEquipmentMakeInfo([NotNull] string giftName)
         {
-            var equipTypeInfo = UnityTestExtensions.CreateEquipmentTypeInfo();
+            EquipmentTypeInfo equipTypeInfo = UnityTestExtensions.CreateEquipmentTypeInfo();
             equipTypeInfo.type = EquipmentTypeInfo.EquipmentType.SPECIAL;
             equipTypeInfo.localizeData = new Dictionary<string, string>
             {
@@ -30,7 +30,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
                 },
             };
 
-            var creatureEquipmentMakeInfo = UnityTestExtensions.CreateCreatureEquipmentMakeInfo();
+            CreatureEquipmentMakeInfo creatureEquipmentMakeInfo = UnityTestExtensions.CreateCreatureEquipmentMakeInfo();
             creatureEquipmentMakeInfo.equipTypeInfo = equipTypeInfo;
 
             LocalizeTextDataModel.instance.Init(new Dictionary<string, string>

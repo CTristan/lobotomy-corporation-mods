@@ -1,334 +1,319 @@
 // SPDX-License-Identifier: MIT
 
-#pragma warning disable CA1852, CA1515
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text.Json;
-using System.Xml;
 using System.Xml.Linq;
 
-namespace CI;
-
-public interface ICoverageThresholdChecker
+namespace CI
 {
-    bool CheckThresholds(string repoRoot, out string failureMessage);
-}
-
-public sealed class CoverageThresholdChecker : ICoverageThresholdChecker
-#pragma warning restore CA1852, CA1515
-{
-    private readonly IFileSystem _fileSystem;
-
-    public CoverageThresholdChecker()
-        : this(new FileSystem())
+    internal interface ICoverageThresholdChecker
     {
+        bool CheckThresholds(string repoRoot, out string failureMessage);
     }
 
-    public CoverageThresholdChecker(IFileSystem fileSystem)
+    internal sealed class CoverageThresholdChecker(IFileSystem fileSystem) : ICoverageThresholdChecker
     {
-        _fileSystem = fileSystem;
-    }
+        private readonly IFileSystem _fileSystem = fileSystem;
 
-    public bool CheckThresholds(string repoRoot, out string failureMessage)
-    {
-        failureMessage = string.Empty;
-
-        // Find all coverage.opencover.xml files in subdirectories
-        var coverageReports = FindCoverageReports(repoRoot);
-
-        if (coverageReports.Count == 0)
+        public CoverageThresholdChecker()
+            : this(new FileSystem())
         {
-            failureMessage = "No coverage reports found. Ensure tests are run with coverage collection enabled.";
-            return false;
         }
 
-        try
+        public bool CheckThresholds(string repoRoot, out string failureMessage)
         {
-            var moduleCoverages = GetModuleCoverages(coverageReports);
+            failureMessage = string.Empty;
 
-            if (moduleCoverages.Count == 0)
+            // Find all coverage.opencover.xml files in subdirectories
+            List<string> coverageReports = FindCoverageReports(repoRoot);
+
+            if (coverageReports.Count == 0)
             {
-                failureMessage = "No coverage metrics found in reports.";
+                failureMessage = "No coverage reports found. Ensure tests are run with coverage collection enabled.";
                 return false;
             }
 
-            // Print overall coverage for information
-            var overallCoverage = CalculateOverallCoverage(moduleCoverages);
-            Console.WriteLine(string.Format(
-                CultureInfo.InvariantCulture,
-                "=== Coverage results: Line {0:F1}%, Branch {1:F1}%, Method {2:F1}% ===",
-                overallCoverage.LineCoverage,
-                overallCoverage.BranchCoverage,
-                overallCoverage.MethodCoverage));
-
-            // Now check against thresholds from coverlet.json
-            var configPath = System.IO.Path.Combine(repoRoot, "coverlet.json");
-
-            if (!_fileSystem.FileExists(configPath))
+            try
             {
-                failureMessage = "Coverlet config not found";
-                return false;
-            }
+                List<ModuleCoverage> moduleCoverages = GetModuleCoverages(coverageReports);
 
-            var json = _fileSystem.ReadAllText(configPath);
-
-            if (json == null)
-            {
-                failureMessage = "Coverlet config not found";
-                return false;
-            }
-
-            var config = JsonSerializer.Deserialize<CoverageConfig>(json);
-
-            if (config == null)
-            {
-                failureMessage = "Coverlet config not found";
-                return false;
-            }
-
-            var failures = new List<string>();
-
-            foreach (var module in moduleCoverages)
-            {
-                if (module.Totals.LineCoverage < config.LineThreshold)
+                if (moduleCoverages.Count == 0)
                 {
-                    failures.Add(string.Format(
-                        CultureInfo.InvariantCulture,
-                        "Module '{0}' line coverage ({1:F1}%) is below threshold ({2:F1}%)",
-                        module.ModuleName,
-                        module.Totals.LineCoverage,
-                        config.LineThreshold));
+                    failureMessage = "No coverage metrics found in reports.";
+                    return false;
                 }
 
-                if (module.Totals.BranchCoverage < config.BranchThreshold)
+                // Print overall coverage for information
+                CoverageTotals overallCoverage = CalculateOverallCoverage(moduleCoverages);
+                Console.WriteLine(string.Format(
+                    CultureInfo.InvariantCulture,
+                    "=== Coverage results: Line {0:F1}%, Branch {1:F1}%, Method {2:F1}% ===",
+                    overallCoverage.LineCoverage,
+                    overallCoverage.BranchCoverage,
+                    overallCoverage.MethodCoverage));
+
+                // Now check against thresholds from coverlet.json
+                string configPath = System.IO.Path.Combine(repoRoot, "coverlet.json");
+
+                if (!_fileSystem.FileExists(configPath))
                 {
-                    failures.Add(string.Format(
-                        CultureInfo.InvariantCulture,
-                        "Module '{0}' branch coverage ({1:F1}%) is below threshold ({2:F1}%)",
-                        module.ModuleName,
-                        module.Totals.BranchCoverage,
-                        config.BranchThreshold));
+                    failureMessage = "Coverlet config not found";
+                    return false;
                 }
 
-                if (module.Totals.MethodCoverage < config.MethodThreshold)
+                string? json = _fileSystem.ReadAllText(configPath);
+
+                if (json == null)
                 {
-                    failures.Add(string.Format(
-                        CultureInfo.InvariantCulture,
-                        "Module '{0}' method coverage ({1:F1}%) is below threshold ({2:F1}%)",
-                        module.ModuleName,
-                        module.Totals.MethodCoverage,
-                        config.MethodThreshold));
+                    failureMessage = "Coverlet config not found";
+                    return false;
                 }
+
+                CoverageConfig? config = JsonSerializer.Deserialize<CoverageConfig>(json);
+
+                if (config == null)
+                {
+                    failureMessage = "Coverlet config not found";
+                    return false;
+                }
+
+                List<string> failures = [];
+
+                foreach (ModuleCoverage module in moduleCoverages)
+                {
+                    if (module.Totals.LineCoverage < config.LineThreshold)
+                    {
+                        failures.Add(string.Format(
+                            CultureInfo.InvariantCulture,
+                            "Module '{0}' line coverage ({1:F1}%) is below threshold ({2:F1}%)",
+                            module.ModuleName,
+                            module.Totals.LineCoverage,
+                            config.LineThreshold));
+                    }
+
+                    if (module.Totals.BranchCoverage < config.BranchThreshold)
+                    {
+                        failures.Add(string.Format(
+                            CultureInfo.InvariantCulture,
+                            "Module '{0}' branch coverage ({1:F1}%) is below threshold ({2:F1}%)",
+                            module.ModuleName,
+                            module.Totals.BranchCoverage,
+                            config.BranchThreshold));
+                    }
+
+                    if (module.Totals.MethodCoverage < config.MethodThreshold)
+                    {
+                        failures.Add(string.Format(
+                            CultureInfo.InvariantCulture,
+                            "Module '{0}' method coverage ({1:F1}%) is below threshold ({2:F1}%)",
+                            module.ModuleName,
+                            module.Totals.MethodCoverage,
+                            config.MethodThreshold));
+                    }
+                }
+
+                if (failures.Count > 0)
+                {
+                    failureMessage = string.Join(Environment.NewLine, failures);
+                    return false;
+                }
+
+                return true;
             }
-
-            if (failures.Count > 0)
+            catch (Exception ex)
             {
-                failureMessage = string.Join(Environment.NewLine, failures);
+                failureMessage = $"Error processing coverage reports: {ex.Message}";
                 return false;
             }
-
-            return true;
         }
-#pragma warning disable CA1031
-        catch (Exception ex)
+
+        private static List<string> FindCoverageReports(string repoRoot)
         {
-            failureMessage = $"Error processing coverage reports: {ex.Message}";
-            return false;
-        }
-#pragma warning restore CA1031
-    }
+            List<string> reports = [];
+            string[] testDirectories = System.IO.Directory.GetDirectories(repoRoot, "*.Test");
 
-    private static List<string> FindCoverageReports(string repoRoot)
-    {
-        var reports = new List<string>();
-        var testDirectories = System.IO.Directory.GetDirectories(repoRoot, "*.Test");
-
-        foreach (var testDir in testDirectories)
-        {
-            var reportPath = System.IO.Path.Combine(testDir, "coverage.opencover.xml");
-
-            if (System.IO.File.Exists(reportPath))
+            foreach (string testDir in testDirectories)
             {
-                reports.Add(reportPath);
-            }
-        }
+                string reportPath = System.IO.Path.Combine(testDir, "coverage.opencover.xml");
 
-        return reports;
-    }
-
-    private static bool ShouldSkipModule(string moduleName)
-    {
-        // Skip the test projects themselves if they appear as modules
-        if (moduleName.EndsWith(".Test", StringComparison.OrdinalIgnoreCase) ||
-            moduleName.EndsWith(".Tests", StringComparison.OrdinalIgnoreCase))
-        {
-            return true;
-        }
-
-        // Skip local dotnet tools (executables) from coverage thresholds
-        // These are CLI tools with different testing requirements than mod libraries
-        return moduleName == "CI" ||
-               moduleName == "SetupExternal" ||
-               moduleName == "RetargetHarmony" ||
-               moduleName == "HarmonyDebugPanel" ||
-               moduleName == "LobotomyPlaywright" ||
-               moduleName == "LobotomyPlaywright.Plugin";
-    }
-
-    private static ModuleClassSummary GetClassSummary(XElement class_, string namespaceName)
-    {
-        var classSummary = class_.Element(XName.Get("Summary", namespaceName));
-
-        if (classSummary == null)
-        {
-            return new ModuleClassSummary();
-        }
-
-        return new ModuleClassSummary
-        {
-            LineVisited = (double?)classSummary.Attribute("numSequencePoints") ?? 0,
-            LineCovered = (double?)classSummary.Attribute("visitedSequencePoints") ?? 0,
-            BranchVisited = (double?)classSummary.Attribute("numBranchPoints") ?? 0,
-            BranchCovered = (double?)classSummary.Attribute("visitedBranchPoints") ?? 0,
-            MethodVisited = (double?)classSummary.Attribute("numMethods") ?? 0,
-            MethodCovered = (double?)classSummary.Attribute("visitedMethods") ?? 0,
-        };
-    }
-
-    private static ModuleCoverage CreateModuleCoverage(string moduleName, XElement module, string namespaceName)
-    {
-        double totalLineVisited = 0;
-        double totalLineCovered = 0;
-        double totalBranchVisited = 0;
-        double totalBranchCovered = 0;
-        double totalMethodVisited = 0;
-        double totalMethodCovered = 0;
-
-        var classes = module.Descendants(XName.Get("Class", namespaceName));
-
-        foreach (var class_ in classes)
-        {
-            var summary = GetClassSummary(class_, namespaceName);
-            totalLineVisited += summary.LineVisited;
-            totalLineCovered += summary.LineCovered;
-            totalBranchVisited += summary.BranchVisited;
-            totalBranchCovered += summary.BranchCovered;
-            totalMethodVisited += summary.MethodVisited;
-            totalMethodCovered += summary.MethodCovered;
-        }
-
-        // Only add modules that actually have code
-        if (totalLineVisited > 0)
-        {
-            return new ModuleCoverage
-            {
-                ModuleName = moduleName,
-                LineVisited = totalLineVisited,
-                LineCovered = totalLineCovered,
-                BranchVisited = totalBranchVisited,
-                BranchCovered = totalBranchCovered,
-                MethodVisited = totalMethodVisited,
-                MethodCovered = totalMethodCovered,
-                Totals = new CoverageTotals
+                if (System.IO.File.Exists(reportPath))
                 {
-                    LineCoverage = (totalLineCovered / totalLineVisited) * 100,
-                    BranchCoverage = totalBranchVisited == 0 ? 100.0 : (totalBranchCovered / totalBranchVisited) * 100,
-                    MethodCoverage = totalMethodVisited == 0 ? 100.0 : (totalMethodCovered / totalMethodVisited) * 100,
+                    reports.Add(reportPath);
                 }
+            }
+
+            return reports;
+        }
+
+        private static bool ShouldSkipModule(string moduleName)
+        {
+            // Skip the test projects themselves if they appear as modules
+            if (moduleName.EndsWith(".Test", StringComparison.OrdinalIgnoreCase) ||
+                moduleName.EndsWith(".Tests", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            // Skip local dotnet tools (executables) from coverage thresholds
+            // These are CLI tools with different testing requirements than mod libraries
+            return moduleName is "CI" or
+                   "SetupExternal" or
+                   "RetargetHarmony" or
+                   "HarmonyDebugPanel" or
+                   "LobotomyPlaywright" or
+                   "LobotomyPlaywright.Plugin";
+        }
+
+        private static ModuleClassSummary GetClassSummary(XElement class_, string namespaceName)
+        {
+            XElement? classSummary = class_.Element(XName.Get("Summary", namespaceName));
+
+            return classSummary == null
+                ? new ModuleClassSummary()
+                : new ModuleClassSummary
+                {
+                    LineVisited = (double?)classSummary.Attribute("numSequencePoints") ?? 0,
+                    LineCovered = (double?)classSummary.Attribute("visitedSequencePoints") ?? 0,
+                    BranchVisited = (double?)classSummary.Attribute("numBranchPoints") ?? 0,
+                    BranchCovered = (double?)classSummary.Attribute("visitedBranchPoints") ?? 0,
+                    MethodVisited = (double?)classSummary.Attribute("numMethods") ?? 0,
+                    MethodCovered = (double?)classSummary.Attribute("visitedMethods") ?? 0,
+                };
+        }
+
+        private static ModuleCoverage CreateModuleCoverage(string moduleName, XElement module, string namespaceName)
+        {
+            double totalLineVisited = 0;
+            double totalLineCovered = 0;
+            double totalBranchVisited = 0;
+            double totalBranchCovered = 0;
+            double totalMethodVisited = 0;
+            double totalMethodCovered = 0;
+
+            IEnumerable<XElement> classes = module.Descendants(XName.Get("Class", namespaceName));
+
+            foreach (XElement class_ in classes)
+            {
+                ModuleClassSummary summary = GetClassSummary(class_, namespaceName);
+                totalLineVisited += summary.LineVisited;
+                totalLineCovered += summary.LineCovered;
+                totalBranchVisited += summary.BranchVisited;
+                totalBranchCovered += summary.BranchCovered;
+                totalMethodVisited += summary.MethodVisited;
+                totalMethodCovered += summary.MethodCovered;
+            }
+
+            // Only add modules that actually have code
+            return totalLineVisited > 0
+                ? new ModuleCoverage
+                {
+                    ModuleName = moduleName,
+                    LineVisited = totalLineVisited,
+                    LineCovered = totalLineCovered,
+                    BranchVisited = totalBranchVisited,
+                    BranchCovered = totalBranchCovered,
+                    MethodVisited = totalMethodVisited,
+                    MethodCovered = totalMethodCovered,
+                    Totals = new CoverageTotals
+                    {
+                        LineCoverage = totalLineCovered / totalLineVisited * 100,
+                        BranchCoverage = totalBranchVisited == 0 ? 100.0 : totalBranchCovered / totalBranchVisited * 100,
+                        MethodCoverage = totalMethodVisited == 0 ? 100.0 : totalMethodCovered / totalMethodVisited * 100,
+                    }
+                }
+                : null!;
+        }
+
+        private static List<ModuleCoverage> GetModuleCoverages(List<string> coverageReports)
+        {
+            List<ModuleCoverage> moduleCoverages = [];
+
+            foreach (string reportPath in coverageReports)
+            {
+                string xml = System.IO.File.ReadAllText(reportPath);
+                XDocument doc = XDocument.Parse(xml);
+                XNamespace? ns = doc.Root?.GetDefaultNamespace();
+                string namespaceName = ns?.NamespaceName ?? string.Empty;
+
+                IEnumerable<XElement> modules = doc.Descendants(XName.Get("Module", namespaceName));
+
+                foreach (XElement module in modules)
+                {
+                    XElement? moduleNameElement = module.Element(XName.Get("ModuleName", namespaceName));
+                    string moduleName = moduleNameElement?.Value ?? "Unknown";
+
+                    if (ShouldSkipModule(moduleName))
+                    {
+                        continue;
+                    }
+
+                    ModuleCoverage moduleCoverage = CreateModuleCoverage(moduleName, module, namespaceName);
+                    if (moduleCoverage != null)
+                    {
+                        moduleCoverages.Add(moduleCoverage);
+                    }
+                }
+            }
+
+            return moduleCoverages;
+        }
+
+        private static CoverageTotals CalculateOverallCoverage(List<ModuleCoverage> moduleCoverages)
+        {
+            double totalLineVisited = 0;
+            double totalLineCovered = 0;
+            double totalBranchVisited = 0;
+            double totalBranchCovered = 0;
+            double totalMethodVisited = 0;
+            double totalMethodCovered = 0;
+
+            foreach (ModuleCoverage module in moduleCoverages)
+            {
+                totalLineVisited += module.LineVisited;
+                totalLineCovered += module.LineCovered;
+                totalBranchVisited += module.BranchVisited;
+                totalBranchCovered += module.BranchCovered;
+                totalMethodVisited += module.MethodVisited;
+                totalMethodCovered += module.MethodCovered;
+            }
+
+            return new CoverageTotals
+            {
+                LineCoverage = totalLineVisited == 0 ? 100.0 : totalLineCovered / totalLineVisited * 100,
+                BranchCoverage = totalBranchVisited == 0 ? 100.0 : totalBranchCovered / totalBranchVisited * 100,
+                MethodCoverage = totalMethodVisited == 0 ? 100.0 : totalMethodCovered / totalMethodVisited * 100,
             };
         }
-
-        return null!;
     }
 
-    private static List<ModuleCoverage> GetModuleCoverages(List<string> coverageReports)
+    internal sealed class ModuleCoverage
     {
-        var moduleCoverages = new List<ModuleCoverage>();
-
-        foreach (var reportPath in coverageReports)
-        {
-            var xml = System.IO.File.ReadAllText(reportPath);
-            var doc = XDocument.Parse(xml);
-            var ns = doc.Root?.GetDefaultNamespace();
-            var namespaceName = ns?.NamespaceName ?? string.Empty;
-
-            var modules = doc.Descendants(XName.Get("Module", namespaceName));
-
-            foreach (var module in modules)
-            {
-                var moduleNameElement = module.Element(XName.Get("ModuleName", namespaceName));
-                var moduleName = moduleNameElement?.Value ?? "Unknown";
-
-                if (ShouldSkipModule(moduleName))
-                {
-                    continue;
-                }
-
-                var moduleCoverage = CreateModuleCoverage(moduleName, module, namespaceName);
-                if (moduleCoverage != null)
-                {
-                    moduleCoverages.Add(moduleCoverage);
-                }
-            }
-        }
-
-        return moduleCoverages;
+        public string ModuleName { get; init; } = string.Empty;
+        public double LineVisited { get; init; }
+        public double LineCovered { get; init; }
+        public double BranchVisited { get; init; }
+        public double BranchCovered { get; init; }
+        public double MethodVisited { get; init; }
+        public double MethodCovered { get; init; }
+        public CoverageTotals Totals { get; init; } = new CoverageTotals();
     }
 
-    private static CoverageTotals CalculateOverallCoverage(List<ModuleCoverage> moduleCoverages)
+    internal sealed class CoverageTotals
     {
-        double totalLineVisited = 0;
-        double totalLineCovered = 0;
-        double totalBranchVisited = 0;
-        double totalBranchCovered = 0;
-        double totalMethodVisited = 0;
-        double totalMethodCovered = 0;
-
-        foreach (var module in moduleCoverages)
-        {
-            totalLineVisited += module.LineVisited;
-            totalLineCovered += module.LineCovered;
-            totalBranchVisited += module.BranchVisited;
-            totalBranchCovered += module.BranchCovered;
-            totalMethodVisited += module.MethodVisited;
-            totalMethodCovered += module.MethodCovered;
-        }
-
-        return new CoverageTotals
-        {
-            LineCoverage = totalLineVisited == 0 ? 100.0 : (totalLineCovered / totalLineVisited) * 100,
-            BranchCoverage = totalBranchVisited == 0 ? 100.0 : (totalBranchCovered / totalBranchVisited) * 100,
-            MethodCoverage = totalMethodVisited == 0 ? 100.0 : (totalMethodCovered / totalMethodVisited) * 100,
-        };
+        public double LineCoverage { get; init; }
+        public double BranchCoverage { get; init; }
+        public double MethodCoverage { get; init; }
     }
-}
 
-internal sealed class ModuleCoverage
-{
-    public string ModuleName { get; init; } = string.Empty;
-    public double LineVisited { get; init; }
-    public double LineCovered { get; init; }
-    public double BranchVisited { get; init; }
-    public double BranchCovered { get; init; }
-    public double MethodVisited { get; init; }
-    public double MethodCovered { get; init; }
-    public CoverageTotals Totals { get; init; } = new CoverageTotals();
-}
-
-internal sealed class CoverageTotals
-{
-    public double LineCoverage { get; init; }
-    public double BranchCoverage { get; init; }
-    public double MethodCoverage { get; init; }
-}
-
-internal sealed class ModuleClassSummary
-{
-    public double LineVisited { get; init; }
-    public double LineCovered { get; init; }
-    public double BranchVisited { get; init; }
-    public double BranchCovered { get; init; }
-    public double MethodVisited { get; init; }
-    public double MethodCovered { get; init; }
+    internal sealed class ModuleClassSummary
+    {
+        public double LineVisited { get; init; }
+        public double LineCovered { get; init; }
+        public double BranchVisited { get; init; }
+        public double BranchCovered { get; init; }
+        public double MethodVisited { get; init; }
+        public double MethodCovered { get; init; }
+    }
 }

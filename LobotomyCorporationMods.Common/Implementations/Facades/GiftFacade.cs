@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 using System;
+using System.Collections.Generic;
 using CommandWindow;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
@@ -48,9 +49,9 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         public static bool HasGift([NotNull] this UnitModel unitModel,
             int? giftId)
         {
-            Guard.Against.Null(unitModel, nameof(unitModel));
+            _ = Guard.Against.Null(unitModel, nameof(unitModel));
 
-            var equippedGifts = unitModel.GetEquippedGifts();
+            List<EGOgiftModel> equippedGifts = unitModel.GetEquippedGifts();
 
             return equippedGifts.Exists(g => g.metaInfo.id == giftId);
         }
@@ -59,7 +60,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             string positionName,
             EGOgiftAttachType attachType)
         {
-            Guard.Against.Null(unitModel, nameof(unitModel));
+            _ = Guard.Against.Null(unitModel, nameof(unitModel));
 
             return unitModel.GetEquippedGifts().Exists(model => model.metaInfo.attachPos.Equals(positionName, StringComparison.OrdinalIgnoreCase) && model.metaInfo.attachType.Equals(attachType));
         }
@@ -69,7 +70,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         /// <returns>True if the equipment is in a valid slot, otherwise false.</returns>
         public static bool IsInValidSlot([NotNull] this EquipmentModel equipmentModel)
         {
-            Guard.Against.Null(equipmentModel, nameof(equipmentModel));
+            _ = Guard.Against.Null(equipmentModel, nameof(equipmentModel));
 
             return !equipmentModel.metaInfo.attachPos.Equals(EGOgiftAttachRegion.BODY_UP.ToString(), StringComparison.OrdinalIgnoreCase);
         }
@@ -77,9 +78,9 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         public static bool PositionHasLockedGift([NotNull] this UnitModel unitModel,
             [NotNull] EquipmentModel gift)
         {
-            Guard.Against.Null(gift, nameof(gift));
+            _ = Guard.Against.Null(gift, nameof(gift));
 
-            var matchingGiftAtPosition = unitModel.FindGiftAtPosition(gift.metaInfo.attachPos);
+            EGOgiftModel matchingGiftAtPosition = unitModel.FindGiftAtPosition(gift.metaInfo.attachPos);
 
             return !matchingGiftAtPosition.IsNull() && unitModel.IsGiftLocked(matchingGiftAtPosition.metaInfo.id);
         }

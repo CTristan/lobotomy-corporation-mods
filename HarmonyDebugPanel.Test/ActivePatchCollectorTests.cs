@@ -1,46 +1,41 @@
 // SPDX-License-Identifier: MIT
 
 using System.Collections.Generic;
-using System.Reflection;
 using AwesomeAssertions;
 using HarmonyDebugPanel.Implementations.Collectors;
 using HarmonyDebugPanel.Interfaces;
 using HarmonyDebugPanel.Models;
 using Xunit;
 
-namespace HarmonyDebugPanel.Test;
-
-public sealed class ActivePatchCollectorTests
+namespace HarmonyDebugPanel.Test
 {
-    [Fact]
-    public void Collect_MapsPatchInspectionInfoToPatchInfo()
+    public sealed class ActivePatchCollectorTests
     {
-        var collector = new ActivePatchCollector(new StubPatchInspectionSource(new List<PatchInspectionInfo>
+        [Fact]
+        public void Collect_MapsPatchInspectionInfoToPatchInfo()
         {
-            new("TargetType", "TargetMethod", PatchType.Prefix, "owner1", "PatchClass.Prefix", "Assembly1", "1.0.0", new List<AssemblyName>()),
-            null,
-            new("TargetType", "TargetMethod", PatchType.Postfix, "owner2", "PatchClass.Postfix", "Assembly2", "2.0.0", new List<AssemblyName>()),
-        }));
+            ActivePatchCollector collector = new(new StubPatchInspectionSource(
+            [
+                new("TargetType", "TargetMethod", PatchType.Prefix, "owner1", "PatchClass.Prefix", "Assembly1", "1.0.0", []),
+                null,
+                new("TargetType", "TargetMethod", PatchType.Postfix, "owner2", "PatchClass.Postfix", "Assembly2", "2.0.0", []),
+            ]));
 
-        var patches = collector.Collect();
+            IList<PatchInfo> patches = collector.Collect();
 
-        patches.Should().HaveCount(2);
-        patches.Should().ContainSingle(p => p.PatchType == PatchType.Prefix && p.Owner == "owner1" && p.PatchAssemblyName == "Assembly1");
-        patches.Should().ContainSingle(p => p.PatchType == PatchType.Postfix && p.Owner == "owner2" && p.PatchAssemblyName == "Assembly2");
-    }
-
-    private sealed class StubPatchInspectionSource : IPatchInspectionSource
-    {
-        private readonly IEnumerable<PatchInspectionInfo> _patches;
-
-        public StubPatchInspectionSource(IEnumerable<PatchInspectionInfo> patches)
-        {
-            _patches = patches;
+            _ = patches.Should().HaveCount(2);
+            _ = patches.Should().ContainSingle(p => p.PatchType == PatchType.Prefix && p.Owner == "owner1" && p.PatchAssemblyName == "Assembly1");
+            _ = patches.Should().ContainSingle(p => p.PatchType == PatchType.Postfix && p.Owner == "owner2" && p.PatchAssemblyName == "Assembly2");
         }
 
-        public IEnumerable<PatchInspectionInfo> GetPatches()
+        private sealed class StubPatchInspectionSource(IEnumerable<PatchInspectionInfo> patches) : IPatchInspectionSource
         {
-            return _patches;
+            private readonly IEnumerable<PatchInspectionInfo> _patches = patches;
+
+            public IEnumerable<PatchInspectionInfo> GetPatches()
+            {
+                return _patches;
+            }
         }
     }
 }

@@ -11,7 +11,7 @@ namespace LobotomyCorporationMods.FreeCustomization
     // ReSharper disable once InconsistentNaming
     public sealed class Harmony_Patch : HarmonyPatchBase
     {
-        public new static readonly Harmony_Patch Instance = new Harmony_Patch(true);
+        public static new readonly Harmony_Patch Instance = new Harmony_Patch(true);
 
         public Harmony_Patch() : this(false)
         {

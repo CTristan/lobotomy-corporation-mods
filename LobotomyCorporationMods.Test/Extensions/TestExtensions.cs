@@ -30,15 +30,15 @@ namespace LobotomyCorporationMods.Test.Extensions
             EGOgiftAttachType attachType = 0,
             IEnumerable<UnitBuf>? unitBuffs = null)
         {
-            unitBuffs = unitBuffs.EnsureNotNullWithMethod(() => new List<UnitBuf>());
+            unitBuffs = unitBuffs.EnsureNotNullWithMethod(() => []);
 
-            var agentModelCreationParameters = new AgentModelCreationParameters
+            AgentModelCreationParameters agentModelCreationParameters = new()
             {
-                BufList = unitBuffs.ToList(),
+                BufList = [.. unitBuffs],
             };
 
-            var agent = UnityTestExtensions.CreateAgentModel(agentModelCreationParameters);
-            var gift = UnityTestExtensions.CreateEgoGiftModel();
+            AgentModel agent = UnityTestExtensions.CreateAgentModel(agentModelCreationParameters);
+            EGOgiftModel gift = UnityTestExtensions.CreateEgoGiftModel();
             gift.metaInfo.id = (int)giftId;
             gift.metaInfo.attachPos = attachPosition.ToString();
             gift.metaInfo.attachType = attachType;
@@ -55,19 +55,19 @@ namespace LobotomyCorporationMods.Test.Extensions
             int qliphothCounter = 0,
             bool maxObservation = true)
         {
-            var equipmentTypeInfo = UnityTestExtensions.CreateEquipmentTypeInfo();
+            EquipmentTypeInfo equipmentTypeInfo = UnityTestExtensions.CreateEquipmentTypeInfo();
             equipmentTypeInfo.id = (int)giftId;
             equipmentTypeInfo.type = EquipmentTypeInfo.EquipmentType.SPECIAL;
             equipmentTypeInfo.attachPos = attachPosition.ToString();
             equipmentTypeInfo.attachType = giftAttachType;
 
-            var creatureEquipmentMakeInfo = UnityTestExtensions.CreateCreatureEquipmentMakeInfo(equipmentTypeInfo);
-            var creatureTypeInfo = UnityTestExtensions.CreateCreatureTypeInfo(new List<CreatureEquipmentMakeInfo>
-            {
+            CreatureEquipmentMakeInfo creatureEquipmentMakeInfo = UnityTestExtensions.CreateCreatureEquipmentMakeInfo(equipmentTypeInfo);
+            CreatureTypeInfo creatureTypeInfo = UnityTestExtensions.CreateCreatureTypeInfo(
+            [
                 creatureEquipmentMakeInfo,
-            });
+            ]);
 
-            var creature = UnityTestExtensions.CreateCreatureModel(metaInfo: creatureTypeInfo, qliphothCounter: qliphothCounter);
+            CreatureModel creature = UnityTestExtensions.CreateCreatureModel(metaInfo: creatureTypeInfo, qliphothCounter: qliphothCounter);
             creature.instanceId = (long)creatureId;
             creature.metadataId = (long)creatureId;
 
@@ -77,7 +77,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             }
 
             // Need to initialize the CreatureLayer with our new creature
-            var creatureUnit = UnityTestExtensions.CreateCreatureUnit();
+            CreatureUnit creatureUnit = UnityTestExtensions.CreateCreatureUnit();
             _ = UnityTestExtensions.CreateCreatureLayer(new Dictionary<long, CreatureUnit>
             {
                 {
@@ -91,7 +91,7 @@ namespace LobotomyCorporationMods.Test.Extensions
         [NotNull]
         internal static Mock<IFileManager> GetMockFileManager()
         {
-            var mockFileManager = new Mock<IFileManager>();
+            Mock<IFileManager> mockFileManager = new();
             _ = mockFileManager.Setup(fm => fm.GetFile(It.IsAny<string>())).Returns((string fileName) => fileName.InCurrentDirectory());
             _ = mockFileManager.Setup(fm => fm.ReadAllText(It.IsAny<string>(), It.IsAny<bool>())).Returns((string fileName,
                 bool _) => File.ReadAllText(fileName.InCurrentDirectory()));
@@ -99,10 +99,10 @@ namespace LobotomyCorporationMods.Test.Extensions
             _ = mockFileManager.Setup(fm => fm.WriteAllText(It.IsAny<string>(), It.IsAny<string>())).Callback<string, string>((path,
                 contents) =>
             {
-                var directory = Path.GetDirectoryName(path);
+                string? directory = Path.GetDirectoryName(path);
                 if (directory.IsNotNull() && !Directory.Exists(directory))
                 {
-                    Directory.CreateDirectory(directory);
+                    _ = Directory.CreateDirectory(directory);
                 }
 
                 File.WriteAllText(path, contents);
@@ -114,7 +114,7 @@ namespace LobotomyCorporationMods.Test.Extensions
         [NotNull]
         internal static Mock<ILogger> GetMockLogger()
         {
-            var mockLogger = new Mock<ILogger>();
+            Mock<ILogger> mockLogger = new();
 
             return mockLogger;
         }
@@ -132,13 +132,13 @@ namespace LobotomyCorporationMods.Test.Extensions
         {
             currentTarget = currentTarget.EnsureNotNullWithMethod(() => UnityTestExtensions.CreateCreatureModel());
 
-            var deadAgentColor = Color.red;
+            Color deadAgentColor = Color.red;
 
             // Need existing game instances
             InitializeLocalizeTextDataModel(textValue);
             InitializeSkillTypeList(rwbpType);
 
-            var commandWindow = UnityTestExtensions.CreateCommandWindow(currentTarget, CommandType.Management, (long)rwbpType);
+            CommandWindow.CommandWindow commandWindow = UnityTestExtensions.CreateCommandWindow(currentTarget, CommandType.Management, (long)rwbpType);
             commandWindow.DeadColor = deadAgentColor;
             CommandWindow.CommandWindow.CurrentWindow.DeadColor = deadAgentColor;
 
@@ -147,7 +147,7 @@ namespace LobotomyCorporationMods.Test.Extensions
 
         private static void InitializeLocalizeTextDataModel([NotNull] string value)
         {
-            var list = new Dictionary<string, string>
+            Dictionary<string, string> list = new()
             {
                 {
                     value, value
@@ -160,45 +160,39 @@ namespace LobotomyCorporationMods.Test.Extensions
         private static void InitializeSkillTypeList(RwbpType rwbpType)
         {
             SkillTypeInfo[] skillTypeInfos =
-            {
+            [
                 new SkillTypeInfo
                 {
                     id = (long)rwbpType,
                 },
-            };
+            ];
 
             _ = UnityTestExtensions.CreateSkillTypeList(skillTypeInfos);
         }
 
         private static void SetMaxObservation([NotNull] CreatureModel creature)
         {
-            var observeRegions = new List<ObserveInfoData>
-            {
-                new ObserveInfoData
-                {
+            List<ObserveInfoData> observeRegions =
+            [
+                new() {
                     regionName = "stat",
                 },
-                new ObserveInfoData
-                {
+                new() {
                     regionName = "defense",
                 },
-                new ObserveInfoData
-                {
+                new() {
                     regionName = "work_r",
                 },
-                new ObserveInfoData
-                {
+                new() {
                     regionName = "work_w",
                 },
-                new ObserveInfoData
-                {
+                new() {
                     regionName = "work_b",
                 },
-                new ObserveInfoData
-                {
+                new() {
                     regionName = "work_p",
                 },
-            };
+            ];
 
             creature.observeInfo.InitObserveRegion(observeRegions);
             creature.observeInfo.ObserveAll();
@@ -209,47 +203,47 @@ namespace LobotomyCorporationMods.Test.Extensions
             string methodName)
         {
             // Use reflection to access HarmonyPatch attributes since we can't reference 0Harmony.dll in net10.0
-            var declaringAssembly = patchClass.DeclaringType?.Assembly
+            Assembly? declaringAssembly = patchClass.DeclaringType?.Assembly
                 ?? (patchClass is Type t ? t.Assembly : null);
 
-            declaringAssembly.Should().NotBeNull("Unable to determine assembly from MemberInfo");
+            _ = declaringAssembly.Should().NotBeNull("Unable to determine assembly from MemberInfo");
 
             // Search all loaded assemblies to find HarmonyPatch attribute type
-            var harmonyPatchAttributeType = AppDomain.CurrentDomain.GetAssemblies()
+            Type? harmonyPatchAttributeType = AppDomain.CurrentDomain.GetAssemblies()
                 .Select(a => a.GetType("HarmonyLib.HarmonyPatch") ?? a.GetType("Harmony.HarmonyPatch"))
                 .FirstOrDefault(t => t != null);
 
-            harmonyPatchAttributeType.Should().NotBeNull("HarmonyPatch attribute type not found in loaded assemblies");
+            _ = harmonyPatchAttributeType.Should().NotBeNull("HarmonyPatch attribute type not found in loaded assemblies");
 
-            var attribute = Attribute.GetCustomAttribute(patchClass, harmonyPatchAttributeType);
-            attribute.Should().NotBeNull("HarmonyPatch attribute not found on member");
+            Attribute? attribute = Attribute.GetCustomAttribute(patchClass, harmonyPatchAttributeType);
+            _ = attribute.Should().NotBeNull("HarmonyPatch attribute not found on member");
 
             // Harmony 1.x stores patch info in a public 'info' field of type HarmonyMethod
-            var infoField = harmonyPatchAttributeType?.GetField("info", BindingFlags.Public | BindingFlags.Instance);
-            infoField.Should().NotBeNull("HarmonyPatch info field not found");
+            FieldInfo? infoField = harmonyPatchAttributeType?.GetField("info", BindingFlags.Public | BindingFlags.Instance);
+            _ = infoField.Should().NotBeNull("HarmonyPatch info field not found");
 
-            var info = infoField?.GetValue(attribute);
-            info.Should().NotBeNull("HarmonyPatch info is null");
+            object? info = infoField?.GetValue(attribute);
+            _ = info.Should().NotBeNull("HarmonyPatch info is null");
 
             // HarmonyMethod has public originalType and methodName fields
-            var originalTypeField = info?.GetType().GetField("originalType", BindingFlags.Public | BindingFlags.Instance);
-            var methodNameField = info?.GetType().GetField("methodName", BindingFlags.Public | BindingFlags.Instance);
+            FieldInfo? originalTypeField = info?.GetType().GetField("originalType", BindingFlags.Public | BindingFlags.Instance);
+            FieldInfo? methodNameField = info?.GetType().GetField("methodName", BindingFlags.Public | BindingFlags.Instance);
 
-            originalTypeField.Should().NotBeNull("HarmonyMethod originalType field not found");
-            methodNameField.Should().NotBeNull("HarmonyMethod methodName field not found");
+            _ = originalTypeField.Should().NotBeNull("HarmonyMethod originalType field not found");
+            _ = methodNameField.Should().NotBeNull("HarmonyMethod methodName field not found");
 
-            var originalTypeValue = originalTypeField?.GetValue(info) as Type;
-            var methodNameValue = methodNameField?.GetValue(info) as string;
+            Type? originalTypeValue = originalTypeField?.GetValue(info) as Type;
+            string? methodNameValue = methodNameField?.GetValue(info) as string;
 
-            originalTypeValue.Should().Be(originalClass);
-            methodNameValue.Should().Be(methodName);
+            _ = originalTypeValue.Should().Be(originalClass);
+            _ = methodNameValue.Should().Be(methodName);
         }
 
         internal static void VerifyArgumentNullException([NotNull] this Mock<ILogger> mockLogger,
             Action action,
             Times? numberOfTimes = null)
         {
-            action.Should().Throw<ArgumentNullException>();
+            _ = action.Should().Throw<ArgumentNullException>();
             mockLogger.Verify(logger => logger.WriteException(It.IsAny<ArgumentNullException>()), numberOfTimes ?? Times.Once());
         }
 
@@ -257,7 +251,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             Action action,
             Times? numberOfTimes = null)
         {
-            action.Should().Throw<NullReferenceException>();
+            _ = action.Should().Throw<NullReferenceException>();
             mockLogger.Verify(logger => logger.WriteException(It.IsAny<NullReferenceException>()), numberOfTimes ?? Times.Once());
         }
     }

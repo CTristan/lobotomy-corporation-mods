@@ -1,20 +1,18 @@
 // SPDX-License-Identifier: MIT
 
-#nullable enable
-
+using System.Collections.Generic;
 using AwesomeAssertions;
-using LobotomyPlaywright.Infrastructure;
 using Xunit;
 
-namespace LobotomyPlaywright.Tests.Infrastructure;
-
-public sealed class VdfParserTests
+namespace LobotomyPlaywright.Tests.Infrastructure
 {
-    [Fact]
-    public void ExtractLibraryPaths_WithValidVDF_ReturnsPaths()
+    public sealed class VdfParserTests
     {
-        // Arrange
-        var vdfContent = """
+        [Fact]
+        public void ExtractLibraryPaths_WithValidVDF_ReturnsPaths()
+        {
+            // Arrange
+            string vdfContent = """
 "libraryfolders"
 {
             "0"
@@ -31,43 +29,43 @@ public sealed class VdfParserTests
         }
 """;
 
-        // Act
-        var paths = VdfParser.ExtractLibraryPaths(vdfContent);
+            // Act
+            List<string> paths = VdfParser.ExtractLibraryPaths(vdfContent);
 
-        // Assert
-        paths.Should().HaveCount(2);
-        paths.Should().Contain(@"C:\Program Files (x86)\Steam");
-        paths.Should().Contain(@"D:\Games\Steam");
-    }
+            // Assert
+            _ = paths.Should().HaveCount(2);
+            _ = paths.Should().Contain(@"C:\Program Files (x86)\Steam");
+            _ = paths.Should().Contain(@"D:\Games\Steam");
+        }
 
-    [Fact]
-    public void ExtractLibraryPaths_WithEmptyContent_ReturnsEmptyList()
-    {
-        // Arrange
-        var vdfContent = "";
+        [Fact]
+        public void ExtractLibraryPaths_WithEmptyContent_ReturnsEmptyList()
+        {
+            // Arrange
+            string vdfContent = "";
 
-        // Act
-        var paths = VdfParser.ExtractLibraryPaths(vdfContent);
+            // Act
+            List<string> paths = VdfParser.ExtractLibraryPaths(vdfContent);
 
-        // Assert
-        paths.Should().BeEmpty();
-    }
+            // Assert
+            _ = paths.Should().BeEmpty();
+        }
 
-    [Fact]
-    public void ExtractLibraryPaths_WithNullContent_ReturnsEmptyList()
-    {
-        // Act
-        var paths = VdfParser.ExtractLibraryPaths(null!);
+        [Fact]
+        public void ExtractLibraryPaths_WithNullContent_ReturnsEmptyList()
+        {
+            // Act
+            List<string> paths = VdfParser.ExtractLibraryPaths(null!);
 
-        // Assert
-        paths.Should().BeEmpty();
-    }
+            // Assert
+            _ = paths.Should().BeEmpty();
+        }
 
-    [Fact]
-    public void ExtractLibraryPaths_WithoutPathEntries_ReturnsEmptyList()
-    {
-        // Arrange
-        var vdfContent = """
+        [Fact]
+        public void ExtractLibraryPaths_WithoutPathEntries_ReturnsEmptyList()
+        {
+            // Arrange
+            string vdfContent = """
 "libraryfolders"
 {
   "0"
@@ -77,10 +75,11 @@ public sealed class VdfParserTests
 }
 """;
 
-        // Act
-        var paths = VdfParser.ExtractLibraryPaths(vdfContent);
+            // Act
+            List<string> paths = VdfParser.ExtractLibraryPaths(vdfContent);
 
-        // Assert
-        paths.Should().BeEmpty();
+            // Assert
+            _ = paths.Should().BeEmpty();
+        }
     }
 }

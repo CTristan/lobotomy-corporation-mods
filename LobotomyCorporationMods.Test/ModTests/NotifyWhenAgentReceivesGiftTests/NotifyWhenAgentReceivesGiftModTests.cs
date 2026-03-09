@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
 using LobotomyCorporationMods.Test.Extensions;
 using LobotomyCorporationMods.Test.Parameters;
@@ -14,7 +15,7 @@ using Moq;
 
 namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
 {
-    public class NotifyWhenAgentReceivesGiftModTests
+    internal class NotifyWhenAgentReceivesGiftModTests
     {
         protected const string ColorAgentString = "#66bfcd";
         protected const string ColorGiftString = "#84bd36";
@@ -29,7 +30,7 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
         protected NotifyWhenAgentReceivesGiftModTests()
         {
             _ = new Harmony_Patch();
-            var mockLogger = TestExtensions.GetMockLogger();
+            Mock<ILogger> mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
         }
 
@@ -39,16 +40,16 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
         protected static AgentModel GetAgentWithLockedGift(string agentName,
             EGOgiftAttachRegion attachRegion)
         {
-            GetGift(DefaultGiftName);
-            var agentModelCreationParameters = new AgentModelCreationParameters
+            _ = GetGift(DefaultGiftName);
+            AgentModelCreationParameters agentModelCreationParameters = new()
             {
                 Name = agentName,
             };
 
-            var unitModel = UnityTestExtensions.CreateAgentModel(agentModelCreationParameters);
-            var oldGift = GetGift(DefaultGiftName, DefaultEquipmentId + 1, DefaultGiftId + 1, attachRegion);
+            AgentModel unitModel = UnityTestExtensions.CreateAgentModel(agentModelCreationParameters);
+            EGOgiftModel oldGift = GetGift(DefaultGiftName, DefaultEquipmentId + 1, DefaultGiftId + 1, attachRegion);
             unitModel.Equipment.gifts.addedGifts.Add(oldGift);
-            var giftLockState = new UnitEGOgiftSpace.GiftLockState
+            UnitEGOgiftSpace.GiftLockState giftLockState = new()
             {
                 id = DefaultEquipmentId + 1,
                 state = true,
@@ -66,7 +67,7 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
             int giftId = DefaultGiftId,
             EGOgiftAttachRegion attachRegion = DefaultGiftAttachRegion)
         {
-            var textData = new Dictionary<string, string>
+            Dictionary<string, string> textData = new()
             {
                 {
                     giftName, giftName
@@ -75,18 +76,18 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
 
             InitializeTextData(textData);
 
-            var equipmentNameDictionary = new Dictionary<string, string>
+            Dictionary<string, string> equipmentNameDictionary = new()
             {
                 {
                     "name", giftName
                 },
             };
 
-            var metaInfo = UnityTestExtensions.CreateEquipmentTypeInfo(localizeData: equipmentNameDictionary);
+            EquipmentTypeInfo metaInfo = UnityTestExtensions.CreateEquipmentTypeInfo(localizeData: equipmentNameDictionary);
             metaInfo.id = giftId;
             metaInfo.attachPos = attachRegion.ToString();
 
-            var gift = UnityTestExtensions.CreateEgoGiftModel(metaInfo);
+            EGOgiftModel gift = UnityTestExtensions.CreateEgoGiftModel(metaInfo);
             gift.instanceId = equipmentId;
 
             return gift;
@@ -103,7 +104,7 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
             textData[GiftColorCodeId] = ColorGiftString;
             textData[LogMessageId] = NotificationLogMessage;
 
-            UnityTestExtensions.CreateLocalizeTextDataModel(textData);
+            _ = UnityTestExtensions.CreateLocalizeTextDataModel(textData);
         }
     }
 }

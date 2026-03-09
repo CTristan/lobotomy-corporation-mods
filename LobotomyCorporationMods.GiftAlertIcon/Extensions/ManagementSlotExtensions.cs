@@ -31,9 +31,9 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Extensions
                 return;
             }
 
-            var giftSlot = instance.GetAbnormalityGiftPosition();
-            var giftAttachType = instance.GetAbnormalityGiftAttachmentType();
-            var giftsInSameSlot = agent.HasGiftInPosition(giftSlot, giftAttachType);
+            string giftSlot = instance.GetAbnormalityGiftPosition();
+            EGOgiftAttachType giftAttachType = instance.GetAbnormalityGiftAttachmentType();
+            bool giftsInSameSlot = agent.HasGiftInPosition(giftSlot, giftAttachType);
             if (giftsInSameSlot)
             {
                 ProcessGiftInSameSlot(instance, agent, imageParameters, fileManager, testAdapterParameters);
@@ -52,10 +52,10 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Extensions
             [NotNull] IFileManager fileManager,
             [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null)
         {
-            var tooltipMessage = new StringBuilder();
-            tooltipMessage.AppendLine(tooltipLine1);
-            tooltipMessage.AppendLine();
-            tooltipMessage.AppendLine(tooltipLine2);
+            StringBuilder tooltipMessage = new StringBuilder();
+            _ = tooltipMessage.AppendLine(tooltipLine1);
+            _ = tooltipMessage.AppendLine();
+            _ = tooltipMessage.AppendLine(tooltipLine2);
 
             managementSlot.UpdateImage(imageParameters, fileManager, color, tooltipMessage.ToString(), testAdapterParameters);
         }
@@ -65,9 +65,9 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Extensions
             [NotNull] IFileManager fileManager,
             [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null)
         {
-            var color = Color.green;
-            var tooltipLine1 = LocalizationIds.NewGiftTooltip1.GetLocalized();
-            var tooltipLine2 = LocalizationIds.NewGiftTooltip2.GetLocalized();
+            Color color = Color.green;
+            string tooltipLine1 = LocalizationIds.NewGiftTooltip1.GetLocalized();
+            string tooltipLine2 = LocalizationIds.NewGiftTooltip2.GetLocalized();
 
             ShowAsGift(managementSlot, imageParameters, color, tooltipLine1, tooltipLine2, fileManager, testAdapterParameters);
         }
@@ -77,9 +77,9 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Extensions
             [NotNull] IFileManager fileManager,
             [CanBeNull] OptionalTestAdapterParameters testAdapterParameters)
         {
-            var color = Color.grey;
-            var tooltipLine1 = LocalizationIds.ReplacementGiftTooltip1.GetLocalized();
-            var tooltipLine2 = LocalizationIds.ReplacementGiftTooltip2.GetLocalized();
+            Color color = Color.grey;
+            string tooltipLine1 = LocalizationIds.ReplacementGiftTooltip1.GetLocalized();
+            string tooltipLine2 = LocalizationIds.ReplacementGiftTooltip2.GetLocalized();
 
             ShowAsGift(managementSlot, imageParameters, color, tooltipLine1, tooltipLine2, fileManager, testAdapterParameters);
         }
@@ -90,7 +90,7 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Extensions
             [NotNull] IFileManager fileManager,
             OptionalTestAdapterParameters testAdapterParameters)
         {
-            var giftId = instance.GetAbnormalityGiftId();
+            int? giftId = instance.GetAbnormalityGiftId();
             if (agent.HasGift(giftId))
             {
                 instance.HideImageObject(imageParameters, fileManager, testAdapterParameters);

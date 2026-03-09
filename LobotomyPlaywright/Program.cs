@@ -9,10 +9,6 @@ using LobotomyPlaywright.Commands;
 
 namespace LobotomyPlaywright;
 
-#pragma warning disable RCS1102 // Make class static
-#pragma warning disable CA1515 // Types need to be public for testability
-#pragma warning disable CA1311 // Specify a culture or use an invariant version
-
 public sealed class Program
 {
     public static int Main(string[] args)

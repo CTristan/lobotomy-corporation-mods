@@ -43,7 +43,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
 
         public static void PatchAfterOpenAppearanceWindow([NotNull] this CustomizingWindow instance)
         {
-            Guard.Against.Null(instance, nameof(instance));
+            _ = Guard.Against.Null(instance, nameof(instance));
 
             instance.CurrentData.isCustomAppearance = false;
         }

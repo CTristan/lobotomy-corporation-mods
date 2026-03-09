@@ -3,6 +3,7 @@
 #region
 
 using AwesomeAssertions;
+using Customizing;
 using LobotomyCorporationMods.FreeCustomization.Patches;
 using LobotomyCorporationMods.Test.Extensions;
 using Xunit;
@@ -18,13 +19,13 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests.PatchTest
         [InlineData("TestAgent")]
         public void Opening_the_strengthen_employee_window_gets_agent_appearance_data(string agentName)
         {
-            var sut = InitializeCustomizingWindow();
-            var agentModel = UnityTestExtensions.CreateAgentModel();
+            CustomizingWindow sut = InitializeCustomizingWindow();
+            AgentModel agentModel = UnityTestExtensions.CreateAgentModel();
             agentModel.name = agentName;
 
             sut.PatchAfterReviseOpenAction(agentModel);
 
-            sut.CurrentData.CustomName.Should().Be(agentName);
+            _ = sut.CurrentData.CustomName.Should().Be(agentName);
         }
     }
 }

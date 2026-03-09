@@ -19,12 +19,12 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests.PatchTest
         public void Opening_the_strengthen_employee_window_opens_the_Appearance_UI()
         {
             // Arrange
-            var sut = InitializeAgentInfoWindow();
+            AgentInfoWindow sut = InitializeAgentInfoWindow();
             _ = InitializeCustomizingWindow();
 
-            var mockAgentInfoWindowUiComponentsTestAdapter = new Mock<IAgentInfoWindowUiComponentsTestAdapter>();
-            var mockCustomizingWindowTestAdapter = new Mock<ICustomizingWindowTestAdapter>();
-            var mockGameObjectTestAdapter = new Mock<IGameObjectTestAdapter>();
+            Mock<IAgentInfoWindowUiComponentsTestAdapter> mockAgentInfoWindowUiComponentsTestAdapter = new();
+            Mock<ICustomizingWindowTestAdapter> mockCustomizingWindowTestAdapter = new();
+            Mock<IGameObjectTestAdapter> mockGameObjectTestAdapter = new();
 
             // Act
             sut.PatchAfterEnforcementWindow(mockAgentInfoWindowUiComponentsTestAdapter.Object, mockCustomizingWindowTestAdapter.Object, mockGameObjectTestAdapter.Object);

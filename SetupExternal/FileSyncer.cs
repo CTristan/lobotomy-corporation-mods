@@ -1,172 +1,168 @@
 // SPDX-License-Identifier: MIT
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace SetupExternal;
-
-#pragma warning disable RCS1102 // Make class static
-#pragma warning disable CA1852 // Type can be sealed
-
-/// <summary>
-/// Handles copying game DLLs with SHA256 hash comparison to avoid unnecessary copies.
-/// </summary>
-public static class FileSyncer
+namespace SetupExternal
 {
-    private const string AssemblyCSharpFileName = "Assembly-CSharp.dll";
-
     /// <summary>
-    /// Writes a debug message if debug logging is enabled.
+    /// Handles copying game DLLs with SHA256 hash comparison to avoid unnecessary copies.
     /// </summary>
-    private static void DebugLog(string message)
+    internal static class FileSyncer
     {
-        Program.DebugLog($"[FileSyncer] {message}");
-    }
+        private const string AssemblyCSharpFileName = "Assembly-CSharp.dll";
 
-    /// <summary>
-    /// Result of a file sync operation.
-    /// </summary>
-    public sealed class SyncResult
-    {
-        public int FilesCopied { get; set; }
-        public int FilesUpdated { get; set; }
-        public int FilesSkipped { get; set; }
-        public bool AssemblyCSharpChanged { get; set; }
-        public bool LobotomyBaseModLibChanged { get; set; }
-    }
-
-    /// <summary>
-    /// Synchronizes DLL files from the game's Managed directory to the external directory.
-    /// </summary>
-    /// <param name="sourcePath">The game installation path.</param>
-    /// <param name="destinationPath">The external directory path.</param>
-    /// <param name="force">If true, skips hash checking and forcibly copies all files.</param>
-    /// <returns>A summary of the sync operation.</returns>
-    public static SyncResult SyncDlls(string sourcePath, string destinationPath, bool force = false)
-    {
-        var result = new SyncResult();
-        var sourceManagedDir = Path.Combine(sourcePath, "LobotomyCorp_Data", "Managed");
-        var destManagedDir = Path.Combine(destinationPath, "LobotomyCorp_Data", "Managed");
-
-        DebugLog($"Starting sync from {sourceManagedDir} to {destManagedDir}");
-        if (force)
+        /// <summary>
+        /// Writes a debug message if debug logging is enabled.
+        /// </summary>
+        private static void DebugLog(string message)
         {
-            DebugLog("Force mode enabled - skipping hash checks");
+            Program.DebugLog($"[FileSyncer] {message}");
         }
 
-        if (!Directory.Exists(sourceManagedDir))
+        /// <summary>
+        /// Result of a file sync operation.
+        /// </summary>
+        internal sealed class SyncResult
         {
-            Console.Error.WriteLine($"Source directory not found: {sourceManagedDir}");
-            DebugLog($"Source directory not found!");
-            return result;
+            public int FilesCopied { get; set; }
+            public int FilesUpdated { get; set; }
+            public int FilesSkipped { get; set; }
+            public bool AssemblyCSharpChanged { get; set; }
+            public bool LobotomyBaseModLibChanged { get; set; }
         }
 
-        // Create destination directory if it doesn't exist
-        Directory.CreateDirectory(destManagedDir);
-        DebugLog($"Destination directory created: {destManagedDir}");
-
-        // Get all DLL files in source
-        var dllFiles = Directory.GetFiles(sourceManagedDir, "*.dll", SearchOption.TopDirectoryOnly);
-        DebugLog($"Found {dllFiles.Length} DLL files in source");
-
-        foreach (var sourceFile in dllFiles)
+        /// <summary>
+        /// Synchronizes DLL files from the game's Managed directory to the external directory.
+        /// </summary>
+        /// <param name="sourcePath">The game installation path.</param>
+        /// <param name="destinationPath">The external directory path.</param>
+        /// <param name="force">If true, skips hash checking and forcibly copies all files.</param>
+        /// <returns>A summary of the sync operation.</returns>
+        public static SyncResult SyncDlls(string sourcePath, string destinationPath, bool force = false)
         {
-            var fileName = Path.GetFileName(sourceFile);
-            var destFile = Path.Combine(destManagedDir, fileName);
+            SyncResult result = new();
+            string sourceManagedDir = Path.Combine(sourcePath, "LobotomyCorp_Data", "Managed");
+            string destManagedDir = Path.Combine(destinationPath, "LobotomyCorp_Data", "Managed");
 
-            if (!File.Exists(destFile))
+            DebugLog($"Starting sync from {sourceManagedDir} to {destManagedDir}");
+            if (force)
             {
-                // New file - copy it
-                File.Copy(sourceFile, destFile, false);
-                result.FilesCopied++;
-
-                UpdateSyncResult(result, fileName);
-
-                Console.WriteLine($"Copied: {fileName}");
-                DebugLog($"Copied (new file): {fileName}");
+                DebugLog("Force mode enabled - skipping hash checks");
             }
-            else
+
+            if (!Directory.Exists(sourceManagedDir))
             {
-                if (force)
+                Console.Error.WriteLine($"Source directory not found: {sourceManagedDir}");
+                DebugLog($"Source directory not found!");
+                return result;
+            }
+
+            // Create destination directory if it doesn't exist
+            _ = Directory.CreateDirectory(destManagedDir);
+            DebugLog($"Destination directory created: {destManagedDir}");
+
+            // Get all DLL files in source
+            string[] dllFiles = Directory.GetFiles(sourceManagedDir, "*.dll", SearchOption.TopDirectoryOnly);
+            DebugLog($"Found {dllFiles.Length} DLL files in source");
+
+            foreach (string sourceFile in dllFiles)
+            {
+                string fileName = Path.GetFileName(sourceFile);
+                string destFile = Path.Combine(destManagedDir, fileName);
+
+                if (!File.Exists(destFile))
                 {
-                    // Force mode - copy without checking hashes
-                    File.Copy(sourceFile, destFile, true);
-                    result.FilesUpdated++;
+                    // New file - copy it
+                    File.Copy(sourceFile, destFile, false);
+                    result.FilesCopied++;
 
                     UpdateSyncResult(result, fileName);
 
-                    Console.WriteLine($"Updated (force): {fileName}");
-                    DebugLog($"Updated (force): {fileName}");
+                    Console.WriteLine($"Copied: {fileName}");
+                    DebugLog($"Copied (new file): {fileName}");
                 }
                 else
                 {
-                    // File exists - compare hashes
-                    var sourceHash = ComputeFileHash(sourceFile);
-                    var destHash = ComputeFileHash(destFile);
-
-                    DebugLog($"Checking {fileName}: source hash = {sourceHash[..8]}..., dest hash = {destHash[..8]}...");
-
-                    if (!sourceHash.Equals(destHash, StringComparison.OrdinalIgnoreCase))
+                    if (force)
                     {
-                        // Hash differs - update the file
+                        // Force mode - copy without checking hashes
                         File.Copy(sourceFile, destFile, true);
                         result.FilesUpdated++;
 
                         UpdateSyncResult(result, fileName);
 
-                        Console.WriteLine($"Updated: {fileName}");
-                        DebugLog($"Updated (hash changed): {fileName}");
+                        Console.WriteLine($"Updated (force): {fileName}");
+                        DebugLog($"Updated (force): {fileName}");
                     }
                     else
                     {
-                        // Hash matches - skip
-                        result.FilesSkipped++;
-                        DebugLog($"Skipped (hash match): {fileName}");
+                        // File exists - compare hashes
+                        string sourceHash = ComputeFileHash(sourceFile);
+                        string destHash = ComputeFileHash(destFile);
+
+                        DebugLog($"Checking {fileName}: source hash = {sourceHash[..8]}..., dest hash = {destHash[..8]}...");
+
+                        if (!sourceHash.Equals(destHash, StringComparison.OrdinalIgnoreCase))
+                        {
+                            // Hash differs - update the file
+                            File.Copy(sourceFile, destFile, true);
+                            result.FilesUpdated++;
+
+                            UpdateSyncResult(result, fileName);
+
+                            Console.WriteLine($"Updated: {fileName}");
+                            DebugLog($"Updated (hash changed): {fileName}");
+                        }
+                        else
+                        {
+                            // Hash matches - skip
+                            result.FilesSkipped++;
+                            DebugLog($"Skipped (hash match): {fileName}");
+                        }
                     }
                 }
             }
+
+            return result;
         }
 
-        return result;
-    }
-
-    private static void UpdateSyncResult(SyncResult result, string fileName)
-    {
-        if (fileName.Equals(AssemblyCSharpFileName, StringComparison.OrdinalIgnoreCase))
+        private static void UpdateSyncResult(SyncResult result, string fileName)
         {
-            result.AssemblyCSharpChanged = true;
+            if (fileName.Equals(AssemblyCSharpFileName, StringComparison.OrdinalIgnoreCase))
+            {
+                result.AssemblyCSharpChanged = true;
+            }
+            else if (fileName.Equals("LobotomyBaseModLib.dll", StringComparison.OrdinalIgnoreCase))
+            {
+                result.LobotomyBaseModLibChanged = true;
+            }
         }
-        else if (fileName.Equals("LobotomyBaseModLib.dll", StringComparison.OrdinalIgnoreCase))
-        {
-            result.LobotomyBaseModLibChanged = true;
-        }
-    }
 
-    /// <summary>
-    /// Computes the SHA256 hash of a file.
-    /// </summary>
-    private static string ComputeFileHash(string filePath)
-    {
-        using var sha256 = SHA256.Create();
-        using var stream = File.OpenRead(filePath);
-        var hashBytes = sha256.ComputeHash(stream);
-        return ConvertHashToString(hashBytes);
-    }
-
-    /// <summary>
-    /// Converts a byte array hash to a hexadecimal string.
-    /// </summary>
-    private static string ConvertHashToString(byte[] hash)
-    {
-        var sb = new StringBuilder();
-        foreach (var b in hash)
+        /// <summary>
+        /// Computes the SHA256 hash of a file.
+        /// </summary>
+        private static string ComputeFileHash(string filePath)
         {
-            sb.Append(b.ToString("x2", System.Globalization.CultureInfo.InvariantCulture));
+            using SHA256 sha256 = SHA256.Create();
+            using FileStream stream = File.OpenRead(filePath);
+            byte[] hashBytes = sha256.ComputeHash(stream);
+            return ConvertHashToString(hashBytes);
         }
-        return sb.ToString();
+
+        /// <summary>
+        /// Converts a byte array hash to a hexadecimal string.
+        /// </summary>
+        private static string ConvertHashToString(byte[] hash)
+        {
+            StringBuilder sb = new();
+            foreach (byte b in hash)
+            {
+                _ = sb.Append(b.ToString("x2", System.Globalization.CultureInfo.InvariantCulture));
+            }
+            return sb.ToString();
+        }
     }
 }

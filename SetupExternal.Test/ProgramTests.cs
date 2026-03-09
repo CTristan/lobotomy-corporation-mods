@@ -1,128 +1,127 @@
 // SPDX-License-Identifier: MIT
 
-using System;
 using AwesomeAssertions;
-using SetupExternal;
 using Xunit;
 
-namespace SetupExternal.Tests;
-
-public sealed class ProgramTests
+namespace SetupExternal.Tests
 {
-    [Fact]
-    public void ParseArguments_WithPathArgument_ReturnsPath()
+    public sealed class ProgramTests
     {
-        // Arrange
-        var args = new[] { "--path", "/path/to/game" };
+        [Fact]
+        public void ParseArguments_WithPathArgument_ReturnsPath()
+        {
+            // Arrange
+            string[] args = ["--path", "/path/to/game"];
 
-        // Act
-        var result = Program.ParseArguments(args);
+            // Act
+            (string? Path, _, _) = Program.ParseArguments(args);
 
-        // Assert
-        result.Path.Should().Be("/path/to/game");
-    }
+            // Assert
+            _ = Path.Should().Be("/path/to/game");
+        }
 
-    [Fact]
-    public void ParseArguments_WithWindowsPath_ReturnsPath()
-    {
-        // Arrange
-        var args = new[] { "--path", @"C:\Games\Lobotomy Corporation" };
+        [Fact]
+        public void ParseArguments_WithWindowsPath_ReturnsPath()
+        {
+            // Arrange
+            string[] args = ["--path", @"C:\Games\Lobotomy Corporation"];
 
-        // Act
-        var result = Program.ParseArguments(args);
+            // Act
+            (string? Path, _, _) = Program.ParseArguments(args);
 
-        // Assert
-        result.Path.Should().Be(@"C:\Games\Lobotomy Corporation");
-    }
+            // Assert
+            _ = Path.Should().Be(@"C:\Games\Lobotomy Corporation");
+        }
 
-    [Fact]
-    public void ParseArguments_WithoutPathArgument_ReturnsNull()
-    {
-        // Arrange
-        var args = Array.Empty<string>();
+        [Fact]
+        public void ParseArguments_WithoutPathArgument_ReturnsNull()
+        {
+            // Arrange
+            string[] args = [];
 
-        // Act
-        var result = Program.ParseArguments(args);
+            // Act
+            (string? Path, _, _) = Program.ParseArguments(args);
 
-        // Assert
-        result.Path.Should().BeNull();
-    }
+            // Assert
+            _ = Path.Should().BeNull();
+        }
 
-    [Fact]
-    public void ParseArguments_WithOtherArguments_ReturnsNull()
-    {
-        // Arrange
-        var args = new[] { "--other", "value" };
+        [Fact]
+        public void ParseArguments_WithOtherArguments_ReturnsNull()
+        {
+            // Arrange
+            string[] args = ["--other", "value"];
 
-        // Act
-        var result = Program.ParseArguments(args);
+            // Act
+            (string? Path, _, _) = Program.ParseArguments(args);
 
-        // Assert
-        result.Path.Should().BeNull();
-    }
+            // Assert
+            _ = Path.Should().BeNull();
+        }
 
-    [Fact]
-    public void ParseArguments_WithPathOnly_ReturnsNull()
-    {
-        // Arrange
-        var args = new[] { "--path" };
+        [Fact]
+        public void ParseArguments_WithPathOnly_ReturnsNull()
+        {
+            // Arrange
+            string[] args = ["--path"];
 
-        // Act
-        var result = Program.ParseArguments(args);
+            // Act
+            (string? Path, _, _) = Program.ParseArguments(args);
 
-        // Assert
-        result.Path.Should().BeNull();
-    }
+            // Assert
+            _ = Path.Should().BeNull();
+        }
 
-    [Fact]
-    public void ParseArguments_WithPathBeforeOther_ReturnsPath()
-    {
-        // Arrange
-        var args = new[] { "--path", "/path", "--other", "value" };
+        [Fact]
+        public void ParseArguments_WithPathBeforeOther_ReturnsPath()
+        {
+            // Arrange
+            string[] args = ["--path", "/path", "--other", "value"];
 
-        // Act
-        var result = Program.ParseArguments(args);
+            // Act
+            (string? Path, _, _) = Program.ParseArguments(args);
 
-        // Assert
-        result.Path.Should().Be("/path");
-    }
+            // Assert
+            _ = Path.Should().Be("/path");
+        }
 
-    [Fact]
-    public void ParseArguments_WithPathAfterOther_ReturnsPath()
-    {
-        // Arrange
-        var args = new[] { "--other", "value", "--path", "/path" };
+        [Fact]
+        public void ParseArguments_WithPathAfterOther_ReturnsPath()
+        {
+            // Arrange
+            string[] args = ["--other", "value", "--path", "/path"];
 
-        // Act
-        var result = Program.ParseArguments(args);
+            // Act
+            (string? Path, _, _) = Program.ParseArguments(args);
 
-        // Assert
-        result.Path.Should().Be("/path");
-    }
+            // Assert
+            _ = Path.Should().Be("/path");
+        }
 
-    [Fact]
-    public void ParseArguments_WithMultiplePathArguments_ReturnsFirst()
-    {
-        // Arrange
-        var args = new[] { "--path", "/first", "--path", "/second" };
+        [Fact]
+        public void ParseArguments_WithMultiplePathArguments_ReturnsFirst()
+        {
+            // Arrange
+            string[] args = ["--path", "/first", "--path", "/second"];
 
-        // Act
-        var result = Program.ParseArguments(args);
+            // Act
+            (string? Path, _, _) = Program.ParseArguments(args);
 
-        // Assert
-        result.Path.Should().Be("/first");
-    }
+            // Assert
+            _ = Path.Should().Be("/first");
+        }
 
-    [Fact]
-    public void ParseArguments_WithCaseInsensitivePath_ReturnsPath()
-    {
-        // Arrange
-        var args = new[] { "--PATH", "/path" };
+        [Fact]
+        public void ParseArguments_WithCaseInsensitivePath_ReturnsPath()
+        {
+            // Arrange
+            string[] args = ["--PATH", "/path"];
 
-        // Act
-        var result = Program.ParseArguments(args);
+            // Act
+            (string? Path, _, _) = Program.ParseArguments(args);
 
-        // Assert
-        result.Path.Should().Be("/path");
+            // Assert
+            _ = Path.Should().Be("/path");
+        }
     }
 }

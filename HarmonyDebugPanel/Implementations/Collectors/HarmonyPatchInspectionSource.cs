@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: MIT
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
@@ -15,15 +14,15 @@ namespace HarmonyDebugPanel.Implementations.Collectors
     {
         public IEnumerable<PatchInspectionInfo> GetPatches()
         {
-            var patches = new List<PatchInspectionInfo>();
-            foreach (var method in Harmony.GetAllPatchedMethods())
+            List<PatchInspectionInfo> patches = [];
+            foreach (MethodBase method in Harmony.GetAllPatchedMethods())
             {
                 if (method == null)
                 {
                     continue;
                 }
 
-                var patchInfo = Harmony.GetPatchInfo(method);
+                Patches patchInfo = Harmony.GetPatchInfo(method);
                 if (patchInfo == null)
                 {
                     continue;
@@ -45,17 +44,14 @@ namespace HarmonyDebugPanel.Implementations.Collectors
                 return;
             }
 
-            foreach (var patch in source)
+            foreach (Patch patch in source)
             {
                 if (patch == null)
                 {
                     continue;
                 }
 
-                string assemblyName;
-                string assemblyVersion;
-                IList<AssemblyName> assemblyReferences;
-                ExtractPatchAssemblyInfo(patch.PatchMethod, out assemblyName, out assemblyVersion, out assemblyReferences);
+                ExtractPatchAssemblyInfo(patch.PatchMethod, out string assemblyName, out string assemblyVersion, out IList<AssemblyName> assemblyReferences);
 
                 destination.Add(new PatchInspectionInfo(
                     targetMethod.DeclaringType != null ? targetMethod.DeclaringType.FullName : "Unknown",
@@ -73,27 +69,27 @@ namespace HarmonyDebugPanel.Implementations.Collectors
         {
             assemblyName = string.Empty;
             assemblyVersion = string.Empty;
-            assemblyReferences = new List<AssemblyName>();
+            assemblyReferences = [];
 
             if (methodInfo == null || methodInfo.DeclaringType == null)
             {
                 return;
             }
 
-            var assembly = methodInfo.DeclaringType.Assembly;
+            Assembly assembly = methodInfo.DeclaringType.Assembly;
             if (assembly == null)
             {
                 return;
             }
 
-            var assemblyObj = assembly.GetName();
+            AssemblyName assemblyObj = assembly.GetName();
             assemblyName = assemblyObj.Name ?? string.Empty;
             assemblyVersion = assemblyObj.Version != null ? assemblyObj.Version.ToString() : string.Empty;
 
-            var referencedAssemblies = assembly.GetReferencedAssemblies();
+            AssemblyName[] referencedAssemblies = assembly.GetReferencedAssemblies();
             if (referencedAssemblies != null)
             {
-                assemblyReferences = new List<AssemblyName>(referencedAssemblies);
+                assemblyReferences = [.. referencedAssemblies];
             }
         }
 
@@ -104,7 +100,7 @@ namespace HarmonyDebugPanel.Implementations.Collectors
                 return string.Empty;
             }
 
-            var declaringTypeName = methodInfo.DeclaringType != null
+            string declaringTypeName = methodInfo.DeclaringType != null
                 ? methodInfo.DeclaringType.FullName
                 : "Unknown";
             return declaringTypeName + "." + methodInfo.Name;

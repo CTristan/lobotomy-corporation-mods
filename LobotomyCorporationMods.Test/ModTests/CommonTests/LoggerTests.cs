@@ -17,8 +17,8 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         [Fact]
         public void Logging_exception_writes_to_log()
         {
-            var mockLoggerTarget = new Mock<ILoggerTarget>();
-            var logger = new Logger(mockLoggerTarget.Object);
+            Mock<ILoggerTarget> mockLoggerTarget = new();
+            Logger logger = new(mockLoggerTarget.Object);
 
             logger.WriteException(new InvalidOperationException());
 

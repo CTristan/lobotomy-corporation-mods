@@ -16,12 +16,12 @@ namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests.PatchTests
     public sealed class ArmorCreaturePatchOnNoticeTests : BugFixesModTests
     {
         private readonly object[] _defaultParams = new object[1];
-        private readonly Mock<IArmorCreatureTestAdapter> _mockArmorCreatureTestAdapter = new Mock<IArmorCreatureTestAdapter>();
+        private readonly Mock<IArmorCreatureTestAdapter> _mockArmorCreatureTestAdapter = new();
         private readonly string _onChangeGiftNotice = NoticeName.OnChangeGift;
 
         public ArmorCreaturePatchOnNoticeTests()
         {
-            _mockArmorCreatureTestAdapter.Setup(a => a.SpecialAgentList).Returns(new List<object>());
+            _ = _mockArmorCreatureTestAdapter.Setup(a => a.SpecialAgentList).Returns(new List<object>());
         }
 
         [Fact]

@@ -61,9 +61,9 @@ namespace LobotomyCorporationMods.Common.Implementations
         {
             try
             {
-                Guard.Against.Null(harmonyPatchType, nameof(harmonyPatchType));
+                _ = Guard.Against.Null(harmonyPatchType, nameof(harmonyPatchType));
 
-                var harmony = HarmonyInstance.Create(modFileName);
+                HarmonyInstance harmony = HarmonyInstance.Create(modFileName);
                 harmony.PatchAll(harmonyPatchType.Assembly);
             }
             catch (Exception ex)
@@ -103,10 +103,10 @@ namespace LobotomyCorporationMods.Common.Implementations
             [NotNull] string modFileName)
         {
             // Try to get Basemod directory list if we don't have one
-            var directoryInfos = directories ?? Add_On.instance.DirList;
-            var wrappedDirectories = new List<IDirectoryInfo>();
+            ICollection<DirectoryInfo> directoryInfos = directories ?? Add_On.instance.DirList;
+            List<IDirectoryInfo> wrappedDirectories = new List<IDirectoryInfo>();
 
-            foreach (var directoryInfo in directoryInfos)
+            foreach (DirectoryInfo directoryInfo in directoryInfos)
             {
                 wrappedDirectories.Add(new DirectoryInfoAdapter(directoryInfo));
             }
@@ -116,7 +116,7 @@ namespace LobotomyCorporationMods.Common.Implementations
 
         private void InitializeLogger(IAngelaConversationUiTestAdapter angelaConversationUiTestAdapter)
         {
-            var fileLoggerTarget = new FileLoggerTarget(FileManager, "log.txt");
+            FileLoggerTarget fileLoggerTarget = new FileLoggerTarget(FileManager, "log.txt");
             Logger = new Logger(fileLoggerTarget);
 
 #if DEBUG
@@ -127,38 +127,38 @@ namespace LobotomyCorporationMods.Common.Implementations
 #endif
 
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            var angelaLoggerTarget = new AngelaLoggerTarget(logToAngela, angelaConversationUiTestAdapter);
+            AngelaLoggerTarget angelaLoggerTarget = new AngelaLoggerTarget(logToAngela, angelaConversationUiTestAdapter);
             Logger.AddTarget(angelaLoggerTarget);
         }
 
         /// <summary>Needed because Basemod doesn't use a localization file as a backup, so in other languages it will default everything to "UKNOWN".</summary>
         private void AddDefaultLocalizedText()
         {
-            var defaultLocalizationFile = FileManager.GetFile("Localize/en/text_en.xml");
+            string defaultLocalizationFile = FileManager.GetFile("Localize/en/text_en.xml");
 
             if (!File.Exists(defaultLocalizationFile))
             {
                 return;
             }
 
-            var xml = File.ReadAllText(defaultLocalizationFile);
-            var xmlDocument = new XmlDocument
+            string xml = File.ReadAllText(defaultLocalizationFile);
+            XmlDocument xmlDocument = new XmlDocument
             {
                 XmlResolver = null,
             };
 
-            var xmlSettings = new XmlReaderSettings
+            XmlReaderSettings xmlSettings = new XmlReaderSettings
             {
                 ProhibitDtd = true,
             };
 
-            using (var xmlReader = XmlReader.Create(new StringReader(xml), xmlSettings))
+            using (XmlReader xmlReader = XmlReader.Create(new StringReader(xml), xmlSettings))
             {
                 xmlDocument.Load(xmlReader);
             }
 
-            var dataLoader = new LocalizeTextDataLoader("en");
-            foreach (var keyValuePair in dataLoader.LoadText(xmlDocument))
+            LocalizeTextDataLoader dataLoader = new LocalizeTextDataLoader("en");
+            foreach (KeyValuePair<string, string> keyValuePair in dataLoader.LoadText(xmlDocument))
             {
                 DefaultLocalizedValues.AddOrOverwriteDefaultLocalizedValue(keyValuePair.Key, keyValuePair.Value);
             }
@@ -173,7 +173,7 @@ namespace LobotomyCorporationMods.Common.Implementations
                     throw new InvalidOperationException(DuplicateErrorMessage);
                 }
 
-                s_registeredTypes.Add(GetType());
+                _ = s_registeredTypes.Add(GetType());
             }
         }
     }

@@ -15,9 +15,9 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 
         protected override bool WillAgentDieFromThisCreature()
         {
-            var agentWillDie = false;
+            bool agentWillDie = false;
 
-            var script = (HappyTeddy)Creature.script;
+            HappyTeddy script = (HappyTeddy)Creature.script;
             if (script.lastAgent.IsNotNull())
             {
                 agentWillDie = Agent.instanceId == script.lastAgent.instanceId;

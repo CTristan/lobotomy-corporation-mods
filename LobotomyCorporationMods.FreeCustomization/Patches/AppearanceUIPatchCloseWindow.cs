@@ -21,7 +21,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
     {
         public static bool PatchBeforeCloseWindow([NotNull] this AppearanceUI instance)
         {
-            Guard.Against.Null(instance, nameof(instance));
+            _ = Guard.Against.Null(instance, nameof(instance));
 
             return !instance.closeAction.IsNull();
         }

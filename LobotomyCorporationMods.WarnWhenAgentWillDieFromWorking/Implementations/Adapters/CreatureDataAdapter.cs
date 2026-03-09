@@ -23,7 +23,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 
         public CreatureDataAdapter([NotNull] CreatureModel creature)
         {
-            Guard.Against.Null(creature, nameof(creature));
+            _ = Guard.Against.Null(creature, nameof(creature));
             _creature = creature;
         }
 

@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: MIT
 
-using System;
 using BepInEx.Configuration;
 using UnityEngine;
 
@@ -26,7 +25,7 @@ namespace HarmonyDebugPanel
 
         public static PluginConfiguration Bind(ConfigFile config)
         {
-            var settings = new PluginConfiguration();
+            PluginConfiguration settings = new();
             if (config == null)
             {
                 return settings;

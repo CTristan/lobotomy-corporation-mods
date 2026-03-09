@@ -13,10 +13,10 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
         public void IsGameQueryable_when_game_managers_not_available_returns_false()
         {
             // Act
-            var result = GameStateQueries.IsGameQueryable();
+            bool result = GameStateQueries.IsGameQueryable();
 
             // Assert
-            result.Should().BeFalse();
+            _ = result.Should().BeFalse();
         }
 
         [Fact]
@@ -26,7 +26,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             Action act = () => GameStateQueries.GetStatus();
 
             // Assert
-            act.Should().Throw<InvalidOperationException>()
+            _ = act.Should().Throw<InvalidOperationException>()
                 .WithMessage("*GameManager.currentGameManager*");
         }
     }

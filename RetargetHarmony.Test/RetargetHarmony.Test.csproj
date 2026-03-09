@@ -9,6 +9,7 @@
     <!-- NU1605: RetargetHarmony project (net35) uses Mono.Cecil 0.10.4; BepInEx transitive deps require 0.11.4+, but 0.10.4 is needed for net35 compatibility -->
     <NoWarn>$(NoWarn);NU1605</NoWarn>
     <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="BepInEx.BaseLib" Version="5.4.21"/>

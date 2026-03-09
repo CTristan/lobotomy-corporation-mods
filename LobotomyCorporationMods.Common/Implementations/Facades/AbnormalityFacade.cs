@@ -24,7 +24,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             const int WeakenedState = 1;
 
             beautyBeastAnimTestAdapter = beautyBeastAnimTestAdapter.EnsureNotNullWithMethod(() => new BeautyBeastAnimTestAdapter((BeautyBeastAnim)creatureModel.GetAnimScript()));
-            var animationState = beautyBeastAnimTestAdapter.State;
+            int animationState = beautyBeastAnimTestAdapter.State;
 
             return animationState == WeakenedState;
         }
@@ -38,7 +38,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         public static void ReloadCrumblingArmorAgentList([NotNull] this ArmorCreature armorCreature,
             IArmorCreatureTestAdapter testAdapter = null)
         {
-            Guard.Against.Null(armorCreature, nameof(armorCreature));
+            _ = Guard.Against.Null(armorCreature, nameof(armorCreature));
 
             testAdapter = testAdapter.EnsureNotNullWithMethod(() => new ArmorCreatureTestAdapter(armorCreature));
 

@@ -1,20 +1,18 @@
 // SPDX-License-Identifier: MIT
 
-using System;
 using AwesomeAssertions;
-using CI;
 using Moq;
 using Xunit;
 
-namespace CI.Tests;
-
-public sealed class CoverageConfigReaderTests
+namespace CI.Tests
 {
-    [Fact]
-    public void ReadConfig_ConfigFileExists_ReturnsConfig()
+    public sealed class CoverageConfigReaderTests
     {
-        var mockFileSystem = new Mock<IFileSystem>();
-        var configJson = """
+        [Fact]
+        public void ReadConfig_ConfigFileExists_ReturnsConfig()
+        {
+            Mock<IFileSystem> mockFileSystem = new();
+            string configJson = /*lang=json,strict*/ """
             {
               "lineThreshold": 85,
               "branchThreshold": 80,
@@ -22,96 +20,97 @@ public sealed class CoverageConfigReaderTests
             }
             """;
 
-        mockFileSystem.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
-        mockFileSystem.Setup(fs => fs.ReadAllText(It.IsAny<string>())).Returns(configJson);
+            _ = mockFileSystem.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
+            _ = mockFileSystem.Setup(fs => fs.ReadAllText(It.IsAny<string>())).Returns(configJson);
 
-        var reader = new CoverageConfigReader(mockFileSystem.Object);
-        var config = reader.ReadConfig("/repo");
+            CoverageConfigReader reader = new(mockFileSystem.Object);
+            CoverageConfig? config = reader.ReadConfig("/repo");
 
-        config.Should().NotBeNull();
-        config!.LineThreshold.Should().Be(85);
-        config.BranchThreshold.Should().Be(80);
-        config.MethodThreshold.Should().Be(90);
-    }
+            _ = config.Should().NotBeNull();
+            _ = config!.LineThreshold.Should().Be(85);
+            _ = config.BranchThreshold.Should().Be(80);
+            _ = config.MethodThreshold.Should().Be(90);
+        }
 
-    [Fact]
-    public void ReadConfig_ConfigFileNotExists_ReturnsNull()
-    {
-        var mockFileSystem = new Mock<IFileSystem>();
+        [Fact]
+        public void ReadConfig_ConfigFileNotExists_ReturnsNull()
+        {
+            Mock<IFileSystem> mockFileSystem = new();
 
-        mockFileSystem.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(false);
+            _ = mockFileSystem.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(false);
 
-        var reader = new CoverageConfigReader(mockFileSystem.Object);
-        var config = reader.ReadConfig("/repo");
+            CoverageConfigReader reader = new(mockFileSystem.Object);
+            CoverageConfig? config = reader.ReadConfig("/repo");
 
-        config.Should().BeNull();
-    }
+            _ = config.Should().BeNull();
+        }
 
-    [Fact]
-    public void ReadConfig_InvalidJson_ReturnsNull()
-    {
-        var mockFileSystem = new Mock<IFileSystem>();
+        [Fact]
+        public void ReadConfig_InvalidJson_ReturnsNull()
+        {
+            Mock<IFileSystem> mockFileSystem = new();
 
-        mockFileSystem.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
-        mockFileSystem.Setup(fs => fs.ReadAllText(It.IsAny<string>())).Returns("invalid json");
+            _ = mockFileSystem.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
+            _ = mockFileSystem.Setup(fs => fs.ReadAllText(It.IsAny<string>())).Returns("invalid json");
 
-        var reader = new CoverageConfigReader(mockFileSystem.Object);
-        var config = reader.ReadConfig("/repo");
+            CoverageConfigReader reader = new(mockFileSystem.Object);
+            CoverageConfig? config = reader.ReadConfig("/repo");
 
-        config.Should().BeNull();
-    }
+            _ = config.Should().BeNull();
+        }
 
-    [Fact]
-    public void ReadConfig_ReadAllTextReturnsNull_ReturnsNull()
-    {
-        var mockFileSystem = new Mock<IFileSystem>();
+        [Fact]
+        public void ReadConfig_ReadAllTextReturnsNull_ReturnsNull()
+        {
+            Mock<IFileSystem> mockFileSystem = new();
 
-        mockFileSystem.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
-        mockFileSystem.Setup(fs => fs.ReadAllText(It.IsAny<string>())).Returns((string)null);
+            _ = mockFileSystem.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
+            _ = mockFileSystem.Setup(fs => fs.ReadAllText(It.IsAny<string>())).Returns((string)null);
 
-        var reader = new CoverageConfigReader(mockFileSystem.Object);
-        var config = reader.ReadConfig("/repo");
+            CoverageConfigReader reader = new(mockFileSystem.Object);
+            CoverageConfig? config = reader.ReadConfig("/repo");
 
-        config.Should().BeNull();
-    }
+            _ = config.Should().BeNull();
+        }
 
-    [Fact]
-    public void ReadConfig_PartialConfig_UsesDefaultsForMissingValues()
-    {
-        var mockFileSystem = new Mock<IFileSystem>();
-        var configJson = """
+        [Fact]
+        public void ReadConfig_PartialConfig_UsesDefaultsForMissingValues()
+        {
+            Mock<IFileSystem> mockFileSystem = new();
+            string configJson = /*lang=json,strict*/ """
             {
               "lineThreshold": 90
             }
             """;
 
-        mockFileSystem.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
-        mockFileSystem.Setup(fs => fs.ReadAllText(It.IsAny<string>())).Returns(configJson);
+            _ = mockFileSystem.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
+            _ = mockFileSystem.Setup(fs => fs.ReadAllText(It.IsAny<string>())).Returns(configJson);
 
-        var reader = new CoverageConfigReader(mockFileSystem.Object);
-        var config = reader.ReadConfig("/repo");
+            CoverageConfigReader reader = new(mockFileSystem.Object);
+            CoverageConfig? config = reader.ReadConfig("/repo");
 
-        config.Should().NotBeNull();
-        config!.LineThreshold.Should().Be(90);
-        config.BranchThreshold.Should().Be(70); // default
-        config.MethodThreshold.Should().Be(75); // default
-    }
+            _ = config.Should().NotBeNull();
+            _ = config!.LineThreshold.Should().Be(90);
+            _ = config.BranchThreshold.Should().Be(70); // default
+            _ = config.MethodThreshold.Should().Be(75); // default
+        }
 
-    [Fact]
-    public void ReadConfig_EmptyConfig_UsesDefaults()
-    {
-        var mockFileSystem = new Mock<IFileSystem>();
-        var configJson = "{}";
+        [Fact]
+        public void ReadConfig_EmptyConfig_UsesDefaults()
+        {
+            Mock<IFileSystem> mockFileSystem = new();
+            string configJson = "{}";
 
-        mockFileSystem.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
-        mockFileSystem.Setup(fs => fs.ReadAllText(It.IsAny<string>())).Returns(configJson);
+            _ = mockFileSystem.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
+            _ = mockFileSystem.Setup(fs => fs.ReadAllText(It.IsAny<string>())).Returns(configJson);
 
-        var reader = new CoverageConfigReader(mockFileSystem.Object);
-        var config = reader.ReadConfig("/repo");
+            CoverageConfigReader reader = new(mockFileSystem.Object);
+            CoverageConfig? config = reader.ReadConfig("/repo");
 
-        config.Should().NotBeNull();
-        config!.LineThreshold.Should().Be(80); // default
-        config.BranchThreshold.Should().Be(70); // default
-        config.MethodThreshold.Should().Be(75); // default
+            _ = config.Should().NotBeNull();
+            _ = config!.LineThreshold.Should().Be(80); // default
+            _ = config.BranchThreshold.Should().Be(70); // default
+            _ = config.MethodThreshold.Should().Be(75); // default
+        }
     }
 }

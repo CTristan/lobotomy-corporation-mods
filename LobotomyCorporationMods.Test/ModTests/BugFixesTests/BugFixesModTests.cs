@@ -11,18 +11,18 @@ using Moq;
 
 namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests
 {
-    public class BugFixesModTests
+    internal class BugFixesModTests
     {
         protected const int FourTimes = 4;
 
         protected BugFixesModTests()
         {
             _ = new Harmony_Patch();
-            var logger = new Mock<ILogger>();
+            Mock<ILogger> logger = new();
             Harmony_Patch.Instance.AddLoggerTarget(logger.Object);
         }
 
         [NotNull]
-        protected static ArmorCreature ArmorCreature => new ArmorCreature();
+        protected static ArmorCreature ArmorCreature => new();
     }
 }

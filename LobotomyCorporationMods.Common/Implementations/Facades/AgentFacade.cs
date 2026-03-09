@@ -18,25 +18,25 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
 
         public static bool HasFairyFestivalEffect([NotNull] this UnitModel agent)
         {
-            Guard.Against.Null(agent, nameof(agent));
-            var effects = agent.GetUnitBufList();
+            _ = Guard.Against.Null(agent, nameof(agent));
+            List<UnitBuf> effects = agent.GetUnitBufList();
 
             return effects.OfType<FairyBuf>().Any();
         }
 
         public static bool HasLaetitiaEffect([NotNull] this UnitModel agent)
         {
-            Guard.Against.Null(agent, nameof(agent));
-            var effects = agent.GetUnitBufList();
+            _ = Guard.Against.Null(agent, nameof(agent));
+            List<UnitBuf> effects = agent.GetUnitBufList();
 
             return effects.OfType<LittleWitchBuf>().Any();
         }
 
         public static bool HasCrumblingArmor([NotNull] this UnitModel agent)
         {
-            Guard.Against.Null(agent, nameof(agent));
+            _ = Guard.Against.Null(agent, nameof(agent));
 
-            var crumblingArmorGiftsId = new List<int>
+            List<int> crumblingArmorGiftsId = new List<int>
             {
                 (int)EquipmentIds.CrumblingArmorGift1,
                 (int)EquipmentIds.CrumblingArmorGift2,
@@ -49,8 +49,8 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
 
         public static bool HasParasiteTreeEffect([NotNull] this UnitModel agent)
         {
-            Guard.Against.Null(agent, nameof(agent));
-            var effects = agent.GetUnitBufList();
+            _ = Guard.Against.Null(agent, nameof(agent));
+            List<UnitBuf> effects = agent.GetUnitBufList();
 
             return effects.OfType<YggdrasilBlessBuf>().Any();
         }

@@ -23,8 +23,8 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         public static void PatchAfterReviseOpenAction([NotNull] this CustomizingWindow instance,
             [NotNull] AgentModel agent)
         {
-            Guard.Against.Null(instance, nameof(instance));
-            Guard.Against.Null(agent, nameof(agent));
+            _ = Guard.Against.Null(instance, nameof(instance));
+            _ = Guard.Against.Null(agent, nameof(agent));
 
             instance.LoadAgentData(agent);
         }

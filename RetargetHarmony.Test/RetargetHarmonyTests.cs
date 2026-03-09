@@ -11,291 +11,282 @@ using Xunit;
 using Xunit.Abstractions;
 using static RetargetHarmony.RetargetHarmony;
 
-#pragma warning disable xUnit1000 // Test classes must be public - xUnit requirement
-#pragma warning disable CA1812 // Internal class apparently never instantiated - xUnit instantiates test classes
-
-namespace RetargetHarmony.Test;
-
-public sealed class RetargetHarmonyTests
+namespace RetargetHarmony.Test
 {
-    private static readonly string RepoRoot = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", ".."));
-    private static readonly string ExternalDir = Path.Combine(RepoRoot, "external");
-    private static readonly string ManagedDir = Path.Combine(ExternalDir, "LobotomyCorp_Data", "Managed");
-
-    private readonly ITestOutputHelper _output;
-
-    public RetargetHarmonyTests(ITestOutputHelper output)
+    public sealed class RetargetHarmonyTests(ITestOutputHelper output)
     {
-        _output = output;
-    }
+        private static readonly string RepoRoot = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", ".."));
+        private static readonly string ExternalDir = Path.Combine(RepoRoot, "external");
+        private static readonly string ManagedDir = Path.Combine(ExternalDir, "LobotomyCorp_Data", "Managed");
 
-    [Fact]
-    public void ExternalDirectoryExists()
-    {
-        _output.WriteLine($"BaseDirectory: {AppContext.BaseDirectory}");
-        _output.WriteLine($"RepoRoot: {RepoRoot}");
-        _output.WriteLine($"ExternalDir: {ExternalDir}");
+        private readonly ITestOutputHelper _output = output;
 
-        Directory.Exists(ExternalDir).Should().BeTrue("external directory should exist");
-        File.Exists(GetManagedAssemblyPath("Assembly-CSharp.dll")).Should().BeTrue("Assembly-CSharp.dll should exist in external directory");
-        File.Exists(GetManagedAssemblyPath("LobotomyBaseModLib.dll")).Should().BeTrue("LobotomyBaseModLib.dll should exist in external directory");
-    }
-
-    [Fact]
-    public void Patch_ThrowsArgumentNullException_WhenAssemblyIsNull()
-    {
-        Action act = () => Patch(null);
-
-        act.Should().Throw<ArgumentNullException>().WithParameterName("asm");
-    }
-
-    [Fact]
-    public void Patch_RetargetsHarmonyReference_InAssemblyCSharp()
-    {
-        using var assemblyDefinition = AssemblyDefinition.ReadAssembly(GetManagedAssemblyPath("Assembly-CSharp.dll"));
-
-        RetargetHarmony.Patch(assemblyDefinition);
-
-        var harmonyRefs = GetHarmonyReferences(assemblyDefinition);
-
-        harmonyRefs.Should().HaveCount(1, "there should be exactly one Harmony reference after patching");
-        harmonyRefs[0].Name.Should().Be("0Harmony109", "the reference should be retargeted to 0Harmony109");
-    }
-
-    [Fact]
-    public void Patch_RetargetsHarmonyReference_InLobotomyBaseModLib()
-    {
-        using var assemblyDefinition = AssemblyDefinition.ReadAssembly(GetManagedAssemblyPath("LobotomyBaseModLib.dll"));
-
-        RetargetHarmony.Patch(assemblyDefinition);
-
-        var harmonyRefs = GetHarmonyReferences(assemblyDefinition);
-
-        harmonyRefs.Should().HaveCount(1, "there should be exactly one Harmony reference after patching");
-        harmonyRefs[0].Name.Should().Be("0Harmony109", "the reference should be retargeted to 0Harmony109");
-    }
-
-    [Fact]
-    public void Patch_DoesNotModifyOtherReferences_InAssemblyCSharp()
-    {
-        using var originalAssembly = AssemblyDefinition.ReadAssembly(GetManagedAssemblyPath("Assembly-CSharp.dll"));
-        var originalRefs = originalAssembly.MainModule.AssemblyReferences.Select(r => r.Name).ToList();
-
-        using var assemblyDefinition = AssemblyDefinition.ReadAssembly(GetManagedAssemblyPath("Assembly-CSharp.dll"));
-
-        RetargetHarmony.Patch(assemblyDefinition);
-        var patchedRefs = assemblyDefinition.MainModule.AssemblyReferences.Select(r => r.Name).ToList();
-
-        var nonHarmonyOriginalRefs = originalRefs.Where(r => r != "0Harmony" && r != "0Harmony109").ToList();
-        var nonHarmonyPatchedRefs = patchedRefs.Where(r => r != "0Harmony" && r != "0Harmony109").ToList();
-
-        nonHarmonyPatchedRefs.Should().BeEquivalentTo(nonHarmonyOriginalRefs,
-            "non-Harmony references should not be modified");
-    }
-
-    [Fact]
-    public void Patch_DoesNotModifyOtherReferences_InLobotomyBaseModLib()
-    {
-        using var originalAssembly = AssemblyDefinition.ReadAssembly(GetManagedAssemblyPath("LobotomyBaseModLib.dll"));
-        var originalRefs = originalAssembly.MainModule.AssemblyReferences.Select(r => r.Name).ToList();
-
-        using var assemblyDefinition = AssemblyDefinition.ReadAssembly(GetManagedAssemblyPath("LobotomyBaseModLib.dll"));
-
-        RetargetHarmony.Patch(assemblyDefinition);
-        var patchedRefs = assemblyDefinition.MainModule.AssemblyReferences.Select(r => r.Name).ToList();
-
-        var nonHarmonyOriginalRefs = originalRefs.Where(r => r != "0Harmony" && r != "0Harmony109").ToList();
-        var nonHarmonyPatchedRefs = patchedRefs.Where(r => r != "0Harmony" && r != "0Harmony109").ToList();
-
-        nonHarmonyPatchedRefs.Should().BeEquivalentTo(nonHarmonyOriginalRefs,
-            "non-Harmony references should not be modified");
-    }
-
-    [Fact]
-    public void Patch_Idempotent_WhenAlreadyRetargetedTo0Harmony109()
-    {
-        using var assemblyDefinition = CreateSyntheticAssembly("0Harmony109");
-
-        RetargetHarmony.Patch(assemblyDefinition);
-        RetargetHarmony.Patch(assemblyDefinition);
-
-        var harmonyRefs = GetHarmonyReferences(assemblyDefinition);
-
-        harmonyRefs.Should().HaveCount(1, "there should still be exactly one Harmony reference");
-        harmonyRefs[0].Name.Should().Be("0Harmony109", "the reference should remain 0Harmony109");
-    }
-
-    [Fact]
-    public void Patch_RemovesDuplicateHarmonyReferences()
-    {
-        using var assemblyDefinition = CreateSyntheticAssembly("0Harmony", "0Harmony", "0Harmony");
-
-        RetargetHarmony.Patch(assemblyDefinition);
-
-        var harmonyRefs = GetHarmonyReferences(assemblyDefinition);
-
-        harmonyRefs.Should().HaveCount(1, "there should be exactly one Harmony reference after deduplication");
-        harmonyRefs[0].Name.Should().Be("0Harmony109", "the remaining reference should be retargeted to 0Harmony109");
-    }
-
-    [Fact]
-    public void Patch_ConsolidatesMixedHarmonyReferences()
-    {
-        using var assemblyDefinition = CreateSyntheticAssembly("0Harmony", "0Harmony109", "0Harmony");
-
-        RetargetHarmony.Patch(assemblyDefinition);
-
-        var harmonyRefs = GetHarmonyReferences(assemblyDefinition);
-
-        harmonyRefs.Should().HaveCount(1, "there should be exactly one Harmony reference after consolidation");
-        harmonyRefs[0].Name.Should().Be("0Harmony109", "the remaining reference should be 0Harmony109");
-    }
-
-    [Fact]
-    public void Patch_DoesNothing_WhenNoHarmonyReference()
-    {
-        using var assemblyDefinition = CreateSyntheticAssembly("mscorlib");
-
-        var exception = Record.Exception(() => RetargetHarmony.Patch(assemblyDefinition));
-
-        exception.Should().BeNull("patching an assembly without Harmony reference should not throw");
-
-        var harmonyRefs = GetHarmonyReferences(assemblyDefinition);
-        harmonyRefs.Should().BeEmpty("no Harmony references should be added");
-    }
-
-    [Fact]
-    public void TargetDLLs_ReturnsExpectedAssemblies()
-    {
-        var targetDlls = RetargetHarmony.TargetDLLs.ToList();
-
-        targetDlls.Should().HaveCount(2, "there should be 2 target DLLs");
-        targetDlls.Should().Contain("Assembly-CSharp.dll");
-        targetDlls.Should().Contain("LobotomyBaseModLib.dll");
-    }
-
-    [Fact]
-    public void Finish_MethodExists()
-    {
-        // Verify Finish() method exists via reflection (BepInEx preloader contract)
-        var finishMethod = typeof(RetargetHarmony).GetMethod("Finish", BindingFlags.Public | BindingFlags.Static);
-
-        finishMethod.Should().NotBeNull("Finish() method should exist for BepInEx preloader lifecycle");
-        finishMethod.GetParameters().Should().BeEmpty("Finish() should take no parameters");
-    }
-
-    [Fact]
-    public void BaseModsPath_ComputesCorrectPath()
-    {
-        // Verify BaseModsPath computes a valid path structure
-        var baseModsPath = RetargetHarmony.BaseModsPath;
-
-        baseModsPath.Should().NotBeNullOrEmpty("BaseModsPath should not be empty");
-        baseModsPath.Should().EndWith("BaseMods", "BaseModsPath should end with BaseMods");
-        baseModsPath.Should().Contain("LobotomyCorp_Data", "BaseModsPath should contain LobotomyCorp_Data");
-    }
-
-    [Fact]
-    public void PatchBaseModsEnabled_DefaultsToFalse()
-    {
-        // Clear any override and config
-        RetargetHarmony.PatchBaseModsOverride = false;
-        RetargetHarmony.ClearPatchBaseModsConfig();
-
-        // Without config initialized, should default to false
-        RetargetHarmony.PatchBaseModsEnabled.Should().BeFalse("by default PatchBaseMods should be disabled");
-    }
-
-    [Fact]
-    public void PatchBaseModsEnabled_ReturnsTrue_WhenOverrideIsSet()
-    {
-        // Set override to true
-        RetargetHarmony.PatchBaseModsOverride = true;
-
-        try
+        [Fact]
+        public void ExternalDirectoryExists()
         {
-            RetargetHarmony.PatchBaseModsEnabled.Should().BeTrue("when override is set, PatchBaseModsEnabled should return true");
+            _output.WriteLine($"BaseDirectory: {AppContext.BaseDirectory}");
+            _output.WriteLine($"RepoRoot: {RepoRoot}");
+            _output.WriteLine($"ExternalDir: {ExternalDir}");
+
+            _ = Directory.Exists(ExternalDir).Should().BeTrue("external directory should exist");
+            _ = File.Exists(GetManagedAssemblyPath("Assembly-CSharp.dll")).Should().BeTrue("Assembly-CSharp.dll should exist in external directory");
+            _ = File.Exists(GetManagedAssemblyPath("LobotomyBaseModLib.dll")).Should().BeTrue("LobotomyBaseModLib.dll should exist in external directory");
         }
-        finally
+
+        [Fact]
+        public void Patch_ThrowsArgumentNullException_WhenAssemblyIsNull()
         {
-            // Clean up
-            RetargetHarmony.PatchBaseModsOverride = false;
+            Action act = () => Patch(null);
+
+            _ = act.Should().Throw<ArgumentNullException>().WithParameterName("asm");
         }
-    }
 
-    [Fact]
-    public void TargetDLLs_ExcludesBaseModsDlls_WhenPatchBaseModsDisabled()
-    {
-        // Ensure patch base mods is disabled
-        RetargetHarmony.PatchBaseModsOverride = false;
-        RetargetHarmony.ClearPatchBaseModsConfig();
-
-        var targetDlls = RetargetHarmony.TargetDLLs.ToList();
-
-        // Should only contain the Managed DLLs
-        targetDlls.Should().HaveCount(2, "only Managed DLLs should be included when PatchBaseMods is disabled");
-        targetDlls.Should().Contain("Assembly-CSharp.dll");
-        targetDlls.Should().Contain("LobotomyBaseModLib.dll");
-    }
-
-    [Fact]
-    public void TargetDLLs_IncludesBaseModsDlls_WhenPatchBaseModsEnabled()
-    {
-        // Set override to true to enable BaseMods patching
-        RetargetHarmony.PatchBaseModsOverride = true;
-
-        try
+        [Fact]
+        public void Patch_RetargetsHarmonyReference_InAssemblyCSharp()
         {
-            // Note: BaseMods directory may not exist in test environment
-            // The property should handle this gracefully
-            var targetDlls = RetargetHarmony.TargetDLLs.ToList();
+            using AssemblyDefinition assemblyDefinition = AssemblyDefinition.ReadAssembly(GetManagedAssemblyPath("Assembly-CSharp.dll"));
 
-            // Should contain Managed DLLs
-            targetDlls.Should().Contain("Assembly-CSharp.dll");
-            targetDlls.Should().Contain("LobotomyBaseModLib.dll");
+            Patch(assemblyDefinition);
 
-            // If BaseMods directory exists, should also contain those DLLs
-            var baseModsPath = RetargetHarmony.BaseModsPath;
-            if (Directory.Exists(baseModsPath))
+            List<AssemblyNameReference> harmonyRefs = GetHarmonyReferences(assemblyDefinition);
+
+            _ = harmonyRefs.Should().HaveCount(1, "there should be exactly one Harmony reference after patching");
+            _ = harmonyRefs[0].Name.Should().Be("0Harmony109", "the reference should be retargeted to 0Harmony109");
+        }
+
+        [Fact]
+        public void Patch_RetargetsHarmonyReference_InLobotomyBaseModLib()
+        {
+            using AssemblyDefinition assemblyDefinition = AssemblyDefinition.ReadAssembly(GetManagedAssemblyPath("LobotomyBaseModLib.dll"));
+
+            Patch(assemblyDefinition);
+
+            List<AssemblyNameReference> harmonyRefs = GetHarmonyReferences(assemblyDefinition);
+
+            _ = harmonyRefs.Should().HaveCount(1, "there should be exactly one Harmony reference after patching");
+            _ = harmonyRefs[0].Name.Should().Be("0Harmony109", "the reference should be retargeted to 0Harmony109");
+        }
+
+        [Fact]
+        public void Patch_DoesNotModifyOtherReferences_InAssemblyCSharp()
+        {
+            using AssemblyDefinition originalAssembly = AssemblyDefinition.ReadAssembly(GetManagedAssemblyPath("Assembly-CSharp.dll"));
+            List<string> originalRefs = [.. originalAssembly.MainModule.AssemblyReferences.Select(r => r.Name)];
+
+            using AssemblyDefinition assemblyDefinition = AssemblyDefinition.ReadAssembly(GetManagedAssemblyPath("Assembly-CSharp.dll"));
+
+            Patch(assemblyDefinition);
+            List<string> patchedRefs = [.. assemblyDefinition.MainModule.AssemblyReferences.Select(r => r.Name)];
+
+            List<string> nonHarmonyOriginalRefs = [.. originalRefs.Where(r => r is not "0Harmony" and not "0Harmony109")];
+            List<string> nonHarmonyPatchedRefs = [.. patchedRefs.Where(r => r is not "0Harmony" and not "0Harmony109")];
+
+            _ = nonHarmonyPatchedRefs.Should().BeEquivalentTo(nonHarmonyOriginalRefs,
+                "non-Harmony references should not be modified");
+        }
+
+        [Fact]
+        public void Patch_DoesNotModifyOtherReferences_InLobotomyBaseModLib()
+        {
+            using AssemblyDefinition originalAssembly = AssemblyDefinition.ReadAssembly(GetManagedAssemblyPath("LobotomyBaseModLib.dll"));
+            List<string> originalRefs = [.. originalAssembly.MainModule.AssemblyReferences.Select(r => r.Name)];
+
+            using AssemblyDefinition assemblyDefinition = AssemblyDefinition.ReadAssembly(GetManagedAssemblyPath("LobotomyBaseModLib.dll"));
+
+            Patch(assemblyDefinition);
+            List<string> patchedRefs = [.. assemblyDefinition.MainModule.AssemblyReferences.Select(r => r.Name)];
+
+            List<string> nonHarmonyOriginalRefs = [.. originalRefs.Where(r => r is not "0Harmony" and not "0Harmony109")];
+            List<string> nonHarmonyPatchedRefs = [.. patchedRefs.Where(r => r is not "0Harmony" and not "0Harmony109")];
+
+            _ = nonHarmonyPatchedRefs.Should().BeEquivalentTo(nonHarmonyOriginalRefs,
+                "non-Harmony references should not be modified");
+        }
+
+        [Fact]
+        public void Patch_Idempotent_WhenAlreadyRetargetedTo0Harmony109()
+        {
+            using AssemblyDefinition assemblyDefinition = CreateSyntheticAssembly("0Harmony109");
+
+            Patch(assemblyDefinition);
+            Patch(assemblyDefinition);
+
+            List<AssemblyNameReference> harmonyRefs = GetHarmonyReferences(assemblyDefinition);
+
+            _ = harmonyRefs.Should().HaveCount(1, "there should still be exactly one Harmony reference");
+            _ = harmonyRefs[0].Name.Should().Be("0Harmony109", "the reference should remain 0Harmony109");
+        }
+
+        [Fact]
+        public void Patch_RemovesDuplicateHarmonyReferences()
+        {
+            using AssemblyDefinition assemblyDefinition = CreateSyntheticAssembly("0Harmony", "0Harmony", "0Harmony");
+
+            Patch(assemblyDefinition);
+
+            List<AssemblyNameReference> harmonyRefs = GetHarmonyReferences(assemblyDefinition);
+
+            _ = harmonyRefs.Should().HaveCount(1, "there should be exactly one Harmony reference after deduplication");
+            _ = harmonyRefs[0].Name.Should().Be("0Harmony109", "the remaining reference should be retargeted to 0Harmony109");
+        }
+
+        [Fact]
+        public void Patch_ConsolidatesMixedHarmonyReferences()
+        {
+            using AssemblyDefinition assemblyDefinition = CreateSyntheticAssembly("0Harmony", "0Harmony109", "0Harmony");
+
+            Patch(assemblyDefinition);
+
+            List<AssemblyNameReference> harmonyRefs = GetHarmonyReferences(assemblyDefinition);
+
+            _ = harmonyRefs.Should().HaveCount(1, "there should be exactly one Harmony reference after consolidation");
+            _ = harmonyRefs[0].Name.Should().Be("0Harmony109", "the remaining reference should be 0Harmony109");
+        }
+
+        [Fact]
+        public void Patch_DoesNothing_WhenNoHarmonyReference()
+        {
+            using AssemblyDefinition assemblyDefinition = CreateSyntheticAssembly("mscorlib");
+
+            Exception exception = Record.Exception(() => Patch(assemblyDefinition));
+
+            _ = exception.Should().BeNull("patching an assembly without Harmony reference should not throw");
+
+            List<AssemblyNameReference> harmonyRefs = GetHarmonyReferences(assemblyDefinition);
+            _ = harmonyRefs.Should().BeEmpty("no Harmony references should be added");
+        }
+
+        [Fact]
+        public void TargetDLLs_ReturnsExpectedAssemblies()
+        {
+            List<string> targetDlls = [.. TargetDLLs];
+
+            _ = targetDlls.Should().HaveCount(2, "there should be 2 target DLLs");
+            _ = targetDlls.Should().Contain("Assembly-CSharp.dll");
+            _ = targetDlls.Should().Contain("LobotomyBaseModLib.dll");
+        }
+
+        [Fact]
+        public void Finish_MethodExists()
+        {
+            // Verify Finish() method exists via reflection (BepInEx preloader contract)
+            MethodInfo? finishMethod = typeof(RetargetHarmony).GetMethod("Finish", BindingFlags.Public | BindingFlags.Static);
+
+            _ = finishMethod.Should().NotBeNull("Finish() method should exist for BepInEx preloader lifecycle");
+            _ = finishMethod.GetParameters().Should().BeEmpty("Finish() should take no parameters");
+        }
+
+        [Fact]
+        public void BaseModsPath_ComputesCorrectPath()
+        {
+            // Verify BaseModsPath computes a valid path structure
+            string baseModsPath = BaseModsPath;
+
+            _ = baseModsPath.Should().NotBeNullOrEmpty("BaseModsPath should not be empty");
+            _ = baseModsPath.Should().EndWith("BaseMods", "BaseModsPath should end with BaseMods");
+            _ = baseModsPath.Should().Contain("LobotomyCorp_Data", "BaseModsPath should contain LobotomyCorp_Data");
+        }
+
+        [Fact]
+        public void PatchBaseModsEnabled_DefaultsToFalse()
+        {
+            // Clear any override and config
+            PatchBaseModsOverride = false;
+            ClearPatchBaseModsConfig();
+
+            // Without config initialized, should default to false
+            _ = PatchBaseModsEnabled.Should().BeFalse("by default PatchBaseMods should be disabled");
+        }
+
+        [Fact]
+        public void PatchBaseModsEnabled_ReturnsTrue_WhenOverrideIsSet()
+        {
+            // Set override to true
+            PatchBaseModsOverride = true;
+
+            try
             {
-                var baseModsDlls = Directory.GetFiles(baseModsPath, "*.dll", SearchOption.TopDirectoryOnly);
-                foreach (var dll in baseModsDlls)
-                {
-                    var dllName = Path.GetFileName(dll);
-                    targetDlls.Should().Contain(dllName, $"BaseMods DLL {dllName} should be included when PatchBaseMods is enabled");
-                }
+                _ = PatchBaseModsEnabled.Should().BeTrue("when override is set, PatchBaseModsEnabled should return true");
+            }
+            finally
+            {
+                // Clean up
+                PatchBaseModsOverride = false;
             }
         }
-        finally
+
+        [Fact]
+        public void TargetDLLs_ExcludesBaseModsDlls_WhenPatchBaseModsDisabled()
         {
-            // Clean up
-            RetargetHarmony.PatchBaseModsOverride = false;
-        }
-    }
+            // Ensure patch base mods is disabled
+            PatchBaseModsOverride = false;
+            ClearPatchBaseModsConfig();
 
-    private static string GetManagedAssemblyPath(string fileName)
-    {
-        return Path.Combine(ManagedDir, fileName);
-    }
+            List<string> targetDlls = [.. TargetDLLs];
 
-    private static List<AssemblyNameReference> GetHarmonyReferences(AssemblyDefinition assemblyDefinition)
-    {
-        return assemblyDefinition.MainModule.AssemblyReferences
-            .Where(r => r.Name == "0Harmony" || r.Name == "0Harmony109")
-            .ToList();
-    }
-
-    private static AssemblyDefinition CreateSyntheticAssembly(params string[] referencedAssemblies)
-    {
-        var assembly = AssemblyDefinition.ReadAssembly(GetManagedAssemblyPath("Assembly-CSharp.dll"));
-        assembly.MainModule.AssemblyReferences.Clear();
-
-        foreach (var refName in referencedAssemblies)
-        {
-            var reference = new AssemblyNameReference(refName, new Version(1, 0, 0, 0));
-            assembly.MainModule.AssemblyReferences.Add(reference);
+            // Should only contain the Managed DLLs
+            _ = targetDlls.Should().HaveCount(2, "only Managed DLLs should be included when PatchBaseMods is disabled");
+            _ = targetDlls.Should().Contain("Assembly-CSharp.dll");
+            _ = targetDlls.Should().Contain("LobotomyBaseModLib.dll");
         }
 
-        return assembly;
+        [Fact]
+        public void TargetDLLs_IncludesBaseModsDlls_WhenPatchBaseModsEnabled()
+        {
+            // Set override to true to enable BaseMods patching
+            PatchBaseModsOverride = true;
+
+            try
+            {
+                // Note: BaseMods directory may not exist in test environment
+                // The property should handle this gracefully
+                List<string> targetDlls = [.. TargetDLLs];
+
+                // Should contain Managed DLLs
+                _ = targetDlls.Should().Contain("Assembly-CSharp.dll");
+                _ = targetDlls.Should().Contain("LobotomyBaseModLib.dll");
+
+                // If BaseMods directory exists, should also contain those DLLs
+                string baseModsPath = BaseModsPath;
+                if (Directory.Exists(baseModsPath))
+                {
+                    string[] baseModsDlls = Directory.GetFiles(baseModsPath, "*.dll", SearchOption.TopDirectoryOnly);
+                    foreach (string dll in baseModsDlls)
+                    {
+                        string dllName = Path.GetFileName(dll);
+                        _ = targetDlls.Should().Contain(dllName, $"BaseMods DLL {dllName} should be included when PatchBaseMods is enabled");
+                    }
+                }
+            }
+            finally
+            {
+                // Clean up
+                PatchBaseModsOverride = false;
+            }
+        }
+
+        private static string GetManagedAssemblyPath(string fileName)
+        {
+            return Path.Combine(ManagedDir, fileName);
+        }
+
+        private static List<AssemblyNameReference> GetHarmonyReferences(AssemblyDefinition assemblyDefinition)
+        {
+            return [.. assemblyDefinition.MainModule.AssemblyReferences.Where(r => r.Name is "0Harmony" or "0Harmony109")];
+        }
+
+        private static AssemblyDefinition CreateSyntheticAssembly(params string[] referencedAssemblies)
+        {
+            AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(GetManagedAssemblyPath("Assembly-CSharp.dll"));
+            assembly.MainModule.AssemblyReferences.Clear();
+
+            foreach (string refName in referencedAssemblies)
+            {
+                AssemblyNameReference reference = new(refName, new Version(1, 0, 0, 0));
+                assembly.MainModule.AssemblyReferences.Add(reference);
+            }
+
+            return assembly;
+        }
     }
 }

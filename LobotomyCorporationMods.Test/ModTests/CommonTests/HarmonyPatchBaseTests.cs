@@ -22,22 +22,22 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
 {
     public sealed class HarmonyPatchBaseTests
     {
-        private FakeHarmonyPatch _fakeHarmonyPatch = new FakeHarmonyPatch(false);
+        private FakeHarmonyPatch _fakeHarmonyPatch = new(false);
 
         [Fact]
         public void Applying_a_Harmony_patch_does_not_error()
         {
-            var mockLogger = new Mock<ILogger>();
+            Mock<ILogger> mockLogger = new();
 
             Action action = () => _fakeHarmonyPatch.ApplyHarmonyPatch(typeof(HarmonyPatchBase), string.Empty, mockLogger.Object);
 
-            action.Should().NotThrow();
+            _ = action.Should().NotThrow();
         }
 
         [Fact]
         public void Harmony_patch_exceptions_are_logged()
         {
-            var mockLogger = new Mock<ILogger>();
+            Mock<ILogger> mockLogger = new();
 
             void Action()
             {
@@ -55,8 +55,8 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         public void Initializing_localized_text_returns_correct_value(string expectedValue)
         {
             // Arrange
-            var key = nameof(Initializing_localized_text_returns_correct_value) + expectedValue;
-            var dictionary = new Dictionary<string, string>
+            string key = nameof(Initializing_localized_text_returns_correct_value) + expectedValue;
+            Dictionary<string, string> dictionary = new()
             {
                 {
                     key, expectedValue
@@ -66,10 +66,10 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
             LocalizeTextDataModel.instance.Init(dictionary);
 
             // Act
-            var dictionaryValue = key.GetLocalized();
+            string dictionaryValue = key.GetLocalized();
 
             // Assert
-            dictionaryValue.Should().Be(expectedValue).And.NotBe(LocalizeTextDataModel.Failed);
+            _ = dictionaryValue.Should().Be(expectedValue).And.NotBe(LocalizeTextDataModel.Failed);
         }
 
         [Fact]
@@ -107,21 +107,14 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
                 _ = new FakeHarmonyPatch(true);
             };
 
-            action.Should().Throw<InvalidOperationException>();
+            _ = action.Should().Throw<InvalidOperationException>();
         }
 
         #region Helper Methods
 
         private void AssertInitialization(bool isNull)
         {
-            if (isNull)
-            {
-                _fakeHarmonyPatch.Logger.Should().BeNull();
-            }
-            else
-            {
-                _fakeHarmonyPatch.Logger.Should().NotBeNull();
-            }
+            _ = isNull ? _fakeHarmonyPatch.Logger.Should().BeNull() : _fakeHarmonyPatch.Logger.Should().NotBeNull();
         }
 
         private static void GenerateXmlLocalizationFile()
@@ -129,35 +122,35 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
             const string XmlTextId = "testId";
             const string XmlTextValue = "Test Text";
 
-            var xmlTextBuilder = new StringBuilder();
-            xmlTextBuilder.AppendLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-            xmlTextBuilder.AppendLine("<localize>");
-            xmlTextBuilder.AppendLine($"    <text id=\"{XmlTextId}\">{XmlTextValue}</text>\n");
-            xmlTextBuilder.AppendLine("</localize>");
+            StringBuilder xmlTextBuilder = new();
+            _ = xmlTextBuilder.AppendLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+            _ = xmlTextBuilder.AppendLine("<localize>");
+            _ = xmlTextBuilder.AppendLine($"    <text id=\"{XmlTextId}\">{XmlTextValue}</text>\n");
+            _ = xmlTextBuilder.AppendLine("</localize>");
 
             const string LocalizationFile = "Localize/en/text_en.xml";
-            var fileManager = TestExtensions.GetMockFileManager();
-            var fileWithPath = fileManager.Object.GetFile(LocalizationFile);
+            Mock<IFileManager> fileManager = TestExtensions.GetMockFileManager();
+            string fileWithPath = fileManager.Object.GetFile(LocalizationFile);
             fileManager.Object.WriteAllText(fileWithPath, xmlTextBuilder.ToString());
         }
 
         private static void DeleteXmlLocalizationFile()
         {
-            var currentDirectory = Directory.GetCurrentDirectory();
+            string currentDirectory = Directory.GetCurrentDirectory();
             const string LocalizationFile = "Localize/en/text_en.xml";
             File.Delete(Path.Combine(currentDirectory, LocalizationFile));
         }
 
         private void InitiatePatchData([CanBeNull] Type? patchType = null)
         {
-            var currentDirectory = Directory.GetCurrentDirectory();
+            string currentDirectory = Directory.GetCurrentDirectory();
 
-            Action action = () => _fakeHarmonyPatch.TestInitializePatchData(new List<DirectoryInfo>
-            {
+            Action action = () => _fakeHarmonyPatch.TestInitializePatchData(
+            [
                 new DirectoryInfo(currentDirectory),
-            }, patchType);
+            ], patchType);
 
-            action.Should().NotThrow();
+            _ = action.Should().NotThrow();
         }
 
         #endregion
@@ -172,7 +165,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         {
         }
 
-        internal void ApplyHarmonyPatch([NotNull] Type harmonyPatchType,
+        internal void ApplyHarmonyPatch([NotNull] Type? harmonyPatchType,
             string modFileName,
             ILogger logger)
         {
@@ -187,8 +180,8 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         {
             patchType = patchType.EnsureNotNullWithMethod(() => typeof(FakeHarmonyPatch));
 
-            var directory = directoryList.First();
-            var testFileWithPath = Path.Combine(directory.FullName, FileNameThatExists);
+            DirectoryInfo directory = directoryList.First();
+            string testFileWithPath = Path.Combine(directory.FullName, FileNameThatExists);
             File.WriteAllText(testFileWithPath, string.Empty);
 
             SetUpPatchData(patchType, FileNameThatExists, directoryList);

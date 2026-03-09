@@ -16,7 +16,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
         internal static bool IsValidGameStage([CanBeNull] this GameManager currentGameManager,
             AgentState state)
         {
-            var commandWindow = CommandWindow.CommandWindow.CurrentWindow;
+            CommandWindow.CommandWindow commandWindow = CommandWindow.CommandWindow.CurrentWindow;
 
             return IsDayStarted(currentGameManager) && commandWindow.IsAbnormalityWorkWindow() && IsAgentControllable(state);
         }

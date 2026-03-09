@@ -6,10 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using BepInEx;
-using BepInEx.Bootstrap;
 using BepInEx.Logging;
-using Mono.Cecil;
-#pragma warning disable CA1031 // Intentionally catching broad exceptions for Unity Debug availability
 
 namespace RetargetHarmony
 {
@@ -71,17 +68,15 @@ namespace RetargetHarmony
             // Determine config directory - check assembly directory first (patcher's own folder),
             // then fall back to BepInEx config path
             // This ensures patcher logs go in the patcher folder, not the shared config folder
-            string configDir;
             string configPath;
 
             // First check the patcher's own directory (assembly location)
-            var assemblyDir = ConfigDirectoryOverride ?? GetAssemblyDirectory();
-            var assemblyConfigPath = Path.Combine(assemblyDir, ConfigFileName);
+            string assemblyDir = ConfigDirectoryOverride ?? GetAssemblyDirectory();
+            string assemblyConfigPath = Path.Combine(assemblyDir, ConfigFileName);
 
             if (File.Exists(assemblyConfigPath))
             {
                 // Config found in assembly directory - use that
-                configDir = assemblyDir;
                 configPath = assemblyConfigPath;
             }
             else if (!string.IsNullOrEmpty(Paths.ConfigPath))
@@ -90,19 +85,17 @@ namespace RetargetHarmony
                 configPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
                 if (File.Exists(configPath))
                 {
-                    configDir = Paths.ConfigPath;
+                    _ = Paths.ConfigPath;
                 }
                 else
                 {
                     // No config file exists yet - use assembly directory for the default config
-                    configDir = assemblyDir;
                     configPath = assemblyConfigPath;
                 }
             }
             else
             {
                 // No BepInEx paths available - use assembly directory
-                configDir = assemblyDir;
                 configPath = assemblyConfigPath;
             }
 
@@ -127,10 +120,10 @@ namespace RetargetHarmony
             }
             else if (s_debugEnabled)
             {
-                var logDir = Path.Combine(assemblyDir, LogFolderName);
+                string logDir = Path.Combine(assemblyDir, LogFolderName);
                 if (!Directory.Exists(logDir))
                 {
-                    Directory.CreateDirectory(logDir);
+                    _ = Directory.CreateDirectory(logDir);
                 }
 
                 s_logFilePath = Path.Combine(logDir, LogFileName);
@@ -178,7 +171,7 @@ namespace RetargetHarmony
 
             try
             {
-                var parsedLevel = (LogLevel)Enum.Parse(typeof(LogLevel), level, true);
+                LogLevel parsedLevel = (LogLevel)Enum.Parse(typeof(LogLevel), level, true);
                 if (parsedLevel == LogLevel.None)
                 {
                     s_debugEnabled = false;
@@ -247,9 +240,9 @@ namespace RetargetHarmony
             // Check if we should log based on level
             // Trace and Debug only log when debug is explicitly enabled
             // Info, Warn, Error always go to BepInEx (existing behavior)
-            var shouldLogToFile = s_debugEnabled && level >= s_minLevel;
-            var shouldLogToBepInEx = level >= LogLevel.Info;
-            var shouldLogToUnity = s_debugEnabled && level >= s_minLevel && s_unityAvailable;
+            bool shouldLogToFile = s_debugEnabled && level >= s_minLevel;
+            bool shouldLogToBepInEx = level >= LogLevel.Info;
+            bool shouldLogToUnity = s_debugEnabled && level >= s_minLevel && s_unityAvailable;
 
             if (shouldLogToFile)
             {
@@ -276,8 +269,8 @@ namespace RetargetHarmony
 
             try
             {
-                var timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
-                var logLine = $"[{timestamp}] [{level.ToString().ToUpperInvariant()}] {message}{Environment.NewLine}";
+                string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
+                string logLine = $"[{timestamp}] [{level.ToString().ToUpperInvariant()}] {message}{Environment.NewLine}";
                 lock (s_fileLock)
                 {
                     File.AppendAllText(s_logFilePath, logLine, Encoding.UTF8);
@@ -303,6 +296,14 @@ namespace RetargetHarmony
                     break;
                 case LogLevel.Warn:
                     s_bepInExLog.LogWarning(message);
+                    break;
+                case LogLevel.None:
+                    break;
+                case LogLevel.Trace:
+                    break;
+                case LogLevel.Debug:
+                    break;
+                case LogLevel.Info:
                     break;
                 default:
                     s_bepInExLog.LogInfo(message);
@@ -344,25 +345,25 @@ namespace RetargetHarmony
         {
             try
             {
-                var lines = File.ReadAllLines(configPath);
-                foreach (var line in lines)
+                string[] lines = File.ReadAllLines(configPath);
+                foreach (string line in lines)
                 {
                     // Skip comments and empty lines
-                    var trimmed = line.Trim();
+                    string trimmed = line.Trim();
                     if (string.IsNullOrEmpty(trimmed) || trimmed.StartsWith("#", StringComparison.Ordinal))
                     {
                         continue;
                     }
 
                     // Parse key=value
-                    var equalsIndex = trimmed.IndexOf('=');
+                    int equalsIndex = trimmed.IndexOf('=');
                     if (equalsIndex <= 0)
                     {
                         continue;
                     }
 
-                    var key = trimmed.Substring(0, equalsIndex).Trim();
-                    var value = trimmed.Substring(equalsIndex + 1).Trim();
+                    string key = trimmed.Substring(0, equalsIndex).Trim();
+                    string value = trimmed.Substring(equalsIndex + 1).Trim();
 
                     if (key.Equals("LogLevel", StringComparison.OrdinalIgnoreCase))
                     {
@@ -371,14 +372,7 @@ namespace RetargetHarmony
                             s_minLevel = (LogLevel)Enum.Parse(typeof(LogLevel), value, true);
 
                             // If LogLevel is None, disable debug logging entirely
-                            if (s_minLevel == LogLevel.None)
-                            {
-                                s_debugEnabled = false;
-                            }
-                            else
-                            {
-                                s_debugEnabled = true;
-                            }
+                            s_debugEnabled = s_minLevel != LogLevel.None;
                         }
                         catch (ArgumentException)
                         {
@@ -399,7 +393,7 @@ namespace RetargetHarmony
 
         private static string GetAssemblyDirectory()
         {
-            var location = Assembly.GetExecutingAssembly().Location;
+            string location = Assembly.GetExecutingAssembly().Location;
 
             // Handle cases where location might be empty (e.g., dynamic assembly)
             if (string.IsNullOrEmpty(location))
@@ -408,13 +402,8 @@ namespace RetargetHarmony
             }
 
             // Find the directory part of the path
-            var lastSep = Math.Max(location.LastIndexOf('/'), location.LastIndexOf('\\'));
-            if (lastSep > 0)
-            {
-                return location.Substring(0, lastSep);
-            }
-
-            return Environment.CurrentDirectory;
+            int lastSep = Math.Max(location.LastIndexOf('/'), location.LastIndexOf('\\'));
+            return lastSep > 0 ? location.Substring(0, lastSep) : Environment.CurrentDirectory;
         }
     }
 }

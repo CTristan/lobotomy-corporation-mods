@@ -16,7 +16,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
         [Fact]
         public void The_tracker_data_is_saved_when_going_to_the_next_day()
         {
-            var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
+            Mock<IAgentWorkTracker> mockAgentWorkTracker = new();
 
             GameSceneControllerPatchOnClickNextDay.PatchAfterOnClickNextDay(mockAgentWorkTracker.Object);
 

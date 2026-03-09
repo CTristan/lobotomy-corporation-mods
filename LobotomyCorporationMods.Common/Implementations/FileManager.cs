@@ -24,15 +24,15 @@ namespace LobotomyCorporationMods.Common.Implementations
         public FileManager([NotNull] string modFileName,
             [NotNull] ICollection<IDirectoryInfo> directories)
         {
-            Guard.Against.Null(directories, nameof(directories));
+            _ = Guard.Against.Null(directories, nameof(directories));
 
-            var directory = directories.FirstOrDefault(directoryInfo => File.Exists(Path.Combine(directoryInfo.FullName, modFileName)));
+            IDirectoryInfo directory = directories.FirstOrDefault(directoryInfo => File.Exists(Path.Combine(directoryInfo.FullName, modFileName)));
 
             if (directory.IsNotNull())
             {
                 _dataPath = directory;
 
-                var modFilePath = Path.Combine(_dataPath.FullName, modFileName);
+                string modFilePath = Path.Combine(_dataPath.FullName, modFileName);
                 _filesCache = new Dictionary<string, string>
                 {
                     {
@@ -42,11 +42,11 @@ namespace LobotomyCorporationMods.Common.Implementations
             }
             else
             {
-                var sb = new StringBuilder();
-                sb.AppendLine($"Data path was not found, unable to find {modFileName} in the following directories:");
-                foreach (var directoryInfo in directories)
+                StringBuilder sb = new StringBuilder();
+                _ = sb.AppendLine($"Data path was not found, unable to find {modFileName} in the following directories:");
+                foreach (IDirectoryInfo directoryInfo in directories)
                 {
-                    sb.AppendLine(directoryInfo.FullName);
+                    _ = sb.AppendLine(directoryInfo.FullName);
                 }
 
                 throw new InvalidOperationException(sb.ToString());
@@ -55,12 +55,12 @@ namespace LobotomyCorporationMods.Common.Implementations
 
         public string GetFile([NotNull] string fileName)
         {
-            if (_filesCache.TryGetValue(fileName, out var value))
+            if (_filesCache.TryGetValue(fileName, out string value))
             {
                 return value;
             }
 
-            var fullFilePath = Path.Combine(_dataPath.FullName, fileName);
+            string fullFilePath = Path.Combine(_dataPath.FullName, fileName);
             _filesCache.Add(fileName, fullFilePath);
 
             return _filesCache[fileName];

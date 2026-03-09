@@ -15,12 +15,7 @@ namespace LobotomyCorporationMods.Common.Extensions
             T input,
             [NotNull][InvokerParameterName] string parameterName)
         {
-            if (input.IsNull())
-            {
-                throw new ArgumentNullException(parameterName);
-            }
-
-            return input;
+            return input.IsNull() ? throw new ArgumentNullException(parameterName) : input;
         }
     }
 }

@@ -12,5 +12,6 @@
     <PackageOutputPath>../nupkg</PackageOutputPath>
     <ProjectGuid>{C3D4E5F6-7A8B-9C0D-1E2F-3A4B5C6D7E8F}</ProjectGuid>
     <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 </Project>

@@ -3,191 +3,191 @@
 using System;
 using System.IO;
 using AwesomeAssertions;
-using CI;
 using Moq;
 using Xunit;
 
-namespace CI.Tests;
-
-public sealed class FileSystemTests
+namespace CI.Tests
 {
-    [Fact]
-    public void WriteAllText_WritesToCorrectPath()
+    public sealed class FileSystemTests
     {
-        // Arrange
-        var tempPath = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid():N}.txt");
-        var fileSystem = new FileSystem();
-
-        try
+        [Fact]
+        public void WriteAllText_WritesToCorrectPath()
         {
-            // Act
-            fileSystem.WriteAllText(tempPath, "test content");
+            // Arrange
+            string tempPath = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid():N}.txt");
+            FileSystem fileSystem = new();
 
-            // Assert
-            File.Exists(tempPath).Should().BeTrue();
-            File.ReadAllText(tempPath).Should().Be("test content");
+            try
+            {
+                // Act
+                fileSystem.WriteAllText(tempPath, "test content");
+
+                // Assert
+                _ = File.Exists(tempPath).Should().BeTrue();
+                _ = File.ReadAllText(tempPath).Should().Be("test content");
+            }
+            finally
+            {
+                if (File.Exists(tempPath))
+                {
+                    File.Delete(tempPath);
+                }
+            }
         }
-        finally
+
+        [Fact]
+        public void ReadAllText_FileExists_ReturnsContent()
         {
+            // Arrange
+            string tempPath = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid():N}.txt");
+            FileSystem fileSystem = new();
+
+            try
+            {
+                File.WriteAllText(tempPath, "test content");
+
+                // Act
+                string? content = fileSystem.ReadAllText(tempPath);
+
+                // Assert
+                _ = content.Should().Be("test content");
+            }
+            finally
+            {
+                if (File.Exists(tempPath))
+                {
+                    File.Delete(tempPath);
+                }
+            }
+        }
+
+        [Fact]
+        public void ReadAllText_FileDoesNotExist_ReturnsNull()
+        {
+            // Arrange
+            string tempPath = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid():N}.txt");
+            FileSystem fileSystem = new();
+
+            // Ensure file doesn't exist
             if (File.Exists(tempPath))
             {
                 File.Delete(tempPath);
             }
-        }
-    }
-
-    [Fact]
-    public void ReadAllText_FileExists_ReturnsContent()
-    {
-        // Arrange
-        var tempPath = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid():N}.txt");
-        var fileSystem = new FileSystem();
-
-        try
-        {
-            File.WriteAllText(tempPath, "test content");
 
             // Act
-            var content = fileSystem.ReadAllText(tempPath);
+            string? content = fileSystem.ReadAllText(tempPath);
 
             // Assert
-            content.Should().Be("test content");
+            _ = content.Should().BeNull();
         }
-        finally
+
+        [Fact]
+        public void DirectoryExists_DirectoryExists_ReturnsTrue()
         {
-            if (File.Exists(tempPath))
+            // Arrange
+            string tempDir = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid():N}");
+            FileSystem fileSystem = new();
+
+            try
             {
-                File.Delete(tempPath);
+                _ = Directory.CreateDirectory(tempDir);
+
+                // Act
+                bool exists = fileSystem.DirectoryExists(tempDir);
+
+                // Assert
+                _ = exists.Should().BeTrue();
+            }
+            finally
+            {
+                if (Directory.Exists(tempDir))
+                {
+                    Directory.Delete(tempDir);
+                }
             }
         }
-    }
 
-    [Fact]
-    public void ReadAllText_FileDoesNotExist_ReturnsNull()
-    {
-        // Arrange
-        var tempPath = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid():N}.txt");
-        var fileSystem = new FileSystem();
-
-        // Ensure file doesn't exist
-        if (File.Exists(tempPath))
+        [Fact]
+        public void DirectoryExists_DirectoryDoesNotExist_ReturnsFalse()
         {
-            File.Delete(tempPath);
-        }
+            // Arrange
+            string tempDir = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid():N}");
+            FileSystem fileSystem = new();
 
-        // Act
-        var content = fileSystem.ReadAllText(tempPath);
-
-        // Assert
-        content.Should().BeNull();
-    }
-
-    [Fact]
-    public void DirectoryExists_DirectoryExists_ReturnsTrue()
-    {
-        // Arrange
-        var tempDir = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid():N}");
-        var fileSystem = new FileSystem();
-
-        try
-        {
-            Directory.CreateDirectory(tempDir);
-
-            // Act
-            var exists = fileSystem.DirectoryExists(tempDir);
-
-            // Assert
-            exists.Should().BeTrue();
-        }
-        finally
-        {
+            // Ensure directory doesn't exist
             if (Directory.Exists(tempDir))
             {
                 Directory.Delete(tempDir);
             }
-        }
-    }
-
-    [Fact]
-    public void DirectoryExists_DirectoryDoesNotExist_ReturnsFalse()
-    {
-        // Arrange
-        var tempDir = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid():N}");
-        var fileSystem = new FileSystem();
-
-        // Ensure directory doesn't exist
-        if (Directory.Exists(tempDir))
-        {
-            Directory.Delete(tempDir);
-        }
-
-        // Act
-        var exists = fileSystem.DirectoryExists(tempDir);
-
-        // Assert
-        exists.Should().BeFalse();
-    }
-
-    [Fact]
-    public void FileExists_FileExists_ReturnsTrue()
-    {
-        // Arrange
-        var tempPath = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid():N}.txt");
-        var fileSystem = new FileSystem();
-
-        try
-        {
-            File.WriteAllText(tempPath, "test");
 
             // Act
-            var exists = fileSystem.FileExists(tempPath);
+            bool exists = fileSystem.DirectoryExists(tempDir);
 
             // Assert
-            exists.Should().BeTrue();
+            _ = exists.Should().BeFalse();
         }
-        finally
+
+        [Fact]
+        public void FileExists_FileExists_ReturnsTrue()
         {
+            // Arrange
+            string tempPath = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid():N}.txt");
+            FileSystem fileSystem = new();
+
+            try
+            {
+                File.WriteAllText(tempPath, "test");
+
+                // Act
+                bool exists = fileSystem.FileExists(tempPath);
+
+                // Assert
+                _ = exists.Should().BeTrue();
+            }
+            finally
+            {
+                if (File.Exists(tempPath))
+                {
+                    File.Delete(tempPath);
+                }
+            }
+        }
+
+        [Fact]
+        public void FileExists_FileDoesNotExist_ReturnsFalse()
+        {
+            // Arrange
+            string tempPath = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid():N}.txt");
+            FileSystem fileSystem = new();
+
+            // Ensure file doesn't exist
             if (File.Exists(tempPath))
             {
                 File.Delete(tempPath);
             }
-        }
-    }
 
-    [Fact]
-    public void FileExists_FileDoesNotExist_ReturnsFalse()
-    {
-        // Arrange
-        var tempPath = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid():N}.txt");
-        var fileSystem = new FileSystem();
+            // Act
+            bool exists = fileSystem.FileExists(tempPath);
 
-        // Ensure file doesn't exist
-        if (File.Exists(tempPath))
-        {
-            File.Delete(tempPath);
+            // Assert
+            _ = exists.Should().BeFalse();
         }
 
-        // Act
-        var exists = fileSystem.FileExists(tempPath);
-
-        // Assert
-        exists.Should().BeFalse();
-    }
-
-    [Fact]
-    public void SetFileExecutable_WithMockFileSystem_VerifiesCall()
-    {
-        // Arrange
-        var mockFileSystem = new Mock<IFileSystem>();
-        var hookSetup = new GitHookSetup(mockFileSystem.Object);
-
-        // Act
-        hookSetup.SetupPreCommitHook("/test/repo");
-
-        // Assert - On Unix, SetFileExecutable should be called; on Windows, it should not
-        if (Environment.OSVersion.Platform == PlatformID.Unix)
+        [Fact]
+        public void SetFileExecutable_WithMockFileSystem_VerifiesCall()
         {
-            mockFileSystem.Verify(fs => fs.SetFileExecutable(It.IsAny<string>()), Times.Once);
+            // Arrange
+            Mock<IFileSystem> mockFileSystem = new();
+            GitHookSetup hookSetup = new(mockFileSystem.Object);
+
+            // Act
+            hookSetup.SetupPreCommitHook("/test/repo");
+
+            // Assert - On Unix, SetFileExecutable should be called; on Windows, it should not
+            if (Environment.OSVersion.Platform == PlatformID.Unix)
+            {
+                mockFileSystem.Verify(fs => fs.SetFileExecutable(It.IsAny<string>()), Times.Once);
+            }
         }
     }
 }

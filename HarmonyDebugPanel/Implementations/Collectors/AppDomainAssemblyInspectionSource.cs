@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using HarmonyDebugPanel.Interfaces;
 
 namespace HarmonyDebugPanel.Implementations.Collectors
@@ -10,18 +11,18 @@ namespace HarmonyDebugPanel.Implementations.Collectors
     {
         public IEnumerable<AssemblyInspectionInfo> GetAssemblies()
         {
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            var infos = new List<AssemblyInspectionInfo>(assemblies.Length);
+            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            List<AssemblyInspectionInfo> infos = new(assemblies.Length);
 
-            foreach (var assembly in assemblies)
+            foreach (Assembly assembly in assemblies)
             {
                 if (assembly == null)
                 {
                     continue;
                 }
 
-                var assemblyName = assembly.GetName();
-                var version = assemblyName.Version != null ? assemblyName.Version.ToString() : "Unknown";
+                AssemblyName assemblyName = assembly.GetName();
+                string version = assemblyName.Version != null ? assemblyName.Version.ToString() : "Unknown";
                 string location;
 
                 try

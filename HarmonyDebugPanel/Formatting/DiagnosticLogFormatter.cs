@@ -15,18 +15,18 @@ namespace HarmonyDebugPanel.Formatting
                 throw new ArgumentNullException(nameof(report));
             }
 
-            var lines = new List<string>
-            {
+            List<string> lines =
+            [
                 "###############################################################################",
                 "#                                                                             #",
                 "#                     Harmony Diagnostic Report                             #",
                 "#                                                                             #",
                 "###############################################################################",
                 "Collected At: " + report.CollectedAt.ToString("u"),
-            };
+            ];
 
-            var bepInExPlugins = FilterBySource(report.Mods, ModSource.BepInExPlugin);
-            var lmmMods = FilterBySource(report.Mods, ModSource.Lmm);
+            List<ModInfo> bepInExPlugins = FilterBySource(report.Mods, ModSource.BepInExPlugin);
+            List<ModInfo> lmmMods = FilterBySource(report.Mods, ModSource.Lmm);
 
             lines.Add("BepInEx Plugins (" + bepInExPlugins.Count + "):");
             AddMods(lines, bepInExPlugins);
@@ -43,7 +43,7 @@ namespace HarmonyDebugPanel.Formatting
                 AddMissingPatches(lines, report.MissingPatches);
             }
 
-            foreach (var warning in report.Warnings)
+            foreach (string warning in report.Warnings)
             {
                 lines.Add("Warning: " + warning);
             }
@@ -51,7 +51,7 @@ namespace HarmonyDebugPanel.Formatting
             if (report.DebugInfo.Count > 0)
             {
                 lines.Add("Debug Info (" + report.DebugInfo.Count + "):");
-                foreach (var debug in report.DebugInfo)
+                foreach (string debug in report.DebugInfo)
                 {
                     lines.Add("  - " + debug);
                 }
@@ -63,8 +63,8 @@ namespace HarmonyDebugPanel.Formatting
 
         private static List<ModInfo> FilterBySource(IList<ModInfo> mods, ModSource source)
         {
-            var filtered = new List<ModInfo>();
-            foreach (var mod in mods)
+            List<ModInfo> filtered = [];
+            foreach (ModInfo mod in mods)
             {
                 if (mod.Source == source)
                 {
@@ -83,28 +83,21 @@ namespace HarmonyDebugPanel.Formatting
                 return;
             }
 
-            foreach (var mod in mods)
+            foreach (ModInfo mod in mods)
             {
-                var identifierSuffix = string.IsNullOrEmpty(mod.Identifier)
+                string identifierSuffix = string.IsNullOrEmpty(mod.Identifier)
                     ? string.Empty
                     : " [" + mod.Identifier + "]";
 
                 string patchStatus;
                 if (mod.ExpectedPatchCount >= 0)
                 {
-                    var failedCount = mod.ActivePatchCount < mod.ExpectedPatchCount ? (mod.ExpectedPatchCount - mod.ActivePatchCount) : 0;
-                    if (mod.ActivePatchCount == mod.ExpectedPatchCount)
-                    {
-                        patchStatus = $" [{mod.ActivePatchCount} loaded/{mod.ExpectedPatchCount} expected, {failedCount} failed]";
-                    }
-                    else if (mod.ActivePatchCount < mod.ExpectedPatchCount)
-                    {
-                        patchStatus = $" [{mod.ActivePatchCount} loaded/{mod.ExpectedPatchCount} expected, {failedCount} failed]";
-                    }
-                    else
-                    {
-                        patchStatus = $" [{mod.ActivePatchCount} loaded/{mod.ExpectedPatchCount} expected, {failedCount} failed]";
-                    }
+                    int failedCount = mod.ActivePatchCount < mod.ExpectedPatchCount ? (mod.ExpectedPatchCount - mod.ActivePatchCount) : 0;
+                    patchStatus = mod.ActivePatchCount == mod.ExpectedPatchCount
+                        ? $" [{mod.ActivePatchCount} loaded/{mod.ExpectedPatchCount} expected, {failedCount} failed]"
+                        : mod.ActivePatchCount < mod.ExpectedPatchCount
+                            ? $" [{mod.ActivePatchCount} loaded/{mod.ExpectedPatchCount} expected, {failedCount} failed]"
+                            : $" [{mod.ActivePatchCount} loaded/{mod.ExpectedPatchCount} expected, {failedCount} failed]";
                 }
                 else
                 {
@@ -117,9 +110,9 @@ namespace HarmonyDebugPanel.Formatting
 
         private static void AddMissingPatches(List<string> lines, IList<MissingPatchInfo> missingPatches)
         {
-            foreach (var missing in missingPatches)
+            foreach (MissingPatchInfo missing in missingPatches)
             {
-                var prefix = missing.PatchType == PatchType.Prefix ? "Prefix" : missing.PatchType == PatchType.Postfix ? "Postfix" : "Transpiler";
+                string prefix = missing.PatchType == PatchType.Prefix ? "Prefix" : missing.PatchType == PatchType.Postfix ? "Postfix" : "Transpiler";
                 lines.Add("  - [" + missing.PatchAssembly + "] " + prefix + " for " + missing.TargetMethod + " in " + missing.TargetType);
             }
         }
@@ -131,7 +124,7 @@ namespace HarmonyDebugPanel.Formatting
                 throw new ArgumentNullException(nameof(report));
             }
 
-            var lines = Format(report) as List<string> ?? new List<string>(Format(report));
+            List<string> lines = Format(report) as List<string> ?? [.. Format(report)];
 
             // Add Loaded Assemblies section
             lines.Add(string.Empty);
@@ -142,9 +135,9 @@ namespace HarmonyDebugPanel.Formatting
             }
             else
             {
-                foreach (var assembly in report.Assemblies)
+                foreach (AssemblyInfo assembly in report.Assemblies)
                 {
-                    var harmonyLabel = assembly.IsHarmonyRelated ? " [Harmony]" : string.Empty;
+                    string harmonyLabel = assembly.IsHarmonyRelated ? " [Harmony]" : string.Empty;
                     lines.Add("  - " + assembly.Name + " v" + assembly.Version + " :: " + assembly.Location + harmonyLabel);
                 }
             }
@@ -158,8 +151,8 @@ namespace HarmonyDebugPanel.Formatting
             }
             else
             {
-                var runtimeLines = runtimeLogContent.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-                foreach (var line in runtimeLines)
+                string[] runtimeLines = runtimeLogContent.Split([Environment.NewLine], StringSplitOptions.RemoveEmptyEntries);
+                foreach (string line in runtimeLines)
                 {
                     lines.Add("  " + line);
                 }
@@ -174,8 +167,8 @@ namespace HarmonyDebugPanel.Formatting
             }
             else
             {
-                var rhLines = retargetHarmonyLogContent.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-                foreach (var line in rhLines)
+                string[] rhLines = retargetHarmonyLogContent.Split([Environment.NewLine], StringSplitOptions.RemoveEmptyEntries);
+                foreach (string line in rhLines)
                 {
                     lines.Add("  " + line);
                 }
@@ -190,8 +183,8 @@ namespace HarmonyDebugPanel.Formatting
             }
             else
             {
-                var bepInExLines = bepInExLogContent.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-                foreach (var line in bepInExLines)
+                string[] bepInExLines = bepInExLogContent.Split([Environment.NewLine], StringSplitOptions.RemoveEmptyEntries);
+                foreach (string line in bepInExLines)
                 {
                     lines.Add("  " + line);
                 }
@@ -206,8 +199,8 @@ namespace HarmonyDebugPanel.Formatting
             }
             else
             {
-                var unityLines = unityLogContent.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-                foreach (var line in unityLines)
+                string[] unityLines = unityLogContent.Split([Environment.NewLine], StringSplitOptions.RemoveEmptyEntries);
+                foreach (string line in unityLines)
                 {
                     lines.Add("  " + line);
                 }
@@ -225,6 +218,8 @@ namespace HarmonyDebugPanel.Formatting
                     return "Harmony 1";
                 case HarmonyVersion.Harmony2:
                     return "Harmony 2";
+                case HarmonyVersion.Unknown:
+                    break;
                 default:
                     return "Unknown";
             }

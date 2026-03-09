@@ -40,7 +40,7 @@ namespace LobotomyCorporationMods.Common.Implementations
         public new bool TryGetValue([NotNull] TKey key,
             [CanBeNull] out TValue value)
         {
-            var success = base.TryGetValue(key, out value);
+            bool success = base.TryGetValue(key, out value);
 
             return success && value.GameObject.IsNotNull();
         }

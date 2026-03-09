@@ -24,8 +24,8 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 
         protected override bool WillAgentDieFromThisCreature()
         {
-            var isWeakened = Creature.IsBeautyAndTheBeastWeakened(_beautyBeastAnimTestAdapter);
-            var agentWillDie = isWeakened && SkillType == RwbpType.P;
+            bool isWeakened = Creature.IsBeautyAndTheBeastWeakened(_beautyBeastAnimTestAdapter);
+            bool agentWillDie = isWeakened && SkillType == RwbpType.P;
 
             return agentWillDie;
         }

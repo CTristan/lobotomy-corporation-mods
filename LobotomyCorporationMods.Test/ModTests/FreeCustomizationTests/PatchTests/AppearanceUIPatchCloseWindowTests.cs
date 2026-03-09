@@ -3,6 +3,7 @@
 #region
 
 using AwesomeAssertions;
+using Customizing;
 using LobotomyCorporationMods.FreeCustomization.Patches;
 using LobotomyCorporationMods.Test.Extensions;
 using Xunit;
@@ -16,11 +17,11 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests.PatchTest
         [Fact]
         public void The_Appearance_UI_does_not_close_itself_if_there_is_no_close_action()
         {
-            var appearanceUi = UnityTestExtensions.CreateAppearanceUi();
+            AppearanceUI appearanceUi = UnityTestExtensions.CreateAppearanceUi();
 
-            var result = appearanceUi.PatchBeforeCloseWindow();
+            bool result = appearanceUi.PatchBeforeCloseWindow();
 
-            result.Should().BeFalse();
+            _ = result.Should().BeFalse();
         }
     }
 }

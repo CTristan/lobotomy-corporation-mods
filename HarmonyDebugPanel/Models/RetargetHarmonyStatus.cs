@@ -2,27 +2,19 @@
 
 namespace HarmonyDebugPanel.Models
 {
-    public sealed class RetargetHarmonyStatus
+    public sealed class RetargetHarmonyStatus(bool isDetected, bool assemblyCSharpRetargeted, bool lobotomyBaseModLibRetargeted, string message)
     {
         public RetargetHarmonyStatus()
             : this(false, false, false, "Not detected")
         {
         }
 
-        public RetargetHarmonyStatus(bool isDetected, bool assemblyCSharpRetargeted, bool lobotomyBaseModLibRetargeted, string message)
-        {
-            IsDetected = isDetected;
-            AssemblyCSharpRetargeted = assemblyCSharpRetargeted;
-            LobotomyBaseModLibRetargeted = lobotomyBaseModLibRetargeted;
-            Message = message ?? string.Empty;
-        }
+        public bool IsDetected { get; private set; } = isDetected;
 
-        public bool IsDetected { get; private set; }
+        public bool AssemblyCSharpRetargeted { get; private set; } = assemblyCSharpRetargeted;
 
-        public bool AssemblyCSharpRetargeted { get; private set; }
+        public bool LobotomyBaseModLibRetargeted { get; private set; } = lobotomyBaseModLibRetargeted;
 
-        public bool LobotomyBaseModLibRetargeted { get; private set; }
-
-        public string Message { get; private set; }
+        public string Message { get; private set; } = message ?? string.Empty;
     }
 }

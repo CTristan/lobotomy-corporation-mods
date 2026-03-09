@@ -4,6 +4,7 @@
 
 using System;
 using AwesomeAssertions;
+using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.NotifyWhenAgentReceivesGift;
 using LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches;
 using LobotomyCorporationMods.Test.Extensions;
@@ -19,7 +20,7 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
         [Fact]
         public void Class_AgentSlot_Method_SetFilter_logs_exceptions()
         {
-            var mockLogger = TestExtensions.GetMockLogger();
+            Mock<ILogger> mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
             const int NumberOfLogs = 2;
 
@@ -33,8 +34,8 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
         public void Class_UnitModel_Method_AttachEgoGift_is_patched_correctly()
         {
             // ReSharper disable once StringLiteralTypo
-            var patch = typeof(UnitModelPatchAttachEgoGift);
-            var originalClass = typeof(UnitModel);
+            Type patch = typeof(UnitModelPatchAttachEgoGift);
+            Type originalClass = typeof(UnitModel);
             const string MethodName = nameof(UnitModel.AttachEGOgift);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
@@ -49,7 +50,7 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
                 _ = new Harmony_Patch();
             };
 
-            action.Should().NotThrow();
+            _ = action.Should().NotThrow();
         }
     }
 }

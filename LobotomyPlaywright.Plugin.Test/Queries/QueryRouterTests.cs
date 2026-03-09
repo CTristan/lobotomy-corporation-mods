@@ -2,9 +2,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using AwesomeAssertions;
 using LobotomyPlaywright.JsonModels;
-using LobotomyPlaywright.Protocol;
 using LobotomyPlaywright.Queries;
 using Xunit;
 
@@ -26,7 +26,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
 
         private static void SetGameReady(bool? ready)
         {
-            var property = typeof(GameStateQueries).GetProperty("IsGameQueryableOverride", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+            PropertyInfo property = typeof(GameStateQueries).GetProperty("IsGameQueryableOverride", BindingFlags.NonPublic | BindingFlags.Static);
             property?.SetValue(null, ready, null);
         }
 
@@ -37,19 +37,19 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             Request request = null;
 
             // Act
-            var response = QueryRouter.HandleQuery(request);
+            Response response = QueryRouter.HandleQuery(request);
 
             // Assert
-            response.Should().NotBeNull();
-            response.status.Should().Be("error");
-            response.error.Should().Contain("Missing target parameter");
+            _ = response.Should().NotBeNull();
+            _ = response.status.Should().Be("error");
+            _ = response.error.Should().Contain("Missing target parameter");
         }
 
         [Fact]
         public void HandleRequest_missing_target_returns_error()
         {
             // Arrange
-            var request = new Request
+            Request request = new()
             {
                 id = "req-1",
                 type = "query",
@@ -57,19 +57,19 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             };
 
             // Act
-            var response = QueryRouter.HandleQuery(request);
+            Response response = QueryRouter.HandleQuery(request);
 
             // Assert
-            response.Should().NotBeNull();
-            response.status.Should().Be("error");
-            response.error.Should().Contain("Missing target parameter");
+            _ = response.Should().NotBeNull();
+            _ = response.status.Should().Be("error");
+            _ = response.error.Should().Contain("Missing target parameter");
         }
 
         [Fact]
         public void HandleRequest_empty_target_returns_error()
         {
             // Arrange
-            var request = new Request
+            Request request = new()
             {
                 id = "req-1",
                 type = "query",
@@ -77,19 +77,19 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             };
 
             // Act
-            var response = QueryRouter.HandleQuery(request);
+            Response response = QueryRouter.HandleQuery(request);
 
             // Assert
-            response.Should().NotBeNull();
-            response.status.Should().Be("error");
-            response.error.Should().Contain("Missing target parameter");
+            _ = response.Should().NotBeNull();
+            _ = response.status.Should().Be("error");
+            _ = response.error.Should().Contain("Missing target parameter");
         }
 
         [Fact]
         public void HandleQuery_unknown_target_returns_error()
         {
             // Arrange
-            var request = new Request
+            Request request = new()
             {
                 id = "req-1",
                 type = "query",
@@ -97,19 +97,19 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             };
 
             // Act
-            var response = QueryRouter.HandleQuery(request);
+            Response response = QueryRouter.HandleQuery(request);
 
             // Assert
-            response.Should().NotBeNull();
-            response.status.Should().Be("error");
-            response.error.Should().Contain("Unknown query target: unknown");
+            _ = response.Should().NotBeNull();
+            _ = response.status.Should().Be("error");
+            _ = response.error.Should().Contain("Unknown query target: unknown");
         }
 
         [Fact]
         public void HandleQuery_game_not_ready_returns_error()
         {
             // Arrange
-            var request = new Request
+            Request request = new()
             {
                 id = "req-1",
                 type = "query",
@@ -117,20 +117,20 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             };
 
             // Act
-            var response = QueryRouter.HandleQuery(request);
+            Response response = QueryRouter.HandleQuery(request);
 
             // Assert
-            response.Should().NotBeNull();
-            response.status.Should().Be("error");
-            response.error.Should().Contain("Game is not in a queryable state");
-            response.code.Should().Be("GAME_NOT_READY");
+            _ = response.Should().NotBeNull();
+            _ = response.status.Should().Be("error");
+            _ = response.error.Should().Contain("Game is not in a queryable state");
+            _ = response.code.Should().Be("GAME_NOT_READY");
         }
 
         [Fact]
         public void HandleQuery_agents_target_case_insensitive()
         {
             // Arrange
-            var request = new Request
+            Request request = new()
             {
                 id = "req-1",
                 type = "query",
@@ -138,19 +138,19 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             };
 
             // Act
-            var response = QueryRouter.HandleQuery(request);
+            Response response = QueryRouter.HandleQuery(request);
 
             // Assert
-            response.Should().NotBeNull();
-            response.status.Should().Be("error");
-            response.error.Should().Contain("Game is not in a queryable state");
+            _ = response.Should().NotBeNull();
+            _ = response.status.Should().Be("error");
+            _ = response.error.Should().Contain("Game is not in a queryable state");
         }
 
         [Fact]
         public void HandleQuery_creatures_target_case_insensitive()
         {
             // Arrange
-            var request = new Request
+            Request request = new()
             {
                 id = "req-1",
                 type = "query",
@@ -158,19 +158,19 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             };
 
             // Act
-            var response = QueryRouter.HandleQuery(request);
+            Response response = QueryRouter.HandleQuery(request);
 
             // Assert
-            response.Should().NotBeNull();
-            response.status.Should().Be("error");
-            response.error.Should().Contain("Game is not in a queryable state");
+            _ = response.Should().NotBeNull();
+            _ = response.status.Should().Be("error");
+            _ = response.error.Should().Contain("Game is not in a queryable state");
         }
 
         [Fact]
         public void HandleQuery_game_target_case_insensitive()
         {
             // Arrange
-            var request = new Request
+            Request request = new()
             {
                 id = "req-1",
                 type = "query",
@@ -178,19 +178,19 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             };
 
             // Act
-            var response = QueryRouter.HandleQuery(request);
+            Response response = QueryRouter.HandleQuery(request);
 
             // Assert
-            response.Should().NotBeNull();
-            response.status.Should().Be("error");
-            response.error.Should().Contain("Game is not in a queryable state");
+            _ = response.Should().NotBeNull();
+            _ = response.status.Should().Be("error");
+            _ = response.error.Should().Contain("Game is not in a queryable state");
         }
 
         [Fact]
         public void HandleQuery_status_target_is_alias_for_game()
         {
             // Arrange
-            var request = new Request
+            Request request = new()
             {
                 id = "req-1",
                 type = "query",
@@ -198,19 +198,19 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             };
 
             // Act
-            var response = QueryRouter.HandleQuery(request);
+            Response response = QueryRouter.HandleQuery(request);
 
             // Assert
-            response.Should().NotBeNull();
-            response.status.Should().Be("error");
-            response.error.Should().Contain("Game is not in a queryable state");
+            _ = response.Should().NotBeNull();
+            _ = response.status.Should().Be("error");
+            _ = response.error.Should().Contain("Game is not in a queryable state");
         }
 
         [Fact]
         public void HandleQuery_sefira_target_case_insensitive()
         {
             // Arrange
-            var request = new Request
+            Request request = new()
             {
                 id = "req-1",
                 type = "query",
@@ -218,19 +218,19 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             };
 
             // Act
-            var response = QueryRouter.HandleQuery(request);
+            Response response = QueryRouter.HandleQuery(request);
 
             // Assert
-            response.Should().NotBeNull();
-            response.status.Should().Be("error");
-            response.error.Should().Contain("Game is not in a queryable state");
+            _ = response.Should().NotBeNull();
+            _ = response.status.Should().Be("error");
+            _ = response.error.Should().Contain("Game is not in a queryable state");
         }
 
         [Fact]
         public void HandleQuery_departments_target_is_alias_for_sefira()
         {
             // Arrange
-            var request = new Request
+            Request request = new()
             {
                 id = "req-1",
                 type = "query",
@@ -238,19 +238,19 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             };
 
             // Act
-            var response = QueryRouter.HandleQuery(request);
+            Response response = QueryRouter.HandleQuery(request);
 
             // Assert
-            response.Should().NotBeNull();
-            response.status.Should().Be("error");
-            response.error.Should().Contain("Game is not in a queryable state");
+            _ = response.Should().NotBeNull();
+            _ = response.status.Should().Be("error");
+            _ = response.error.Should().Contain("Game is not in a queryable state");
         }
 
         [Fact]
         public void HandleQuery_with_null_params_uses_empty_dict()
         {
             // Arrange
-            var request = new Request
+            Request request = new()
             {
                 id = "req-1",
                 type = "query",
@@ -259,31 +259,31 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             };
 
             // Act
-            var response = QueryRouter.HandleQuery(request);
+            Response response = QueryRouter.HandleQuery(request);
 
             // Assert
-            response.Should().NotBeNull();
-            response.status.Should().Be("error");
+            _ = response.Should().NotBeNull();
+            _ = response.status.Should().Be("error");
         }
 
         [Fact]
         public void HandleQuery_with_empty_params_works()
         {
             // Arrange
-            var request = new Request
+            Request request = new()
             {
                 id = "req-1",
                 type = "query",
                 target = "agents",
-                @params = new Dictionary<string, object>()
+                @params = []
             };
 
             // Act
-            var response = QueryRouter.HandleQuery(request);
+            Response response = QueryRouter.HandleQuery(request);
 
             // Assert
-            response.Should().NotBeNull();
-            response.status.Should().Be("error");
+            _ = response.Should().NotBeNull();
+            _ = response.status.Should().Be("error");
         }
 
         [Fact]
@@ -294,7 +294,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             // The "id" param in agent queries is ignored in ListAgents,
             // so this won't throw. But we can verify the structure handles
             // error cases properly.
-            var request = new Request
+            Request request = new()
             {
                 id = "req-1",
                 type = "query",
@@ -303,66 +303,66 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             };
 
             // Act
-            var response = QueryRouter.HandleQuery(request);
+            Response response = QueryRouter.HandleQuery(request);
 
             // Assert - Should return error response
-            response.Should().NotBeNull();
-            response.status.Should().Be("error");
-            response.error.Should().NotBeNullOrEmpty();
+            _ = response.Should().NotBeNull();
+            _ = response.status.Should().Be("error");
+            _ = response.error.Should().NotBeNullOrEmpty();
         }
 
         [Fact]
         public void HandleQuery_ui_target_returns_success()
         {
             // Arrange - UI queries work regardless of game state
-            var request = new Request
+            Request request = new()
             {
                 id = "req-1",
                 type = "query",
                 target = "ui",
-                @params = new Dictionary<string, object>()
+                @params = []
             };
 
             // Act
-            var response = QueryRouter.HandleQuery(request);
+            Response response = QueryRouter.HandleQuery(request);
 
             // Assert
-            response.Should().NotBeNull();
+            _ = response.Should().NotBeNull();
             if (response.status == "error")
             {
-                System.Console.WriteLine($"UI query error: {response.error}, code: {response.code}");
+                Console.WriteLine($"UI query error: {response.error}, code: {response.code}");
             }
-            response.status.Should().Be("ok");
-            response.DataObject.Should().NotBeNull();
-            response.id.Should().Be("req-1");
+            _ = response.status.Should().Be("ok");
+            _ = response.DataObject.Should().NotBeNull();
+            _ = response.id.Should().Be("req-1");
         }
 
         [Fact]
         public void HandleQuery_ui_target_case_insensitive()
         {
             // Arrange
-            var request = new Request
+            Request request = new()
             {
                 id = "req-1",
                 type = "query",
                 target = "UI",
-                @params = new Dictionary<string, object>()
+                @params = []
             };
 
             // Act
-            var response = QueryRouter.HandleQuery(request);
+            Response response = QueryRouter.HandleQuery(request);
 
             // Assert
-            response.Should().NotBeNull();
-            response.status.Should().Be("ok");
-            response.DataObject.Should().NotBeNull();
+            _ = response.Should().NotBeNull();
+            _ = response.status.Should().Be("ok");
+            _ = response.DataObject.Should().NotBeNull();
         }
 
         [Fact]
         public void HandleQuery_ui_with_depth_summary()
         {
             // Arrange
-            var request = new Request
+            Request request = new()
             {
                 id = "req-1",
                 type = "query",
@@ -371,19 +371,19 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             };
 
             // Act
-            var response = QueryRouter.HandleQuery(request);
+            Response response = QueryRouter.HandleQuery(request);
 
             // Assert
-            response.Should().NotBeNull();
-            response.status.Should().Be("ok");
-            response.DataObject.Should().NotBeNull();
+            _ = response.Should().NotBeNull();
+            _ = response.status.Should().Be("ok");
+            _ = response.DataObject.Should().NotBeNull();
         }
 
         [Fact]
         public void HandleQuery_ui_with_window_filter()
         {
             // Arrange
-            var request = new Request
+            Request request = new()
             {
                 id = "req-1",
                 type = "query",
@@ -396,19 +396,19 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             };
 
             // Act
-            var response = QueryRouter.HandleQuery(request);
+            Response response = QueryRouter.HandleQuery(request);
 
             // Assert
-            response.Should().NotBeNull();
-            response.status.Should().Be("ok");
-            response.DataObject.Should().NotBeNull();
+            _ = response.Should().NotBeNull();
+            _ = response.status.Should().Be("ok");
+            _ = response.DataObject.Should().NotBeNull();
         }
 
         [Fact]
         public void HandleQuery_ui_data_has_expected_structure()
         {
             // Arrange
-            var request = new Request
+            Request request = new()
             {
                 id = "req-1",
                 type = "query",
@@ -416,13 +416,13 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             };
 
             // Act
-            var response = QueryRouter.HandleQuery(request);
+            Response response = QueryRouter.HandleQuery(request);
 
             // Assert - The data should be a UiStateData object
-            response.Should().NotBeNull();
-            response.status.Should().Be("ok");
-            response.DataObject.Should().NotBeNull();
-            response.DataObject.Should().BeOfType<UiStateData>();
+            _ = response.Should().NotBeNull();
+            _ = response.status.Should().Be("ok");
+            _ = response.DataObject.Should().NotBeNull();
+            _ = response.DataObject.Should().BeOfType<UiStateData>();
         }
     }
 }

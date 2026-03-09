@@ -6,7 +6,9 @@ using System;
 using AwesomeAssertions;
 using LobotomyCorporationMods.BadLuckProtectionForGifts;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Patches;
+using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.Test.Extensions;
+using Moq;
 using Xunit;
 
 #endregion
@@ -24,14 +26,14 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
                 _ = new Harmony_Patch();
             };
 
-            act.Should().NotThrow();
+            _ = act.Should().NotThrow();
         }
 
         [Fact]
         public void Class_CreatureEquipmentMakeInfo_Method_GetProb_is_patched_correctly()
         {
-            var patch = typeof(CreatureEquipmentMakeInfoPatchGetProb);
-            var originalClass = typeof(CreatureEquipmentMakeInfo);
+            Type patch = typeof(CreatureEquipmentMakeInfoPatchGetProb);
+            Type originalClass = typeof(CreatureEquipmentMakeInfo);
             const string MethodName = nameof(CreatureEquipmentMakeInfo.GetProb);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
@@ -40,9 +42,9 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
         [Fact]
         public void Class_CreatureEquipmentMakeInfo_Method_GetProb_logs_exceptions()
         {
-            var mockLogger = TestExtensions.GetMockLogger();
+            Mock<ILogger> mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
-            var result = 0f;
+            float result = 0f;
 
             void Action()
             {
@@ -57,8 +59,8 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
         [Fact]
         public void Class_GameSceneController_Method_OnClickNextDay_is_patched_correctly()
         {
-            var patch = typeof(GameSceneControllerPatchOnClickNextDay);
-            var originalClass = typeof(GameSceneController);
+            Type patch = typeof(GameSceneControllerPatchOnClickNextDay);
+            Type originalClass = typeof(GameSceneController);
             const string MethodName = nameof(GameSceneController.OnClickNextDay);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
@@ -67,7 +69,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
         [Fact]
         public void Class_GameSceneController_Method_OnClickNextDay_logs_exceptions()
         {
-            var mockLogger = TestExtensions.GetMockLogger();
+            Mock<ILogger> mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
             Action action = GameSceneControllerPatchOnClickNextDay.Postfix;
@@ -78,8 +80,8 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
         [Fact]
         public void Class_GameSceneController_Method_OnStageStart_is_patched_correctly()
         {
-            var patch = typeof(GameSceneControllerPatchOnStageStart);
-            var originalClass = typeof(GameSceneController);
+            Type patch = typeof(GameSceneControllerPatchOnStageStart);
+            Type originalClass = typeof(GameSceneController);
             const string MethodName = nameof(GameSceneController.OnStageStart);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
@@ -88,7 +90,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
         [Fact]
         public void Class_GameSceneController_Method_OnStageStart_logs_exceptions()
         {
-            var mockLogger = TestExtensions.GetMockLogger();
+            Mock<ILogger> mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
             Action action = GameSceneControllerPatchOnStageStart.Postfix;
@@ -99,8 +101,8 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
         [Fact]
         public void Class_NewTitleScript_Method_OnClickNewGame_is_patched_correctly()
         {
-            var patch = typeof(NewTitleScriptPatchOnClickNewGame);
-            var originalClass = typeof(NewTitleScript);
+            Type patch = typeof(NewTitleScriptPatchOnClickNewGame);
+            Type originalClass = typeof(NewTitleScript);
             const string MethodName = nameof(NewTitleScript.OnClickNewGame);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
@@ -109,7 +111,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
         [Fact]
         public void Class_NewTitleScript_Method_OnClickNewGame_logs_exceptions()
         {
-            var mockLogger = TestExtensions.GetMockLogger();
+            Mock<ILogger> mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
             Action action = NewTitleScriptPatchOnClickNewGame.Postfix;
@@ -120,8 +122,8 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
         [Fact]
         public void Class_UseSkill_Method_FinishWorkSuccessfully_is_patched_correctly()
         {
-            var patch = typeof(UseSkillPatchFinishWorkSuccessfully);
-            var originalClass = typeof(UseSkill);
+            Type patch = typeof(UseSkillPatchFinishWorkSuccessfully);
+            Type originalClass = typeof(UseSkill);
             const string MethodName = PrivateMethods.UseSkill.FinishWorkSuccessfully;
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
@@ -130,10 +132,10 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
         [Fact]
         public void Class_UseSkill_Method_FinishWorkSuccessfully_logs_exceptions()
         {
-            var mockLogger = TestExtensions.GetMockLogger();
+            Mock<ILogger> mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
-            void Action()
+            static void Action()
             {
                 // ReSharper disable once AssignNullToNotNullAttribute
                 // Forcing null argument to test exception logging.

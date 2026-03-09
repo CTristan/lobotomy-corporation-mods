@@ -22,7 +22,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 
         public DirectoryInfoAdapter([NotNull] DirectoryInfo directoryInfo)
         {
-            Guard.Against.Null(directoryInfo, nameof(directoryInfo));
+            _ = Guard.Against.Null(directoryInfo, nameof(directoryInfo));
             _directoryInfo = directoryInfo;
         }
 

@@ -39,14 +39,14 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
         {
             ICreatureEvaluator evaluator;
 
-            if (commandWindow.TryGetCreature(out var creature) && !creature.IsNull())
+            if (commandWindow.TryGetCreature(out CreatureModel creature) && !creature.IsNull())
             {
-                var skillType = commandWindow.CurrentSkill.rwbpType;
-                var agentDataAdapter = new AgentDataAdapter(agent);
-                var creatureDataAdapter = new CreatureDataAdapter(creature);
-                var evaluatorParameters = new CreatureEvaluatorParameters(agentDataAdapter, creatureDataAdapter, skillType, beautyBeastAnimTestAdapter, yggdrasilAnimTestAdapter);
+                RwbpType skillType = commandWindow.CurrentSkill.rwbpType;
+                AgentDataAdapter agentDataAdapter = new AgentDataAdapter(agent);
+                CreatureDataAdapter creatureDataAdapter = new CreatureDataAdapter(creature);
+                CreatureEvaluatorParameters evaluatorParameters = new CreatureEvaluatorParameters(agentDataAdapter, creatureDataAdapter, skillType, beautyBeastAnimTestAdapter, yggdrasilAnimTestAdapter);
 
-                evaluator = evaluators.TryGetValue((CreatureIds)creature.metadataId, out var factoryMethod) ? factoryMethod(evaluatorParameters) : new DefaultEvaluator(agentDataAdapter, creatureDataAdapter, skillType);
+                evaluator = evaluators.TryGetValue((CreatureIds)creature.metadataId, out Func<CreatureEvaluatorParameters, ICreatureEvaluator> factoryMethod) ? factoryMethod(evaluatorParameters) : new DefaultEvaluator(agentDataAdapter, creatureDataAdapter, skillType);
             }
             else
             {
@@ -61,7 +61,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
         {
             creature = null;
 
-            var unitModel = commandWindow.CurrentTarget;
+            UnitModel unitModel = commandWindow.CurrentTarget;
             if (unitModel is CreatureModel creatureModel)
             {
                 creature = creatureModel;

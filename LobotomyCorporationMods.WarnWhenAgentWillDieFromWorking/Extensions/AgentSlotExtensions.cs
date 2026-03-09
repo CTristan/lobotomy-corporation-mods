@@ -23,8 +23,8 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
             IBeautyBeastAnimTestAdapter beautyBeastAnimTestAdapter,
             IYggdrasilAnimTestAdapter yggdrasilAnimTestAdapter)
         {
-            var agent = agentSlot.CurrentAgent;
-            var evaluator = commandWindow.GetCreatureEvaluator(agent, evaluators, beautyBeastAnimTestAdapter, yggdrasilAnimTestAdapter);
+            AgentModel agent = agentSlot.CurrentAgent;
+            ICreatureEvaluator evaluator = commandWindow.GetCreatureEvaluator(agent, evaluators, beautyBeastAnimTestAdapter, yggdrasilAnimTestAdapter);
 
             return evaluator.WillAgentDie();
         }

@@ -16,7 +16,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
         [Fact]
         public void Restarting_the_day_reloads_the_saved_data_and_overwrites_the_progress_made_that_day()
         {
-            var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
+            Mock<IAgentWorkTracker> mockAgentWorkTracker = new();
 
             GameSceneControllerPatchOnStageStart.PatchAfterOnStageStart(mockAgentWorkTracker.Object);
 

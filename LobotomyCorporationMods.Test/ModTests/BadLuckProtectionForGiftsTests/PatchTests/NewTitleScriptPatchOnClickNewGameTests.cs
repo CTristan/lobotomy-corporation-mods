@@ -16,7 +16,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
         [Fact]
         public void Starting_a_new_game_resets_the_tracker()
         {
-            var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
+            Mock<IAgentWorkTracker> mockAgentWorkTracker = new();
 
             NewTitleScriptPatchOnClickNewGame.PatchAfterOnClickNewGame(mockAgentWorkTracker.Object);
 

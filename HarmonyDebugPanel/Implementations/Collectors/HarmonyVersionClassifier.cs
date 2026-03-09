@@ -22,17 +22,17 @@ namespace HarmonyDebugPanel.Implementations.Collectors
                 return HarmonyVersion.Unknown;
             }
 
-            var hasHarmony1 = false;
-            var hasHarmony2 = false;
+            bool hasHarmony1 = false;
+            bool hasHarmony2 = false;
 
-            foreach (var reference in references)
+            foreach (AssemblyName reference in references)
             {
                 if (reference == null)
                 {
                     continue;
                 }
 
-                var referenceName = reference.Name ?? string.Empty;
+                string referenceName = reference.Name ?? string.Empty;
                 if (referenceName.Equals(Harmony1AssemblyName, StringComparison.OrdinalIgnoreCase) ||
                     referenceName.Equals(Harmony12AssemblyName, StringComparison.OrdinalIgnoreCase) ||
                     referenceName.Equals(Harmony012AssemblyName, StringComparison.OrdinalIgnoreCase))
@@ -45,17 +45,7 @@ namespace HarmonyDebugPanel.Implementations.Collectors
                 }
             }
 
-            if (hasHarmony1)
-            {
-                return HarmonyVersion.Harmony1;
-            }
-
-            if (hasHarmony2)
-            {
-                return HarmonyVersion.Harmony2;
-            }
-
-            return HarmonyVersion.Unknown;
+            return hasHarmony1 ? HarmonyVersion.Harmony1 : hasHarmony2 ? HarmonyVersion.Harmony2 : HarmonyVersion.Unknown;
         }
     }
 }

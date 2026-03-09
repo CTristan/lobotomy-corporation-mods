@@ -4,14 +4,16 @@
 
 using Customizing;
 using JetBrains.Annotations;
+using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.FreeCustomization;
 using LobotomyCorporationMods.Test.Extensions;
+using Moq;
 
 #endregion
 
 namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests
 {
-    public class FreeCustomizationModTests
+    internal class FreeCustomizationModTests
     {
         protected const int Twice = 2;
         private const AgentModel DefaultAgentModel = null;
@@ -20,7 +22,7 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests
         protected FreeCustomizationModTests()
         {
             _ = new Harmony_Patch();
-            var mockLogger = TestExtensions.GetMockLogger();
+            Mock<ILogger> mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
         }
 

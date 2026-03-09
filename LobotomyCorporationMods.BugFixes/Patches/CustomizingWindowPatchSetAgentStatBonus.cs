@@ -26,9 +26,9 @@ namespace LobotomyCorporationMods.BugFixes.Patches
             [NotNull] AgentData data,
             [CanBeNull] ICustomizingWindowTestAdapter customizingWindowTestAdapter = null)
         {
-            Guard.Against.Null(instance, nameof(instance));
-            Guard.Against.Null(agent, nameof(agent));
-            Guard.Against.Null(data, nameof(data));
+            _ = Guard.Against.Null(instance, nameof(instance));
+            _ = Guard.Against.Null(agent, nameof(agent));
+            _ = Guard.Against.Null(data, nameof(data));
 
             // This is our custom fixed update
             instance.UpdateAgentStats(agent, data, customizingWindowTestAdapter);

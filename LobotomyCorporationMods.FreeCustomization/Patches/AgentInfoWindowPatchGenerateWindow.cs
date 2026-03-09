@@ -26,7 +26,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
             [CanBeNull] ICustomizingWindowTestAdapter customizingWindowTestAdapter = null,
             [CanBeNull] IGameObjectTestAdapter gameObjectTestAdapter = null)
         {
-            Guard.Against.Null(instance, nameof(instance));
+            _ = Guard.Against.Null(instance, nameof(instance));
 
             instance.OpenAppearancePanel(agentInfoWindowUiComponentsTestAdapter, customizingWindowTestAdapter, gameObjectTestAdapter);
         }
@@ -39,7 +39,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
             try
             {
                 // GenerateWindow is a static method, so we can't get an instance of it through Harmony.
-                var agentInfoWindow = AgentInfoWindow.currentWindow;
+                AgentInfoWindow agentInfoWindow = AgentInfoWindow.currentWindow;
 
                 agentInfoWindow.PatchAfterGenerateWindow();
             }

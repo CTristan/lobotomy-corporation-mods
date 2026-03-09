@@ -3,7 +3,6 @@
 #region
 
 using LobotomyCorporationMods.Common.Enums;
-using LobotomyCorporationMods.Common.Implementations.Facades;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
 
 #endregion
@@ -27,7 +26,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 
         public bool WillAgentDie()
         {
-            var agentWillDie = false;
+            bool agentWillDie = false;
 
             // Make sure we have completed observation so that we can't cheat
             if (Creature.IsMaxObserved())

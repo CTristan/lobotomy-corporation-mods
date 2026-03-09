@@ -26,9 +26,9 @@ namespace LobotomyCorporationMods.Common.Implementations
 
         public void WriteException(Exception exception)
         {
-            var message = $"ERROR: {exception}";
+            string message = $"ERROR: {exception}";
 
-            foreach (var target in _targets)
+            foreach (ILoggerTarget target in _targets)
             {
                 target.WriteToLoggerTarget(message);
             }

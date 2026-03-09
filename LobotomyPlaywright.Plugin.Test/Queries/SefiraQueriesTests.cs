@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 using System;
+using System.Collections.Generic;
 using AwesomeAssertions;
 using LobotomyPlaywright.Queries;
 using Xunit;
@@ -16,7 +17,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             Action act = () => SefiraQueries.ListSefira();
 
             // Assert - method should not throw
-            act.Should().NotThrow();
+            _ = act.Should().NotThrow();
         }
 
         [Fact]
@@ -24,24 +25,24 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
         {
             // Act - SefiraManager.instance creates a new instance if null
             // The SefiraManager always has data (the Sefira departments)
-            var sefiras = SefiraQueries.ListSefira();
+            List<SefiraData> sefiras = SefiraQueries.ListSefira();
 
             // Assert - Should return data (even if empty agent/creature lists)
-            sefiras.Should().NotBeNull();
+            _ = sefiras.Should().NotBeNull();
             // The number of sefiras is fixed in the game
-            sefiras.Should().HaveCountGreaterThanOrEqualTo(10); // At least the named Sefira
+            _ = sefiras.Should().HaveCountGreaterThanOrEqualTo(10); // At least the named Sefira
         }
 
         [Fact]
         public void GetSefira_with_valid_sefira_enum_returns_data()
         {
             // Act - Get a valid Sefira (MALKUT)
-            var sefira = SefiraQueries.GetSefira(SefiraEnum.MALKUT);
+            SefiraData sefira = SefiraQueries.GetSefira(SefiraEnum.MALKUT);
 
             // Assert - Should return data
-            sefira.Should().NotBeNull();
-            sefira.AgentIds.Should().NotBeNull();
-            sefira.CreatureIds.Should().NotBeNull();
+            _ = sefira.Should().NotBeNull();
+            _ = sefira.AgentIds.Should().NotBeNull();
+            _ = sefira.CreatureIds.Should().NotBeNull();
         }
 
         [Fact]
@@ -51,7 +52,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             Action act = () => SefiraQueries.GetSefira(SefiraEnum.MALKUT);
 
             // Assert - method should not throw
-            act.Should().NotThrow();
+            _ = act.Should().NotThrow();
         }
     }
 }

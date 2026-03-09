@@ -38,27 +38,27 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
                 const float SecondAgentWorkCount = 2f;
                 const float ThirdAgentWorkCount = 3f;
 
-                var firstAgentFirstGift = new object[]
-                {
+                object[] firstAgentFirstGift =
+                [
                     FirstGiftData, DefaultGiftName, FirstAgentId, FirstAgentWorkCount,
-                };
+                ];
 
-                var secondAgentFirstGift = new object[]
-                {
+                object[] secondAgentFirstGift =
+                [
                     SecondGiftData, DefaultGiftName, SecondAgentId, SecondAgentWorkCount,
-                };
+                ];
 
-                var firstAgentSecondGift = new object[]
-                {
+                object[] firstAgentSecondGift =
+                [
                     ThirdGiftData, SecondGiftNameSet, FirstAgentId, ThirdAgentWorkCount,
-                };
+                ];
 
-                return new List<object[]>
-                {
+                return
+                [
                     firstAgentFirstGift,
                     secondAgentFirstGift,
                     firstAgentSecondGift,
-                };
+                ];
             }
         }
 
@@ -66,11 +66,11 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
         public void Converting_a_tracker_to_a_string_with_a_single_gift_and_a_single_agent_returns_the_correct_string()
         {
             const string DataFileName = nameof(Converting_a_tracker_to_a_string_with_a_single_gift_and_a_single_agent_returns_the_correct_string);
-            var agentWorkTracker = CreateAgentWorkTracker(DataFileName);
+            AgentWorkTracker agentWorkTracker = CreateAgentWorkTracker(DataFileName);
             agentWorkTracker.IncrementAgentWorkCount(DefaultGiftName, 1L);
-            var expected = $"{DefaultGiftName}^{1L.ToString(CultureInfo.CurrentCulture)};1";
+            string expected = $"{DefaultGiftName}^{1L.ToString(CultureInfo.CurrentCulture)};1";
 
-            var actual = agentWorkTracker.ToString();
+            string actual = agentWorkTracker.ToString();
 
             Assert.Equal(expected, actual);
         }
@@ -84,7 +84,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
             const string SecondGiftName = "Second";
             const long SecondAgentId = 1L + 1;
 
-            var agentWorkTracker = CreateAgentWorkTracker(DataFileName);
+            AgentWorkTracker agentWorkTracker = CreateAgentWorkTracker(DataFileName);
 
             // First gift first agent
             agentWorkTracker.IncrementAgentWorkCount(DefaultGiftName, 1L);
@@ -94,11 +94,11 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
 
             // Second gift second agent
             agentWorkTracker.IncrementAgentWorkCount(SecondGiftName, SecondAgentId, SecondGiftCount);
-            var expected = string.Format(CultureInfo.CurrentCulture, "{0}^{1};1^{2};1|{3}^{2};2", DefaultGiftName, 1L.ToString(CultureInfo.CurrentCulture),
+            string expected = string.Format(CultureInfo.CurrentCulture, "{0}^{1};1^{2};1|{3}^{2};2", DefaultGiftName, 1L.ToString(CultureInfo.CurrentCulture),
                 SecondAgentId.ToString(CultureInfo.CurrentCulture), SecondGiftName);
 
             // Act
-            var actual = agentWorkTracker.ToString();
+            string actual = agentWorkTracker.ToString();
 
             // Assert
             Assert.Equal(expected, actual);
@@ -108,11 +108,11 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
         public void Getting_last_agent_work_count_when_gift_not_yet_worked_on_returns_zero()
         {
             const string DataFileName = nameof(Getting_last_agent_work_count_when_gift_not_yet_worked_on_returns_zero);
-            var agentWorkTracker = CreateAgentWorkTracker(DataFileName);
+            AgentWorkTracker agentWorkTracker = CreateAgentWorkTracker(DataFileName);
 
-            var result = agentWorkTracker.GetLastAgentWorkCountByGift(DefaultGiftName);
+            float result = agentWorkTracker.GetLastAgentWorkCountByGift(DefaultGiftName);
 
-            result.Should().Be(0f);
+            _ = result.Should().Be(0f);
         }
 
         [Theory]
@@ -123,14 +123,14 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
             float numberOfTimes)
         {
             // Arrange
-            var dataFileName = $"{nameof(Loading_data_from_a_saved_tracker_file_populates_a_valid_tracker)}_{giftName}_{agentId}_{numberOfTimes}";
-            var agentWorkTracker = CreateAgentWorkTracker(dataFileName, trackerData);
+            string dataFileName = $"{nameof(Loading_data_from_a_saved_tracker_file_populates_a_valid_tracker)}_{giftName}_{agentId}_{numberOfTimes}";
+            AgentWorkTracker agentWorkTracker = CreateAgentWorkTracker(dataFileName, trackerData);
 
             // Act
-            var result = agentWorkTracker.GetLastAgentWorkCountByGift(giftName);
+            float result = agentWorkTracker.GetLastAgentWorkCountByGift(giftName);
 
             // Assert
-            result.Should().Be(numberOfTimes);
+            _ = result.Should().Be(numberOfTimes);
         }
 
         [Theory]
@@ -140,10 +140,10 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
             long agentId,
             float numberOfTimes)
         {
-            var appendText = $"_{giftName}_{agentId}_{numberOfTimes}";
-            var dataFileName = nameof(Loading_data_multiple_times_from_a_saved_tracker_file_does_not_duplicate_work_progress).ShortenBy(appendText.Length);
+            string appendText = $"_{giftName}_{agentId}_{numberOfTimes}";
+            string dataFileName = nameof(Loading_data_multiple_times_from_a_saved_tracker_file_does_not_duplicate_work_progress).ShortenBy(appendText.Length);
             dataFileName += appendText;
-            var agentWorkTracker = CreateAgentWorkTracker(dataFileName, trackerData);
+            AgentWorkTracker agentWorkTracker = CreateAgentWorkTracker(dataFileName, trackerData);
 
             agentWorkTracker.Load();
             agentWorkTracker.Load();
@@ -158,18 +158,18 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
             const string DataFileName = nameof(Resetting_tracker_clears_all_gifts_and_saves_the_file);
             const string TrackerData = DefaultGiftName + "^1;1";
 
-            var mockFileManager = TestExtensions.GetMockFileManager();
-            var agentWorkTracker = CreateAgentWorkTracker(DataFileName, TrackerData, mockFileManager.Object);
+            Mock<IFileManager> mockFileManager = TestExtensions.GetMockFileManager();
+            AgentWorkTracker agentWorkTracker = CreateAgentWorkTracker(DataFileName, TrackerData, mockFileManager.Object);
             agentWorkTracker.Load();
 
             // Quick sanity check that we actually have gifts loaded
-            agentWorkTracker.GetLastAgentWorkCountByGift(DefaultGiftName).Should().BeGreaterThan(0);
+            _ = agentWorkTracker.GetLastAgentWorkCountByGift(DefaultGiftName).Should().BeGreaterThan(0);
 
             // Act
             agentWorkTracker.Reset();
 
             // Assert
-            agentWorkTracker.GetLastAgentWorkCountByGift(DefaultGiftName).Should().Be(0);
+            _ = agentWorkTracker.GetLastAgentWorkCountByGift(DefaultGiftName).Should().Be(0);
             mockFileManager.Verify(manager => manager.WriteAllText(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         }
 
@@ -191,7 +191,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
         private static void CreateTestTrackerFile([NotNull] string fileName,
             string trackerData)
         {
-            var fileNameWithPath = Path.Combine(Directory.GetCurrentDirectory(), fileName);
+            string fileNameWithPath = Path.Combine(Directory.GetCurrentDirectory(), fileName);
             File.WriteAllText(fileNameWithPath, trackerData);
         }
 

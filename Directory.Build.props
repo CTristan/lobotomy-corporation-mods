@@ -29,4 +29,9 @@
   <PropertyGroup Condition="'$(IsTestProject)' == 'true'">
     <NoWarn>$(NoWarn);NU1702</NoWarn>
   </PropertyGroup>
+  <!-- Needed to support rule IDE0130: https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0130-->
+  <ItemGroup>
+    <CompilerVisibleProperty Include="RootNamespace" />
+    <CompilerVisibleProperty Include="ProjectDir" />
+  </ItemGroup>
 </Project>

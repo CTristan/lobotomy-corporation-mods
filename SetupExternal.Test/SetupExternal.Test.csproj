@@ -6,6 +6,7 @@
     <ProjectGuid>{B2C3D4E5-6F7A-8B9C-0D1E-2F3A4B5C6D7E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Mono.Cecil" Version="0.11.6"/>

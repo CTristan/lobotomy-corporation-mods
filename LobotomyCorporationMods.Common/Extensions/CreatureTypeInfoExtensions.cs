@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 
+using System.Collections.Generic;
 using JetBrains.Annotations;
 
 namespace LobotomyCorporationMods.Common.Extensions
@@ -8,7 +9,7 @@ namespace LobotomyCorporationMods.Common.Extensions
     {
         internal static CreatureEquipmentMakeInfo GetGift([NotNull] this CreatureTypeInfo creatureTypeInfo)
         {
-            var equipment = creatureTypeInfo.equipMakeInfos;
+            List<CreatureEquipmentMakeInfo> equipment = creatureTypeInfo.equipMakeInfos;
 
             return equipment.Find(info => info.equipTypeInfo.type == EquipmentTypeInfo.EquipmentType.SPECIAL);
         }

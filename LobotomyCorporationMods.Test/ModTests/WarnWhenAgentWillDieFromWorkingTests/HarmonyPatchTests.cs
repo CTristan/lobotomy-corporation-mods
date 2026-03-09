@@ -5,9 +5,11 @@
 using System;
 using AwesomeAssertions;
 using CommandWindow;
+using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.Test.Extensions;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches;
+using Moq;
 using Xunit;
 
 #endregion
@@ -19,8 +21,8 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         [Fact]
         public void Class_AgentSlot_Method_SetFilter_is_patched_correctly()
         {
-            var patch = typeof(AgentSlotPatchSetFilter);
-            var originalClass = typeof(AgentSlot);
+            Type patch = typeof(AgentSlotPatchSetFilter);
+            Type originalClass = typeof(AgentSlot);
             const string MethodName = nameof(AgentSlot.SetFilter);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
@@ -29,10 +31,10 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         [Fact]
         public void Class_AgentSlot_Method_SetFilter_logs_exceptions()
         {
-            var mockLogger = TestExtensions.GetMockLogger();
+            Mock<ILogger> mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
-            void Action()
+            static void Action()
             {
                 // ReSharper disable once AssignNullToNotNullAttribute
                 // Forcing null argument to test exception logging.
@@ -51,7 +53,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
                 _ = new Harmony_Patch();
             };
 
-            action.Should().NotThrow();
+            _ = action.Should().NotThrow();
         }
     }
 }

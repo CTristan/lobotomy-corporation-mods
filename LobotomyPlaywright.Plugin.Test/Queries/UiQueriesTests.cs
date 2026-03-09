@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 using System;
+using System.Collections.Generic;
 using AwesomeAssertions;
 using LobotomyPlaywright.Queries;
 using Xunit;
@@ -13,113 +14,113 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
         public void GetUiState_with_default_parameters_returns_UiStateData()
         {
             // Act
-            var uiState = UiQueries.GetUiState();
+            UiStateData uiState = UiQueries.GetUiState();
 
             // Assert
-            uiState.Should().NotBeNull();
-            uiState.Windows.Should().NotBeNull();
-            uiState.ActivatedSlots.Should().NotBeNull();
-            uiState.ModElements.Should().NotBeNull();
+            _ = uiState.Should().NotBeNull();
+            _ = uiState.Windows.Should().NotBeNull();
+            _ = uiState.ActivatedSlots.Should().NotBeNull();
+            _ = uiState.ModElements.Should().NotBeNull();
         }
 
         [Fact]
         public void GetUiState_with_summary_depth_returns_UiStateData()
         {
             // Act
-            var uiState = UiQueries.GetUiState(depth: "summary");
+            UiStateData uiState = UiQueries.GetUiState(depth: "summary");
 
             // Assert
-            uiState.Should().NotBeNull();
-            uiState.Windows.Should().NotBeNull();
-            uiState.ActivatedSlots.Should().NotBeNull();
+            _ = uiState.Should().NotBeNull();
+            _ = uiState.Windows.Should().NotBeNull();
+            _ = uiState.ActivatedSlots.Should().NotBeNull();
         }
 
         [Fact]
         public void GetUiState_with_full_depth_returns_UiStateData()
         {
             // Act
-            var uiState = UiQueries.GetUiState(depth: "full");
+            UiStateData uiState = UiQueries.GetUiState(depth: "full");
 
             // Assert
-            uiState.Should().NotBeNull();
-            uiState.Windows.Should().NotBeNull();
-            uiState.ActivatedSlots.Should().NotBeNull();
+            _ = uiState.Should().NotBeNull();
+            _ = uiState.Windows.Should().NotBeNull();
+            _ = uiState.ActivatedSlots.Should().NotBeNull();
         }
 
         [Fact]
         public void GetUiState_with_window_depth_and_filter_returns_UiStateData()
         {
             // Act
-            var uiState = UiQueries.GetUiState(depth: "window", windowFilter: "AgentInfoWindow");
+            UiStateData uiState = UiQueries.GetUiState(depth: "window", windowFilter: "AgentInfoWindow");
 
             // Assert
-            uiState.Should().NotBeNull();
-            uiState.Windows.Should().NotBeNull();
+            _ = uiState.Should().NotBeNull();
+            _ = uiState.Windows.Should().NotBeNull();
         }
 
         [Fact]
         public void GetUiState_with_null_depth_returns_UiStateData()
         {
             // Act
-            var uiState = UiQueries.GetUiState(depth: null);
+            UiStateData uiState = UiQueries.GetUiState(depth: null);
 
             // Assert
-            uiState.Should().NotBeNull();
+            _ = uiState.Should().NotBeNull();
         }
 
         [Fact]
         public void GetUiState_with_empty_string_depth_returns_UiStateData()
         {
             // Act
-            var uiState = UiQueries.GetUiState(depth: "");
+            UiStateData uiState = UiQueries.GetUiState(depth: "");
 
             // Assert
-            uiState.Should().NotBeNull();
+            _ = uiState.Should().NotBeNull();
         }
 
         [Fact]
         public void GetUiState_with_invalid_depth_returns_UiStateData()
         {
             // Act - Invalid depth should default to "full"
-            var uiState = UiQueries.GetUiState(depth: "invalid");
+            UiStateData uiState = UiQueries.GetUiState(depth: "invalid");
 
             // Assert
-            uiState.Should().NotBeNull();
+            _ = uiState.Should().NotBeNull();
         }
 
         [Fact]
         public void GetUiState_with_case_insensitive_depth_works()
         {
             // Act & Assert - All should return valid data
-            var summary = UiQueries.GetUiState(depth: "SUMMARY");
-            summary.Should().NotBeNull();
+            UiStateData summary = UiQueries.GetUiState(depth: "SUMMARY");
+            _ = summary.Should().NotBeNull();
 
-            var full = UiQueries.GetUiState(depth: "FULL");
-            full.Should().NotBeNull();
+            UiStateData full = UiQueries.GetUiState(depth: "FULL");
+            _ = full.Should().NotBeNull();
 
-            var window = UiQueries.GetUiState(depth: "WINDOW");
-            window.Should().NotBeNull();
+            UiStateData window = UiQueries.GetUiState(depth: "WINDOW");
+            _ = window.Should().NotBeNull();
         }
 
         [Fact]
         public void GetUiState_returns_all_known_windows()
         {
             // Act
-            var uiState = UiQueries.GetUiState();
+            UiStateData uiState = UiQueries.GetUiState();
 
             // Assert - Should contain at least the 12 known windows
-            uiState.Windows.Should().HaveCountGreaterThanOrEqualTo(12);
+            _ = uiState.Windows.Should().HaveCountGreaterThanOrEqualTo(12);
         }
 
         [Fact]
         public void GetUiState_returns_activated_slots_list_of_max_5()
         {
             // Act
-            var uiState = UiQueries.GetUiState();
+            UiStateData uiState = UiQueries.GetUiState();
 
             // Assert
-            uiState.ActivatedSlots.Should().NotBeNull();
-            uiState.ActivatedSlots.Count.Should().BeLessThanOrEqualTo(5);
+            _ = uiState.ActivatedSlots.Should().NotBeNull();
+            _ = uiState.ActivatedSlots.Count.Should().BeLessThanOrEqualTo(5);
         }
 
         [Fact]
@@ -129,14 +130,14 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             Action act = () => UiQueries.GetUiState();
 
             // Assert - method should not throw
-            act.Should().NotThrow();
+            _ = act.Should().NotThrow();
         }
 
         [Fact]
         public void UiNodeData_properties_are_accessible()
         {
             // Arrange
-            var node = new UiNodeData
+            UiNodeData node = new()
             {
                 Path = "Window/Button",
                 Type = "button",
@@ -145,17 +146,17 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             };
 
             // Act & Assert
-            node.Path.Should().Be("Window/Button");
-            node.Type.Should().Be("button");
-            node.Value.Should().Be("Click Me");
-            node.Interactable.Should().BeTrue();
+            _ = node.Path.Should().Be("Window/Button");
+            _ = node.Type.Should().Be("button");
+            _ = node.Value.Should().Be("Click Me");
+            _ = node.Interactable.Should().BeTrue();
         }
 
         [Fact]
         public void UiWindowData_properties_are_accessible()
         {
             // Arrange
-            var window = new UiWindowData
+            UiWindowData window = new()
             {
                 Name = "AgentInfoWindow",
                 IsOpen = true,
@@ -164,47 +165,47 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             };
 
             // Act & Assert
-            window.Name.Should().Be("AgentInfoWindow");
-            window.IsOpen.Should().BeTrue();
-            window.WindowType.Should().Be("AgentInfo");
-            window.Children.Should().BeNull();
+            _ = window.Name.Should().Be("AgentInfoWindow");
+            _ = window.IsOpen.Should().BeTrue();
+            _ = window.WindowType.Should().Be("AgentInfo");
+            _ = window.Children.Should().BeNull();
         }
 
         [Fact]
         public void UiWindowData_with_children()
         {
             // Arrange
-            var window = new UiWindowData
+            UiWindowData window = new()
             {
                 Name = "CommandWindow",
                 IsOpen = true,
                 WindowType = "Command",
-                Children = new System.Collections.Generic.List<UiNodeData>
-                {
+                Children =
+                [
                     new UiNodeData { Path = "Panel/Text", Type = "text", Value = "Hello" }
-                }
+                ]
             };
 
             // Act & Assert
-            window.Children.Should().HaveCount(1);
-            window.Children[0].Path.Should().Be("Panel/Text");
+            _ = window.Children.Should().HaveCount(1);
+            _ = window.Children[0].Path.Should().Be("Panel/Text");
         }
 
         [Fact]
         public void UiStateData_properties_are_accessible()
         {
             // Arrange
-            var uiState = new UiStateData
+            UiStateData uiState = new()
             {
-                Windows = new System.Collections.Generic.List<UiWindowData>(),
-                ActivatedSlots = new System.Collections.Generic.List<string>(),
-                ModElements = new System.Collections.Generic.List<UiNodeData>()
+                Windows = [],
+                ActivatedSlots = [],
+                ModElements = []
             };
 
             // Act & Assert
-            uiState.Windows.Should().NotBeNull();
-            uiState.ActivatedSlots.Should().NotBeNull();
-            uiState.ModElements.Should().NotBeNull();
+            _ = uiState.Windows.Should().NotBeNull();
+            _ = uiState.ActivatedSlots.Should().NotBeNull();
+            _ = uiState.ModElements.Should().NotBeNull();
         }
 
         [Fact]
@@ -219,10 +220,10 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             // - Path should go from root to node
 
             // Arrange & Assert
-            var expectedPathComponents = new[] { "Window", "Panel", "Button" };
-            var expectedPath = string.Join("/", expectedPathComponents);
+            string[] expectedPathComponents = ["Window", "Panel", "Button"];
+            string expectedPath = string.Join("/", expectedPathComponents);
 
-            expectedPath.Should().Be("Window/Panel/Button");
+            _ = expectedPath.Should().Be("Window/Panel/Button");
         }
 
         [Trait("Category", "RequiresUnity")]
@@ -233,21 +234,21 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             // Marked with [RequiresUnity] trait
 
             // Act
-            var uiState = UiQueries.GetUiState(depth: "summary");
+            UiStateData uiState = UiQueries.GetUiState(depth: "summary");
 
             // Assert - Known window names should be present
-            var windowNames = new System.Collections.Generic.List<string>();
-            foreach (var window in uiState.Windows)
+            List<string> windowNames = [];
+            foreach (UiWindowData window in uiState.Windows)
             {
                 windowNames.Add(window.Name);
             }
 
-            windowNames.Should().Contain("AgentInfoWindow");
-            windowNames.Should().Contain("CommandWindow");
-            windowNames.Should().Contain("CreatureInfoWindow");
-            windowNames.Should().Contain("ManualUI");
-            windowNames.Should().Contain("OptionUI");
-            windowNames.Should().Contain("DeployUI");
+            _ = windowNames.Should().Contain("AgentInfoWindow");
+            _ = windowNames.Should().Contain("CommandWindow");
+            _ = windowNames.Should().Contain("CreatureInfoWindow");
+            _ = windowNames.Should().Contain("ManualUI");
+            _ = windowNames.Should().Contain("OptionUI");
+            _ = windowNames.Should().Contain("DeployUI");
         }
     }
 }

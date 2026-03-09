@@ -1,129 +1,97 @@
+// SPDX-License-Identifier: MIT
+
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using AwesomeAssertions;
-using CI;
 using Xunit;
 
-namespace CI.Tests;
-
-public sealed class ProcessRunnerTests
+namespace CI.Tests
 {
-    [Fact]
-    public void Run_CallsProcessWithCorrectArguments()
+    public sealed class ProcessRunnerTests
     {
-        // Note: This is an integration-style test that actually runs a process
-        // We'll use a simple command like "echo" that should work on all platforms
-
-        // Arrange
-        var runner = new ProcessRunner();
-
-        // Act & Assert - This should work on both Unix and Windows
-        // On Windows, "cmd /c echo test" should work
-        // On Unix, "echo test" should work
-        ProcessResult result;
-
-        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+        [Fact]
+        public void Run_CallsProcessWithCorrectArguments()
         {
-            result = runner.Run("cmd", "/c echo test");
-        }
-        else
-        {
-            result = runner.Run("echo", "test");
+            // Note: This is an integration-style test that actually runs a process
+            // We'll use a simple command like "echo" that should work on all platforms
+
+            // Arrange
+            ProcessRunner runner = new();
+
+            // Act & Assert - This should work on both Unix and Windows
+            // On Windows, "cmd /c echo test" should work
+            // On Unix, "echo test" should work
+            ProcessResult result = Environment.OSVersion.Platform == PlatformID.Win32NT ? runner.Run("cmd", "/c echo test") : runner.Run("echo", "test");
+            _ = result.ExitCode.Should().Be(0);
         }
 
-        result.ExitCode.Should().Be(0);
-    }
-
-    [Fact]
-    public void Run_WithWorkingDirectory_SetsProcessWorkingDirectory()
-    {
-        // This test verifies that working directory can be set
-        // We'll use the current directory since we know it exists
-
-        // Arrange
-        var runner = new ProcessRunner();
-        var currentDir = Environment.CurrentDirectory;
-
-        // Act & Assert
-        ProcessResult result;
-
-        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+        [Fact]
+        public void Run_WithWorkingDirectory_SetsProcessWorkingDirectory()
         {
-            result = runner.Run("cmd", "/c echo test", currentDir);
-        }
-        else
-        {
-            result = runner.Run("echo", "test", currentDir);
+            // This test verifies that working directory can be set
+            // We'll use the current directory since we know it exists
+
+            // Arrange
+            ProcessRunner runner = new();
+            string currentDir = Environment.CurrentDirectory;
+
+            // Act & Assert
+            ProcessResult result = Environment.OSVersion.Platform == PlatformID.Win32NT
+                ? runner.Run("cmd", "/c echo test", currentDir)
+                : runner.Run("echo", "test", currentDir);
+            _ = result.ExitCode.Should().Be(0);
         }
 
-        result.ExitCode.Should().Be(0);
-    }
-
-    [Fact]
-    public void Run_NonexistentCommand_ReturnsNonZeroExitCode()
-    {
-        // Arrange
-        var runner = new ProcessRunner();
-
-        // Act - Try to run a command that doesn't exist
-        var result = runner.Run("thiscommanddefinitelydoesnotexist12345", "");
-
-        // Assert - The exit code should be non-zero
-        // Note: The exact behavior depends on the OS and shell
-        result.ExitCode.Should().NotBe(0);
-    }
-
-    [Fact]
-    public void Run_WithNullWorkingDirectory_DoesNotThrow()
-    {
-        // Arrange
-        var runner = new ProcessRunner();
-
-        // Act & Assert - This should work without setting a working directory
-        ProcessResult result;
-
-        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+        [Fact]
+        public void Run_NonexistentCommand_ReturnsNonZeroExitCode()
         {
-            result = runner.Run("cmd", "/c echo test", null);
-        }
-        else
-        {
-            result = runner.Run("echo", "test", null);
+            // Arrange
+            ProcessRunner runner = new();
+
+            // Act - Try to run a command that doesn't exist
+            ProcessResult result = runner.Run("thiscommanddefinitelydoesnotexist12345", "");
+
+            // Assert - The exit code should be non-zero
+            // Note: The exact behavior depends on the OS and shell
+            _ = result.ExitCode.Should().NotBe(0);
         }
 
-        result.ExitCode.Should().Be(0);
-    }
-
-    [Fact]
-    public void Run_WithOutputFilter_FiltersOutput()
-    {
-        // Arrange
-        var runner = new ProcessRunner();
-        var filteredLines = new System.Collections.Generic.List<string>();
-
-        // Act - Run a command with an output filter
-        ProcessResult result;
-
-        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+        [Fact]
+        public void Run_WithNullWorkingDirectory_DoesNotThrow()
         {
-            result = runner.Run("cmd", "/c echo test-output", null, line =>
-            {
-                filteredLines.Add(line);
-                return !line.Contains("should-filter", System.StringComparison.Ordinal);
-            });
-        }
-        else
-        {
-            result = runner.Run("echo", "test-output", null, line =>
-            {
-                filteredLines.Add(line);
-                return !line.Contains("should-filter", System.StringComparison.Ordinal);
-            });
+            // Arrange
+            ProcessRunner runner = new();
+
+            // Act & Assert - This should work without setting a working directory
+            ProcessResult result = Environment.OSVersion.Platform == PlatformID.Win32NT
+                ? runner.Run("cmd", "/c echo test", null)
+                : runner.Run("echo", "test", null);
+            _ = result.ExitCode.Should().Be(0);
         }
 
-        // Assert - The command should succeed and output should be captured
-        result.ExitCode.Should().Be(0);
-        filteredLines.Should().Contain(line => line != null && line.Contains("test-output", System.StringComparison.Ordinal));
+        [Fact]
+        public void Run_WithOutputFilter_FiltersOutput()
+        {
+            // Arrange
+            ProcessRunner runner = new();
+            List<string> filteredLines = [];
+
+            // Act - Run a command with an output filter
+            ProcessResult result = Environment.OSVersion.Platform == PlatformID.Win32NT
+                ? runner.Run("cmd", "/c echo test-output", null, line =>
+                {
+                    filteredLines.Add(line);
+                    return !line.Contains("should-filter", StringComparison.Ordinal);
+                })
+                : runner.Run("echo", "test-output", null, line =>
+                {
+                    filteredLines.Add(line);
+                    return !line.Contains("should-filter", StringComparison.Ordinal);
+                });
+
+            // Assert - The command should succeed and output should be captured
+            _ = result.ExitCode.Should().Be(0);
+            _ = filteredLines.Should().Contain(line => line != null && line.Contains("test-output", StringComparison.Ordinal));
+        }
     }
 }

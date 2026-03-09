@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 using AwesomeAssertions;
+using CommandWindow;
 using LobotomyCorporationMods.Common.Implementations.Facades;
 using LobotomyCorporationMods.Test.Extensions;
 using Xunit;
@@ -13,42 +14,42 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests.FacadeTests
         public void Abnormality_with_no_gift_returns_null_for_id()
         {
             // Arrange
-            var managementSlot = UnityTestExtensions.CreateManagementSlot();
+            ManagementSlot managementSlot = UnityTestExtensions.CreateManagementSlot();
             _ = TestExtensions.InitializeCommandWindowWithAbnormality();
 
             // Act
-            var result = managementSlot.GetAbnormalityGiftId();
+            int? result = managementSlot.GetAbnormalityGiftId();
 
             // Assert
-            result.Should().BeNull();
+            _ = result.Should().BeNull();
         }
 
         [Fact]
         public void Abnormality_with_no_gift_returns_null_for_position()
         {
             // Arrange
-            var managementSlot = UnityTestExtensions.CreateManagementSlot();
+            ManagementSlot managementSlot = UnityTestExtensions.CreateManagementSlot();
             _ = TestExtensions.InitializeCommandWindowWithAbnormality();
 
             // Act
-            var result = managementSlot.GetAbnormalityGiftPosition();
+            string result = managementSlot.GetAbnormalityGiftPosition();
 
             // Assert
-            result.Should().BeNull();
+            _ = result.Should().BeNull();
         }
 
         [Fact]
         public void Abnormality_with_no_gift_returns_default_value_for_attachment_type()
         {
             // Arrange
-            var managementSlot = UnityTestExtensions.CreateManagementSlot();
+            ManagementSlot managementSlot = UnityTestExtensions.CreateManagementSlot();
             _ = TestExtensions.InitializeCommandWindowWithAbnormality();
 
             // Act
-            var result = managementSlot.GetAbnormalityGiftAttachmentType();
+            EGOgiftAttachType result = managementSlot.GetAbnormalityGiftAttachmentType();
 
             // Assert
-            result.Should().Be(0);
+            _ = result.Should().Be(0);
         }
     }
 }

@@ -25,10 +25,10 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             float probability,
             [NotNull] IAgentWorkTracker agentWorkTracker)
         {
-            Guard.Against.Null(instance, nameof(instance));
-            Guard.Against.Null(agentWorkTracker, nameof(agentWorkTracker));
+            _ = Guard.Against.Null(instance, nameof(instance));
+            _ = Guard.Against.Null(agentWorkTracker, nameof(agentWorkTracker));
 
-            var giftName = instance.GetAbnormalityGiftName();
+            string giftName = instance.GetAbnormalityGiftName();
             probability = ModifyProbabilityIfGiftNameIsValid(probability, agentWorkTracker, giftName);
 
             return ValidateProbability(probability);
@@ -48,7 +48,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
                 return probability;
             }
 
-            var probabilityBonus = agentWorkTracker.GetLastAgentWorkCountByGift(giftName) / 100f;
+            float probabilityBonus = agentWorkTracker.GetLastAgentWorkCountByGift(giftName) / 100f;
             probability += probabilityBonus;
 
             return probability;
@@ -73,7 +73,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
         {
             try
             {
-                Guard.Against.Null(__instance, nameof(__instance));
+                _ = Guard.Against.Null(__instance, nameof(__instance));
 
                 __result = PatchAfterGetProb(__instance, __result, Harmony_Patch.Instance.AgentWorkTracker);
             }

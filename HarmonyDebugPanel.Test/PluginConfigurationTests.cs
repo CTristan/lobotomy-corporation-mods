@@ -4,39 +4,39 @@ using System;
 using System.IO;
 using AwesomeAssertions;
 using BepInEx.Configuration;
-using HarmonyDebugPanel;
 using UnityEngine;
 using Xunit;
 
-namespace HarmonyDebugPanel.Test;
-
-public sealed class PluginConfigurationTests
+namespace HarmonyDebugPanel.Test
 {
-    [Fact]
-    public void Bind_UsesExpectedDefaultValues()
+    public sealed class PluginConfigurationTests
     {
-        var tempDirectory = Path.Combine(Path.GetTempPath(), "HarmonyDebugPanel.Test", Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(tempDirectory);
-        var configPath = Path.Combine(tempDirectory, "test.cfg");
-
-        try
+        [Fact]
+        public void Bind_UsesExpectedDefaultValues()
         {
-            var configFile = new ConfigFile(configPath, true);
+            string tempDirectory = Path.Combine(Path.GetTempPath(), "HarmonyDebugPanel.Test", Guid.NewGuid().ToString("N"));
+            _ = Directory.CreateDirectory(tempDirectory);
+            string configPath = Path.Combine(tempDirectory, "test.cfg");
 
-            var configuration = PluginConfiguration.Bind(configFile);
-
-            configuration.OverlayToggleHotkey.Should().Be(KeyCode.F9);
-            configuration.RefreshHotkey.Should().Be(KeyCode.F10);
-            configuration.ShowBepInExPlugins.Should().BeTrue();
-            configuration.ShowLmmMods.Should().BeTrue();
-            configuration.ShowActivePatches.Should().BeTrue();
-            configuration.ShowAssemblyInfo.Should().BeTrue();
-        }
-        finally
-        {
-            if (Directory.Exists(tempDirectory))
+            try
             {
-                Directory.Delete(tempDirectory, recursive: true);
+                ConfigFile configFile = new(configPath, true);
+
+                PluginConfiguration configuration = PluginConfiguration.Bind(configFile);
+
+                _ = configuration.OverlayToggleHotkey.Should().Be(KeyCode.F9);
+                _ = configuration.RefreshHotkey.Should().Be(KeyCode.F10);
+                _ = configuration.ShowBepInExPlugins.Should().BeTrue();
+                _ = configuration.ShowLmmMods.Should().BeTrue();
+                _ = configuration.ShowActivePatches.Should().BeTrue();
+                _ = configuration.ShowAssemblyInfo.Should().BeTrue();
+            }
+            finally
+            {
+                if (Directory.Exists(tempDirectory))
+                {
+                    Directory.Delete(tempDirectory, recursive: true);
+                }
             }
         }
     }

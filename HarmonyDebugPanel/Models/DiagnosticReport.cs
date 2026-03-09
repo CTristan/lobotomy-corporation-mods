@@ -9,12 +9,12 @@ namespace HarmonyDebugPanel.Models
     {
         public DiagnosticReport()
         {
-            Mods = new List<ModInfo>();
-            Patches = new List<PatchInfo>();
-            Assemblies = new List<AssemblyInfo>();
-            MissingPatches = new List<MissingPatchInfo>();
-            Warnings = new List<string>();
-            DebugInfo = new List<string>();
+            Mods = [];
+            Patches = [];
+            Assemblies = [];
+            MissingPatches = [];
+            Warnings = [];
+            DebugInfo = [];
             RetargetHarmonyStatus = new RetargetHarmonyStatus();
             CollectedAt = DateTime.UtcNow;
         }

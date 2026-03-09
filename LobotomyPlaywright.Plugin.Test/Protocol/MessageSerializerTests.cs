@@ -10,14 +10,9 @@ using Xunit.Abstractions;
 namespace LobotomyPlaywright.Plugin.Test.Protocol
 {
     [Trait("Category", "RequiresUnity")]
-    public class MessageSerializerTests
+    public class MessageSerializerTests(ITestOutputHelper output)
     {
-        private readonly ITestOutputHelper _output;
-
-        public MessageSerializerTests(ITestOutputHelper output)
-        {
-            _output = output;
-        }
+        private readonly ITestOutputHelper _output = output;
 
         [Fact]
         public void SerializeResponse_success_response_produces_valid_json()
@@ -29,16 +24,16 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
             }
 
             // Arrange
-            var response = Response.CreateSuccess("req-1", new { name = "Test Agent", hp = 100 });
+            Response response = Response.CreateSuccess("req-1", new { name = "Test Agent", hp = 100 });
 
             // Act
-            var json = MessageSerializer.Serialize(response);
+            string json = MessageSerializer.Serialize(response);
 
             // Assert
-            json.Should().NotBeNullOrEmpty();
-            json.Should().Contain("\"id\":\"req-1\"");
-            json.Should().Contain("\"type\":\"response\"");
-            json.Should().Contain("\"status\":\"ok\"");
+            _ = json.Should().NotBeNullOrEmpty();
+            _ = json.Should().Contain("\"id\":\"req-1\"");
+            _ = json.Should().Contain("\"type\":\"response\"");
+            _ = json.Should().Contain("\"status\":\"ok\"");
         }
 
         [Fact]
@@ -51,18 +46,18 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
             }
 
             // Arrange
-            var response = Response.CreateError("req-2", "Agent not found", "NOT_FOUND");
+            Response response = Response.CreateError("req-2", "Agent not found", "NOT_FOUND");
 
             // Act
-            var json = MessageSerializer.Serialize(response);
+            string json = MessageSerializer.Serialize(response);
 
             // Assert
-            json.Should().NotBeNullOrEmpty();
-            json.Should().Contain("\"id\":\"req-2\"");
-            json.Should().Contain("\"type\":\"response\"");
-            json.Should().Contain("\"status\":\"error\"");
-            json.Should().Contain("\"error\":\"Agent not found\"");
-            json.Should().Contain("\"code\":\"NOT_FOUND\"");
+            _ = json.Should().NotBeNullOrEmpty();
+            _ = json.Should().Contain("\"id\":\"req-2\"");
+            _ = json.Should().Contain("\"type\":\"response\"");
+            _ = json.Should().Contain("\"status\":\"error\"");
+            _ = json.Should().Contain("\"error\":\"Agent not found\"");
+            _ = json.Should().Contain("\"code\":\"NOT_FOUND\"");
         }
 
         [Fact]
@@ -75,19 +70,19 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
             }
 
             // Arrange
-            var response = Response.CreateEvent("OnAgentDead", new { agentId = 3, agentName = "Sarah" });
+            Response response = Response.CreateEvent("OnAgentDead", new { agentId = 3, agentName = "Sarah" });
 
             // Act
-            var json = MessageSerializer.Serialize(response);
+            string json = MessageSerializer.Serialize(response);
 
             // Assert
-            json.Should().NotBeNullOrEmpty();
-            json.Should().Contain("\"id\":null");
-            json.Should().Contain("\"type\":\"event\"");
-            json.Should().Contain("\"event\":\"OnAgentDead\"");
-            json.Should().Contain("\"agentId\":3");
-            json.Should().Contain("\"agentName\":\"Sarah\"");
-            json.Should().Contain("\"timestamp\"");
+            _ = json.Should().NotBeNullOrEmpty();
+            _ = json.Should().Contain("\"id\":null");
+            _ = json.Should().Contain("\"type\":\"event\"");
+            _ = json.Should().Contain("\"event\":\"OnAgentDead\"");
+            _ = json.Should().Contain("\"agentId\":3");
+            _ = json.Should().Contain("\"agentName\":\"Sarah\"");
+            _ = json.Should().Contain("\"timestamp\"");
         }
 
         [Fact]
@@ -100,17 +95,17 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
             }
 
             // Arrange
-            var json = "{\"id\":\"req-1\",\"type\":\"query\",\"target\":\"agents\",\"params\":{}}";
+            string json = /*lang=json,strict*/ "{\"id\":\"req-1\",\"type\":\"query\",\"target\":\"agents\",\"params\":{}}";
 
             // Act
-            var request = MessageSerializer.DeserializeRequest(json);
+            Request request = MessageSerializer.DeserializeRequest(json);
 
             // Assert
-            request.Should().NotBeNull();
-            request.Id.Should().Be("req-1");
-            request.Type.Should().Be("query");
-            request.Target.Should().Be("agents");
-            request.Params.Should().NotBeNull();
+            _ = request.Should().NotBeNull();
+            _ = request.Id.Should().Be("req-1");
+            _ = request.Type.Should().Be("query");
+            _ = request.Target.Should().Be("agents");
+            _ = request.Params.Should().NotBeNull();
         }
 
         [Fact]
@@ -123,14 +118,14 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
             }
 
             // Arrange
-            var json = "{\"id\":\"req-2\",\"type\":\"query\",\"target\":\"agents\",\"params\":{\"id\":3}}";
+            string json = /*lang=json,strict*/ "{\"id\":\"req-2\",\"type\":\"query\",\"target\":\"agents\",\"params\":{\"id\":3}}";
 
             // Act
-            var request = MessageSerializer.DeserializeRequest(json);
+            Request request = MessageSerializer.DeserializeRequest(json);
 
             // Assert
-            request.Should().NotBeNull();
-            request.Params.Should().NotBeNull();
+            _ = request.Should().NotBeNull();
+            _ = request.Params.Should().NotBeNull();
         }
 
         [Fact]
@@ -149,7 +144,7 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
             Action act = () => MessageSerializer.DeserializeRequest(json);
 
             // Assert
-            act.Should().Throw<ArgumentNullException>()
+            _ = act.Should().Throw<ArgumentNullException>()
                 .WithParameterName("json");
         }
 
@@ -163,13 +158,13 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
             }
 
             // Arrange
-            var json = "";
+            string json = "";
 
             // Act
             Action act = () => MessageSerializer.DeserializeRequest(json);
 
             // Assert
-            act.Should().Throw<ArgumentNullException>();
+            _ = act.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -182,13 +177,13 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
             }
 
             // Arrange
-            var json = "not valid json";
+            string json = "not valid json";
 
             // Act
             Action act = () => MessageSerializer.DeserializeRequest(json);
 
             // Assert
-            act.Should().Throw<InvalidOperationException>();
+            _ = act.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
@@ -201,16 +196,16 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
             }
 
             // Arrange
-            var originalResponse = Response.CreateSuccess("req-1", new { name = "Test", value = 42 });
+            Response originalResponse = Response.CreateSuccess("req-1", new { name = "Test", value = 42 });
 
             // Act
-            var json = MessageSerializer.Serialize(originalResponse);
-            var deserializedRequest = MessageSerializer.DeserializeRequest(json);
+            string json = MessageSerializer.Serialize(originalResponse);
+            Request deserializedRequest = MessageSerializer.DeserializeRequest(json);
 
             // Assert
-            deserializedRequest.Should().NotBeNull();
-            deserializedRequest.Id.Should().Be("req-1");
-            deserializedRequest.Type.Should().Be("response");
+            _ = deserializedRequest.Should().NotBeNull();
+            _ = deserializedRequest.Id.Should().Be("req-1");
+            _ = deserializedRequest.Type.Should().Be("response");
         }
     }
 }

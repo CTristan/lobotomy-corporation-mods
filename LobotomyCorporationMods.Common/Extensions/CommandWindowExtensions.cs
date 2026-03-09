@@ -10,17 +10,17 @@ namespace LobotomyCorporationMods.Common.Extensions
         [CanBeNull]
         internal static CreatureEquipmentMakeInfo GetAbnormalityGift([NotNull] this CommandWindow.CommandWindow commandWindow)
         {
-            return !commandWindow.TryGetCreature(out var creature) ? null : creature.GetAbnormalityGift();
+            return !commandWindow.TryGetCreature(out CreatureModel creature) ? null : creature.GetAbnormalityGift();
         }
 
         [ContractAnnotation("=> true, creature:notnull; => false, creature:null")]
         private static bool TryGetCreature([NotNull] this CommandWindow.CommandWindow commandWindow,
             [CanBeNull] out CreatureModel creature)
         {
-            Guard.Against.Null(commandWindow, nameof(commandWindow));
+            _ = Guard.Against.Null(commandWindow, nameof(commandWindow));
 
             creature = null;
-            var unitModel = commandWindow.CurrentTarget;
+            UnitModel unitModel = commandWindow.CurrentTarget;
 
             if (unitModel is CreatureModel creatureModel)
             {

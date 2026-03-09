@@ -9,7 +9,7 @@ namespace LobotomyCorporationMods.Common.Extensions
     {
         internal static EquipmentTypeInfo GetAbnormalityGiftInfo([NotNull] this CreatureEquipmentMakeInfo creatureEquipmentMakeInfo)
         {
-            Guard.Against.Null(creatureEquipmentMakeInfo, nameof(creatureEquipmentMakeInfo));
+            _ = Guard.Against.Null(creatureEquipmentMakeInfo, nameof(creatureEquipmentMakeInfo));
 
             return creatureEquipmentMakeInfo.equipTypeInfo;
         }

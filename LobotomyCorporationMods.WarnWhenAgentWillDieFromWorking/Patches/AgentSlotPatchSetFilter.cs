@@ -19,6 +19,7 @@ using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
+using UnityEngine;
 
 #endregion
 
@@ -38,23 +39,23 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
             [CanBeNull] ITextTestAdapter textTestAdapter = null,
             [CanBeNull] IYggdrasilAnimTestAdapter yggdrasilAnimTestAdapter = null)
         {
-            Guard.Against.Null(instance, nameof(instance));
+            _ = Guard.Against.Null(instance, nameof(instance));
 
             if (!currentGameManager.IsValidGameStage(state))
             {
                 return;
             }
 
-            var agentWillDie = instance.CheckIfWorkWillKillAgent(CommandWindow.CommandWindow.CurrentWindow, s_evaluatorFactoryDictionary, beautyBeastAnimTestAdapter, yggdrasilAnimTestAdapter);
+            bool agentWillDie = instance.CheckIfWorkWillKillAgent(CommandWindow.CommandWindow.CurrentWindow, s_evaluatorFactoryDictionary, beautyBeastAnimTestAdapter, yggdrasilAnimTestAdapter);
 
             if (!agentWillDie)
             {
                 return;
             }
 
-            var commandWindow = CommandWindow.CommandWindow.CurrentWindow;
-            var slotColor = commandWindow.DeadColor;
-            var slotText = LocalizeTextDataModel.instance.GetText("AgentState_Dead");
+            CommandWindow.CommandWindow commandWindow = CommandWindow.CommandWindow.CurrentWindow;
+            Color slotColor = commandWindow.DeadColor;
+            string slotText = LocalizeTextDataModel.instance.GetText("AgentState_Dead");
             instance.UpdateAgentSlot(slotColor, slotText, imageTestAdapter, textTestAdapter);
         }
 
@@ -115,7 +116,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
         {
             try
             {
-                var currentGameManager = GameManager.currentGameManager;
+                GameManager currentGameManager = GameManager.currentGameManager;
                 __instance.PatchAfterSetFilter(state, currentGameManager);
             }
             catch (Exception ex)

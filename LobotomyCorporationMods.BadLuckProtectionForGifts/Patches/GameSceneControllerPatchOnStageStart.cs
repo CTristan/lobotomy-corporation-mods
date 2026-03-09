@@ -21,7 +21,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
     {
         public static void PatchAfterOnStageStart([NotNull] IAgentWorkTracker agentWorkTracker)
         {
-            Guard.Against.Null(agentWorkTracker, nameof(agentWorkTracker));
+            _ = Guard.Against.Null(agentWorkTracker, nameof(agentWorkTracker));
 
             agentWorkTracker.Load();
         }

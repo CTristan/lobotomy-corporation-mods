@@ -37,7 +37,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         [NotNull]
         public IAgent GetOrAddAgent(long agentId)
         {
-            var agent = _agents.Find(a => a.GetId() == agentId);
+            IAgent agent = _agents.Find(a => a.GetId() == agentId);
 
             if (agent.IsNotNull())
             {

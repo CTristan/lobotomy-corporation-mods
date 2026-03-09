@@ -15,8 +15,8 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
             IBeautyBeastAnimTestAdapter beautyBeastAnimTestAdapter,
             IYggdrasilAnimTestAdapter yggdrasilAnimTestAdapter)
         {
-            Guard.Against.Null(agent, nameof(agent));
-            Guard.Against.Null(creature, nameof(creature));
+            _ = Guard.Against.Null(agent, nameof(agent));
+            _ = Guard.Against.Null(creature, nameof(creature));
             Agent = agent;
             Creature = creature;
             SkillType = skillType;

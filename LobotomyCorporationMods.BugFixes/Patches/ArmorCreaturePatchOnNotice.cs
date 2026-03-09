@@ -25,9 +25,9 @@ namespace LobotomyCorporationMods.BugFixes.Patches
             [CanBeNull] IArmorCreatureTestAdapter armorCreatureTestAdapter = null,
             [NotNull] params object[] noticeParameters)
         {
-            Guard.Against.Null(instance, nameof(instance));
-            Guard.Against.Null(noticeName, nameof(noticeName));
-            Guard.Against.Null(noticeParameters, nameof(noticeParameters));
+            _ = Guard.Against.Null(instance, nameof(instance));
+            _ = Guard.Against.Null(noticeName, nameof(noticeName));
+            _ = Guard.Against.Null(noticeParameters, nameof(noticeParameters));
 
             if (!noticeName.Equals(NoticeName.OnChangeGift, StringComparison.Ordinal))
             {

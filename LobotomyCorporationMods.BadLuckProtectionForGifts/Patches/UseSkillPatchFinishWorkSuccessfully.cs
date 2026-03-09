@@ -23,10 +23,10 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
         public static void PatchAfterFinishWorkSuccessfully([NotNull] this UseSkill instance,
             [NotNull] IAgentWorkTracker agentWorkTracker)
         {
-            Guard.Against.Null(instance, nameof(instance));
-            Guard.Against.Null(agentWorkTracker, nameof(agentWorkTracker));
+            _ = Guard.Against.Null(instance, nameof(instance));
+            _ = Guard.Against.Null(agentWorkTracker, nameof(agentWorkTracker));
 
-            var giftName = instance.GetAbnormalityGiftName();
+            string giftName = instance.GetAbnormalityGiftName();
 
             // If the abnormality has no gift then there's nothing to track
             if (string.IsNullOrEmpty(giftName))
@@ -34,8 +34,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
                 return;
             }
 
-            var agentId = instance.GetAgentId();
-            var numberOfSuccesses = instance.successCount;
+            long agentId = instance.GetAgentId();
+            int numberOfSuccesses = instance.successCount;
 
             agentWorkTracker.IncrementAgentWorkCount(giftName, agentId, numberOfSuccesses);
         }
