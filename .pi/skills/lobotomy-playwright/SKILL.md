@@ -125,6 +125,35 @@ dotnet playwright stop [options]
 | `--host HOST` | localhost | TCP host |
 | `--port PORT` | from config | TCP port |
 
+### switch-environment
+
+Switch between debug and release game environments by swapping `UnityPlayer.dll`. Debug mode enables the Unity Developer Console and debug logging. The game must be stopped before switching.
+
+```bash
+dotnet playwright switch-environment <debug|release> [--status]
+```
+
+| Argument/Option | Description |
+|-----------------|-------------|
+| `debug` | Switch to debug environment |
+| `release` | Switch to release environment |
+| `--status` | Show current environment without switching |
+
+**Examples:**
+
+```bash
+# Check current environment
+dotnet playwright switch-environment --status
+
+# Switch to debug mode
+dotnet playwright switch-environment debug
+
+# Switch to release mode
+dotnet playwright switch-environment release
+```
+
+The command automatically stops the game if it is running before switching. Requires both `UnityPlayer_debug.dll` and `UnityPlayer_release.dll` to exist in the game directory.
+
 ### query
 
 Query game state. This is the primary way to observe the game.

@@ -92,4 +92,11 @@ public interface IFileSystem
     /// </summary>
     /// <param name="path">The file path.</param>
     void SetFileExecutable(string path);
+
+    /// <summary>
+    /// Reads all bytes from a file.
+    /// </summary>
+    /// <param name="path">The file path.</param>
+    /// <returns>The file contents as a byte array.</returns>
+    byte[] ReadAllBytes(string path);
 }

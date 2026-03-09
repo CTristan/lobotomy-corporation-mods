@@ -52,6 +52,8 @@ public sealed class Program
                     return new ScreenshotCommand().Run(commandArgs);
                 case "command":
                     return new CommandCommand().Run(commandArgs);
+                case "switch-environment":
+                    return new SwitchEnvironmentCommand().Run(commandArgs);
                 default:
                     return HandleUnknownCommand(command);
             }
@@ -78,16 +80,17 @@ public sealed class Program
         Console.WriteLine("Usage: dotnet playwright <command> [options]");
         Console.WriteLine();
         Console.WriteLine("Commands:");
-        Console.WriteLine("  find-game            Auto-detect and configure game installation path");
-        Console.WriteLine("  deploy               Build and deploy plugin DLLs to game");
-        Console.WriteLine("  launch               Launch game and wait for TCP readiness");
-        Console.WriteLine("  status               Check game status");
-        Console.WriteLine("  stop                 Stop the game");
-        Console.WriteLine("  query <target>       Query game state");
-        Console.WriteLine("  read-log             Read BepInEx log files");
-        Console.WriteLine("  wait event <names>   Wait for specific game events");
-        Console.WriteLine("  screenshot           Capture a screenshot of the current game state");
-        Console.WriteLine("  command <action>     Send commands to the game");
+        Console.WriteLine("  find-game               Auto-detect and configure game installation path");
+        Console.WriteLine("  deploy                  Build and deploy plugin DLLs to game");
+        Console.WriteLine("  launch                  Launch game and wait for TCP readiness");
+        Console.WriteLine("  status                  Check game status");
+        Console.WriteLine("  stop                    Stop the game");
+        Console.WriteLine("  switch-environment      Switch between debug/release game environments");
+        Console.WriteLine("  query <target>          Query game state");
+        Console.WriteLine("  read-log                Read BepInEx log files");
+        Console.WriteLine("  wait event <names>      Wait for specific game events");
+        Console.WriteLine("  screenshot              Capture a screenshot of the current game state");
+        Console.WriteLine("  command <action>        Send commands to the game");
         Console.WriteLine();
         Console.WriteLine("Use 'dotnet playwright <command> --help' for command-specific help.");
     }

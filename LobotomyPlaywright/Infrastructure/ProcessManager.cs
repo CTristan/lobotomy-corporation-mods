@@ -13,7 +13,7 @@ namespace LobotomyPlaywright.Infrastructure;
 /// <summary>
 /// Manages detection and control of game processes.
 /// </summary>
-internal class ProcessManager
+public class ProcessManager
 {
     private readonly IProcessRunner _processRunner;
 
@@ -38,7 +38,7 @@ internal class ProcessManager
     /// Finds all Lobotomy Corporation game processes.
     /// </summary>
     /// <returns>List of process IDs.</returns>
-    public List<int> FindGameProcesses()
+    public virtual List<int> FindGameProcesses()
     {
         var pids = new List<int>();
 
@@ -128,8 +128,10 @@ internal class ProcessManager
     /// <param name="pids">List of process IDs to kill.</param>
     /// <param name="force">Whether to force kill (SIGKILL) instead of graceful termination (SIGTERM).</param>
     /// <returns>True if all processes were killed.</returns>
-    public bool KillProcesses(List<int> pids, bool force = false)
+    public virtual bool KillProcesses(List<int> pids, bool force = false)
     {
+        ArgumentNullException.ThrowIfNull(pids);
+
         var success = true;
 
         foreach (var pid in pids)

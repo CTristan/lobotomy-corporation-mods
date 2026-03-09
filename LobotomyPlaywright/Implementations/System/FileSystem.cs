@@ -85,4 +85,9 @@ public sealed class FileSystem : IFileSystem
             process.WaitForExit();
         }
     }
+
+    public byte[] ReadAllBytes(string path)
+    {
+        return File.ReadAllBytes(path);
+    }
 }
