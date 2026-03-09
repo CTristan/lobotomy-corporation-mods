@@ -71,8 +71,73 @@ dotnet_diagnostic.CA1707.severity = none
 dotnet_diagnostic.CA1707.severity = none
 # WHY: xUnit requires public test classes, not internal
 dotnet_diagnostic.CA1515.severity = none
+# WHY: Test projects use string literals directly (no localization needed)
+dotnet_diagnostic.CA1303.severity = none
+# WHY: Test helper classes are instantiated by the test framework, not directly
+dotnet_diagnostic.CA1812.severity = none
+# WHY: Test helper methods may be unused during incremental development
+dotnet_diagnostic.IDE0051.severity = none
 # WHY: ReSharper/Rider — suppress nullable warning noise in test assertions
 resharper_nullable_warning_suppression_is_used_highlighting = none
+# WHY: Nullable warnings in test code often represent intentional null test scenarios
+dotnet_diagnostic.CS8600.severity = none
+dotnet_diagnostic.CS8602.severity = none
+dotnet_diagnostic.CS8603.severity = none
+dotnet_diagnostic.CS8604.severity = none
+dotnet_diagnostic.CS8620.severity = none
+dotnet_diagnostic.CS8625.severity = none
+
+# WHY: CI is a CLI tool with the same conventions as SetupExternal
+[CI/**.cs]
+# WHY: CLI tool uses string literals directly (no localization needed)
+dotnet_diagnostic.CA1303.severity = none
+# WHY: Public types needed for testability
+dotnet_diagnostic.CA1515.severity = none
+# WHY: Types kept unsealed for extensibility/testability
+dotnet_diagnostic.CA1852.severity = none
+# WHY: Nested types used for configuration grouping
+dotnet_diagnostic.CA1034.severity = none
+# WHY: Generic lists acceptable in internal tool API
+dotnet_diagnostic.CA1002.severity = none
+# WHY: Broad exception catching needed for CLI error handling
+dotnet_diagnostic.CA1031.severity = none
+# WHY: Classes instantiated via reflection or DI
+dotnet_diagnostic.CA1812.severity = none
+
+# WHY: LobotomyPlaywright CLI tool shares conventions with CI/SetupExternal
+[LobotomyPlaywright/**.cs]
+# WHY: CLI tool uses string literals directly (no localization needed)
+dotnet_diagnostic.CA1303.severity = none
+# WHY: Public types needed for testability
+dotnet_diagnostic.CA1515.severity = none
+# WHY: Types kept unsealed for extensibility/testability
+dotnet_diagnostic.CA1852.severity = none
+# WHY: Nested types used for configuration grouping
+dotnet_diagnostic.CA1034.severity = none
+# WHY: Generic lists acceptable in internal tool API
+dotnet_diagnostic.CA1002.severity = none
+# WHY: Broad exception catching needed for CLI error handling
+dotnet_diagnostic.CA1031.severity = none
+# WHY: Classes instantiated via reflection or DI
+dotnet_diagnostic.CA1812.severity = none
+# WHY: Static JsonSerializerOptions acceptable in CLI tool
+dotnet_diagnostic.CA1869.severity = none
+# WHY: IFormatProvider not needed for CLI tool string formatting
+dotnet_diagnostic.CA1305.severity = none
+# WHY: CultureInfo not needed for CLI tool string operations
+dotnet_diagnostic.CA1304.severity = none
+# WHY: StringComparison not needed for CLI tool string operations
+dotnet_diagnostic.CA1311.severity = none
+# WHY: Ordinal string comparison not needed for CLI tool
+dotnet_diagnostic.CA1310.severity = none
+# WHY: ToUpperInvariant vs ToLowerInvariant not significant for CLI tool
+dotnet_diagnostic.CA1308.severity = none
+# WHY: Array allocation in CLI tool is not a performance concern
+dotnet_diagnostic.CA1861.severity = none
+# WHY: Static methods not required in CLI tool
+dotnet_diagnostic.CA1822.severity = none
+# WHY: Roslynator string interpolation suggestion not applicable
+dotnet_diagnostic.RCS1075.severity = none
 
 # WHY: SetupExternal is a CLI tool; previously had its own root editorconfig
 [SetupExternal/**.cs]

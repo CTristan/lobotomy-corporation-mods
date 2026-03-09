@@ -5,7 +5,7 @@
 using System;
 using System.IO;
 using System.Linq;
-using FluentAssertions;
+using AwesomeAssertions;
 using LobotomyPlaywright.Commands;
 using LobotomyPlaywright.Implementations.Configuration;
 using LobotomyPlaywright.Interfaces.Configuration;

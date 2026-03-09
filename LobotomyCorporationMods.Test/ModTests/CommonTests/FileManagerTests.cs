@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using FluentAssertions;
+using AwesomeAssertions;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Implementations.Adapters;

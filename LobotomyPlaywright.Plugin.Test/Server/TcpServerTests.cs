@@ -3,7 +3,7 @@
 using System;
 using System.Net;
 using System.Net.Sockets;
-using FluentAssertions;
+using AwesomeAssertions;
 using LobotomyPlaywright.Server;
 using Xunit;
 
@@ -197,7 +197,7 @@ namespace LobotomyPlaywright.Plugin.Test.Server
                 System.Threading.Thread.Sleep(200);
 
                 // Assert
-                server.ClientCount.Should().BeGreaterOrEqualTo(1);
+                server.ClientCount.Should().BeGreaterThanOrEqualTo(1);
             }
             finally
             {

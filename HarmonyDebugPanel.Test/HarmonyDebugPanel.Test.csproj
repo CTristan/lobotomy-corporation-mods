@@ -4,42 +4,23 @@
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
     <ProjectGuid>{E5F6A7B8-9C0D-1E2F-3A4B-5C6D7E8F9A0B}</ProjectGuid>
-    <AnalysisLevel>latest-all</AnalysisLevel>
-    <Deterministic>true</Deterministic>
-    <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    <OutputPath>bin\</OutputPath>
     <OutputType>Library</OutputType>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <!-- NU1702: net35 project references intentionally loaded via modern .NET compatibility -->
-    <NoWarn>$(NoWarn);NU1702</NoWarn>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="BepInEx.BaseLib" Version="5.4.21"/>
     <PackageReference Include="BepInEx.Core" Version="5.4.21"/>
-    <PackageReference Include="coverlet.collector" Version="6.0.2">
+    <PackageReference Include="coverlet.collector" Version="8.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="coverlet.msbuild" Version="6.0.2">
+    <PackageReference Include="coverlet.msbuild" Version="8.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="FluentAssertions" Version="6.12.0"/>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0"/>
-    <PackageReference Include="Roslynator.Analyzers" Version="4.15.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Roslynator.Formatting.Analyzers" Version="4.15.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="AwesomeAssertions" Version="9.4.0"/>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
     <PackageReference Include="xunit" Version="2.8.1"/>
     <PackageReference Include="xunit.runner.console" Version="2.8.1">
       <PrivateAssets>all</PrivateAssets>
@@ -50,11 +31,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\HarmonyDebugPanel\HarmonyDebugPanel.csproj"/>
   </ItemGroup>
-
   <ItemGroup>
     <Content Include="$(NuGetPackageRoot)bepinex.baselib/5.4.21/lib/netstandard2.0/BepInEx.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -72,10 +51,5 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>UnityEngine.dll</Link>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <!-- Disable CA1515 for test projects as tests must be public for xUnit -->
-    <NoAnalyzer Include="CA1515"/>
   </ItemGroup>
 </Project>

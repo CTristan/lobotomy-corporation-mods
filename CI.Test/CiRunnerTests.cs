@@ -2,8 +2,8 @@
 
 using System;
 using System.Collections.Generic;
+using AwesomeAssertions;
 using CI;
-using FluentAssertions;
 using Moq;
 using Xunit;
 

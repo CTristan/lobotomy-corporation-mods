@@ -2,8 +2,8 @@
 
 using System;
 using System.IO;
+using AwesomeAssertions;
 using CI;
-using FluentAssertions;
 using Moq;
 using Xunit;
 

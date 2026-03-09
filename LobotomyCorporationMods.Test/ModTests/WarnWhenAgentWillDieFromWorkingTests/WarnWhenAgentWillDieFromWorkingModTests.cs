@@ -4,8 +4,8 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using AwesomeAssertions;
 using CommandWindow;
-using FluentAssertions;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Enums;
 using LobotomyCorporationMods.Common.Extensions;
@@ -62,7 +62,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
 
         [NotNull]
         private static AgentModel GetAgentWithGift(EquipmentIds giftIds = EquipmentIds.None,
-            IEnumerable<UnitBuf> unitBuffs = null)
+            IEnumerable<UnitBuf>? unitBuffs = null)
         {
             unitBuffs = unitBuffs.EnsureNotNullWithMethod(() => new List<UnitBuf>());
 
@@ -81,7 +81,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
 
         [NotNull]
         protected static AgentSlot InitializeAgentSlot(CreatureIds creatureId,
-            IEnumerable<UnitBuf> buffList = null,
+            IEnumerable<UnitBuf>? buffList = null,
             EquipmentIds giftIds = (EquipmentIds)1,
             RwbpType skillType = (RwbpType)1,
             int qliphothCounter = 0)

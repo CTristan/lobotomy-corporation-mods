@@ -2,7 +2,7 @@
 
 #region
 
-using FluentAssertions;
+using AwesomeAssertions;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Patches;
 using LobotomyCorporationMods.Test.Extensions;

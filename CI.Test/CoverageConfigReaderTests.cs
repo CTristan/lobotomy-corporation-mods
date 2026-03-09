@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 
 using System;
+using AwesomeAssertions;
 using CI;
-using FluentAssertions;
 using Moq;
 using Xunit;
 

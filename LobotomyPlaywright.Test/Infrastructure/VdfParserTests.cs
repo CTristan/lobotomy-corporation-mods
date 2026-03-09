@@ -2,7 +2,7 @@
 
 #nullable enable
 
-using FluentAssertions;
+using AwesomeAssertions;
 using LobotomyPlaywright.Infrastructure;
 using Xunit;
 

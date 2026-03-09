@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using FluentAssertions;
+using AwesomeAssertions;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Extensions;
@@ -89,7 +89,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests.AttributeTests
         }
 
         [NotNull]
-        private static string MethodIsIncorrectlyExcludedFromCodeCoverage([NotNull] MemberInfo method)
+        private static string? MethodIsIncorrectlyExcludedFromCodeCoverage([NotNull] MemberInfo method)
         {
             var attributes = method.GetCustomAttributes(false).ToList();
 

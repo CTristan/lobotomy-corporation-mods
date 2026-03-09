@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using FluentAssertions;
+using AwesomeAssertions;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
@@ -148,7 +148,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
             File.Delete(Path.Combine(currentDirectory, LocalizationFile));
         }
 
-        private void InitiatePatchData([CanBeNull] Type patchType = null)
+        private void InitiatePatchData([CanBeNull] Type? patchType = null)
         {
             var currentDirectory = Directory.GetCurrentDirectory();
 
@@ -183,7 +183,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         }
 
         internal void TestInitializePatchData([NotNull] ICollection<DirectoryInfo> directoryList,
-            Type patchType = null)
+            Type? patchType = null)
         {
             patchType = patchType.EnsureNotNullWithMethod(() => typeof(FakeHarmonyPatch));
 

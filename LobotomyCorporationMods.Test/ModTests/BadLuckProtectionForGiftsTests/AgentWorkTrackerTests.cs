@@ -5,7 +5,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using FluentAssertions;
+using AwesomeAssertions;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations;
 using LobotomyCorporationMods.Common.Extensions;
@@ -179,7 +179,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
         [NotNull]
         private static AgentWorkTracker CreateAgentWorkTracker(string dataFileName,
             string trackerData = "",
-            IFileManager fileManager = null)
+            IFileManager? fileManager = null)
         {
             fileManager = fileManager.EnsureNotNullWithMethod(() => TestExtensions.GetMockFileManager().Object);
             dataFileName = dataFileName.InCurrentDirectory();

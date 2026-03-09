@@ -2,7 +2,7 @@
 
 using System;
 using System.Collections.Generic;
-using FluentAssertions;
+using AwesomeAssertions;
 using LobotomyPlaywright.Protocol;
 using LobotomyPlaywright.Queries;
 using Xunit;

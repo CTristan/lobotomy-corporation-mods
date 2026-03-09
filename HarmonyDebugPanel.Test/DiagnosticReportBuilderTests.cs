@@ -2,7 +2,7 @@
 
 using System;
 using System.Collections.Generic;
-using FluentAssertions;
+using AwesomeAssertions;
 using HarmonyDebugPanel.Implementations.Collectors;
 using HarmonyDebugPanel.Interfaces;
 using HarmonyDebugPanel.Models;

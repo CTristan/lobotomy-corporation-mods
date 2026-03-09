@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-using FluentAssertions;
+using AwesomeAssertions;
 using LobotomyPlaywright.Commands;
 using LobotomyPlaywright.Protocol;
 using Xunit;

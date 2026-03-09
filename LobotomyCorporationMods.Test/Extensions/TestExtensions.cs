@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using FluentAssertions;
+using AwesomeAssertions;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Enums;
 using LobotomyCorporationMods.Common.Extensions;
@@ -28,7 +28,7 @@ namespace LobotomyCorporationMods.Test.Extensions
         internal static AgentModel GetAgentWithGift(EquipmentIds giftId = EquipmentIds.None,
             EGOgiftAttachRegion attachPosition = EGOgiftAttachRegion.HEAD,
             EGOgiftAttachType attachType = 0,
-            IEnumerable<UnitBuf> unitBuffs = null)
+            IEnumerable<UnitBuf>? unitBuffs = null)
         {
             unitBuffs = unitBuffs.EnsureNotNullWithMethod(() => new List<UnitBuf>());
 
@@ -126,7 +126,7 @@ namespace LobotomyCorporationMods.Test.Extensions
         }
 
         [NotNull]
-        internal static CommandWindow.CommandWindow InitializeCommandWindowWithAbnormality([CanBeNull] UnitModel currentTarget = null,
+        internal static CommandWindow.CommandWindow InitializeCommandWindowWithAbnormality([CanBeNull] UnitModel? currentTarget = null,
             RwbpType rwbpType = (RwbpType)1,
             [NotNull] string textValue = "")
         {

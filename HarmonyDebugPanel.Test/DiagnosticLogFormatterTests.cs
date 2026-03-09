@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 using System;
-using FluentAssertions;
+using AwesomeAssertions;
 using HarmonyDebugPanel.Formatting;
 using HarmonyDebugPanel.Models;
 using Xunit;

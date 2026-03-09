@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 using System;
-using FluentAssertions;
+using AwesomeAssertions;
 using LobotomyPlaywright.Queries;
 using Xunit;
 
@@ -29,7 +29,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             // Assert - Should return data (even if empty agent/creature lists)
             sefiras.Should().NotBeNull();
             // The number of sefiras is fixed in the game
-            sefiras.Should().HaveCountGreaterOrEqualTo(10); // At least the named Sefira
+            sefiras.Should().HaveCountGreaterThanOrEqualTo(10); // At least the named Sefira
         }
 
         [Fact]

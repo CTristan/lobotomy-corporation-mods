@@ -3,7 +3,7 @@
 using System;
 using System.IO;
 using System.Text;
-using FluentAssertions;
+using AwesomeAssertions;
 using SetupExternal;
 using Xunit;
 

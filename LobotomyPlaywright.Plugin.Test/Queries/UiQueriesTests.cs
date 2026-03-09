@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 using System;
-using FluentAssertions;
+using AwesomeAssertions;
 using LobotomyPlaywright.Queries;
 using Xunit;
 
@@ -108,7 +108,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             var uiState = UiQueries.GetUiState();
 
             // Assert - Should contain at least the 12 known windows
-            uiState.Windows.Should().HaveCountGreaterOrEqualTo(12);
+            uiState.Windows.Should().HaveCountGreaterThanOrEqualTo(12);
         }
 
         [Fact]
@@ -119,7 +119,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
 
             // Assert
             uiState.ActivatedSlots.Should().NotBeNull();
-            uiState.ActivatedSlots.Count.Should().BeLessOrEqualTo(5);
+            uiState.ActivatedSlots.Count.Should().BeLessThanOrEqualTo(5);
         }
 
         [Fact]

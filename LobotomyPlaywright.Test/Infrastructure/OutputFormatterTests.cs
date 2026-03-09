@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 using System.Collections.Generic;
-using FluentAssertions;
+using AwesomeAssertions;
 using LobotomyPlaywright.Infrastructure;
 using Xunit;
 

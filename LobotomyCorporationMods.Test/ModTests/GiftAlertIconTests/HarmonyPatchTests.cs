@@ -3,8 +3,8 @@
 #region
 
 using System;
+using AwesomeAssertions;
 using CommandWindow;
-using FluentAssertions;
 using LobotomyCorporationMods.GiftAlertIcon;
 using LobotomyCorporationMods.GiftAlertIcon.Patches;
 using LobotomyCorporationMods.Test.Extensions;

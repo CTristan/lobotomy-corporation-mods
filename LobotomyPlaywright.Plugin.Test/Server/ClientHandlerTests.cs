@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using FluentAssertions;
+using AwesomeAssertions;
 using LobotomyPlaywright.Server;
 using Xunit;
 using Xunit.Abstractions;

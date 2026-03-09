@@ -3,7 +3,7 @@
 using System;
 using System.IO;
 using System.Linq;
-using FluentAssertions;
+using AwesomeAssertions;
 using Mono.Cecil;
 using SetupExternal;
 using Xunit;

@@ -38,7 +38,7 @@ namespace LobotomyCorporationMods.{{ModName}}
 }
 ```
 
-3. **Create `.csproj`** — use [LobotomyCorporationMods.BugFixes/LobotomyCorporationMods.BugFixes.csproj](LobotomyCorporationMods.BugFixes/LobotomyCorporationMods.BugFixes.csproj) as a template. Set `AssemblyVersion` to `1.0.0` and generate a new `ProjectGuid`. Include the same external DLL references, PackageReference, and ProjectReference to Common.
+3. **Create `.csproj`** — use [LobotomyCorporationMods.BugFixes/LobotomyCorporationMods.BugFixes.csproj](LobotomyCorporationMods.BugFixes/LobotomyCorporationMods.BugFixes.csproj) as a template. Set `AssemblyVersion` to `1.0.0` and generate a new `ProjectGuid`. Include the same external DLL references, PackageReference, and ProjectReference to Common. Shared build properties (analyzers, TreatWarningsAsErrors, etc.) are inherited from `Directory.Build.props` — do NOT duplicate them. See `.github/instructions/csproj-conventions.instructions.md` for what belongs in a `.csproj` vs shared config.
 
 4. **Create `Info/GlobalInfo.xml`**:
 

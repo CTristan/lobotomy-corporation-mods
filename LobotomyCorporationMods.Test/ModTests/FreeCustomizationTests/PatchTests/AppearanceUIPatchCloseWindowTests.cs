@@ -2,7 +2,7 @@
 
 #region
 
-using FluentAssertions;
+using AwesomeAssertions;
 using LobotomyCorporationMods.FreeCustomization.Patches;
 using LobotomyCorporationMods.Test.Extensions;
 using Xunit;

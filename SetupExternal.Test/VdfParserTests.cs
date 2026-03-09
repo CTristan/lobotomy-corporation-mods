@@ -2,7 +2,7 @@
 
 using System;
 using System.Collections.Generic;
-using FluentAssertions;
+using AwesomeAssertions;
 using SetupExternal;
 using Xunit;
 
@@ -83,7 +83,7 @@ public sealed class VdfParserTests
     public void ExtractLibraryPaths_WithNullContent_ReturnsEmptyList()
     {
         // Arrange
-        string vdfContent = null;
+        string? vdfContent = null;
 
         // Act
         var paths = VdfParser.ExtractLibraryPaths(vdfContent);

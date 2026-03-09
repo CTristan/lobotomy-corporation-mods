@@ -3,7 +3,7 @@
 #region
 
 using System;
-using FluentAssertions;
+using AwesomeAssertions;
 using LobotomyCorporationMods.BadLuckProtectionForGifts;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Patches;
 using LobotomyCorporationMods.Test.Extensions;

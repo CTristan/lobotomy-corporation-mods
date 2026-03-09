@@ -1,50 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <TargetFramework>net10.0</TargetFramework>
-        <OutputType>Exe</OutputType>
-        <IsPackable>true</IsPackable>
-        <PackAsTool>true</PackAsTool>
-        <ToolCommandName>setup</ToolCommandName>
-        <PackageId>LobotomyCorporationMods.Setup</PackageId>
-        <Version>1.0.0</Version>
-        <Description>Setup tool for Lobotomy Corporation mods</Description>
-        <Authors>CTristan</Authors>
-        <PackageOutputPath>../nupkg</PackageOutputPath>
-        <ProjectGuid>{8A1B2C3D-4E5F-6A7B-8C9D-0E1F2A3B4C5D}</ProjectGuid>
-        <AnalysisLevel>latest-all</AnalysisLevel>
-        <Deterministic>true</Deterministic>
-        <EnableNETAnalyzers>true</EnableNETAnalyzers>
-        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-        <OutputPath>bin\</OutputPath>
-        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-        <DebugType>full</DebugType>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-        <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-        <DebugType>none</DebugType>
-        <WarningLevel>4</WarningLevel>
-        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    </PropertyGroup>
-    <ItemGroup>
-        <PackageReference Include="Mono.Cecil" Version="0.11.6"/>
-        <PackageReference Include="Roslynator.Analyzers" Version="4.15.0">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Roslynator.Formatting.Analyzers" Version="4.15.0">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-    </ItemGroup>
-    <ItemGroup>
-        <!-- Disable analyzers that conflict with testability -->
-        <NoAnalyzer Include="CA1303"/>
-        <NoAnalyzer Include="CA1515"/>
-        <NoAnalyzer Include="CA1852"/>
-        <NoAnalyzer Include="CA1034"/>
-        <NoAnalyzer Include="CA1002"/>
-    </ItemGroup>
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <IsPackable>true</IsPackable>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>setup</ToolCommandName>
+    <PackageId>LobotomyCorporationMods.Setup</PackageId>
+    <Version>1.0.0</Version>
+    <Description>Setup tool for Lobotomy Corporation mods</Description>
+    <Authors>CTristan</Authors>
+    <PackageOutputPath>../nupkg</PackageOutputPath>
+    <ProjectGuid>{8A1B2C3D-4E5F-6A7B-8C9D-0E1F2A3B4C5D}</ProjectGuid>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Mono.Cecil" Version="0.11.6"/>
+  </ItemGroup>
 </Project>

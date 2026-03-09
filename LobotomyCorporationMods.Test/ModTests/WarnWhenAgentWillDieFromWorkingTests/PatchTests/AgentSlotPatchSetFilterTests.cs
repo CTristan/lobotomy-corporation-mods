@@ -4,8 +4,8 @@
 
 using System;
 using System.Collections.Generic;
+using AwesomeAssertions;
 using CommandWindow;
-using FluentAssertions;
 using LobotomyCorporationMods.Common.Enums;
 using LobotomyCorporationMods.Test.Extensions;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches;

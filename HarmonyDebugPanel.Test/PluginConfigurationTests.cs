@@ -2,8 +2,8 @@
 
 using System;
 using System.IO;
+using AwesomeAssertions;
 using BepInEx.Configuration;
-using FluentAssertions;
 using HarmonyDebugPanel;
 using UnityEngine;
 using Xunit;

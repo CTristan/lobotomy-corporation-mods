@@ -3,7 +3,7 @@
 #region
 
 using System;
-using FluentAssertions;
+using AwesomeAssertions;
 using LobotomyCorporationMods.NotifyWhenAgentReceivesGift;
 using LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches;
 using LobotomyCorporationMods.Test.Extensions;

@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using AwesomeAssertions;
 using CI;
-using FluentAssertions;
 using Xunit;
 
 namespace CI.Tests;

@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using FluentAssertions;
+using AwesomeAssertions;
 using LobotomyPlaywright.Commands;
 using LobotomyPlaywright.Implementations.Configuration;
 using LobotomyPlaywright.Implementations.Network;

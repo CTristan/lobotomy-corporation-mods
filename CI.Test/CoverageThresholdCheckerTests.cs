@@ -3,8 +3,8 @@
 using System;
 using System.IO;
 using System.Xml.Linq;
+using AwesomeAssertions;
 using CI;
-using FluentAssertions;
 using Moq;
 using Xunit;
 

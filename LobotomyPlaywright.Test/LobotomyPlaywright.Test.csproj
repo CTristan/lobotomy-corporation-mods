@@ -4,43 +4,21 @@
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
     <ProjectGuid>{B3C4D5E6-F7A8-9B0C-1D2E-3F4A5B6C7D8}</ProjectGuid>
-    <AnalysisLevel>latest-all</AnalysisLevel>
-    <Deterministic>true</Deterministic>
-    <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    <OutputPath>bin\</OutputPath>
     <OutputType>Library</OutputType>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <!-- Disable code fixes for test classes - test classes must be public for xUnit -->
-    <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
-    <RunAnalyzers>true</RunAnalyzers>
-    <CodeAnalysisRuleSet></CodeAnalysisRuleSet>
-    <!-- NU1702: net35 project references intentionally loaded via modern .NET compatibility -->
-    <NoWarn>$(NoWarn);NU1702;IDE0051;CA1515;CA1812</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <DebugType>full</DebugType>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="coverlet.collector" Version="6.0.2">
+    <PackageReference Include="coverlet.collector" Version="8.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="coverlet.msbuild" Version="6.0.2">
+    <PackageReference Include="coverlet.msbuild" Version="8.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="FluentAssertions" Version="6.12.0"/>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0"/>
-    <PackageReference Include="Moq" Version="4.20.70"/>
-    <PackageReference Include="Roslynator.Analyzers" Version="4.15.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Roslynator.Formatting.Analyzers" Version="4.15.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="AwesomeAssertions" Version="9.4.0"/>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
+    <PackageReference Include="Moq" Version="4.20.72" />
     <PackageReference Include="xunit" Version="2.8.1"/>
     <PackageReference Include="xunit.runner.console" Version="2.8.1">
       <PrivateAssets>all</PrivateAssets>
@@ -53,11 +31,5 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LobotomyPlaywright\LobotomyPlaywright.csproj"/>
-  </ItemGroup>
-  <ItemGroup>
-    <!-- Disable localization analyzer for test output -->
-    <NoAnalyzer Include="CA1303"/>
-    <!-- Disable CA1515 for test projects as tests must be public for xUnit -->
-    <NoAnalyzer Include="CA1515"/>
   </ItemGroup>
 </Project>
