@@ -1,228 +1,96 @@
 root = true
-# EditorConfig is awesome: https://EditorConfig.org
 
-# top-most EditorConfig file
-
-# Don't use tabs for indentation.
+# WHY: Prevent tabs across all file types (team convention)
 [*]
 indent_style = space
 
-# (Please don't specify an indent_size here; that has too many unintended consequences.)
-
-# XML project files
+# WHY: Standard 2-space indent for XML markup readability
 [*.{csproj,vbproj,vcxproj,vcxproj.filters,proj,projitems,shproj}]
 indent_size = 2
 
-# XML config files
 [*.{props,targets,ruleset,config,nuspec,resx,vsixmanifest,vsct}]
 indent_size = 2
 
-# JSON files
+# WHY: Standard 2-space indent for JSON readability
 [*.json]
 indent_size = 2
 
-# Code files
-[*.{cs,csx,vb,vbx}]
+[*.{cs,csx}]
 indent_size = 4
+# WHY: Ensure consistent line endings across OS and editors
 insert_final_newline = true
 charset = utf-8
 
-# File Header
+# WHY: Every source file must carry the SPDX license identifier (project policy)
 file_header_template = SPDX-License-Identifier: MIT
 
-# Dotnet code style settings:
-
-# Disable naming checks for underscores since every patch has to be named Harmony_Patch
-dotnet_diagnostic.ca1707.severity = none
-
-# Disable array initialization method for newer .NET versions
-dotnet_diagnostic.ca1825.severity = none
-
-# Allow for Harmony-patch-named arguments (such as __instance)
-dotnet_diagnostic.ide1006.severity = none
-
-# Sort using and Import directives with System.* appearing first
+# WHY: System.* usings first is a visible project convention for consistency
 dotnet_sort_system_directives_first = true
-dotnet_separate_import_directive_groups = false
-# Avoid "this." and "Me." if not necessary
-dotnet_style_qualification_for_field = false
-dotnet_style_qualification_for_property = false
-dotnet_style_qualification_for_method = false
-dotnet_style_qualification_for_event = false
 
-# Use language keywords instead of framework type names for type references
-dotnet_style_predefined_type_for_locals_parameters_members = true: suggestion
-dotnet_style_predefined_type_for_member_access = true: suggestion
-
-# Suggest more modern language features when available
-dotnet_style_object_initializer = true: suggestion
-dotnet_style_collection_initializer = true: suggestion
-dotnet_style_coalesce_expression = true: suggestion
-dotnet_style_null_propagation = true: suggestion
-dotnet_style_explicit_tuple_names = true: suggestion
-
-# Non-private static fields are PascalCase
-dotnet_naming_rule.non_private_static_fields_should_be_pascal_case.severity = suggestion
-dotnet_naming_rule.non_private_static_fields_should_be_pascal_case.symbols = non_private_static_fields
-dotnet_naming_rule.non_private_static_fields_should_be_pascal_case.style = non_private_static_field_style
-
-dotnet_naming_symbols.non_private_static_fields.applicable_kinds = field
-dotnet_naming_symbols.non_private_static_fields.applicable_accessibilities = public, protected, internal, protected_internal, private_protected
-dotnet_naming_symbols.non_private_static_fields.required_modifiers = static
-
-dotnet_naming_style.non_private_static_field_style.capitalization = pascal_case
-
-# Non-private readonly fields are PascalCase
-dotnet_naming_rule.non_private_readonly_fields_should_be_pascal_case.severity = suggestion
-dotnet_naming_rule.non_private_readonly_fields_should_be_pascal_case.symbols = non_private_readonly_fields
-dotnet_naming_rule.non_private_readonly_fields_should_be_pascal_case.style = non_private_readonly_field_style
-
-dotnet_naming_symbols.non_private_readonly_fields.applicable_kinds = field
-dotnet_naming_symbols.non_private_readonly_fields.applicable_accessibilities = public, protected, internal, protected_internal, private_protected
-dotnet_naming_symbols.non_private_readonly_fields.required_modifiers = readonly
-
-dotnet_naming_style.non_private_readonly_field_style.capitalization = pascal_case
-
-# Constants are PascalCase
-dotnet_naming_rule.constants_should_be_pascal_case.severity = suggestion
-dotnet_naming_rule.constants_should_be_pascal_case.symbols = constants
-dotnet_naming_rule.constants_should_be_pascal_case.style = constant_style
-
-dotnet_naming_symbols.constants.applicable_kinds = field, local
-dotnet_naming_symbols.constants.required_modifiers = const
-
-dotnet_naming_style.constant_style.capitalization = pascal_case
-
-# Static fields are camelCase and start with s_
-dotnet_naming_rule.static_fields_should_be_camel_case.severity = suggestion
-dotnet_naming_rule.static_fields_should_be_camel_case.symbols = static_fields
-dotnet_naming_rule.static_fields_should_be_camel_case.style = static_field_style
-
-dotnet_naming_symbols.static_fields.applicable_kinds = field
-dotnet_naming_symbols.static_fields.required_modifiers = static
-
-dotnet_naming_style.static_field_style.capitalization = camel_case
-dotnet_naming_style.static_field_style.required_prefix = s_
-
-# Instance fields are camelCase and start with _
-dotnet_naming_rule.instance_fields_should_be_camel_case.severity = suggestion
-dotnet_naming_rule.instance_fields_should_be_camel_case.symbols = instance_fields
-dotnet_naming_rule.instance_fields_should_be_camel_case.style = instance_field_style
-
-dotnet_naming_symbols.instance_fields.applicable_kinds = field
-
-dotnet_naming_style.instance_field_style.capitalization = camel_case
-dotnet_naming_style.instance_field_style.required_prefix = _
-
-# Locals and parameters are camelCase
-dotnet_naming_rule.locals_should_be_camel_case.severity = suggestion
-dotnet_naming_rule.locals_should_be_camel_case.symbols = locals_and_parameters
-dotnet_naming_rule.locals_should_be_camel_case.style = camel_case_style
-
-dotnet_naming_symbols.locals_and_parameters.applicable_kinds = parameter, local
-
-dotnet_naming_style.camel_case_style.capitalization = camel_case
-
-# Local functions are PascalCase
-dotnet_naming_rule.local_functions_should_be_pascal_case.severity = suggestion
-dotnet_naming_rule.local_functions_should_be_pascal_case.symbols = local_functions
-dotnet_naming_rule.local_functions_should_be_pascal_case.style = local_function_style
-
-dotnet_naming_symbols.local_functions.applicable_kinds = local_function
-
-dotnet_naming_style.local_function_style.capitalization = pascal_case
-
-# By default, name items with PascalCase
-dotnet_naming_rule.members_should_be_pascal_case.severity = suggestion
-dotnet_naming_rule.members_should_be_pascal_case.symbols = all_members
-dotnet_naming_rule.members_should_be_pascal_case.style = pascal_case_style
-
-dotnet_naming_symbols.all_members.applicable_kinds = *
-
-dotnet_naming_style.pascal_case_style.capitalization = pascal_case
-
-# Newline settings
-csharp_new_line_before_open_brace = all
-csharp_new_line_before_else = true
-csharp_new_line_before_catch = true
-csharp_new_line_before_finally = true
-csharp_new_line_before_members_in_object_initializers = true
-csharp_new_line_before_members_in_anonymous_types = true
-csharp_new_line_between_query_expression_clauses = true
-
-# Indentation preferences
-csharp_indent_block_contents = true
-csharp_indent_braces = false
-csharp_indent_case_contents = true
-csharp_indent_case_contents_when_block = true
-csharp_indent_switch_labels = true
-csharp_indent_labels = flush_left
-
-# Prefer "var" everywhere
+# WHY: Project prefers var everywhere for brevity; C# default is false for all three
 csharp_style_var_for_built_in_types = true: suggestion
 csharp_style_var_when_type_is_apparent = true: suggestion
 csharp_style_var_elsewhere = true: suggestion
 
-# Prefer method-like constructs to have a block body
-csharp_style_expression_bodied_methods = false: none
-csharp_style_expression_bodied_constructors = false: none
-csharp_style_expression_bodied_operators = false: none
-
-# Prefer property-like constructs to have an expression-body
-csharp_style_expression_bodied_properties = true: none
-csharp_style_expression_bodied_indexers = true: none
-csharp_style_expression_bodied_accessors = true: none
-
-# Suggest more modern language features when available
-csharp_style_pattern_matching_over_is_with_cast_check = true: suggestion
-csharp_style_pattern_matching_over_as_with_null_check = true: suggestion
-csharp_style_inlined_variable_declaration = true: suggestion
-csharp_style_throw_expression = true: suggestion
-csharp_style_conditional_delegate_call = true: suggestion
-
-# Space preferences
-csharp_space_after_cast = false
-csharp_space_after_colon_in_inheritance_clause = true
-csharp_space_after_comma = true
-csharp_space_after_dot = false
-csharp_space_after_keywords_in_control_flow_statements = true
-csharp_space_after_semicolon_in_for_statement = true
-csharp_space_around_binary_operators = before_and_after
-csharp_space_before_colon_in_inheritance_clause = true
-csharp_space_before_comma = false
-csharp_space_before_dot = false
-csharp_space_before_open_square_brackets = false
-csharp_space_before_semicolon_in_for_statement = false
-csharp_space_between_empty_square_brackets = false
-csharp_space_between_method_call_empty_parameter_list_parentheses = false
-csharp_space_between_method_call_name_and_opening_parenthesis = false
-csharp_space_between_method_call_parameter_list_parentheses = false
-csharp_space_between_method_declaration_empty_parameter_list_parentheses = false
-csharp_space_between_method_declaration_name_and_open_parenthesis = false
-csharp_space_between_method_declaration_parameter_list_parentheses = false
-csharp_space_between_parentheses = false
-csharp_space_between_square_brackets = false
-
-# Blocks are allowed
+# WHY: Require braces on all control flow to prevent bugs; default severity is silent, we want IDE nudge
 csharp_prefer_braces = true: suggestion
-csharp_preserve_single_line_blocks = true
-csharp_preserve_single_line_statements = true
 
-# ReSharper properties
+# WHY: ReSharper/Rider — keep accessor attributes on separate lines for readable diffs
 resharper_place_accessorholder_attribute_on_same_line = false
+# WHY: ReSharper/Rider — compact single-line expression properties
 resharper_place_expr_property_on_single_line = true
+# WHY: ReSharper/Rider — let Rider decide block vs expression body contextually
 resharper_use_heuristics_for_body_style = true
+# WHY: ReSharper/Rider — chop initializer members to separate lines for readable diffs
 resharper_wrap_object_and_collection_initializer_style = chop_always
 
-# Test classes in LobotomyPlaywright.Test must be public for xUnit
-[**/LobotomyPlaywright.Test/**/*.cs]
+# WHY: net35 lacks Array.Empty<T>(); suppress false-positive suggesting it
+dotnet_diagnostic.CA1825.severity = none
+
+# WHY: Enforce cyclomatic/maintainability/coupling complexity as build errors (quality gate)
+dotnet_diagnostic.CA1502.severity = error
+dotnet_diagnostic.CA1505.severity = error
+dotnet_diagnostic.CA1506.severity = error
+
+# WHY: Harmony patches use __ prefixed parameters (__instance, __result) that violate naming rules
+[**/Patches/**.cs]
+dotnet_diagnostic.IDE1006.severity = none
+dotnet_diagnostic.CA1707.severity = none
+
+# WHY: Harmony_Patch class names contain underscores (Basemod convention)
+[**/Harmony_Patch.cs]
+dotnet_diagnostic.CA1707.severity = none
+
+# WHY: BepInEx auto-generates MyPluginInfo.cs with SCREAMING_CASE constants (PLUGIN_GUID, etc.)
+[**/MyPluginInfo.cs]
+dotnet_diagnostic.CA1707.severity = none
+
+# WHY: All test projects share these conventions
+[**.Test/**.cs]
+# WHY: Test methods use underscores for readability (e.g., Method_Scenario_Expected)
+dotnet_diagnostic.CA1707.severity = none
+# WHY: xUnit requires public test classes, not internal
 dotnet_diagnostic.CA1515.severity = none
-dotnet_diagnostic.CA1861.severity = none
+# WHY: ReSharper/Rider — suppress nullable warning noise in test assertions
+resharper_nullable_warning_suppression_is_used_highlighting = none
 
-# Explicitly disable internal class code fixer for LobotomyPlaywright test classes
-[**/LobotomyPlaywright.Test/**/*Tests.cs]
-dotnet_style_prefer_internal_class_over_private_class = false:silent
+# WHY: SetupExternal is a CLI tool; previously had its own root editorconfig
+[SetupExternal/**.cs]
+# WHY: CLI tool uses string literals directly (no localization needed)
+dotnet_diagnostic.CA1303.severity = none
+# WHY: Public types needed for testability
+dotnet_diagnostic.CA1515.severity = none
+# WHY: Types kept unsealed for extensibility/testability
+dotnet_diagnostic.CA1852.severity = none
+# WHY: Nested types used for configuration grouping
+dotnet_diagnostic.CA1034.severity = none
+# WHY: Generic lists acceptable in internal tool API
+dotnet_diagnostic.CA1002.severity = none
+# WHY: Non-static classes have instance state by design
+dotnet_diagnostic.RCS1102.severity = none
+# WHY: CLI tool was previously shielded from complexity gate; retargeting logic is inherently complex
+dotnet_diagnostic.CA1502.severity = none
 
-# Disable internal class preference globally for test projects
-dotnet_style_prefer_internal_class_over_private_class = false:silent
-dotnet_style_prefer_internal_class = false:silent
+# WHY: Common library sets assembly version dynamically via csproj AssemblyName, not AssemblyVersionAttribute
+[LobotomyCorporationMods.Common/**.cs]
+dotnet_diagnostic.CA1016.severity = none
