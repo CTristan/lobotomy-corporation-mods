@@ -111,7 +111,9 @@ namespace RetargetHarmony
             // Use GetFiles instead of EnumerateFiles for .NET 3.5 compatibility
             foreach (var file in Directory.GetFiles(BaseModsPath, "*.dll", SearchOption.TopDirectoryOnly))
             {
-                yield return Path.GetFileName(file);
+                var fileName = Path.GetFileName(file);
+                SafeTrace(string.Format(CultureInfo.InvariantCulture, "Checking BaseMods DLL: {0}", fileName));
+                yield return fileName;
             }
         }
 

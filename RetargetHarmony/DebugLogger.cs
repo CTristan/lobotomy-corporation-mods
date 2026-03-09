@@ -134,6 +134,16 @@ namespace RetargetHarmony
                 }
 
                 s_logFilePath = Path.Combine(logDir, LogFileName);
+
+                // Clear existing log file on each launch to avoid accumulating logs
+                try
+                {
+                    File.WriteAllText(s_logFilePath, string.Empty);
+                }
+                catch (IOException)
+                {
+                    // Silently ignore if clear fails (file locked, etc.)
+                }
             }
 
             s_initialized = true;
