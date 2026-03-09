@@ -11,6 +11,11 @@ namespace LobotomyPlaywright.Queries
     /// </summary>
     public static class QueryRouter
     {
+        private static readonly HashSet<string> ValidTargets = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "agents", "creatures", "game", "status", "sefira", "departments", "titlemenu", "title", "ui"
+        };
+
         public static Protocol.Response HandleQuery(Protocol.Request request)
         {
             LobotomyPlaywright.Server.TcpServer.LogDebug($"[LobotomyPlaywright] HandleQuery called: target={request?.Target}, id={request?.Id}");
@@ -28,10 +33,7 @@ namespace LobotomyPlaywright.Queries
             {
                 var target = request.Target.ToLowerInvariant();
 
-                // Check for unknown targets first
-                if (target != "agents" && target != "creatures" && target != "game" &&
-                    target != "status" && target != "sefira" && target != "departments" &&
-                    target != "titlemenu" && target != "title" && target != "ui")
+                if (!IsValidTarget(target))
                 {
                     return Protocol.Response.CreateError(
                         request.Id,
@@ -40,19 +42,20 @@ namespace LobotomyPlaywright.Queries
                     );
                 }
 
-                // Title menu queries are always available on the title screen
-                if ((target == "titlemenu" || target == "title") && GameStateQueries.IsOnTitleScreen())
+                // Handle title menu queries (always available on title screen)
+                if (IsTitleMenuTarget(target) && GameStateQueries.IsOnTitleScreen())
                 {
                     return HandleTitleMenuQuery(request.Id);
                 }
 
-                // UI queries can be made at any time (not just when game is queryable)
+                // UI queries can be made at any time
                 if (target == "ui")
                 {
                     var uiParams = request.Params ?? new Dictionary<string, object>();
                     return HandleUiQuery(request.Id, uiParams);
                 }
 
+                // All other queries require the game to be queryable
                 if (!GameStateQueries.IsGameQueryable())
                 {
                     LobotomyPlaywright.Server.TcpServer.LogDebug("[LobotomyPlaywright] Game not queryable!");
@@ -64,36 +67,9 @@ namespace LobotomyPlaywright.Queries
                 }
 
                 var paramsDict = request.Params ?? new Dictionary<string, object>();
-
                 LobotomyPlaywright.Server.TcpServer.LogDebug($"[LobotomyPlaywright] Routing query: target={target}, isQueryable=true");
 
-                switch (target)
-                {
-                    case "agents":
-                        return HandleAgentsQuery(request.Id, paramsDict);
-
-                    case "creatures":
-                        return HandleCreaturesQuery(request.Id, paramsDict);
-
-                    case "game":
-                    case "status":
-                        return HandleGameStatusQuery(request.Id);
-
-                    case "sefira":
-                    case "departments":
-                        return HandleSefiraQuery(request.Id, paramsDict);
-
-                    case "titlemenu":
-                    case "title":
-                        return HandleTitleMenuQuery(request.Id);
-
-                    default:
-                        return Protocol.Response.CreateError(
-                            request.Id,
-                            $"Unknown query target: {request.Target}",
-                            "UNKNOWN_TARGET"
-                        );
-                }
+                return RouteQuery(target, request.Id, paramsDict);
             }
             catch (Exception ex)
             {
@@ -105,36 +81,51 @@ namespace LobotomyPlaywright.Queries
             }
         }
 
+        private static bool IsValidTarget(string target) => ValidTargets.Contains(target);
+
+        private static bool IsTitleMenuTarget(string target) => target == "titlemenu" || target == "title";
+
+        private static Protocol.Response RouteQuery(string target, string requestId, Dictionary<string, object> parameters)
+        {
+            switch (target)
+            {
+                case "agents":
+                    return HandleAgentsQuery(requestId, parameters);
+                case "creatures":
+                    return HandleCreaturesQuery(requestId, parameters);
+                case "game":
+                case "status":
+                    return HandleGameStatusQuery(requestId);
+                case "sefira":
+                case "departments":
+                    return HandleSefiraQuery(requestId, parameters);
+                case "titlemenu":
+                case "title":
+                    return HandleTitleMenuQuery(requestId);
+                default:
+                    return Protocol.Response.CreateError(requestId, $"Unknown query target: {target}", "UNKNOWN_TARGET");
+            }
+        }
+
+        private static long ExtractInstanceId(Dictionary<string, object> parameters)
+        {
+            var idKey = parameters.ContainsKey("id") ? "id" : "instanceId";
+            var idValue = parameters[idKey];
+
+            if (idValue is double)
+            {
+                return (long)(double)idValue;
+            }
+
+            return Convert.ToInt64(idValue);
+        }
+
         private static Protocol.Response HandleAgentsQuery(string requestId, Dictionary<string, object> parameters)
         {
             // Check if we're querying a specific agent
             if (parameters.ContainsKey("id") || parameters.ContainsKey("instanceId"))
             {
-                long instanceId;
-                if (parameters.ContainsKey("id"))
-                {
-                    var idValue = parameters["id"];
-                    if (idValue is double d)
-                    {
-                        instanceId = (long)d;
-                    }
-                    else
-                    {
-                        instanceId = Convert.ToInt64(idValue);
-                    }
-                }
-                else
-                {
-                    var idValue = parameters["instanceId"];
-                    if (idValue is double d)
-                    {
-                        instanceId = (long)d;
-                    }
-                    else
-                    {
-                        instanceId = Convert.ToInt64(idValue);
-                    }
-                }
+                var instanceId = ExtractInstanceId(parameters);
 
                 var agent = AgentQueries.GetAgent(instanceId);
                 if (agent == null)
@@ -159,31 +150,7 @@ namespace LobotomyPlaywright.Queries
             // Check if we're querying a specific creature
             if (parameters.ContainsKey("id") || parameters.ContainsKey("instanceId"))
             {
-                long instanceId;
-                if (parameters.ContainsKey("id"))
-                {
-                    var idValue = parameters["id"];
-                    if (idValue is double d)
-                    {
-                        instanceId = (long)d;
-                    }
-                    else
-                    {
-                        instanceId = Convert.ToInt64(idValue);
-                    }
-                }
-                else
-                {
-                    var idValue = parameters["instanceId"];
-                    if (idValue is double d)
-                    {
-                        instanceId = (long)d;
-                    }
-                    else
-                    {
-                        instanceId = Convert.ToInt64(idValue);
-                    }
-                }
+                var instanceId = ExtractInstanceId(parameters);
 
                 var creature = CreatureQueries.GetCreature(instanceId);
                 if (creature == null)
