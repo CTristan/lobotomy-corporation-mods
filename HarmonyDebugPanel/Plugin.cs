@@ -284,6 +284,9 @@ namespace HarmonyDebugPanel
         {
             try
             {
+                LogInfo("GenerateLog: Starting log generation");
+                LogInfo("GenerateLog: _logFilePath = " + _logFilePath);
+
                 if (_report == null)
                 {
                     LogError("GenerateLog: Report is null");
@@ -295,7 +298,34 @@ namespace HarmonyDebugPanel
                 var logFileName = "HarmonyDebugPanel_" + timestamp + ".log";
                 var logFilePath = Path.Combine(Path.GetDirectoryName(_logFilePath) ?? Environment.CurrentDirectory, logFileName);
 
-                // Read runtime log content
+                // Read RetargetHarmony log content (this also writes debug messages to runtime log)
+                var retargetHarmonyLogContent = string.Empty;
+                var retargetHarmonyLogPath = GetRetargetHarmonyLogPath();
+                if (!string.IsNullOrEmpty(retargetHarmonyLogPath) && File.Exists(retargetHarmonyLogPath))
+                {
+                    try
+                    {
+                        retargetHarmonyLogContent = File.ReadAllText(retargetHarmonyLogPath, Encoding.UTF8);
+                    }
+                    catch (Exception ex)
+                    {
+                        LogWarning("GenerateLog: Could not read RetargetHarmony log file: " + ex.Message);
+                    }
+                }
+
+                // Read BepInEx LogOutput.log content (using snapshot reader to handle locked files)
+                string bepInExLogContent = null; // null means file not found
+                var bepInExLogPath = GetBepInExLogPath();
+                if (!string.IsNullOrEmpty(bepInExLogPath) && File.Exists(bepInExLogPath))
+                {
+                    bepInExLogContent = ReadLogFileSnapshot(bepInExLogPath);
+                    if (string.IsNullOrEmpty(bepInExLogContent))
+                    {
+                        bepInExLogContent = "[BepInEx LogOutput.log exists but could not be read - file is likely locked by another process]";
+                    }
+                }
+
+                // Read runtime log content AFTER helper methods so we capture their debug messages
                 var runtimeLogContent = string.Empty;
                 if (!string.IsNullOrEmpty(_logFilePath) && File.Exists(_logFilePath))
                 {
@@ -309,8 +339,20 @@ namespace HarmonyDebugPanel
                     }
                 }
 
+                // Read Unity output_log.txt content (using snapshot reader to handle locked files)
+                string unityLogContent = null; // null means file not found
+                var unityLogPath = GetUnityLogPath();
+                if (!string.IsNullOrEmpty(unityLogPath) && File.Exists(unityLogPath))
+                {
+                    unityLogContent = ReadLogFileSnapshot(unityLogPath);
+                    if (string.IsNullOrEmpty(unityLogContent))
+                    {
+                        unityLogContent = "[Unity output_log.txt exists but could not be read - file is likely locked by another process]";
+                    }
+                }
+
                 // Format the extended log
-                var logLines = DiagnosticLogFormatter.FormatExtended(_report, runtimeLogContent);
+                var logLines = DiagnosticLogFormatter.FormatExtended(_report, runtimeLogContent, retargetHarmonyLogContent, bepInExLogContent, unityLogContent);
                 var logContent = string.Join(Environment.NewLine, logLines.ToArray());
 
                 // Write to file
@@ -332,6 +374,182 @@ namespace HarmonyDebugPanel
             {
                 LogError("GenerateLog error: " + ex);
             }
+        }
+
+        private string GetRetargetHarmonyLogPath()
+        {
+            try
+            {
+                // Get the directory where this plugin (HarmonyDebugPanel) is located
+                var thisAssembly = Assembly.GetExecutingAssembly();
+                var thisDir = Path.GetDirectoryName(thisAssembly.Location);
+                if (string.IsNullOrEmpty(thisDir))
+                {
+                    thisDir = Environment.CurrentDirectory;
+                }
+
+                // Find the game root by walking up directories until we find BepInEx or LobotomyCorp_Data
+                var currentDir = thisDir;
+                var gameRoot = thisDir;
+                for (int i = 0; i < 10; i++)
+                {
+                    if (Directory.Exists(Path.Combine(currentDir, "BepInEx")) ||
+                        Directory.Exists(Path.Combine(currentDir, "LobotomyCorp_Data")))
+                    {
+                        gameRoot = currentDir;
+                        break;
+                    }
+                    var parent = Path.GetDirectoryName(currentDir);
+                    if (string.IsNullOrEmpty(parent) || parent == currentDir)
+                    {
+                        break;
+                    }
+                    currentDir = parent;
+                }
+
+                // Now search for RetargetHarmony.log in common locations
+                var searchPaths = new[]
+                {
+                    // Subdirectory structure: BepInEx/patchers/RetargetHarmony/logs/
+                    Path.Combine(Path.Combine(Path.Combine(gameRoot, "BepInEx/patchers/RetargetHarmony"), "logs"), "RetargetHarmony.log"),
+                    // Direct in patchers folder
+                    Path.Combine(Path.Combine(gameRoot, "BepInEx/patchers"), "RetargetHarmony.log"),
+                    // Also check in the same folder as this plugin (if it's in patchers)
+                    Path.Combine(Path.Combine(thisDir, "logs"), "RetargetHarmony.log"),
+                };
+
+                foreach (var searchPath in searchPaths)
+                {
+                    LogInfo("GetRetargetHarmonyLogPath: Checking for RetargetHarmony log at: " + searchPath);
+                    if (File.Exists(searchPath))
+                    {
+                        LogInfo("GetRetargetHarmonyLogPath: Found RetargetHarmony log at: " + searchPath);
+                        return searchPath;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogWarning("GetRetargetHarmonyLogPath: Error finding RetargetHarmony log: " + ex.Message);
+            }
+
+            return null;
+        }
+
+        private string GetBepInExLogPath()
+        {
+            try
+            {
+                // Get the directory where this plugin (HarmonyDebugPanel) is located
+                var thisAssembly = Assembly.GetExecutingAssembly();
+                var thisDir = Path.GetDirectoryName(thisAssembly.Location);
+                if (string.IsNullOrEmpty(thisDir))
+                {
+                    thisDir = Environment.CurrentDirectory;
+                }
+
+                // Find the game root by walking up directories until we find BepInEx or LobotomyCorp_Data
+                var currentDir = thisDir;
+                var gameRoot = thisDir;
+                for (int i = 0; i < 10; i++)
+                {
+                    var bepInExExists = Directory.Exists(currentDir + Path.DirectorySeparatorChar + "BepInEx");
+                    var lobotomyDataExists = Directory.Exists(currentDir + Path.DirectorySeparatorChar + "LobotomyCorp_Data");
+
+                    if (bepInExExists || lobotomyDataExists)
+                    {
+                        gameRoot = currentDir;
+                        break;
+                    }
+                    var parent = Path.GetDirectoryName(currentDir);
+                    if (string.IsNullOrEmpty(parent) || parent == currentDir)
+                    {
+                        break;
+                    }
+                    currentDir = parent;
+                }
+
+                // Check for BepInEx/LogOutput.log using explicit path construction
+                var logPath = gameRoot + Path.DirectorySeparatorChar + "BepInEx" + Path.DirectorySeparatorChar + "LogOutput.log";
+                LogInfo("GetBepInExLogPath: Checking for BepInEx log at: " + logPath);
+
+                if (File.Exists(logPath))
+                {
+                    LogInfo("GetBepInExLogPath: Found BepInEx log at: " + logPath);
+                    return logPath;
+                }
+                else
+                {
+                    LogWarning("GetBepInExLogPath: BepInEx log not found at: " + logPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogWarning("GetBepInExLogPath: Error finding BepInEx log: " + ex.Message);
+            }
+
+            return null;
+        }
+
+        private static string ReadLogFileSnapshot(string logPath)
+        {
+            try
+            {
+                using (var stream = new FileStream(
+                    logPath,
+                    FileMode.Open,
+                    FileAccess.Read,
+                    FileShare.ReadWrite | FileShare.Delete))
+                {
+                    using (var reader = new StreamReader(stream))
+                    {
+                        return reader.ReadToEnd();
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        private string GetUnityLogPath()
+        {
+            try
+            {
+                // Unity log is at %USERPROFILE%\AppData\LocalLow\Project_Moon\Lobotomy\output_log.txt
+                var userProfile = Environment.GetEnvironmentVariable("USERPROFILE");
+                if (string.IsNullOrEmpty(userProfile))
+                {
+                    // Try fallback for Unix-style environments
+                    userProfile = Environment.GetEnvironmentVariable("HOME");
+                }
+
+                if (string.IsNullOrEmpty(userProfile))
+                {
+                    LogWarning("GetUnityLogPath: Could not find USERPROFILE or HOME environment variable");
+                    return null;
+                }
+
+                var logPath = userProfile + Path.DirectorySeparatorChar + "AppData" + Path.DirectorySeparatorChar + "LocalLow" + Path.DirectorySeparatorChar + "Project_Moon" + Path.DirectorySeparatorChar + "Lobotomy" + Path.DirectorySeparatorChar + "output_log.txt";
+                LogInfo("GetUnityLogPath: Checking for Unity log at: " + logPath);
+
+                if (File.Exists(logPath))
+                {
+                    LogInfo("GetUnityLogPath: Found Unity log at: " + logPath);
+                    return logPath;
+                }
+                else
+                {
+                    LogWarning("GetUnityLogPath: Unity log not found at: " + logPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogWarning("GetUnityLogPath: Error finding Unity log: " + ex.Message);
+            }
+
+            return null;
         }
     }
 }

@@ -17,7 +17,11 @@ namespace HarmonyDebugPanel.Formatting
 
             var lines = new List<string>
             {
-                "=== Harmony Diagnostic Report ===",
+                "###############################################################################",
+                "#                                                                             #",
+                "#                     Harmony Diagnostic Report                             #",
+                "#                                                                             #",
+                "###############################################################################",
                 "Collected At: " + report.CollectedAt.ToString("u"),
             };
 
@@ -120,7 +124,7 @@ namespace HarmonyDebugPanel.Formatting
             }
         }
 
-        public static IList<string> FormatExtended(DiagnosticReport report, string runtimeLogContent)
+        public static IList<string> FormatExtended(DiagnosticReport report, string runtimeLogContent, string retargetHarmonyLogContent = null, string bepInExLogContent = null, string unityLogContent = null)
         {
             if (report == null)
             {
@@ -130,7 +134,8 @@ namespace HarmonyDebugPanel.Formatting
             var lines = Format(report) as List<string> ?? new List<string>(Format(report));
 
             // Add Loaded Assemblies section
-            lines.Add("Loaded Assemblies (" + report.Assemblies.Count + "):");
+            lines.Add(string.Empty);
+            lines.Add("========== LOADED ASSEMBLIES (" + report.Assemblies.Count + ") ==========");
             if (report.Assemblies.Count == 0)
             {
                 lines.Add("  - None");
@@ -145,7 +150,8 @@ namespace HarmonyDebugPanel.Formatting
             }
 
             // Add Runtime Log section
-            lines.Add("Runtime Log:");
+            lines.Add(string.Empty);
+            lines.Add("========== RUNTIME LOG ==========");
             if (string.IsNullOrEmpty(runtimeLogContent))
             {
                 lines.Add("  - No runtime log entries");
@@ -154,6 +160,54 @@ namespace HarmonyDebugPanel.Formatting
             {
                 var runtimeLines = runtimeLogContent.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (var line in runtimeLines)
+                {
+                    lines.Add("  " + line);
+                }
+            }
+
+            // Add RetargetHarmony Log section
+            lines.Add(string.Empty);
+            lines.Add("========== RETARGETHARMONY LOG ==========");
+            if (string.IsNullOrEmpty(retargetHarmonyLogContent))
+            {
+                lines.Add("  - No RetargetHarmony log entries");
+            }
+            else
+            {
+                var rhLines = retargetHarmonyLogContent.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var line in rhLines)
+                {
+                    lines.Add("  " + line);
+                }
+            }
+
+            // Add BepInEx LogOutput.log section
+            lines.Add(string.Empty);
+            lines.Add("========== BEPINEX LOGOUTPUT.LOG ==========");
+            if (string.IsNullOrEmpty(bepInExLogContent))
+            {
+                lines.Add("  - No BepInEx LogOutput.log found or file does not exist");
+            }
+            else
+            {
+                var bepInExLines = bepInExLogContent.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var line in bepInExLines)
+                {
+                    lines.Add("  " + line);
+                }
+            }
+
+            // Add Unity output_log.txt section
+            lines.Add(string.Empty);
+            lines.Add("========== UNITY OUTPUT_LOG.TXT ==========");
+            if (string.IsNullOrEmpty(unityLogContent))
+            {
+                lines.Add("  - No Unity output_log.txt found or file does not exist");
+            }
+            else
+            {
+                var unityLines = unityLogContent.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var line in unityLines)
                 {
                     lines.Add("  " + line);
                 }
