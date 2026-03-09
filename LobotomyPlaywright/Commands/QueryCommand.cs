@@ -79,133 +79,7 @@ internal class QueryCommand
             using var client = _tcpClientFactory();
             client.Connect(host, port);
 
-            switch (target)
-            {
-                case "agents":
-                case "agent":
-                    if (idArg != null)
-                    {
-                        var agentParams = new Dictionary<string, object> { { "id", int.Parse(idArg) } };
-                        var agentData = client.Query("agents", agentParams);
-                        Console.WriteLine(OutputFormatter.FormatAgent(agentData, jsonOutput));
-                    }
-                    else
-                    {
-                        var agentsData = client.Query("agents");
-                        var agentsList = agentsData.TryGetValue("agents", out var a) && a is List<Dictionary<string, object>> list
-                            ? list
-                            : new List<Dictionary<string, object>>();
-
-                        if (jsonOutput)
-                        {
-                            Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(agentsList, new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
-                        }
-                        else
-                        {
-                            foreach (var agent in agentsList)
-                            {
-                                Console.WriteLine(OutputFormatter.FormatAgent(agent, jsonOutput));
-                                Console.WriteLine("---");
-                            }
-                        }
-                    }
-                    break;
-
-                case "creatures":
-                case "creature":
-                case "abnormalities":
-                case "abnormality":
-                    if (idArg != null)
-                    {
-                        var creatureParams = new Dictionary<string, object> { { "id", int.Parse(idArg) } };
-                        var creatureData = client.Query("creatures", creatureParams);
-                        Console.WriteLine(OutputFormatter.FormatCreature(creatureData, jsonOutput));
-                    }
-                    else
-                    {
-                        var creaturesData = client.Query("creatures");
-                        var creaturesList = creaturesData.TryGetValue("creatures", out var c) && c is List<Dictionary<string, object>> list2
-                            ? list2
-                            : new List<Dictionary<string, object>>();
-
-                        if (jsonOutput)
-                        {
-                            Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(creaturesList, new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
-                        }
-                        else
-                        {
-                            foreach (var creature in creaturesList)
-                            {
-                                Console.WriteLine(OutputFormatter.FormatCreature(creature, jsonOutput));
-                                Console.WriteLine("---");
-                            }
-                        }
-                    }
-                    break;
-
-                case "game":
-                case "status":
-                    var gameData = client.Query("game");
-                    Console.WriteLine(OutputFormatter.FormatGameState(gameData, jsonOutput));
-                    break;
-
-                case "departments":
-                case "department":
-                case "sefira":
-                case "sefiras":
-                    var sefiraData = client.Query("sefira");
-                    var sefiraList = sefiraData.TryGetValue("sefiras", out var s) && s is List<Dictionary<string, object>> list3
-                        ? list3
-                        : new List<Dictionary<string, object>>();
-
-                    if (jsonOutput)
-                    {
-                        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(sefiraList, new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
-                    }
-                    else
-                    {
-                        foreach (var sefira in sefiraList)
-                        {
-                            Console.WriteLine(OutputFormatter.FormatDepartment(sefira, jsonOutput));
-                            Console.WriteLine("---");
-                        }
-                    }
-                    break;
-
-                case "ui":
-                    var depth = GetArgValue(args, "--depth") ?? "full";
-                    var windowName = GetArgValue(args, "--name");
-                    var uiParams = new Dictionary<string, object>();
-
-                    if (depth != "full")
-                    {
-                        uiParams["depth"] = depth;
-                    }
-
-                    if (windowName != null)
-                    {
-                        uiParams["name"] = windowName;
-                    }
-
-                    var uiData = client.Query("ui", uiParams);
-
-                    if (jsonOutput)
-                    {
-                        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(uiData, new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
-                    }
-                    else
-                    {
-                        Console.WriteLine(OutputFormatter.FormatUiState(uiData));
-                    }
-                    break;
-
-                default:
-                    Console.Error.WriteLine($"Unknown target: {target}");
-                    Console.Error.WriteLine("Valid targets: agents, creatures, game, departments, ui");
-                    return 1;
-            }
-
-            return 0;
+            return ExecuteQuery(client, target, idArg, jsonOutput, args);
         }
         catch (Exception ex) when (ex is InvalidOperationException || ex is System.Net.Sockets.SocketException)
         {
@@ -213,6 +87,151 @@ internal class QueryCommand
             Console.Error.WriteLine("Ensure Lobotomy Corporation is running with LobotomyPlaywright plugin.");
             return 1;
         }
+    }
+
+    private int ExecuteQuery(ITcpClient client, string target, string? idArg, bool jsonOutput, string[] args)
+    {
+        return target switch
+        {
+            "agents" or "agent" => QueryAgents(client, idArg, jsonOutput),
+            "creatures" or "creature" or "abnormalities" or "abnormality" => QueryCreatures(client, idArg, jsonOutput),
+            "game" or "status" => QueryGame(client, jsonOutput),
+            "departments" or "department" or "sefira" or "sefiras" => QueryDepartments(client, jsonOutput),
+            "ui" => QueryUi(client, jsonOutput, args),
+            _ => PrintUnknownTargetError(target)
+        };
+    }
+
+    private static int QueryAgents(ITcpClient client, string? idArg, bool jsonOutput)
+    {
+        if (idArg != null)
+        {
+            var agentParams = new Dictionary<string, object> { { "id", int.Parse(idArg) } };
+            var agentData = client.Query("agents", agentParams);
+            Console.WriteLine(OutputFormatter.FormatAgent(agentData, jsonOutput));
+        }
+        else
+        {
+            var agentsData = client.Query("agents");
+            var agentsList = ExtractListFromDictionary(agentsData, "agents");
+
+            if (jsonOutput)
+            {
+                Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(agentsList, new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
+            }
+            else
+            {
+                foreach (var agent in agentsList)
+                {
+                    Console.WriteLine(OutputFormatter.FormatAgent(agent, jsonOutput));
+                    Console.WriteLine("---");
+                }
+            }
+        }
+
+        return 0;
+    }
+
+    private static int QueryCreatures(ITcpClient client, string? idArg, bool jsonOutput)
+    {
+        if (idArg != null)
+        {
+            var creatureParams = new Dictionary<string, object> { { "id", int.Parse(idArg) } };
+            var creatureData = client.Query("creatures", creatureParams);
+            Console.WriteLine(OutputFormatter.FormatCreature(creatureData, jsonOutput));
+        }
+        else
+        {
+            var creaturesData = client.Query("creatures");
+            var creaturesList = ExtractListFromDictionary(creaturesData, "creatures");
+
+            if (jsonOutput)
+            {
+                Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(creaturesList, new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
+            }
+            else
+            {
+                foreach (var creature in creaturesList)
+                {
+                    Console.WriteLine(OutputFormatter.FormatCreature(creature, jsonOutput));
+                    Console.WriteLine("---");
+                }
+            }
+        }
+
+        return 0;
+    }
+
+    private static int QueryGame(ITcpClient client, bool jsonOutput)
+    {
+        var gameData = client.Query("game");
+        Console.WriteLine(OutputFormatter.FormatGameState(gameData, jsonOutput));
+        return 0;
+    }
+
+    private static int QueryDepartments(ITcpClient client, bool jsonOutput)
+    {
+        var sefiraData = client.Query("sefira");
+        var sefiraList = ExtractListFromDictionary(sefiraData, "sefiras");
+
+        if (jsonOutput)
+        {
+            Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(sefiraList, new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
+        }
+        else
+        {
+            foreach (var sefira in sefiraList)
+            {
+                Console.WriteLine(OutputFormatter.FormatDepartment(sefira, jsonOutput));
+                Console.WriteLine("---");
+            }
+        }
+
+        return 0;
+    }
+
+    private static int QueryUi(ITcpClient client, bool jsonOutput, string[] args)
+    {
+        var depth = GetArgValue(args, "--depth") ?? "full";
+        var windowName = GetArgValue(args, "--name");
+        var uiParams = new Dictionary<string, object>();
+
+        if (depth != "full")
+        {
+            uiParams["depth"] = depth;
+        }
+
+        if (windowName != null)
+        {
+            uiParams["name"] = windowName;
+        }
+
+        var uiData = client.Query("ui", uiParams);
+
+        if (jsonOutput)
+        {
+            Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(uiData, new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
+        }
+        else
+        {
+            Console.WriteLine(OutputFormatter.FormatUiState(uiData));
+        }
+
+        return 0;
+    }
+
+    private static int PrintUnknownTargetError(string target)
+    {
+        Console.Error.WriteLine($"Unknown target: {target}");
+        Console.Error.WriteLine("Valid targets: agents, creatures, game, departments, ui");
+        return 1;
+    }
+
+    private static List<Dictionary<string, object>> ExtractListFromDictionary(Dictionary<string, object> data, string key)
+    {
+        return data.TryGetValue(key, out var value) && value is List<Dictionary<string, object>> list
+            ? list
+            : new List<Dictionary<string, object>>();
     }
 
     private static void PrintUsage()
