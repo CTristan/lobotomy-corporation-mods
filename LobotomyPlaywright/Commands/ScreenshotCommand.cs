@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using LobotomyPlaywright.Implementations.Configuration;
 using LobotomyPlaywright.Implementations.Network;
@@ -46,26 +47,11 @@ public class ScreenshotCommand
     {
         ArgumentNullException.ThrowIfNull(args);
 
-        var formatArg = GetArgValue(args, "--format") ?? "base64";
-        var outputPath = GetArgValue(args, "--output");
-        var displayFormat = GetArgValue(args, "--display") ?? "text";
-        var host = GetArgValue(args, "--host") ?? "localhost";
-        var portArg = GetArgValue(args, "--port");
-
-        // Validate format argument
-        formatArg = formatArg.ToLowerInvariant();
-        if (formatArg != "base64" && formatArg != "path")
+        // Parse and validate arguments
+        var parseResult = ParseAndValidateArgs(args);
+        if (parseResult.ExitCode != 0)
         {
-            Console.Error.WriteLine($"ERROR: Invalid format '{formatArg}'. Must be 'base64' or 'path'.");
-            return 1;
-        }
-
-        // Validate display format argument
-        displayFormat = displayFormat.ToLowerInvariant();
-        if (displayFormat != "text" && displayFormat != "json")
-        {
-            Console.Error.WriteLine($"ERROR: Invalid display format '{displayFormat}'. Must be 'text' or 'json'.");
-            return 1;
+            return parseResult.ExitCode;
         }
 
         // Load configuration
@@ -80,85 +66,158 @@ public class ScreenshotCommand
             return 1;
         }
 
-        var port = portArg != null ? int.Parse(portArg) : config.TcpPort;
+        var port = parseResult.PortArg != null ? int.Parse(parseResult.PortArg) : config.TcpPort;
 
         try
         {
             using var client = _tcpClientFactory();
-            client.Connect(host, port);
+            client.Connect(parseResult.Host, port);
 
-            // Build command parameters
-            var parameters = new System.Collections.Generic.Dictionary<string, object>
-            {
-                { "format", formatArg }
-            };
-
-            // Send screenshot command
-            var responseData = client.SendCommandWithData("screenshot", parameters);
-
-            if (responseData == null)
-            {
-                Console.Error.WriteLine("ERROR: No response from server");
-                return 1;
-            }
-
-            // Extract response data
-            if (!responseData.TryGetValue("filename", out var filenameObj) || filenameObj == null)
-            {
-                Console.Error.WriteLine("ERROR: Response missing filename");
-                return 1;
-            }
-
-            string filename = filenameObj.ToString() ?? string.Empty;
-            string path = responseData.TryGetValue("path", out var pathObj) ? GetStringValue(pathObj) ?? string.Empty : string.Empty;
-            long size = responseData.TryGetValue("size", out var sizeObj) && sizeObj != null
-                ? GetLongValue(sizeObj)
-                : 0;
-            string timestamp = responseData.TryGetValue("timestamp", out var timestampObj)
-                ? GetStringValue(timestampObj) ?? string.Empty
-                : string.Empty;
-
-            // Handle base64 data if present
-            string? base64Data = null;
-            if (formatArg == "base64" && responseData.TryGetValue("base64", out var base64Obj) && base64Obj != null)
-            {
-                base64Data = GetStringValue(base64Obj);
-            }
-
-            // If output path specified, save the image
-            string savedPath = path;
-            if (!string.IsNullOrEmpty(outputPath) && !string.IsNullOrEmpty(base64Data))
-            {
-                try
-                {
-                    var imageBytes = Convert.FromBase64String(base64Data);
-                    File.WriteAllBytes(outputPath, imageBytes);
-                    savedPath = Path.GetFullPath(outputPath);
-                }
-                catch (Exception ex)
-                {
-                    Console.Error.WriteLine($"ERROR: Failed to save image to '{outputPath}': {ex.Message}");
-                    return 1;
-                }
-            }
-
-            // Display results
-            if (displayFormat == "json")
-            {
-                DisplayJsonResponse(filename, savedPath, size, timestamp, base64Data);
-            }
-            else
-            {
-                DisplayTextResponse(filename, savedPath, size, timestamp, base64Data);
-            }
-
-            return 0;
+            return ExecuteScreenshot(client, parseResult);
         }
         catch (Exception ex) when (ex is InvalidOperationException || ex is System.Net.Sockets.SocketException)
         {
             Console.Error.WriteLine($"Connection error: {ex.Message}");
             Console.Error.WriteLine("Ensure Lobotomy Corporation is running with LobotomyPlaywright plugin.");
             return 1;
+        }
+    }
+
+    private record ParseArgsResult(
+        string FormatArg,
+        string? OutputPath,
+        string DisplayFormat,
+        string Host,
+        string? PortArg,
+        int ExitCode
+    );
+
+    private static ParseArgsResult ParseAndValidateArgs(string[] args)
+    {
+        var formatArg = GetArgValue(args, "--format") ?? "base64";
+        var outputPath = GetArgValue(args, "--output");
+        var displayFormat = GetArgValue(args, "--display") ?? "text";
+        var host = GetArgValue(args, "--host") ?? "localhost";
+        var portArg = GetArgValue(args, "--port");
+
+        // Validate format argument
+        formatArg = formatArg.ToLowerInvariant();
+        if (formatArg != "base64" && formatArg != "path")
+        {
+            Console.Error.WriteLine($"ERROR: Invalid format '{formatArg}'. Must be 'base64' or 'path'.");
+            return new ParseArgsResult(formatArg, outputPath, displayFormat, host, portArg, 1);
+        }
+
+        // Validate display format argument
+        displayFormat = displayFormat.ToLowerInvariant();
+        if (displayFormat != "text" && displayFormat != "json")
+        {
+            Console.Error.WriteLine($"ERROR: Invalid display format '{displayFormat}'. Must be 'text' or 'json'.");
+            return new ParseArgsResult(formatArg, outputPath, displayFormat, host, portArg, 1);
+        }
+
+        return new ParseArgsResult(formatArg, outputPath, displayFormat, host, portArg, 0);
+    }
+
+    private int ExecuteScreenshot(ITcpClient client, ParseArgsResult args)
+    {
+        // Build command parameters
+        var parameters = new System.Collections.Generic.Dictionary<string, object>
+        {
+            { "format", args.FormatArg }
+        };
+
+        // Send screenshot command
+        var responseData = client.SendCommandWithData("screenshot", parameters);
+
+        if (responseData == null)
+        {
+            Console.Error.WriteLine("ERROR: No response from server");
+            return 1;
+        }
+
+        // Extract response data
+        var extractResult = ExtractResponseData(responseData, args.FormatArg);
+        if (extractResult.ExitCode != 0)
+        {
+            return extractResult.ExitCode;
+        }
+
+        // If output path specified, save the image
+        var savedPath = extractResult.Path;
+        if (!string.IsNullOrEmpty(args.OutputPath) && !string.IsNullOrEmpty(extractResult.Base64Data))
+        {
+            var saveResult = SaveImage(args.OutputPath, extractResult.Base64Data);
+            if (saveResult.ExitCode != 0)
+            {
+                return saveResult.ExitCode;
+            }
+            savedPath = saveResult.SavedPath ?? extractResult.Path;
+        }
+
+        // Display results
+        if (args.DisplayFormat == "json")
+        {
+            DisplayJsonResponse(extractResult.FileName, savedPath, extractResult.Size, extractResult.Timestamp, extractResult.Base64Data);
+        }
+        else
+        {
+            DisplayTextResponse(extractResult.FileName, savedPath, extractResult.Size, extractResult.Timestamp, extractResult.Base64Data);
+        }
+
+        return 0;
+    }
+
+    private record ExtractDataResult(
+        string FileName,
+        string Path,
+        long Size,
+        string Timestamp,
+        string? Base64Data,
+        int ExitCode
+    );
+
+    private static ExtractDataResult ExtractResponseData(Dictionary<string, object> responseData, string formatArg)
+    {
+        // Extract response data
+        if (!responseData.TryGetValue("filename", out var filenameObj) || filenameObj == null)
+        {
+            return new ExtractDataResult(string.Empty, string.Empty, 0, string.Empty, null, 1);
+        }
+
+        string filename = filenameObj.ToString() ?? string.Empty;
+        string path = responseData.TryGetValue("path", out var pathObj) ? GetStringValue(pathObj) ?? string.Empty : string.Empty;
+        long size = responseData.TryGetValue("size", out var sizeObj) && sizeObj != null
+            ? GetLongValue(sizeObj)
+            : 0;
+        string timestamp = responseData.TryGetValue("timestamp", out var timestampObj)
+            ? GetStringValue(timestampObj) ?? string.Empty
+            : string.Empty;
+
+        // Handle base64 data if present
+        string? base64Data = null;
+        if (formatArg == "base64" && responseData.TryGetValue("base64", out var base64Obj) && base64Obj != null)
+        {
+            base64Data = GetStringValue(base64Obj);
+        }
+
+        return new ExtractDataResult(filename, path, size, timestamp, base64Data, 0);
+    }
+
+    private record SaveImageResult(string? SavedPath, int ExitCode);
+
+    private static SaveImageResult SaveImage(string outputPath, string base64Data)
+    {
+        try
+        {
+            var imageBytes = Convert.FromBase64String(base64Data);
+            File.WriteAllBytes(outputPath, imageBytes);
+            return new SaveImageResult(Path.GetFullPath(outputPath), 0);
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"ERROR: Failed to save image to '{outputPath}': {ex.Message}");
+            return new SaveImageResult(null, 1);
         }
     }
 
