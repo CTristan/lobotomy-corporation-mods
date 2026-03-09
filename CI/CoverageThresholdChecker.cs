@@ -157,6 +157,91 @@ public sealed class CoverageThresholdChecker : ICoverageThresholdChecker
         return reports;
     }
 
+    private static bool ShouldSkipModule(string moduleName)
+    {
+        // Skip the test projects themselves if they appear as modules
+        if (moduleName.EndsWith(".Test", StringComparison.OrdinalIgnoreCase) ||
+            moduleName.EndsWith(".Tests", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        // Skip local dotnet tools (executables) from coverage thresholds
+        // These are CLI tools with different testing requirements than mod libraries
+        return moduleName == "CI" ||
+               moduleName == "SetupExternal" ||
+               moduleName == "RetargetHarmony" ||
+               moduleName == "HarmonyDebugPanel" ||
+               moduleName == "LobotomyPlaywright" ||
+               moduleName == "LobotomyPlaywright.Plugin";
+    }
+
+    private static ModuleClassSummary GetClassSummary(XElement class_, string namespaceName)
+    {
+        var classSummary = class_.Element(XName.Get("Summary", namespaceName));
+
+        if (classSummary == null)
+        {
+            return new ModuleClassSummary();
+        }
+
+        return new ModuleClassSummary
+        {
+            LineVisited = (double?)classSummary.Attribute("numSequencePoints") ?? 0,
+            LineCovered = (double?)classSummary.Attribute("visitedSequencePoints") ?? 0,
+            BranchVisited = (double?)classSummary.Attribute("numBranchPoints") ?? 0,
+            BranchCovered = (double?)classSummary.Attribute("visitedBranchPoints") ?? 0,
+            MethodVisited = (double?)classSummary.Attribute("numMethods") ?? 0,
+            MethodCovered = (double?)classSummary.Attribute("visitedMethods") ?? 0,
+        };
+    }
+
+    private static ModuleCoverage CreateModuleCoverage(string moduleName, XElement module, string namespaceName)
+    {
+        double totalLineVisited = 0;
+        double totalLineCovered = 0;
+        double totalBranchVisited = 0;
+        double totalBranchCovered = 0;
+        double totalMethodVisited = 0;
+        double totalMethodCovered = 0;
+
+        var classes = module.Descendants(XName.Get("Class", namespaceName));
+
+        foreach (var class_ in classes)
+        {
+            var summary = GetClassSummary(class_, namespaceName);
+            totalLineVisited += summary.LineVisited;
+            totalLineCovered += summary.LineCovered;
+            totalBranchVisited += summary.BranchVisited;
+            totalBranchCovered += summary.BranchCovered;
+            totalMethodVisited += summary.MethodVisited;
+            totalMethodCovered += summary.MethodCovered;
+        }
+
+        // Only add modules that actually have code
+        if (totalLineVisited > 0)
+        {
+            return new ModuleCoverage
+            {
+                ModuleName = moduleName,
+                LineVisited = totalLineVisited,
+                LineCovered = totalLineCovered,
+                BranchVisited = totalBranchVisited,
+                BranchCovered = totalBranchCovered,
+                MethodVisited = totalMethodVisited,
+                MethodCovered = totalMethodCovered,
+                Totals = new CoverageTotals
+                {
+                    LineCoverage = (totalLineCovered / totalLineVisited) * 100,
+                    BranchCoverage = totalBranchVisited == 0 ? 100.0 : (totalBranchCovered / totalBranchVisited) * 100,
+                    MethodCoverage = totalMethodVisited == 0 ? 100.0 : (totalMethodCovered / totalMethodVisited) * 100,
+                }
+            };
+        }
+
+        return null!;
+    }
+
     private static List<ModuleCoverage> GetModuleCoverages(List<string> coverageReports)
     {
         var moduleCoverages = new List<ModuleCoverage>();
@@ -175,70 +260,15 @@ public sealed class CoverageThresholdChecker : ICoverageThresholdChecker
                 var moduleNameElement = module.Element(XName.Get("ModuleName", namespaceName));
                 var moduleName = moduleNameElement?.Value ?? "Unknown";
 
-                // Skip the test projects themselves if they appear as modules
-                if (moduleName.EndsWith(".Test", StringComparison.OrdinalIgnoreCase) ||
-                    moduleName.EndsWith(".Tests", StringComparison.OrdinalIgnoreCase))
+                if (ShouldSkipModule(moduleName))
                 {
                     continue;
                 }
 
-                // Skip local dotnet tools (executables) from coverage thresholds
-                // These are CLI tools with different testing requirements than mod libraries
-                if (moduleName == "CI" ||
-                    moduleName == "SetupExternal" ||
-                    moduleName == "RetargetHarmony" ||
-                    moduleName == "HarmonyDebugPanel" ||
-                    moduleName == "LobotomyPlaywright" ||
-                    moduleName == "LobotomyPlaywright.Plugin")
+                var moduleCoverage = CreateModuleCoverage(moduleName, module, namespaceName);
+                if (moduleCoverage != null)
                 {
-                    continue;
-                }
-
-                double totalLineVisited = 0;
-                double totalLineCovered = 0;
-                double totalBranchVisited = 0;
-                double totalBranchCovered = 0;
-                double totalMethodVisited = 0;
-                double totalMethodCovered = 0;
-
-                var classes = module.Descendants(XName.Get("Class", namespaceName));
-
-                foreach (var class_ in classes)
-                {
-                    var classSummary = class_.Element(XName.Get("Summary", namespaceName));
-
-                    if (classSummary == null)
-                    {
-                        continue;
-                    }
-
-                    totalLineVisited += (double?)classSummary.Attribute("numSequencePoints") ?? 0;
-                    totalLineCovered += (double?)classSummary.Attribute("visitedSequencePoints") ?? 0;
-                    totalBranchVisited += (double?)classSummary.Attribute("numBranchPoints") ?? 0;
-                    totalBranchCovered += (double?)classSummary.Attribute("visitedBranchPoints") ?? 0;
-                    totalMethodVisited += (double?)classSummary.Attribute("numMethods") ?? 0;
-                    totalMethodCovered += (double?)classSummary.Attribute("visitedMethods") ?? 0;
-                }
-
-                // Only add modules that actually have code
-                if (totalLineVisited > 0)
-                {
-                    moduleCoverages.Add(new ModuleCoverage
-                    {
-                        ModuleName = moduleName,
-                        LineVisited = totalLineVisited,
-                        LineCovered = totalLineCovered,
-                        BranchVisited = totalBranchVisited,
-                        BranchCovered = totalBranchCovered,
-                        MethodVisited = totalMethodVisited,
-                        MethodCovered = totalMethodCovered,
-                        Totals = new CoverageTotals
-                        {
-                            LineCoverage = (totalLineCovered / totalLineVisited) * 100,
-                            BranchCoverage = totalBranchVisited == 0 ? 100.0 : (totalBranchCovered / totalBranchVisited) * 100,
-                            MethodCoverage = totalMethodVisited == 0 ? 100.0 : (totalMethodCovered / totalMethodVisited) * 100,
-                        }
-                    });
+                    moduleCoverages.Add(moduleCoverage);
                 }
             }
         }
@@ -291,4 +321,14 @@ internal sealed class CoverageTotals
     public double LineCoverage { get; init; }
     public double BranchCoverage { get; init; }
     public double MethodCoverage { get; init; }
+}
+
+internal sealed class ModuleClassSummary
+{
+    public double LineVisited { get; init; }
+    public double LineCovered { get; init; }
+    public double BranchVisited { get; init; }
+    public double BranchCovered { get; init; }
+    public double MethodVisited { get; init; }
+    public double MethodCovered { get; init; }
 }
