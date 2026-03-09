@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,7 +11,6 @@ namespace SetupExternal;
 
 #pragma warning disable RCS1102 // Make class static
 #pragma warning disable CA1852 // Type can be sealed
-#pragma warning disable CA1515 // Make internal
 
 /// <summary>
 /// Handles copying game DLLs with SHA256 hash comparison to avoid unnecessary copies.

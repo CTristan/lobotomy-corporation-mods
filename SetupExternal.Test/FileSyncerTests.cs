@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+
 using System;
 using System.IO;
 using System.Text;
@@ -8,7 +10,6 @@ using Xunit;
 namespace SetupExternal.Tests;
 
 #pragma warning disable CA1303 // Do not pass literals as localized parameters
-#pragma warning disable CA1515 // Types need to be public for testability
 
 public sealed class FileSyncerTests : IDisposable
 {

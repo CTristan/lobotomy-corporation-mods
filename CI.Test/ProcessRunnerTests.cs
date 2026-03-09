@@ -5,8 +5,6 @@ using CI;
 using FluentAssertions;
 using Xunit;
 
-#pragma warning disable CA1515 // Types need to be public for testability
-
 namespace CI.Tests;
 
 public sealed class ProcessRunnerTests

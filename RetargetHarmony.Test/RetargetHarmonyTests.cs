@@ -11,7 +11,6 @@ using Xunit;
 using Xunit.Abstractions;
 using static RetargetHarmony.RetargetHarmony;
 
-#pragma warning disable CA1515 // Types need to be public for testability
 #pragma warning disable xUnit1000 // Test classes must be public - xUnit requirement
 #pragma warning disable CA1812 // Internal class apparently never instantiated - xUnit instantiates test classes
 

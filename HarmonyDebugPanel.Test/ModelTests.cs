@@ -5,8 +5,6 @@ using FluentAssertions;
 using HarmonyDebugPanel.Models;
 using Xunit;
 
-#pragma warning disable CA1515 // Test classes must be public for xUnit
-
 namespace HarmonyDebugPanel.Test;
 
 public sealed class ModelTests

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+
 using System;
 using System.IO;
 using System.Linq;
@@ -7,8 +9,6 @@ using SetupExternal;
 using Xunit;
 
 namespace SetupExternal.Tests;
-
-#pragma warning disable CA1515 // Types need to be public for testability
 
 public sealed class AssemblyRetargeterTests : IDisposable
 {

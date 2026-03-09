@@ -1,7 +1,5 @@
 // SPDX-License-Identifier: MIT
 
-#pragma warning disable CA1515 // Test classes must be public for xUnit
-
 using System.Collections.Generic;
 using FluentAssertions;
 using LobotomyPlaywright.Infrastructure;

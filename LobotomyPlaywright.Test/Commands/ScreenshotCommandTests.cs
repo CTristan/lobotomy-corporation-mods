@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 
 #nullable enable
-#pragma warning disable CA1515 // Test classes must be public for xUnit
 
 using System;
 using System.Collections.Generic;
