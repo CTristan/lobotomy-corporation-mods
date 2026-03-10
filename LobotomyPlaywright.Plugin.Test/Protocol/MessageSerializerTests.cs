@@ -3,7 +3,6 @@
 using System;
 using AwesomeAssertions;
 using LobotomyPlaywright.JsonModels;
-using LobotomyPlaywright.Plugin.Test.Tests;
 using LobotomyPlaywright.Protocol;
 using Xunit;
 using Xunit.Abstractions;
@@ -18,7 +17,7 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
         [Fact]
         public void SerializeResponse_success_response_produces_valid_json()
         {
-            if (!UnityTestHelper.IsUnityAvailable)
+            if (!LobotomyPlaywright.TestHelpers.UnityTestHelper.IsUnityAvailable)
             {
                 _output.WriteLine("Skipping test - Unity runtime not available");
                 return;
@@ -40,7 +39,7 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
         [Fact]
         public void SerializeResponse_error_response_produces_valid_json()
         {
-            if (!UnityTestHelper.IsUnityAvailable)
+            if (!LobotomyPlaywright.TestHelpers.UnityTestHelper.IsUnityAvailable)
             {
                 _output.WriteLine("Skipping test - Unity runtime not available");
                 return;
@@ -64,7 +63,7 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
         [Fact]
         public void SerializeResponse_event_response_produces_valid_json()
         {
-            if (!UnityTestHelper.IsUnityAvailable)
+            if (!LobotomyPlaywright.TestHelpers.UnityTestHelper.IsUnityAvailable)
             {
                 _output.WriteLine("Skipping test - Unity runtime not available");
                 return;
@@ -89,7 +88,7 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
         [Fact]
         public void DeserializeRequest_valid_json_produces_request_object()
         {
-            if (!UnityTestHelper.IsUnityAvailable)
+            if (!LobotomyPlaywright.TestHelpers.UnityTestHelper.IsUnityAvailable)
             {
                 _output.WriteLine("Skipping test - Unity runtime not available");
                 return;
@@ -112,7 +111,7 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
         [Fact]
         public void DeserializeRequest_with_params_produces_request_with_params()
         {
-            if (!UnityTestHelper.IsUnityAvailable)
+            if (!LobotomyPlaywright.TestHelpers.UnityTestHelper.IsUnityAvailable)
             {
                 _output.WriteLine("Skipping test - Unity runtime not available");
                 return;
@@ -132,7 +131,7 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
         [Fact]
         public void DeserializeRequest_null_json_throws_exception()
         {
-            if (!UnityTestHelper.IsUnityAvailable)
+            if (!LobotomyPlaywright.TestHelpers.UnityTestHelper.IsUnityAvailable)
             {
                 _output.WriteLine("Skipping test - Unity runtime not available");
                 return;
@@ -152,7 +151,7 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
         [Fact]
         public void DeserializeRequest_empty_json_throws_exception()
         {
-            if (!UnityTestHelper.IsUnityAvailable)
+            if (!LobotomyPlaywright.TestHelpers.UnityTestHelper.IsUnityAvailable)
             {
                 _output.WriteLine("Skipping test - Unity runtime not available");
                 return;
@@ -171,7 +170,7 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
         [Fact]
         public void DeserializeRequest_invalid_json_throws_exception()
         {
-            if (!UnityTestHelper.IsUnityAvailable)
+            if (!LobotomyPlaywright.TestHelpers.UnityTestHelper.IsUnityAvailable)
             {
                 _output.WriteLine("Skipping test - Unity runtime not available");
                 return;
@@ -190,7 +189,7 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
         [Fact]
         public void Serialize_deserialize_round_trip_preserves_data()
         {
-            if (!UnityTestHelper.IsUnityAvailable)
+            if (!LobotomyPlaywright.TestHelpers.UnityTestHelper.IsUnityAvailable)
             {
                 _output.WriteLine("Skipping test - Unity runtime not available");
                 return;

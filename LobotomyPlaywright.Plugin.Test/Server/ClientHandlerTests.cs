@@ -6,7 +6,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using AwesomeAssertions;
-using LobotomyPlaywright.Plugin.Test.Tests;
 using LobotomyPlaywright.Server;
 using Xunit;
 using Xunit.Abstractions;
@@ -72,7 +71,7 @@ namespace LobotomyPlaywright.Plugin.Test.Server
         [Fact]
         public void ClientHandler_can_send_json_request()
         {
-            if (!UnityTestHelper.IsUnityAvailable)
+            if (!LobotomyPlaywright.TestHelpers.UnityTestHelper.IsUnityAvailable)
             {
                 return;
             }
@@ -108,7 +107,7 @@ namespace LobotomyPlaywright.Plugin.Test.Server
         [Fact]
         public void ClientHandler_handles_multiple_requests()
         {
-            if (!UnityTestHelper.IsUnityAvailable)
+            if (!LobotomyPlaywright.TestHelpers.UnityTestHelper.IsUnityAvailable)
             {
                 return;
             }
@@ -154,7 +153,7 @@ namespace LobotomyPlaywright.Plugin.Test.Server
         [Fact]
         public void ClientHandler_handles_malformed_json_gracefully()
         {
-            if (!UnityTestHelper.IsUnityAvailable)
+            if (!LobotomyPlaywright.TestHelpers.UnityTestHelper.IsUnityAvailable)
             {
                 return;
             }
@@ -185,7 +184,7 @@ namespace LobotomyPlaywright.Plugin.Test.Server
         [Fact]
         public void ClientHandler_with_large_request_handles_gracefully()
         {
-            if (!UnityTestHelper.IsUnityAvailable)
+            if (!LobotomyPlaywright.TestHelpers.UnityTestHelper.IsUnityAvailable)
             {
                 return;
             }
@@ -221,7 +220,7 @@ namespace LobotomyPlaywright.Plugin.Test.Server
         [Fact]
         public void ClientHandler_json_line_protocol_uses_newline_delimiter()
         {
-            if (!UnityTestHelper.IsUnityAvailable)
+            if (!LobotomyPlaywright.TestHelpers.UnityTestHelper.IsUnityAvailable)
             {
                 return;
             }
@@ -257,7 +256,7 @@ namespace LobotomyPlaywright.Plugin.Test.Server
         [Fact]
         public void ClientHandler_handles_concurrent_clients()
         {
-            if (!UnityTestHelper.IsUnityAvailable)
+            if (!LobotomyPlaywright.TestHelpers.UnityTestHelper.IsUnityAvailable)
             {
                 return;
             }
