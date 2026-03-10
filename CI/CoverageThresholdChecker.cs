@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Text.Json;
 using System.Xml.Linq;
 
@@ -55,7 +56,7 @@ namespace CI
                     overallCoverage.MethodCoverage));
 
                 // Now check against thresholds from coverlet.json
-                var configPath = System.IO.Path.Combine(repoRoot, "coverlet.json");
+                var configPath = Path.Combine(repoRoot, "coverlet.json");
 
                 if (!_fileSystem.FileExists(configPath))
                 {
@@ -122,9 +123,29 @@ namespace CI
 
                 return true;
             }
-            catch (Exception ex)
+            catch (IOException ex)
             {
-                failureMessage = $"Error processing coverage reports: {ex.Message}";
+                failureMessage = $"Error reading coverage files: {ex.Message}";
+                return false;
+            }
+            catch (JsonException ex)
+            {
+                failureMessage = $"Error parsing coverlet configuration: {ex.Message}";
+                return false;
+            }
+            catch (System.Xml.XmlException ex)
+            {
+                failureMessage = $"Error parsing coverage XML: {ex.Message}";
+                return false;
+            }
+            catch (InvalidOperationException ex)
+            {
+                failureMessage = $"Error processing coverage data: {ex.Message}";
+                return false;
+            }
+            catch (FormatException ex)
+            {
+                failureMessage = $"Error parsing numeric values in coverage data: {ex.Message}";
                 return false;
             }
         }
@@ -132,13 +153,13 @@ namespace CI
         private static List<string> FindCoverageReports(string repoRoot)
         {
             List<string> reports = [];
-            var testDirectories = System.IO.Directory.GetDirectories(repoRoot, "*.Test");
+            var testDirectories = Directory.GetDirectories(repoRoot, "*.Test");
 
             foreach (var testDir in testDirectories)
             {
-                var reportPath = System.IO.Path.Combine(testDir, "coverage.opencover.xml");
+                var reportPath = Path.Combine(testDir, "coverage.opencover.xml");
 
-                if (System.IO.File.Exists(reportPath))
+                if (File.Exists(reportPath))
                 {
                     reports.Add(reportPath);
                 }
@@ -232,7 +253,7 @@ namespace CI
 
             foreach (var reportPath in coverageReports)
             {
-                var xml = System.IO.File.ReadAllText(reportPath);
+                var xml = File.ReadAllText(reportPath);
                 XDocument doc = XDocument.Parse(xml);
                 var ns = doc.Root?.GetDefaultNamespace();
                 var namespaceName = ns?.NamespaceName ?? string.Empty;

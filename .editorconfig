@@ -7,8 +7,6 @@ indent_style = space
 [*.{cs,csx}]
 # BEGIN TEMPORARY BUILD WORKAROUND: Disable analyzers that cause build errors until the underlying issues are resolved
 
-# WHY: Disable CA1031 (catch specific exception) - too strict for practical exception handling
-dotnet_diagnostic.CA1031.severity = none
 # WHY: Disable CA1034 (nested types) - nested types are sometimes appropriate
 dotnet_diagnostic.CA1034.severity = none
 # WHY: Disable CA1051 (visible instance fields) - required for JsonUtility serialization
@@ -110,6 +108,13 @@ dotnet_diagnostic.CA1707.severity = none
 # WHY: Harmony_Patch class names contain underscores (Basemod convention)
 dotnet_diagnostic.CA1707.severity = none
 
+# WHY: HarmonyDebugPanel must never crash the game. Plugin lifecycle methods (Awake, Update, OnGUI)
+# and diagnostic collectors use reflection to inspect loaded assemblies at runtime. Any exception
+# type can occur and must be caught. Caught exceptions are collected and displayed in the panel's
+# Warnings section.
+[{HarmonyDebugPanel,**/HarmonyDebugPanel}/{*.cs,**/*.cs}]
+dotnet_diagnostic.CA1031.severity = none
+
 # WHY: These are required for JsonUtility serialization
 [{JsonModels,**/JsonModels}/{*.cs,**/*.cs}]
 # WHY: JsonUtility does not support collections other than arrays and List<T>
@@ -118,7 +123,25 @@ dotnet_diagnostic.CA1002.severity = none
 # WHY: JsonUtility data classes require public lowercase fields and case-differing PascalCase accessors — Unity's serializer only works with public fields
 dotnet_diagnostic.CA1708.severity = none
 
+# WHY: LobotomyPlaywright CLI is a testing tool. Command handlers catch Exception to log errors,
+# attempt to send a shutdown command to the game via TCP, and return proper exit codes. General
+# exception catching is intentional for TCP communication where exception types are unpredictable.
+[{LobotomyPlaywright,**/LobotomyPlaywright}/{*.cs,**/*.cs}]
+dotnet_diagnostic.CA1031.severity = none
+
+# WHY: LobotomyPlaywright.Plugin is an automated testing tool. Any caught exception logs the error
+# and immediately shuts down the game to make failures loud and obvious. General exception catching
+# is intentional — the plugin uses reflection to access game internals where exception types are
+# unpredictable.
+[{LobotomyPlaywright.Plugin,**/LobotomyPlaywright.Plugin}/{*.cs,**/*.cs}]
+dotnet_diagnostic.CA1031.severity = none
+
 # WHY: Harmony patches use __ prefixed parameters (__instance, __result) that violate naming rules
 [{Patches,**/Patches}/{*.cs,**/*.cs}]
 dotnet_diagnostic.IDE1006.severity = none
 dotnet_diagnostic.CA1707.severity = none
+
+# WHY: RetargetHarmony is a BepInEx preloader patcher — an unhandled exception here prevents
+# ALL mods from loading. General exception catching is intentional to ensure patcher resilience.
+[{RetargetHarmony,**/RetargetHarmony}/{*.cs,**/*.cs}]
+dotnet_diagnostic.CA1031.severity = none

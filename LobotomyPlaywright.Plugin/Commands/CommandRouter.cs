@@ -113,6 +113,7 @@ namespace LobotomyPlaywright.Commands
             }
             catch (Exception ex)
             {
+                Plugin.HandleFatalException(ex, "HandleShutdown");
                 return Response.CreateError(
                     request.Id,
                     $"Failed to queue shutdown: {ex.Message}",

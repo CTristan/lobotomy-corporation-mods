@@ -2,6 +2,7 @@
 
 using System;
 using LobotomyPlaywright.Commands;
+using LobotomyPlaywright.Infrastructure;
 
 // Only exclude specific classes from coverage, not the entire assembly
 // [assembly: ExcludeFromCodeCoverage]
@@ -43,7 +44,7 @@ namespace LobotomyPlaywright
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine($"ERROR: {ex.Message}");
+                ExceptionHelper.LogAndAttemptShutdown(ex, "Main");
                 return 1;
             }
         }

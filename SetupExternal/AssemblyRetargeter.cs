@@ -240,10 +240,22 @@ namespace SetupExternal
                 Program.DebugLog($"[Retarget] No changes needed for {Path.GetFileName(dllPath)}");
                 return false;
             }
-            catch (Exception ex)
+            catch (IOException ex)
             {
-                Console.Error.WriteLine($"Error retargeting {dllPath}: {ex.Message}");
-                Program.DebugLog($"[Retarget] Exception: {ex}");
+                Console.Error.WriteLine($"Error reading/writing file {dllPath}: {ex.Message}");
+                Program.DebugLog($"[Retarget] IOException: {ex}");
+                return false;
+            }
+            catch (BadImageFormatException ex)
+            {
+                Console.Error.WriteLine($"Error: Assembly {dllPath} is corrupt or invalid: {ex.Message}");
+                Program.DebugLog($"[Retarget] BadImageFormatException: {ex}");
+                return false;
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.Error.WriteLine($"Error processing assembly {dllPath}: {ex.Message}");
+                Program.DebugLog($"[Retarget] InvalidOperationException: {ex}");
                 return false;
             }
         }

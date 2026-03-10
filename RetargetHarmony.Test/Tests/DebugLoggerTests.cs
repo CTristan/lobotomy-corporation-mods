@@ -42,9 +42,13 @@ namespace RetargetHarmony.Test.Tests
                     Directory.Delete(_tempDir, true);
                 }
             }
-            catch
+            catch (IOException)
             {
-                // Ignore cleanup errors
+                // Ignore IO errors during cleanup
+            }
+            catch (UnauthorizedAccessException)
+            {
+                // Ignore access errors during cleanup
             }
         }
 

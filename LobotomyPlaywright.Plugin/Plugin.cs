@@ -52,6 +52,7 @@ namespace LobotomyPlaywright
             }
             catch (System.Exception ex)
             {
+                HandleFatalException(ex, "Awake");
                 LogError($"LobotomyPlaywright initialization error: {ex.Message}");
             }
         }
@@ -122,6 +123,16 @@ namespace LobotomyPlaywright
         {
             _shutdownQueued = true;
             LogInfo("LobotomyPlaywright: Shutdown queued.");
+        }
+
+        /// <summary>
+        /// Handles a fatal exception by logging it and queueing a game shutdown.
+        /// </summary>
+        internal static void HandleFatalException(System.Exception ex, string context)
+        {
+            var message = "[LobotomyPlaywright] FATAL [" + context + "]: " + ex;
+            TcpServer.LogError(message);
+            Instance?.QueueShutdown();
         }
 
         private void OnDestroy()

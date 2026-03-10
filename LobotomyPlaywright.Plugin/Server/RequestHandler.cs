@@ -44,6 +44,7 @@ namespace LobotomyPlaywright.Server
             }
             catch (Exception ex)
             {
+                Plugin.HandleFatalException(ex, "ProcessRequest");
                 return Response.CreateError(
                     request.Id,
                     $"Error processing request: {ex.Message}",

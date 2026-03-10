@@ -26,6 +26,8 @@ namespace HarmonyDebugPanel
         private const string LogFolderName = "logs";
         private const string LogFileName = "HarmonyDebugPanel.log";
 
+        private static readonly System.Collections.Generic.List<string> s_runtimeExceptions = [];
+
         private string _logFilePath;
 
         private PluginConfiguration _configuration;
@@ -85,6 +87,7 @@ namespace HarmonyDebugPanel
             }
             catch (Exception ex)
             {
+                s_runtimeExceptions.Add("HarmonyDebugPanel initialization error: " + ex);
                 if (Logger != null)
                 {
                     Logger.LogError("HarmonyDebugPanel initialization error: " + ex);
@@ -129,9 +132,16 @@ namespace HarmonyDebugPanel
                 var timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
                 File.WriteAllText(_logFilePath, $"[{timestamp}] INFO: HarmonyDebugPanel log file initialized{Environment.NewLine}");
             }
-            catch (Exception ex)
+            catch (IOException ex)
             {
-                Logger?.LogWarning("HarmonyDebugPanel: Could not initialize log file: " + ex.Message);
+                s_runtimeExceptions.Add("InitializeLogFile: IOException - " + ex.Message);
+                Logger?.LogWarning("HarmonyDebugPanel: Could not initialize log file (IO): " + ex.Message);
+                _logFilePath = null;
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                s_runtimeExceptions.Add("InitializeLogFile: UnauthorizedAccessException - " + ex.Message);
+                Logger?.LogWarning("HarmonyDebugPanel: Could not initialize log file (Access): " + ex.Message);
                 _logFilePath = null;
             }
         }
@@ -206,9 +216,9 @@ namespace HarmonyDebugPanel
                     RefreshReport();
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                // Silently ignore Update errors to prevent cascading failures
+                s_runtimeExceptions.Add("Update error: " + ex);
             }
         }
 
@@ -240,6 +250,7 @@ namespace HarmonyDebugPanel
             }
             catch (Exception ex)
             {
+                s_runtimeExceptions.Add("OnGUI draw error: " + ex);
                 GUI.Box(new Rect(10, 50, 400, 30), "Draw error: " + ex.Message);
             }
         }
@@ -254,9 +265,22 @@ namespace HarmonyDebugPanel
             try
             {
                 _report = _reportBuilder.BuildReport();
+
+                // Merge runtime exceptions into warnings
+                if (s_runtimeExceptions.Count > 0)
+                {
+                    foreach (var exception in s_runtimeExceptions)
+                    {
+                        _report.Warnings.Add(exception);
+                    }
+
+                    // Clear after merging to avoid duplicates on subsequent refreshes
+                    s_runtimeExceptions.Clear();
+                }
             }
             catch (Exception ex)
             {
+                s_runtimeExceptions.Add("RefreshReport error: " + ex);
                 LogError("RefreshReport error: " + ex);
             }
         }
@@ -288,9 +312,9 @@ namespace HarmonyDebugPanel
                     {
                         retargetHarmonyLogContent = File.ReadAllText(retargetHarmonyLogPath, Encoding.UTF8);
                     }
-                    catch (Exception ex)
+                    catch (IOException ex)
                     {
-                        LogWarning("GenerateLog: Could not read RetargetHarmony log file: " + ex.Message);
+                        LogWarning("GenerateLog: Could not read RetargetHarmony log file (IO): " + ex.Message);
                     }
                 }
 
@@ -314,9 +338,9 @@ namespace HarmonyDebugPanel
                     {
                         runtimeLogContent = File.ReadAllText(_logFilePath, Encoding.UTF8);
                     }
-                    catch (Exception ex)
+                    catch (IOException ex)
                     {
-                        LogWarning("GenerateLog: Could not read runtime log file: " + ex.Message);
+                        LogWarning("GenerateLog: Could not read runtime log file (IO): " + ex.Message);
                     }
                 }
 
@@ -346,13 +370,14 @@ namespace HarmonyDebugPanel
                 {
                     _ = Process.Start("notepad.exe", logFilePath);
                 }
-                catch (Exception ex)
+                catch (System.ComponentModel.Win32Exception ex)
                 {
                     LogError("GenerateLog: Could not open Notepad: " + ex.Message);
                 }
             }
             catch (Exception ex)
             {
+                s_runtimeExceptions.Add("GenerateLog error: " + ex);
                 LogError("GenerateLog error: " + ex);
             }
         }
@@ -409,9 +434,13 @@ namespace HarmonyDebugPanel
                     }
                 }
             }
-            catch (Exception ex)
+            catch (IOException ex)
             {
-                LogWarning("GetRetargetHarmonyLogPath: Error finding RetargetHarmony log: " + ex.Message);
+                LogWarning("GetRetargetHarmonyLogPath: IOError finding RetargetHarmony log: " + ex.Message);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                LogWarning("GetRetargetHarmonyLogPath: Access error finding RetargetHarmony log: " + ex.Message);
             }
 
             return null;
@@ -464,9 +493,13 @@ namespace HarmonyDebugPanel
                     LogWarning("GetBepInExLogPath: BepInEx log not found at: " + logPath);
                 }
             }
-            catch (Exception ex)
+            catch (IOException ex)
             {
-                LogWarning("GetBepInExLogPath: Error finding BepInEx log: " + ex.Message);
+                LogWarning("GetBepInExLogPath: IOError finding BepInEx log: " + ex.Message);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                LogWarning("GetBepInExLogPath: Access error finding BepInEx log: " + ex.Message);
             }
 
             return null;
@@ -484,7 +517,7 @@ namespace HarmonyDebugPanel
                 using var reader = new StreamReader(stream);
                 return reader.ReadToEnd();
             }
-            catch (Exception)
+            catch (IOException)
             {
                 return null;
             }
@@ -521,9 +554,13 @@ namespace HarmonyDebugPanel
                     LogWarning("GetUnityLogPath: Unity log not found at: " + logPath);
                 }
             }
-            catch (Exception ex)
+            catch (IOException ex)
             {
-                LogWarning("GetUnityLogPath: Error finding Unity log: " + ex.Message);
+                LogWarning("GetUnityLogPath: IOError finding Unity log: " + ex.Message);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                LogWarning("GetUnityLogPath: Access error finding Unity log: " + ex.Message);
             }
 
             return null;

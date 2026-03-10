@@ -48,6 +48,7 @@ namespace LobotomyPlaywright.Commands
             }
             catch (Exception ex)
             {
+                Plugin.HandleFatalException(ex, "HandlePause");
                 return Response.CreateError(request.Id, $"Failed to pause: {ex.Message}", "COMMAND_ERROR");
             }
         }
@@ -77,6 +78,7 @@ namespace LobotomyPlaywright.Commands
             }
             catch (Exception ex)
             {
+                Plugin.HandleFatalException(ex, "HandleUnpause");
                 return Response.CreateError(request.Id, $"Failed to unpause: {ex.Message}", "COMMAND_ERROR");
             }
         }
@@ -144,6 +146,7 @@ namespace LobotomyPlaywright.Commands
             }
             catch (Exception ex)
             {
+                Plugin.HandleFatalException(ex, "HandleAssignWork");
                 return Response.CreateError(request.Id, $"Failed to assign work: {ex.Message}", "COMMAND_ERROR");
             }
         }
@@ -197,6 +200,7 @@ namespace LobotomyPlaywright.Commands
             }
             catch (Exception ex)
             {
+                Plugin.HandleFatalException(ex, "HandleDeployAgent");
                 return Response.CreateError(request.Id, $"Failed to deploy agent: {ex.Message}", "COMMAND_ERROR");
             }
         }
@@ -239,6 +243,7 @@ namespace LobotomyPlaywright.Commands
             }
             catch (Exception ex)
             {
+                Plugin.HandleFatalException(ex, "HandleRecallAgent");
                 return Response.CreateError(request.Id, $"Failed to recall agent: {ex.Message}", "COMMAND_ERROR");
             }
         }
@@ -279,6 +284,7 @@ namespace LobotomyPlaywright.Commands
             }
             catch (Exception ex)
             {
+                Plugin.HandleFatalException(ex, "HandleSuppress");
                 return Response.CreateError(request.Id, $"Failed to suppress: {ex.Message}", "COMMAND_ERROR");
             }
         }

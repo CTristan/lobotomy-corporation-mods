@@ -168,7 +168,7 @@ namespace CI.Test.Tests
                 var result = checker.CheckThresholds(tempDir, out var failureMessage);
 
                 _ = result.Should().BeFalse();
-                _ = failureMessage.Should().Contain("Error processing coverage reports");
+                _ = failureMessage.Should().Contain("Error parsing coverage XML");
             }
             finally
             {

@@ -27,9 +27,13 @@ namespace SetupExternal.Test.Tests
                 {
                     File.Delete(_testAssemblyPath);
                 }
-                catch
+                catch (IOException)
                 {
-                    // Ignore errors during cleanup
+                    // Ignore IO errors during cleanup
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    // Ignore access errors during cleanup
                 }
             }
         }

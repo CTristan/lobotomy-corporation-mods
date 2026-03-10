@@ -73,6 +73,7 @@ namespace LobotomyPlaywright.Queries
             }
             catch (Exception ex)
             {
+                Plugin.HandleFatalException(ex, "HandleQuery");
                 return Response.CreateError(
                     request.Id,
                     $"Query failed: {ex.Message}",

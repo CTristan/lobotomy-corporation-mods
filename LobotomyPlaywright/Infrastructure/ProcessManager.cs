@@ -109,7 +109,11 @@ namespace LobotomyPlaywright.Infrastructure
                     }
                 }
             }
-            catch (Exception)
+            catch (InvalidOperationException)
+            {
+                // Ignore errors during process detection
+            }
+            catch (System.ComponentModel.Win32Exception)
             {
                 // Ignore errors during process detection
             }
@@ -145,7 +149,11 @@ namespace LobotomyPlaywright.Infrastructure
                         _ = _processRunner.Run("kill", $"-{signal} {pid}", null, null);
                     }
                 }
-                catch (Exception)
+                catch (InvalidOperationException)
+                {
+                    success = false;
+                }
+                catch (System.ComponentModel.Win32Exception)
                 {
                     success = false;
                 }
