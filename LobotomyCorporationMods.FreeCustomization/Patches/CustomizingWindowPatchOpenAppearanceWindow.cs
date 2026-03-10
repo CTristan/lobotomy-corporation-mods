@@ -19,6 +19,20 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
     [HarmonyPatch(typeof(CustomizingWindow), nameof(CustomizingWindow.OpenAppearanceWindow))]
     public static class CustomizingWindowPatchOpenAppearanceWindow
     {
+        public static void PostfixWithLogging(Func<CustomizingWindow> getCustomizingWindow)
+        {
+            try
+            {
+                getCustomizingWindow().PatchAfterOpenAppearanceWindow();
+            }
+            catch (Exception ex)
+            {
+                Harmony_Patch.Instance.Logger.WriteException(ex);
+
+                throw;
+            }
+        }
+
         /// <summary>
         ///     Runs after opening the Appearance Window to make sure the IsCustomAppearance field is false, which is used by all of the private methods to check for increasing the cost
         ///     of custom agents.
@@ -28,16 +42,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
         public static void Postfix([NotNull] CustomizingWindow __instance)
         {
-            try
-            {
-                __instance.PatchAfterOpenAppearanceWindow();
-            }
-            catch (Exception ex)
-            {
-                Harmony_Patch.Instance.Logger.WriteException(ex);
-
-                throw;
-            }
+            PostfixWithLogging(() => __instance);
         }
         // ReSharper enable InconsistentNaming
 

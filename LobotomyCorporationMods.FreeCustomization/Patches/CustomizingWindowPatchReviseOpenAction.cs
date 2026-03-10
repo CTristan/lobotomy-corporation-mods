@@ -29,16 +29,11 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
             instance.LoadAgentData(agent);
         }
 
-        /// <summary>Runs after opening the Strengthen Agent window to set the appearance data for the customization window.</summary>
-        // ReSharper disable InconsistentNaming
-        [EntryPoint]
-        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-        public static void Postfix([NotNull] CustomizingWindow __instance,
-            [NotNull] AgentModel agent)
+        public static void PostfixWithLogging(Func<CustomizingWindow> getCustomizingWindow, [NotNull] AgentModel agent)
         {
             try
             {
-                __instance.PatchAfterReviseOpenAction(agent);
+                getCustomizingWindow().PatchAfterReviseOpenAction(agent);
             }
             catch (Exception ex)
             {
@@ -46,6 +41,16 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
 
                 throw;
             }
+        }
+
+        /// <summary>Runs after opening the Strengthen Agent window to set the appearance data for the customization window.</summary>
+        // ReSharper disable InconsistentNaming
+        [EntryPoint]
+        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
+        public static void Postfix([NotNull] CustomizingWindow __instance,
+            [NotNull] AgentModel agent)
+        {
+            PostfixWithLogging(() => __instance, agent);
         }
         // ReSharper disable InconsistentNaming
     }

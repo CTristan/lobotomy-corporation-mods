@@ -54,21 +54,17 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Patches
             instance.UpdateGiftIcon(agent, imageProperties, fileManager, testAdapterParameters);
         }
 
-        /// <summary>Runs after initializing the management slot UI to add our own additional icon.</summary>
-        // ReSharper disable InconsistentNaming
-        [EntryPoint]
-        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-        public static void Postfix([NotNull] ManagementSlot __instance,
-            [NotNull] UnitModel agent)
+        public static void PostfixWithLogging(Func<ManagementSlot> getManagementSlot,
+            [NotNull] UnitModel agent,
+            Func<IFileManager> getFileManager)
         {
             try
             {
-                _ = Guard.Against.Null(__instance, nameof(__instance));
                 _ = Guard.Against.Null(agent, nameof(agent));
 
                 const string ImagePath = "Assets/gift.png";
 
-                __instance.PatchAfterSetUi(agent, ImagePath);
+                getManagementSlot().PatchAfterSetUi(agent, ImagePath, getFileManager());
             }
             catch (Exception ex)
             {
@@ -76,6 +72,16 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Patches
 
                 throw;
             }
+        }
+
+        /// <summary>Runs after initializing the management slot UI to add our own additional icon.</summary>
+        // ReSharper disable InconsistentNaming
+        [EntryPoint]
+        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
+        public static void Postfix([NotNull] ManagementSlot __instance,
+            [NotNull] UnitModel agent)
+        {
+            PostfixWithLogging(() => __instance, agent, () => Harmony_Patch.Instance.FileManager);
         }
     }
 }

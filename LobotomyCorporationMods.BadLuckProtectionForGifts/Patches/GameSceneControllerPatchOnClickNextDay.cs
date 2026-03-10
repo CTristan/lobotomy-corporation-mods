@@ -26,6 +26,20 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             agentWorkTracker.Save();
         }
 
+        public static void PostfixWithLogging(Func<IAgentWorkTracker> getAgentWorkTracker)
+        {
+            try
+            {
+                PatchAfterOnClickNextDay(getAgentWorkTracker());
+            }
+            catch (Exception ex)
+            {
+                Harmony_Patch.Instance.Logger.WriteException(ex);
+
+                throw;
+            }
+        }
+
         /// <summary>
         ///     Runs after the original OnClickNextDay method to save our tracker progress. We only save when going to the next day because it doesn't make sense that an agent would
         ///     remember their creature experience if the day is reset.
@@ -34,16 +48,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
         [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
         public static void Postfix()
         {
-            try
-            {
-                PatchAfterOnClickNextDay(Harmony_Patch.Instance.AgentWorkTracker);
-            }
-            catch (Exception ex)
-            {
-                Harmony_Patch.Instance.Logger.WriteException(ex);
-
-                throw;
-            }
+            PostfixWithLogging(() => Harmony_Patch.Instance.AgentWorkTracker);
         }
     }
 }

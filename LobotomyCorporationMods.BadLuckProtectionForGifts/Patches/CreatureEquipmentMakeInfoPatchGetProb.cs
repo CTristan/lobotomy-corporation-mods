@@ -62,6 +62,25 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             return probability > 1f ? 1f : probability;
         }
 
+        public static void PostfixWithLogging(
+            [NotNull] CreatureEquipmentMakeInfo __instance,
+            ref float __result,
+            Func<IAgentWorkTracker> getAgentWorkTracker)
+        {
+            try
+            {
+                _ = Guard.Against.Null(__instance, nameof(__instance));
+
+                __result = PatchAfterGetProb(__instance, __result, getAgentWorkTracker());
+            }
+            catch (Exception ex)
+            {
+                Harmony_Patch.Instance.Logger.WriteException(ex);
+
+                throw;
+            }
+        }
+
         /// <summary>Runs after GetProb to add on additional chance based on our work tracking.</summary>
         /// <param name="__instance">The instance of the CreatureEquipmentMakeInfo class.</param>
         /// <param name="__result">The result of the original GetProb method.</param>
@@ -71,18 +90,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
         public static void Postfix([NotNull] CreatureEquipmentMakeInfo __instance,
             ref float __result)
         {
-            try
-            {
-                _ = Guard.Against.Null(__instance, nameof(__instance));
-
-                __result = PatchAfterGetProb(__instance, __result, Harmony_Patch.Instance.AgentWorkTracker);
-            }
-            catch (Exception ex)
-            {
-                Harmony_Patch.Instance.Logger.WriteException(ex);
-
-                throw;
-            }
+            PostfixWithLogging(__instance, ref __result, () => Harmony_Patch.Instance.AgentWorkTracker);
         }
         // ReSharper enable InconsistentNaming
     }

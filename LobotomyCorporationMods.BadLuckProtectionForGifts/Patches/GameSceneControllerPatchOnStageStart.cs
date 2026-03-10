@@ -26,6 +26,20 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             agentWorkTracker.Load();
         }
 
+        public static void PostfixWithLogging(Func<IAgentWorkTracker> getAgentWorkTracker)
+        {
+            try
+            {
+                PatchAfterOnStageStart(getAgentWorkTracker());
+            }
+            catch (Exception ex)
+            {
+                Harmony_Patch.Instance.Logger.WriteException(ex);
+
+                throw;
+            }
+        }
+
         /// <summary>
         ///     Runs after the original OnStageStart method to reset our tracker progress. We reset the progress on restart because it doesn't make sense that an agent would remember
         ///     their creature experience if the day is reset.
@@ -34,16 +48,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
         [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
         public static void Postfix()
         {
-            try
-            {
-                PatchAfterOnStageStart(Harmony_Patch.Instance.AgentWorkTracker);
-            }
-            catch (Exception ex)
-            {
-                Harmony_Patch.Instance.Logger.WriteException(ex);
-
-                throw;
-            }
+            PostfixWithLogging(() => Harmony_Patch.Instance.AgentWorkTracker);
         }
     }
 }

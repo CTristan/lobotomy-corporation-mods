@@ -37,6 +37,20 @@ namespace LobotomyCorporationMods.BugFixes.Patches
             instance.ReloadCrumblingArmorAgentList(armorCreatureTestAdapter);
         }
 
+        public static void PostfixWithLogging(Func<ArmorCreature> getArmorCreature, [NotNull] string notice, [NotNull] params object[] param)
+        {
+            try
+            {
+                getArmorCreature().PatchAfterOnNotice(notice, noticeParameters: param);
+            }
+            catch (Exception ex)
+            {
+                Harmony_Patch.Instance.Logger.WriteException(ex);
+
+                throw;
+            }
+        }
+
         /// <summary>Runs after the original OnNotice method to force Crumbling Armor to re-initialize it's internal list of agents.</summary>
         /// <remarks>
         ///     Bugs fixed:
@@ -81,16 +95,7 @@ namespace LobotomyCorporationMods.BugFixes.Patches
             [NotNull] string notice,
             [NotNull] params object[] param)
         {
-            try
-            {
-                __instance.PatchAfterOnNotice(notice, noticeParameters: param);
-            }
-            catch (Exception ex)
-            {
-                Harmony_Patch.Instance.Logger.WriteException(ex);
-
-                throw;
-            }
+            PostfixWithLogging(() => __instance, notice, param);
         }
     }
 }

@@ -35,7 +35,7 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests
 
             static void Action()
             {
-                AgentInfoWindowPatchEnforcementWindow.Postfix();
+                AgentInfoWindowPatchEnforcementWindow.PostfixWithLogging(() => null);
             }
 
             mockLogger.VerifyArgumentNullException(Action);
@@ -59,7 +59,7 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests
 
             static void Action()
             {
-                AgentInfoWindowPatchGenerateWindow.Postfix();
+                AgentInfoWindowPatchGenerateWindow.PostfixWithLogging(() => null);
             }
 
             mockLogger.VerifyArgumentNullException(Action);
@@ -85,7 +85,7 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests
             {
                 // ReSharper disable once AssignNullToNotNullAttribute
                 // Forcing null argument to test exception logging.
-                _ = AppearanceUiPatchCloseWindow.Prefix(null);
+                _ = AppearanceUiPatchCloseWindow.PrefixWithLogging(() => null);
             }
 
             mockLogger.VerifyArgumentNullException(Action);
@@ -111,7 +111,7 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests
             {
                 // ReSharper disable once AssignNullToNotNullAttribute
                 // Forcing null argument to test exception logging.
-                CustomizingWindowPatchConfirm.Prefix(null);
+                CustomizingWindowPatchConfirm.PrefixWithLogging(() => null);
             }
 
             mockLogger.VerifyArgumentNullException(Action);
@@ -137,7 +137,7 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests
             {
                 // ReSharper disable once AssignNullToNotNullAttribute
                 // Forcing null argument to test exception logging.
-                CustomizingWindowPatchOpenAppearanceWindow.Postfix(null);
+                CustomizingWindowPatchOpenAppearanceWindow.PostfixWithLogging(() => null);
             }
 
             mockLogger.VerifyArgumentNullException(Action);
@@ -162,13 +162,13 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests
 
             // ReSharper disable AssignNullToNotNullAttribute
             // Forcing null arguments to test exception logging.
-            Action action = () => CustomizingWindowPatchReviseOpenAction.Postfix(null, null);
+            Action action = () => CustomizingWindowPatchReviseOpenAction.PostfixWithLogging(() => null, null);
             // ReSharper enable AssignNullToNotNullAttribute
 
             mockLogger.VerifyArgumentNullException(action);
 
             // Verify other arguments throw an exception if null
-            action = () => CustomizingWindowPatchReviseOpenAction.Postfix(UnityTestExtensions.CreateCustomizingWindow(), null);
+            action = () => CustomizingWindowPatchReviseOpenAction.PostfixWithLogging(() => UnityTestExtensions.CreateCustomizingWindow(), null);
             mockLogger.VerifyArgumentNullException(action, Times.Exactly(NumberOfLogs));
         }
 

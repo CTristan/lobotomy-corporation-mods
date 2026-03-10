@@ -26,14 +26,11 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             agentWorkTracker.Reset();
         }
 
-        /// <summary>Runs after the original OnClickNewGame method does to reset our agent work when the player starts a new game.</summary>
-        [EntryPoint]
-        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-        public static void Postfix()
+        public static void PostfixWithLogging(Func<IAgentWorkTracker> getAgentWorkTracker)
         {
             try
             {
-                PatchAfterOnClickNewGame(Harmony_Patch.Instance.AgentWorkTracker);
+                PatchAfterOnClickNewGame(getAgentWorkTracker());
             }
             catch (Exception ex)
             {
@@ -41,6 +38,14 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
 
                 throw;
             }
+        }
+
+        /// <summary>Runs after the original OnClickNewGame method does to reset our agent work when the player starts a new game.</summary>
+        [EntryPoint]
+        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
+        public static void Postfix()
+        {
+            PostfixWithLogging(() => Harmony_Patch.Instance.AgentWorkTracker);
         }
     }
 }

@@ -30,6 +30,20 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
             instance.SaveAppearanceData(agentLayerTestAdapter, workerSpriteManagerTestAdapter);
         }
 
+        public static void PrefixWithLogging(Func<CustomizingWindow> getCustomizingWindow)
+        {
+            try
+            {
+                getCustomizingWindow().PatchBeforeConfirm();
+            }
+            catch (Exception ex)
+            {
+                Harmony_Patch.Instance.Logger.WriteException(ex);
+
+                throw;
+            }
+        }
+
         /// <summary>
         ///     Runs before confirming the Strengthen Employee window to save appearance data. Needs to run before the Confirm method because the Confirm method unloads the CurrentAgent
         ///     from the customizing window, so it would be too late for us to update the agent. This forcefully updates an agent's data because the game wasn't designed to allow you to
@@ -40,16 +54,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
         public static void Prefix([NotNull] CustomizingWindow __instance)
         {
-            try
-            {
-                __instance.PatchBeforeConfirm();
-            }
-            catch (Exception ex)
-            {
-                Harmony_Patch.Instance.Logger.WriteException(ex);
-
-                throw;
-            }
+            PrefixWithLogging(() => __instance);
         }
     }
 }

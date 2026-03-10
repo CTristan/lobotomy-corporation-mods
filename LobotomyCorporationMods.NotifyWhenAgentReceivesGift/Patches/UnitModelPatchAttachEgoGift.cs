@@ -57,16 +57,11 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches
             instance.SendMessage(message, noticeTestAdapter);
         }
 
-        /// <summary>Needs to run before the method because we need to check ahead of time if the agent already has the gift or has another gift in the same position that is locked.</summary>
-        // ReSharper disable InconsistentNaming
-        [EntryPoint]
-        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-        public static void Prefix(UnitModel __instance,
-            EGOgiftModel gift)
+        public static void PrefixWithLogging(Func<UnitModel> getUnitModel, EGOgiftModel gift)
         {
             try
             {
-                __instance.PatchBeforeAttachEgoGift(gift);
+                getUnitModel().PatchBeforeAttachEgoGift(gift);
             }
             catch (Exception ex)
             {
@@ -74,6 +69,16 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches
 
                 throw;
             }
+        }
+
+        /// <summary>Needs to run before the method because we need to check ahead of time if the agent already has the gift or has another gift in the same position that is locked.</summary>
+        // ReSharper disable InconsistentNaming
+        [EntryPoint]
+        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
+        public static void Prefix(UnitModel __instance,
+            EGOgiftModel gift)
+        {
+            PrefixWithLogging(() => __instance, gift);
         }
     }
 }

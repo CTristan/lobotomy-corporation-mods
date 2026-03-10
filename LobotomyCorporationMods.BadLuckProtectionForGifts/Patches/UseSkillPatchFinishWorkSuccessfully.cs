@@ -40,16 +40,11 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             agentWorkTracker.IncrementAgentWorkCount(giftName, agentId, numberOfSuccesses);
         }
 
-        /// <summary>Runs after an agent finishes working with an abnormality to increment their work count.</summary>
-        /// <param name="__instance"></param>
-        // ReSharper disable InconsistentNaming
-        [EntryPoint]
-        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-        public static void Postfix([NotNull] UseSkill __instance)
+        public static void PostfixWithLogging([NotNull] UseSkill __instance, Func<IAgentWorkTracker> getAgentWorkTracker)
         {
             try
             {
-                __instance.PatchAfterFinishWorkSuccessfully(Harmony_Patch.Instance.AgentWorkTracker);
+                __instance.PatchAfterFinishWorkSuccessfully(getAgentWorkTracker());
             }
             catch (Exception ex)
             {
@@ -57,6 +52,16 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
 
                 throw;
             }
+        }
+
+        /// <summary>Runs after an agent finishes working with an abnormality to increment their work count.</summary>
+        /// <param name="__instance"></param>
+        // ReSharper disable InconsistentNaming
+        [EntryPoint]
+        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
+        public static void Postfix([NotNull] UseSkill __instance)
+        {
+            PostfixWithLogging(__instance, () => Harmony_Patch.Instance.AgentWorkTracker);
         }
         // ReSharper enable InconsistentNaming
     }

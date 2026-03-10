@@ -36,7 +36,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
             {
                 // ReSharper disable once AssignNullToNotNullAttribute
                 // Forcing null argument to test exception logging.
-                AgentSlotPatchSetFilter.Postfix(null, (AgentState)1);
+                AgentSlotPatchSetFilter.PostfixWithLogging(() => null, (AgentState)1, () => null);
             }
 
             mockLogger.VerifyArgumentNullException(Action);

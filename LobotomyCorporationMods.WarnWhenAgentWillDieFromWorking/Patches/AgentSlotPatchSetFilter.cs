@@ -107,16 +107,13 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
             };
         }
 
-        [EntryPoint]
-        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-        // ReSharper disable InconsistentNaming
-        public static void Postfix([NotNull] AgentSlot __instance,
-            AgentState state)
+        public static void PostfixWithLogging(Func<AgentSlot> getAgentSlot,
+            AgentState state,
+            Func<GameManager> getCurrentGameManager)
         {
             try
             {
-                var currentGameManager = GameManager.currentGameManager;
-                __instance.PatchAfterSetFilter(state, currentGameManager);
+                getAgentSlot().PatchAfterSetFilter(state, getCurrentGameManager());
             }
             catch (Exception ex)
             {
@@ -124,6 +121,15 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
 
                 throw;
             }
+        }
+
+        [EntryPoint]
+        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
+        // ReSharper disable InconsistentNaming
+        public static void Postfix([NotNull] AgentSlot __instance,
+            AgentState state)
+        {
+            PostfixWithLogging(() => __instance, state, () => GameManager.currentGameManager);
         }
         // ReSharper enable InconsistentNaming
     }

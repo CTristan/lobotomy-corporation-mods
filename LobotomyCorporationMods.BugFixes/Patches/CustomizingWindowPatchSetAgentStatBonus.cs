@@ -34,6 +34,23 @@ namespace LobotomyCorporationMods.BugFixes.Patches
             instance.UpdateAgentStats(agent, data, customizingWindowTestAdapter);
         }
 
+        public static bool PrefixWithLogging(Func<CustomizingWindow> getCustomizingWindow, [NotNull] AgentModel agent, [NotNull] AgentData data)
+        {
+            try
+            {
+                getCustomizingWindow().PatchBeforeSetAgentStatBonus(agent, data);
+
+                // Since we're replacing the method we never want to call the original method
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Harmony_Patch.Instance.Logger.WriteException(ex);
+
+                throw;
+            }
+        }
+
         /// <summary>Runs before SetAgentStatBonus to use the original stat levels instead of the modified stat levels.</summary>
         /// <remarks>
         ///     <para>
@@ -64,19 +81,7 @@ namespace LobotomyCorporationMods.BugFixes.Patches
             [NotNull] AgentModel agent,
             [NotNull] AgentData data)
         {
-            try
-            {
-                __instance.PatchBeforeSetAgentStatBonus(agent, data);
-
-                // Since we're replacing the method we never want to call the original method
-                return false;
-            }
-            catch (Exception ex)
-            {
-                Harmony_Patch.Instance.Logger.WriteException(ex);
-
-                throw;
-            }
+            return PrefixWithLogging(() => __instance, agent, data);
         }
         // ReSharper enable InconsistentNaming
     }

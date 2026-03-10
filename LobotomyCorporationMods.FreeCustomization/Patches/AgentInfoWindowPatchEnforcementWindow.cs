@@ -31,15 +31,12 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
             instance.OpenAppearancePanel(agentInfoWindowUiComponentsTestAdapter, customizingWindowTestAdapter, gameObjectTestAdapter);
         }
 
-        /// <summary>Runs after opening the Strengthen Agent window to open the appearance window.</summary>
-        [EntryPoint]
-        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-        public static void Postfix()
+        public static void PostfixWithLogging(Func<AgentInfoWindow> getAgentInfoWindow)
         {
             try
             {
                 // EnforcementWindow is a static method, so we can't get an instance of the AgentInfoWindow through Harmony.
-                var agentInfoWindow = AgentInfoWindow.currentWindow;
+                var agentInfoWindow = getAgentInfoWindow();
 
                 agentInfoWindow.PatchAfterEnforcementWindow();
             }
@@ -49,6 +46,14 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
 
                 throw;
             }
+        }
+
+        /// <summary>Runs after opening the Strengthen Agent window to open the appearance window.</summary>
+        [EntryPoint]
+        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
+        public static void Postfix()
+        {
+            PostfixWithLogging(() => AgentInfoWindow.currentWindow);
         }
     }
 }
