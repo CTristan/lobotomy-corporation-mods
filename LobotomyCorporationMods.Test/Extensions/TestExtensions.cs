@@ -34,7 +34,7 @@ namespace LobotomyCorporationMods.Test.Extensions
 
             AgentModelCreationParameters agentModelCreationParameters = new()
             {
-                BufList = [.. unitBuffs],
+                BufList = [.. unitBuffs!],
             };
 
             var agent = UnityTestExtensions.CreateAgentModel(agentModelCreationParameters);
@@ -42,7 +42,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             gift.metaInfo.id = (int)giftId;
             gift.metaInfo.attachPos = attachPosition.ToString();
             gift.metaInfo.attachType = attachType;
-            agent.Equipment.gifts.addedGifts.Add(gift);
+            agent.Equipment.gifts!.addedGifts!.Add(gift);
 
             return agent;
         }

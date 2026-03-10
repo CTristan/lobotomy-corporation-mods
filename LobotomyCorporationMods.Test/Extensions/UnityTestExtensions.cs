@@ -73,13 +73,13 @@ namespace LobotomyCorporationMods.Test.Extensions
         [NotNull]
         internal static AgentModel CreateAgentModel([CanBeNull] AgentModelCreationParameters? parameters = null)
         {
-            parameters = parameters.EnsureNotNullWithMethod(() => new AgentModelCreationParameters());
-            parameters.AgentName = parameters.AgentName.EnsureNotNullWithMethod(() => CreateAgentName());
-            parameters.BufList = parameters.BufList.EnsureNotNullWithMethod(() => []);
-            parameters.Equipment = parameters.Equipment.EnsureNotNullWithMethod(CreateUnitEquipSpace);
-            parameters.PrimaryStat = parameters.PrimaryStat.EnsureNotNullWithMethod(CreateWorkerPrimaryStat);
-            parameters.SpriteData = parameters.SpriteData.EnsureNotNullWithMethod(CreateWorkerSprite);
-            parameters.StatBufList = parameters.StatBufList.EnsureNotNullWithMethod(() => []);
+            parameters = parameters.EnsureNotNullWithMethod(() => new AgentModelCreationParameters())!;
+            parameters.AgentName = parameters.AgentName.EnsureNotNullWithMethod(() => CreateAgentName())!;
+            parameters.BufList = parameters.BufList.EnsureNotNullWithMethod(() => [])!;
+            parameters.Equipment = parameters.Equipment.EnsureNotNullWithMethod(CreateUnitEquipSpace)!;
+            parameters.PrimaryStat = parameters.PrimaryStat.EnsureNotNullWithMethod(CreateWorkerPrimaryStat)!;
+            parameters.SpriteData = parameters.SpriteData.EnsureNotNullWithMethod(CreateWorkerSprite)!;
+            parameters.StatBufList = parameters.StatBufList.EnsureNotNullWithMethod(() => [])!;
 
             CreateUninitializedObject<AgentModel>(out var agentModel);
             var fields = GetUninitializedFieldsIncludingBaseType(agentModel.GetType());
@@ -636,13 +636,13 @@ namespace LobotomyCorporationMods.Test.Extensions
             CreatureModel? targetCreature = null)
         {
             agent = agent.EnsureNotNullWithMethod(() => CreateAgentModel());
-            skillTypeInfo = skillTypeInfo.EnsureNotNullWithMethod(CreateSkillTypeInfo);
-            targetCreature = targetCreature.EnsureNotNullWithMethod(() => CreateCreatureModel());
+            skillTypeInfo = skillTypeInfo.EnsureNotNullWithMethod(CreateSkillTypeInfo)!;
+            targetCreature = targetCreature.EnsureNotNullWithMethod(() => CreateCreatureModel())!;
 
             // Needed to avoid circular reference
             if (targetCreature.currentSkill.IsNotNull())
             {
-                return targetCreature.currentSkill;
+                return targetCreature.currentSkill!;
             }
 
             UseSkill useSkill = new()
@@ -733,11 +733,13 @@ namespace LobotomyCorporationMods.Test.Extensions
                 var typeFields = type.GetFields(BindingFlagsInstance);
                 fields.AddRange(typeFields.GetValidFields());
 
-                var baseType = type.BaseType;
-                if (baseType.IsNotNull())
+                Type? baseType = type.BaseType;
+                if (baseType.IsNull())
                 {
-                    type = baseType;
+                    break;
                 }
+
+                type = baseType!;
             }
 
             return [.. fields];

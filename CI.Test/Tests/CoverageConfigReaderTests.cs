@@ -65,7 +65,7 @@ namespace CI.Test.Tests
             Mock<IFileSystem> mockFileSystem = new();
 
             _ = mockFileSystem.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
-            _ = mockFileSystem.Setup(fs => fs.ReadAllText(It.IsAny<string>())).Returns((string)null);
+            _ = mockFileSystem.Setup(fs => fs.ReadAllText(It.IsAny<string>())).Returns((string?)null);
 
             CoverageConfigReader reader = new(mockFileSystem.Object);
             CoverageConfig? config = reader.ReadConfig("/repo");

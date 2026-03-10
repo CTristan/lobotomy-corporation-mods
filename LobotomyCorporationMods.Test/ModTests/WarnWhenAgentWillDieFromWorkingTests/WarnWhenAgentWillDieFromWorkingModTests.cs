@@ -67,13 +67,14 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
 
             AgentModelCreationParameters agentModelCreationParameters = new()
             {
-                BufList = [.. unitBuffs],
+                BufList = [.. unitBuffs!],
             };
 
             var agent = UnityTestExtensions.CreateAgentModel(agentModelCreationParameters);
             var gift = UnityTestExtensions.CreateEgoGiftModel();
             gift.metaInfo.id = (int)giftIds;
-            agent.Equipment.gifts.addedGifts.Add(gift);
+            var gifts = agent.Equipment.gifts!;
+            gifts.addedGifts!.Add(gift);
 
             return agent;
         }
