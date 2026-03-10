@@ -170,7 +170,7 @@ namespace LobotomyPlaywright.Queries
                 {
                     Name = "ManualUI",
                     WindowType = "Manual",
-                    Check = (Func<GameObject, bool>)((go) => CheckSingletonProperty("ManualUI", "Instance", go, out bool isOpen) ? isOpen : false)
+                    Check = (Func<GameObject, bool>)((go) => CheckSingletonProperty("ManualUI", "Instance", go, out var isOpen) ? isOpen : false)
                 },
 
                 // 5. Option UI
@@ -178,7 +178,7 @@ namespace LobotomyPlaywright.Queries
                 {
                     Name = "OptionUI",
                     WindowType = "Option",
-                    Check = (Func<GameObject, bool>)((go) => CheckSingletonProperty("OptionUI", "Instance", go, out bool isOpen) ? isOpen : false)
+                    Check = (Func<GameObject, bool>)((go) => CheckSingletonProperty("OptionUI", "Instance", go, out var isOpen) ? isOpen : false)
                 },
 
                 // 6. Deploy UI
@@ -186,7 +186,7 @@ namespace LobotomyPlaywright.Queries
                 {
                     Name = "DeployUI",
                     WindowType = "Deploy",
-                    Check = (Func<GameObject, bool>)((go) => CheckSingletonProperty("DeployUI", "instance", go, out bool isOpen) ? isOpen : false)
+                    Check = (Func<GameObject, bool>)((go) => CheckSingletonProperty("DeployUI", "instance", go, out var isOpen) ? isOpen : false)
                 },
 
                 // 7. Research Window (uses FindObjectOfType)
@@ -394,7 +394,7 @@ namespace LobotomyPlaywright.Queries
                         var activatedArray = activatedField.GetValue(uiActivateManager) as Array;
                         if (activatedArray != null)
                         {
-                            for (int i = 0; i < Math.Min(activatedArray.Length, 5); i++)
+                            for (var i = 0; i < Math.Min(activatedArray.Length, 5); i++)
                             {
                                 var slot = activatedArray.GetValue(i);
                                 if (slot != null)

@@ -4,7 +4,7 @@ using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators
 {
-    internal sealed class WarmHeartedWoodsmanEvaluator : CreatureEvaluator
+    public sealed class WarmHeartedWoodsmanEvaluator : CreatureEvaluator
     {
         internal WarmHeartedWoodsmanEvaluator(IAgentData agent,
             ICreatureData creature,

@@ -27,8 +27,8 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests.PatchTest
         public void Changing_random_generated_agent_marks_them_as_custom()
         {
             // Arrange
-            CustomizingWindow sut = InitializeCustomizingWindow(CustomizingType.REVISE);
-            AgentModel agent = UnityTestExtensions.CreateAgentModel();
+            var sut = InitializeCustomizingWindow(CustomizingType.REVISE);
+            var agent = UnityTestExtensions.CreateAgentModel();
             agent.iscustom = false;
 
             // Act
@@ -42,9 +42,9 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests.PatchTest
         public void Customizing_existing_agent_changes_agent_appearance_successfully()
         {
             // Arrange
-            WorkerSprite.WorkerSprite currentAppearance = UnityTestExtensions.CreateWorkerSprite();
-            Sprite expectedSprite = UnityTestExtensions.CreateSprite();
-            Color expectedColor = Color.black;
+            var currentAppearance = UnityTestExtensions.CreateWorkerSprite();
+            var expectedSprite = UnityTestExtensions.CreateSprite();
+            var expectedColor = Color.black;
             Appearance expectedAppearance = new()
             {
                 spriteSet = UnityTestExtensions.CreateWorkerSprite(),
@@ -63,13 +63,13 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests.PatchTest
                 EyeColor = expectedColor,
             };
 
-            AgentModel currentAgent = UnityTestExtensions.CreateAgentModel();
+            var currentAgent = UnityTestExtensions.CreateAgentModel();
             currentAgent.spriteData = currentAppearance;
 
-            AgentData agentData = UnityTestExtensions.CreateAgentData();
+            var agentData = UnityTestExtensions.CreateAgentData();
             agentData.appearance = expectedAppearance;
 
-            CustomizingWindow sut = InitializeCustomizingWindow(CustomizingType.REVISE);
+            var sut = InitializeCustomizingWindow(CustomizingType.REVISE);
             sut.appearanceUI.copied = agentData;
             sut.CurrentData.appearance = expectedAppearance;
 
@@ -89,7 +89,7 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests.PatchTest
             [NotNull] string expectedName)
         {
             // Arrange
-            AgentModel currentAgent = UnityTestExtensions.CreateAgentModel();
+            var currentAgent = UnityTestExtensions.CreateAgentModel();
             currentAgent.name = currentName;
             currentAgent._agentName.nameDic = new Dictionary<string, string>
             {
@@ -98,7 +98,7 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests.PatchTest
                 },
             };
 
-            AgentName expectedAgentName = UnityTestExtensions.CreateAgentName();
+            var expectedAgentName = UnityTestExtensions.CreateAgentName();
             expectedAgentName.nameDic = new Dictionary<string, string>
             {
                 {
@@ -106,11 +106,11 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests.PatchTest
                 },
             };
 
-            AgentData expectedData = UnityTestExtensions.CreateAgentData();
+            var expectedData = UnityTestExtensions.CreateAgentData();
             expectedData.CustomName = expectedName;
             expectedData.agentName = expectedAgentName;
 
-            CustomizingWindow sut = InitializeCustomizingWindow(currentAgent, CustomizingType.REVISE);
+            var sut = InitializeCustomizingWindow(currentAgent, CustomizingType.REVISE);
             sut.CurrentData = expectedData;
 
             // Act
@@ -127,7 +127,7 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests.PatchTest
         {
             // Arrange
             // Default for CustomizingWindow is Generate
-            CustomizingWindow sut = InitializeCustomizingWindow();
+            var sut = InitializeCustomizingWindow();
 
             // Act
             sut.PatchBeforeConfirm(_mockAgentLayerTestAdapter.Object, _mockWorkerSpriteManagerTestAdapter.Object);

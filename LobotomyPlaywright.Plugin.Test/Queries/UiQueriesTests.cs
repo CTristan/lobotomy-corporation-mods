@@ -14,7 +14,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
         public void GetUiState_with_default_parameters_returns_UiStateData()
         {
             // Act
-            UiStateData uiState = UiQueries.GetUiState();
+            var uiState = UiQueries.GetUiState();
 
             // Assert
             _ = uiState.Should().NotBeNull();
@@ -27,7 +27,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
         public void GetUiState_with_summary_depth_returns_UiStateData()
         {
             // Act
-            UiStateData uiState = UiQueries.GetUiState(depth: "summary");
+            var uiState = UiQueries.GetUiState(depth: "summary");
 
             // Assert
             _ = uiState.Should().NotBeNull();
@@ -39,7 +39,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
         public void GetUiState_with_full_depth_returns_UiStateData()
         {
             // Act
-            UiStateData uiState = UiQueries.GetUiState(depth: "full");
+            var uiState = UiQueries.GetUiState(depth: "full");
 
             // Assert
             _ = uiState.Should().NotBeNull();
@@ -51,7 +51,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
         public void GetUiState_with_window_depth_and_filter_returns_UiStateData()
         {
             // Act
-            UiStateData uiState = UiQueries.GetUiState(depth: "window", windowFilter: "AgentInfoWindow");
+            var uiState = UiQueries.GetUiState(depth: "window", windowFilter: "AgentInfoWindow");
 
             // Assert
             _ = uiState.Should().NotBeNull();
@@ -62,7 +62,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
         public void GetUiState_with_null_depth_returns_UiStateData()
         {
             // Act
-            UiStateData uiState = UiQueries.GetUiState(depth: null);
+            var uiState = UiQueries.GetUiState(depth: null);
 
             // Assert
             _ = uiState.Should().NotBeNull();
@@ -72,7 +72,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
         public void GetUiState_with_empty_string_depth_returns_UiStateData()
         {
             // Act
-            UiStateData uiState = UiQueries.GetUiState(depth: "");
+            var uiState = UiQueries.GetUiState(depth: "");
 
             // Assert
             _ = uiState.Should().NotBeNull();
@@ -82,7 +82,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
         public void GetUiState_with_invalid_depth_returns_UiStateData()
         {
             // Act - Invalid depth should default to "full"
-            UiStateData uiState = UiQueries.GetUiState(depth: "invalid");
+            var uiState = UiQueries.GetUiState(depth: "invalid");
 
             // Assert
             _ = uiState.Should().NotBeNull();
@@ -92,13 +92,13 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
         public void GetUiState_with_case_insensitive_depth_works()
         {
             // Act & Assert - All should return valid data
-            UiStateData summary = UiQueries.GetUiState(depth: "SUMMARY");
+            var summary = UiQueries.GetUiState(depth: "SUMMARY");
             _ = summary.Should().NotBeNull();
 
-            UiStateData full = UiQueries.GetUiState(depth: "FULL");
+            var full = UiQueries.GetUiState(depth: "FULL");
             _ = full.Should().NotBeNull();
 
-            UiStateData window = UiQueries.GetUiState(depth: "WINDOW");
+            var window = UiQueries.GetUiState(depth: "WINDOW");
             _ = window.Should().NotBeNull();
         }
 
@@ -106,7 +106,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
         public void GetUiState_returns_all_known_windows()
         {
             // Act
-            UiStateData uiState = UiQueries.GetUiState();
+            var uiState = UiQueries.GetUiState();
 
             // Assert - Should contain at least the 12 known windows
             _ = uiState.Windows.Should().HaveCountGreaterThanOrEqualTo(12);
@@ -116,7 +116,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
         public void GetUiState_returns_activated_slots_list_of_max_5()
         {
             // Act
-            UiStateData uiState = UiQueries.GetUiState();
+            var uiState = UiQueries.GetUiState();
 
             // Assert
             _ = uiState.ActivatedSlots.Should().NotBeNull();
@@ -221,7 +221,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
 
             // Arrange & Assert
             string[] expectedPathComponents = ["Window", "Panel", "Button"];
-            string expectedPath = string.Join("/", expectedPathComponents);
+            var expectedPath = string.Join("/", expectedPathComponents);
 
             _ = expectedPath.Should().Be("Window/Panel/Button");
         }
@@ -234,11 +234,11 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             // Marked with [RequiresUnity] trait
 
             // Act
-            UiStateData uiState = UiQueries.GetUiState(depth: "summary");
+            var uiState = UiQueries.GetUiState(depth: "summary");
 
             // Assert - Known window names should be present
             List<string> windowNames = [];
-            foreach (UiWindowData window in uiState.Windows)
+            foreach (var window in uiState.Windows)
             {
                 windowNames.Add(window.Name);
             }

@@ -17,9 +17,9 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests.PatchTest
         [Fact]
         public void The_Appearance_UI_does_not_close_itself_if_there_is_no_close_action()
         {
-            AppearanceUI appearanceUi = UnityTestExtensions.CreateAppearanceUi();
+            var appearanceUi = UnityTestExtensions.CreateAppearanceUi();
 
-            bool result = appearanceUi.PatchBeforeCloseWindow();
+            var result = appearanceUi.PatchBeforeCloseWindow();
 
             _ = result.Should().BeFalse();
         }

@@ -9,7 +9,7 @@ namespace LobotomyCorporationMods.Common.Extensions
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    internal static class GameObjectTestExtensions
+    public static class GameObjectTestExtensions
     {
         internal static bool IsUnityNull(this GameObject gameObject)
         {

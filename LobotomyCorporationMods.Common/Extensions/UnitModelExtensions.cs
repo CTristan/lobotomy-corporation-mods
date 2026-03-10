@@ -6,7 +6,7 @@ using JetBrains.Annotations;
 
 namespace LobotomyCorporationMods.Common.Extensions
 {
-    internal static class UnitModelExtensions
+    public static class UnitModelExtensions
     {
         /// <summary>A unit's equipped gifts consists of both added and replaced gifts.</summary>
         [NotNull]
@@ -14,13 +14,13 @@ namespace LobotomyCorporationMods.Common.Extensions
         {
             List<EGOgiftModel> giftList = new List<EGOgiftModel>();
 
-            List<EGOgiftModel> addedGifts = unitModel.Equipment.gifts.addedGifts;
+            var addedGifts = unitModel.Equipment.gifts.addedGifts;
             if (addedGifts.Count > 0)
             {
                 giftList.AddRange(addedGifts);
             }
 
-            List<EGOgiftModel> replacedGifts = unitModel.Equipment.gifts.replacedGifts;
+            var replacedGifts = unitModel.Equipment.gifts.replacedGifts;
             if (replacedGifts.Count > 0)
             {
                 giftList.AddRange(unitModel.Equipment.gifts.replacedGifts);
@@ -32,7 +32,7 @@ namespace LobotomyCorporationMods.Common.Extensions
         internal static EGOgiftModel FindGiftAtPosition([NotNull] this UnitModel unitModel,
             string position)
         {
-            List<EGOgiftModel> equippedGifts = unitModel.GetEquippedGifts();
+            var equippedGifts = unitModel.GetEquippedGifts();
 
             return equippedGifts.Find(g => g.metaInfo.attachPos == position);
         }
@@ -40,7 +40,7 @@ namespace LobotomyCorporationMods.Common.Extensions
         internal static bool IsGiftLocked([NotNull] this UnitModel unitModel,
             int giftId)
         {
-            UnitEGOgiftSpace.GiftLockState matchingGiftLockState = unitModel.GetMatchingGiftLockState(giftId);
+            var matchingGiftLockState = unitModel.GetMatchingGiftLockState(giftId);
 
             return matchingGiftLockState.state;
         }
@@ -49,8 +49,8 @@ namespace LobotomyCorporationMods.Common.Extensions
         private static UnitEGOgiftSpace.GiftLockState GetMatchingGiftLockState([NotNull] this UnitModel unitModel,
             int giftId)
         {
-            Dictionary<int, UnitEGOgiftSpace.GiftLockState> lockStateDictionary = unitModel.Equipment.gifts.lockState;
-            UnitEGOgiftSpace.GiftLockState lockState = lockStateDictionary.Values.FirstOrDefault(v => v.id == giftId);
+            var lockStateDictionary = unitModel.Equipment.gifts.lockState;
+            var lockState = lockStateDictionary.Values.FirstOrDefault(v => v.id == giftId);
 
             return lockState ?? new UnitEGOgiftSpace.GiftLockState();
         }

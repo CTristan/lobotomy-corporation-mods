@@ -10,7 +10,7 @@ namespace LobotomyPlaywright.Implementations.System;
 /// <summary>
 /// Implementation of IProcessRunner using System.Diagnostics.Process.
 /// </summary>
-internal sealed class ProcessRunner : IProcessRunner
+public sealed class ProcessRunner : IProcessRunner
 {
     public int Run(string fileName, string arguments, string? workingDirectory = null, Func<string?, bool>? outputFilter = null)
     {

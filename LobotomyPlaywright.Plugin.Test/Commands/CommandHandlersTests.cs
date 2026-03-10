@@ -16,7 +16,7 @@ namespace LobotomyPlaywright.Plugin.Test.Commands
             Request request = new() { id = "req-1", action = "set-agent-stats", Params = null };
 
             // Act
-            Response response = CommandRouter.HandleCommand(request);
+            var response = CommandRouter.HandleCommand(request);
 
             // Assert
             _ = response.Should().NotBeNull();
@@ -36,7 +36,7 @@ namespace LobotomyPlaywright.Plugin.Test.Commands
             };
 
             // Act
-            Response response = CommandRouter.HandleCommand(request);
+            var response = CommandRouter.HandleCommand(request);
 
             // Assert
             _ = response.Should().NotBeNull();
@@ -56,7 +56,7 @@ namespace LobotomyPlaywright.Plugin.Test.Commands
             };
 
             // Act
-            Response response = CommandRouter.HandleCommand(request);
+            var response = CommandRouter.HandleCommand(request);
 
             // Assert
             _ = response.Should().NotBeNull();
@@ -76,7 +76,7 @@ namespace LobotomyPlaywright.Plugin.Test.Commands
             };
 
             // Act
-            Response response = CommandRouter.HandleCommand(request);
+            var response = CommandRouter.HandleCommand(request);
 
             // Assert
             _ = response.Should().NotBeNull();
@@ -96,7 +96,7 @@ namespace LobotomyPlaywright.Plugin.Test.Commands
             };
 
             // Act
-            Response response = CommandRouter.HandleCommand(request);
+            var response = CommandRouter.HandleCommand(request);
 
             // Assert
             _ = response.Should().NotBeNull();
@@ -115,7 +115,7 @@ namespace LobotomyPlaywright.Plugin.Test.Commands
             };
 
             // Act
-            Response response = CommandRouter.HandleCommand(request);
+            var response = CommandRouter.HandleCommand(request);
 
             // Assert
             _ = response.Should().NotBeNull();
@@ -130,7 +130,7 @@ namespace LobotomyPlaywright.Plugin.Test.Commands
             Request request = new() { id = "req-1", action = "set-game-speed", Params = [] };
 
             // Act
-            Response response = CommandRouter.HandleCommand(request);
+            var response = CommandRouter.HandleCommand(request);
 
             // Assert
             _ = response.Should().NotBeNull();
@@ -149,7 +149,7 @@ namespace LobotomyPlaywright.Plugin.Test.Commands
             };
 
             // Act
-            Response response = CommandRouter.HandleCommand(request);
+            var response = CommandRouter.HandleCommand(request);
 
             // Assert
             _ = response.Should().NotBeNull();
@@ -175,7 +175,7 @@ namespace LobotomyPlaywright.Plugin.Test.Commands
             };
 
             // Act
-            Response response = CommandRouter.HandleCommand(request);
+            var response = CommandRouter.HandleCommand(request);
 
             // Assert
             _ = response.Should().NotBeNull();
@@ -198,7 +198,7 @@ namespace LobotomyPlaywright.Plugin.Test.Commands
             };
 
             // Act
-            Response response = CommandRouter.HandleCommand(request);
+            var response = CommandRouter.HandleCommand(request);
 
             // Assert
             _ = response.Should().NotBeNull();
@@ -221,7 +221,7 @@ namespace LobotomyPlaywright.Plugin.Test.Commands
             };
 
             // Act
-            Response response = CommandRouter.HandleCommand(request);
+            var response = CommandRouter.HandleCommand(request);
 
             // Assert
             _ = response.Should().NotBeNull();
@@ -240,7 +240,7 @@ namespace LobotomyPlaywright.Plugin.Test.Commands
             };
 
             // Act
-            Response response = CommandRouter.HandleCommand(request);
+            var response = CommandRouter.HandleCommand(request);
 
             // Assert
             _ = response.Should().NotBeNull();
@@ -259,7 +259,7 @@ namespace LobotomyPlaywright.Plugin.Test.Commands
             };
 
             // Act
-            Response response = CommandRouter.HandleCommand(request);
+            var response = CommandRouter.HandleCommand(request);
 
             // Assert
             _ = response.Should().NotBeNull();
@@ -273,7 +273,7 @@ namespace LobotomyPlaywright.Plugin.Test.Commands
             Request request = new() { id = "req-1", action = "recall-agent", Params = [] };
 
             // Act
-            Response response = CommandRouter.HandleCommand(request);
+            var response = CommandRouter.HandleCommand(request);
 
             // Assert
             _ = response.Should().NotBeNull();
@@ -287,7 +287,7 @@ namespace LobotomyPlaywright.Plugin.Test.Commands
             Request request = new() { id = "req-1", action = "suppress", Params = [] };
 
             // Act
-            Response response = CommandRouter.HandleCommand(request);
+            var response = CommandRouter.HandleCommand(request);
 
             // Assert
             _ = response.Should().NotBeNull();

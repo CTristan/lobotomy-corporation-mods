@@ -15,7 +15,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
         {
             // Act - CreatureManager.instance creates a new instance if null
             // with empty list, so we should get an empty list
-            List<CreatureData> creatures = CreatureQueries.ListCreatures();
+            var creatures = CreatureQueries.ListCreatures();
 
             // Assert
             _ = creatures.Should().NotBeNull();
@@ -36,7 +36,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
         public void GetCreature_with_nonexistent_id_returns_null()
         {
             // Act
-            CreatureData creature = CreatureQueries.GetCreature(999999);
+            var creature = CreatureQueries.GetCreature(999999);
 
             // Assert
             _ = creature.Should().BeNull();
@@ -46,7 +46,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
         public void GetCreature_with_zero_id_returns_null()
         {
             // Act
-            CreatureData creature = CreatureQueries.GetCreature(0);
+            var creature = CreatureQueries.GetCreature(0);
 
             // Assert
             _ = creature.Should().BeNull();

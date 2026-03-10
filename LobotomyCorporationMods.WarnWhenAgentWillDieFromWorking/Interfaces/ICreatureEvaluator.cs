@@ -2,7 +2,7 @@
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces
 {
-    internal interface ICreatureEvaluator
+    public interface ICreatureEvaluator
     {
         bool WillAgentDie();
     }

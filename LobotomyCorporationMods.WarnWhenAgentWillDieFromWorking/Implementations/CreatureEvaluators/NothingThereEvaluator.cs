@@ -5,7 +5,7 @@ using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators
 {
-    internal sealed class NothingThereEvaluator : CreatureEvaluator
+    public sealed class NothingThereEvaluator : CreatureEvaluator
     {
         internal NothingThereEvaluator(IAgentData agent,
             ICreatureData creature,
@@ -16,7 +16,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
         private bool IsDisguised()
         {
             Nothing nothingThere = (Nothing)Creature.script;
-            bool isDisguised = nothingThere.copiedWorker.IsNotNull();
+            var isDisguised = nothingThere.copiedWorker.IsNotNull();
 
             return isDisguised;
         }

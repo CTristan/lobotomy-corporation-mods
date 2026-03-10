@@ -6,18 +6,18 @@ using System.Text;
 
 namespace CI;
 
-internal sealed class ProcessResult
+public sealed class ProcessResult
 {
     public int ExitCode { get; init; }
     public IList<string> ErrorLines { get; init; } = new List<string>();
 }
 
-internal interface IProcessRunner
+public interface IProcessRunner
 {
     ProcessResult Run(string fileName, string arguments, string? workingDirectory = null, Func<string?, bool>? outputFilter = null);
 }
 
-internal class ProcessRunner : IProcessRunner
+public class ProcessRunner : IProcessRunner
 {
     public ProcessResult Run(string fileName, string arguments, string? workingDirectory = null, Func<string?, bool>? outputFilter = null)
     {
@@ -84,12 +84,12 @@ internal class ProcessRunner : IProcessRunner
     }
 }
 
-internal interface IGitHookSetup
+public interface IGitHookSetup
 {
     void SetupPreCommitHook(string repoRoot);
 }
 
-internal class GitHookSetup : IGitHookSetup
+public class GitHookSetup : IGitHookSetup
 {
     private readonly IFileSystem _fileSystem;
 
@@ -133,7 +133,7 @@ dotnet ci --check
     }
 }
 
-internal interface IFileSystem
+public interface IFileSystem
 {
     void WriteAllText(string path, string contents);
     void SetFileExecutable(string path);
@@ -142,7 +142,7 @@ internal interface IFileSystem
     string? ReadAllText(string path);
 }
 
-internal class FileSystem : IFileSystem
+public class FileSystem : IFileSystem
 {
     public void WriteAllText(string path, string contents)
     {
@@ -182,7 +182,7 @@ internal class FileSystem : IFileSystem
     }
 }
 
-internal class CiRunner
+public class CiRunner
 {
     private readonly IProcessRunner _processRunner;
     private readonly IGitHookSetup _gitHookSetup;
@@ -321,7 +321,7 @@ internal class CiRunner
     }
 }
 
-internal sealed class Program
+public sealed class Program
 {
     public static int Main(string[] args)
     {

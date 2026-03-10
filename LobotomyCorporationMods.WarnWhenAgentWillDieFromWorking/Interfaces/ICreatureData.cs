@@ -4,7 +4,7 @@ using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces
 {
-    internal interface ICreatureData
+    public interface ICreatureData
     {
         long metadataId { get; }
         int qliphothCounter { get; }

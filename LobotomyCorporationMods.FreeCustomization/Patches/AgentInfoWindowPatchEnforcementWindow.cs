@@ -39,7 +39,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
             try
             {
                 // EnforcementWindow is a static method, so we can't get an instance of the AgentInfoWindow through Harmony.
-                AgentInfoWindow agentInfoWindow = AgentInfoWindow.currentWindow;
+                var agentInfoWindow = AgentInfoWindow.currentWindow;
 
                 agentInfoWindow.PatchAfterEnforcementWindow();
             }

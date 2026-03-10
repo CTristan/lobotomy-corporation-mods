@@ -49,21 +49,21 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 
         public bool HasFairyFestivalEffect()
         {
-            List<UnitBuf> effects = _agent.GetUnitBufList();
+            var effects = _agent.GetUnitBufList();
 
             return effects.OfType<FairyBuf>().Any();
         }
 
         public bool HasLaetitiaEffect()
         {
-            List<UnitBuf> effects = _agent.GetUnitBufList();
+            var effects = _agent.GetUnitBufList();
 
             return effects.OfType<LittleWitchBuf>().Any();
         }
 
         public bool HasParasiteTreeEffect()
         {
-            List<UnitBuf> effects = _agent.GetUnitBufList();
+            var effects = _agent.GetUnitBufList();
 
             return effects.OfType<YggdrasilBlessBuf>().Any();
         }

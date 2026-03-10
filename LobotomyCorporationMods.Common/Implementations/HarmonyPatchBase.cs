@@ -103,10 +103,10 @@ namespace LobotomyCorporationMods.Common.Implementations
             [NotNull] string modFileName)
         {
             // Try to get Basemod directory list if we don't have one
-            ICollection<DirectoryInfo> directoryInfos = directories ?? Add_On.instance.DirList;
+            var directoryInfos = directories ?? Add_On.instance.DirList;
             List<IDirectoryInfo> wrappedDirectories = new List<IDirectoryInfo>();
 
-            foreach (DirectoryInfo directoryInfo in directoryInfos)
+            foreach (var directoryInfo in directoryInfos)
             {
                 wrappedDirectories.Add(new DirectoryInfoAdapter(directoryInfo));
             }
@@ -134,14 +134,14 @@ namespace LobotomyCorporationMods.Common.Implementations
         /// <summary>Needed because Basemod doesn't use a localization file as a backup, so in other languages it will default everything to "UKNOWN".</summary>
         private void AddDefaultLocalizedText()
         {
-            string defaultLocalizationFile = FileManager.GetFile("Localize/en/text_en.xml");
+            var defaultLocalizationFile = FileManager.GetFile("Localize/en/text_en.xml");
 
             if (!File.Exists(defaultLocalizationFile))
             {
                 return;
             }
 
-            string xml = File.ReadAllText(defaultLocalizationFile);
+            var xml = File.ReadAllText(defaultLocalizationFile);
             XmlDocument xmlDocument = new XmlDocument
             {
                 XmlResolver = null,
@@ -158,7 +158,7 @@ namespace LobotomyCorporationMods.Common.Implementations
             }
 
             LocalizeTextDataLoader dataLoader = new LocalizeTextDataLoader("en");
-            foreach (KeyValuePair<string, string> keyValuePair in dataLoader.LoadText(xmlDocument))
+            foreach (var keyValuePair in dataLoader.LoadText(xmlDocument))
             {
                 DefaultLocalizedValues.AddOrOverwriteDefaultLocalizedValue(keyValuePair.Key, keyValuePair.Value);
             }

@@ -11,7 +11,7 @@ namespace LobotomyPlaywright.Implementations.Configuration;
 /// <summary>
 /// Manages loading and saving of the LobotomyPlaywright configuration.
 /// </summary>
-internal sealed class ConfigManager : IConfigManager
+public sealed class ConfigManager : IConfigManager
 {
     private readonly IFileSystem _fileSystem;
     private readonly string _configPath;

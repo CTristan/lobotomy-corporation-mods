@@ -21,7 +21,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
         [NotNull]
         protected static CreatureEquipmentMakeInfo GetCreatureEquipmentMakeInfo([NotNull] string giftName)
         {
-            EquipmentTypeInfo equipTypeInfo = UnityTestExtensions.CreateEquipmentTypeInfo();
+            var equipTypeInfo = UnityTestExtensions.CreateEquipmentTypeInfo();
             equipTypeInfo.type = EquipmentTypeInfo.EquipmentType.SPECIAL;
             equipTypeInfo.localizeData = new Dictionary<string, string>
             {
@@ -30,7 +30,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
                 },
             };
 
-            CreatureEquipmentMakeInfo creatureEquipmentMakeInfo = UnityTestExtensions.CreateCreatureEquipmentMakeInfo();
+            var creatureEquipmentMakeInfo = UnityTestExtensions.CreateCreatureEquipmentMakeInfo();
             creatureEquipmentMakeInfo.equipTypeInfo = equipTypeInfo;
 
             LocalizeTextDataModel.instance.Init(new Dictionary<string, string>

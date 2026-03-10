@@ -22,7 +22,7 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests
         protected FreeCustomizationModTests()
         {
             _ = new Harmony_Patch();
-            Mock<ILogger> mockLogger = TestExtensions.GetMockLogger();
+            var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
         }
 

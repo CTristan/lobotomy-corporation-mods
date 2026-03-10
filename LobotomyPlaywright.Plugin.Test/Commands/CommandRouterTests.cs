@@ -13,7 +13,7 @@ namespace LobotomyPlaywright.Plugin.Test.Commands
         public void HandleCommand_null_request_returns_error()
         {
             // Act
-            Response response = CommandRouter.HandleCommand(null);
+            var response = CommandRouter.HandleCommand(null);
 
             // Assert
             _ = response.Should().NotBeNull();
@@ -28,7 +28,7 @@ namespace LobotomyPlaywright.Plugin.Test.Commands
             Request request = new() { id = "req-1", action = null };
 
             // Act
-            Response response = CommandRouter.HandleCommand(request);
+            var response = CommandRouter.HandleCommand(request);
 
             // Assert
             _ = response.Should().NotBeNull();
@@ -43,7 +43,7 @@ namespace LobotomyPlaywright.Plugin.Test.Commands
             Request request = new() { id = "req-1", action = "unknown" };
 
             // Act
-            Response response = CommandRouter.HandleCommand(request);
+            var response = CommandRouter.HandleCommand(request);
 
             // Assert
             _ = response.Should().NotBeNull();
@@ -62,7 +62,7 @@ namespace LobotomyPlaywright.Plugin.Test.Commands
             // In a real BepInEx environment, this would return a success response.
             try
             {
-                Response response = CommandRouter.HandleCommand(request);
+                var response = CommandRouter.HandleCommand(request);
 
                 // Assert - If we got here, BepInEx was available
                 _ = response.Should().NotBeNull();

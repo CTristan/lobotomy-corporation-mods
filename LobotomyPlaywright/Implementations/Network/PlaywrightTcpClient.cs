@@ -14,7 +14,7 @@ namespace LobotomyPlaywright.Implementations.Network;
 /// <summary>
 /// TCP client for communicating with the LobotomyPlaywright plugin.
 /// </summary>
-internal sealed class PlaywrightTcpClient : ITcpClient
+public sealed class PlaywrightTcpClient : ITcpClient
 {
     private TcpClient? _tcpClient;
     private NetworkStream? _stream;

@@ -8,7 +8,7 @@ using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
 {
-    internal sealed class Agent : IAgent
+    public sealed class Agent : IAgent
     {
         private readonly long _id;
         private float _workCount;

@@ -5,7 +5,7 @@ using LobotomyCorporationMods.Common.Implementations;
 
 namespace LobotomyCorporationMods.Common.Extensions
 {
-    internal static class CreatureEquipmentMakeInfoExtensions
+    public static class CreatureEquipmentMakeInfoExtensions
     {
         internal static EquipmentTypeInfo GetAbnormalityGiftInfo([NotNull] this CreatureEquipmentMakeInfo creatureEquipmentMakeInfo)
         {

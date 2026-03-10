@@ -51,7 +51,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         {
             _ = Guard.Against.Null(unitModel, nameof(unitModel));
 
-            List<EGOgiftModel> equippedGifts = unitModel.GetEquippedGifts();
+            var equippedGifts = unitModel.GetEquippedGifts();
 
             return equippedGifts.Exists(g => g.metaInfo.id == giftId);
         }
@@ -80,7 +80,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         {
             _ = Guard.Against.Null(gift, nameof(gift));
 
-            EGOgiftModel matchingGiftAtPosition = unitModel.FindGiftAtPosition(gift.metaInfo.attachPos);
+            var matchingGiftAtPosition = unitModel.FindGiftAtPosition(gift.metaInfo.attachPos);
 
             return !matchingGiftAtPosition.IsNull() && unitModel.IsGiftLocked(matchingGiftAtPosition.metaInfo.id);
         }

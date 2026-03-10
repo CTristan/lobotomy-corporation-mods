@@ -14,7 +14,7 @@ namespace LobotomyPlaywright.Commands;
 /// <summary>
 /// Command to find and configure the game installation path.
 /// </summary>
-internal class FindGameCommand
+public class FindGameCommand
 {
     private readonly IConfigManager _configManager;
     private readonly IFileSystem _fileSystem;

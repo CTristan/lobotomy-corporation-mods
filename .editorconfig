@@ -18,6 +18,9 @@ dotnet_diagnostic.IDE0130.severity = suggestion
 dotnet_diagnostic.IDE0051.severity = none
 dotnet_diagnostic.IDE0052.severity = none
 
+# TODO: Remove temporary workaround when this bug is fixed: https://github.com/dotnet/format/issues/1623
+dotnet_diagnostic.IDE0130.severity = suggestion
+
 # WHY: All test projects share these conventions
 [*.Test/**/*.cs]
 # WHY: Tests should not have unused private members (opposite of earlier exclusion for Unity private methods)
@@ -48,7 +51,6 @@ dotnet_diagnostic.CA1707.severity = none
 # WHY: Harmony_Patch class names contain underscores (Basemod convention)
 [**/Harmony_Patch.cs]
 dotnet_diagnostic.CA1707.severity = none
-
 
 # WHY: All test projects share these conventions
 [**.Test/**.cs]

@@ -14,7 +14,7 @@ namespace LobotomyPlaywright.Commands;
 /// <summary>
 /// Command to build and deploy the plugin DLLs to the game.
 /// </summary>
-internal class DeployCommand
+public class DeployCommand
 {
     private const string PluginDllName = "LobotomyPlaywright.Plugin.dll";
     private const string HarmonyDebugPanelDllName = "HarmonyDebugPanel.dll";
@@ -424,7 +424,7 @@ internal class DeployCommand
         return false;
     }
 
-    internal class BuildFailedException : Exception
+    public class BuildFailedException : Exception
     {
         public BuildFailedException(string message) : base(message)
         {

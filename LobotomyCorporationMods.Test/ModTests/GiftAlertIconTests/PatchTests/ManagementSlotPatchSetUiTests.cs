@@ -34,11 +34,11 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
         {
             // Arrange
             const string ImageName = nameof(Only_creates_image_object_once);
-            CreatureModel creature = UnityTestExtensions.CreateCreatureModel();
+            var creature = UnityTestExtensions.CreateCreatureModel();
             _ = TestExtensions.InitializeCommandWindowWithAbnormality(creature);
-            AgentModel agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1);
-            Mock<IFileManager> fileManager = TestExtensions.GetMockFileManager();
-            OptionalTestAdapterParameters testAdapterParameters = SetupTestParameters(ImageName);
+            var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1);
+            var fileManager = TestExtensions.GetMockFileManager();
+            var testAdapterParameters = SetupTestParameters(ImageName);
 
             // Act
             // Run twice to see if the image gets created a second time
@@ -54,10 +54,10 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
         {
             // Arrange
             const string ImageName = nameof(Errors_when_image_file_does_not_exist);
-            AgentModel agent = TestExtensions.GetAgentWithGift();
-            UnitModel tool = UnityTestExtensions.CreateUnitModel();
+            var agent = TestExtensions.GetAgentWithGift();
+            var tool = UnityTestExtensions.CreateUnitModel();
             _ = TestExtensions.InitializeCommandWindowWithAbnormality(tool);
-            OptionalTestAdapterParameters testAdapterParameters = SetupTestParameters(ImageName);
+            var testAdapterParameters = SetupTestParameters(ImageName);
 
             Mock<IFileManager> mockFileManager = new();
             _ = mockFileManager.Setup(x => x.GetFile(ImageName)).Returns(string.Empty);
@@ -73,10 +73,10 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
         public void Hides_image_when_abnormality_does_not_have_a_gift()
         {
             // Arrange
-            CreatureModel creature = UnityTestExtensions.CreateCreatureModel();
+            var creature = UnityTestExtensions.CreateCreatureModel();
             _ = TestExtensions.InitializeCommandWindowWithAbnormality(creature);
-            AgentModel agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1);
-            Mock<IImageTestAdapter> mockImageTestAdapter = GetMockImageTestAdapter();
+            var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1);
+            var mockImageTestAdapter = GetMockImageTestAdapter();
 
             SetUpSlot(_sut, agent, nameof(Hides_image_when_abnormality_does_not_have_a_gift), mockImageTestAdapter);
 
@@ -87,11 +87,11 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
         public void Hides_image_when_agent_already_has_the_gift()
         {
             // Arrange
-            CreatureModel creature = TestExtensions.GetCreatureWithGift(giftId: EquipmentIds.CrumblingArmorGift1);
+            var creature = TestExtensions.GetCreatureWithGift(giftId: EquipmentIds.CrumblingArmorGift1);
             _ = TestExtensions.InitializeCommandWindowWithAbnormality(creature);
-            AgentModel agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1);
+            var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1);
             const string ImageName = nameof(Hides_image_when_abnormality_does_not_have_a_gift);
-            Mock<IImageTestAdapter> mockImageTestAdapter = GetMockImageTestAdapter();
+            var mockImageTestAdapter = GetMockImageTestAdapter();
 
             SetUpSlot(_sut, agent, ImageName, mockImageTestAdapter);
 
@@ -102,10 +102,10 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
         public void Hides_image_when_abnormality_is_a_tool()
         {
             // Arrange
-            UnitModel unitModel = UnityTestExtensions.CreateUnitModel();
+            var unitModel = UnityTestExtensions.CreateUnitModel();
             _ = UnityTestExtensions.CreateCommandWindow(unitModel);
-            AgentModel agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1);
-            Mock<IImageTestAdapter> mockImageTestAdapter = GetMockImageTestAdapter();
+            var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1);
+            var mockImageTestAdapter = GetMockImageTestAdapter();
 
             SetUpSlot(_sut, agent, nameof(Hides_image_when_abnormality_is_a_tool), mockImageTestAdapter);
 
@@ -119,7 +119,7 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
             EGOgiftAttachRegion newGiftPosition)
         {
             // Act & Assert
-            Color resultColor = SetupAndReturnImageColor(nameof(Shows_as_new_gift_when_gift_is_in_a_new_slot_and_same_attachment_type), firstGiftPosition, newGiftPosition);
+            var resultColor = SetupAndReturnImageColor(nameof(Shows_as_new_gift_when_gift_is_in_a_new_slot_and_same_attachment_type), firstGiftPosition, newGiftPosition);
             _ = resultColor.Should().Be(_newGiftColor);
         }
 
@@ -132,7 +132,7 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
             EGOgiftAttachType newGiftAttachmentType)
         {
             // Act & Assert
-            Color resultColor = SetupAndReturnImageColor(nameof(Shows_as_new_gift_when_gift_is_in_a_new_slot_and_different_attachment_type), firstGiftPosition, newGiftPosition, firstGiftAttachmentType,
+            var resultColor = SetupAndReturnImageColor(nameof(Shows_as_new_gift_when_gift_is_in_a_new_slot_and_different_attachment_type), firstGiftPosition, newGiftPosition, firstGiftAttachmentType,
                 newGiftAttachmentType);
 
             _ = resultColor.Should().Be(_newGiftColor);
@@ -145,7 +145,7 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
             EGOgiftAttachType giftAttachmentType)
         {
             // Act & Assert
-            Color resultColor = SetupAndReturnImageColor(nameof(Shows_as_replacement_gift_when_gift_is_in_an_existing_slot_and_has_same_attachment_type), giftPosition, giftPosition, giftAttachmentType,
+            var resultColor = SetupAndReturnImageColor(nameof(Shows_as_replacement_gift_when_gift_is_in_an_existing_slot_and_has_same_attachment_type), giftPosition, giftPosition, giftAttachmentType,
                 giftAttachmentType);
 
             _ = resultColor.Should().Be(_replacementGiftColor);
@@ -158,7 +158,7 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
             EGOgiftAttachType newGiftAttachmentType)
         {
             // Act & Assert
-            Color resultColor = SetupAndReturnImageColor(nameof(Shows_as_new_gift_when_gift_is_in_existing_slot_but_has_different_attachment_type), firstGiftAttachmentType: firstGiftAttachmentType,
+            var resultColor = SetupAndReturnImageColor(nameof(Shows_as_new_gift_when_gift_is_in_existing_slot_but_has_different_attachment_type), firstGiftAttachmentType: firstGiftAttachmentType,
                 newGiftAttachmentType: newGiftAttachmentType);
 
             _ = resultColor.Should().Be(_newGiftColor);
@@ -171,8 +171,8 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
             string imageName,
             [NotNull] Mock<IImageTestAdapter> mockImageTestAdapter)
         {
-            OptionalTestAdapterParameters testAdapterParameters = CreateTestAdapterParameters(imageName, mockImageTestAdapter);
-            Mock<IFileManager> fileManager = TestExtensions.GetMockFileManager();
+            var testAdapterParameters = CreateTestAdapterParameters(imageName, mockImageTestAdapter);
+            var fileManager = TestExtensions.GetMockFileManager();
 
             // Act
             Action action = () => sut.PatchAfterSetUi(agent, imageName, fileManager.Object, testAdapterParameters);
@@ -184,7 +184,7 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
         [NotNull]
         private static OptionalTestAdapterParameters SetupTestParameters(string imageName)
         {
-            Mock<IImageTestAdapter> mockImageTestAdapter = GetMockImageTestAdapter();
+            var mockImageTestAdapter = GetMockImageTestAdapter();
 
             return CreateTestAdapterParameters(imageName, mockImageTestAdapter);
         }
@@ -242,11 +242,11 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
             EGOgiftAttachType firstGiftAttachmentType = 0,
             EGOgiftAttachType newGiftAttachmentType = 0)
         {
-            CreatureModel creature = TestExtensions.GetCreatureWithGift(attachPosition: firstGiftPosition, giftAttachType: firstGiftAttachmentType);
+            var creature = TestExtensions.GetCreatureWithGift(attachPosition: firstGiftPosition, giftAttachType: firstGiftAttachmentType);
             _ = TestExtensions.InitializeCommandWindowWithAbnormality(creature);
-            string imageName = functionName + firstGiftPosition + newGiftPosition + firstGiftAttachmentType + newGiftAttachmentType;
-            AgentModel agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1, newGiftPosition, newGiftAttachmentType);
-            Mock<IImageTestAdapter> mockImageTestAdapter = GetMockImageTestAdapter();
+            var imageName = functionName + firstGiftPosition + newGiftPosition + firstGiftAttachmentType + newGiftAttachmentType;
+            var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1, newGiftPosition, newGiftAttachmentType);
+            var mockImageTestAdapter = GetMockImageTestAdapter();
             SetUpSlot(_sut, agent, imageName, mockImageTestAdapter);
 
             return mockImageTestAdapter.Object.Color;

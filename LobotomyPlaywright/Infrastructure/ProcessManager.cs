@@ -13,7 +13,7 @@ namespace LobotomyPlaywright.Infrastructure;
 /// <summary>
 /// Manages detection and control of game processes.
 /// </summary>
-internal class ProcessManager
+public class ProcessManager
 {
     private readonly IProcessRunner _processRunner;
 

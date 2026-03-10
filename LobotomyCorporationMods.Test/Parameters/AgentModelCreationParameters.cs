@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace LobotomyCorporationMods.Test.Parameters
 {
-    internal sealed class AgentModelCreationParameters
+    public sealed class AgentModelCreationParameters
     {
         internal AgentName? AgentName { get; set; }
         internal List<UnitBuf>? BufList { get; set; }

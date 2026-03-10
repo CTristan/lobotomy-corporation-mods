@@ -13,7 +13,7 @@ namespace LobotomyPlaywright.Commands;
 /// <summary>
 /// Command to read BepInEx log files from the game directory.
 /// </summary>
-internal class ReadLogCommand
+public class ReadLogCommand
 {
     private const string DefaultLogFile = "LogOutput.log";
     private const string BepInExLogDir = "BepInEx";

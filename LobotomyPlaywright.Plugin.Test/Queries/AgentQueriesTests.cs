@@ -15,7 +15,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
         {
             // Act - AgentManager.instance creates a new instance if null
             // with empty agentList, so we should get an empty list
-            List<AgentData> agents = AgentQueries.ListAgents();
+            var agents = AgentQueries.ListAgents();
 
             // Assert
             _ = agents.Should().NotBeNull();
@@ -36,7 +36,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
         public void GetAgent_with_nonexistent_id_returns_null()
         {
             // Act
-            AgentData agent = AgentQueries.GetAgent(999999);
+            var agent = AgentQueries.GetAgent(999999);
 
             // Assert
             _ = agent.Should().BeNull();
@@ -46,7 +46,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
         public void GetAgent_with_zero_id_returns_null()
         {
             // Act
-            AgentData agent = AgentQueries.GetAgent(0);
+            var agent = AgentQueries.GetAgent(0);
 
             // Assert
             _ = agent.Should().BeNull();
@@ -56,7 +56,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
         public void GetAgent_with_negative_id_returns_null()
         {
             // Act
-            AgentData agent = AgentQueries.GetAgent(-1);
+            var agent = AgentQueries.GetAgent(-1);
 
             // Assert
             _ = agent.Should().BeNull();

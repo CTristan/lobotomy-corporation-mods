@@ -63,7 +63,7 @@ namespace RetargetHarmony.Test.Tests
             DebugLogger.Trace("Test trace message");
 
             // Verify log file was not created (since debug is disabled)
-            string logPath = Path.Combine(_tempDir, "test.log");
+            var logPath = Path.Combine(_tempDir, "test.log");
             _ = File.Exists(logPath).Should().BeFalse("log file should not be created when debug is disabled");
         }
 
@@ -71,7 +71,7 @@ namespace RetargetHarmony.Test.Tests
         public void Initialize_WithValidConfigFile_EnablesDebugLogging()
         {
             // Arrange - create config file
-            string configPath = Path.Combine(_tempDir, "RetargetHarmony.cfg");
+            var configPath = Path.Combine(_tempDir, "RetargetHarmony.cfg");
             File.WriteAllText(configPath, "LogLevel=Debug");
 
             DebugLogger.Reset();
@@ -84,9 +84,9 @@ namespace RetargetHarmony.Test.Tests
             // Assert
             DebugLogger.Debug("Test debug message");
 
-            string logPath = Path.Combine(_tempDir, "test.log");
+            var logPath = Path.Combine(_tempDir, "test.log");
             _ = File.Exists(logPath).Should().BeTrue("log file should be created when debug is enabled");
-            string content = File.ReadAllText(logPath);
+            var content = File.ReadAllText(logPath);
             _ = content.Should().Contain("DEBUG");
             _ = content.Should().Contain("Test debug message");
         }
@@ -105,10 +105,10 @@ namespace RetargetHarmony.Test.Tests
                 DebugLogger.LogLevel.Error
             ];
 
-            for (int i = 0; i < levels.Length; i++)
+            for (var i = 0; i < levels.Length; i++)
             {
                 // Arrange
-                string configPath = Path.Combine(_tempDir, "RetargetHarmony.cfg");
+                var configPath = Path.Combine(_tempDir, "RetargetHarmony.cfg");
                 File.WriteAllText(configPath, string.Format(CultureInfo.InvariantCulture, "LogLevel={0}", levels[i]));
 
                 DebugLogger.Reset();
@@ -141,16 +141,16 @@ namespace RetargetHarmony.Test.Tests
                 }
 
                 // Read the log file and verify the level
-                string logPath = Path.Combine(_tempDir, "test.log");
+                var logPath = Path.Combine(_tempDir, "test.log");
                 if (File.Exists(logPath))
                 {
-                    string content = File.ReadAllText(logPath);
+                    var content = File.ReadAllText(logPath);
                     _ = content.Should().Contain(expectedLevels[i].ToString().ToUpperInvariant());
                 }
 
                 // Clean up for next iteration
                 DebugLogger.Reset();
-                string testLogPath = Path.Combine(_tempDir, "test.log");
+                var testLogPath = Path.Combine(_tempDir, "test.log");
                 if (File.Exists(testLogPath))
                 {
                     File.Delete(testLogPath);
@@ -162,7 +162,7 @@ namespace RetargetHarmony.Test.Tests
         public void ParseConfigFile_InvalidLogLevel_DefaultsToDebug()
         {
             // Arrange - invalid log level
-            string configPath = Path.Combine(_tempDir, "RetargetHarmony.cfg");
+            var configPath = Path.Combine(_tempDir, "RetargetHarmony.cfg");
             File.WriteAllText(configPath, "LogLevel=InvalidLevel");
 
             DebugLogger.Reset();
@@ -175,9 +175,9 @@ namespace RetargetHarmony.Test.Tests
             // Assert - should default to Debug
             DebugLogger.Debug("Test debug message");
 
-            string logPath = Path.Combine(_tempDir, "test.log");
+            var logPath = Path.Combine(_tempDir, "test.log");
             _ = File.Exists(logPath).Should().BeTrue("log file should be created");
-            string content = File.ReadAllText(logPath);
+            var content = File.ReadAllText(logPath);
             _ = content.Should().Contain("DEBUG");
         }
 
@@ -185,7 +185,7 @@ namespace RetargetHarmony.Test.Tests
         public void ParseConfigFile_CaseInsensitive_HandlesLowercase()
         {
             // Arrange
-            string configPath = Path.Combine(_tempDir, "RetargetHarmony.cfg");
+            var configPath = Path.Combine(_tempDir, "RetargetHarmony.cfg");
             File.WriteAllText(configPath, "LogLevel=debug");
 
             DebugLogger.Reset();
@@ -198,9 +198,9 @@ namespace RetargetHarmony.Test.Tests
             // Assert
             DebugLogger.Debug("Test");
 
-            string logPath = Path.Combine(_tempDir, "test.log");
+            var logPath = Path.Combine(_tempDir, "test.log");
             _ = File.Exists(logPath).Should().BeTrue();
-            string content = File.ReadAllText(logPath);
+            var content = File.ReadAllText(logPath);
             _ = content.Should().Contain("DEBUG");
         }
 
@@ -215,7 +215,7 @@ namespace RetargetHarmony.Test.Tests
             // No config file - debug disabled
 
             // Act - should not throw
-            Exception exception = Record.Exception(() => DebugLogger.Info("Test info message"));
+            var exception = Record.Exception(() => DebugLogger.Info("Test info message"));
 
             // Assert
             _ = exception.Should().BeNull();
@@ -232,7 +232,7 @@ namespace RetargetHarmony.Test.Tests
             // No config file
 
             // Act
-            Exception exception = Record.Exception(() => DebugLogger.Warn("Test warn message"));
+            var exception = Record.Exception(() => DebugLogger.Warn("Test warn message"));
 
             // Assert
             _ = exception.Should().BeNull();
@@ -249,7 +249,7 @@ namespace RetargetHarmony.Test.Tests
             // No config file
 
             // Act
-            Exception exception = Record.Exception(() => DebugLogger.Error("Test error message"));
+            var exception = Record.Exception(() => DebugLogger.Error("Test error message"));
 
             // Assert
             _ = exception.Should().BeNull();
@@ -259,7 +259,7 @@ namespace RetargetHarmony.Test.Tests
         public void LogFile_WritesCorrectFormat()
         {
             // Arrange - create config with Trace level
-            string configPath = Path.Combine(_tempDir, "RetargetHarmony.cfg");
+            var configPath = Path.Combine(_tempDir, "RetargetHarmony.cfg");
             File.WriteAllText(configPath, "LogLevel=Trace");
 
             DebugLogger.Reset();
@@ -275,10 +275,10 @@ namespace RetargetHarmony.Test.Tests
             DebugLogger.Error("Test error message");
 
             // Assert
-            string logPath = Path.Combine(_tempDir, "test.log");
+            var logPath = Path.Combine(_tempDir, "test.log");
             _ = File.Exists(logPath).Should().BeTrue();
 
-            string content = File.ReadAllText(logPath);
+            var content = File.ReadAllText(logPath);
             _output.WriteLine("Log content:\n{0}", content);
 
             // Verify format: [yyyy-MM-dd HH:mm:ss.fff] [LEVEL] message
@@ -296,7 +296,7 @@ namespace RetargetHarmony.Test.Tests
         public void LogFile_RespectsMinLevel()
         {
             // Arrange - set min level to Warn
-            string configPath = Path.Combine(_tempDir, "RetargetHarmony.cfg");
+            var configPath = Path.Combine(_tempDir, "RetargetHarmony.cfg");
             File.WriteAllText(configPath, "LogLevel=Warn");
 
             DebugLogger.Reset();
@@ -312,8 +312,8 @@ namespace RetargetHarmony.Test.Tests
             DebugLogger.Error("Should appear");
 
             // Assert
-            string logPath = Path.Combine(_tempDir, "test.log");
-            string content = File.ReadAllText(logPath);
+            var logPath = Path.Combine(_tempDir, "test.log");
+            var content = File.ReadAllText(logPath);
 
             _ = content.Should().NotContain("Should not appear");
             _ = content.Should().Contain("Should appear");
@@ -323,7 +323,7 @@ namespace RetargetHarmony.Test.Tests
         public void Reset_ClearsState()
         {
             // Arrange - enable debug
-            string configPath = Path.Combine(_tempDir, "RetargetHarmony.cfg");
+            var configPath = Path.Combine(_tempDir, "RetargetHarmony.cfg");
             File.WriteAllText(configPath, "LogLevel=Debug");
 
             DebugLogger.Reset();
@@ -348,7 +348,7 @@ namespace RetargetHarmony.Test.Tests
             DebugLogger.Initialize(_mockLog);
             DebugLogger.Debug("After reset 2");
 
-            string logPath2 = Path.Combine(_tempDir, "test2.log");
+            var logPath2 = Path.Combine(_tempDir, "test2.log");
             _ = File.Exists(logPath2).Should().BeTrue();
         }
 
@@ -356,8 +356,8 @@ namespace RetargetHarmony.Test.Tests
         public void ConfigFile_ParsesComments()
         {
             // Arrange - config with comments
-            string configPath = Path.Combine(_tempDir, "RetargetHarmony.cfg");
-            string configContent = @"# This is a comment
+            var configPath = Path.Combine(_tempDir, "RetargetHarmony.cfg");
+            var configContent = @"# This is a comment
 LogLevel=Debug
 # Another comment
 ";
@@ -373,7 +373,7 @@ LogLevel=Debug
             // Assert
             DebugLogger.Debug("Test");
 
-            string logPath = Path.Combine(_tempDir, "test.log");
+            var logPath = Path.Combine(_tempDir, "test.log");
             _ = File.Exists(logPath).Should().BeTrue();
         }
 
@@ -381,8 +381,8 @@ LogLevel=Debug
         public void ConfigFile_ParsesEmptyLines()
         {
             // Arrange - config with empty lines
-            string configPath = Path.Combine(_tempDir, "RetargetHarmony.cfg");
-            string configContent = @"
+            var configPath = Path.Combine(_tempDir, "RetargetHarmony.cfg");
+            var configContent = @"
 
 LogLevel=Debug
 
@@ -399,7 +399,7 @@ LogLevel=Debug
             // Assert
             DebugLogger.Debug("Test");
 
-            string logPath = Path.Combine(_tempDir, "test.log");
+            var logPath = Path.Combine(_tempDir, "test.log");
             _ = File.Exists(logPath).Should().BeTrue();
         }
 
@@ -417,7 +417,7 @@ LogLevel=Debug
             DebugLogger.Initialize(_mockLog);
 
             // Assert - should not throw
-            Exception exception = Record.Exception(() => DebugLogger.Info("Test"));
+            var exception = Record.Exception(() => DebugLogger.Info("Test"));
             _ = exception.Should().BeNull();
         }
     }

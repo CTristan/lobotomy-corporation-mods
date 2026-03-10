@@ -2,6 +2,9 @@
 
 using System.IO;
 using AwesomeAssertions;
+using LobotomyPlaywright.Commands;
+using LobotomyPlaywright.Interfaces.Configuration;
+using LobotomyPlaywright.Interfaces.System;
 using Moq;
 using Xunit;
 
@@ -90,7 +93,7 @@ namespace LobotomyPlaywright.Tests.Commands
         public void Run_WhenLogFileExists_DisplaysLogContent()
         {
             // Arrange
-            string logContent = "Line 1\nLine 2\nLine 3";
+            var logContent = "Line 1\nLine 2\nLine 3";
             _ = _mockFileSystem.Setup(f => f.DirectoryExists("/test/game/path")).Returns(true);
             _ = _mockFileSystem.Setup(f => f.DirectoryExists("/test/game/path/BepInEx")).Returns(true);
             _ = _mockFileSystem.Setup(f => f.FileExists("/test/game/path/BepInEx/LogOutput.log")).Returns(true);
@@ -108,7 +111,7 @@ namespace LobotomyPlaywright.Tests.Commands
         public void Run_WithTailOption_DisplaysLastNLines()
         {
             // Arrange
-            string logContent = "Line 1\nLine 2\nLine 3\nLine 4\nLine 5";
+            var logContent = "Line 1\nLine 2\nLine 3\nLine 4\nLine 5";
             _ = _mockFileSystem.Setup(f => f.DirectoryExists("/test/game/path")).Returns(true);
             _ = _mockFileSystem.Setup(f => f.DirectoryExists("/test/game/path/BepInEx")).Returns(true);
             _ = _mockFileSystem.Setup(f => f.FileExists("/test/game/path/BepInEx/LogOutput.log")).Returns(true);
@@ -131,7 +134,7 @@ namespace LobotomyPlaywright.Tests.Commands
         public void Run_WithFilterOption_DisplaysFilteredLines()
         {
             // Arrange
-            string logContent = "Info: Something happened\nError: Bad thing\nInfo: Another thing\nDebug: Details\nERROR: Another error";
+            var logContent = "Info: Something happened\nError: Bad thing\nInfo: Another thing\nDebug: Details\nERROR: Another error";
             _ = _mockFileSystem.Setup(f => f.DirectoryExists("/test/game/path")).Returns(true);
             _ = _mockFileSystem.Setup(f => f.DirectoryExists("/test/game/path/BepInEx")).Returns(true);
             _ = _mockFileSystem.Setup(f => f.FileExists("/test/game/path/BepInEx/LogOutput.log")).Returns(true);

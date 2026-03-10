@@ -21,8 +21,8 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests
         [Fact]
         public void Class_AgentInfoWindow_Method_EnforcementWindow_is_patched_correctly()
         {
-            Type patch = typeof(AgentInfoWindowPatchEnforcementWindow);
-            Type originalClass = typeof(AgentInfoWindow);
+            var patch = typeof(AgentInfoWindowPatchEnforcementWindow);
+            var originalClass = typeof(AgentInfoWindow);
             const string MethodName = nameof(AgentInfoWindow.EnforcementWindow);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
@@ -31,7 +31,7 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests
         [Fact]
         public void Class_AgentInfoWindow_Method_EnforcementWindow_logs_exceptions()
         {
-            Mock<ILogger> mockLogger = TestExtensions.GetMockLogger();
+            var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
             static void Action()
@@ -45,8 +45,8 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests
         [Fact]
         public void Class_AgentInfoWindow_Method_GenerateWindow_is_patched_correctly()
         {
-            Type patch = typeof(AgentInfoWindowPatchGenerateWindow);
-            Type originalClass = typeof(AgentInfoWindow);
+            var patch = typeof(AgentInfoWindowPatchGenerateWindow);
+            var originalClass = typeof(AgentInfoWindow);
             const string MethodName = nameof(AgentInfoWindow.GenerateWindow);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
@@ -55,7 +55,7 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests
         [Fact]
         public void Class_AgentInfoWindow_Method_GenerateWindow_logs_exceptions()
         {
-            Mock<ILogger> mockLogger = TestExtensions.GetMockLogger();
+            var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
             static void Action()
@@ -69,8 +69,8 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests
         [Fact]
         public void Class_AppearanceUI_Method_CloseWindow_is_patched_correctly()
         {
-            Type patch = typeof(AppearanceUiPatchCloseWindow);
-            Type originalClass = typeof(AppearanceUI);
+            var patch = typeof(AppearanceUiPatchCloseWindow);
+            var originalClass = typeof(AppearanceUI);
             const string MethodName = nameof(AppearanceUI.CloseWindow);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
@@ -79,7 +79,7 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests
         [Fact]
         public void Class_AppearanceUI_Method_CloseWindow_logs_exceptions()
         {
-            Mock<ILogger> mockLogger = TestExtensions.GetMockLogger();
+            var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
             static void Action()
@@ -95,8 +95,8 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests
         [Fact]
         public void Class_CustomizingWindow_Method_Confirm_is_patched_correctly()
         {
-            Type patch = typeof(CustomizingWindowPatchConfirm);
-            Type originalClass = typeof(CustomizingWindow);
+            var patch = typeof(CustomizingWindowPatchConfirm);
+            var originalClass = typeof(CustomizingWindow);
             const string MethodName = nameof(CustomizingWindow.Confirm);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
@@ -105,7 +105,7 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests
         [Fact]
         public void Class_CustomizingWindow_Method_Confirm_logs_exceptions()
         {
-            Mock<ILogger> mockLogger = TestExtensions.GetMockLogger();
+            var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
             static void Action()
@@ -121,8 +121,8 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests
         [Fact]
         public void Class_CustomizingWindow_Method_OpenAppearanceWindow_is_patched_correctly()
         {
-            Type patch = typeof(CustomizingWindowPatchOpenAppearanceWindow);
-            Type originalClass = typeof(CustomizingWindow);
+            var patch = typeof(CustomizingWindowPatchOpenAppearanceWindow);
+            var originalClass = typeof(CustomizingWindow);
             const string MethodName = nameof(CustomizingWindow.OpenAppearanceWindow);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
@@ -131,7 +131,7 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests
         [Fact]
         public void Class_CustomizingWindow_Method_OpenAppearanceWindow_logs_exceptions()
         {
-            Mock<ILogger> mockLogger = TestExtensions.GetMockLogger();
+            var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
             static void Action()
@@ -147,8 +147,8 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests
         [Fact]
         public void Class_CustomizingWindow_Method_ReviseOpenAction_is_patched_correctly()
         {
-            Type patch = typeof(CustomizingWindowPatchReviseOpenAction);
-            Type originalClass = typeof(CustomizingWindow);
+            var patch = typeof(CustomizingWindowPatchReviseOpenAction);
+            var originalClass = typeof(CustomizingWindow);
             const string MethodName = PrivateMethods.CustomizingWindow.ReviseOpenAction;
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
@@ -157,7 +157,7 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests
         [Fact]
         public void Class_CustomizingWindow_Method_ReviseOpenAction_logs_exceptions()
         {
-            Mock<ILogger> mockLogger = TestExtensions.GetMockLogger();
+            var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
             const int NumberOfLogs = 2;
 

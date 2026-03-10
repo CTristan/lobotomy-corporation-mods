@@ -29,7 +29,7 @@ internal enum GameStatus
 /// <summary>
 /// Command to check the status of the game and TCP server.
 /// </summary>
-internal class StatusCommand
+public class StatusCommand
 {
     private readonly IConfigManager _configManager;
     private readonly ProcessManager _processManager;

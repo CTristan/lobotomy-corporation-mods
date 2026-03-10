@@ -2,7 +2,7 @@
 
 namespace LobotomyCorporationMods.Test.Constants
 {
-    internal static class TextValues
+    public static class TextValues
     {
         internal const string LocalizedValue = "UNKNOWN";
     }

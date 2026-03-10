@@ -20,7 +20,7 @@ namespace SetupExternal
     ///   dotnet run --project SetupExternal -- --debug
     ///   dotnet run --project SetupExternal -- --force
     /// </summary>
-    internal sealed class Program
+    public sealed class Program
     {
         private const string ExternalDirectoryName = "external";
         public static bool DebugEnabled { get; private set; }
@@ -39,7 +39,7 @@ namespace SetupExternal
         public static int Main(string[] args)
         {
             args ??= [];
-            (string? manualPath, bool debugEnabled, bool force) = ParseArguments(args);
+            (var manualPath, var debugEnabled, var force) = ParseArguments(args);
             DebugEnabled = debugEnabled;
 
             Console.WriteLine("SetupExternal - Game File Initialization Tool");
@@ -55,8 +55,8 @@ namespace SetupExternal
             // Parse CLI arguments
 
             // Get the solution root directory
-            string solutionRoot = GetSolutionRootDirectory();
-            string externalPath = Path.Combine(solutionRoot, ExternalDirectoryName);
+            var solutionRoot = GetSolutionRootDirectory();
+            var externalPath = Path.Combine(solutionRoot, ExternalDirectoryName);
 
             // Find or use manual game path
             string? gamePath;
@@ -104,21 +104,21 @@ namespace SetupExternal
             Console.WriteLine();
 
             // Sync DLL files
-            FileSyncer.SyncResult syncResult = FileSyncer.SyncDlls(gamePath, externalPath, force);
+            var syncResult = FileSyncer.SyncDlls(gamePath, externalPath, force);
 
             // Retarget all DLLs to fix mscorlib version mismatches
             Console.WriteLine("Checking DLLs for mscorlib version mismatches...");
-            string destManagedDir = Path.Combine(externalPath, "LobotomyCorp_Data", "Managed");
+            var destManagedDir = Path.Combine(externalPath, "LobotomyCorp_Data", "Managed");
 
-            string[] dllFiles = Directory.GetFiles(destManagedDir, "*.dll");
-            int retargetedCount = 0;
+            var dllFiles = Directory.GetFiles(destManagedDir, "*.dll");
+            var retargetedCount = 0;
 
-            foreach (string dllPath in dllFiles)
+            foreach (var dllPath in dllFiles)
             {
                 if (AssemblyRetargeter.Retarget(dllPath))
                 {
                     retargetedCount++;
-                    string dllName = Path.GetFileName(dllPath);
+                    var dllName = Path.GetFileName(dllPath);
                     Console.WriteLine($"  Retargeted {dllName} to mscorlib v2.0.0.0");
 
                     // Track specific DLLs for decompilation
@@ -159,7 +159,7 @@ namespace SetupExternal
                 Console.WriteLine();
                 DebugLog("Starting decompilation of Assembly-CSharp.dll");
 
-                bool success = Decompiler.DecompileDll(externalPath, "Assembly-CSharp.dll");
+                var success = Decompiler.DecompileDll(externalPath, "Assembly-CSharp.dll");
 
                 if (!success)
                 {
@@ -180,7 +180,7 @@ namespace SetupExternal
                 Console.WriteLine();
                 DebugLog("Starting decompilation of LobotomyBaseModLib.dll");
 
-                bool success = Decompiler.DecompileDll(externalPath, "LobotomyBaseModLib.dll");
+                var success = Decompiler.DecompileDll(externalPath, "LobotomyBaseModLib.dll");
 
                 if (!success)
                 {
@@ -215,10 +215,10 @@ namespace SetupExternal
         {
             args ??= [];
             string? path = null;
-            bool debug = false;
-            bool force = false;
+            var debug = false;
+            var force = false;
 
-            for (int i = 0; i < args.Length; i++)
+            for (var i = 0; i < args.Length; i++)
             {
                 if (args[i].Equals("--path", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length)
                 {
@@ -246,7 +246,7 @@ namespace SetupExternal
         /// </summary>
         private static string GetSolutionRootDirectory()
         {
-            string? currentDir = Directory.GetCurrentDirectory();
+            var currentDir = Directory.GetCurrentDirectory();
 
             // Search upward for the .sln file
             while (currentDir != null)
@@ -272,7 +272,7 @@ namespace SetupExternal
 
                 try
                 {
-                    DirectoryInfo? parentDir = Directory.GetParent(currentDir);
+                    var parentDir = Directory.GetParent(currentDir);
                     currentDir = parentDir?.FullName;
                 }
                 catch (UnauthorizedAccessException)
@@ -294,7 +294,7 @@ namespace SetupExternal
         /// </summary>
         private static bool ValidateGamePath(string path)
         {
-            string assemblyCSharpPath = Path.Combine(path, "LobotomyCorp_Data", "Managed", "Assembly-CSharp.dll");
+            var assemblyCSharpPath = Path.Combine(path, "LobotomyCorp_Data", "Managed", "Assembly-CSharp.dll");
             return File.Exists(assemblyCSharpPath);
         }
 

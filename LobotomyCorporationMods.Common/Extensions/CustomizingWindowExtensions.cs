@@ -6,11 +6,11 @@ using LobotomyCorporationMods.Common.Interfaces.Adapters;
 
 namespace LobotomyCorporationMods.Common.Extensions
 {
-    internal static class CustomizingWindowExtensions
+    public static class CustomizingWindowExtensions
     {
         internal static void RenameAgent([NotNull] this CustomizingWindow customizingWindow)
         {
-            string customName = customizingWindow.CurrentData.CustomName;
+            var customName = customizingWindow.CurrentData.CustomName;
             customizingWindow.CurrentAgent.name = customName;
             customizingWindow.CurrentAgent._agentName = customizingWindow.CurrentData.agentName;
             customizingWindow.CurrentAgent.iscustom = true;
@@ -18,7 +18,7 @@ namespace LobotomyCorporationMods.Common.Extensions
             customizingWindow.CurrentAgent._agentName.metaInfo.nameDic.Clear();
             customizingWindow.CurrentAgent._agentName.nameDic.Clear();
 
-            foreach (string language in SupportedLanguage.GetSupprotedList())
+            foreach (var language in SupportedLanguage.GetSupprotedList())
             {
                 customizingWindow.CurrentAgent._agentName.metaInfo.nameDic.Add(language, customName);
                 customizingWindow.CurrentAgent._agentName.nameDic.Add(language, customName);
@@ -39,7 +39,7 @@ namespace LobotomyCorporationMods.Common.Extensions
         internal static void UpdateAgentModel([NotNull] this CustomizingWindow customizingWindow,
             [NotNull] IAgentLayerTestAdapter agentLayerTestAdapter)
         {
-            AgentModel agentModel = customizingWindow.CurrentAgent;
+            var agentModel = customizingWindow.CurrentAgent;
             agentLayerTestAdapter.RemoveAgent(agentModel);
             agentLayerTestAdapter.AddAgent(agentModel);
         }

@@ -20,7 +20,7 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
         [Fact]
         public void Class_AgentSlot_Method_SetFilter_logs_exceptions()
         {
-            Mock<ILogger> mockLogger = TestExtensions.GetMockLogger();
+            var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
             const int NumberOfLogs = 2;
 
@@ -34,8 +34,8 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
         public void Class_UnitModel_Method_AttachEgoGift_is_patched_correctly()
         {
             // ReSharper disable once StringLiteralTypo
-            Type patch = typeof(UnitModelPatchAttachEgoGift);
-            Type originalClass = typeof(UnitModel);
+            var patch = typeof(UnitModelPatchAttachEgoGift);
+            var originalClass = typeof(UnitModel);
             const string MethodName = nameof(UnitModel.AttachEGOgift);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);

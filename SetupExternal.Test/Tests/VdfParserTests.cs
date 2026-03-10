@@ -12,7 +12,7 @@ namespace SetupExternal.Test.Tests
         public void ExtractLibraryPaths_WithValidVdf_ReturnsPaths()
         {
             // Arrange
-            string vdfContent = """
+            var vdfContent = """
             "libraryfolders"
             {
                 "0"
@@ -31,7 +31,7 @@ namespace SetupExternal.Test.Tests
             """;
 
             // Act
-            List<string> paths = VdfParser.ExtractLibraryPaths(vdfContent);
+            var paths = VdfParser.ExtractLibraryPaths(vdfContent);
 
             // Assert
             _ = paths.Should().HaveCount(2);
@@ -43,7 +43,7 @@ namespace SetupExternal.Test.Tests
         public void ExtractLibraryPaths_WithSinglePath_ReturnsOnePath()
         {
             // Arrange
-            string vdfContent = """
+            var vdfContent = """
             "libraryfolders"
             {
                 "0"
@@ -55,7 +55,7 @@ namespace SetupExternal.Test.Tests
             """;
 
             // Act
-            List<string> paths = VdfParser.ExtractLibraryPaths(vdfContent);
+            var paths = VdfParser.ExtractLibraryPaths(vdfContent);
 
             // Assert
             _ = paths.Should().HaveCount(1);
@@ -66,10 +66,10 @@ namespace SetupExternal.Test.Tests
         public void ExtractLibraryPaths_WithEmptyContent_ReturnsEmptyList()
         {
             // Arrange
-            string vdfContent = "";
+            var vdfContent = "";
 
             // Act
-            List<string> paths = VdfParser.ExtractLibraryPaths(vdfContent);
+            var paths = VdfParser.ExtractLibraryPaths(vdfContent);
 
             // Assert
             _ = paths.Should().BeEmpty();
@@ -82,7 +82,7 @@ namespace SetupExternal.Test.Tests
             string? vdfContent = null;
 
             // Act
-            List<string> paths = VdfParser.ExtractLibraryPaths(vdfContent);
+            var paths = VdfParser.ExtractLibraryPaths(vdfContent);
 
             // Assert
             _ = paths.Should().BeEmpty();
@@ -92,10 +92,10 @@ namespace SetupExternal.Test.Tests
         public void ExtractLibraryPaths_WithWhitespaceContent_ReturnsEmptyList()
         {
             // Arrange
-            string vdfContent = "   \n\n   ";
+            var vdfContent = "   \n\n   ";
 
             // Act
-            List<string> paths = VdfParser.ExtractLibraryPaths(vdfContent);
+            var paths = VdfParser.ExtractLibraryPaths(vdfContent);
 
             // Assert
             _ = paths.Should().BeEmpty();
@@ -105,7 +105,7 @@ namespace SetupExternal.Test.Tests
         public void ExtractLibraryPaths_WithNoPaths_ReturnsEmptyList()
         {
             // Arrange
-            string vdfContent = """
+            var vdfContent = """
             "libraryfolders"
             {
                 "0"
@@ -117,7 +117,7 @@ namespace SetupExternal.Test.Tests
             """;
 
             // Act
-            List<string> paths = VdfParser.ExtractLibraryPaths(vdfContent);
+            var paths = VdfParser.ExtractLibraryPaths(vdfContent);
 
             // Assert
             _ = paths.Should().BeEmpty();
@@ -127,7 +127,7 @@ namespace SetupExternal.Test.Tests
         public void ExtractLibraryPaths_WithMalformedPath_SkipsMalformed()
         {
             // Arrange
-            string vdfContent = """
+            var vdfContent = """
             "libraryfolders"
             {
                 "0"
@@ -147,7 +147,7 @@ namespace SetupExternal.Test.Tests
             """;
 
             // Act
-            List<string> paths = VdfParser.ExtractLibraryPaths(vdfContent);
+            var paths = VdfParser.ExtractLibraryPaths(vdfContent);
 
             // Assert
             _ = paths.Should().HaveCount(1);

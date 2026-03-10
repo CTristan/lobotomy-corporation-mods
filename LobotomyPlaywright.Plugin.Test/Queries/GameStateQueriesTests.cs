@@ -13,7 +13,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
         public void IsGameQueryable_when_game_managers_not_available_returns_false()
         {
             // Act
-            bool result = GameStateQueries.IsGameQueryable();
+            var result = GameStateQueries.IsGameQueryable();
 
             // Assert
             _ = result.Should().BeFalse();

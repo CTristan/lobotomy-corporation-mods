@@ -21,7 +21,7 @@ namespace HarmonyDebugPanel.Test.Tests
                 new("TargetType", "TargetMethod", PatchType.Postfix, "owner2", "PatchClass.Postfix", "Assembly2", "2.0.0", []),
             ]));
 
-            IList<PatchInfo> patches = collector.Collect();
+            var patches = collector.Collect();
 
             _ = patches.Should().HaveCount(2);
             _ = patches.Should().ContainSingle(p => p.PatchType == PatchType.Prefix && p.Owner == "owner1" && p.PatchAssemblyName == "Assembly1");

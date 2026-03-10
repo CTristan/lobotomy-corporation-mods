@@ -22,7 +22,7 @@ namespace HarmonyDebugPanel.Test.Tests
                 new StubValueCollector<RetargetHarmonyStatus>(new RetargetHarmonyStatus(true, true, false, "Detected")),
                 new StubExpectedPatchSource());
 
-            DiagnosticReport report = builder.BuildReport();
+            var report = builder.BuildReport();
 
             _ = report.Mods.Should().HaveCount(2);
             _ = report.Patches.Should().HaveCount(1);
@@ -42,7 +42,7 @@ namespace HarmonyDebugPanel.Test.Tests
                 new ThrowingValueCollector<RetargetHarmonyStatus>("retarget failed"),
                 new StubExpectedPatchSource());
 
-            DiagnosticReport report = builder.BuildReport();
+            var report = builder.BuildReport();
 
             _ = report.Mods.Should().BeEmpty();
             _ = report.Patches.Should().BeEmpty();
@@ -78,19 +78,19 @@ namespace HarmonyDebugPanel.Test.Tests
                 new StubValueCollector<RetargetHarmonyStatus>(new RetargetHarmonyStatus()),
                 new StubExpectedPatchSource());
 
-            DiagnosticReport report = builder.BuildReport();
+            var report = builder.BuildReport();
 
             _ = report.Mods.Should().HaveCount(3);
 
-            ModInfo pluginMod = report.Mods.Should().ContainSingle(m => m.Name == "PluginMod").Subject;
+            var pluginMod = report.Mods.Should().ContainSingle(m => m.Name == "PluginMod").Subject;
             _ = pluginMod.HasActivePatches.Should().BeTrue();
             _ = pluginMod.ActivePatchCount.Should().Be(1);
 
-            ModInfo baseMod1 = report.Mods.Should().ContainSingle(m => m.Name == "BaseMod1").Subject;
+            var baseMod1 = report.Mods.Should().ContainSingle(m => m.Name == "BaseMod1").Subject;
             _ = baseMod1.HasActivePatches.Should().BeTrue();
             _ = baseMod1.ActivePatchCount.Should().Be(2);
 
-            ModInfo baseMod2 = report.Mods.Should().ContainSingle(m => m.Name == "BaseMod2").Subject;
+            var baseMod2 = report.Mods.Should().ContainSingle(m => m.Name == "BaseMod2").Subject;
             _ = baseMod2.HasActivePatches.Should().BeFalse();
             _ = baseMod2.ActivePatchCount.Should().Be(0);
         }
@@ -117,9 +117,9 @@ namespace HarmonyDebugPanel.Test.Tests
                 new StubValueCollector<RetargetHarmonyStatus>(new RetargetHarmonyStatus()),
                 new StubExpectedPatchSource());
 
-            DiagnosticReport report = builder.BuildReport();
+            var report = builder.BuildReport();
 
-            ModInfo mod = report.Mods.Should().ContainSingle(m => m.Name == "BaseMod").Subject;
+            var mod = report.Mods.Should().ContainSingle(m => m.Name == "BaseMod").Subject;
             _ = mod.HasActivePatches.Should().BeTrue();
             _ = mod.ActivePatchCount.Should().Be(2);
         }
@@ -145,9 +145,9 @@ namespace HarmonyDebugPanel.Test.Tests
                 new StubValueCollector<RetargetHarmonyStatus>(new RetargetHarmonyStatus()),
                 new StubExpectedPatchSource());
 
-            DiagnosticReport report = builder.BuildReport();
+            var report = builder.BuildReport();
 
-            ModInfo mod = report.Mods.Should().ContainSingle(m => m.Name == "BaseMod").Subject;
+            var mod = report.Mods.Should().ContainSingle(m => m.Name == "BaseMod").Subject;
             _ = mod.HasActivePatches.Should().BeFalse();
             _ = mod.ActivePatchCount.Should().Be(0);
         }
@@ -168,9 +168,9 @@ namespace HarmonyDebugPanel.Test.Tests
                 new StubValueCollector<RetargetHarmonyStatus>(new RetargetHarmonyStatus()),
                 new StubExpectedPatchSource());
 
-            DiagnosticReport report = builder.BuildReport();
+            var report = builder.BuildReport();
 
-            ModInfo mod = report.Mods.Should().ContainSingle(m => m.Name == "NoPatchesMod").Subject;
+            var mod = report.Mods.Should().ContainSingle(m => m.Name == "NoPatchesMod").Subject;
             _ = mod.HasActivePatches.Should().BeFalse();
             _ = mod.ActivePatchCount.Should().Be(0);
         }
@@ -187,7 +187,7 @@ namespace HarmonyDebugPanel.Test.Tests
                 new StubExpectedPatchSource());
 
             // Should not throw even with null collectors
-            DiagnosticReport report = builder.BuildReport();
+            var report = builder.BuildReport();
 
             // CollectSafe returns empty lists on null, not null
             _ = report.Mods.Should().BeEmpty();

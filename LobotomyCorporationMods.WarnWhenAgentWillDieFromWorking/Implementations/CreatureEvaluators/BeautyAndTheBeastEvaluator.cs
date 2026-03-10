@@ -10,7 +10,7 @@ using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators
 {
-    internal sealed class BeautyAndTheBeastEvaluator : CreatureEvaluator
+    public sealed class BeautyAndTheBeastEvaluator : CreatureEvaluator
     {
         private readonly IBeautyBeastAnimTestAdapter _beautyBeastAnimTestAdapter;
 
@@ -24,8 +24,8 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 
         protected override bool WillAgentDieFromThisCreature()
         {
-            bool isWeakened = Creature.IsBeautyAndTheBeastWeakened(_beautyBeastAnimTestAdapter);
-            bool agentWillDie = isWeakened && SkillType == RwbpType.P;
+            var isWeakened = Creature.IsBeautyAndTheBeastWeakened(_beautyBeastAnimTestAdapter);
+            var agentWillDie = isWeakened && SkillType == RwbpType.P;
 
             return agentWillDie;
         }

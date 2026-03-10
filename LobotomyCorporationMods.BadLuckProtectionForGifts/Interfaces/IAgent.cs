@@ -2,7 +2,7 @@
 
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces
 {
-    internal interface IAgent
+    public interface IAgent
     {
         long GetId();
         float GetWorkCount();

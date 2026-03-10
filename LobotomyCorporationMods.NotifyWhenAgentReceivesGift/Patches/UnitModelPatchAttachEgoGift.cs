@@ -48,12 +48,12 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches
             }
 
             // Send notification that the agent acquired the gift
-            string notificationMessage = LocalizationIds.LogMessage.GetLocalized();
-            string agentColorCode = LocalizationIds.AgentColorCode.GetLocalized();
-            string giftColorCode = LocalizationIds.GiftColorCode.GetLocalized();
-            string agentColoredName = $"<color={agentColorCode}>{instance.GetUnitName()}</color>";
-            string giftColoredName = $"<color={giftColorCode}>{gift.metaInfo.Name}</color>";
-            string message = string.Format(CultureInfo.InvariantCulture, notificationMessage, agentColoredName, giftColoredName);
+            var notificationMessage = LocalizationIds.LogMessage.GetLocalized();
+            var agentColorCode = LocalizationIds.AgentColorCode.GetLocalized();
+            var giftColorCode = LocalizationIds.GiftColorCode.GetLocalized();
+            var agentColoredName = $"<color={agentColorCode}>{instance.GetUnitName()}</color>";
+            var giftColoredName = $"<color={giftColorCode}>{gift.metaInfo.Name}</color>";
+            var message = string.Format(CultureInfo.InvariantCulture, notificationMessage, agentColoredName, giftColoredName);
             instance.SendMessage(message, noticeTestAdapter);
         }
 

@@ -384,7 +384,7 @@ namespace HarmonyDebugPanel
                 // Find the game root by walking up directories until we find BepInEx or LobotomyCorp_Data
                 var currentDir = thisDir;
                 var gameRoot = thisDir;
-                for (int i = 0; i < 10; i++)
+                for (var i = 0; i < 10; i++)
                 {
                     if (Directory.Exists(Path.Combine(currentDir, "BepInEx")) ||
                         Directory.Exists(Path.Combine(currentDir, "LobotomyCorp_Data")))
@@ -444,7 +444,7 @@ namespace HarmonyDebugPanel
                 // Find the game root by walking up directories until we find BepInEx or LobotomyCorp_Data
                 var currentDir = thisDir;
                 var gameRoot = thisDir;
-                for (int i = 0; i < 10; i++)
+                for (var i = 0; i < 10; i++)
                 {
                     var bepInExExists = Directory.Exists(currentDir + Path.DirectorySeparatorChar + "BepInEx");
                     var lobotomyDataExists = Directory.Exists(currentDir + Path.DirectorySeparatorChar + "LobotomyCorp_Data");

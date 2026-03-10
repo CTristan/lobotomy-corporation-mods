@@ -15,7 +15,7 @@ using LobotomyPlaywright.Infrastructure;
 /// <summary>
 /// Locates the Lobotomy Corporation game installation directory across different platforms.
 /// </summary>
-internal class GamePathFinder
+public class GamePathFinder
 {
     private const string GameFolderName = "LobotomyCorp";
     private const string SteamAppsFolder = "steamapps";

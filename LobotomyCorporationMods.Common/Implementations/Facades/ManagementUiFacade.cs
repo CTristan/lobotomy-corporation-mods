@@ -37,7 +37,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
                 return;
             }
 
-            string fileWithPath = fileManager.GetFile(imageParameters.ImageFilePath);
+            var fileWithPath = fileManager.GetFile(imageParameters.ImageFilePath);
             if (string.IsNullOrEmpty(fileWithPath))
             {
                 throw new InvalidOperationException("No image found with name " + imageParameters.ImageFilePath);
@@ -45,9 +45,9 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
 
             _ = testAdapterParameters.Texture2DTestAdapter.LoadImage(fileManager.ReadAllBytes(fileWithPath));
 
-            IGameObjectTestAdapter imageObject = managementSlot.CreateImageObjectTestAdapter(imageParameters, testAdapterParameters);
+            var imageObject = managementSlot.CreateImageObjectTestAdapter(imageParameters, testAdapterParameters);
 
-            IImageTestAdapter imageTestAdapter = imageObject.ImageComponent;
+            var imageTestAdapter = imageObject.ImageComponent;
             s_imagesDictionary[imageParameters.ImageId] = imageTestAdapter;
         }
 
@@ -67,11 +67,11 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             _ = Guard.Against.Null(imageParameters, nameof(imageParameters));
 
             CreateImageObjectIfNotExist(managementSlot, imageParameters, fileManager, testAdapterParameters);
-            IImageTestAdapter image = GetImage(imageParameters.ImageId);
+            var image = GetImage(imageParameters.ImageId);
 
             image.Color = Color.clear;
 
-            ITooltipMouseOverTestAdapter tooltip = image.TooltipMouseOverComponent;
+            var tooltip = image.TooltipMouseOverComponent;
             tooltip.SetActive(false);
         }
 
@@ -86,7 +86,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             _ = Guard.Against.Null(commandWindow, nameof(commandWindow));
 
             // Validation checks to confirm we have everything we need
-            bool isAbnormalityWorkWindow = commandWindow.CurrentSkill.IsNotNull() && commandWindow.CurrentWindowType == CommandType.Management;
+            var isAbnormalityWorkWindow = commandWindow.CurrentSkill.IsNotNull() && commandWindow.CurrentWindowType == CommandType.Management;
 
             return isAbnormalityWorkWindow;
         }
@@ -118,11 +118,11 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
 
             CreateImageObjectIfNotExist(managementSlot, imageParameters, fileManager, testAdapterParameters);
 
-            IImageTestAdapter image = GetImage(imageParameters.ImageId);
+            var image = GetImage(imageParameters.ImageId);
             image.Color = color;
             image.SetActive(true);
 
-            ITooltipMouseOverTestAdapter tooltip = image.TooltipMouseOverComponent;
+            var tooltip = image.TooltipMouseOverComponent;
             tooltip.SetActive(true);
             tooltip.SetDynamicTooltip(tooltipMessage);
         }

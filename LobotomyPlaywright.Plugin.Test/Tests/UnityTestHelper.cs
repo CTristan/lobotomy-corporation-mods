@@ -9,7 +9,7 @@ namespace LobotomyPlaywright.Plugin.Test.Tests
     /// <summary>
     /// Helper to check if Unity runtime is available for testing.
     /// </summary>
-    internal static class UnityTestHelper
+    public static class UnityTestHelper
     {
         private static bool? s_isUnityAvailable;
 
@@ -29,7 +29,7 @@ namespace LobotomyPlaywright.Plugin.Test.Tests
                             Type jsonUtilityType = Type.GetType("UnityEngine.JsonUtility, UnityEngine.CoreModule");
                             if (jsonUtilityType != null)
                             {
-                                MethodInfo toJsonMethod = jsonUtilityType.GetMethod("ToJson", [typeof(object)]);
+                                var toJsonMethod = jsonUtilityType.GetMethod("ToJson", [typeof(object)]);
                                 if (toJsonMethod != null)
                                 {
                                     // Try to call it - if it works, Unity runtime is available

@@ -6,7 +6,7 @@ using LobotomyCorporationMods.Common.Implementations;
 
 namespace LobotomyCorporationMods.Common.Extensions
 {
-    internal static class UseSkillExtensions
+    public static class UseSkillExtensions
     {
         private static CreatureModel GetAbnormality([NotNull] this UseSkill useSkill)
         {

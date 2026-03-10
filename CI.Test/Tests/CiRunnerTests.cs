@@ -118,7 +118,7 @@ namespace CI.Test.Tests
 
             CiRunner runner = new(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageConfigReader.Object, mockCoverageThresholdChecker.Object);
 
-            int exitCode = runner.Run(checkMode: true);
+            var exitCode = runner.Run(checkMode: true);
 
             _ = exitCode.Should().Be(1);
             mockProcessRunner.Verify(
@@ -143,7 +143,7 @@ namespace CI.Test.Tests
 
             CiRunner runner = new(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageConfigReader.Object, mockCoverageThresholdChecker.Object);
 
-            int exitCode = runner.Run(checkMode: true);
+            var exitCode = runner.Run(checkMode: true);
 
             _ = exitCode.Should().Be(1);
         }
@@ -161,7 +161,7 @@ namespace CI.Test.Tests
 
             CiRunner runner = new(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageConfigReader.Object, mockCoverageThresholdChecker.Object);
 
-            int exitCode = runner.Run(checkMode: true);
+            var exitCode = runner.Run(checkMode: true);
 
             _ = exitCode.Should().Be(1);
             mockProcessRunner.Verify(
@@ -188,7 +188,7 @@ namespace CI.Test.Tests
 
             CiRunner runner = new(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageConfigReader.Object, mockCoverageThresholdChecker.Object);
 
-            int exitCode = runner.Run(checkMode: true);
+            var exitCode = runner.Run(checkMode: true);
 
             _ = exitCode.Should().Be(0);
             mockCoverageThresholdChecker.Verify();
@@ -213,7 +213,7 @@ namespace CI.Test.Tests
 
             CiRunner runner = new(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageConfigReader.Object, mockCoverageThresholdChecker.Object);
 
-            int exitCode = runner.Run(checkMode: true);
+            var exitCode = runner.Run(checkMode: true);
 
             _ = exitCode.Should().Be(1);
             mockCoverageThresholdChecker.Verify();

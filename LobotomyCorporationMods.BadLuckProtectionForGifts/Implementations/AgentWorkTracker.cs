@@ -41,12 +41,12 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         public float GetLastAgentWorkCountByGift([NotNull] string giftName)
         {
             // Make sure this gift has actually been worked on before doing lookups
-            if (!_mostRecentAgentIdByGift.TryGetValue(giftName, out long value))
+            if (!_mostRecentAgentIdByGift.TryGetValue(giftName, out var value))
             {
                 return 0;
             }
 
-            IAgent agent = GetAgent(giftName, value);
+            var agent = GetAgent(giftName, value);
 
             return agent.GetWorkCount();
         }
@@ -61,7 +61,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
             long agentId,
             float numberOfTimes)
         {
-            IAgent agent = GetAgent(giftName, agentId);
+            var agent = GetAgent(giftName, agentId);
             agent.IncrementWorkCount(numberOfTimes);
             _mostRecentAgentIdByGift[giftName] = agent.GetId();
         }
@@ -86,7 +86,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         private IAgent GetAgent(string giftName,
             long agentId)
         {
-            IGift gift = _gifts.Find(g => g.GetName().Equals(giftName, StringComparison.Ordinal));
+            var gift = _gifts.Find(g => g.GetName().Equals(giftName, StringComparison.Ordinal));
             if (gift.IsNull())
             {
                 gift = CreateAndAddGift(giftName);
@@ -111,14 +111,14 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
             _gifts.Clear();
             _mostRecentAgentIdByGift.Clear();
 
-            string[] gifts = trackerData.Split('|');
-            foreach (string gift in gifts)
+            var gifts = trackerData.Split('|');
+            foreach (var gift in gifts)
             {
-                string[] giftData = gift.Split('^');
-                string giftName = giftData[0];
-                for (int i = 1; i < giftData.Length; i++)
+                var giftData = gift.Split('^');
+                var giftName = giftData[0];
+                for (var i = 1; i < giftData.Length; i++)
                 {
-                    string[] agentData = giftData[i].Split(';');
+                    var agentData = giftData[i].Split(';');
                     IncrementAgentWorkCount(giftName, long.Parse(agentData[0], CultureInfo.InvariantCulture), float.Parse(agentData[1], CultureInfo.InvariantCulture));
                 }
             }
@@ -133,17 +133,17 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         public override string ToString()
         {
             StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < _gifts.Count; i++)
+            for (var i = 0; i < _gifts.Count; i++)
             {
-                IGift gift = _gifts[i];
+                var gift = _gifts[i];
 
                 if (i > 0)
                 {
                     _ = builder.Append('|');
                 }
 
-                string agentData = GetGiftAgentData(gift);
-                string giftData = $"{gift.GetName()}{agentData}";
+                var agentData = GetGiftAgentData(gift);
+                var giftData = $"{gift.GetName()}{agentData}";
 
                 _ = builder.Append(giftData);
             }
@@ -156,7 +156,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         {
             StringBuilder agentDataBuilder = new StringBuilder();
 
-            foreach (string agentData in gift.GetAgents().Select(agent => $"^{agent.GetId()};{agent.GetWorkCount().ToString(CultureInfo.InvariantCulture)}"))
+            foreach (var agentData in gift.GetAgents().Select(agent => $"^{agent.GetId()};{agent.GetWorkCount().ToString(CultureInfo.InvariantCulture)}"))
             {
                 _ = agentDataBuilder.Append(agentData);
             }

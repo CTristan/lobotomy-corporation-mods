@@ -31,7 +31,7 @@ namespace HarmonyDebugPanel.Rendering
                 throw new ArgumentNullException(nameof(refreshAction));
             }
 
-            string title = "Harmony Debug Panel (" + configuration.OverlayToggleHotkey + " to hide)";
+            var title = "Harmony Debug Panel (" + configuration.OverlayToggleHotkey + " to hide)";
             _windowRect = GUI.Window(0xD1349, _windowRect, id => DrawWindowContents(id, report, configuration, refreshAction, generateLogAction), title);
         }
 
@@ -87,7 +87,7 @@ namespace HarmonyDebugPanel.Rendering
             {
                 GUILayout.Space(8f);
                 GUILayout.Label("Warnings", GUI.skin.box);
-                foreach (string warning in report.Warnings)
+                foreach (var warning in report.Warnings)
                 {
                     GUILayout.Label("- " + warning);
                 }
@@ -103,9 +103,9 @@ namespace HarmonyDebugPanel.Rendering
         {
             GUILayout.Space(8f);
             GUILayout.Label(title, GUI.skin.box);
-            bool hadEntries = false;
+            var hadEntries = false;
 
-            foreach (ModInfo mod in report.Mods)
+            foreach (var mod in report.Mods)
             {
                 if (mod.Source != source)
                 {
@@ -113,14 +113,14 @@ namespace HarmonyDebugPanel.Rendering
                 }
 
                 hadEntries = true;
-                Color originalColor = GUI.contentColor;
+                var originalColor = GUI.contentColor;
                 GUI.contentColor = GetModColor(mod.HarmonyVersion);
-                string identifierSuffix = string.IsNullOrEmpty(mod.Identifier) ? string.Empty : " [" + mod.Identifier + "]";
+                var identifierSuffix = string.IsNullOrEmpty(mod.Identifier) ? string.Empty : " [" + mod.Identifier + "]";
 
                 string patchStatus;
                 if (mod.ExpectedPatchCount >= 0)
                 {
-                    int failedCount = mod.ActivePatchCount < mod.ExpectedPatchCount ? (mod.ExpectedPatchCount - mod.ActivePatchCount) : 0;
+                    var failedCount = mod.ActivePatchCount < mod.ExpectedPatchCount ? (mod.ExpectedPatchCount - mod.ActivePatchCount) : 0;
                     if (mod.ActivePatchCount == mod.ExpectedPatchCount)
                     {
                         patchStatus = $" ({mod.ActivePatchCount} loaded/{mod.ExpectedPatchCount} expected, {failedCount} failed)";
@@ -162,7 +162,6 @@ namespace HarmonyDebugPanel.Rendering
                 case HarmonyVersion.Harmony2:
                     return new Color(0.66f, 1f, 0.66f, 1f);
                 case HarmonyVersion.Unknown:
-                    break;
                 default:
                     return Color.white;
             }
@@ -173,7 +172,7 @@ namespace HarmonyDebugPanel.Rendering
             GUILayout.Space(8f);
             GUILayout.Label("Active Harmony Patches (" + report.Patches.Count + ")", GUI.skin.box);
 
-            foreach (PatchInfo patch in report.Patches)
+            foreach (var patch in report.Patches)
             {
                 GUILayout.Label("- " + patch.TargetType + "." + patch.TargetMethod + " [" + patch.PatchType + "] by " + patch.Owner + " -> " + patch.PatchMethod);
             }
@@ -189,9 +188,9 @@ namespace HarmonyDebugPanel.Rendering
             GUILayout.Space(8f);
             GUILayout.Label("Loaded Assemblies (" + report.Assemblies.Count + ")", GUI.skin.box);
 
-            foreach (AssemblyInfo assembly in report.Assemblies)
+            foreach (var assembly in report.Assemblies)
             {
-                Color originalColor = GUI.contentColor;
+                var originalColor = GUI.contentColor;
                 if (assembly.IsHarmonyRelated)
                 {
                     GUI.contentColor = new Color(1f, 0.88f, 0.45f, 1f);
@@ -211,14 +210,14 @@ namespace HarmonyDebugPanel.Rendering
         {
             GUILayout.Space(8f);
             Color warningColor = new(1f, 0.6f, 0.4f, 1f);
-            Color originalColor = GUI.contentColor;
+            var originalColor = GUI.contentColor;
             GUI.contentColor = warningColor;
             GUILayout.Label("Missing Harmony Patches (" + report.MissingPatches.Count + ")", GUI.skin.box);
             GUI.contentColor = originalColor;
 
-            foreach (MissingPatchInfo missing in report.MissingPatches)
+            foreach (var missing in report.MissingPatches)
             {
-                string prefix = missing.PatchType == PatchType.Prefix ? "Prefix" : missing.PatchType == PatchType.Postfix ? "Postfix" : "Transpiler";
+                var prefix = missing.PatchType == PatchType.Prefix ? "Prefix" : missing.PatchType == PatchType.Postfix ? "Postfix" : "Transpiler";
                 GUILayout.Label("- [" + missing.PatchAssembly + "] " + prefix + " for " + missing.TargetMethod + " in " + missing.TargetType);
             }
 

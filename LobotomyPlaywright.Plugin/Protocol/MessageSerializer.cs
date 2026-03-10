@@ -27,10 +27,10 @@ namespace LobotomyPlaywright.Protocol
 
             // Set placeholder and serialize wrapper
             response.data = DataPlaceholder;
-            string wrapperJson = JsonUtility.ToJson(response);
+            var wrapperJson = JsonUtility.ToJson(response);
 
             // Serialize data object
-            string dataJson = JsonUtility.ToJson(response.DataObject);
+            var dataJson = JsonUtility.ToJson(response.DataObject);
 
             // Replace placeholder with data JSON (it might be empty or "{}")
             return wrapperJson.Replace("\"" + DataPlaceholder + "\"", dataJson);

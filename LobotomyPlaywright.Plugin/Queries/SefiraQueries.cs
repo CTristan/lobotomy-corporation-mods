@@ -126,7 +126,7 @@ namespace LobotomyPlaywright.Queries
                 }
             }
 
-            int officerCount = 0;
+            var officerCount = 0;
             if (s_officerCntField != null)
             {
                 officerCount = (int)s_officerCntField.GetValue(sefira);

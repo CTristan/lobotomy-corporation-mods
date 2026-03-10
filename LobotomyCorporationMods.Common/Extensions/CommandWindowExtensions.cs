@@ -5,12 +5,12 @@ using LobotomyCorporationMods.Common.Implementations;
 
 namespace LobotomyCorporationMods.Common.Extensions
 {
-    internal static class CommandWindowExtensions
+    public static class CommandWindowExtensions
     {
         [CanBeNull]
         internal static CreatureEquipmentMakeInfo GetAbnormalityGift([NotNull] this CommandWindow.CommandWindow commandWindow)
         {
-            return !commandWindow.TryGetCreature(out CreatureModel creature) ? null : creature.GetAbnormalityGift();
+            return !commandWindow.TryGetCreature(out var creature) ? null : creature.GetAbnormalityGift();
         }
 
         [ContractAnnotation("=> true, creature:notnull; => false, creature:null")]
@@ -20,7 +20,7 @@ namespace LobotomyCorporationMods.Common.Extensions
             _ = Guard.Against.Null(commandWindow, nameof(commandWindow));
 
             creature = null;
-            UnitModel unitModel = commandWindow.CurrentTarget;
+            var unitModel = commandWindow.CurrentTarget;
 
             if (unitModel is CreatureModel creatureModel)
             {

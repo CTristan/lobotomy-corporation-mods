@@ -11,7 +11,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    internal sealed class TooltipMouseOverTestAdapter : ComponentTestAdapter<TooltipMouseOver>, ITooltipMouseOverTestAdapter
+    public sealed class TooltipMouseOverTestAdapter : ComponentTestAdapter<TooltipMouseOver>, ITooltipMouseOverTestAdapter
     {
         internal TooltipMouseOverTestAdapter([NotNull] TooltipMouseOver gameObject) : base(gameObject)
         {

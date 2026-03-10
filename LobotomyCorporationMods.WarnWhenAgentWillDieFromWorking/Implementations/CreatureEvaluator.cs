@@ -9,7 +9,7 @@ using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations
 {
-    internal abstract class CreatureEvaluator : ICreatureEvaluator
+    public abstract class CreatureEvaluator : ICreatureEvaluator
     {
         protected CreatureEvaluator(IAgentData agent,
             ICreatureData creature,
@@ -26,7 +26,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 
         public bool WillAgentDie()
         {
-            bool agentWillDie = false;
+            var agentWillDie = false;
 
             // Make sure we have completed observation so that we can't cheat
             if (Creature.IsMaxObserved())

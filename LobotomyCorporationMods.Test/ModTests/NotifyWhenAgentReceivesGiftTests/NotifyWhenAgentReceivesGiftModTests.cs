@@ -30,7 +30,7 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
         protected NotifyWhenAgentReceivesGiftModTests()
         {
             _ = new Harmony_Patch();
-            Mock<ILogger> mockLogger = TestExtensions.GetMockLogger();
+            var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
         }
 
@@ -46,8 +46,8 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
                 Name = agentName,
             };
 
-            AgentModel unitModel = UnityTestExtensions.CreateAgentModel(agentModelCreationParameters);
-            EGOgiftModel oldGift = GetGift(DefaultGiftName, DefaultEquipmentId + 1, DefaultGiftId + 1, attachRegion);
+            var unitModel = UnityTestExtensions.CreateAgentModel(agentModelCreationParameters);
+            var oldGift = GetGift(DefaultGiftName, DefaultEquipmentId + 1, DefaultGiftId + 1, attachRegion);
             unitModel.Equipment.gifts.addedGifts.Add(oldGift);
             UnitEGOgiftSpace.GiftLockState giftLockState = new()
             {
@@ -83,11 +83,11 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
                 },
             };
 
-            EquipmentTypeInfo metaInfo = UnityTestExtensions.CreateEquipmentTypeInfo(localizeData: equipmentNameDictionary);
+            var metaInfo = UnityTestExtensions.CreateEquipmentTypeInfo(localizeData: equipmentNameDictionary);
             metaInfo.id = giftId;
             metaInfo.attachPos = attachRegion.ToString();
 
-            EGOgiftModel gift = UnityTestExtensions.CreateEgoGiftModel(metaInfo);
+            var gift = UnityTestExtensions.CreateEgoGiftModel(metaInfo);
             gift.instanceId = equipmentId;
 
             return gift;

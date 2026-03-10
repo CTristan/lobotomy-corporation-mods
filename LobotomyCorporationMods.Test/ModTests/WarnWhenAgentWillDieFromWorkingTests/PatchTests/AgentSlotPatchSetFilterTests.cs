@@ -37,9 +37,9 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         [Fact]
         public void Does_not_error_if_command_window_is_not_Management_window()
         {
-            CreatureModel creature = UnityTestExtensions.CreateCreatureModel();
+            var creature = UnityTestExtensions.CreateCreatureModel();
             _ = UnityTestExtensions.CreateCommandWindow(creature, CommandType.Suppress);
-            AgentSlot agentSlot = UnityTestExtensions.CreateAgentSlot();
+            var agentSlot = UnityTestExtensions.CreateAgentSlot();
 
             Action action = () => agentSlot.PatchAfterSetFilter(IdleAgentState, GameManager, MockBeautyBeastAnimTestAdapter.Object, MockImageTestAdapter.Object, MockTextTestAdapter.Object,
                 MockYggdrasilAnimTestAdapter.Object);
@@ -50,9 +50,9 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         [Fact]
         public void Does_not_error_if_we_are_not_in_Management_phase()
         {
-            CreatureModel creature = UnityTestExtensions.CreateCreatureModel();
+            var creature = UnityTestExtensions.CreateCreatureModel();
             _ = TestExtensions.InitializeCommandWindowWithAbnormality(creature);
-            AgentSlot agentSlot = UnityTestExtensions.CreateAgentSlot();
+            var agentSlot = UnityTestExtensions.CreateAgentSlot();
             GameManager.ManageStarted = false;
 
             Action action = () => agentSlot.PatchAfterSetFilter(IdleAgentState, GameManager, MockBeautyBeastAnimTestAdapter.Object, MockImageTestAdapter.Object, MockTextTestAdapter.Object,
@@ -64,9 +64,9 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         [Fact]
         public void Does_not_error_on_first_game_load()
         {
-            CreatureModel creature = UnityTestExtensions.CreateCreatureModel();
+            var creature = UnityTestExtensions.CreateCreatureModel();
             _ = TestExtensions.InitializeCommandWindowWithAbnormality(creature);
-            AgentSlot agentSlot = UnityTestExtensions.CreateAgentSlot();
+            var agentSlot = UnityTestExtensions.CreateAgentSlot();
 
             // Send a null game manager to indicate this is our first game load
             Action action = () => agentSlot.PatchAfterSetFilter(IdleAgentState, null, MockBeautyBeastAnimTestAdapter.Object, MockImageTestAdapter.Object, MockTextTestAdapter.Object,
@@ -79,7 +79,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         public void No_false_positives()
         {
             _ = TestExtensions.InitializeCommandWindowWithAbnormality(UnityTestExtensions.CreateCreatureModel());
-            AgentSlot agentSlot = UnityTestExtensions.CreateAgentSlot();
+            var agentSlot = UnityTestExtensions.CreateAgentSlot();
 
             VerifyAgentWillNotDie(agentSlot);
         }
@@ -87,9 +87,9 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         [Fact]
         public void Tool_does_not_show_if_agent_will_die()
         {
-            UnitModel tool = UnityTestExtensions.CreateUnitModel();
+            var tool = UnityTestExtensions.CreateUnitModel();
             _ = TestExtensions.InitializeCommandWindowWithAbnormality(tool);
-            AgentSlot agentSlot = UnityTestExtensions.CreateAgentSlot();
+            var agentSlot = UnityTestExtensions.CreateAgentSlot();
 
             VerifyAgentWillNotDie(agentSlot);
         }
@@ -107,7 +107,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
                 UnityTestExtensions.CreateFairyBuf(),
             ];
 
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.OneSin, buffList);
+            var agentSlot = InitializeAgentSlot(CreatureIds.OneSin, buffList);
 
             // Act
             agentSlot.PatchAfterSetFilter(agentState, GameManager, MockBeautyBeastAnimTestAdapter.Object, MockImageTestAdapter.Object, MockTextTestAdapter.Object, MockYggdrasilAnimTestAdapter.Object);
@@ -122,7 +122,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         public void BeautyAndTheBeast_Will_Not_Kill_Agent_If_Performing_Repression_Work_While_Not_Weak()
         {
             // Arrange
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.BeautyAndTheBeast, skillType: SkillTypeRepression);
+            var agentSlot = InitializeAgentSlot(CreatureIds.BeautyAndTheBeast, skillType: SkillTypeRepression);
 
             // Mock animation script adapter to avoid Unity errors
             const int NormalState = 0;
@@ -136,7 +136,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         public void BeautyAndTheBeast_Will_Kill_Agent_If_Performing_Repression_Work_While_Weak()
         {
             // Arrange
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.BeautyAndTheBeast, skillType: SkillTypeRepression);
+            var agentSlot = InitializeAgentSlot(CreatureIds.BeautyAndTheBeast, skillType: SkillTypeRepression);
 
             // Mock animation script adapter to avoid Unity errors
             const int WeakenedState = 1;
@@ -153,7 +153,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         public void BeautyAndTheBeast_Will_Not_Kill_Agent_If_Not_Performing_Repression_Work_While_Weak(RwbpType skillType)
         {
             // Arrange
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.BeautyAndTheBeast, skillType: skillType);
+            var agentSlot = InitializeAgentSlot(CreatureIds.BeautyAndTheBeast, skillType: skillType);
 
             // Mock animation script adapter to avoid Unity errors
             const int WeakenedState = 1;
@@ -170,7 +170,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         [Fact]
         public void Bloodbath_Will_Kill_Agent_With_Fortitude_Of_One_And_Temperance_Above_One()
         {
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.Bloodbath);
+            var agentSlot = InitializeAgentSlot(CreatureIds.Bloodbath);
             agentSlot.CurrentAgent.primaryStat.hp = StatLevelOne;
             agentSlot.CurrentAgent.primaryStat.work = StatLevelFive;
 
@@ -180,7 +180,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         [Fact]
         public void Bloodbath_Will_Kill_Agent_With_Temperance_Of_One_And_Fortitude_Above_One()
         {
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.Bloodbath);
+            var agentSlot = InitializeAgentSlot(CreatureIds.Bloodbath);
             agentSlot.CurrentAgent.primaryStat.hp = StatLevelFive;
             agentSlot.CurrentAgent.primaryStat.work = StatLevelOne;
 
@@ -194,7 +194,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         [InlineData(StatLevelFive)]
         public void Bloodbath_Will_Not_Kill_Agent_With_Fortitude_Greater_Than_One(int fortitude)
         {
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.Bloodbath);
+            var agentSlot = InitializeAgentSlot(CreatureIds.Bloodbath);
             agentSlot.CurrentAgent.primaryStat.hp = fortitude;
             agentSlot.CurrentAgent.primaryStat.work = StatLevelFive;
 
@@ -208,7 +208,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         [InlineData(StatLevelFive)]
         public void Bloodbath_Will_Not_Kill_Agent_With_Temperance_Greater_Than_One(int temperance)
         {
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.Bloodbath);
+            var agentSlot = InitializeAgentSlot(CreatureIds.Bloodbath);
             agentSlot.CurrentAgent.primaryStat.hp = StatLevelFive;
             agentSlot.CurrentAgent.primaryStat.work = temperance;
 
@@ -231,7 +231,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         public void BlueStar_Will_Kill_Agent_With_Prudence_Less_Than_Five_And_Temperance_Greater_Than_Three(int prudence,
             int temperance)
         {
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.BlueStar);
+            var agentSlot = InitializeAgentSlot(CreatureIds.BlueStar);
             agentSlot.CurrentAgent.primaryStat.mental = prudence;
             agentSlot.CurrentAgent.primaryStat.work = temperance;
 
@@ -244,7 +244,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         [InlineData(StatLevelThree)]
         public void BlueStar_Will_Kill_Agent_With_Prudence_Five_And_Temperance_Less_Than_Four(int temperance)
         {
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.BlueStar);
+            var agentSlot = InitializeAgentSlot(CreatureIds.BlueStar);
             agentSlot.CurrentAgent.primaryStat.hp = StatLevelFive;
             agentSlot.CurrentAgent.primaryStat.work = temperance;
 
@@ -256,7 +256,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         [InlineData(StatLevelFive)]
         public void BlueStar_Will_Not_Kill_Agent_With_Prudence_Five_And_Temperance_Greater_Than_Three(int temperance)
         {
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.BlueStar);
+            var agentSlot = InitializeAgentSlot(CreatureIds.BlueStar);
             agentSlot.CurrentAgent.primaryStat.mental = StatLevelFive;
             agentSlot.CurrentAgent.primaryStat.work = temperance;
 
@@ -270,7 +270,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         [Fact]
         public void CrumblingArmor_Will_Kill_Agent_With_Fortitude_Of_One()
         {
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.CrumblingArmor);
+            var agentSlot = InitializeAgentSlot(CreatureIds.CrumblingArmor);
             agentSlot.CurrentAgent.primaryStat.hp = StatLevelOne;
 
             VerifyAgentWillDie(agentSlot);
@@ -283,7 +283,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         [InlineData(EquipmentIds.CrumblingArmorGift4)]
         public void CrumblingArmor_Will_Kill_Agent_With_Gift_If_Performing_Attachment_Work(EquipmentIds equipmentIds)
         {
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.CrumblingArmor, giftIds: equipmentIds, skillType: SkillTypeAttachment);
+            var agentSlot = InitializeAgentSlot(CreatureIds.CrumblingArmor, giftIds: equipmentIds, skillType: SkillTypeAttachment);
             agentSlot.CurrentAgent.primaryStat.hp = StatLevelFive;
 
             VerifyAgentWillDie(agentSlot);
@@ -296,7 +296,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         [InlineData(StatLevelFive)]
         public void CrumblingArmor_Will_Not_Kill_Agent_With_Fortitude_Greater_Than_One(int fortitude)
         {
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.CrumblingArmor);
+            var agentSlot = InitializeAgentSlot(CreatureIds.CrumblingArmor);
             agentSlot.CurrentAgent.primaryStat.hp = fortitude;
 
             VerifyAgentWillNotDie(agentSlot);
@@ -318,7 +318,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         public void CrumblingArmor_Will_Not_Kill_Agent_With_Gift_If_Not_Performing_Attachment_Work(EquipmentIds giftIds,
             RwbpType skillType)
         {
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.CrumblingArmor, giftIds: giftIds, skillType: skillType);
+            var agentSlot = InitializeAgentSlot(CreatureIds.CrumblingArmor, giftIds: giftIds, skillType: skillType);
             agentSlot.CurrentAgent.primaryStat.hp = StatLevelFive;
 
             VerifyAgentWillNotDie(agentSlot);
@@ -336,7 +336,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
                 UnityTestExtensions.CreateFairyBuf(),
             ];
 
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.OneSin, buffList);
+            var agentSlot = InitializeAgentSlot(CreatureIds.OneSin, buffList);
 
             VerifyAgentWillDie(agentSlot);
         }
@@ -349,7 +349,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
                 UnityTestExtensions.CreateFairyBuf(),
             ];
 
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.FairyFestival, buffList);
+            var agentSlot = InitializeAgentSlot(CreatureIds.FairyFestival, buffList);
 
             VerifyAgentWillNotDie(agentSlot);
         }
@@ -366,7 +366,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
                 UnityTestExtensions.CreateLittleWitchBuf(),
             ];
 
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.OneSin, buffList);
+            var agentSlot = InitializeAgentSlot(CreatureIds.OneSin, buffList);
 
             VerifyAgentWillDie(agentSlot);
         }
@@ -379,7 +379,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
                 UnityTestExtensions.CreateLittleWitchBuf(),
             ];
 
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.Laetitia, buffList);
+            var agentSlot = InitializeAgentSlot(CreatureIds.Laetitia, buffList);
 
             VerifyAgentWillNotDie(agentSlot);
         }
@@ -391,7 +391,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         [Fact]
         public void HappyTeddyBear_Will_Kill_Agent_If_Same_Agent_Sent_Twice_In_A_Row()
         {
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.HappyTeddyBear);
+            var agentSlot = InitializeAgentSlot(CreatureIds.HappyTeddyBear);
             ((CreatureModel)CommandWindow.CommandWindow.CurrentWindow.CurrentTarget).script = new HappyTeddy
             {
                 lastAgent = agentSlot.CurrentAgent,
@@ -403,8 +403,8 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         [Fact]
         public void HappyTeddyBear_Will_Not_Kill_Agent_If_Last_Agent_Was_Different()
         {
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.HappyTeddyBear);
-            AgentModel lastAgent = UnityTestExtensions.CreateAgentModel();
+            var agentSlot = InitializeAgentSlot(CreatureIds.HappyTeddyBear);
+            var lastAgent = UnityTestExtensions.CreateAgentModel();
             lastAgent.instanceId += 1L;
             ((CreatureModel)CommandWindow.CommandWindow.CurrentWindow.CurrentTarget).script = new HappyTeddy
             {
@@ -417,7 +417,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         [Fact]
         public void HappyTeddyBear_Will_Not_Kill_Agent_If_This_Is_The_First_Agent()
         {
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.HappyTeddyBear);
+            var agentSlot = InitializeAgentSlot(CreatureIds.HappyTeddyBear);
             ((CreatureModel)CommandWindow.CommandWindow.CurrentWindow.CurrentTarget).script = new HappyTeddy();
 
             VerifyAgentWillNotDie(agentSlot);
@@ -433,7 +433,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         [InlineData(StatLevelThree)]
         public void NothingThere_Will_Kill_Agent_With_Fortitude_Less_Than_Four_While_Disguised(int fortitude)
         {
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.NothingThere);
+            var agentSlot = InitializeAgentSlot(CreatureIds.NothingThere);
             SetupNothingThere(agentSlot, fortitude, true);
 
             VerifyAgentWillDie(agentSlot);
@@ -445,7 +445,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         [InlineData(StatLevelThree)]
         public void NothingThere_Will_Not_Kill_Agent_With_Fortitude_Less_Than_Four_While_Not_Disguised(int fortitude)
         {
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.NothingThere);
+            var agentSlot = InitializeAgentSlot(CreatureIds.NothingThere);
             SetupNothingThere(agentSlot, fortitude);
 
             VerifyAgentWillNotDie(agentSlot);
@@ -456,7 +456,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         [InlineData(StatLevelFive)]
         public void NothingThere_Will_Not_Kill_Agent_With_Fortitude_Greater_Than_Three_While_Disguised(int fortitude)
         {
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.NothingThere);
+            var agentSlot = InitializeAgentSlot(CreatureIds.NothingThere);
             SetupNothingThere(agentSlot, fortitude, true);
 
             VerifyAgentWillNotDie(agentSlot);
@@ -471,7 +471,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         {
             // Arrange
             const int NumberOfFlowers = 4;
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.ParasiteTree);
+            var agentSlot = InitializeAgentSlot(CreatureIds.ParasiteTree);
             SetupParasiteTree(NumberOfFlowers);
 
             // Assert
@@ -483,14 +483,14 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         {
             // Arrange
             const int NumberOfFlowers = 4;
-            YggdrasilBlessBuf parasiteTreeBlessing = UnityTestExtensions.CreateYggdrasilBlessBuf();
+            var parasiteTreeBlessing = UnityTestExtensions.CreateYggdrasilBlessBuf();
             parasiteTreeBlessing.type = UnitBufType.YGGDRASIL_BLESS;
             List<UnitBuf> buffList =
             [
                 parasiteTreeBlessing,
             ];
 
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.ParasiteTree, buffList);
+            var agentSlot = InitializeAgentSlot(CreatureIds.ParasiteTree, buffList);
             SetupParasiteTree(NumberOfFlowers);
 
             // Assert
@@ -505,7 +505,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         public void ParasiteTree_Will_Not_Kill_Agent_If_Tree_Has_Less_Than_Four_Flowers(int numberOfFlowers)
         {
             // Arrange
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.ParasiteTree);
+            var agentSlot = InitializeAgentSlot(CreatureIds.ParasiteTree);
             SetupParasiteTree(numberOfFlowers);
 
             // Assert
@@ -521,7 +521,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         [InlineData(StatLevelTwo)]
         public void RedShoes_Will_Kill_Agent_With_Temperance_Less_Than_Three(int temperance)
         {
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.RedShoes);
+            var agentSlot = InitializeAgentSlot(CreatureIds.RedShoes);
             agentSlot.CurrentAgent.primaryStat.work = temperance;
 
             VerifyAgentWillDie(agentSlot);
@@ -533,7 +533,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         [InlineData(StatLevelFive)]
         public void RedShoes_Will_Kill_Not_Agent_With_Temperance_Greater_Than_Two(int temperance)
         {
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.RedShoes);
+            var agentSlot = InitializeAgentSlot(CreatureIds.RedShoes);
             agentSlot.CurrentAgent.primaryStat.work = temperance;
 
             VerifyAgentWillNotDie(agentSlot);
@@ -546,7 +546,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         [Fact]
         public void SnowQueen_Will_Kill_Agent_With_FirebirdWeapon()
         {
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.SnowQueen);
+            var agentSlot = InitializeAgentSlot(CreatureIds.SnowQueen);
             agentSlot.CurrentAgent.Equipment.armor = new ArmorModel
             {
                 metaInfo = new EquipmentTypeInfo
@@ -561,7 +561,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         [Fact]
         public void SnowQueen_Will_Not_Kill_Agent_Without_FirebirdWeapon()
         {
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.SnowQueen);
+            var agentSlot = InitializeAgentSlot(CreatureIds.SnowQueen);
             agentSlot.CurrentAgent.Equipment.weapon = new WeaponModel
             {
                 metaInfo = new EquipmentTypeInfo
@@ -583,7 +583,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         [InlineData(SkillTypeRepression)]
         public void SpiderBud_Will_Kill_Agent_With_Prudence_Of_One_And_Not_Performing_Insight_Work(RwbpType skillType)
         {
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.SpiderBud, skillType: skillType);
+            var agentSlot = InitializeAgentSlot(CreatureIds.SpiderBud, skillType: skillType);
             agentSlot.CurrentAgent.primaryStat.mental = StatLevelOne;
 
             VerifyAgentWillDie(agentSlot);
@@ -605,7 +605,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         public void SpiderBud_Will_Kill_Not_Agent_With_Prudence_Greater_Than_One_And_Not_Performing_Insight_Work(int prudence,
             RwbpType skillType)
         {
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.SpiderBud, skillType: skillType);
+            var agentSlot = InitializeAgentSlot(CreatureIds.SpiderBud, skillType: skillType);
             agentSlot.CurrentAgent.primaryStat.mental = prudence;
 
             VerifyAgentWillNotDie(agentSlot);
@@ -618,7 +618,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         [InlineData(StatLevelFive)]
         public void SpiderBud_Will_Kill_Agent_With_Prudence_Greater_Than_One_And_Performing_Insight_Work(int prudence)
         {
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.SpiderBud, skillType: SkillTypeInsight);
+            var agentSlot = InitializeAgentSlot(CreatureIds.SpiderBud, skillType: SkillTypeInsight);
             agentSlot.CurrentAgent.primaryStat.mental = prudence;
 
             VerifyAgentWillDie(agentSlot);
@@ -640,7 +640,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
             int temperance)
         {
             const int QliphothCounterOne = 1;
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.SingingMachine, qliphothCounter: QliphothCounterOne);
+            var agentSlot = InitializeAgentSlot(CreatureIds.SingingMachine, qliphothCounter: QliphothCounterOne);
             agentSlot.CurrentAgent.primaryStat.hp = fortitude;
             agentSlot.CurrentAgent.primaryStat.work = temperance;
 
@@ -675,7 +675,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         public void SingingMachine_Will_Kill_Agent_At_Qliphoth_Greater_Than_Zero_With_Fortitude_Three_Because_Gift_Will_Make_Fortitude_Greater_Than_Three(int fortitude)
         {
             const int QliphothCounterOne = 1;
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.SingingMachine, qliphothCounter: QliphothCounterOne);
+            var agentSlot = InitializeAgentSlot(CreatureIds.SingingMachine, qliphothCounter: QliphothCounterOne);
             agentSlot.CurrentAgent.primaryStat.hp = fortitude;
             agentSlot.CurrentAgent.primaryStat.work = StatLevelThree;
 
@@ -696,7 +696,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
             int temperance)
         {
             const int QliphothCounterOne = 1;
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.SingingMachine, qliphothCounter: QliphothCounterOne);
+            var agentSlot = InitializeAgentSlot(CreatureIds.SingingMachine, qliphothCounter: QliphothCounterOne);
             agentSlot.CurrentAgent.primaryStat.hp = fortitude;
             agentSlot.CurrentAgent.primaryStat.work = temperance;
 
@@ -732,7 +732,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         public void SingingMachine_Will_Kill_Agent_At_Qliphoth_Zero_Regardless_Of_Fortitude_And_Temperance(int fortitude,
             int temperance)
         {
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.SingingMachine);
+            var agentSlot = InitializeAgentSlot(CreatureIds.SingingMachine);
             agentSlot.CurrentAgent.primaryStat.hp = fortitude;
             agentSlot.CurrentAgent.primaryStat.work = temperance;
 
@@ -746,7 +746,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         [Fact]
         public void VoidDream_Will_Kill_Agent_With_Temperance_Of_One()
         {
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.VoidDream);
+            var agentSlot = InitializeAgentSlot(CreatureIds.VoidDream);
             agentSlot.CurrentAgent.primaryStat.work = StatLevelOne;
 
             VerifyAgentWillDie(agentSlot);
@@ -759,7 +759,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         [InlineData(StatLevelFive)]
         public void VoidDream_Will_Not_Kill_Agent_With_Temperance_Greater_Than_One(int temperance)
         {
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.VoidDream);
+            var agentSlot = InitializeAgentSlot(CreatureIds.VoidDream);
             agentSlot.CurrentAgent.primaryStat.work = temperance;
 
             VerifyAgentWillNotDie(agentSlot);
@@ -772,7 +772,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         [Fact]
         public void WarmHeartedWoodsman_Will_Kill_Agent_If_Qliphoth_Counter_Is_Zero()
         {
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.WarmHeartedWoodsman);
+            var agentSlot = InitializeAgentSlot(CreatureIds.WarmHeartedWoodsman);
 
             VerifyAgentWillDie(agentSlot);
         }
@@ -781,7 +781,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         public void WarmHeartedWoodsman_Will_Not_Kill_Agent_If_Qliphoth_Counter_Is_Greater_Than_Zero()
         {
             const int QliphothCounterOne = 1;
-            AgentSlot agentSlot = InitializeAgentSlot(CreatureIds.WarmHeartedWoodsman, qliphothCounter: QliphothCounterOne);
+            var agentSlot = InitializeAgentSlot(CreatureIds.WarmHeartedWoodsman, qliphothCounter: QliphothCounterOne);
 
             VerifyAgentWillNotDie(agentSlot);
         }

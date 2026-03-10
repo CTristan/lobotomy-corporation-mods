@@ -39,7 +39,7 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Patches
             const float LocalScaleX = 0.2f;
             const float LocalScaleY = 0.2f;
 
-            string imageId = instance.GetSlotName(testAdapterParameters.ManagementSlotTestAdapter);
+            var imageId = instance.GetSlotName(testAdapterParameters.ManagementSlotTestAdapter);
             ImageParameters imageProperties = new ImageParameters
             {
                 ImageId = imageId,

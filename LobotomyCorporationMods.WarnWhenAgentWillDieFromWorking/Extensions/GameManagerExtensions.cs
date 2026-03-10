@@ -7,7 +7,7 @@ using LobotomyCorporationMods.Common.Implementations.Facades;
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
 {
-    internal static class GameManagerExtensions
+    public static class GameManagerExtensions
     {
         /// <summary>Checks if the current game stage is valid for the given AgentState.</summary>
         /// <param name="currentGameManager">The current GameManager instance.</param>
@@ -16,7 +16,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
         internal static bool IsValidGameStage([CanBeNull] this GameManager currentGameManager,
             AgentState state)
         {
-            CommandWindow.CommandWindow commandWindow = CommandWindow.CommandWindow.CurrentWindow;
+            var commandWindow = CommandWindow.CommandWindow.CurrentWindow;
 
             return IsDayStarted(currentGameManager) && commandWindow.IsAbnormalityWorkWindow() && IsAgentControllable(state);
         }

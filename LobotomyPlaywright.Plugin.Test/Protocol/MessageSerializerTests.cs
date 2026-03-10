@@ -3,6 +3,7 @@
 using System;
 using AwesomeAssertions;
 using LobotomyPlaywright.JsonModels;
+using LobotomyPlaywright.Plugin.Test.Tests;
 using LobotomyPlaywright.Protocol;
 using Xunit;
 using Xunit.Abstractions;
@@ -27,7 +28,7 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
             Response response = Response.CreateSuccess("req-1", new { name = "Test Agent", hp = 100 });
 
             // Act
-            string json = MessageSerializer.Serialize(response);
+            var json = MessageSerializer.Serialize(response);
 
             // Assert
             _ = json.Should().NotBeNullOrEmpty();
@@ -49,7 +50,7 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
             Response response = Response.CreateError("req-2", "Agent not found", "NOT_FOUND");
 
             // Act
-            string json = MessageSerializer.Serialize(response);
+            var json = MessageSerializer.Serialize(response);
 
             // Assert
             _ = json.Should().NotBeNullOrEmpty();
@@ -73,7 +74,7 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
             Response response = Response.CreateEvent("OnAgentDead", new { agentId = 3, agentName = "Sarah" });
 
             // Act
-            string json = MessageSerializer.Serialize(response);
+            var json = MessageSerializer.Serialize(response);
 
             // Assert
             _ = json.Should().NotBeNullOrEmpty();
@@ -95,10 +96,10 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
             }
 
             // Arrange
-            string json = /*lang=json,strict*/ "{\"id\":\"req-1\",\"type\":\"query\",\"target\":\"agents\",\"params\":{}}";
+            var json = /*lang=json,strict*/ "{\"id\":\"req-1\",\"type\":\"query\",\"target\":\"agents\",\"params\":{}}";
 
             // Act
-            Request request = MessageSerializer.DeserializeRequest(json);
+            var request = MessageSerializer.DeserializeRequest(json);
 
             // Assert
             _ = request.Should().NotBeNull();
@@ -118,10 +119,10 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
             }
 
             // Arrange
-            string json = /*lang=json,strict*/ "{\"id\":\"req-2\",\"type\":\"query\",\"target\":\"agents\",\"params\":{\"id\":3}}";
+            var json = /*lang=json,strict*/ "{\"id\":\"req-2\",\"type\":\"query\",\"target\":\"agents\",\"params\":{\"id\":3}}";
 
             // Act
-            Request request = MessageSerializer.DeserializeRequest(json);
+            var request = MessageSerializer.DeserializeRequest(json);
 
             // Assert
             _ = request.Should().NotBeNull();
@@ -158,7 +159,7 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
             }
 
             // Arrange
-            string json = "";
+            var json = "";
 
             // Act
             Action act = () => MessageSerializer.DeserializeRequest(json);
@@ -177,7 +178,7 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
             }
 
             // Arrange
-            string json = "not valid json";
+            var json = "not valid json";
 
             // Act
             Action act = () => MessageSerializer.DeserializeRequest(json);
@@ -199,8 +200,8 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
             Response originalResponse = Response.CreateSuccess("req-1", new { name = "Test", value = 42 });
 
             // Act
-            string json = MessageSerializer.Serialize(originalResponse);
-            Request deserializedRequest = MessageSerializer.DeserializeRequest(json);
+            var json = MessageSerializer.Serialize(originalResponse);
+            var deserializedRequest = MessageSerializer.DeserializeRequest(json);
 
             // Assert
             _ = deserializedRequest.Should().NotBeNull();

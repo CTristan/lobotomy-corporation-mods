@@ -9,7 +9,7 @@ using JetBrains.Annotations;
 
 namespace LobotomyCorporationMods.Common.Extensions
 {
-    internal static class WorkerModelExtensions
+    public static class WorkerModelExtensions
     {
         [NotNull]
         internal static Appearance GetAppearanceData([NotNull] this WorkerModel workerModel)

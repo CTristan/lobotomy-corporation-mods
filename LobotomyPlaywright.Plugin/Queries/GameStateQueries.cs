@@ -111,9 +111,9 @@ namespace LobotomyPlaywright.Queries
                     throw new InvalidOperationException("EnergyModel.instance is null. Game may not be initialized.");
                 }
 
-                int day = playerModel.GetDay();
-                float currentEnergy = energyModel.GetEnergy();
-                float energyQuota = StageTypeInfo.instnace.GetEnergyNeed(day);
+                var day = playerModel.GetDay();
+                var currentEnergy = energyModel.GetEnergy();
+                var energyQuota = StageTypeInfo.instnace.GetEnergyNeed(day);
 
                 return new GameStateData
                 {

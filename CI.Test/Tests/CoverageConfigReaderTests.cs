@@ -12,7 +12,7 @@ namespace CI.Test.Tests
         public void ReadConfig_ConfigFileExists_ReturnsConfig()
         {
             Mock<IFileSystem> mockFileSystem = new();
-            string configJson = /*lang=json,strict*/ """
+            var configJson = /*lang=json,strict*/ """
             {
               "lineThreshold": 85,
               "branchThreshold": 80,
@@ -77,7 +77,7 @@ namespace CI.Test.Tests
         public void ReadConfig_PartialConfig_UsesDefaultsForMissingValues()
         {
             Mock<IFileSystem> mockFileSystem = new();
-            string configJson = /*lang=json,strict*/ """
+            var configJson = /*lang=json,strict*/ """
             {
               "lineThreshold": 90
             }
@@ -99,7 +99,7 @@ namespace CI.Test.Tests
         public void ReadConfig_EmptyConfig_UsesDefaults()
         {
             Mock<IFileSystem> mockFileSystem = new();
-            string configJson = "{}";
+            var configJson = "{}";
 
             _ = mockFileSystem.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
             _ = mockFileSystem.Setup(fs => fs.ReadAllText(It.IsAny<string>())).Returns(configJson);

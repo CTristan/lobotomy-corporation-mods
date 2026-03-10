@@ -4,7 +4,7 @@ using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators
 {
-    internal sealed class BloodbathEvaluator : CreatureEvaluator
+    public sealed class BloodbathEvaluator : CreatureEvaluator
     {
         internal BloodbathEvaluator(IAgentData agent,
             ICreatureData creature,

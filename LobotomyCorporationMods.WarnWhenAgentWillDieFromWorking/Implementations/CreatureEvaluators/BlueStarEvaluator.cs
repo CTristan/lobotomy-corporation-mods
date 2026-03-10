@@ -4,7 +4,7 @@ using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators
 {
-    internal sealed class BlueStarEvaluator : CreatureEvaluator
+    public sealed class BlueStarEvaluator : CreatureEvaluator
     {
         internal BlueStarEvaluator(IAgentData agent,
             ICreatureData creature,

@@ -15,14 +15,14 @@ namespace HarmonyDebugPanel.Implementations.Collectors
         public IEnumerable<PatchInspectionInfo> GetPatches()
         {
             List<PatchInspectionInfo> patches = [];
-            foreach (MethodBase method in Harmony.GetAllPatchedMethods())
+            foreach (var method in Harmony.GetAllPatchedMethods())
             {
                 if (method == null)
                 {
                     continue;
                 }
 
-                Patches patchInfo = Harmony.GetPatchInfo(method);
+                var patchInfo = Harmony.GetPatchInfo(method);
                 if (patchInfo == null)
                 {
                     continue;
@@ -44,14 +44,14 @@ namespace HarmonyDebugPanel.Implementations.Collectors
                 return;
             }
 
-            foreach (Patch patch in source)
+            foreach (var patch in source)
             {
                 if (patch == null)
                 {
                     continue;
                 }
 
-                ExtractPatchAssemblyInfo(patch.PatchMethod, out string assemblyName, out string assemblyVersion, out IList<AssemblyName> assemblyReferences);
+                ExtractPatchAssemblyInfo(patch.PatchMethod, out var assemblyName, out var assemblyVersion, out var assemblyReferences);
 
                 destination.Add(new PatchInspectionInfo(
                     targetMethod.DeclaringType != null ? targetMethod.DeclaringType.FullName : "Unknown",
@@ -76,17 +76,17 @@ namespace HarmonyDebugPanel.Implementations.Collectors
                 return;
             }
 
-            Assembly assembly = methodInfo.DeclaringType.Assembly;
+            var assembly = methodInfo.DeclaringType.Assembly;
             if (assembly == null)
             {
                 return;
             }
 
-            AssemblyName assemblyObj = assembly.GetName();
+            var assemblyObj = assembly.GetName();
             assemblyName = assemblyObj.Name ?? string.Empty;
             assemblyVersion = assemblyObj.Version != null ? assemblyObj.Version.ToString() : string.Empty;
 
-            AssemblyName[] referencedAssemblies = assembly.GetReferencedAssemblies();
+            var referencedAssemblies = assembly.GetReferencedAssemblies();
             if (referencedAssemblies != null)
             {
                 assemblyReferences = [.. referencedAssemblies];
@@ -100,7 +100,7 @@ namespace HarmonyDebugPanel.Implementations.Collectors
                 return string.Empty;
             }
 
-            string declaringTypeName = methodInfo.DeclaringType != null
+            var declaringTypeName = methodInfo.DeclaringType != null
                 ? methodInfo.DeclaringType.FullName
                 : "Unknown";
             return declaringTypeName + "." + methodInfo.Name;

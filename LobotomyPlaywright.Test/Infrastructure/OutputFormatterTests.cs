@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using AwesomeAssertions;
+using LobotomyPlaywright.Infrastructure;
 using Xunit;
 
 namespace LobotomyPlaywright.Tests.Infrastructure

@@ -9,7 +9,7 @@ namespace LobotomyPlaywright.Infrastructure;
 /// <summary>
 /// Parses Valve's VDF (Valve Data Format) files to extract library folder paths.
 /// </summary>
-internal static class VdfParser
+public static class VdfParser
 {
     private static readonly string[] LineSeparators = { "\r", "\n" };
 

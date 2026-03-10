@@ -19,7 +19,7 @@ namespace LobotomyPlaywright.Commands;
 /// <summary>
 /// Command to launch the game and wait for TCP readiness.
 /// </summary>
-internal class LaunchCommand
+public class LaunchCommand
 {
     private readonly IConfigManager _configManager;
     private readonly IFileSystem _fileSystem;
@@ -89,7 +89,7 @@ internal class LaunchCommand
         {
             Console.WriteLine($"Game is already running (PID: {string.Join(", ", existingPids)}). Stopping it first...");
 
-            bool stopped = false;
+            var stopped = false;
             if (!force && IsTcpPortOpen(host, port))
             {
                 stopped = TryGracefulShutdown(host, port, config.ShutdownTimeoutSeconds);

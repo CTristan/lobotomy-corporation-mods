@@ -27,12 +27,12 @@ namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests.PatchTests
             // Arrange
             const int BaseStatValue = 1;
             const int BuffStatBonus = 100;
-            CustomizingWindow customizingWindow = UnityTestExtensions.CreateCustomizingWindow();
+            var customizingWindow = UnityTestExtensions.CreateCustomizingWindow();
             Mock<ICustomizingWindowTestAdapter> mockTestAdapter = new();
 
             // The base stat level is primary stat + title bonus
             // We'll ignore the title bonus
-            WorkerPrimaryStat primaryStat = UnityTestExtensions.CreateWorkerPrimaryStat();
+            var primaryStat = UnityTestExtensions.CreateWorkerPrimaryStat();
             primaryStat.battle = BaseStatValue;
             primaryStat.hp = BaseStatValue;
             primaryStat.mental = BaseStatValue;
@@ -40,12 +40,12 @@ namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests.PatchTests
 
             // The current stat level is the base stat level + buffs + equipment/gift bonuses
             // We'll add a generic buff to increase all stats
-            WorkerPrimaryStatBonus statBonus = UnityTestExtensions.CreateWorkerPrimaryStatBonus();
+            var statBonus = UnityTestExtensions.CreateWorkerPrimaryStatBonus();
             statBonus.battle = BuffStatBonus;
             statBonus.hp = BuffStatBonus;
             statBonus.mental = BuffStatBonus;
             statBonus.work = BuffStatBonus;
-            UnitStatBuf statBuff = UnityTestExtensions.CreateUnitStatBuf(statBonus);
+            var statBuff = UnityTestExtensions.CreateUnitStatBuf(statBonus);
             List<UnitStatBuf> statBuffList =
             [
                 statBuff,
@@ -57,8 +57,8 @@ namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests.PatchTests
                 StatBufList = statBuffList,
             };
 
-            AgentModel agent = UnityTestExtensions.CreateAgentModel(agentModelCreationParameters);
-            AgentData data = UnityTestExtensions.CreateAgentData();
+            var agent = UnityTestExtensions.CreateAgentModel(agentModelCreationParameters);
+            var data = UnityTestExtensions.CreateAgentData();
 
 
             // Act

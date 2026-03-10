@@ -3,6 +3,9 @@
 using System;
 using System.IO;
 using AwesomeAssertions;
+using LobotomyPlaywright.Commands;
+using LobotomyPlaywright.Interfaces.Configuration;
+using LobotomyPlaywright.Interfaces.System;
 using Moq;
 using Xunit;
 
@@ -69,7 +72,7 @@ namespace LobotomyPlaywright.Tests.Commands
         public void Run_BuildPhase_HandlesBuildFailures()
         {
             // Arrange
-            string repoRoot = Directory.GetCurrentDirectory();
+            var repoRoot = Directory.GetCurrentDirectory();
             _ = _mockFileSystem.Setup(f => f.FileExists(It.Is<string>(s => s.EndsWith("LobotomyCorporationMods.sln")))).Returns(true);
             _ = _mockFileSystem.Setup(f => f.FileExists(It.IsAny<string>())).Returns(true);
             _ = _mockFileSystem.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);

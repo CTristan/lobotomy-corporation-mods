@@ -55,7 +55,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         public void Initializing_localized_text_returns_correct_value(string expectedValue)
         {
             // Arrange
-            string key = nameof(Initializing_localized_text_returns_correct_value) + expectedValue;
+            var key = nameof(Initializing_localized_text_returns_correct_value) + expectedValue;
             Dictionary<string, string> dictionary = new()
             {
                 {
@@ -66,7 +66,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
             LocalizeTextDataModel.instance.Init(dictionary);
 
             // Act
-            string dictionaryValue = key.GetLocalized();
+            var dictionaryValue = key.GetLocalized();
 
             // Assert
             _ = dictionaryValue.Should().Be(expectedValue).And.NotBe(LocalizeTextDataModel.Failed);
@@ -129,21 +129,21 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
             _ = xmlTextBuilder.AppendLine("</localize>");
 
             const string LocalizationFile = "Localize/en/text_en.xml";
-            Mock<IFileManager> fileManager = TestExtensions.GetMockFileManager();
-            string fileWithPath = fileManager.Object.GetFile(LocalizationFile);
+            var fileManager = TestExtensions.GetMockFileManager();
+            var fileWithPath = fileManager.Object.GetFile(LocalizationFile);
             fileManager.Object.WriteAllText(fileWithPath, xmlTextBuilder.ToString());
         }
 
         private static void DeleteXmlLocalizationFile()
         {
-            string currentDirectory = Directory.GetCurrentDirectory();
+            var currentDirectory = Directory.GetCurrentDirectory();
             const string LocalizationFile = "Localize/en/text_en.xml";
             File.Delete(Path.Combine(currentDirectory, LocalizationFile));
         }
 
         private void InitiatePatchData([CanBeNull] Type? patchType = null)
         {
-            string currentDirectory = Directory.GetCurrentDirectory();
+            var currentDirectory = Directory.GetCurrentDirectory();
 
             Action action = () => _fakeHarmonyPatch.TestInitializePatchData(
             [
@@ -157,7 +157,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
     }
 
     /// <summary>Only to be used for HarmonyPatchBase tests.</summary>
-    internal sealed class FakeHarmonyPatch : HarmonyPatchBase
+    public sealed class FakeHarmonyPatch : HarmonyPatchBase
     {
         private const string FileNameThatExists = "FileNameThatExists.txt";
 
@@ -180,8 +180,8 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         {
             patchType = patchType.EnsureNotNullWithMethod(() => typeof(FakeHarmonyPatch));
 
-            DirectoryInfo directory = directoryList.First();
-            string testFileWithPath = Path.Combine(directory.FullName, FileNameThatExists);
+            var directory = directoryList.First();
+            var testFileWithPath = Path.Combine(directory.FullName, FileNameThatExists);
             File.WriteAllText(testFileWithPath, string.Empty);
 
             SetUpPatchData(patchType, FileNameThatExists, directoryList);

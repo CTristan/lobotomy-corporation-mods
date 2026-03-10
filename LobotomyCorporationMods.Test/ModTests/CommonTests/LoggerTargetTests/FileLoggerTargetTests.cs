@@ -15,7 +15,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests.LoggerTargetTests
         {
             const string ExpectedLogFilename = "log.txt";
             const string ExpectedMessage = "MessageSentToLog";
-            Mock<IFileManager> mockFileManager = TestExtensions.GetMockFileManager();
+            var mockFileManager = TestExtensions.GetMockFileManager();
             FileLoggerTarget sut = new(mockFileManager.Object, ExpectedLogFilename);
 
             sut.WriteToLoggerTarget(ExpectedMessage);

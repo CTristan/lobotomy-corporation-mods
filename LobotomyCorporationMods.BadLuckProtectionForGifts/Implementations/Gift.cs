@@ -11,7 +11,7 @@ using LobotomyCorporationMods.Common.Extensions;
 
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
 {
-    internal sealed class Gift : IGift
+    public sealed class Gift : IGift
     {
         private readonly List<IAgent> _agents = new List<IAgent>();
         private readonly string _name;
@@ -37,7 +37,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         [NotNull]
         public IAgent GetOrAddAgent(long agentId)
         {
-            IAgent agent = _agents.Find(a => a.GetId() == agentId);
+            var agent = _agents.Find(a => a.GetId() == agentId);
 
             if (agent.IsNotNull())
             {

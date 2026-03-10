@@ -22,17 +22,17 @@ namespace HarmonyDebugPanel.Implementations.Collectors
                 return HarmonyVersion.Unknown;
             }
 
-            bool hasHarmony1 = false;
-            bool hasHarmony2 = false;
+            var hasHarmony1 = false;
+            var hasHarmony2 = false;
 
-            foreach (AssemblyName reference in references)
+            foreach (var reference in references)
             {
                 if (reference == null)
                 {
                     continue;
                 }
 
-                string referenceName = reference.Name ?? string.Empty;
+                var referenceName = reference.Name ?? string.Empty;
                 if (referenceName.Equals(Harmony1AssemblyName, StringComparison.OrdinalIgnoreCase) ||
                     referenceName.Equals(Harmony12AssemblyName, StringComparison.OrdinalIgnoreCase) ||
                     referenceName.Equals(Harmony012AssemblyName, StringComparison.OrdinalIgnoreCase))

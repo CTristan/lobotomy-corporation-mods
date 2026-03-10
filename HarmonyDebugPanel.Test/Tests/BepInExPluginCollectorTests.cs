@@ -21,7 +21,7 @@ namespace HarmonyDebugPanel.Test.Tests
 
             BepInExPluginCollector collector = new(source, new HarmonyVersionClassifier());
 
-            IList<ModInfo> mods = collector.Collect();
+            var mods = collector.Collect();
 
             _ = mods.Should().BeEmpty();
         }
@@ -40,7 +40,7 @@ namespace HarmonyDebugPanel.Test.Tests
 
             BepInExPluginCollector collector = new(source, new HarmonyVersionClassifier());
 
-            IList<ModInfo> mods = collector.Collect();
+            var mods = collector.Collect();
 
             _ = mods.Should().HaveCount(1);
             _ = mods[0].Name.Should().Be("PluginName");

@@ -182,7 +182,7 @@ namespace LobotomyPlaywright.Queries
             // Check if we're querying a specific sefira
             if (parameters.ContainsKey("name") || parameters.ContainsKey("sefira"))
             {
-                string sefiraName = parameters.ContainsKey("name")
+                var sefiraName = parameters.ContainsKey("name")
                     ? parameters["name"].ToString()
                     : parameters["sefira"].ToString();
 

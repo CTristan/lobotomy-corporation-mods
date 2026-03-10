@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using AwesomeAssertions;
+using LobotomyPlaywright.Infrastructure;
 using Xunit;
 
 namespace LobotomyPlaywright.Tests.Infrastructure
@@ -12,7 +13,7 @@ namespace LobotomyPlaywright.Tests.Infrastructure
         public void ExtractLibraryPaths_WithValidVDF_ReturnsPaths()
         {
             // Arrange
-            string vdfContent = """
+            var vdfContent = """
 "libraryfolders"
 {
             "0"
@@ -42,7 +43,7 @@ namespace LobotomyPlaywright.Tests.Infrastructure
         public void ExtractLibraryPaths_WithEmptyContent_ReturnsEmptyList()
         {
             // Arrange
-            string vdfContent = "";
+            var vdfContent = "";
 
             // Act
             List<string> paths = VdfParser.ExtractLibraryPaths(vdfContent);
@@ -65,7 +66,7 @@ namespace LobotomyPlaywright.Tests.Infrastructure
         public void ExtractLibraryPaths_WithoutPathEntries_ReturnsEmptyList()
         {
             // Arrange
-            string vdfContent = """
+            var vdfContent = """
 "libraryfolders"
 {
   "0"

@@ -88,7 +88,7 @@ namespace CI.Test.Tests
             Mock<IFileSystem> mockFileSystem = new();
             GitHookSetup hookSetup = new(mockFileSystem.Object);
 
-            string capturedContent = string.Empty;
+            var capturedContent = string.Empty;
             _ = mockFileSystem
                 .Setup(fs => fs.WriteAllText(It.IsAny<string>(), It.IsAny<string>()))
                 .Callback<string, string>((_, content) => capturedContent = content);

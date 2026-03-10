@@ -12,7 +12,7 @@ namespace SetupExternal
     /// <summary>
     /// Locates the Lobotomy Corporation game installation directory across different platforms.
     /// </summary>
-    internal static class GamePathFinder
+    public static class GamePathFinder
     {
         private const string GameFolderName = "LobotomyCorp";
         private const string SteamAppsFolder = "steamapps";
@@ -34,10 +34,10 @@ namespace SetupExternal
         public static string? FindGamePath()
         {
             DebugLog("Starting game path search");
-            List<string> candidates = GetCandidatePaths();
+            var candidates = GetCandidatePaths();
             DebugLog($"Found {candidates.Count} candidate paths to check");
 
-            foreach (string candidate in candidates)
+            foreach (var candidate in candidates)
             {
                 DebugLog($"Checking: {candidate}");
                 if (IsValidGamePath(candidate))
@@ -86,11 +86,11 @@ namespace SetupExternal
             List<string> paths = [];
 
             // Default Steam installation path
-            string defaultSteamPath = @"C:\Program Files (x86)\Steam";
+            var defaultSteamPath = @"C:\Program Files (x86)\Steam";
             paths.AddRange(GetSteamLibraryPaths(defaultSteamPath));
 
             // Fallback: check Windows Registry for Steam installation path
-            string? registrySteamPath = GetSteamPathFromRegistry();
+            var registrySteamPath = GetSteamPathFromRegistry();
             if (registrySteamPath != null && !registrySteamPath.Equals(defaultSteamPath, StringComparison.OrdinalIgnoreCase))
             {
                 DebugLog($"Found Steam in Registry: {registrySteamPath}");
@@ -118,10 +118,10 @@ namespace SetupExternal
             DebugLog("Checking HKLM\\SOFTWARE\\Valve\\Steam for InstallPath");
             try
             {
-                using RegistryKey? hklmKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Valve\Steam");
+                using var hklmKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Valve\Steam");
                 if (hklmKey != null)
                 {
-                    string? installPath = hklmKey.GetValue("InstallPath") as string;
+                    var installPath = hklmKey.GetValue("InstallPath") as string;
                     DebugLog($"HKLM InstallPath value: {installPath ?? "(null)"}");
 
                     if (string.IsNullOrWhiteSpace(installPath))
@@ -152,10 +152,10 @@ namespace SetupExternal
             DebugLog("Checking HKCU\\SOFTWARE\\Valve\\Steam for InstallPath");
             try
             {
-                using RegistryKey? hkcuKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Valve\Steam");
+                using var hkcuKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Valve\Steam");
                 if (hkcuKey != null)
                 {
-                    string? installPath = hkcuKey.GetValue("InstallPath") as string;
+                    var installPath = hkcuKey.GetValue("InstallPath") as string;
                     DebugLog($"HKCU InstallPath value: {installPath ?? "(null)"}");
 
                     if (string.IsNullOrWhiteSpace(installPath))
@@ -200,7 +200,7 @@ namespace SetupExternal
                 Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".local", "share", "Steam")
             ];
 
-            foreach (string? steamPath in steamPaths)
+            foreach (var steamPath in steamPaths)
             {
                 paths.AddRange(GetSteamLibraryPaths(steamPath));
             }
@@ -215,7 +215,7 @@ namespace SetupExternal
         {
             List<string> paths = [];
 
-            string bottlesPath = Path.Combine(
+            var bottlesPath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
                 "Library",
                 "Application Support",
@@ -232,9 +232,9 @@ namespace SetupExternal
             DebugLog($"Searching bottles in: {bottlesPath}");
 
             // Search all bottles for the game directory
-            foreach (string bottleDir in Directory.GetDirectories(bottlesPath))
+            foreach (var bottleDir in Directory.GetDirectories(bottlesPath))
             {
-                string driveC = Path.Combine(bottleDir, "drive_c");
+                var driveC = Path.Combine(bottleDir, "drive_c");
                 if (!Directory.Exists(driveC))
                 {
                     continue;
@@ -243,17 +243,17 @@ namespace SetupExternal
                 DebugLog($"Checking bottle: {bottleDir}");
 
                 // Check for Steam installation in bottle
-                string steamPath = Path.Combine(driveC, "Program Files (x86)", "Steam");
+                var steamPath = Path.Combine(driveC, "Program Files (x86)", "Steam");
                 if (Directory.Exists(steamPath))
                 {
                     // Parse libraryfolders.vdf to find Steam libraries (including external drives like Z:)
                     DebugLog($"Steam installation found in bottle: {steamPath}");
-                    List<string> libraryPaths = GetSteamLibraryPaths(steamPath);
+                    var libraryPaths = GetSteamLibraryPaths(steamPath);
                     paths.AddRange(libraryPaths);
                 }
 
                 // Fallback to recursive search for game directory
-                string? gamePath = FindGamePathRecursive(driveC);
+                var gamePath = FindGamePathRecursive(driveC);
                 if (gamePath != null)
                 {
                     paths.Add(gamePath);
@@ -278,10 +278,10 @@ namespace SetupExternal
                 }
 
                 // Recursively search subdirectories (limit depth to avoid scanning entire drive)
-                string[] subdirs = Directory.GetDirectories(rootPath);
-                foreach (string? subdir in subdirs.Take(10)) // Limit to first 10 subdirs per level
+                var subdirs = Directory.GetDirectories(rootPath);
+                foreach (var subdir in subdirs.Take(10)) // Limit to first 10 subdirs per level
                 {
-                    string? result = FindGamePathRecursive(subdir);
+                    var result = FindGamePathRecursive(subdir);
                     if (result != null)
                     {
                         return result;
@@ -306,7 +306,7 @@ namespace SetupExternal
             if (windowsPath.StartsWith("Z:\\\\", StringComparison.Ordinal))
             {
                 // Remove "Z:\\" and convert all backslashes to forward slashes
-                string unixPath = windowsPath[4..].Replace("\\\\", "/", StringComparison.Ordinal);
+                var unixPath = windowsPath[4..].Replace("\\\\", "/", StringComparison.Ordinal);
                 return "/" + unixPath;
             }
 
@@ -328,20 +328,20 @@ namespace SetupExternal
             }
 
             // Parse libraryfolders.vdf to find Steam libraries
-            string libraryFoldersPath = Path.Combine(steamPath, SteamAppsFolder, LibraryFoldersFile);
+            var libraryFoldersPath = Path.Combine(steamPath, SteamAppsFolder, LibraryFoldersFile);
             if (File.Exists(libraryFoldersPath))
             {
                 try
                 {
-                    string vdfContent = File.ReadAllText(libraryFoldersPath);
-                    List<string> libraryPaths = VdfParser.ExtractLibraryPaths(vdfContent);
+                    var vdfContent = File.ReadAllText(libraryFoldersPath);
+                    var libraryPaths = VdfParser.ExtractLibraryPaths(vdfContent);
 
-                    foreach (string libRootPath in libraryPaths)
+                    foreach (var libRootPath in libraryPaths)
                     {
                         // Convert CrossOver Windows-style paths to macOS Unix paths
-                        string convertedPath = ConvertCrossOverPath(libRootPath) ?? libRootPath;
+                        var convertedPath = ConvertCrossOverPath(libRootPath) ?? libRootPath;
                         // The VDF path is already the Steam library root, so just append the game folder
-                        string gamePath = Path.Combine(convertedPath, SteamAppsFolder, CommonFolder, GameFolderName);
+                        var gamePath = Path.Combine(convertedPath, SteamAppsFolder, CommonFolder, GameFolderName);
                         paths.Add(gamePath);
                     }
                 }
@@ -353,7 +353,7 @@ namespace SetupExternal
             else
             {
                 // No libraryfolders.vdf, add default path
-                string defaultGamePath = Path.Combine(steamPath, SteamAppsFolder, CommonFolder, GameFolderName);
+                var defaultGamePath = Path.Combine(steamPath, SteamAppsFolder, CommonFolder, GameFolderName);
                 paths.Add(defaultGamePath);
             }
 
@@ -370,8 +370,8 @@ namespace SetupExternal
                 return false;
             }
 
-            string assemblyCSharpPath = Path.Combine(path, "LobotomyCorp_Data", "Managed", "Assembly-CSharp.dll");
-            bool isValid = File.Exists(assemblyCSharpPath);
+            var assemblyCSharpPath = Path.Combine(path, "LobotomyCorp_Data", "Managed", "Assembly-CSharp.dll");
+            var isValid = File.Exists(assemblyCSharpPath);
 
             DebugLog($"Validating path: {path}");
             DebugLog($"  Looking for: {assemblyCSharpPath}");

@@ -26,13 +26,13 @@ namespace LobotomyCorporationMods.Common.Implementations
         {
             _ = Guard.Against.Null(directories, nameof(directories));
 
-            IDirectoryInfo directory = directories.FirstOrDefault(directoryInfo => File.Exists(Path.Combine(directoryInfo.FullName, modFileName)));
+            var directory = directories.FirstOrDefault(directoryInfo => File.Exists(Path.Combine(directoryInfo.FullName, modFileName)));
 
             if (directory.IsNotNull())
             {
                 _dataPath = directory;
 
-                string modFilePath = Path.Combine(_dataPath.FullName, modFileName);
+                var modFilePath = Path.Combine(_dataPath.FullName, modFileName);
                 _filesCache = new Dictionary<string, string>
                 {
                     {
@@ -44,7 +44,7 @@ namespace LobotomyCorporationMods.Common.Implementations
             {
                 StringBuilder sb = new StringBuilder();
                 _ = sb.AppendLine($"Data path was not found, unable to find {modFileName} in the following directories:");
-                foreach (IDirectoryInfo directoryInfo in directories)
+                foreach (var directoryInfo in directories)
                 {
                     _ = sb.AppendLine(directoryInfo.FullName);
                 }
@@ -55,12 +55,12 @@ namespace LobotomyCorporationMods.Common.Implementations
 
         public string GetFile([NotNull] string fileName)
         {
-            if (_filesCache.TryGetValue(fileName, out string value))
+            if (_filesCache.TryGetValue(fileName, out var value))
             {
                 return value;
             }
 
-            string fullFilePath = Path.Combine(_dataPath.FullName, fileName);
+            var fullFilePath = Path.Combine(_dataPath.FullName, fileName);
             _filesCache.Add(fileName, fullFilePath);
 
             return _filesCache[fileName];

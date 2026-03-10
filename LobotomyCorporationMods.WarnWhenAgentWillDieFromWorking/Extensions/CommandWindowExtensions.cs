@@ -17,7 +17,7 @@ using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
 {
-    internal static class CommandWindowExtensions
+    public static class CommandWindowExtensions
     {
         /// <summary>Retrieves the creature evaluator for the given command window, agent, beautyBeastAnimAdapter, and yggdrasilAnimAdapter.</summary>
         /// <param name="commandWindow">The command window from which to retrieve the creature evaluator.</param>
@@ -39,14 +39,14 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
         {
             ICreatureEvaluator evaluator;
 
-            if (commandWindow.TryGetCreature(out CreatureModel creature) && !creature.IsNull())
+            if (commandWindow.TryGetCreature(out var creature) && !creature.IsNull())
             {
-                RwbpType skillType = commandWindow.CurrentSkill.rwbpType;
+                var skillType = commandWindow.CurrentSkill.rwbpType;
                 AgentDataAdapter agentDataAdapter = new AgentDataAdapter(agent);
                 CreatureDataAdapter creatureDataAdapter = new CreatureDataAdapter(creature);
                 CreatureEvaluatorParameters evaluatorParameters = new CreatureEvaluatorParameters(agentDataAdapter, creatureDataAdapter, skillType, beautyBeastAnimTestAdapter, yggdrasilAnimTestAdapter);
 
-                evaluator = evaluators.TryGetValue((CreatureIds)creature.metadataId, out Func<CreatureEvaluatorParameters, ICreatureEvaluator> factoryMethod) ? factoryMethod(evaluatorParameters) : new DefaultEvaluator(agentDataAdapter, creatureDataAdapter, skillType);
+                evaluator = evaluators.TryGetValue((CreatureIds)creature.metadataId, out var factoryMethod) ? factoryMethod(evaluatorParameters) : new DefaultEvaluator(agentDataAdapter, creatureDataAdapter, skillType);
             }
             else
             {
@@ -61,7 +61,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
         {
             creature = null;
 
-            UnitModel unitModel = commandWindow.CurrentTarget;
+            var unitModel = commandWindow.CurrentTarget;
             if (unitModel is CreatureModel creatureModel)
             {
                 creature = creatureModel;

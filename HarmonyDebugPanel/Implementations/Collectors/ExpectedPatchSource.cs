@@ -39,21 +39,21 @@ namespace HarmonyDebugPanel.Implementations.Collectors
 
             List<ExpectedPatchInfo> expectedPatches = [];
             HashSet<string> reflectionScannedAssemblies = new(StringComparer.OrdinalIgnoreCase);
-            Type harmonyPatchAttributeType = ResolveHarmonyPatchAttributeType(debugInfo);
+            var harmonyPatchAttributeType = ResolveHarmonyPatchAttributeType(debugInfo);
 
             // Phase 1: Reflection scan ALL non-framework assemblies
             debugInfo.Add("=== Phase 1: Reflection-based scan ===");
             lock (s_assemblyScanLock)
             {
-                Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-                foreach (Assembly assembly in assemblies)
+                var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+                foreach (var assembly in assemblies)
                 {
                     if (assembly == null)
                     {
                         continue;
                     }
 
-                    AssemblyName assemblyName = assembly.GetName();
+                    var assemblyName = assembly.GetName();
                     if (assemblyName == null || ShouldSkipAssembly(assemblyName.Name))
                     {
                         continue;
@@ -61,7 +61,7 @@ namespace HarmonyDebugPanel.Implementations.Collectors
 
                     try
                     {
-                        List<ExpectedPatchInfo> reflectionPatches = ScanAssemblyViaReflection(assembly, assemblyName.Name, harmonyPatchAttributeType, debugInfo);
+                        var reflectionPatches = ScanAssemblyViaReflection(assembly, assemblyName.Name, harmonyPatchAttributeType, debugInfo);
                         if (reflectionPatches.Count > 0)
                         {
                             expectedPatches.AddRange(reflectionPatches);
@@ -75,18 +75,18 @@ namespace HarmonyDebugPanel.Implementations.Collectors
                 }
             }
 
-            int reflectionCount = expectedPatches.Count;
+            var reflectionCount = expectedPatches.Count;
             debugInfo.Add("Reflection: total patches found: " + reflectionCount.ToString(CultureInfo.InvariantCulture));
             debugInfo.Add("Reflection: assemblies with patches: " + reflectionScannedAssemblies.Count.ToString(CultureInfo.InvariantCulture));
 
             // Phase 2: Source scan as fallback for LobotomyCorporationMods.* that reflection missed
             debugInfo.Add("=== Phase 2: Source-scan fallback ===");
-            List<ExpectedPatchInfo> sourcePatches = ScanSourceFallback(reflectionScannedAssemblies, debugInfo);
+            var sourcePatches = ScanSourceFallback(reflectionScannedAssemblies, debugInfo);
             expectedPatches.AddRange(sourcePatches);
 
             // Phase 3: runtime patch-state fallback for assemblies that still have no expected patches
             debugInfo.Add("=== Phase 3: Runtime fallback scan ===");
-            List<ExpectedPatchInfo> runtimeFallbackPatches = ScanRuntimeFallback(expectedPatches, debugInfo);
+            var runtimeFallbackPatches = ScanRuntimeFallback(expectedPatches, debugInfo);
             expectedPatches.AddRange(runtimeFallbackPatches);
 
             debugInfo.Add("Source fallback: " + sourcePatches.Count.ToString(CultureInfo.InvariantCulture) + " additional patches found");
@@ -107,7 +107,7 @@ namespace HarmonyDebugPanel.Implementations.Collectors
         private static void LogException(IList<string> debugInfo, string context, Exception ex, bool includeStackTrace = true)
         {
             _ = Interlocked.Increment(ref s_suppressedExceptionCount);
-            string message = "Exception: " + context;
+            var message = "Exception: " + context;
             if (includeStackTrace && ex.StackTrace != null)
             {
                 message += " - " + ex.GetType().Name + ": " + ex.Message + "\n" + ex.StackTrace;
@@ -124,7 +124,7 @@ namespace HarmonyDebugPanel.Implementations.Collectors
         {
             try
             {
-                Type harmonyPatchType = typeof(HarmonyPatch);
+                var harmonyPatchType = typeof(HarmonyPatch);
                 debugInfo.Add("Reflection: HarmonyPatch attribute type resolved: " + harmonyPatchType.FullName + " from " + harmonyPatchType.Assembly.GetName().Name);
                 return harmonyPatchType;
             }
@@ -138,11 +138,11 @@ namespace HarmonyDebugPanel.Implementations.Collectors
         private static List<ExpectedPatchInfo> ScanAssemblyViaReflection(Assembly assembly, string assemblyName, Type harmonyPatchAttributeType, IList<string> debugInfo)
         {
             List<ExpectedPatchInfo> patches = [];
-            Type[] types = SafeGetTypes(assembly, assemblyName, debugInfo);
+            var types = SafeGetTypes(assembly, assemblyName, debugInfo);
 
             debugInfo.Add("Reflection: scanning " + assemblyName + " (" + types.Length.ToString(CultureInfo.InvariantCulture) + " types)");
 
-            foreach (Type type in types)
+            foreach (var type in types)
             {
                 if (type == null)
                 {
@@ -151,12 +151,12 @@ namespace HarmonyDebugPanel.Implementations.Collectors
 
                 try
                 {
-                    List<ExpectedPatchInfo> typePatches = ScanTypeViaReflection(type, assemblyName, harmonyPatchAttributeType, debugInfo);
+                    var typePatches = ScanTypeViaReflection(type, assemblyName, harmonyPatchAttributeType, debugInfo);
                     patches.AddRange(typePatches);
                 }
                 catch (Exception ex)
                 {
-                    string typeName = GetTypeDisplayName(type);
+                    var typeName = GetTypeDisplayName(type);
                     LogException(debugInfo, "Reflection: error on type " + typeName, ex);
                 }
             }
@@ -168,10 +168,10 @@ namespace HarmonyDebugPanel.Implementations.Collectors
         private static List<ExpectedPatchInfo> ScanTypeViaReflection(Type type, string assemblyName, Type harmonyPatchAttributeType, IList<string> debugInfo)
         {
             List<ExpectedPatchInfo> patches = [];
-            string typeName = GetTypeDisplayName(type);
-            List<object> typePatchAttributes = GetHarmonyPatchAttributes(type, harmonyPatchAttributeType, debugInfo);
+            var typeName = GetTypeDisplayName(type);
+            var typePatchAttributes = GetHarmonyPatchAttributes(type, harmonyPatchAttributeType, debugInfo);
 
-            MergePatchTargetFromAttributes(typePatchAttributes, out Type typeTargetDeclaringType, out string typeTargetMethodName, debugInfo, typeName + " (type)");
+            MergePatchTargetFromAttributes(typePatchAttributes, out var typeTargetDeclaringType, out var typeTargetMethodName, debugInfo, typeName + " (type)");
 
             if (typePatchAttributes.Count > 0)
             {
@@ -180,26 +180,26 @@ namespace HarmonyDebugPanel.Implementations.Collectors
                     (typeTargetMethodName ?? "null"));
             }
 
-            MethodInfo[] methods = type.GetMethods(StaticMethodFlags);
-            foreach (MethodInfo method in methods)
+            var methods = type.GetMethods(StaticMethodFlags);
+            foreach (var method in methods)
             {
-                PatchType? patchType = ClassifyPatchMethod(method);
+                var patchType = ClassifyPatchMethod(method);
                 if (patchType == null)
                 {
                     continue;
                 }
 
-                List<object> methodPatchAttributes = GetHarmonyPatchAttributes(method, harmonyPatchAttributeType, debugInfo);
+                var methodPatchAttributes = GetHarmonyPatchAttributes(method, harmonyPatchAttributeType, debugInfo);
                 if (typePatchAttributes.Count == 0 && methodPatchAttributes.Count == 0)
                 {
                     // Avoid false positives from arbitrary static methods named Prefix/Postfix.
                     continue;
                 }
 
-                MergePatchTargetFromAttributes(methodPatchAttributes, out Type methodTargetDeclaringType, out string methodTargetMethodName, debugInfo, typeName + "." + method.Name + " (method)");
+                MergePatchTargetFromAttributes(methodPatchAttributes, out var methodTargetDeclaringType, out var methodTargetMethodName, debugInfo, typeName + "." + method.Name + " (method)");
 
-                Type targetDeclaringType = methodTargetDeclaringType ?? typeTargetDeclaringType;
-                string targetMethodName = !string.IsNullOrEmpty(methodTargetMethodName)
+                var targetDeclaringType = methodTargetDeclaringType ?? typeTargetDeclaringType;
+                var targetMethodName = !string.IsNullOrEmpty(methodTargetMethodName)
                     ? methodTargetMethodName
                     : typeTargetMethodName;
 
@@ -212,7 +212,7 @@ namespace HarmonyDebugPanel.Implementations.Collectors
                     continue;
                 }
 
-                string targetTypeName = targetDeclaringType.FullName ?? targetDeclaringType.Name;
+                var targetTypeName = targetDeclaringType.FullName ?? targetDeclaringType.Name;
                 patches.Add(new ExpectedPatchInfo(assemblyName, targetTypeName, targetMethodName, method.Name, patchType.Value));
 
                 debugInfo.Add("Reflection: " + assemblyName + ": " + patchType.Value + " for " +
@@ -241,14 +241,14 @@ namespace HarmonyDebugPanel.Implementations.Collectors
                 return patchAttributes;
             }
 
-            foreach (object attribute in allAttributes)
+            foreach (var attribute in allAttributes)
             {
                 if (attribute == null)
                 {
                     continue;
                 }
 
-                Type attributeType = attribute.GetType();
+                var attributeType = attribute.GetType();
                 if (harmonyPatchAttributeType != null && harmonyPatchAttributeType.IsAssignableFrom(attributeType))
                 {
                     patchAttributes.Add(attribute);
@@ -271,9 +271,9 @@ namespace HarmonyDebugPanel.Implementations.Collectors
             targetDeclaringType = null;
             targetMethodName = null;
 
-            foreach (object attribute in attributes)
+            foreach (var attribute in attributes)
             {
-                if (!TryExtractPatchTarget(attribute, out Type currentDeclaringType, out string currentMethodName, debugInfo, context))
+                if (!TryExtractPatchTarget(attribute, out var currentDeclaringType, out var currentMethodName, debugInfo, context))
                 {
                     continue;
                 }
@@ -302,15 +302,15 @@ namespace HarmonyDebugPanel.Implementations.Collectors
 
             try
             {
-                Type patchAttributeType = patchAttribute.GetType();
-                FieldInfo infoField = patchAttributeType.GetField("info", InstanceFieldFlags);
+                var patchAttributeType = patchAttribute.GetType();
+                var infoField = patchAttributeType.GetField("info", InstanceFieldFlags);
                 if (infoField == null)
                 {
                     debugInfo.Add("Reflection: HarmonyPatch attribute has no 'info' field on " + context + " (attribute type=" + patchAttributeType.FullName + ")");
                     return true;
                 }
 
-                object infoValue = infoField.GetValue(patchAttribute);
+                var infoValue = infoField.GetValue(patchAttribute);
                 if (infoValue == null)
                 {
                     return true;
@@ -319,7 +319,7 @@ namespace HarmonyDebugPanel.Implementations.Collectors
                 declaringType = GetMemberValueAsType(infoValue, "declaringType", "originalType", "type");
                 methodName = GetMemberValueAsString(infoValue, "methodName", "name");
 
-                MethodInfo targetMethod = GetMemberValueAsMethodInfo(infoValue, "method", "originalMethod");
+                var targetMethod = GetMemberValueAsMethodInfo(infoValue, "method", "originalMethod");
                 if (targetMethod != null)
                 {
                     declaringType ??= targetMethod.DeclaringType;
@@ -341,9 +341,9 @@ namespace HarmonyDebugPanel.Implementations.Collectors
 
         private static Type GetMemberValueAsType(object source, params string[] memberNames)
         {
-            foreach (string memberName in memberNames)
+            foreach (var memberName in memberNames)
             {
-                object memberValue = GetMemberValue(source, memberName);
+                var memberValue = GetMemberValue(source, memberName);
                 if (memberValue is Type typeValue)
                 {
                     return typeValue;
@@ -355,9 +355,9 @@ namespace HarmonyDebugPanel.Implementations.Collectors
 
         private static string GetMemberValueAsString(object source, params string[] memberNames)
         {
-            foreach (string memberName in memberNames)
+            foreach (var memberName in memberNames)
             {
-                string memberValue = GetMemberValue(source, memberName) as string;
+                var memberValue = GetMemberValue(source, memberName) as string;
                 if (!string.IsNullOrEmpty(memberValue))
                 {
                     return memberValue;
@@ -369,7 +369,7 @@ namespace HarmonyDebugPanel.Implementations.Collectors
 
         private static MethodInfo GetMemberValueAsMethodInfo(object source, params string[] memberNames)
         {
-            foreach (string memberName in memberNames)
+            foreach (var memberName in memberNames)
             {
                 if (GetMemberValue(source, memberName) is MethodInfo methodValue)
                 {
@@ -387,15 +387,15 @@ namespace HarmonyDebugPanel.Implementations.Collectors
                 return null;
             }
 
-            Type sourceType = source.GetType();
+            var sourceType = source.GetType();
 
-            FieldInfo field = sourceType.GetField(memberName, InstanceFieldFlags);
+            var field = sourceType.GetField(memberName, InstanceFieldFlags);
             if (field != null)
             {
                 return field.GetValue(source);
             }
 
-            PropertyInfo property = sourceType.GetProperty(memberName, InstanceFieldFlags);
+            var property = sourceType.GetProperty(memberName, InstanceFieldFlags);
             return property != null && property.GetIndexParameters().Length == 0 ? property.GetValue(source, null) : null;
         }
 
@@ -415,15 +415,15 @@ namespace HarmonyDebugPanel.Implementations.Collectors
             // Check for Harmony attributes on the method
             try
             {
-                object[] methodAttrs = method.GetCustomAttributes(false);
-                foreach (object attr in methodAttrs)
+                var methodAttrs = method.GetCustomAttributes(false);
+                foreach (var attr in methodAttrs)
                 {
                     if (attr == null)
                     {
                         continue;
                     }
 
-                    string attrTypeName = attr.GetType().Name;
+                    var attrTypeName = attr.GetType().Name;
                     switch (attrTypeName)
                     {
                         case "HarmonyPrefix": return PatchType.Prefix;
@@ -452,12 +452,12 @@ namespace HarmonyDebugPanel.Implementations.Collectors
             catch (ReflectionTypeLoadException ex)
             {
                 _ = Interlocked.Increment(ref s_suppressedExceptionCount);
-                int loadedTypeCount = ex.Types != null ? ex.Types.Length : 0;
+                var loadedTypeCount = ex.Types != null ? ex.Types.Length : 0;
                 debugInfo.Add("Reflection: ReflectionTypeLoadException in " + assemblyName +
                     ", loaded " + loadedTypeCount.ToString(CultureInfo.InvariantCulture) + " types (some failed)");
                 if (ex.LoaderExceptions != null)
                 {
-                    foreach (Exception loaderEx in ex.LoaderExceptions)
+                    foreach (var loaderEx in ex.LoaderExceptions)
                     {
                         if (loaderEx != null)
                         {
@@ -485,7 +485,7 @@ namespace HarmonyDebugPanel.Implementations.Collectors
             HashSet<string> assembliesWithExpected = new(StringComparer.OrdinalIgnoreCase);
             HashSet<string> knownPatchKeys = new(StringComparer.Ordinal);
 
-            foreach (ExpectedPatchInfo expectedPatch in existingExpectedPatches)
+            foreach (var expectedPatch in existingExpectedPatches)
             {
                 if (expectedPatch == null)
                 {
@@ -500,14 +500,14 @@ namespace HarmonyDebugPanel.Implementations.Collectors
             {
                 lock (s_assemblyScanLock)
                 {
-                    foreach (MethodBase targetMethod in Harmony.GetAllPatchedMethods())
+                    foreach (var targetMethod in Harmony.GetAllPatchedMethods())
                     {
                         if (targetMethod == null)
                         {
                             continue;
                         }
 
-                        Patches patchInfo = Harmony.GetPatchInfo(targetMethod);
+                        var patchInfo = Harmony.GetPatchInfo(targetMethod);
                         if (patchInfo == null)
                         {
                             continue;
@@ -542,14 +542,14 @@ namespace HarmonyDebugPanel.Implementations.Collectors
                 return;
             }
 
-            foreach (Patch patch in source)
+            foreach (var patch in source)
             {
                 if (patch == null || patch.PatchMethod == null || patch.PatchMethod.DeclaringType == null)
                 {
                     continue;
                 }
 
-                string patchAssemblyName = patch.PatchMethod.DeclaringType.Assembly.GetName().Name;
+                var patchAssemblyName = patch.PatchMethod.DeclaringType.Assembly.GetName().Name;
                 if (string.IsNullOrEmpty(patchAssemblyName) || ShouldSkipAssembly(patchAssemblyName))
                 {
                     continue;
@@ -560,12 +560,12 @@ namespace HarmonyDebugPanel.Implementations.Collectors
                     continue;
                 }
 
-                string targetType = targetMethod.DeclaringType != null
+                var targetType = targetMethod.DeclaringType != null
                     ? (targetMethod.DeclaringType.FullName ?? targetMethod.DeclaringType.Name)
                     : "Unknown";
-                string targetMethodName = targetMethod.Name;
-                string patchMethodName = patch.PatchMethod.Name;
-                string patchKey = BuildExpectedPatchKey(patchAssemblyName, targetType, targetMethodName, patchMethodName, patchType);
+                var targetMethodName = targetMethod.Name;
+                var patchMethodName = patch.PatchMethod.Name;
+                var patchKey = BuildExpectedPatchKey(patchAssemblyName, targetType, targetMethodName, patchMethodName, patchType);
 
                 if (knownPatchKeys.Contains(patchKey))
                 {
@@ -576,7 +576,7 @@ namespace HarmonyDebugPanel.Implementations.Collectors
                 ExpectedPatchInfo expectedPatch = new(patchAssemblyName, targetType, targetMethodName, patchMethodName, patchType);
                 destination.Add(expectedPatch);
 
-                string patchDeclaringTypeName = patch.PatchMethod.DeclaringType.FullName ?? patch.PatchMethod.DeclaringType.Name;
+                var patchDeclaringTypeName = patch.PatchMethod.DeclaringType.FullName ?? patch.PatchMethod.DeclaringType.Name;
                 debugInfo.Add("Runtime fallback: " + patchAssemblyName + ": " + patchType + " for " + targetType + "." + targetMethodName +
                     " (patch method=" + patchDeclaringTypeName + "." + patchMethodName + ")");
             }
@@ -595,14 +595,14 @@ namespace HarmonyDebugPanel.Implementations.Collectors
 
             lock (s_assemblyScanLock)
             {
-                foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+                foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
                 {
                     if (assembly == null)
                     {
                         continue;
                     }
 
-                    AssemblyName assemblyName = assembly.GetName();
+                    var assemblyName = assembly.GetName();
                     if (assemblyName == null || ShouldSkipAssembly(assemblyName.Name))
                     {
                         continue;
@@ -615,13 +615,13 @@ namespace HarmonyDebugPanel.Implementations.Collectors
 
                     try
                     {
-                        string location = assembly.Location;
+                        var location = assembly.Location;
                         if (string.IsNullOrEmpty(location))
                         {
                             continue;
                         }
 
-                        string dir = Path.GetDirectoryName(location);
+                        var dir = Path.GetDirectoryName(location);
                         if (string.IsNullOrEmpty(dir) || scannedDirectories.Contains(dir))
                         {
                             continue;
@@ -668,8 +668,8 @@ namespace HarmonyDebugPanel.Implementations.Collectors
 
             try
             {
-                string[] files = Directory.GetFiles(dir, "*.cs", SearchOption.AllDirectories);
-                foreach (string file in files)
+                var files = Directory.GetFiles(dir, "*.cs", SearchOption.AllDirectories);
+                foreach (var file in files)
                 {
                     try
                     {
@@ -692,7 +692,7 @@ namespace HarmonyDebugPanel.Implementations.Collectors
         private static List<ExpectedPatchInfo> ScanFileForHarmonyPatches(string filePath, string modName)
         {
             List<ExpectedPatchInfo> patches = [];
-            string content = File.ReadAllText(filePath);
+            var content = File.ReadAllText(filePath);
 
             // Match [HarmonyPatch(...)] - improved pattern that handles:
             // - Nested parentheses in typeof(...) expressions
@@ -710,7 +710,7 @@ namespace HarmonyDebugPanel.Implementations.Collectors
             //
             // When "missing patch" warnings appear, manually review the HarmonyPatch declarations
             // to verify they are correctly detected.
-            MatchCollection matches = Regex.Matches(content, @"\[\s*HarmonyPatch\s*\(([^)]*(?:\([^)]*\)[^)]*)*)\)\s*\]", RegexOptions.Multiline);
+            var matches = Regex.Matches(content, @"\[\s*HarmonyPatch\s*\(([^)]*(?:\([^)]*\)[^)]*)*)\)\s*\]", RegexOptions.Multiline);
 
             foreach (Match match in matches)
             {
@@ -719,24 +719,24 @@ namespace HarmonyDebugPanel.Implementations.Collectors
                     continue;
                 }
 
-                string args = match.Groups[1].Value;
+                var args = match.Groups[1].Value;
                 string targetType = null;
                 string targetMethod = null;
 
-                Match typeMatch = Regex.Match(args, @"typeof\s*\(([^)]+)\)");
+                var typeMatch = Regex.Match(args, @"typeof\s*\(([^)]+)\)");
                 if (typeMatch.Success)
                 {
                     targetType = typeMatch.Groups[1].Value.Trim();
                 }
 
                 // Handle both "Method", nameof(...), and constants
-                Match methodNameMatch = Regex.Match(args, @"""([^""]+)""|nameof\s*\((?:[^.]+\.)?([^)]+)\)|,\s*([^,\s)]+)");
+                var methodNameMatch = Regex.Match(args, @"""([^""]+)""|nameof\s*\((?:[^.]+\.)?([^)]+)\)|,\s*([^,\s)]+)");
                 if (methodNameMatch.Success)
                 {
                     targetMethod = (methodNameMatch.Groups[1].Value + methodNameMatch.Groups[2].Value + methodNameMatch.Groups[3].Value).Trim();
                     if (targetMethod.Contains("."))
                     {
-                        string[] split = targetMethod.Split('.');
+                        var split = targetMethod.Split('.');
                         targetMethod = split.Length > 0 ? split[split.Length - 1] : targetMethod;
                     }
                 }
@@ -751,24 +751,24 @@ namespace HarmonyDebugPanel.Implementations.Collectors
                     continue;
                 }
 
-                string afterAttribute = content.Substring(match.Index + match.Length);
+                var afterAttribute = content.Substring(match.Index + match.Length);
 
                 // 1. Check for class declaration
-                Match classMatch = Regex.Match(afterAttribute, @"^\s*(?:\[[^\]]+\]\s*)*(?:public|internal|private)?\s*(?:sealed|abstract)?\s*static\s+class\s+([^\s{]+)");
+                var classMatch = Regex.Match(afterAttribute, @"^\s*(?:\[[^\]]+\]\s*)*(?:public|internal|private)?\s*(?:sealed|abstract)?\s*static\s+class\s+([^\s{]+)");
                 if (classMatch.Success)
                 {
-                    int openBrace = afterAttribute.IndexOf('{');
+                    var openBrace = afterAttribute.IndexOf('{');
                     if (openBrace == -1)
                     {
                         continue;
                     }
 
-                    string classBody = afterAttribute.Substring(openBrace);
-                    MatchCollection methodMatches = Regex.Matches(classBody, @"(?:public|internal|private)?\s+static\s+[^\s(]+\s+(Prefix|Postfix|Transpiler|Finalizer)\s*\(");
+                    var classBody = afterAttribute.Substring(openBrace);
+                    var methodMatches = Regex.Matches(classBody, @"(?:public|internal|private)?\s+static\s+[^\s(]+\s+(Prefix|Postfix|Transpiler|Finalizer)\s*\(");
                     foreach (Match patchMethodMatch in methodMatches)
                     {
-                        string patchMethodName = patchMethodMatch.Groups[1].Value;
-                        PatchType patchType = patchMethodName == "Prefix"
+                        var patchMethodName = patchMethodMatch.Groups[1].Value;
+                        var patchType = patchMethodName == "Prefix"
                             ? PatchType.Prefix
                             : patchMethodName == "Postfix"
                                 ? PatchType.Postfix
@@ -783,12 +783,12 @@ namespace HarmonyDebugPanel.Implementations.Collectors
                 }
 
                 // 2. Check for method declaration
-                Match methodMatch = Regex.Match(afterAttribute, @"^\s*(?:\[[^\]]+\]\s*)*(?:public|internal|private)?\s+static\s+([^\s(]+)\s+([^\s(]+)\s*\(");
+                var methodMatch = Regex.Match(afterAttribute, @"^\s*(?:\[[^\]]+\]\s*)*(?:public|internal|private)?\s+static\s+([^\s(]+)\s+([^\s(]+)\s*\(");
                 if (methodMatch.Success)
                 {
-                    string methodName = methodMatch.Groups[2].Value;
-                    string returnType = methodMatch.Groups[1].Value;
-                    PatchType patchType = returnType == "void" ? PatchType.Prefix : PatchType.Postfix;
+                    var methodName = methodMatch.Groups[2].Value;
+                    var returnType = methodMatch.Groups[1].Value;
+                    var patchType = returnType == "void" ? PatchType.Prefix : PatchType.Postfix;
                     patches.Add(new ExpectedPatchInfo(modName, targetType, targetMethod, methodName, patchType));
                 }
             }
@@ -798,9 +798,9 @@ namespace HarmonyDebugPanel.Implementations.Collectors
 
         private static string FindClassLevelTargetType(string content, int index)
         {
-            string before = content.Substring(0, index);
-            string pattern = @"\[\s*HarmonyPatch\s*\(\s*typeof\s*\(([^)]+)\)\s*\)\s*\]\s*(?:\[[^\]]+\]\s*)*(?:public|internal|private)?\s*(?:sealed|abstract)?\s*static\s+class";
-            MatchCollection matches = Regex.Matches(before, pattern);
+            var before = content.Substring(0, index);
+            var pattern = @"\[\s*HarmonyPatch\s*\(\s*typeof\s*\(([^)]+)\)\s*\)\s*\]\s*(?:\[[^\]]+\]\s*)*(?:public|internal|private)?\s*(?:sealed|abstract)?\s*static\s+class";
+            var matches = Regex.Matches(before, pattern);
             return matches.Count == 0 ? null : matches[matches.Count - 1].Groups[1].Value.Trim();
         }
 

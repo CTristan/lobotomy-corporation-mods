@@ -10,7 +10,7 @@ using LobotomyCorporationMods.Common.ParameterObjects;
 
 namespace LobotomyCorporationMods.Common.Extensions
 {
-    internal static class ManagementSlotExtensions
+    public static class ManagementSlotExtensions
     {
         [NotNull]
         internal static IGameObjectTestAdapter CreateImageObjectTestAdapter([NotNull] this ManagementSlot managementSlot,
@@ -26,7 +26,7 @@ namespace LobotomyCorporationMods.Common.Extensions
         [CanBeNull]
         internal static CreatureEquipmentMakeInfo GetAbnormalityGift(this ManagementSlot managementSlot)
         {
-            CommandWindow.CommandWindow commandWindow = CommandWindow.CommandWindow.CurrentWindow;
+            var commandWindow = CommandWindow.CommandWindow.CurrentWindow;
 
             return commandWindow.GetAbnormalityGift();
         }

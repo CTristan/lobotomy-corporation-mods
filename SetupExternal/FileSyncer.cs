@@ -10,7 +10,7 @@ namespace SetupExternal
     /// <summary>
     /// Handles copying game DLLs with SHA256 hash comparison to avoid unnecessary copies.
     /// </summary>
-    internal static class FileSyncer
+    public static class FileSyncer
     {
         private const string AssemblyCSharpFileName = "Assembly-CSharp.dll";
 
@@ -25,7 +25,7 @@ namespace SetupExternal
         /// <summary>
         /// Result of a file sync operation.
         /// </summary>
-        internal sealed class SyncResult
+        public sealed class SyncResult
         {
             public int FilesCopied { get; set; }
             public int FilesUpdated { get; set; }
@@ -44,8 +44,8 @@ namespace SetupExternal
         public static SyncResult SyncDlls(string sourcePath, string destinationPath, bool force = false)
         {
             SyncResult result = new();
-            string sourceManagedDir = Path.Combine(sourcePath, "LobotomyCorp_Data", "Managed");
-            string destManagedDir = Path.Combine(destinationPath, "LobotomyCorp_Data", "Managed");
+            var sourceManagedDir = Path.Combine(sourcePath, "LobotomyCorp_Data", "Managed");
+            var destManagedDir = Path.Combine(destinationPath, "LobotomyCorp_Data", "Managed");
 
             DebugLog($"Starting sync from {sourceManagedDir} to {destManagedDir}");
             if (force)
@@ -65,13 +65,13 @@ namespace SetupExternal
             DebugLog($"Destination directory created: {destManagedDir}");
 
             // Get all DLL files in source
-            string[] dllFiles = Directory.GetFiles(sourceManagedDir, "*.dll", SearchOption.TopDirectoryOnly);
+            var dllFiles = Directory.GetFiles(sourceManagedDir, "*.dll", SearchOption.TopDirectoryOnly);
             DebugLog($"Found {dllFiles.Length} DLL files in source");
 
-            foreach (string sourceFile in dllFiles)
+            foreach (var sourceFile in dllFiles)
             {
-                string fileName = Path.GetFileName(sourceFile);
-                string destFile = Path.Combine(destManagedDir, fileName);
+                var fileName = Path.GetFileName(sourceFile);
+                var destFile = Path.Combine(destManagedDir, fileName);
 
                 if (!File.Exists(destFile))
                 {
@@ -100,8 +100,8 @@ namespace SetupExternal
                     else
                     {
                         // File exists - compare hashes
-                        string sourceHash = ComputeFileHash(sourceFile);
-                        string destHash = ComputeFileHash(destFile);
+                        var sourceHash = ComputeFileHash(sourceFile);
+                        var destHash = ComputeFileHash(destFile);
 
                         DebugLog($"Checking {fileName}: source hash = {sourceHash[..8]}..., dest hash = {destHash[..8]}...");
 
@@ -147,8 +147,8 @@ namespace SetupExternal
         private static string ComputeFileHash(string filePath)
         {
             using SHA256 sha256 = SHA256.Create();
-            using FileStream stream = File.OpenRead(filePath);
-            byte[] hashBytes = sha256.ComputeHash(stream);
+            using var stream = File.OpenRead(filePath);
+            var hashBytes = sha256.ComputeHash(stream);
             return ConvertHashToString(hashBytes);
         }
 
@@ -158,7 +158,7 @@ namespace SetupExternal
         private static string ConvertHashToString(byte[] hash)
         {
             StringBuilder sb = new();
-            foreach (byte b in hash)
+            foreach (var b in hash)
             {
                 _ = sb.Append(b.ToString("x2", System.Globalization.CultureInfo.InvariantCulture));
             }

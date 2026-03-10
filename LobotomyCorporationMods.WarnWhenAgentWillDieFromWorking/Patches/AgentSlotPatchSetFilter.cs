@@ -46,16 +46,16 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
                 return;
             }
 
-            bool agentWillDie = instance.CheckIfWorkWillKillAgent(CommandWindow.CommandWindow.CurrentWindow, s_evaluatorFactoryDictionary, beautyBeastAnimTestAdapter, yggdrasilAnimTestAdapter);
+            var agentWillDie = instance.CheckIfWorkWillKillAgent(CommandWindow.CommandWindow.CurrentWindow, s_evaluatorFactoryDictionary, beautyBeastAnimTestAdapter, yggdrasilAnimTestAdapter);
 
             if (!agentWillDie)
             {
                 return;
             }
 
-            CommandWindow.CommandWindow commandWindow = CommandWindow.CommandWindow.CurrentWindow;
-            Color slotColor = commandWindow.DeadColor;
-            string slotText = LocalizeTextDataModel.instance.GetText("AgentState_Dead");
+            var commandWindow = CommandWindow.CommandWindow.CurrentWindow;
+            var slotColor = commandWindow.DeadColor;
+            var slotText = LocalizeTextDataModel.instance.GetText("AgentState_Dead");
             instance.UpdateAgentSlot(slotColor, slotText, imageTestAdapter, textTestAdapter);
         }
 
@@ -116,7 +116,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
         {
             try
             {
-                GameManager currentGameManager = GameManager.currentGameManager;
+                var currentGameManager = GameManager.currentGameManager;
                 __instance.PatchAfterSetFilter(state, currentGameManager);
             }
             catch (Exception ex)

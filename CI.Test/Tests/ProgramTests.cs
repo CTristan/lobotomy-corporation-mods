@@ -13,7 +13,7 @@ namespace CI.Test.Tests
         public void Main_WithInvalidArgument_ReturnsOne()
         {
             // Arrange & Act
-            int exitCode = Program.Main(InvalidArgs);
+            var exitCode = Program.Main(InvalidArgs);
 
             // Assert - This works because it returns before trying to find .git
             _ = exitCode.Should().Be(1);

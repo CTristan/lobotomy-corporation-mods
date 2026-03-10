@@ -24,7 +24,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             const int WeakenedState = 1;
 
             beautyBeastAnimTestAdapter = beautyBeastAnimTestAdapter.EnsureNotNullWithMethod(() => new BeautyBeastAnimTestAdapter((BeautyBeastAnim)creatureModel.GetAnimScript()));
-            int animationState = beautyBeastAnimTestAdapter.State;
+            var animationState = beautyBeastAnimTestAdapter.State;
 
             return animationState == WeakenedState;
         }

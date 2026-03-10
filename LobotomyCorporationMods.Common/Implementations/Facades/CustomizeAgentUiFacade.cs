@@ -34,7 +34,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             uiComponentsTestAdapter = uiComponentsTestAdapter.EnsureNotNullWithMethod(() => new AgentInfoWindowUiComponentsTestAdapter(agentInfoWindow.UIComponents));
             customizingWindowTestAdapter = customizingWindowTestAdapter.EnsureNotNullWithMethod(() => new CustomizingWindowTestAdapter(agentInfoWindow.customizingWindow));
 
-            CustomizingWindow customizingWindow = CustomizingWindow.CurrentWindow;
+            var customizingWindow = CustomizingWindow.CurrentWindow;
 
             // Make sure the customizing block is active so that we can customize the agent
             gameObjectTestAdapter.GameObject = agentInfoWindow.customizingBlock;

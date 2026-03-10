@@ -2,7 +2,7 @@
 
 namespace LobotomyCorporationMods.GiftAlertIcon.Constants
 {
-    internal static class LocalizationIds
+    public static class LocalizationIds
     {
         internal const string NewGiftTooltip1 = "GiftAlertIcon_NewGiftTooltip1";
         internal const string NewGiftTooltip2 = "GiftAlertIcon_NewGiftTooltip2";

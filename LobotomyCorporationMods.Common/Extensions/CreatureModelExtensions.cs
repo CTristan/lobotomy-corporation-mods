@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 
 namespace LobotomyCorporationMods.Common.Extensions
 {
-    internal static class CreatureModelExtensions
+    public static class CreatureModelExtensions
     {
         internal static CreatureEquipmentMakeInfo GetAbnormalityGift([NotNull] this CreatureModel creatureModel)
         {

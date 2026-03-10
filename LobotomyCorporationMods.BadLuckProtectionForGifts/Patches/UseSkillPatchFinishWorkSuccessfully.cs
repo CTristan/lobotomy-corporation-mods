@@ -26,7 +26,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             _ = Guard.Against.Null(instance, nameof(instance));
             _ = Guard.Against.Null(agentWorkTracker, nameof(agentWorkTracker));
 
-            string giftName = instance.GetAbnormalityGiftName();
+            var giftName = instance.GetAbnormalityGiftName();
 
             // If the abnormality has no gift then there's nothing to track
             if (string.IsNullOrEmpty(giftName))
@@ -34,8 +34,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
                 return;
             }
 
-            long agentId = instance.GetAgentId();
-            int numberOfSuccesses = instance.successCount;
+            var agentId = instance.GetAgentId();
+            var numberOfSuccesses = instance.successCount;
 
             agentWorkTracker.IncrementAgentWorkCount(giftName, agentId, numberOfSuccesses);
         }

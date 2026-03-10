@@ -26,7 +26,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
 
         private static void SetGameReady(bool? ready)
         {
-            PropertyInfo property = typeof(GameStateQueries).GetProperty("IsGameQueryableOverride", BindingFlags.NonPublic | BindingFlags.Static);
+            var property = typeof(GameStateQueries).GetProperty("IsGameQueryableOverride", BindingFlags.NonPublic | BindingFlags.Static);
             property?.SetValue(null, ready, null);
         }
 
@@ -37,7 +37,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             Request request = null;
 
             // Act
-            Response response = QueryRouter.HandleQuery(request);
+            var response = QueryRouter.HandleQuery(request);
 
             // Assert
             _ = response.Should().NotBeNull();
@@ -57,7 +57,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             };
 
             // Act
-            Response response = QueryRouter.HandleQuery(request);
+            var response = QueryRouter.HandleQuery(request);
 
             // Assert
             _ = response.Should().NotBeNull();
@@ -77,7 +77,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             };
 
             // Act
-            Response response = QueryRouter.HandleQuery(request);
+            var response = QueryRouter.HandleQuery(request);
 
             // Assert
             _ = response.Should().NotBeNull();
@@ -97,7 +97,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             };
 
             // Act
-            Response response = QueryRouter.HandleQuery(request);
+            var response = QueryRouter.HandleQuery(request);
 
             // Assert
             _ = response.Should().NotBeNull();
@@ -117,7 +117,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             };
 
             // Act
-            Response response = QueryRouter.HandleQuery(request);
+            var response = QueryRouter.HandleQuery(request);
 
             // Assert
             _ = response.Should().NotBeNull();
@@ -138,7 +138,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             };
 
             // Act
-            Response response = QueryRouter.HandleQuery(request);
+            var response = QueryRouter.HandleQuery(request);
 
             // Assert
             _ = response.Should().NotBeNull();
@@ -158,7 +158,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             };
 
             // Act
-            Response response = QueryRouter.HandleQuery(request);
+            var response = QueryRouter.HandleQuery(request);
 
             // Assert
             _ = response.Should().NotBeNull();
@@ -178,7 +178,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             };
 
             // Act
-            Response response = QueryRouter.HandleQuery(request);
+            var response = QueryRouter.HandleQuery(request);
 
             // Assert
             _ = response.Should().NotBeNull();
@@ -198,7 +198,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             };
 
             // Act
-            Response response = QueryRouter.HandleQuery(request);
+            var response = QueryRouter.HandleQuery(request);
 
             // Assert
             _ = response.Should().NotBeNull();
@@ -218,7 +218,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             };
 
             // Act
-            Response response = QueryRouter.HandleQuery(request);
+            var response = QueryRouter.HandleQuery(request);
 
             // Assert
             _ = response.Should().NotBeNull();
@@ -238,7 +238,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             };
 
             // Act
-            Response response = QueryRouter.HandleQuery(request);
+            var response = QueryRouter.HandleQuery(request);
 
             // Assert
             _ = response.Should().NotBeNull();
@@ -259,7 +259,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             };
 
             // Act
-            Response response = QueryRouter.HandleQuery(request);
+            var response = QueryRouter.HandleQuery(request);
 
             // Assert
             _ = response.Should().NotBeNull();
@@ -279,7 +279,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             };
 
             // Act
-            Response response = QueryRouter.HandleQuery(request);
+            var response = QueryRouter.HandleQuery(request);
 
             // Assert
             _ = response.Should().NotBeNull();
@@ -303,7 +303,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             };
 
             // Act
-            Response response = QueryRouter.HandleQuery(request);
+            var response = QueryRouter.HandleQuery(request);
 
             // Assert - Should return error response
             _ = response.Should().NotBeNull();
@@ -324,7 +324,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             };
 
             // Act
-            Response response = QueryRouter.HandleQuery(request);
+            var response = QueryRouter.HandleQuery(request);
 
             // Assert
             _ = response.Should().NotBeNull();
@@ -350,7 +350,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             };
 
             // Act
-            Response response = QueryRouter.HandleQuery(request);
+            var response = QueryRouter.HandleQuery(request);
 
             // Assert
             _ = response.Should().NotBeNull();
@@ -371,7 +371,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             };
 
             // Act
-            Response response = QueryRouter.HandleQuery(request);
+            var response = QueryRouter.HandleQuery(request);
 
             // Assert
             _ = response.Should().NotBeNull();
@@ -396,7 +396,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             };
 
             // Act
-            Response response = QueryRouter.HandleQuery(request);
+            var response = QueryRouter.HandleQuery(request);
 
             // Assert
             _ = response.Should().NotBeNull();
@@ -416,7 +416,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             };
 
             // Act
-            Response response = QueryRouter.HandleQuery(request);
+            var response = QueryRouter.HandleQuery(request);
 
             // Assert - The data should be a UiStateData object
             _ = response.Should().NotBeNull();

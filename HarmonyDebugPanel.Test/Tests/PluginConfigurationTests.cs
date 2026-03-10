@@ -14,9 +14,9 @@ namespace HarmonyDebugPanel.Test.Tests
         [Fact]
         public void Bind_UsesExpectedDefaultValues()
         {
-            string tempDirectory = Path.Combine(Path.GetTempPath(), "HarmonyDebugPanel.Test", Guid.NewGuid().ToString("N"));
+            var tempDirectory = Path.Combine(Path.GetTempPath(), "HarmonyDebugPanel.Test", Guid.NewGuid().ToString("N"));
             _ = Directory.CreateDirectory(tempDirectory);
-            string configPath = Path.Combine(tempDirectory, "test.cfg");
+            var configPath = Path.Combine(tempDirectory, "test.cfg");
 
             try
             {

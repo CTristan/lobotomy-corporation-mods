@@ -25,7 +25,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         {
             FileManager fileManager = new(DefaultModFileName, GetDirectories());
 
-            string result = fileManager.GetFile(DefaultModFileName);
+            var result = fileManager.GetFile(DefaultModFileName);
 
             _ = result.Should().NotBeNullOrWhiteSpace();
         }
@@ -35,7 +35,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         {
             FileManager fileManager = new(DefaultModFileName, GetDirectories());
 
-            string result = fileManager.GetFile("NewFileName");
+            var result = fileManager.GetFile("NewFileName");
 
             _ = result.Should().NotBeNullOrWhiteSpace();
         }
@@ -46,10 +46,10 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         public void Reading_a_nonexistent_file_with_flag_not_set_does_not_create_the_file([NotNull] string fileName)
         {
             FileManager fileManager = new(DefaultModFileName, GetDirectories());
-            string fileWithPath = fileManager.GetFile(fileName);
+            var fileWithPath = fileManager.GetFile(fileName);
             DeleteFileIfExists(fileWithPath);
 
-            string result = fileManager.ReadAllText(fileWithPath, false);
+            var result = fileManager.ReadAllText(fileWithPath, false);
 
             _ = result.Should().BeEmpty();
         }
@@ -60,7 +60,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         public void Reading_a_nonexistent_file_with_flag_set_creates_the_file([NotNull] string fileName)
         {
             FileManager fileManager = new(DefaultModFileName, GetDirectories());
-            string fileWithPath = fileManager.GetFile(fileName);
+            var fileWithPath = fileManager.GetFile(fileName);
             DeleteFileIfExists(fileWithPath);
 
             _ = fileManager.ReadAllText(fileWithPath, true);
@@ -84,7 +84,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         {
             FileManager fileManager = new(DefaultModFileName, GetDirectories());
 
-            byte[] result = fileManager.ReadAllBytes(DefaultModFileName);
+            var result = fileManager.ReadAllBytes(DefaultModFileName);
 
             _ = result.Should().NotBeNull();
         }
@@ -94,7 +94,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         [NotNull]
         private static List<IDirectoryInfo> GetDirectories()
         {
-            string currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            var currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
             return
             [

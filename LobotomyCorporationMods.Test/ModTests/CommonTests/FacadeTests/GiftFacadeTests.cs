@@ -14,11 +14,11 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests.FacadeTests
         public void Abnormality_with_no_gift_returns_null_for_id()
         {
             // Arrange
-            ManagementSlot managementSlot = UnityTestExtensions.CreateManagementSlot();
+            var managementSlot = UnityTestExtensions.CreateManagementSlot();
             _ = TestExtensions.InitializeCommandWindowWithAbnormality();
 
             // Act
-            int? result = managementSlot.GetAbnormalityGiftId();
+            var result = managementSlot.GetAbnormalityGiftId();
 
             // Assert
             _ = result.Should().BeNull();
@@ -28,11 +28,11 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests.FacadeTests
         public void Abnormality_with_no_gift_returns_null_for_position()
         {
             // Arrange
-            ManagementSlot managementSlot = UnityTestExtensions.CreateManagementSlot();
+            var managementSlot = UnityTestExtensions.CreateManagementSlot();
             _ = TestExtensions.InitializeCommandWindowWithAbnormality();
 
             // Act
-            string result = managementSlot.GetAbnormalityGiftPosition();
+            var result = managementSlot.GetAbnormalityGiftPosition();
 
             // Assert
             _ = result.Should().BeNull();
@@ -42,11 +42,11 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests.FacadeTests
         public void Abnormality_with_no_gift_returns_default_value_for_attachment_type()
         {
             // Arrange
-            ManagementSlot managementSlot = UnityTestExtensions.CreateManagementSlot();
+            var managementSlot = UnityTestExtensions.CreateManagementSlot();
             _ = TestExtensions.InitializeCommandWindowWithAbnormality();
 
             // Act
-            EGOgiftAttachType result = managementSlot.GetAbnormalityGiftAttachmentType();
+            var result = managementSlot.GetAbnormalityGiftAttachmentType();
 
             // Assert
             _ = result.Should().Be(0);

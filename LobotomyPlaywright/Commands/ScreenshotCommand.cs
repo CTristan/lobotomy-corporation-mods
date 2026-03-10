@@ -14,7 +14,7 @@ namespace LobotomyPlaywright.Commands;
 /// <summary>
 /// Command to capture a screenshot of the current game state.
 /// </summary>
-internal class ScreenshotCommand
+public class ScreenshotCommand
 {
     private readonly IConfigManager _configManager;
     private readonly Func<ITcpClient> _tcpClientFactory;
@@ -185,12 +185,12 @@ internal class ScreenshotCommand
             return new ExtractDataResult(string.Empty, string.Empty, 0, string.Empty, null, 1);
         }
 
-        string filename = filenameObj.ToString() ?? string.Empty;
-        string path = responseData.TryGetValue("path", out var pathObj) ? GetStringValue(pathObj) ?? string.Empty : string.Empty;
-        long size = responseData.TryGetValue("size", out var sizeObj) && sizeObj != null
+        var filename = filenameObj.ToString() ?? string.Empty;
+        var path = responseData.TryGetValue("path", out var pathObj) ? GetStringValue(pathObj) ?? string.Empty : string.Empty;
+        var size = responseData.TryGetValue("size", out var sizeObj) && sizeObj != null
             ? GetLongValue(sizeObj)
             : 0;
-        string timestamp = responseData.TryGetValue("timestamp", out var timestampObj)
+        var timestamp = responseData.TryGetValue("timestamp", out var timestampObj)
             ? GetStringValue(timestampObj) ?? string.Empty
             : string.Empty;
 

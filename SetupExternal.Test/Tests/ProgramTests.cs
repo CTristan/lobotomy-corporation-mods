@@ -14,7 +14,7 @@ namespace SetupExternal.Test.Tests
             string[] args = ["--path", "/path/to/game"];
 
             // Act
-            (string? Path, _, _) = Program.ParseArguments(args);
+            (var Path, _, _) = Program.ParseArguments(args);
 
             // Assert
             _ = Path.Should().Be("/path/to/game");
@@ -27,7 +27,7 @@ namespace SetupExternal.Test.Tests
             string[] args = ["--path", @"C:\Games\Lobotomy Corporation"];
 
             // Act
-            (string? Path, _, _) = Program.ParseArguments(args);
+            (var Path, _, _) = Program.ParseArguments(args);
 
             // Assert
             _ = Path.Should().Be(@"C:\Games\Lobotomy Corporation");
@@ -40,7 +40,7 @@ namespace SetupExternal.Test.Tests
             string[] args = [];
 
             // Act
-            (string? Path, _, _) = Program.ParseArguments(args);
+            (var Path, _, _) = Program.ParseArguments(args);
 
             // Assert
             _ = Path.Should().BeNull();
@@ -53,7 +53,7 @@ namespace SetupExternal.Test.Tests
             string[] args = ["--other", "value"];
 
             // Act
-            (string? Path, _, _) = Program.ParseArguments(args);
+            (var Path, _, _) = Program.ParseArguments(args);
 
             // Assert
             _ = Path.Should().BeNull();
@@ -66,7 +66,7 @@ namespace SetupExternal.Test.Tests
             string[] args = ["--path"];
 
             // Act
-            (string? Path, _, _) = Program.ParseArguments(args);
+            (var Path, _, _) = Program.ParseArguments(args);
 
             // Assert
             _ = Path.Should().BeNull();
@@ -79,7 +79,7 @@ namespace SetupExternal.Test.Tests
             string[] args = ["--path", "/path", "--other", "value"];
 
             // Act
-            (string? Path, _, _) = Program.ParseArguments(args);
+            (var Path, _, _) = Program.ParseArguments(args);
 
             // Assert
             _ = Path.Should().Be("/path");
@@ -92,7 +92,7 @@ namespace SetupExternal.Test.Tests
             string[] args = ["--other", "value", "--path", "/path"];
 
             // Act
-            (string? Path, _, _) = Program.ParseArguments(args);
+            (var Path, _, _) = Program.ParseArguments(args);
 
             // Assert
             _ = Path.Should().Be("/path");
@@ -105,7 +105,7 @@ namespace SetupExternal.Test.Tests
             string[] args = ["--path", "/first", "--path", "/second"];
 
             // Act
-            (string? Path, _, _) = Program.ParseArguments(args);
+            (var Path, _, _) = Program.ParseArguments(args);
 
             // Assert
             _ = Path.Should().Be("/first");
@@ -118,7 +118,7 @@ namespace SetupExternal.Test.Tests
             string[] args = ["--PATH", "/path"];
 
             // Act
-            (string? Path, _, _) = Program.ParseArguments(args);
+            (var Path, _, _) = Program.ParseArguments(args);
 
             // Assert
             _ = Path.Should().Be("/path");

@@ -33,8 +33,8 @@ namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests
         [Fact]
         public void Class_ArmorCreature_Method_OnNotice_is_patched_correctly()
         {
-            Type patch = typeof(ArmorCreaturePatchOnNotice);
-            Type originalClass = typeof(ArmorCreature);
+            var patch = typeof(ArmorCreaturePatchOnNotice);
+            var originalClass = typeof(ArmorCreature);
             const string MethodName = nameof(ArmorCreature.OnNotice);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
@@ -43,7 +43,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests
         [Fact]
         public void Class_ArmorCreature_Method_OnNotice_logs_exceptions()
         {
-            Mock<ILogger> mockLogger = TestExtensions.GetMockLogger();
+            var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
             ArmorCreature armorCreature = new();
 
@@ -60,8 +60,8 @@ namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests
         [Fact]
         public void Class_CustomizingWindow_Method_SetAgentStatBonus_is_patched_correctly()
         {
-            Type patch = typeof(CustomizingWindowPatchSetAgentStatBonus);
-            Type originalClass = typeof(CustomizingWindow);
+            var patch = typeof(CustomizingWindowPatchSetAgentStatBonus);
+            var originalClass = typeof(CustomizingWindow);
             const string MethodName = nameof(CustomizingWindow.SetAgentStatBonus);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
@@ -70,7 +70,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests
         [Fact]
         public void Class_CustomizingWindow_Method_SetAgentStatBonus_logs_exceptions()
         {
-            Mock<ILogger> mockLogger = TestExtensions.GetMockLogger();
+            var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
             const int TwoLogs = 2;
             const int ThreeLogs = 3;

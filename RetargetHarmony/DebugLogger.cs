@@ -71,8 +71,8 @@ namespace RetargetHarmony
             string configPath;
 
             // First check the patcher's own directory (assembly location)
-            string assemblyDir = ConfigDirectoryOverride ?? GetAssemblyDirectory();
-            string assemblyConfigPath = Path.Combine(assemblyDir, ConfigFileName);
+            var assemblyDir = ConfigDirectoryOverride ?? GetAssemblyDirectory();
+            var assemblyConfigPath = Path.Combine(assemblyDir, ConfigFileName);
 
             if (File.Exists(assemblyConfigPath))
             {
@@ -120,7 +120,7 @@ namespace RetargetHarmony
             }
             else if (s_debugEnabled)
             {
-                string logDir = Path.Combine(assemblyDir, LogFolderName);
+                var logDir = Path.Combine(assemblyDir, LogFolderName);
                 if (!Directory.Exists(logDir))
                 {
                     _ = Directory.CreateDirectory(logDir);
@@ -240,9 +240,9 @@ namespace RetargetHarmony
             // Check if we should log based on level
             // Trace and Debug only log when debug is explicitly enabled
             // Info, Warn, Error always go to BepInEx (existing behavior)
-            bool shouldLogToFile = s_debugEnabled && level >= s_minLevel;
-            bool shouldLogToBepInEx = level >= LogLevel.Info;
-            bool shouldLogToUnity = s_debugEnabled && level >= s_minLevel && s_unityAvailable;
+            var shouldLogToFile = s_debugEnabled && level >= s_minLevel;
+            var shouldLogToBepInEx = level >= LogLevel.Info;
+            var shouldLogToUnity = s_debugEnabled && level >= s_minLevel && s_unityAvailable;
 
             if (shouldLogToFile)
             {
@@ -269,8 +269,8 @@ namespace RetargetHarmony
 
             try
             {
-                string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
-                string logLine = $"[{timestamp}] [{level.ToString().ToUpperInvariant()}] {message}{Environment.NewLine}";
+                var timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
+                var logLine = $"[{timestamp}] [{level.ToString().ToUpperInvariant()}] {message}{Environment.NewLine}";
                 lock (s_fileLock)
                 {
                     File.AppendAllText(s_logFilePath, logLine, Encoding.UTF8);
@@ -345,25 +345,25 @@ namespace RetargetHarmony
         {
             try
             {
-                string[] lines = File.ReadAllLines(configPath);
-                foreach (string line in lines)
+                var lines = File.ReadAllLines(configPath);
+                foreach (var line in lines)
                 {
                     // Skip comments and empty lines
-                    string trimmed = line.Trim();
+                    var trimmed = line.Trim();
                     if (string.IsNullOrEmpty(trimmed) || trimmed.StartsWith("#", StringComparison.Ordinal))
                     {
                         continue;
                     }
 
                     // Parse key=value
-                    int equalsIndex = trimmed.IndexOf('=');
+                    var equalsIndex = trimmed.IndexOf('=');
                     if (equalsIndex <= 0)
                     {
                         continue;
                     }
 
-                    string key = trimmed.Substring(0, equalsIndex).Trim();
-                    string value = trimmed.Substring(equalsIndex + 1).Trim();
+                    var key = trimmed.Substring(0, equalsIndex).Trim();
+                    var value = trimmed.Substring(equalsIndex + 1).Trim();
 
                     if (key.Equals("LogLevel", StringComparison.OrdinalIgnoreCase))
                     {
@@ -393,7 +393,7 @@ namespace RetargetHarmony
 
         private static string GetAssemblyDirectory()
         {
-            string location = Assembly.GetExecutingAssembly().Location;
+            var location = Assembly.GetExecutingAssembly().Location;
 
             // Handle cases where location might be empty (e.g., dynamic assembly)
             if (string.IsNullOrEmpty(location))
@@ -402,7 +402,7 @@ namespace RetargetHarmony
             }
 
             // Find the directory part of the path
-            int lastSep = Math.Max(location.LastIndexOf('/'), location.LastIndexOf('\\'));
+            var lastSep = Math.Max(location.LastIndexOf('/'), location.LastIndexOf('\\'));
             return lastSep > 0 ? location.Substring(0, lastSep) : Environment.CurrentDirectory;
         }
     }

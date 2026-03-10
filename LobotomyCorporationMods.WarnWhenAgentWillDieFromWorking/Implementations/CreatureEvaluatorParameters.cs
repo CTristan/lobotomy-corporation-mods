@@ -7,7 +7,7 @@ using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations
 {
-    internal sealed class CreatureEvaluatorParameters
+    public sealed class CreatureEvaluatorParameters
     {
         internal CreatureEvaluatorParameters(IAgentData agent,
             ICreatureData creature,

@@ -443,7 +443,7 @@ namespace LobotomyPlaywright.Commands
                 { " Realization", 3 }
             };
 
-            if (workTypes.TryGetValue(workType, out int value))
+            if (workTypes.TryGetValue(workType, out var value))
             {
                 return value;
             }
@@ -465,7 +465,7 @@ namespace LobotomyPlaywright.Commands
                 { "MALKUTH", 6 }
             };
 
-            if (sefiras.TryGetValue(sefira, out int value))
+            if (sefiras.TryGetValue(sefira, out var value))
             {
                 return value;
             }

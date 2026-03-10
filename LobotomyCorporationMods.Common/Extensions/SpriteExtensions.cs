@@ -9,7 +9,7 @@ namespace LobotomyCorporationMods.Common.Extensions
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    internal static class SpriteExtensions
+    public static class SpriteExtensions
     {
         internal static bool IsUnityNull(this Sprite sprite)
         {

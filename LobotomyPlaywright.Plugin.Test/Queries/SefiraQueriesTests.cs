@@ -25,7 +25,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
         {
             // Act - SefiraManager.instance creates a new instance if null
             // The SefiraManager always has data (the Sefira departments)
-            List<SefiraData> sefiras = SefiraQueries.ListSefira();
+            var sefiras = SefiraQueries.ListSefira();
 
             // Assert - Should return data (even if empty agent/creature lists)
             _ = sefiras.Should().NotBeNull();
@@ -37,7 +37,7 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
         public void GetSefira_with_valid_sefira_enum_returns_data()
         {
             // Act - Get a valid Sefira (MALKUT)
-            SefiraData sefira = SefiraQueries.GetSefira(SefiraEnum.MALKUT);
+            var sefira = SefiraQueries.GetSefira(SefiraEnum.MALKUT);
 
             // Assert - Should return data
             _ = sefira.Should().NotBeNull();

@@ -9,7 +9,7 @@ using LobotomyCorporationMods.Common.Implementations;
 
 namespace LobotomyCorporationMods.Common.Extensions
 {
-    internal static class TypeExtensions
+    public static class TypeExtensions
     {
         /// <summary>
         ///     Fastest and safest way to determine if a type inherits a base class or implements an interface. Just remember that you need to check that the parent is assignable from

@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces
 {
-    internal interface IGift
+    public interface IGift
     {
         List<IAgent> GetAgents();
         string GetName();

@@ -2,7 +2,7 @@
 
 namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Constants
 {
-    internal static class LocalizationIds
+    public static class LocalizationIds
     {
         internal const string AgentColorCode = "NotifyWhenAgentReceivesGift_AgentColorCode";
         internal const string GiftColorCode = "NotifyWhenAgentReceivesGift_GiftColorCode";

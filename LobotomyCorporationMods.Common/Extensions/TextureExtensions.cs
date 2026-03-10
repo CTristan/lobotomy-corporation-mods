@@ -9,7 +9,7 @@ namespace LobotomyCorporationMods.Common.Extensions
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    internal static class TextureExtensions
+    public static class TextureExtensions
     {
         internal static bool IsUnityNull(this Texture texture)
         {

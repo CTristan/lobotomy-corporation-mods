@@ -9,7 +9,7 @@ namespace SetupExternal
     /// <summary>
     /// Wraps ilspycmd invocation to decompile Assembly-CSharp.dll.
     /// </summary>
-    internal static class Decompiler
+    public static class Decompiler
     {
         private const string DecompiledDirectoryName = "decompiled";
         private static readonly string[] LineSeparators = ["\r", "\n"];
@@ -30,7 +30,7 @@ namespace SetupExternal
         /// <returns>True if decompilation succeeded, false otherwise.</returns>
         public static bool DecompileDll(string externalPath, string dllName)
         {
-            string dllPath = Path.Combine(
+            var dllPath = Path.Combine(
                 externalPath,
                 "LobotomyCorp_Data",
                 "Managed",
@@ -46,8 +46,8 @@ namespace SetupExternal
                 return false;
             }
 
-            string folderName = Path.GetFileNameWithoutExtension(dllName);
-            string decompiledDir = Path.Combine(externalPath, DecompiledDirectoryName, folderName);
+            var folderName = Path.GetFileNameWithoutExtension(dllName);
+            var decompiledDir = Path.Combine(externalPath, DecompiledDirectoryName, folderName);
             DebugLog($"Decompilation target directory: {decompiledDir}");
 
             // Clear existing decompiled directory if it exists
@@ -110,13 +110,13 @@ namespace SetupExternal
             }
 
             process.WaitForExit();
-            int exitCode = process.ExitCode;
+            var exitCode = process.ExitCode;
 
             DebugLog($"dotnet tool restore exit code: {exitCode}");
 
             if (exitCode != 0)
             {
-                string error = process.StandardError.ReadToEnd();
+                var error = process.StandardError.ReadToEnd();
                 Console.Error.WriteLine($"dotnet tool restore failed: {error}");
                 DebugLog($"dotnet tool restore error: {error}");
                 return false;
@@ -151,11 +151,11 @@ namespace SetupExternal
             }
 
             // Read output
-            string output = process.StandardOutput.ReadToEnd();
-            string error = process.StandardError.ReadToEnd();
+            var output = process.StandardOutput.ReadToEnd();
+            var error = process.StandardError.ReadToEnd();
 
             process.WaitForExit();
-            int exitCode = process.ExitCode;
+            var exitCode = process.ExitCode;
 
             if (exitCode != 0)
             {
@@ -172,8 +172,8 @@ namespace SetupExternal
             // Print summary if available
             if (!string.IsNullOrWhiteSpace(output))
             {
-                string[] lines = output.Split(LineSeparators, StringSplitOptions.RemoveEmptyEntries);
-                foreach (string line in lines)
+                var lines = output.Split(LineSeparators, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var line in lines)
                 {
                     if (line.Contains("files", StringComparison.OrdinalIgnoreCase) ||
                         line.Contains("classes", StringComparison.OrdinalIgnoreCase))

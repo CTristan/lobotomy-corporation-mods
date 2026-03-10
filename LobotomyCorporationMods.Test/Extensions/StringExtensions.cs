@@ -4,13 +4,13 @@ using JetBrains.Annotations;
 
 namespace LobotomyCorporationMods.Test.Extensions
 {
-    internal static class StringExtensions
+    public static class StringExtensions
     {
         [NotNull]
         internal static string ShortenBy([NotNull] this string value,
             int lengthToRemove)
         {
-            int length = value.Length;
+            var length = value.Length;
 
             return value[..(length - lengthToRemove)];
         }

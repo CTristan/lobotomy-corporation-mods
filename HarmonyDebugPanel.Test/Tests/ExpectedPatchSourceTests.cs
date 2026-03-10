@@ -27,9 +27,9 @@ namespace HarmonyDebugPanel.Test.Tests
         {
             ExpectedPatchSource sut = new();
             List<string> debugInfo = [];
-            string? patchAssemblyName = typeof(ExpectedPatchSourceTests).Assembly.GetName().Name;
+            var patchAssemblyName = typeof(ExpectedPatchSourceTests).Assembly.GetName().Name;
 
-            IList<ExpectedPatchInfo> patches = sut.GetExpectedPatches(debugInfo);
+            var patches = sut.GetExpectedPatches(debugInfo);
 
             _ = patches.Should().Contain(p =>
                 p.PatchAssembly == patchAssemblyName &&
@@ -46,9 +46,9 @@ namespace HarmonyDebugPanel.Test.Tests
         {
             ExpectedPatchSource sut = new();
             List<string> debugInfo = [];
-            string? patchAssemblyName = typeof(ExpectedPatchSourceTests).Assembly.GetName().Name;
+            var patchAssemblyName = typeof(ExpectedPatchSourceTests).Assembly.GetName().Name;
 
-            IList<ExpectedPatchInfo> patches = sut.GetExpectedPatches(debugInfo);
+            var patches = sut.GetExpectedPatches(debugInfo);
 
             _ = patches.Should().Contain(p =>
                 p.PatchAssembly == patchAssemblyName &&
@@ -63,9 +63,9 @@ namespace HarmonyDebugPanel.Test.Tests
         {
             ExpectedPatchSource sut = new();
             List<string> debugInfo = [];
-            string? patchAssemblyName = typeof(ExpectedPatchSourceTests).Assembly.GetName().Name;
+            var patchAssemblyName = typeof(ExpectedPatchSourceTests).Assembly.GetName().Name;
 
-            IList<ExpectedPatchInfo> patches = sut.GetExpectedPatches(debugInfo);
+            var patches = sut.GetExpectedPatches(debugInfo);
 
             _ = patches.Should().Contain(p =>
                 p.PatchAssembly == patchAssemblyName &&
@@ -80,9 +80,9 @@ namespace HarmonyDebugPanel.Test.Tests
         {
             ExpectedPatchSource sut = new();
             List<string> debugInfo = [];
-            string? patchAssemblyName = typeof(ExpectedPatchSourceTests).Assembly.GetName().Name;
+            var patchAssemblyName = typeof(ExpectedPatchSourceTests).Assembly.GetName().Name;
 
-            IList<ExpectedPatchInfo> patches = sut.GetExpectedPatches(debugInfo);
+            var patches = sut.GetExpectedPatches(debugInfo);
 
             _ = patches.Should().Contain(p =>
                 p.PatchAssembly == patchAssemblyName &&
@@ -101,7 +101,7 @@ namespace HarmonyDebugPanel.Test.Tests
             // This test verifies that reflection errors are logged
             // In practice, if an assembly throws ReflectionTypeLoadException during GetTypes(),
             // the error should be captured in debugInfo without crashing
-            IList<ExpectedPatchInfo> patches = sut.GetExpectedPatches(debugInfo);
+            var patches = sut.GetExpectedPatches(debugInfo);
 
             // Should have patches from this test assembly despite potential failures in other assemblies
             _ = patches.Should().NotBeEmpty();
@@ -118,7 +118,7 @@ namespace HarmonyDebugPanel.Test.Tests
 
             // This test assembly includes the ExpectedPatchSourceMalformedPatch class
             // which has intentionally malformed HarmonyPatch attributes
-            IList<ExpectedPatchInfo> patches = sut.GetExpectedPatches(debugInfo);
+            var patches = sut.GetExpectedPatches(debugInfo);
 
             // Should not crash, just skip malformed patches
             _ = patches.Should().NotBeEmpty();
@@ -136,7 +136,7 @@ namespace HarmonyDebugPanel.Test.Tests
             ExpectedPatchSource sut = new();
             List<string> debugInfo = [];
 
-            IList<ExpectedPatchInfo> patches = sut.GetExpectedPatches(debugInfo);
+            var patches = sut.GetExpectedPatches(debugInfo);
 
             // Verify debug info contains reflection phase information
             _ = debugInfo.Should().Contain(entry => entry.Contains("=== Phase 1: Reflection-based scan ===", StringComparison.Ordinal));
@@ -153,16 +153,16 @@ namespace HarmonyDebugPanel.Test.Tests
             ExpectedPatchSource sut = new();
             List<string> debugInfo = [];
 
-            IList<ExpectedPatchInfo> patches = sut.GetExpectedPatches(debugInfo);
+            var patches = sut.GetExpectedPatches(debugInfo);
 
             // If any exceptions were suppressed, they should be reported
             // (This will be empty in successful runs, but the format should be consistent)
-            string? exceptionReport = debugInfo.Find(entry => entry.Contains("exceptions were suppressed", StringComparison.Ordinal));
+            var exceptionReport = debugInfo.Find(entry => entry.Contains("exceptions were suppressed", StringComparison.Ordinal));
             _ = (exceptionReport?.Should().Match("WARNING: * exceptions were suppressed during patch detection.*"));
         }
     }
 
-    internal sealed class ExpectedPatchSourceTestTarget
+    public sealed class ExpectedPatchSourceTestTarget
     {
         public static void ClassLevelTarget()
         {
@@ -182,7 +182,7 @@ namespace HarmonyDebugPanel.Test.Tests
     }
 
     [HarmonyPatch(typeof(ExpectedPatchSourceTestTarget), nameof(ExpectedPatchSourceTestTarget.ClassLevelTarget))]
-    internal static class ExpectedPatchSourceClassLevelPatch
+    public static class ExpectedPatchSourceClassLevelPatch
     {
         public static void Prefix()
         {
@@ -190,7 +190,7 @@ namespace HarmonyDebugPanel.Test.Tests
     }
 
     [HarmonyPatch(typeof(ExpectedPatchSourceTestTarget), nameof(ExpectedPatchSourceTestTarget.AttributeTarget))]
-    internal static class ExpectedPatchSourceCustomMethodNamePatch
+    public static class ExpectedPatchSourceCustomMethodNamePatch
     {
         [HarmonyPostfix]
         public static void CustomNamedPostfix()
@@ -200,7 +200,7 @@ namespace HarmonyDebugPanel.Test.Tests
 
     [HarmonyPatch(typeof(ExpectedPatchSourceTestTarget))]
     [HarmonyPatch(nameof(ExpectedPatchSourceTestTarget.StackedClassLevelTarget))]
-    internal static class ExpectedPatchSourceStackedClassAttributesPatch
+    public static class ExpectedPatchSourceStackedClassAttributesPatch
     {
         public static void Postfix()
         {
@@ -208,7 +208,7 @@ namespace HarmonyDebugPanel.Test.Tests
     }
 
     [HarmonyPatch(typeof(ExpectedPatchSourceTestTarget))]
-    internal static class ExpectedPatchSourceMethodLevelTargetPatch
+    public static class ExpectedPatchSourceMethodLevelTargetPatch
     {
         [HarmonyPatch(nameof(ExpectedPatchSourceTestTarget.MethodLevelTarget))]
         [HarmonyPrefix]
@@ -219,7 +219,7 @@ namespace HarmonyDebugPanel.Test.Tests
 
     // Test class with intentionally malformed HarmonyPatch attributes to test error handling
     [HarmonyPatch] // Missing target type and method
-    internal static class ExpectedPatchSourceMalformedPatch
+    public static class ExpectedPatchSourceMalformedPatch
     {
         [HarmonyPatch] // Malformed - no arguments
         public static void MalformedPrefix1()

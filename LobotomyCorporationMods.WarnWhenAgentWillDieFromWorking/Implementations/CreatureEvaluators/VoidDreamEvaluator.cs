@@ -4,7 +4,7 @@ using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators
 {
-    internal sealed class VoidDreamEvaluator : CreatureEvaluator
+    public sealed class VoidDreamEvaluator : CreatureEvaluator
     {
         internal VoidDreamEvaluator(IAgentData agent,
             ICreatureData creature,

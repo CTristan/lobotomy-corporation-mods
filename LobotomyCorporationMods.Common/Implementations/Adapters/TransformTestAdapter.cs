@@ -12,7 +12,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    internal sealed class TransformTestAdapter : ComponentTestAdapter<Transform>, ITransformTestAdapter
+    public sealed class TransformTestAdapter : ComponentTestAdapter<Transform>, ITransformTestAdapter
     {
         internal TransformTestAdapter([NotNull] Transform gameObject) : base(gameObject)
         {

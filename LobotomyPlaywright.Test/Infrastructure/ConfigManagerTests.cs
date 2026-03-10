@@ -3,6 +3,9 @@
 using System;
 using System.IO;
 using AwesomeAssertions;
+using LobotomyPlaywright.Implementations.Configuration;
+using LobotomyPlaywright.Interfaces.Configuration;
+using LobotomyPlaywright.Interfaces.System;
 using Moq;
 using Xunit;
 
@@ -23,7 +26,7 @@ namespace LobotomyPlaywright.Tests.Infrastructure
         public void Load_WhenFileExists_ReturnsConfig()
         {
             // Arrange
-            string json = /*lang=json,strict*/ @"{
+            var json = /*lang=json,strict*/ @"{
   ""gamePath"": ""/path/to/game"",
   ""crossoverBottle"": ""TestBottle"",
   ""tcpPort"": 8484,

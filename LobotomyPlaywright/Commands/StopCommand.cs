@@ -18,7 +18,7 @@ namespace LobotomyPlaywright.Commands;
 /// <summary>
 /// Command to stop the game with graceful TCP shutdown or force-kill.
 /// </summary>
-internal class StopCommand
+public class StopCommand
 {
     private readonly IConfigManager _configManager;
     private readonly ProcessManager _processManager;

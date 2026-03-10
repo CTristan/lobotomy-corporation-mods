@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 
 namespace LobotomyCorporationMods.Common.Implementations
 {
-    internal static class DefaultLocalizedValues
+    public static class DefaultLocalizedValues
     {
         private static readonly Dictionary<string, string> s_defaultLocalizedValuesDictionary = new Dictionary<string, string>();
 

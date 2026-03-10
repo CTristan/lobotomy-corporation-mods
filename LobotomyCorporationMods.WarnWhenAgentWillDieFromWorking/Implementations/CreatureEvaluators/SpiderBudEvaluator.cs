@@ -4,7 +4,7 @@ using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators
 {
-    internal sealed class SpiderBudEvaluator : CreatureEvaluator
+    public sealed class SpiderBudEvaluator : CreatureEvaluator
     {
         internal SpiderBudEvaluator(IAgentData agent,
             ICreatureData creature,

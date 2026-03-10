@@ -11,18 +11,18 @@ namespace HarmonyDebugPanel.Implementations.Collectors
     {
         public IEnumerable<AssemblyInspectionInfo> GetAssemblies()
         {
-            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
             List<AssemblyInspectionInfo> infos = new(assemblies.Length);
 
-            foreach (Assembly assembly in assemblies)
+            foreach (var assembly in assemblies)
             {
                 if (assembly == null)
                 {
                     continue;
                 }
 
-                AssemblyName assemblyName = assembly.GetName();
-                string version = assemblyName.Version != null ? assemblyName.Version.ToString() : "Unknown";
+                var assemblyName = assembly.GetName();
+                var version = assemblyName.Version != null ? assemblyName.Version.ToString() : "Unknown";
                 string location;
 
                 try

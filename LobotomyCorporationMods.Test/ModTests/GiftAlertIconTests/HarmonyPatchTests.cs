@@ -21,8 +21,8 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests
         [Fact]
         public void Class_ManagementSlot_Method_SetUi_is_patched_correctly()
         {
-            Type patch = typeof(ManagementSlotPatchSetUi);
-            Type originalClass = typeof(ManagementSlot);
+            var patch = typeof(ManagementSlotPatchSetUi);
+            var originalClass = typeof(ManagementSlot);
             const string MethodName = nameof(ManagementSlot.SetUI);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
@@ -31,12 +31,12 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests
         [Fact]
         public void Class_ManagementSlot_Method_SetUi_logs_exceptions()
         {
-            Mock<ILogger> mockLogger = TestExtensions.GetMockLogger();
+            var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
             // Forcing null arguments to test exception logging.
             // ReSharper disable AssignNullToNotNullAttribute
-            int times = 1;
+            var times = 1;
             Action action = () => ManagementSlotPatchSetUi.Postfix(null, UnityTestExtensions.CreateUnitModel());
             mockLogger.VerifyArgumentNullException(action, Times.Exactly(times++));
             action = () => ManagementSlotPatchSetUi.Postfix(UnityTestExtensions.CreateManagementSlot(), null);

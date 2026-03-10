@@ -3,6 +3,10 @@
 using System.Collections.Generic;
 using System.IO;
 using AwesomeAssertions;
+using LobotomyPlaywright.Commands;
+using LobotomyPlaywright.Infrastructure;
+using LobotomyPlaywright.Interfaces.Configuration;
+using LobotomyPlaywright.Interfaces.System;
 using Moq;
 using Xunit;
 

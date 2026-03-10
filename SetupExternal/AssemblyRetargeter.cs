@@ -15,7 +15,7 @@ namespace SetupExternal
     /// which causes MSBuild to fail with warning MSB3258 and CS0246 errors.
     /// This class consolidates all mscorlib references to v2.0.0.0.
     /// </summary>
-    internal static class AssemblyRetargeter
+    public static class AssemblyRetargeter
     {
         private static readonly Version TargetVersion = new(2, 0, 0, 0);
 
@@ -34,7 +34,7 @@ namespace SetupExternal
 
             try
             {
-                string fileName = Path.GetFileName(dllPath);
+                var fileName = Path.GetFileName(dllPath);
                 Program.DebugLog($"[Retarget] Starting retarget check for {fileName}");
 
                 // Set up assembly resolver to find dependencies in the same directory
@@ -49,7 +49,7 @@ namespace SetupExternal
                     AssemblyResolver = resolver
                 };
 
-                bool modified = false;
+                var modified = false;
                 using (AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(dllPath, readerParameters))
                 {
                     List<AssemblyNameReference> mscorlibRefs = [.. assembly.MainModule.AssemblyReferences.Where(r => r.Name.Equals("mscorlib", StringComparison.OrdinalIgnoreCase))];
@@ -61,7 +61,7 @@ namespace SetupExternal
                     }
 
                     Program.DebugLog($"[Retarget] Found {mscorlibRefs.Count} mscorlib reference(s) in {fileName}");
-                    foreach (AssemblyNameReference? asmRef in mscorlibRefs)
+                    foreach (var asmRef in mscorlibRefs)
                     {
                         Program.DebugLog($"[Retarget]   - mscorlib {asmRef.Version}");
                     }
@@ -72,9 +72,9 @@ namespace SetupExternal
                         Program.DebugLog($"[Retarget] Found {mscorlibRefs.Count} mscorlib references in {fileName}. Consolidating...");
 
                         // Log diagnostic information before the fix
-                        int typeRefsWithWrongScope = 0;
+                        var typeRefsWithWrongScope = 0;
                         List<TypeReference> allTypeRefs = [.. assembly.MainModule.GetTypeReferences()];
-                        foreach (TypeReference? typeRef in allTypeRefs)
+                        foreach (var typeRef in allTypeRefs)
                         {
                             if (typeRef.Scope != null && !mscorlibRefs.Contains(typeRef.Scope))
                             {
@@ -87,11 +87,11 @@ namespace SetupExternal
                         }
 
                         // Log some specific TypeRef scopes for debugging
-                        TypeReference? systemObjectTypeRef = allTypeRefs
+                        var systemObjectTypeRef = allTypeRefs
                             .FirstOrDefault(tr => tr.FullName == "System.Object");
                         if (systemObjectTypeRef != null)
                         {
-                            string scopeName = systemObjectTypeRef.Scope is AssemblyNameReference asmRef
+                            var scopeName = systemObjectTypeRef.Scope is AssemblyNameReference asmRef
                                 ? $"{asmRef.Name} {asmRef.Version}"
                                 : systemObjectTypeRef.Scope?.GetType().Name ?? "null";
                             Program.DebugLog($"[Retarget] System.Object TypeRef Scope: {scopeName}");
@@ -100,26 +100,26 @@ namespace SetupExternal
                         // Log the TypeRef at index 464 (token 0x010001d0 from the error message)
                         if (allTypeRefs.Count > 464)
                         {
-                            TypeReference typeRef464 = allTypeRefs[464];
-                            string scopeName464 = typeRef464.Scope is AssemblyNameReference asmRef
+                            var typeRef464 = allTypeRefs[464];
+                            var scopeName464 = typeRef464.Scope is AssemblyNameReference asmRef
                                 ? $"{asmRef.Name} {asmRef.Version}"
                                 : typeRef464.Scope?.GetType().Name ?? "null";
                             Program.DebugLog($"[Retarget] TypeRef at index 464 (token 0x010001d0): {typeRef464.FullName}, Scope: {scopeName464}");
                         }
 
                         // Keep the first one and remove the rest
-                        AssemblyNameReference keepRef = mscorlibRefs[0];
+                        var keepRef = mscorlibRefs[0];
                         List<AssemblyNameReference> refsToRemove = [.. mscorlibRefs.Skip(1)];
 
-                        int typeRescoped = 0;
-                        int memberRescoped = 0;
-                        int exportedTypeRescoped = 0;
+                        var typeRescoped = 0;
+                        var memberRescoped = 0;
+                        var exportedTypeRescoped = 0;
 
                         // Re-scope TypeRefs before removing duplicate mscorlib references
-                        foreach (AssemblyNameReference? removeRef in refsToRemove)
+                        foreach (var removeRef in refsToRemove)
                         {
                             // Re-scope TypeRefs - compare by assembly name and version
-                            foreach (TypeReference? typeRef in assembly.MainModule.GetTypeReferences())
+                            foreach (var typeRef in assembly.MainModule.GetTypeReferences())
                             {
                                 if (typeRef.Scope is AssemblyNameReference scopeAsmRef &&
                                     scopeAsmRef.Name == removeRef.Name &&
@@ -131,7 +131,7 @@ namespace SetupExternal
                             }
 
                             // Re-scope MemberRefs
-                            foreach (MemberReference? memberRef in assembly.MainModule.GetMemberReferences())
+                            foreach (var memberRef in assembly.MainModule.GetMemberReferences())
                             {
                                 if (memberRef.DeclaringType?.Scope is AssemblyNameReference scopeAsmRef &&
                                     scopeAsmRef.Name == removeRef.Name &&
@@ -143,7 +143,7 @@ namespace SetupExternal
                             }
 
                             // Re-scope ExportedTypes
-                            foreach (ExportedType? exportedType in assembly.MainModule.ExportedTypes)
+                            foreach (var exportedType in assembly.MainModule.ExportedTypes)
                             {
                                 if (exportedType.Scope is AssemblyNameReference scopeAsmRef &&
                                     scopeAsmRef.Name == removeRef.Name &&
@@ -165,22 +165,22 @@ namespace SetupExternal
                         }
 
                         // Verify System.Object TypeRef scope after re-scoping
-                        TypeReference? systemObjectTypeRefAfter = assembly.MainModule.GetTypeReferences()
+                        var systemObjectTypeRefAfter = assembly.MainModule.GetTypeReferences()
                             .FirstOrDefault(tr => tr.FullName == "System.Object");
                         if (systemObjectTypeRefAfter != null)
                         {
-                            string scopeNameAfter = systemObjectTypeRefAfter.Scope is AssemblyNameReference asmRef
+                            var scopeNameAfter = systemObjectTypeRefAfter.Scope is AssemblyNameReference asmRef
                                 ? $"{asmRef.Name} {asmRef.Version}"
                                 : systemObjectTypeRefAfter.Scope?.GetType().Name ?? "null";
                             Program.DebugLog($"[Retarget] System.Object TypeRef Scope AFTER re-scoping: {scopeNameAfter}");
                         }
 
                         // Verify System.String TypeRef scope after re-scoping (token 0x010001d0)
-                        TypeReference? systemStringTypeRefAfter = assembly.MainModule.GetTypeReferences()
+                        var systemStringTypeRefAfter = assembly.MainModule.GetTypeReferences()
                             .FirstOrDefault(tr => tr.FullName == "System.String");
                         if (systemStringTypeRefAfter != null)
                         {
-                            string scopeNameAfter = systemStringTypeRefAfter.Scope is AssemblyNameReference asmRef
+                            var scopeNameAfter = systemStringTypeRefAfter.Scope is AssemblyNameReference asmRef
                                 ? $"{asmRef.Name} {asmRef.Version}"
                                 : systemStringTypeRefAfter.Scope?.GetType().Name ?? "null";
                             Program.DebugLog($"[Retarget] System.String TypeRef Scope AFTER re-scoping: {scopeNameAfter}");
@@ -197,7 +197,7 @@ namespace SetupExternal
                     else
                     {
                         // Single mscorlib reference, check if it needs a version downgrade
-                        AssemblyNameReference mscorlibRef = mscorlibRefs[0];
+                        var mscorlibRef = mscorlibRefs[0];
                         if (mscorlibRef.Version != TargetVersion)
                         {
                             Program.DebugLog($"[Retarget] Downgrading mscorlib reference in {fileName} from {mscorlibRef.Version} to {TargetVersion}");
@@ -208,7 +208,7 @@ namespace SetupExternal
 
                     if (modified)
                     {
-                        string tempPath = dllPath + ".tmp";
+                        var tempPath = dllPath + ".tmp";
                         try
                         {
                             assembly.Write(tempPath);
@@ -226,7 +226,7 @@ namespace SetupExternal
 
                 if (modified)
                 {
-                    string tempPath = dllPath + ".tmp";
+                    var tempPath = dllPath + ".tmp";
                     if (File.Exists(tempPath))
                     {
                         File.Delete(dllPath);

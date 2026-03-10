@@ -21,8 +21,8 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         [Fact]
         public void Class_AgentSlot_Method_SetFilter_is_patched_correctly()
         {
-            Type patch = typeof(AgentSlotPatchSetFilter);
-            Type originalClass = typeof(AgentSlot);
+            var patch = typeof(AgentSlotPatchSetFilter);
+            var originalClass = typeof(AgentSlot);
             const string MethodName = nameof(AgentSlot.SetFilter);
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
@@ -31,7 +31,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         [Fact]
         public void Class_AgentSlot_Method_SetFilter_logs_exceptions()
         {
-            Mock<ILogger> mockLogger = TestExtensions.GetMockLogger();
+            var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
             static void Action()

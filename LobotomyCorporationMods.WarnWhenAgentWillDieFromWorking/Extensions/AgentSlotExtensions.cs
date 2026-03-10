@@ -15,7 +15,7 @@ using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
 {
-    internal static class AgentSlotExtensions
+    public static class AgentSlotExtensions
     {
         internal static bool CheckIfWorkWillKillAgent([NotNull] this AgentSlot agentSlot,
             [NotNull] CommandWindow.CommandWindow commandWindow,
@@ -23,8 +23,8 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
             IBeautyBeastAnimTestAdapter beautyBeastAnimTestAdapter,
             IYggdrasilAnimTestAdapter yggdrasilAnimTestAdapter)
         {
-            AgentModel agent = agentSlot.CurrentAgent;
-            ICreatureEvaluator evaluator = commandWindow.GetCreatureEvaluator(agent, evaluators, beautyBeastAnimTestAdapter, yggdrasilAnimTestAdapter);
+            var agent = agentSlot.CurrentAgent;
+            var evaluator = commandWindow.GetCreatureEvaluator(agent, evaluators, beautyBeastAnimTestAdapter, yggdrasilAnimTestAdapter);
 
             return evaluator.WillAgentDie();
         }

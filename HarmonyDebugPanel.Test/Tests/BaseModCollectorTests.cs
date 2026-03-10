@@ -29,7 +29,7 @@ namespace HarmonyDebugPanel.Test.Tests
 
             BaseModCollector collector = new(patchSource, new HarmonyVersionClassifier());
 
-            IList<ModInfo> mods = collector.Collect();
+            var mods = collector.Collect();
 
             _ = mods.Should().HaveCount(1);
             _ = mods[0].Name.Should().Be("ModAssembly");
@@ -59,7 +59,7 @@ namespace HarmonyDebugPanel.Test.Tests
 
             BaseModCollector collector = new(patchSource, new HarmonyVersionClassifier());
 
-            IList<ModInfo> mods = collector.Collect();
+            var mods = collector.Collect();
 
             _ = mods.Should().BeEmpty();
         }
@@ -100,7 +100,7 @@ namespace HarmonyDebugPanel.Test.Tests
 
             BaseModCollector collector = new(patchSource, new HarmonyVersionClassifier());
 
-            IList<ModInfo> mods = collector.Collect();
+            var mods = collector.Collect();
 
             _ = mods.Should().HaveCount(1);
             _ = mods[0].Name.Should().Be("ModAssembly");
@@ -114,7 +114,7 @@ namespace HarmonyDebugPanel.Test.Tests
 
             BaseModCollector collector = new(patchSource, new HarmonyVersionClassifier());
 
-            IList<ModInfo> mods = collector.Collect();
+            var mods = collector.Collect();
 
             _ = mods.Should().BeEmpty();
         }
@@ -164,7 +164,7 @@ namespace HarmonyDebugPanel.Test.Tests
 
             BaseModCollector collector = new(patchSource, new HarmonyVersionClassifier());
 
-            IList<ModInfo> mods = collector.Collect();
+            var mods = collector.Collect();
 
             _ = mods.Should().BeEmpty();
         }
@@ -196,7 +196,7 @@ namespace HarmonyDebugPanel.Test.Tests
 
             BaseModCollector collector = new(patchSource, new HarmonyVersionClassifier());
 
-            IList<ModInfo> mods = collector.Collect();
+            var mods = collector.Collect();
 
             _ = mods.Should().HaveCount(2);
             _ = mods.Should().ContainSingle(m => m.Name == "Mod1" && m.Version == "1.0.0");
@@ -221,7 +221,7 @@ namespace HarmonyDebugPanel.Test.Tests
 
             BaseModCollector collector = new(patchSource, new HarmonyVersionClassifier());
 
-            IList<ModInfo> mods = collector.Collect();
+            var mods = collector.Collect();
 
             _ = mods.Should().BeEmpty();
         }

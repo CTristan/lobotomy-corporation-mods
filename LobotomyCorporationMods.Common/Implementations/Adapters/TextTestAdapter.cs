@@ -16,7 +16,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    internal sealed class TextTestAdapter : ComponentTestAdapter<Text>, ITextTestAdapter
+    public sealed class TextTestAdapter : ComponentTestAdapter<Text>, ITextTestAdapter
     {
         internal TextTestAdapter([NotNull] Text gameObject) : base(gameObject)
         {

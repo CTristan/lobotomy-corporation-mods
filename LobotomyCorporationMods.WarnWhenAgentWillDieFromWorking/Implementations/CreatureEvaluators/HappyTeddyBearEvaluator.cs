@@ -5,7 +5,7 @@ using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators
 {
-    internal sealed class HappyTeddyBearEvaluator : CreatureEvaluator
+    public sealed class HappyTeddyBearEvaluator : CreatureEvaluator
     {
         internal HappyTeddyBearEvaluator(IAgentData agent,
             ICreatureData creature,
@@ -15,7 +15,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 
         protected override bool WillAgentDieFromThisCreature()
         {
-            bool agentWillDie = false;
+            var agentWillDie = false;
 
             HappyTeddy script = (HappyTeddy)Creature.script;
             if (script.lastAgent.IsNotNull())

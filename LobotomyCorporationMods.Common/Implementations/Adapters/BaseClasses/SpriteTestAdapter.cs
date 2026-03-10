@@ -12,7 +12,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    internal sealed class SpriteTestAdapter : TestAdapter<Sprite>, ISpriteTestAdapter
+    public sealed class SpriteTestAdapter : TestAdapter<Sprite>, ISpriteTestAdapter
     {
         internal SpriteTestAdapter([NotNull] Sprite gameObject) : base(gameObject)
         {

@@ -9,7 +9,7 @@ namespace SetupExternal
     /// <summary>
     /// Parses Valve's VDF (Valve Data Format) files to extract library folder paths.
     /// </summary>
-    internal static class VdfParser
+    public static class VdfParser
     {
         private static readonly string[] LineSeparators = ["\r", "\n"];
         /// <summary>
@@ -44,18 +44,18 @@ namespace SetupExternal
             //
             // We look for lines that contain "path" followed by a quoted string value.
 
-            string[] lines = vdfContent.Split(LineSeparators, StringSplitOptions.RemoveEmptyEntries);
-            foreach (string line in lines)
+            var lines = vdfContent.Split(LineSeparators, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var line in lines)
             {
-                string trimmed = line.Trim();
+                var trimmed = line.Trim();
                 // Look for "path" followed by a quoted value on the same line or next line
                 if (trimmed.StartsWith("\"path\"", StringComparison.Ordinal))
                 {
                     // Same line: "path"\t\t"C:\\Program Files (x86)\\Steam"
-                    Match match = Regex.Match(trimmed, "\"path\"\\s*\"([^\"]+)\"");
+                    var match = Regex.Match(trimmed, "\"path\"\\s*\"([^\"]+)\"");
                     if (match.Success)
                     {
-                        string path = match.Groups[1].Value;
+                        var path = match.Groups[1].Value;
                         if (!string.IsNullOrWhiteSpace(path))
                         {
                             paths.Add(path);

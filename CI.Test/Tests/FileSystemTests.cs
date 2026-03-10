@@ -14,7 +14,7 @@ namespace CI.Test.Tests
         public void WriteAllText_WritesToCorrectPath()
         {
             // Arrange
-            string tempPath = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid():N}.txt");
+            var tempPath = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid():N}.txt");
             FileSystem fileSystem = new();
 
             try
@@ -39,7 +39,7 @@ namespace CI.Test.Tests
         public void ReadAllText_FileExists_ReturnsContent()
         {
             // Arrange
-            string tempPath = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid():N}.txt");
+            var tempPath = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid():N}.txt");
             FileSystem fileSystem = new();
 
             try
@@ -47,7 +47,7 @@ namespace CI.Test.Tests
                 File.WriteAllText(tempPath, "test content");
 
                 // Act
-                string? content = fileSystem.ReadAllText(tempPath);
+                var content = fileSystem.ReadAllText(tempPath);
 
                 // Assert
                 _ = content.Should().Be("test content");
@@ -65,7 +65,7 @@ namespace CI.Test.Tests
         public void ReadAllText_FileDoesNotExist_ReturnsNull()
         {
             // Arrange
-            string tempPath = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid():N}.txt");
+            var tempPath = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid():N}.txt");
             FileSystem fileSystem = new();
 
             // Ensure file doesn't exist
@@ -75,7 +75,7 @@ namespace CI.Test.Tests
             }
 
             // Act
-            string? content = fileSystem.ReadAllText(tempPath);
+            var content = fileSystem.ReadAllText(tempPath);
 
             // Assert
             _ = content.Should().BeNull();
@@ -85,7 +85,7 @@ namespace CI.Test.Tests
         public void DirectoryExists_DirectoryExists_ReturnsTrue()
         {
             // Arrange
-            string tempDir = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid():N}");
+            var tempDir = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid():N}");
             FileSystem fileSystem = new();
 
             try
@@ -93,7 +93,7 @@ namespace CI.Test.Tests
                 _ = Directory.CreateDirectory(tempDir);
 
                 // Act
-                bool exists = fileSystem.DirectoryExists(tempDir);
+                var exists = fileSystem.DirectoryExists(tempDir);
 
                 // Assert
                 _ = exists.Should().BeTrue();
@@ -111,7 +111,7 @@ namespace CI.Test.Tests
         public void DirectoryExists_DirectoryDoesNotExist_ReturnsFalse()
         {
             // Arrange
-            string tempDir = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid():N}");
+            var tempDir = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid():N}");
             FileSystem fileSystem = new();
 
             // Ensure directory doesn't exist
@@ -121,7 +121,7 @@ namespace CI.Test.Tests
             }
 
             // Act
-            bool exists = fileSystem.DirectoryExists(tempDir);
+            var exists = fileSystem.DirectoryExists(tempDir);
 
             // Assert
             _ = exists.Should().BeFalse();
@@ -131,7 +131,7 @@ namespace CI.Test.Tests
         public void FileExists_FileExists_ReturnsTrue()
         {
             // Arrange
-            string tempPath = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid():N}.txt");
+            var tempPath = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid():N}.txt");
             FileSystem fileSystem = new();
 
             try
@@ -139,7 +139,7 @@ namespace CI.Test.Tests
                 File.WriteAllText(tempPath, "test");
 
                 // Act
-                bool exists = fileSystem.FileExists(tempPath);
+                var exists = fileSystem.FileExists(tempPath);
 
                 // Assert
                 _ = exists.Should().BeTrue();
@@ -157,7 +157,7 @@ namespace CI.Test.Tests
         public void FileExists_FileDoesNotExist_ReturnsFalse()
         {
             // Arrange
-            string tempPath = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid():N}.txt");
+            var tempPath = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid():N}.txt");
             FileSystem fileSystem = new();
 
             // Ensure file doesn't exist
@@ -167,7 +167,7 @@ namespace CI.Test.Tests
             }
 
             // Act
-            bool exists = fileSystem.FileExists(tempPath);
+            var exists = fileSystem.FileExists(tempPath);
 
             // Assert
             _ = exists.Should().BeFalse();

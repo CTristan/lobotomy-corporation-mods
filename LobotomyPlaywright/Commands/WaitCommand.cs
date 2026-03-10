@@ -16,7 +16,7 @@ namespace LobotomyPlaywright.Commands;
 /// <summary>
 /// Command to wait for game events.
 /// </summary>
-internal class WaitCommand
+public class WaitCommand
 {
     private readonly IConfigManager _configManager;
     private readonly Func<ITcpClient> _tcpClientFactory;

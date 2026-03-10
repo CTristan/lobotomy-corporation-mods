@@ -39,7 +39,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
             try
             {
                 // GenerateWindow is a static method, so we can't get an instance of it through Harmony.
-                AgentInfoWindow agentInfoWindow = AgentInfoWindow.currentWindow;
+                var agentInfoWindow = AgentInfoWindow.currentWindow;
 
                 agentInfoWindow.PatchAfterGenerateWindow();
             }

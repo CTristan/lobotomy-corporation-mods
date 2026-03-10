@@ -25,7 +25,7 @@ namespace HarmonyDebugPanel.Test.Tests
             report.Patches.Add(new PatchInfo("Type", "Method", PatchType.Postfix, "owner", "patch", "PatchAssembly"));
             report.Warnings.Add("collector warning");
 
-            IList<string> lines = DiagnosticLogFormatter.Format(report);
+            var lines = DiagnosticLogFormatter.Format(report);
 
             _ = lines.Should().Contain(l => l.Contains("Harmony Diagnostic Report", StringComparison.Ordinal));
             _ = lines.Should().Contain(l => l.Contains("BepInEx Plugins (1)", StringComparison.Ordinal));

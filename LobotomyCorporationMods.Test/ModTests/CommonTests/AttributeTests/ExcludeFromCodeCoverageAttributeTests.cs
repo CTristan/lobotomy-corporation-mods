@@ -27,10 +27,10 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests.AttributeTests
         [Fact]
         public void Verify_that_code_coverage_exclusions_are_only_on_appropriately_attributed_classes_and_methods()
         {
-            Assembly currentAssembly = typeof(ExcludeFromCodeCoverageAttributeTests).Assembly;
-            IEnumerable<AssemblyName> referencedAssemblies = currentAssembly.GetReferencedAssemblies().Where(name => IsInModsNamespace(name.Name));
+            var currentAssembly = typeof(ExcludeFromCodeCoverageAttributeTests).Assembly;
+            var referencedAssemblies = currentAssembly.GetReferencedAssemblies().Where(name => IsInModsNamespace(name.Name));
 
-            string invalidAttributeFound = AnyModIsIncorrectlyExcludedFromCodeCoverage(referencedAssemblies);
+            var invalidAttributeFound = AnyModIsIncorrectlyExcludedFromCodeCoverage(referencedAssemblies);
 
             _ = invalidAttributeFound.Should().BeNullOrWhiteSpace();
         }
@@ -67,7 +67,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests.AttributeTests
         private static string CheckClassAndMethodsForInvalidExclusion([NotNull] Type reflectionClass)
         {
             // First, check if the class itself is marked with ExcludeFromCodeCoverage
-            string className = ClassIsIncorrectlyExcludedFromCodeCoverage(reflectionClass);
+            var className = ClassIsIncorrectlyExcludedFromCodeCoverage(reflectionClass);
 
             if (!string.IsNullOrEmpty(className))
             {
@@ -75,8 +75,8 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests.AttributeTests
             }
 
             // Now we need to check all the methods in the class
-            MethodInfo[] methods = reflectionClass.GetMethods();
-            string methodName = AnyMethodIsIncorrectlyExcludedFromCodeCoverage(methods);
+            var methods = reflectionClass.GetMethods();
+            var methodName = AnyMethodIsIncorrectlyExcludedFromCodeCoverage(methods);
 
             return !string.IsNullOrEmpty(methodName) ? $"{methodName} in {reflectionClass}" : string.Empty;
         }

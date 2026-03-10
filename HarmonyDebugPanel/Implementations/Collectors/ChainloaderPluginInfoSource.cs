@@ -17,23 +17,23 @@ namespace HarmonyDebugPanel.Implementations.Collectors
         {
             List<BepInExPluginInspectionInfo> results = [];
 
-            foreach (KeyValuePair<string, PluginInfo> pluginInfoEntry in Chainloader.PluginInfos)
+            foreach (var pluginInfoEntry in Chainloader.PluginInfos)
             {
-                PluginInfo pluginInfo = pluginInfoEntry.Value;
+                var pluginInfo = pluginInfoEntry.Value;
                 if (pluginInfo == null)
                 {
                     continue;
                 }
 
-                BepInPlugin metadata = pluginInfo.Metadata;
+                var metadata = pluginInfo.Metadata;
                 if (metadata == null || pluginInfo.Instance == null)
                 {
                     continue;
                 }
 
-                Assembly pluginAssembly = pluginInfo.Instance.GetType().Assembly;
-                AssemblyName assemblyName = pluginAssembly.GetName();
-                string assemblyVersion = assemblyName.Version != null
+                var pluginAssembly = pluginInfo.Instance.GetType().Assembly;
+                var assemblyName = pluginAssembly.GetName();
+                var assemblyVersion = assemblyName.Version != null
                     ? assemblyName.Version.ToString()
                     : "Unknown";
                 string location;

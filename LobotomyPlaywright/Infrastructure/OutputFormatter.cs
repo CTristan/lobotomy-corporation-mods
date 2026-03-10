@@ -10,7 +10,7 @@ namespace LobotomyPlaywright.Infrastructure;
 /// <summary>
 /// Formats query results for human-readable output.
 /// </summary>
-internal static class OutputFormatter
+public static class OutputFormatter
 {
     /// <summary>
     /// Formats agent data for display.
@@ -234,7 +234,7 @@ internal static class OutputFormatter
 
         // Format activated slots
         result.AppendLine("Activated Slots (0-4):");
-        for (int i = 0; i < 5; i++)
+        for (var i = 0; i < 5; i++)
         {
             var slot = i < activatedSlots.Count ? activatedSlots[i] : null;
             var slotDisplay = slot ?? "Empty";

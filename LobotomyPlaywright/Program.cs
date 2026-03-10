@@ -9,7 +9,7 @@ using LobotomyPlaywright.Commands;
 
 namespace LobotomyPlaywright;
 
-internal sealed class Program
+public sealed class Program
 {
     public static int Main(string[] args)
     {

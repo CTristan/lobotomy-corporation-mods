@@ -7,7 +7,7 @@ namespace LobotomyPlaywright.Interfaces.System;
 /// <summary>
 /// Interface for file system operations.
 /// </summary>
-internal interface IFileSystem
+public interface IFileSystem
 {
     /// <summary>
     /// Writes all text to a file.

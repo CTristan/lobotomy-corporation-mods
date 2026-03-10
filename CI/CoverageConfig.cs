@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace CI
 {
-    internal class CoverageConfig
+    public class CoverageConfig
     {
         [JsonPropertyName("lineThreshold")]
         public double LineThreshold { get; set; } = 80;

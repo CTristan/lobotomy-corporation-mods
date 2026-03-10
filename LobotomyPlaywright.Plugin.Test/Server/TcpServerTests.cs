@@ -28,7 +28,7 @@ namespace LobotomyPlaywright.Plugin.Test.Server
         public void Constructor_port_too_low_throws_exception()
         {
             // Arrange & Act
-            ArgumentOutOfRangeException exception = Assert.Throws<ArgumentOutOfRangeException>(() => new TcpServer(0));
+            var exception = Assert.Throws<ArgumentOutOfRangeException>(() => new TcpServer(0));
 
             // Assert
             _ = exception.ParamName.Should().Be("port");
@@ -38,7 +38,7 @@ namespace LobotomyPlaywright.Plugin.Test.Server
         public void Constructor_port_too_high_throws_exception()
         {
             // Arrange & Act
-            ArgumentOutOfRangeException exception = Assert.Throws<ArgumentOutOfRangeException>(() => new TcpServer(65536));
+            var exception = Assert.Throws<ArgumentOutOfRangeException>(() => new TcpServer(65536));
 
             // Assert
             _ = exception.ParamName.Should().Be("port");
@@ -48,7 +48,7 @@ namespace LobotomyPlaywright.Plugin.Test.Server
         public void Constructor_port_negative_throws_exception()
         {
             // Arrange & Act
-            ArgumentOutOfRangeException exception = Assert.Throws<ArgumentOutOfRangeException>(() => new TcpServer(-1));
+            var exception = Assert.Throws<ArgumentOutOfRangeException>(() => new TcpServer(-1));
 
             // Assert
             _ = exception.ParamName.Should().Be("port");
@@ -171,7 +171,7 @@ namespace LobotomyPlaywright.Plugin.Test.Server
                 // Wait for server to be ready to accept connections
                 // The server starts on a background thread, so we need to give it time to start listening
                 // We retry the connection with a delay to handle the race condition
-                int retryCount = 0;
+                var retryCount = 0;
                 const int maxRetries = 20;
                 const int retryDelayMs = 50;
 

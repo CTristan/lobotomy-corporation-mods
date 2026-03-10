@@ -32,15 +32,15 @@ namespace LobotomyPlaywright.Commands
             }
 
             // Get format parameter (base64 or path), default to path
-            string format = "path";
+            var format = "path";
             if (request.Params != null && request.Params.ContainsKey("format"))
             {
                 format = request.Params["format"].ToString().ToLowerInvariant();
             }
 
             // Generate unique filename with timestamp
-            string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss_fff");
-            string filename = "loboplaywright_" + timestamp + ".png";
+            var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss_fff");
+            var filename = "loboplaywright_" + timestamp + ".png";
 
             try
             {
@@ -49,7 +49,7 @@ namespace LobotomyPlaywright.Commands
                 ScreenCapture.CaptureScreenshot(filename);
 
                 // Build expected path - typically in the game's root directory
-                string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), filename);
+                var expectedPath = Path.Combine(Directory.GetCurrentDirectory(), filename);
 
                 // For base64 format, poll for the file to exist and read it
                 string base64Data = null;
@@ -68,8 +68,8 @@ namespace LobotomyPlaywright.Commands
                         {
                             try
                             {
-                                int maxAttempts = 40; // 2 seconds total (40 * 50ms)
-                                int attempt = 0;
+                                var maxAttempts = 40; // 2 seconds total (40 * 50ms)
+                                var attempt = 0;
 
                                 while (attempt < maxAttempts)
                                 {
@@ -125,12 +125,12 @@ namespace LobotomyPlaywright.Commands
                     // For path format, try to read the file immediately (it might not be ready yet)
                     if (File.Exists(expectedPath))
                     {
-                        byte[] imageBytes = File.ReadAllBytes(expectedPath);
+                        var imageBytes = File.ReadAllBytes(expectedPath);
                         fileSize = imageBytes.Length;
                     }
                 }
 
-                string timestampUtc = DateTime.UtcNow.ToString("O");
+                var timestampUtc = DateTime.UtcNow.ToString("O");
 
                 // Use concrete class for proper JsonUtility serialization
                 var data = new ScreenshotData

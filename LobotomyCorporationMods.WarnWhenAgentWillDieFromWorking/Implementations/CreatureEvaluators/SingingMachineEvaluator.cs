@@ -4,7 +4,7 @@ using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators
 {
-    internal sealed class SingingMachineEvaluator : CreatureEvaluator
+    public sealed class SingingMachineEvaluator : CreatureEvaluator
     {
         internal SingingMachineEvaluator(IAgentData agent,
             ICreatureData creature,
@@ -24,8 +24,8 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
             const int GiftIncrease = 8;
             const int FortitudeThreshold = 65;
             const int MinTemperance = 3;
-            bool fortitudeStatTooHigh = Agent.fortitudeStat >= FortitudeThreshold - GiftIncrease;
-            int qliphothCounter = Creature.qliphothCounter;
+            var fortitudeStatTooHigh = Agent.fortitudeStat >= FortitudeThreshold - GiftIncrease;
+            var qliphothCounter = Creature.qliphothCounter;
 
             return qliphothCounter == 0 || fortitudeStatTooHigh || Agent.temperanceLevel < MinTemperance;
         }

@@ -33,7 +33,7 @@ namespace CI.Test.Tests
 
             // Arrange
             ProcessRunner runner = new();
-            string currentDir = Environment.CurrentDirectory;
+            var currentDir = Environment.CurrentDirectory;
 
             // Act & Assert
             ProcessResult result = Environment.OSVersion.Platform == PlatformID.Win32NT

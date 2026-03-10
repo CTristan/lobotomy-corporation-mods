@@ -17,7 +17,7 @@ namespace LobotomyPlaywright.Commands;
 /// <summary>
 /// Command to query game state.
 /// </summary>
-internal class QueryCommand
+public class QueryCommand
 {
     private readonly IConfigManager _configManager;
     private readonly Func<ITcpClient> _tcpClientFactory;

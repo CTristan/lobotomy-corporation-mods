@@ -16,7 +16,7 @@ namespace HarmonyDebugPanel.Test.Tests
         {
             RetargetHarmonyDetector detector = new(new StubAssemblySource([]));
 
-            RetargetHarmonyStatus status = detector.Collect();
+            var status = detector.Collect();
 
             _ = status.IsDetected.Should().BeFalse();
             _ = status.Message.Should().Be("Not detected");
@@ -32,7 +32,7 @@ namespace HarmonyDebugPanel.Test.Tests
                 new("LobotomyBaseModLib", "1.0.0", "LobotomyBaseModLib.dll", [new("0Harmony")]),
             ]));
 
-            RetargetHarmonyStatus status = detector.Collect();
+            var status = detector.Collect();
 
             _ = status.IsDetected.Should().BeTrue();
             _ = status.AssemblyCSharpRetargeted.Should().BeFalse();
@@ -50,7 +50,7 @@ namespace HarmonyDebugPanel.Test.Tests
                 new("LobotomyBaseModLib", "1.0.0", "LobotomyBaseModLib.dll", [new("0Harmony109")]),
             ]));
 
-            RetargetHarmonyStatus status = detector.Collect();
+            var status = detector.Collect();
 
             _ = status.IsDetected.Should().BeTrue();
             _ = status.AssemblyCSharpRetargeted.Should().BeTrue();

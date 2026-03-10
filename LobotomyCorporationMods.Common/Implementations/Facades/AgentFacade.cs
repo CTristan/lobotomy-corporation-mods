@@ -19,7 +19,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         public static bool HasFairyFestivalEffect([NotNull] this UnitModel agent)
         {
             _ = Guard.Against.Null(agent, nameof(agent));
-            List<UnitBuf> effects = agent.GetUnitBufList();
+            var effects = agent.GetUnitBufList();
 
             return effects.OfType<FairyBuf>().Any();
         }
@@ -27,7 +27,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         public static bool HasLaetitiaEffect([NotNull] this UnitModel agent)
         {
             _ = Guard.Against.Null(agent, nameof(agent));
-            List<UnitBuf> effects = agent.GetUnitBufList();
+            var effects = agent.GetUnitBufList();
 
             return effects.OfType<LittleWitchBuf>().Any();
         }
@@ -50,7 +50,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         public static bool HasParasiteTreeEffect([NotNull] this UnitModel agent)
         {
             _ = Guard.Against.Null(agent, nameof(agent));
-            List<UnitBuf> effects = agent.GetUnitBufList();
+            var effects = agent.GetUnitBufList();
 
             return effects.OfType<YggdrasilBlessBuf>().Any();
         }

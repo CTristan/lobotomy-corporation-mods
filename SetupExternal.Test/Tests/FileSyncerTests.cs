@@ -89,7 +89,7 @@ namespace SetupExternal.Test.Tests
         public void SyncDlls_WithExistingSameHash_SkipsFiles()
         {
             // Arrange
-            string content = "same content";
+            var content = "same content";
             CreateTestFile(_sourceManagedDir, "Test.dll", content);
             CreateTestFile(_destManagedDir, "Test.dll", content);
 
@@ -117,7 +117,7 @@ namespace SetupExternal.Test.Tests
             _ = result.FilesUpdated.Should().Be(1);
             _ = result.FilesSkipped.Should().Be(0);
 
-            string destContent = File.ReadAllText(Path.Combine(_destManagedDir, "Test.dll"));
+            var destContent = File.ReadAllText(Path.Combine(_destManagedDir, "Test.dll"));
             _ = destContent.Should().Be("new content");
         }
 
@@ -125,7 +125,7 @@ namespace SetupExternal.Test.Tests
         public void SyncDlls_WithMixedStates_HandlesCorrectly()
         {
             // Arrange
-            string sameContent = "same content";
+            var sameContent = "same content";
             CreateTestFile(_sourceManagedDir, "Same.dll", sameContent);
             CreateTestFile(_destManagedDir, "Same.dll", sameContent);
 
@@ -167,7 +167,7 @@ namespace SetupExternal.Test.Tests
             CreateTestFile(_sourceManagedDir, "Test.exe", "exe file");
 
             // Act
-            FileSyncer.SyncResult result = FileSyncer.SyncDlls(_sourceDir, _destDir);
+            var result = FileSyncer.SyncDlls(_sourceDir, _destDir);
 
             // Assert
             _ = result.FilesCopied.Should().Be(0);
@@ -180,7 +180,7 @@ namespace SetupExternal.Test.Tests
 
         private static void CreateTestFile(string dir, string filename, string content)
         {
-            string path = Path.Combine(dir, filename);
+            var path = Path.Combine(dir, filename);
             File.WriteAllText(path, content, Encoding.UTF8);
         }
     }

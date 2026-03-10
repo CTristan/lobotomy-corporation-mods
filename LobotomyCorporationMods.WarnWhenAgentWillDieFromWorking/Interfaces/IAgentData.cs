@@ -2,7 +2,7 @@
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces
 {
-    internal interface IAgentData
+    public interface IAgentData
     {
         int fortitudeLevel { get; }
         int prudenceLevel { get; }

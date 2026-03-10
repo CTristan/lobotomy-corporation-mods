@@ -21,7 +21,7 @@ namespace HarmonyDebugPanel.Test.Tests
                 new("SomeOtherAssembly", "1.0.0", "SomeOtherAssembly.dll", []),
             ]));
 
-            IList<AssemblyInfo> results = collector.Collect();
+            var results = collector.Collect();
 
             _ = results.Should().HaveCount(2);
             _ = results.Should().ContainSingle(a => a.Name == "0Harmony" && a.IsHarmonyRelated);

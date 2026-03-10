@@ -41,7 +41,7 @@ namespace SetupExternal.Test.Tests
             CreateTestAssembly([new Version(2, 0, 0, 0), new Version(4, 0, 0, 0)]);
 
             // Act
-            bool result = AssemblyRetargeter.Retarget(_testAssemblyPath);
+            var result = AssemblyRetargeter.Retarget(_testAssemblyPath);
 
             // Assert
             _ = result.Should().BeTrue();
@@ -55,7 +55,7 @@ namespace SetupExternal.Test.Tests
             CreateTestAssembly([new Version(4, 0, 0, 0)]);
 
             // Act
-            bool result = AssemblyRetargeter.Retarget(_testAssemblyPath);
+            var result = AssemblyRetargeter.Retarget(_testAssemblyPath);
 
             // Assert
             _ = result.Should().BeTrue();
@@ -67,10 +67,10 @@ namespace SetupExternal.Test.Tests
         {
             // Arrange
             CreateTestAssembly([new Version(2, 0, 0, 0)]);
-            DateTime lastWriteTime = File.GetLastWriteTime(_testAssemblyPath);
+            var lastWriteTime = File.GetLastWriteTime(_testAssemblyPath);
 
             // Act
-            bool result = AssemblyRetargeter.Retarget(_testAssemblyPath);
+            var result = AssemblyRetargeter.Retarget(_testAssemblyPath);
 
             // Assert
             _ = result.Should().BeFalse();
@@ -86,7 +86,7 @@ namespace SetupExternal.Test.Tests
             CreateTestAssembly([]);
 
             // Act
-            bool result = AssemblyRetargeter.Retarget(_testAssemblyPath);
+            var result = AssemblyRetargeter.Retarget(_testAssemblyPath);
 
             // Assert
             _ = result.Should().BeFalse();
@@ -96,7 +96,7 @@ namespace SetupExternal.Test.Tests
         public void Retarget_NonExistentFile_ReturnsFalse()
         {
             // Act
-            bool result = AssemblyRetargeter.Retarget("non_existent_file.dll");
+            var result = AssemblyRetargeter.Retarget("non_existent_file.dll");
 
             // Assert
             _ = result.Should().BeFalse();
@@ -112,7 +112,7 @@ namespace SetupExternal.Test.Tests
             // Mono.Cecil might add a default mscorlib ref when creating assembly
             assembly.MainModule.AssemblyReferences.Clear();
 
-            foreach (Version version in mscorlibVersions)
+            foreach (var version in mscorlibVersions)
             {
                 AssemblyNameReference mscorlibRef = new("mscorlib", version);
                 assembly.MainModule.AssemblyReferences.Add(mscorlibRef);

@@ -4,6 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using AwesomeAssertions;
+using LobotomyPlaywright.Commands;
+using LobotomyPlaywright.Implementations.Configuration;
+using LobotomyPlaywright.Implementations.System;
+using LobotomyPlaywright.Interfaces.Configuration;
+using LobotomyPlaywright.Interfaces.Network;
 using Moq;
 using Xunit;
 
@@ -21,9 +26,9 @@ namespace LobotomyPlaywright.Test.Commands
             _tcpClientFactory = () => _mockTcpClient.Object;
 
             // Create a temp config file for testing
-            string tempDir = Path.Combine(Path.GetTempPath(), $"lobotomy_test_{Guid.NewGuid():N}");
+            var tempDir = Path.Combine(Path.GetTempPath(), $"lobotomy_test_{Guid.NewGuid():N}");
             _ = Directory.CreateDirectory(tempDir);
-            string configPath = Path.Combine(tempDir, "config.json");
+            var configPath = Path.Combine(tempDir, "config.json");
             File.WriteAllText(configPath, /*lang=json,strict*/ @"{
             ""gamePath"": ""/test/game"",
             ""crossoverBottle"": ""DXMT"",

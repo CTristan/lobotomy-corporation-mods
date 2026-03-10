@@ -14,7 +14,7 @@ namespace HarmonyDebugPanel.Test.Tests
         {
             HarmonyVersionClassifier classifier = new();
 
-            HarmonyVersion version = classifier.Classify(null);
+            var version = classifier.Classify(null);
 
             _ = version.Should().Be(HarmonyVersion.Unknown);
         }
@@ -24,7 +24,7 @@ namespace HarmonyDebugPanel.Test.Tests
         {
             HarmonyVersionClassifier classifier = new();
 
-            HarmonyVersion version = classifier.Classify(
+            var version = classifier.Classify(
             [
                 new("0Harmony109"),
             ]);
@@ -37,7 +37,7 @@ namespace HarmonyDebugPanel.Test.Tests
         {
             HarmonyVersionClassifier classifier = new();
 
-            HarmonyVersion version = classifier.Classify(
+            var version = classifier.Classify(
             [
                 new("0Harmony"),
             ]);
@@ -50,7 +50,7 @@ namespace HarmonyDebugPanel.Test.Tests
         {
             HarmonyVersionClassifier classifier = new();
 
-            HarmonyVersion version = classifier.Classify(
+            var version = classifier.Classify(
             [
                 new("0Harmony"),
                 new("0Harmony109"),

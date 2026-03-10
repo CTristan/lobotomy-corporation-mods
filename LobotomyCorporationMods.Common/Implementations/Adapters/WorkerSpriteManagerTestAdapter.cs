@@ -16,7 +16,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    internal sealed class WorkerSpriteManagerTestAdapter : ComponentTestAdapter<WorkerSpriteManager>, IWorkerSpriteManagerTestAdapter
+    public sealed class WorkerSpriteManagerTestAdapter : ComponentTestAdapter<WorkerSpriteManager>, IWorkerSpriteManagerTestAdapter
     {
         internal WorkerSpriteManagerTestAdapter([NotNull] WorkerSpriteManager gameObject) : base(gameObject)
         {

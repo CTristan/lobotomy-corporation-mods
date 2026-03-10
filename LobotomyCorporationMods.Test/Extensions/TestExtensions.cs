@@ -22,7 +22,7 @@ using ILogger = LobotomyCorporationMods.Common.Interfaces.ILogger;
 // ReSharper disable MemberCanBePrivate.Global
 namespace LobotomyCorporationMods.Test.Extensions
 {
-    internal static class TestExtensions
+    public static class TestExtensions
     {
         [NotNull]
         internal static AgentModel GetAgentWithGift(EquipmentIds giftId = EquipmentIds.None,
@@ -37,8 +37,8 @@ namespace LobotomyCorporationMods.Test.Extensions
                 BufList = [.. unitBuffs],
             };
 
-            AgentModel agent = UnityTestExtensions.CreateAgentModel(agentModelCreationParameters);
-            EGOgiftModel gift = UnityTestExtensions.CreateEgoGiftModel();
+            var agent = UnityTestExtensions.CreateAgentModel(agentModelCreationParameters);
+            var gift = UnityTestExtensions.CreateEgoGiftModel();
             gift.metaInfo.id = (int)giftId;
             gift.metaInfo.attachPos = attachPosition.ToString();
             gift.metaInfo.attachType = attachType;
@@ -55,19 +55,19 @@ namespace LobotomyCorporationMods.Test.Extensions
             int qliphothCounter = 0,
             bool maxObservation = true)
         {
-            EquipmentTypeInfo equipmentTypeInfo = UnityTestExtensions.CreateEquipmentTypeInfo();
+            var equipmentTypeInfo = UnityTestExtensions.CreateEquipmentTypeInfo();
             equipmentTypeInfo.id = (int)giftId;
             equipmentTypeInfo.type = EquipmentTypeInfo.EquipmentType.SPECIAL;
             equipmentTypeInfo.attachPos = attachPosition.ToString();
             equipmentTypeInfo.attachType = giftAttachType;
 
-            CreatureEquipmentMakeInfo creatureEquipmentMakeInfo = UnityTestExtensions.CreateCreatureEquipmentMakeInfo(equipmentTypeInfo);
-            CreatureTypeInfo creatureTypeInfo = UnityTestExtensions.CreateCreatureTypeInfo(
+            var creatureEquipmentMakeInfo = UnityTestExtensions.CreateCreatureEquipmentMakeInfo(equipmentTypeInfo);
+            var creatureTypeInfo = UnityTestExtensions.CreateCreatureTypeInfo(
             [
                 creatureEquipmentMakeInfo,
             ]);
 
-            CreatureModel creature = UnityTestExtensions.CreateCreatureModel(metaInfo: creatureTypeInfo, qliphothCounter: qliphothCounter);
+            var creature = UnityTestExtensions.CreateCreatureModel(metaInfo: creatureTypeInfo, qliphothCounter: qliphothCounter);
             creature.instanceId = (long)creatureId;
             creature.metadataId = (long)creatureId;
 
@@ -77,7 +77,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             }
 
             // Need to initialize the CreatureLayer with our new creature
-            CreatureUnit creatureUnit = UnityTestExtensions.CreateCreatureUnit();
+            var creatureUnit = UnityTestExtensions.CreateCreatureUnit();
             _ = UnityTestExtensions.CreateCreatureLayer(new Dictionary<long, CreatureUnit>
             {
                 {
@@ -99,7 +99,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             _ = mockFileManager.Setup(fm => fm.WriteAllText(It.IsAny<string>(), It.IsAny<string>())).Callback<string, string>((path,
                 contents) =>
             {
-                string? directory = Path.GetDirectoryName(path);
+                var directory = Path.GetDirectoryName(path);
                 if (directory.IsNotNull() && !Directory.Exists(directory))
                 {
                     _ = Directory.CreateDirectory(directory);
@@ -132,13 +132,13 @@ namespace LobotomyCorporationMods.Test.Extensions
         {
             currentTarget = currentTarget.EnsureNotNullWithMethod(() => UnityTestExtensions.CreateCreatureModel());
 
-            Color deadAgentColor = Color.red;
+            var deadAgentColor = Color.red;
 
             // Need existing game instances
             InitializeLocalizeTextDataModel(textValue);
             InitializeSkillTypeList(rwbpType);
 
-            CommandWindow.CommandWindow commandWindow = UnityTestExtensions.CreateCommandWindow(currentTarget, CommandType.Management, (long)rwbpType);
+            var commandWindow = UnityTestExtensions.CreateCommandWindow(currentTarget, CommandType.Management, (long)rwbpType);
             commandWindow.DeadColor = deadAgentColor;
             CommandWindow.CommandWindow.CurrentWindow.DeadColor = deadAgentColor;
 
@@ -203,13 +203,13 @@ namespace LobotomyCorporationMods.Test.Extensions
             string methodName)
         {
             // Use reflection to access HarmonyPatch attributes since we can't reference 0Harmony.dll in net10.0
-            Assembly? declaringAssembly = patchClass.DeclaringType?.Assembly
+            var declaringAssembly = patchClass.DeclaringType?.Assembly
                 ?? (patchClass is Type t ? t.Assembly : null);
 
             _ = declaringAssembly.Should().NotBeNull("Unable to determine assembly from MemberInfo");
 
             // Search all loaded assemblies to find HarmonyPatch attribute type
-            Type? harmonyPatchAttributeType = AppDomain.CurrentDomain.GetAssemblies()
+            var harmonyPatchAttributeType = AppDomain.CurrentDomain.GetAssemblies()
                 .Select(a => a.GetType("HarmonyLib.HarmonyPatch") ?? a.GetType("Harmony.HarmonyPatch"))
                 .FirstOrDefault(t => t != null);
 
@@ -219,21 +219,21 @@ namespace LobotomyCorporationMods.Test.Extensions
             _ = attribute.Should().NotBeNull("HarmonyPatch attribute not found on member");
 
             // Harmony 1.x stores patch info in a public 'info' field of type HarmonyMethod
-            FieldInfo? infoField = harmonyPatchAttributeType?.GetField("info", BindingFlags.Public | BindingFlags.Instance);
+            var infoField = harmonyPatchAttributeType?.GetField("info", BindingFlags.Public | BindingFlags.Instance);
             _ = infoField.Should().NotBeNull("HarmonyPatch info field not found");
 
-            object? info = infoField?.GetValue(attribute);
+            var info = infoField?.GetValue(attribute);
             _ = info.Should().NotBeNull("HarmonyPatch info is null");
 
             // HarmonyMethod has public originalType and methodName fields
-            FieldInfo? originalTypeField = info?.GetType().GetField("originalType", BindingFlags.Public | BindingFlags.Instance);
-            FieldInfo? methodNameField = info?.GetType().GetField("methodName", BindingFlags.Public | BindingFlags.Instance);
+            var originalTypeField = info?.GetType().GetField("originalType", BindingFlags.Public | BindingFlags.Instance);
+            var methodNameField = info?.GetType().GetField("methodName", BindingFlags.Public | BindingFlags.Instance);
 
             _ = originalTypeField.Should().NotBeNull("HarmonyMethod originalType field not found");
             _ = methodNameField.Should().NotBeNull("HarmonyMethod methodName field not found");
 
             Type? originalTypeValue = originalTypeField?.GetValue(info) as Type;
-            string? methodNameValue = methodNameField?.GetValue(info) as string;
+            var methodNameValue = methodNameField?.GetValue(info) as string;
 
             _ = originalTypeValue.Should().Be(originalClass);
             _ = methodNameValue.Should().Be(methodName);

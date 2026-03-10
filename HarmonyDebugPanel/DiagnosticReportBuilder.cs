@@ -164,7 +164,7 @@ namespace HarmonyDebugPanel
         {
             // Compare target type, target method, and patch type
             // TargetType from source might not have namespace, so we check if it matches the end
-            bool typeMatches = expected.TargetType == actual.TargetType ||
+            var typeMatches = expected.TargetType == actual.TargetType ||
                               actual.TargetType.EndsWith("." + expected.TargetType, StringComparison.Ordinal);
 
             return expected.PatchAssembly == actual.PatchAssemblyName &&
