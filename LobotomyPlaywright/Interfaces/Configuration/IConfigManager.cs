@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: MIT
 
+using System.IO;
+
 namespace LobotomyPlaywright.Interfaces.Configuration;
 
 /// <summary>
@@ -11,7 +13,7 @@ public interface IConfigManager
     /// Loads the configuration from disk.
     /// </summary>
     /// <returns>The configuration object.</returns>
-    /// <exception cref="System.IO.FileNotFoundException">Thrown when config file doesn't exist.</exception>
+    /// <exception cref="FileNotFoundException">Thrown when config file doesn't exist.</exception>
     Config Load();
 
     /// <summary>
