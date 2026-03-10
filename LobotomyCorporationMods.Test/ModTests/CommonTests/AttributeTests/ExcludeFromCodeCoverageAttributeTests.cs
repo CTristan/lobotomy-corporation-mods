@@ -83,7 +83,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests.AttributeTests
 
         private static string AnyMethodIsIncorrectlyExcludedFromCodeCoverage([NotNull] IEnumerable<MethodInfo> methods)
         {
-            List<string?> invalidMethods = [.. methods.Select(MethodIsIncorrectlyExcludedFromCodeCoverage).Where(methodName => !string.IsNullOrEmpty(methodName))];
+            List<string> invalidMethods = [.. methods.Select(MethodIsIncorrectlyExcludedFromCodeCoverage).Where(methodName => !string.IsNullOrEmpty(methodName))!];
 
             return invalidMethods.Count != 0 ? invalidMethods[0] : string.Empty;
         }

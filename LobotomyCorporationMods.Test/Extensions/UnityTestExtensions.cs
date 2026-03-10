@@ -779,7 +779,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             [NotNull] MemberInfo[] fields,
             Dictionary<string, object> newValues) where TObject : class
         {
-            CreateUninitializedObject(out TObject? newObj);
+            CreateUninitializedObject(out TObject newObj);
             object?[] values = [.. fields.Select(m => ((FieldInfo)m).GetValue(obj))];
 
             for (var i = 0; i < fields.Length; i++)
