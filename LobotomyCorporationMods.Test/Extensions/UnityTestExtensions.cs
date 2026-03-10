@@ -54,13 +54,13 @@ namespace LobotomyCorporationMods.Test.Extensions
             Dictionary<string, object> newValues = new()
             {
                 {
-                    "customizingBlock", customizingBlock
+                    "customizingBlock", customizingBlock!
                 },
                 {
-                    "customizingWindow", customizingWindow
+                    "customizingWindow", customizingWindow!
                 },
                 {
-                    "UIComponents", uiComponents
+                    "UIComponents", uiComponents!
                 },
             };
 
@@ -86,28 +86,28 @@ namespace LobotomyCorporationMods.Test.Extensions
             Dictionary<string, object> newValues = new()
             {
                 {
-                    "_agentName", parameters.AgentName
+                    "_agentName", parameters.AgentName!
                 },
                 {
-                    "_bufList", parameters.BufList
+                    "_bufList", parameters.BufList!
                 },
                 {
-                    "_equipment", parameters.Equipment
+                    "_equipment", parameters.Equipment!
                 },
                 {
                     "instanceId", parameters.InstanceId
                 },
                 {
-                    "name", parameters.Name
+                    "name", parameters.Name!
                 },
                 {
-                    "primaryStat", parameters.PrimaryStat
+                    "primaryStat", parameters.PrimaryStat!
                 },
                 {
-                    "spriteData", parameters.SpriteData
+                    "spriteData", parameters.SpriteData!
                 },
                 {
-                    "_statBufList", parameters.StatBufList
+                    "_statBufList", parameters.StatBufList!
                 },
             };
 
@@ -127,10 +127,10 @@ namespace LobotomyCorporationMods.Test.Extensions
             Dictionary<string, object> newValues = new()
             {
                 {
-                    "metaInfo", metaInfo
+                    "metaInfo", metaInfo!
                 },
                 {
-                    "nameDic", nameDic
+                    "nameDic", nameDic!
                 },
             };
 
@@ -165,16 +165,16 @@ namespace LobotomyCorporationMods.Test.Extensions
             Dictionary<string, object> newValues = new()
             {
                 {
-                    "coloredTargets", coloredTargets
+                    "coloredTargets", coloredTargets!
                 },
                 {
-                    "_currentAgent", currentAgent
+                    "_currentAgent", currentAgent!
                 },
                 {
-                    "WorkFilterFill", workFilterFill
+                    "WorkFilterFill", workFilterFill!
                 },
                 {
-                    "WorkFilterText", workFilterText
+                    "WorkFilterText", workFilterText!
                 },
             };
 
@@ -212,7 +212,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             Dictionary<string, object> newValues = new()
             {
                 {
-                    "_currentTarget", currentTarget
+                    "_currentTarget", currentTarget!
                 },
                 {
                     "_currentWindowType", currentWindowType
@@ -250,7 +250,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             Dictionary<string, object> newValues = new()
             {
                 {
-                    "creatureDic", creatureDic
+                    "creatureDic", creatureDic!
                 },
             };
 
@@ -280,10 +280,10 @@ namespace LobotomyCorporationMods.Test.Extensions
             Dictionary<string, object> newValues = new()
             {
                 {
-                    "metaInfo", metaInfo
+                    "metaInfo", metaInfo!
                 },
                 {
-                    "observeInfo", observeInfo
+                    "observeInfo", observeInfo!
                 },
                 {
                     "_qliphothCounter", qliphothCounter
@@ -312,10 +312,10 @@ namespace LobotomyCorporationMods.Test.Extensions
             Dictionary<string, object> newValues = new()
             {
                 {
-                    "_metaInfo", metaInfo
+                    "_metaInfo", metaInfo!
                 },
                 {
-                    "observeRegions", observeRegions
+                    "observeRegions", observeRegions!
                 },
             };
 
@@ -358,16 +358,16 @@ namespace LobotomyCorporationMods.Test.Extensions
             Dictionary<string, object> newValues = new()
             {
                 {
-                    "appearanceBlock", appearanceBlock
+                    "appearanceBlock", appearanceBlock!
                 },
                 {
-                    "appearanceUI", appearanceUi
+                    "appearanceUI", appearanceUi!
                 },
                 {
-                    "_currentAgent", currentAgent
+                    "_currentAgent", currentAgent!
                 },
                 {
-                    "CurrentData", currentData
+                    "CurrentData", currentData!
                 },
                 {
                     "_currentWindowType", currentWindowType
@@ -427,7 +427,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             Dictionary<string, object> newValues = new()
             {
                 {
-                    "_model", model
+                    "_model", model!
                 },
             };
 
@@ -447,10 +447,10 @@ namespace LobotomyCorporationMods.Test.Extensions
             Dictionary<string, object> newValues = new()
             {
                 {
-                    "bonus", bonus
+                    "bonus", bonus!
                 },
                 {
-                    "localizeData", localizeData
+                    "localizeData", localizeData!
                 },
             };
 
@@ -510,7 +510,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             Dictionary<string, object> newValues = new()
             {
                 {
-                    "_list", list
+                    "_list", list!
                 },
             };
 
@@ -557,7 +557,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             Dictionary<string, object> newValues = new()
             {
                 {
-                    "name", name
+                    "name", name!
                 },
             };
 
@@ -602,10 +602,10 @@ namespace LobotomyCorporationMods.Test.Extensions
             Dictionary<string, object> newValues = new()
             {
                 {
-                    "_bufList", bufList
+                    "_bufList", bufList!
                 },
                 {
-                    "_statBufList", statBufList
+                    "_statBufList", statBufList!
                 },
             };
 
@@ -623,7 +623,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             Dictionary<string, object> newValues = new()
             {
                 {
-                    "primaryStat", primaryStat
+                    "primaryStat", primaryStat!
                 },
             };
 
@@ -692,7 +692,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             Dictionary<string, object> newValues = new()
             {
                 {
-                    "basicData", basicData
+                    "basicData", basicData!
                 },
             };
 

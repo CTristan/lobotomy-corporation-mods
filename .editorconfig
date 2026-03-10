@@ -7,8 +7,6 @@ indent_style = space
 [*.{cs,csx}]
 # BEGIN TEMPORARY BUILD WORKAROUND: Disable analyzers that cause build errors until the underlying issues are resolved
 
-# WHY: Disable CS8604 (possible null reference) - nullable reference types are too strict for this codebase
-dotnet_diagnostic.CS8604.severity = none
 # WHY: Disable CS8620 (nullability differences) - nullable reference types are too strict for this codebase
 dotnet_diagnostic.CS8620.severity = none
 # WHY: Disable CS8625 (null literal to non-nullable) - nullable reference types are too strict for this codebase

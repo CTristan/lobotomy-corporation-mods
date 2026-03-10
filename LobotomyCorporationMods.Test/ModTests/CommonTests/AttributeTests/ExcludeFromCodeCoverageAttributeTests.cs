@@ -28,7 +28,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests.AttributeTests
         public void Verify_that_code_coverage_exclusions_are_only_on_appropriately_attributed_classes_and_methods()
         {
             var currentAssembly = typeof(ExcludeFromCodeCoverageAttributeTests).Assembly;
-            var referencedAssemblies = currentAssembly.GetReferencedAssemblies().Where(name => IsInModsNamespace(name.Name));
+            var referencedAssemblies = currentAssembly.GetReferencedAssemblies().Where(name => IsInModsNamespace(name.Name!));
 
             var invalidAttributeFound = AnyModIsIncorrectlyExcludedFromCodeCoverage(referencedAssemblies);
 
@@ -42,13 +42,13 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests.AttributeTests
 
         private static bool IsInModsNamespace([CanBeNull] string name)
         {
-            return !name.IsNull() && name.Length >= s_namespaceMinLength && name.StartsWith(ModsNamespace, StringComparison.InvariantCulture);
+            return !name.IsNull() && name!.Length >= s_namespaceMinLength && name.StartsWith(ModsNamespace, StringComparison.InvariantCulture);
         }
 
         private static string AnyModIsIncorrectlyExcludedFromCodeCoverage([NotNull] IEnumerable<AssemblyName> referencedAssemblies)
         {
-            List<string> invalidClasses = [.. referencedAssemblies.Select(assemblyName => Assembly.Load(assemblyName.Name))
-                .Select(assembly => assembly.GetTypes().Where(type => type.IsClass && IsInModsNamespace(type.Namespace))).Select(AnyClassIsIncorrectlyExcludedFromCodeCoverage)
+            List<string> invalidClasses = [.. referencedAssemblies.Select(assemblyName => Assembly.Load(assemblyName.Name!))
+                .Select(assembly => assembly.GetTypes().Where(type => type.IsClass && IsInModsNamespace(type.Namespace!))).Select(AnyClassIsIncorrectlyExcludedFromCodeCoverage)
                 .Where(className => !string.IsNullOrEmpty(className))];
 
             return invalidClasses.Count != 0 ? invalidClasses[0] : string.Empty;
@@ -83,7 +83,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests.AttributeTests
 
         private static string AnyMethodIsIncorrectlyExcludedFromCodeCoverage([NotNull] IEnumerable<MethodInfo> methods)
         {
-            List<string> invalidMethods = [.. methods.Select(MethodIsIncorrectlyExcludedFromCodeCoverage).Where(methodName => !string.IsNullOrEmpty(methodName))!];
+            List<string> invalidMethods = methods.Select(MethodIsIncorrectlyExcludedFromCodeCoverage).Where(methodName => !string.IsNullOrEmpty(methodName)).ToList()!;
 
             return invalidMethods.Count != 0 ? invalidMethods[0] : string.Empty;
         }
@@ -94,7 +94,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests.AttributeTests
             List<object> attributes = [.. method.GetCustomAttributes(false)];
 
             return attributes.Exists(attribute => attribute.ToString() == ExcludeFromCodeCoverageAttributeTypeName && !attributes.Exists(o => o is EntryPointAttribute))
-                ? method.ToString()
+                ? method.ToString()!
                 : string.Empty;
         }
 

@@ -80,13 +80,13 @@ namespace CI.Test.Tests
             ProcessResult result = Environment.OSVersion.Platform == PlatformID.Win32NT
                 ? runner.Run("cmd", "/c echo test-output", null, line =>
                 {
-                    filteredLines.Add(line);
-                    return !line.Contains("should-filter", StringComparison.Ordinal);
+                    filteredLines.Add(line!);
+                    return !line!.Contains("should-filter", StringComparison.Ordinal);
                 })
                 : runner.Run("echo", "test-output", null, line =>
                 {
-                    filteredLines.Add(line);
-                    return !line.Contains("should-filter", StringComparison.Ordinal);
+                    filteredLines.Add(line!);
+                    return !line!.Contains("should-filter", StringComparison.Ordinal);
                 });
 
             // Assert - The command should succeed and output should be captured

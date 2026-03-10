@@ -112,7 +112,7 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
             var unitModel = UnityTestExtensions.CreateAgentModel(agentModelCreationParameters);
             List<string> noticeMessages = [];
             _ = NoticeTestAdapter.Setup(adapter => adapter.Send(It.IsAny<string>(), It.IsAny<object[]>())).Callback((string _,
-                object[] objectArray) => noticeMessages.Add(objectArray[0].ToString()));
+                object[] objectArray) => noticeMessages.Add(objectArray[0]?.ToString() ?? string.Empty));
 
             ExecutePatchAndVerifyNotification(unitModel, gift, Times.Once());
 

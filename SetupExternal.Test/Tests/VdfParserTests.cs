@@ -81,7 +81,7 @@ namespace SetupExternal.Test.Tests
             string? vdfContent = null;
 
             // Act
-            var paths = VdfParser.ExtractLibraryPaths(vdfContent);
+            var paths = VdfParser.ExtractLibraryPaths(vdfContent!);
 
             // Assert
             _ = paths.Should().BeEmpty();

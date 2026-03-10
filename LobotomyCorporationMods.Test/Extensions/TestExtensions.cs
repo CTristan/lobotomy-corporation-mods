@@ -102,7 +102,7 @@ namespace LobotomyCorporationMods.Test.Extensions
                 var directory = Path.GetDirectoryName(path);
                 if (directory.IsNotNull() && !Directory.Exists(directory))
                 {
-                    _ = Directory.CreateDirectory(directory);
+                    _ = Directory.CreateDirectory(directory!);
                 }
 
                 File.WriteAllText(path, contents);
