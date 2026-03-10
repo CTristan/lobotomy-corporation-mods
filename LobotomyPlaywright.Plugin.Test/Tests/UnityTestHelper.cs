@@ -13,6 +13,9 @@ namespace LobotomyPlaywright.TestHelpers
     {
         private static bool? s_isUnityAvailable;
 
+        /// <summary>
+        /// Gets a value indicating whether Unity runtime is available.
+        /// </summary>
         public static bool IsUnityAvailable
         {
             get

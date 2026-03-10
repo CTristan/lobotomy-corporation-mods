@@ -7,8 +7,14 @@ using Xunit;
 
 namespace LobotomyPlaywright.Plugin.Test.Commands
 {
+    /// <summary>
+    /// Tests for CommandRouter.
+    /// </summary>
     public class CommandRouterTests
     {
+        /// <summary>
+        /// Tests HandleCommand with null request returns error.
+        /// </summary>
         [Fact]
         public void HandleCommand_null_request_returns_error()
         {
@@ -21,6 +27,9 @@ namespace LobotomyPlaywright.Plugin.Test.Commands
             _ = response.error.Should().Contain("Request is null");
         }
 
+        /// <summary>
+        /// Tests HandleCommand with missing action returns error.
+        /// </summary>
         [Fact]
         public void HandleCommand_missing_action_returns_error()
         {
@@ -36,6 +45,9 @@ namespace LobotomyPlaywright.Plugin.Test.Commands
             _ = response.error.Should().Contain("Missing action");
         }
 
+        /// <summary>
+        /// Tests HandleCommand with unknown action returns error.
+        /// </summary>
         [Fact]
         public void HandleCommand_unknown_action_returns_error()
         {
@@ -51,6 +63,9 @@ namespace LobotomyPlaywright.Plugin.Test.Commands
             _ = response.error.Should().Contain("Unknown action");
         }
 
+        /// <summary>
+        /// Tests HandleCommand with shutdown returns success.
+        /// </summary>
         [Fact]
         public void HandleCommand_shutdown_returns_success()
         {

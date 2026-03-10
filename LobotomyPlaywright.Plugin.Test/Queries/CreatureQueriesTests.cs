@@ -8,8 +8,14 @@ using Xunit;
 
 namespace LobotomyPlaywright.Plugin.Test.Queries
 {
+    /// <summary>
+    /// Tests for CreatureQueries.
+    /// </summary>
     public class CreatureQueriesTests
     {
+        /// <summary>
+        /// Tests ListCreatures returns empty list when no game state.
+        /// </summary>
         [Fact]
         public void ListCreatures_returns_empty_list_when_no_game_state()
         {
@@ -22,6 +28,9 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             _ = creatures.Should().BeEmpty();
         }
 
+        /// <summary>
+        /// Tests ListCreatures method exists and is callable.
+        /// </summary>
         [Fact]
         public void ListCreatures_method_exists_and_is_callable()
         {
@@ -32,6 +41,9 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             _ = act.Should().NotThrow();
         }
 
+        /// <summary>
+        /// Tests GetCreature with nonexistent id returns null.
+        /// </summary>
         [Fact]
         public void GetCreature_with_nonexistent_id_returns_null()
         {
@@ -42,6 +54,9 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             _ = creature.Should().BeNull();
         }
 
+        /// <summary>
+        /// Tests GetCreature with zero id returns null.
+        /// </summary>
         [Fact]
         public void GetCreature_with_zero_id_returns_null()
         {
@@ -52,6 +67,9 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             _ = creature.Should().BeNull();
         }
 
+        /// <summary>
+        /// Tests GetCreature method exists and is callable.
+        /// </summary>
         [Fact]
         public void GetCreature_method_exists_and_is_callable()
         {

@@ -11,17 +11,26 @@ using Xunit;
 
 namespace LobotomyPlaywright.Tests.Infrastructure
 {
+    /// <summary>
+    /// Tests for ConfigManager.
+    /// </summary>
     public sealed class ConfigManagerTests
     {
         private readonly Mock<IFileSystem> _mockFileSystem;
         private readonly ConfigManager _configManager;
 
+        /// <summary>
+        /// Initializes a new instance of the ConfigManagerTests class.
+        /// </summary>
         public ConfigManagerTests()
         {
             _mockFileSystem = new Mock<IFileSystem>();
             _configManager = new ConfigManager(_mockFileSystem.Object, "/test/config.json");
         }
 
+        /// <summary>
+        /// Tests that Load returns config when file exists.
+        /// </summary>
         [Fact]
         public void Load_WhenFileExists_ReturnsConfig()
         {
@@ -47,6 +56,9 @@ namespace LobotomyPlaywright.Tests.Infrastructure
             _ = config.ShutdownTimeoutSeconds.Should().Be(10);
         }
 
+        /// <summary>
+        /// Tests that Load throws FileNotFoundException when file does not exist.
+        /// </summary>
         [Fact]
         public void Load_WhenFileDoesNotExist_ThrowsFileNotFoundException()
         {
@@ -60,6 +72,9 @@ namespace LobotomyPlaywright.Tests.Infrastructure
             _ = action.Should().Throw<FileNotFoundException>();
         }
 
+        /// <summary>
+        /// Tests that Save writes config to file.
+        /// </summary>
         [Fact]
         public void Save_WritesConfigToFile()
         {

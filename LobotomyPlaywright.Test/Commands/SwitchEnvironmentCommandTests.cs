@@ -12,6 +12,9 @@ using Xunit;
 
 namespace LobotomyPlaywright.Tests.Commands
 {
+    /// <summary>
+    /// Tests for SwitchEnvironmentCommand.
+    /// </summary>
     public sealed class SwitchEnvironmentCommandTests
     {
         private readonly Mock<IFileSystem> _mockFileSystem;
@@ -22,6 +25,9 @@ namespace LobotomyPlaywright.Tests.Commands
         private readonly byte[] _debugDllBytes = [0x01, 0x02, 0x03];
         private readonly byte[] _releaseDllBytes = [0x04, 0x05, 0x06];
 
+        /// <summary>
+        /// Initializes a new instance of the SwitchEnvironmentCommandTests class.
+        /// </summary>
         public SwitchEnvironmentCommandTests()
         {
             _mockFileSystem = new Mock<IFileSystem>();
@@ -207,6 +213,9 @@ namespace LobotomyPlaywright.Tests.Commands
             _mockFileSystem.Verify(f => f.CopyFile(Path.Combine(_gamePath, "UnityPlayer_debug.dll"), Path.Combine(_gamePath, "UnityPlayer.dll"), true), Times.Once);
         }
 
+        /// <summary>
+        /// Tests that copy file failure returns one.
+        /// </summary>
         [Fact]
         public void Run_CopyFileFailure_ReturnsOne()
         {
@@ -222,6 +231,9 @@ namespace LobotomyPlaywright.Tests.Commands
             _ = result.Should().Be(1);
         }
 
+        /// <summary>
+        /// Tests that verification failure returns one.
+        /// </summary>
         [Fact]
         public void Run_VerificationFailure_ReturnsOne()
         {

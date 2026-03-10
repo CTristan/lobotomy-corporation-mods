@@ -8,8 +8,14 @@ using Xunit;
 
 namespace LobotomyPlaywright.Plugin.Test.Queries
 {
+    /// <summary>
+    /// Tests for AgentQueries.
+    /// </summary>
     public class AgentQueriesTests
     {
+        /// <summary>
+        /// Tests ListAgents returns empty list when no game state.
+        /// </summary>
         [Fact]
         public void ListAgents_returns_empty_list_when_no_game_state()
         {
@@ -22,6 +28,9 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             _ = agents.Should().BeEmpty();
         }
 
+        /// <summary>
+        /// Tests ListAgents method exists and is callable.
+        /// </summary>
         [Fact]
         public void ListAgents_method_exists_and_is_callable()
         {
@@ -32,6 +41,9 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             _ = act.Should().NotThrow();
         }
 
+        /// <summary>
+        /// Tests GetAgent with nonexistent id returns null.
+        /// </summary>
         [Fact]
         public void GetAgent_with_nonexistent_id_returns_null()
         {
@@ -42,6 +54,9 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             _ = agent.Should().BeNull();
         }
 
+        /// <summary>
+        /// Tests GetAgent with zero id returns null.
+        /// </summary>
         [Fact]
         public void GetAgent_with_zero_id_returns_null()
         {
@@ -52,6 +67,9 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             _ = agent.Should().BeNull();
         }
 
+        /// <summary>
+        /// Tests GetAgent with negative id returns null.
+        /// </summary>
         [Fact]
         public void GetAgent_with_negative_id_returns_null()
         {
@@ -62,6 +80,9 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             _ = agent.Should().BeNull();
         }
 
+        /// <summary>
+        /// Tests GetAgent method exists and is callable.
+        /// </summary>
         [Fact]
         public void GetAgent_method_exists_and_is_callable()
         {

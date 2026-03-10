@@ -9,11 +9,17 @@ using Xunit.Abstractions;
 
 namespace LobotomyPlaywright.Plugin.Test.Protocol
 {
+    /// <summary>
+    /// Tests for MessageSerializer.
+    /// </summary>
     [Trait("Category", "RequiresUnity")]
     public class MessageSerializerTests(ITestOutputHelper output)
     {
         private readonly ITestOutputHelper _output = output;
 
+        /// <summary>
+        /// Tests SerializeResponse with success response produces valid JSON.
+        /// </summary>
         [Fact]
         public void SerializeResponse_success_response_produces_valid_json()
         {
@@ -36,6 +42,9 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
             _ = json.Should().Contain("\"status\":\"ok\"");
         }
 
+        /// <summary>
+        /// Tests SerializeResponse with error response produces valid JSON.
+        /// </summary>
         [Fact]
         public void SerializeResponse_error_response_produces_valid_json()
         {
@@ -60,6 +69,9 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
             _ = json.Should().Contain("\"code\":\"NOT_FOUND\"");
         }
 
+        /// <summary>
+        /// Tests SerializeResponse with event response produces valid JSON.
+        /// </summary>
         [Fact]
         public void SerializeResponse_event_response_produces_valid_json()
         {
@@ -85,6 +97,9 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
             _ = json.Should().Contain("\"timestamp\"");
         }
 
+        /// <summary>
+        /// Tests DeserializeRequest with valid JSON produces request object.
+        /// </summary>
         [Fact]
         public void DeserializeRequest_valid_json_produces_request_object()
         {
@@ -108,6 +123,9 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
             _ = request.Params.Should().NotBeNull();
         }
 
+        /// <summary>
+        /// Tests DeserializeRequest with params produces request with params.
+        /// </summary>
         [Fact]
         public void DeserializeRequest_with_params_produces_request_with_params()
         {
@@ -128,6 +146,9 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
             _ = request.Params.Should().NotBeNull();
         }
 
+        /// <summary>
+        /// Tests DeserializeRequest with null JSON throws exception.
+        /// </summary>
         [Fact]
         public void DeserializeRequest_null_json_throws_exception()
         {
@@ -148,6 +169,9 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
                 .WithParameterName("json");
         }
 
+        /// <summary>
+        /// Tests DeserializeRequest with empty JSON throws exception.
+        /// </summary>
         [Fact]
         public void DeserializeRequest_empty_json_throws_exception()
         {
@@ -167,6 +191,9 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
             _ = act.Should().Throw<ArgumentNullException>();
         }
 
+        /// <summary>
+        /// Tests DeserializeRequest with invalid JSON throws exception.
+        /// </summary>
         [Fact]
         public void DeserializeRequest_invalid_json_throws_exception()
         {
@@ -186,6 +213,9 @@ namespace LobotomyPlaywright.Plugin.Test.Protocol
             _ = act.Should().Throw<InvalidOperationException>();
         }
 
+        /// <summary>
+        /// Tests Serialize deserialize round trip preserves data.
+        /// </summary>
         [Fact]
         public void Serialize_deserialize_round_trip_preserves_data()
         {

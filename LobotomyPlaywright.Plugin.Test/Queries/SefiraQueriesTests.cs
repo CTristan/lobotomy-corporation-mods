@@ -8,8 +8,14 @@ using Xunit;
 
 namespace LobotomyPlaywright.Plugin.Test.Queries
 {
+    /// <summary>
+    /// Tests for SefiraQueries.
+    /// </summary>
     public class SefiraQueriesTests
     {
+        /// <summary>
+        /// Tests ListSefira method exists and is callable.
+        /// </summary>
         [Fact]
         public void ListSefira_method_exists_and_is_callable()
         {
@@ -20,6 +26,9 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             _ = act.Should().NotThrow();
         }
 
+        /// <summary>
+        /// Tests ListSefira returns data.
+        /// </summary>
         [Fact]
         public void ListSefira_returns_data()
         {
@@ -33,6 +42,9 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             _ = sefiras.Should().HaveCountGreaterThanOrEqualTo(10); // At least the named Sefira
         }
 
+        /// <summary>
+        /// Tests GetSefira with valid sefira enum returns data.
+        /// </summary>
         [Fact]
         public void GetSefira_with_valid_sefira_enum_returns_data()
         {
@@ -45,6 +57,9 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             _ = sefira.CreatureIds.Should().NotBeNull();
         }
 
+        /// <summary>
+        /// Tests GetSefira method exists and is callable.
+        /// </summary>
         [Fact]
         public void GetSefira_method_exists_and_is_callable()
         {

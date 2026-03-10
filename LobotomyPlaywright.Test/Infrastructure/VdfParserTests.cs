@@ -7,8 +7,14 @@ using Xunit;
 
 namespace LobotomyPlaywright.Tests.Infrastructure
 {
+    /// <summary>
+    /// Tests for VdfParser.
+    /// </summary>
     public sealed class VdfParserTests
     {
+        /// <summary>
+        /// Tests ExtractLibraryPaths with valid VDF returns paths.
+        /// </summary>
         [Fact]
         public void ExtractLibraryPaths_WithValidVDF_ReturnsPaths()
         {
@@ -39,6 +45,9 @@ namespace LobotomyPlaywright.Tests.Infrastructure
             _ = paths.Should().Contain(@"D:\Games\Steam");
         }
 
+        /// <summary>
+        /// Tests ExtractLibraryPaths with empty content returns empty list.
+        /// </summary>
         [Fact]
         public void ExtractLibraryPaths_WithEmptyContent_ReturnsEmptyList()
         {
@@ -52,6 +61,9 @@ namespace LobotomyPlaywright.Tests.Infrastructure
             _ = paths.Should().BeEmpty();
         }
 
+        /// <summary>
+        /// Tests ExtractLibraryPaths with null content returns empty list.
+        /// </summary>
         [Fact]
         public void ExtractLibraryPaths_WithNullContent_ReturnsEmptyList()
         {
@@ -62,6 +74,9 @@ namespace LobotomyPlaywright.Tests.Infrastructure
             _ = paths.Should().BeEmpty();
         }
 
+        /// <summary>
+        /// Tests ExtractLibraryPaths without path entries returns empty list.
+        /// </summary>
         [Fact]
         public void ExtractLibraryPaths_WithoutPathEntries_ReturnsEmptyList()
         {

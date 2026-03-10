@@ -10,8 +10,14 @@ using Xunit;
 
 namespace LobotomyPlaywright.Plugin.Test.Queries
 {
+    /// <summary>
+    /// Tests for QueryRouter.
+    /// </summary>
     public sealed class QueryRouterTests : IDisposable
     {
+        /// <summary>
+        /// Initializes a new instance of the QueryRouterTests class.
+        /// </summary>
         public QueryRouterTests()
         {
             SetGameReady(false);
@@ -19,6 +25,9 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             UiQueries.DisableThreadCheckForTesting();
         }
 
+        /// <summary>
+        /// Disposes resources.
+        /// </summary>
         public void Dispose()
         {
             SetGameReady(null);
@@ -30,6 +39,9 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             property?.SetValue(null, ready, null);
         }
 
+        /// <summary>
+        /// Tests HandleQuery with null request returns error.
+        /// </summary>
         [Fact]
         public void HandleQuery_null_request_returns_error()
         {
@@ -45,6 +57,9 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             _ = response.error.Should().Contain("Missing target parameter");
         }
 
+        /// <summary>
+        /// Tests HandleRequest with missing target returns error.
+        /// </summary>
         [Fact]
         public void HandleRequest_missing_target_returns_error()
         {
@@ -65,6 +80,9 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             _ = response.error.Should().Contain("Missing target parameter");
         }
 
+        /// <summary>
+        /// Tests HandleRequest with empty target returns error.
+        /// </summary>
         [Fact]
         public void HandleRequest_empty_target_returns_error()
         {
@@ -85,6 +103,9 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             _ = response.error.Should().Contain("Missing target parameter");
         }
 
+        /// <summary>
+        /// Tests HandleQuery with unknown target returns error.
+        /// </summary>
         [Fact]
         public void HandleQuery_unknown_target_returns_error()
         {
@@ -105,6 +126,9 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             _ = response.error.Should().Contain("Unknown query target: unknown");
         }
 
+        /// <summary>
+        /// Tests HandleQuery when game not ready returns error.
+        /// </summary>
         [Fact]
         public void HandleQuery_game_not_ready_returns_error()
         {
@@ -126,6 +150,9 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             _ = response.code.Should().Be("GAME_NOT_READY");
         }
 
+        /// <summary>
+        /// Tests HandleQuery agents target case insensitive.
+        /// </summary>
         [Fact]
         public void HandleQuery_agents_target_case_insensitive()
         {
@@ -146,6 +173,9 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             _ = response.error.Should().Contain("Game is not in a queryable state");
         }
 
+        /// <summary>
+        /// Tests HandleQuery creatures target case insensitive.
+        /// </summary>
         [Fact]
         public void HandleQuery_creatures_target_case_insensitive()
         {
@@ -166,6 +196,9 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             _ = response.error.Should().Contain("Game is not in a queryable state");
         }
 
+        /// <summary>
+        /// Tests HandleQuery game target case insensitive.
+        /// </summary>
         [Fact]
         public void HandleQuery_game_target_case_insensitive()
         {
@@ -186,6 +219,9 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             _ = response.error.Should().Contain("Game is not in a queryable state");
         }
 
+        /// <summary>
+        /// Tests HandleQuery status target is alias for game.
+        /// </summary>
         [Fact]
         public void HandleQuery_status_target_is_alias_for_game()
         {
@@ -206,6 +242,9 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             _ = response.error.Should().Contain("Game is not in a queryable state");
         }
 
+        /// <summary>
+        /// Tests HandleQuery sefira target case insensitive.
+        /// </summary>
         [Fact]
         public void HandleQuery_sefira_target_case_insensitive()
         {
@@ -226,6 +265,9 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             _ = response.error.Should().Contain("Game is not in a queryable state");
         }
 
+        /// <summary>
+        /// Tests HandleQuery departments target is alias for sefira.
+        /// </summary>
         [Fact]
         public void HandleQuery_departments_target_is_alias_for_sefira()
         {
@@ -246,6 +288,9 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             _ = response.error.Should().Contain("Game is not in a queryable state");
         }
 
+        /// <summary>
+        /// Tests HandleQuery with null params uses empty dict.
+        /// </summary>
         [Fact]
         public void HandleQuery_with_null_params_uses_empty_dict()
         {
@@ -266,6 +311,9 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             _ = response.status.Should().Be("error");
         }
 
+        /// <summary>
+        /// Tests HandleQuery with empty params works.
+        /// </summary>
         [Fact]
         public void HandleQuery_with_empty_params_works()
         {
@@ -286,6 +334,9 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             _ = response.status.Should().Be("error");
         }
 
+        /// <summary>
+        /// Tests HandleQuery exception caught and returns error.
+        /// </summary>
         [Fact]
         public void HandleQuery_exception_caught_and_returns_error()
         {
@@ -311,6 +362,9 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             _ = response.error.Should().NotBeNullOrEmpty();
         }
 
+        /// <summary>
+        /// Tests HandleQuery ui target returns success.
+        /// </summary>
         [Fact]
         public void HandleQuery_ui_target_returns_success()
         {
@@ -337,6 +391,9 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             _ = response.id.Should().Be("req-1");
         }
 
+        /// <summary>
+        /// Tests HandleQuery ui target case insensitive.
+        /// </summary>
         [Fact]
         public void HandleQuery_ui_target_case_insensitive()
         {
@@ -358,6 +415,9 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             _ = response.DataObject.Should().NotBeNull();
         }
 
+        /// <summary>
+        /// Tests HandleQuery ui with depth summary.
+        /// </summary>
         [Fact]
         public void HandleQuery_ui_with_depth_summary()
         {
@@ -379,6 +439,9 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             _ = response.DataObject.Should().NotBeNull();
         }
 
+        /// <summary>
+        /// Tests HandleQuery ui with window filter.
+        /// </summary>
         [Fact]
         public void HandleQuery_ui_with_window_filter()
         {
@@ -404,6 +467,9 @@ namespace LobotomyPlaywright.Plugin.Test.Queries
             _ = response.DataObject.Should().NotBeNull();
         }
 
+        /// <summary>
+        /// Tests HandleQuery ui data has expected structure.
+        /// </summary>
         [Fact]
         public void HandleQuery_ui_data_has_expected_structure()
         {

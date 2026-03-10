@@ -7,8 +7,14 @@ using Xunit;
 
 namespace LobotomyPlaywright.Tests.Infrastructure
 {
+    /// <summary>
+    /// Tests for OutputFormatter.
+    /// </summary>
     public sealed class OutputFormatterTests
     {
+        /// <summary>
+        /// Tests FormatAgent with JSON output returns JSON string.
+        /// </summary>
         [Fact]
         public void FormatAgent_WithJsonOutput_ReturnsJsonString()
         {
@@ -40,6 +46,9 @@ namespace LobotomyPlaywright.Tests.Infrastructure
             _ = result.Should().Contain("100");
         }
 
+        /// <summary>
+        /// Tests FormatAgent with formatted output returns formatted string.
+        /// </summary>
         [Fact]
         public void FormatAgent_WithFormattedOutput_ReturnsFormattedString()
         {
@@ -76,6 +85,9 @@ namespace LobotomyPlaywright.Tests.Infrastructure
             _ = result.Should().Contain("Status: Normal");
         }
 
+        /// <summary>
+        /// Tests FormatCreature with formatted output returns formatted string.
+        /// </summary>
         [Fact]
         public void FormatCreature_WithFormattedOutput_ReturnsFormattedString()
         {
@@ -106,6 +118,9 @@ namespace LobotomyPlaywright.Tests.Infrastructure
             _ = result.Should().Contain("Status: Normal");
         }
 
+        /// <summary>
+        /// Tests FormatGameState with formatted output returns formatted string.
+        /// </summary>
         [Fact]
         public void FormatGameState_WithFormattedOutput_ReturnsFormattedString()
         {
@@ -135,6 +150,9 @@ namespace LobotomyPlaywright.Tests.Infrastructure
             _ = result.Should().Contain("Emergency: NORMAL");
         }
 
+        /// <summary>
+        /// Tests FormatDepartment with formatted output returns formatted string.
+        /// </summary>
         [Fact]
         public void FormatDepartment_WithFormattedOutput_ReturnsFormattedString()
         {

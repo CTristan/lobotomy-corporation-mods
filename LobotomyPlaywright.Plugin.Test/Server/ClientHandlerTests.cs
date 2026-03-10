@@ -12,23 +12,35 @@ using Xunit.Abstractions;
 
 namespace LobotomyPlaywright.Plugin.Test.Server
 {
+    /// <summary>
+    /// Tests for ClientHandler.
+    /// </summary>
     public sealed class ClientHandlerTests : IDisposable
     {
         private readonly TcpServer _server;
         private readonly int _port = 18495;
 
+        /// <summary>
+        /// Initializes a new instance of the ClientHandlerTests class.
+        /// </summary>
         public ClientHandlerTests(ITestOutputHelper output)
         {
             _server = new TcpServer(_port);
             _server.Start();
         }
 
+        /// <summary>
+        /// Disposes resources.
+        /// </summary>
         public void Dispose()
         {
             _server?.Stop();
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Tests ClientHandler with valid TCP client starts successfully.
+        /// </summary>
         [Fact]
         public void ClientHandler_with_valid_tcp_client_starts_successfully()
         {
@@ -49,6 +61,9 @@ namespace LobotomyPlaywright.Plugin.Test.Server
             Thread.Sleep(100);
         }
 
+        /// <summary>
+        /// Tests ClientHandler disconnects gracefully on client close.
+        /// </summary>
         [Fact]
         public void ClientHandler_disconnects_gracefully_on_client_close()
         {
@@ -68,6 +83,9 @@ namespace LobotomyPlaywright.Plugin.Test.Server
             _ = _server.ClientCount.Should().Be(0);
         }
 
+        /// <summary>
+        /// Tests ClientHandler can send JSON request.
+        /// </summary>
         [Fact]
         public void ClientHandler_can_send_json_request()
         {
@@ -104,6 +122,9 @@ namespace LobotomyPlaywright.Plugin.Test.Server
             tcpClient.Close();
         }
 
+        /// <summary>
+        /// Tests ClientHandler handles multiple requests.
+        /// </summary>
         [Fact]
         public void ClientHandler_handles_multiple_requests()
         {
@@ -150,6 +171,9 @@ namespace LobotomyPlaywright.Plugin.Test.Server
             tcpClient.Close();
         }
 
+        /// <summary>
+        /// Tests ClientHandler handles malformed JSON gracefully.
+        /// </summary>
         [Fact]
         public void ClientHandler_handles_malformed_json_gracefully()
         {
@@ -181,6 +205,9 @@ namespace LobotomyPlaywright.Plugin.Test.Server
             tcpClient.Close();
         }
 
+        /// <summary>
+        /// Tests ClientHandler with large request handles gracefully.
+        /// </summary>
         [Fact]
         public void ClientHandler_with_large_request_handles_gracefully()
         {
@@ -217,6 +244,9 @@ namespace LobotomyPlaywright.Plugin.Test.Server
             tcpClient.Close();
         }
 
+        /// <summary>
+        /// Tests ClientHandler JSON line protocol uses newline delimiter.
+        /// </summary>
         [Fact]
         public void ClientHandler_json_line_protocol_uses_newline_delimiter()
         {
@@ -253,6 +283,9 @@ namespace LobotomyPlaywright.Plugin.Test.Server
             tcpClient.Close();
         }
 
+        /// <summary>
+        /// Tests ClientHandler handles concurrent clients.
+        /// </summary>
         [Fact]
         public void ClientHandler_handles_concurrent_clients()
         {

@@ -9,8 +9,14 @@ using Xunit;
 
 namespace LobotomyPlaywright.Plugin.Test.Server
 {
+    /// <summary>
+    /// Tests for TcpServer.
+    /// </summary>
     public class TcpServerTests
     {
+        /// <summary>
+        /// Tests Constructor with valid port creates server.
+        /// </summary>
         [Fact]
         public void Constructor_valid_port_creates_server()
         {
@@ -24,6 +30,9 @@ namespace LobotomyPlaywright.Plugin.Test.Server
             _ = server.ClientCount.Should().Be(0);
         }
 
+        /// <summary>
+        /// Tests Constructor with port too low throws exception.
+        /// </summary>
         [Fact]
         public void Constructor_port_too_low_throws_exception()
         {
@@ -34,6 +43,9 @@ namespace LobotomyPlaywright.Plugin.Test.Server
             _ = exception.ParamName.Should().Be("port");
         }
 
+        /// <summary>
+        /// Tests Constructor with port too high throws exception.
+        /// </summary>
         [Fact]
         public void Constructor_port_too_high_throws_exception()
         {
@@ -44,6 +56,9 @@ namespace LobotomyPlaywright.Plugin.Test.Server
             _ = exception.ParamName.Should().Be("port");
         }
 
+        /// <summary>
+        /// Tests Constructor with negative port throws exception.
+        /// </summary>
         [Fact]
         public void Constructor_port_negative_throws_exception()
         {
@@ -54,6 +69,9 @@ namespace LobotomyPlaywright.Plugin.Test.Server
             _ = exception.ParamName.Should().Be("port");
         }
 
+        /// <summary>
+        /// Tests Start starts server on background thread.
+        /// </summary>
         [Fact]
         public void Start_starts_server_on_background_thread()
         {
@@ -70,6 +88,9 @@ namespace LobotomyPlaywright.Plugin.Test.Server
             server.Stop();
         }
 
+        /// <summary>
+        /// Tests Start with already running does nothing.
+        /// </summary>
         [Fact]
         public void Start_already_running_does_nothing()
         {
@@ -87,6 +108,9 @@ namespace LobotomyPlaywright.Plugin.Test.Server
             server.Stop();
         }
 
+        /// <summary>
+        /// Tests Stop stops running server.
+        /// </summary>
         [Fact]
         public void Stop_stops_running_server()
         {
@@ -101,6 +125,9 @@ namespace LobotomyPlaywright.Plugin.Test.Server
             _ = server.IsRunning.Should().BeFalse();
         }
 
+        /// <summary>
+        /// Tests Stop with already stopped does nothing.
+        /// </summary>
         [Fact]
         public void Stop_already_stopped_does_nothing()
         {
@@ -114,6 +141,9 @@ namespace LobotomyPlaywright.Plugin.Test.Server
             _ = server.IsRunning.Should().BeFalse();
         }
 
+        /// <summary>
+        /// Tests Stop with no clients sets client count to zero.
+        /// </summary>
         [Fact]
         public void Stop_with_no_clients_sets_client_count_to_zero()
         {
@@ -128,6 +158,9 @@ namespace LobotomyPlaywright.Plugin.Test.Server
             _ = server.ClientCount.Should().Be(0);
         }
 
+        /// <summary>
+        /// Tests ProcessQueuedRequests with empty queue does nothing.
+        /// </summary>
         [Fact]
         public void ProcessQueuedRequests_with_empty_queue_does_nothing()
         {
@@ -145,6 +178,9 @@ namespace LobotomyPlaywright.Plugin.Test.Server
             server.Stop();
         }
 
+        /// <summary>
+        /// Tests ProcessQueuedRequests when server not running does not throw.
+        /// </summary>
         [Fact]
         public void ProcessQueuedRequests_when_server_not_running_does_not_throw()
         {
@@ -158,6 +194,9 @@ namespace LobotomyPlaywright.Plugin.Test.Server
             _ = server.IsRunning.Should().BeFalse();
         }
 
+        /// <summary>
+        /// Tests ClientCount increases when client connects.
+        /// </summary>
         [Fact]
         public void ClientCount_increases_when_client_connects()
         {
@@ -206,6 +245,9 @@ namespace LobotomyPlaywright.Plugin.Test.Server
             }
         }
 
+        /// <summary>
+        /// Tests BroadcastEvent with no clients does not throw.
+        /// </summary>
         [Fact]
         public void BroadcastEvent_with_no_clients_does_not_throw()
         {
@@ -227,6 +269,9 @@ namespace LobotomyPlaywright.Plugin.Test.Server
             }
         }
 
+        /// <summary>
+        /// Tests BroadcastEvent when server not running does not throw.
+        /// </summary>
         [Fact]
         public void BroadcastEvent_when_server_not_running_does_not_throw()
         {
@@ -240,6 +285,9 @@ namespace LobotomyPlaywright.Plugin.Test.Server
             _ = server.IsRunning.Should().BeFalse();
         }
 
+        /// <summary>
+        /// Tests EnqueueRequest from client handler adds to queue.
+        /// </summary>
         [Fact]
         public void EnqueueRequest_from_client_handler_adds_to_queue()
         {
