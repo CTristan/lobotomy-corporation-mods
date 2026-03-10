@@ -111,7 +111,7 @@ Based on [Unity 2017.4 JsonSerialization docs](https://docs.unity3d.com/2017.4/D
 
 ### Folder convention
 
-All JsonUtility data classes **must** live in a `JsonModels/` folder (`.editorconfig` suppresses CA1051/IDE1006/CA1708 via `[**/JsonModels/**.cs]`). Do not place non-JsonUtility classes there.
+All JsonUtility data classes **must** live in a `JsonModels/` folder (`.editorconfig` suppresses rules via `[**/JsonModels/**.cs]`). Do not place non-JsonUtility classes there.
 
 ### Class requirements
 

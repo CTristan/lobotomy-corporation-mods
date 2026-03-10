@@ -22,17 +22,17 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses
             Rect rect,
             Vector2 pivot)
         {
-            _gameObject = Sprite.Create(texture, rect, pivot);
+            GameObjectInternal = Sprite.Create(texture, rect, pivot);
 
-            return _gameObject;
+            return GameObjectInternal;
         }
 
         public override Sprite GameObject
         {
             get =>
-                !_gameObject.IsUnityNull() ? _gameObject : null;
+                !GameObjectInternal.IsUnityNull() ? GameObjectInternal : null;
             set =>
-                _gameObject = value;
+                GameObjectInternal = value;
         }
     }
 }

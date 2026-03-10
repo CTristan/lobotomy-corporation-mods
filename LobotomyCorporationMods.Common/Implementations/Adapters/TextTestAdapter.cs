@@ -25,9 +25,9 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
         public string Text
         {
             get =>
-                _gameObject.text;
+                GameObjectInternal.text;
             set =>
-                _gameObject.text = value;
+                GameObjectInternal.text = value;
         }
     }
 }

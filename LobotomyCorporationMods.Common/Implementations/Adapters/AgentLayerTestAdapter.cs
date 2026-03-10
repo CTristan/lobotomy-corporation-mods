@@ -23,12 +23,12 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 
         public void AddAgent(AgentModel model)
         {
-            _gameObject.AddAgent(model);
+            GameObjectInternal.AddAgent(model);
         }
 
         public void RemoveAgent(AgentModel model)
         {
-            _gameObject.RemoveAgent(model);
+            GameObjectInternal.RemoveAgent(model);
         }
     }
 }

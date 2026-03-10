@@ -26,26 +26,26 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
         public Color Color
         {
             get =>
-                _gameObject.color;
+                GameObjectInternal.color;
             set =>
-                _gameObject.color = value;
+                GameObjectInternal.color = value;
         }
 
         public Sprite Sprite
         {
             get =>
-                _gameObject.sprite;
+                GameObjectInternal.sprite;
             set =>
-                _gameObject.sprite = value;
+                GameObjectInternal.sprite = value;
         }
 
         [NotNull]
         public ITooltipMouseOverTestAdapter AddTooltipMouseOverComponent()
         {
-            return new TooltipMouseOverTestAdapter(_gameObject.gameObject.AddComponent<TooltipMouseOver>());
+            return new TooltipMouseOverTestAdapter(GameObjectInternal.gameObject.AddComponent<TooltipMouseOver>());
         }
 
         [NotNull]
-        public ITooltipMouseOverTestAdapter TooltipMouseOverComponent => new TooltipMouseOverTestAdapter(_gameObject.gameObject.GetComponent<TooltipMouseOver>());
+        public ITooltipMouseOverTestAdapter TooltipMouseOverComponent => new TooltipMouseOverTestAdapter(GameObjectInternal.gameObject.GetComponent<TooltipMouseOver>());
     }
 }

@@ -21,19 +21,19 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses
 
         [NotNull]
         public ITransformTestAdapter Transform =>
-            new TransformTestAdapter(_gameObject.transform);
+            new TransformTestAdapter(GameObjectInternal.transform);
 
         public void SetActive(bool value)
         {
-            _gameObject.gameObject.SetActive(value);
+            GameObjectInternal.gameObject.SetActive(value);
         }
 
         public override T GameObject
         {
             get =>
-                !_gameObject.IsUnityNull() ? _gameObject : null;
+                !GameObjectInternal.IsUnityNull() ? GameObjectInternal : null;
             set =>
-                _gameObject = value;
+                GameObjectInternal = value;
         }
     }
 }

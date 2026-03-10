@@ -24,7 +24,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses
 
         public void SetData(AgentData agentData)
         {
-            _gameObject.SetData(agentData);
+            GameObjectInternal.SetData(agentData);
         }
     }
 }

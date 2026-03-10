@@ -20,7 +20,7 @@ namespace LobotomyCorporationMods.Common.Implementations
     {
         private const string UninitializedGameObjectErrorMessage = "Please load the game object into the adapter before trying to use it.";
 
-        protected T _gameObject;
+        protected T GameObjectInternal { get; set; }
 
         // ReSharper disable once UnusedMember.Global
         protected TestAdapter()
@@ -29,15 +29,15 @@ namespace LobotomyCorporationMods.Common.Implementations
 
         protected TestAdapter([NotNull] T gameObject)
         {
-            _gameObject = gameObject;
+            GameObjectInternal = gameObject;
         }
 
         [CanBeNull]
         public virtual T GameObject
         {
-            get => !_gameObject.IsNotNull() ? throw new InvalidOperationException(UninitializedGameObjectErrorMessage) : _gameObject;
+            get => !GameObjectInternal.IsNotNull() ? throw new InvalidOperationException(UninitializedGameObjectErrorMessage) : GameObjectInternal;
             set =>
-                _gameObject = value;
+                GameObjectInternal = value;
         }
     }
 }

@@ -23,7 +23,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses
         public void Send(string notice,
             params object[] param)
         {
-            _gameObject.Send(notice, param);
+            GameObjectInternal.Send(notice, param);
         }
     }
 }

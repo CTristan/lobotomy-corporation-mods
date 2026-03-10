@@ -7,8 +7,6 @@ indent_style = space
 [*.{cs,csx}]
 # BEGIN TEMPORARY BUILD WORKAROUND: Disable analyzers that cause build errors until the underlying issues are resolved
 
-# WHY: Disable CA1051 (visible instance fields) - required for JsonUtility serialization
-dotnet_diagnostic.CA1051.severity = none
 # WHY: Disable CA1062 (validate parameters) - too many false positives for parameter validation
 dotnet_diagnostic.CA1062.severity = none
 # WHY: Disable CA1303 (use resources for strings) - literal strings are fine for CLI tools
@@ -117,6 +115,9 @@ dotnet_diagnostic.CA1031.severity = none
 [{JsonModels,**/JsonModels}/{*.cs,**/*.cs}]
 # WHY: JsonUtility does not support collections other than arrays and List<T>
 dotnet_diagnostic.CA1002.severity = none
+
+# WHY: JsonUtility only serializes fields, not properties — public fields are required
+dotnet_diagnostic.CA1051.severity = none
 
 # WHY: JsonUtility data classes require public lowercase fields and case-differing PascalCase accessors — Unity's serializer only works with public fields
 dotnet_diagnostic.CA1708.severity = none

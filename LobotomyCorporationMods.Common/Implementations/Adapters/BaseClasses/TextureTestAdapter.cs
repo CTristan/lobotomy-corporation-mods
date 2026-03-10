@@ -19,17 +19,17 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses
         }
 
         public int Width =>
-            _gameObject.width;
+            GameObjectInternal.width;
 
         public int Height =>
-            _gameObject.height;
+            GameObjectInternal.height;
 
         public override T GameObject
         {
             get =>
-                !_gameObject.IsUnityNull() ? _gameObject : null;
+                !GameObjectInternal.IsUnityNull() ? GameObjectInternal : null;
             set =>
-                _gameObject = value;
+                GameObjectInternal = value;
         }
     }
 }

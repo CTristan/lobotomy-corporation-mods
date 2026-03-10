@@ -24,31 +24,31 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses
         {
         }
 
-        public bool ActiveSelf => _gameObject.activeSelf;
+        public bool ActiveSelf => GameObjectInternal.activeSelf;
 
         [NotNull]
-        public ITransformTestAdapter Transform => new TransformTestAdapter(_gameObject.transform);
+        public ITransformTestAdapter Transform => new TransformTestAdapter(GameObjectInternal.transform);
 
         [NotNull]
         public IImageTestAdapter AddImageComponent()
         {
-            return new ImageTestAdapter(_gameObject.AddComponent<Image>());
+            return new ImageTestAdapter(GameObjectInternal.AddComponent<Image>());
         }
 
         [NotNull]
-        public IImageTestAdapter ImageComponent => new ImageTestAdapter(_gameObject.GetComponent<Image>());
+        public IImageTestAdapter ImageComponent => new ImageTestAdapter(GameObjectInternal.GetComponent<Image>());
 
         public void SetActive(bool value)
         {
-            _gameObject.SetActive(value);
+            GameObjectInternal.SetActive(value);
         }
 
         public override GameObject GameObject
         {
             get =>
-                !_gameObject.IsUnityNull() ? _gameObject : null;
+                !GameObjectInternal.IsUnityNull() ? GameObjectInternal : null;
             set =>
-                _gameObject = value;
+                GameObjectInternal = value;
         }
     }
 }

@@ -19,7 +19,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 
         public void SetDynamicTooltip(string str)
         {
-            _gameObject.SetDynamicTooltip(str);
+            GameObjectInternal.SetDynamicTooltip(str);
         }
     }
 }

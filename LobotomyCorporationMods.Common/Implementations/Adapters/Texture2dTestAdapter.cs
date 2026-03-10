@@ -27,7 +27,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 
         public bool LoadImage(byte[] data)
         {
-            return _gameObject.LoadImage(data);
+            return GameObjectInternal.LoadImage(data);
         }
     }
 }
