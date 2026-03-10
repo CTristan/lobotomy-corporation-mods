@@ -212,16 +212,13 @@ namespace HarmonyDebugPanel.Formatting
 
         public static string ToHarmonyVersionLabel(HarmonyVersion harmonyVersion)
         {
-            switch (harmonyVersion)
+            return harmonyVersion switch
             {
-                case HarmonyVersion.Harmony1:
-                    return "Harmony 1";
-                case HarmonyVersion.Harmony2:
-                    return "Harmony 2";
-                case HarmonyVersion.Unknown:
-                default:
-                    return "Unknown";
-            }
+                HarmonyVersion.Harmony1 => "Harmony 1",
+                HarmonyVersion.Harmony2 => "Harmony 2",
+                HarmonyVersion.Unknown => "Unknown",
+                _ => "Unknown",
+            };
         }
     }
 }

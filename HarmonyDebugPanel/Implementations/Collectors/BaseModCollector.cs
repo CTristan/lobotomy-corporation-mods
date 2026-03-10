@@ -7,9 +7,11 @@ using HarmonyDebugPanel.Models;
 
 namespace HarmonyDebugPanel.Implementations.Collectors
 {
-    public sealed class BaseModCollector : IInfoCollector<IList<ModInfo>>
+    public sealed class BaseModCollector(
+        IPatchInspectionSource patchInspectionSource,
+        IHarmonyVersionClassifier harmonyVersionClassifier) : IInfoCollector<IList<ModInfo>>
     {
-        private static readonly HashSet<string> s_frameworkAssemblies = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        private static readonly HashSet<string> s_frameworkAssemblies = new(StringComparer.OrdinalIgnoreCase)
         {
             "mscorlib",
             "System",
@@ -31,20 +33,12 @@ namespace HarmonyDebugPanel.Implementations.Collectors
             "Assembly-CSharp",
         };
 
-        private readonly IPatchInspectionSource _patchInspectionSource;
-        private readonly IHarmonyVersionClassifier _harmonyVersionClassifier;
+        private readonly IPatchInspectionSource _patchInspectionSource = patchInspectionSource ?? throw new ArgumentNullException(nameof(patchInspectionSource));
+        private readonly IHarmonyVersionClassifier _harmonyVersionClassifier = harmonyVersionClassifier ?? throw new ArgumentNullException(nameof(harmonyVersionClassifier));
 
         public BaseModCollector()
             : this(new HarmonyPatchInspectionSource(), new HarmonyVersionClassifier())
         {
-        }
-
-        public BaseModCollector(
-            IPatchInspectionSource patchInspectionSource,
-            IHarmonyVersionClassifier harmonyVersionClassifier)
-        {
-            _patchInspectionSource = patchInspectionSource ?? throw new ArgumentNullException(nameof(patchInspectionSource));
-            _harmonyVersionClassifier = harmonyVersionClassifier ?? throw new ArgumentNullException(nameof(harmonyVersionClassifier));
         }
 
         public IList<ModInfo> Collect()
@@ -108,7 +102,7 @@ namespace HarmonyDebugPanel.Implementations.Collectors
 
                 if (!grouped.TryGetValue(patch.PatchAssemblyName, out var patchList))
                 {
-                    patchList = new List<PatchInspectionInfo>();
+                    patchList = [];
                     grouped[patch.PatchAssemblyName] = patchList;
                 }
 

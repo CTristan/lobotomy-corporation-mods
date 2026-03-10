@@ -16,7 +16,10 @@ namespace LobotomyPlaywright.Protocol
 
         public static string Serialize(Response response)
         {
-            if (response == null) return "null";
+            if (response == null)
+            {
+                return "null";
+            }
 
             // If we have no data object, just serialize as is
             if (response.DataObject == null)

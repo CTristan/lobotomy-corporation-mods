@@ -7,7 +7,6 @@ using AwesomeAssertions;
 using Customizing;
 using LobotomyCorporationMods.BugFixes;
 using LobotomyCorporationMods.BugFixes.Patches;
-using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.Test.Extensions;
 using Moq;
 using Xunit;

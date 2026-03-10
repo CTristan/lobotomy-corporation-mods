@@ -120,7 +120,7 @@ namespace HarmonyDebugPanel
 
                 if (!Directory.Exists(logDirectory))
                 {
-                    Directory.CreateDirectory(logDirectory);
+                    _ = Directory.CreateDirectory(logDirectory);
                 }
 
                 _logFilePath = Path.Combine(logDirectory, LogFileName);
@@ -131,10 +131,7 @@ namespace HarmonyDebugPanel
             }
             catch (Exception ex)
             {
-                if (Logger != null)
-                {
-                    Logger.LogWarning("HarmonyDebugPanel: Could not initialize log file: " + ex.Message);
-                }
+                Logger?.LogWarning("HarmonyDebugPanel: Could not initialize log file: " + ex.Message);
                 _logFilePath = null;
             }
         }
@@ -142,28 +139,19 @@ namespace HarmonyDebugPanel
         private void LogInfo(string message)
         {
             WriteToLogFile("INFO", message);
-            if (Logger != null)
-            {
-                Logger.LogInfo(message);
-            }
+            Logger?.LogInfo(message);
         }
 
         private void LogWarning(string message)
         {
             WriteToLogFile("WARN", message);
-            if (Logger != null)
-            {
-                Logger.LogWarning(message);
-            }
+            Logger?.LogWarning(message);
         }
 
         private void LogError(string message)
         {
             WriteToLogFile("ERROR", message);
-            if (Logger != null)
-            {
-                Logger.LogError(message);
-            }
+            Logger?.LogError(message);
         }
 
         private void WriteToLogFile(string level, string message)
@@ -356,7 +344,7 @@ namespace HarmonyDebugPanel
                 // Open in Notepad
                 try
                 {
-                    Process.Start("notepad.exe", logFilePath);
+                    _ = Process.Start("notepad.exe", logFilePath);
                 }
                 catch (Exception ex)
                 {
@@ -488,17 +476,13 @@ namespace HarmonyDebugPanel
         {
             try
             {
-                using (var stream = new FileStream(
+                using var stream = new FileStream(
                     logPath,
                     FileMode.Open,
                     FileAccess.Read,
-                    FileShare.ReadWrite | FileShare.Delete))
-                {
-                    using (var reader = new StreamReader(stream))
-                    {
-                        return reader.ReadToEnd();
-                    }
-                }
+                    FileShare.ReadWrite | FileShare.Delete);
+                using var reader = new StreamReader(stream);
+                return reader.ReadToEnd();
             }
             catch (Exception)
             {

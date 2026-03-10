@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading;
 using LobotomyPlaywright.Events;
 using LobotomyPlaywright.JsonModels;
-using UnityEngine;
 
 namespace LobotomyPlaywright.Server
 {
@@ -26,17 +25,8 @@ namespace LobotomyPlaywright.Server
 
         public ClientHandler(TcpClient client, TcpServer server)
         {
-            if (client == null)
-            {
-                throw new ArgumentNullException(nameof(client));
-            }
-            if (server == null)
-            {
-                throw new ArgumentNullException(nameof(server));
-            }
-
-            _client = client;
-            _server = server;
+            _client = client ?? throw new ArgumentNullException(nameof(client));
+            _server = server ?? throw new ArgumentNullException(nameof(server));
             _isRunning = true;
         }
 
@@ -102,13 +92,12 @@ namespace LobotomyPlaywright.Server
             try
             {
                 stream = _client.GetStream();
-                var networkStream = stream as System.Net.Sockets.NetworkStream;
 
                 while (_isRunning && _client.Connected)
                 {
-                    if (networkStream != null && !networkStream.DataAvailable)
+                    if (stream is NetworkStream networkStream && !networkStream.DataAvailable)
                     {
-                        if (_client.Client != null && _client.Client.Poll(0, System.Net.Sockets.SelectMode.SelectRead))
+                        if (_client.Client != null && _client.Client.Poll(0, SelectMode.SelectRead))
                         {
                             break;
                         }
@@ -123,7 +112,7 @@ namespace LobotomyPlaywright.Server
                     }
 
                     var chunk = Encoding.UTF8.GetString(readBuffer, 0, bytesRead);
-                    buffer.Append(chunk);
+                    _ = buffer.Append(chunk);
 
                     // Process complete lines
                     var content = buffer.ToString();
@@ -132,7 +121,7 @@ namespace LobotomyPlaywright.Server
                     while (newlineIndex >= 0)
                     {
                         var line = content.Substring(0, newlineIndex).Trim();
-                        buffer.Remove(0, newlineIndex + 1);
+                        _ = buffer.Remove(0, newlineIndex + 1);
                         content = buffer.ToString();
 
                         if (!string.IsNullOrEmpty(line))

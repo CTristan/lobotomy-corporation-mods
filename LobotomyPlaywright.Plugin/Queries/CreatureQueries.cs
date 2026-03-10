@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using UnityEngine;
 
 namespace LobotomyPlaywright.Queries
 {
@@ -52,16 +51,8 @@ namespace LobotomyPlaywright.Queries
             InitializeField();
 
             var creatures = new List<CreatureData>();
-            var creatureManager = CreatureManager.instance;
-
-            if (creatureManager == null)
-            {
-                throw new InvalidOperationException("CreatureManager.instance is null. Game may not be initialized.");
-            }
-
-            var creatureList = s_creatureListField?.GetValue(creatureManager) as List<CreatureModel>;
-
-            if (creatureList != null)
+            var creatureManager = CreatureManager.instance ?? throw new InvalidOperationException("CreatureManager.instance is null. Game may not be initialized.");
+            if (s_creatureListField?.GetValue(creatureManager) is List<CreatureModel> creatureList)
             {
                 foreach (var creature in creatureList)
                 {

@@ -6,9 +6,7 @@ using System;
 using AwesomeAssertions;
 using LobotomyCorporationMods.BadLuckProtectionForGifts;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Patches;
-using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.Test.Extensions;
-using Moq;
 using Xunit;
 
 #endregion

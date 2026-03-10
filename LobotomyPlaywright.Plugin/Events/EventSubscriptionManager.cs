@@ -14,25 +14,20 @@ namespace LobotomyPlaywright.Events
     /// </summary>
     public static class EventSubscriptionManager
     {
-        private static readonly Dictionary<Server.ClientHandler, HashSet<string>> s_clientSubscriptions =
-            new Dictionary<Server.ClientHandler, HashSet<string>>();
+        private static readonly Dictionary<ClientHandler, HashSet<string>> s_clientSubscriptions =
+            new Dictionary<ClientHandler, HashSet<string>>();
 
         private static readonly object s_lock = new object();
-        private static Server.TcpServer s_server;
+        private static TcpServer s_server;
         private static NoticeSubscriber s_noticeSubscriber;
         private static bool s_hasSubscribed;
 
         /// <summary>
         /// Initialize the event subscription system.
         /// </summary>
-        public static void Initialize(Server.TcpServer server)
+        public static void Initialize(TcpServer server)
         {
-            if (server == null)
-            {
-                throw new ArgumentNullException(nameof(server));
-            }
-
-            s_server = server;
+            s_server = server ?? throw new ArgumentNullException(nameof(server));
 
             // Create Notice subscriber but defer subscription
             // Subscription will happen when Notice system is ready
@@ -67,7 +62,7 @@ namespace LobotomyPlaywright.Events
                 }
                 catch (Exception ex)
                 {
-                    LobotomyPlaywright.Server.TcpServer.LogError($"[LobotomyPlaywright] Failed to subscribe to events: {ex.Message}");
+                    TcpServer.LogError($"[LobotomyPlaywright] Failed to subscribe to events: {ex.Message}");
                 }
             }
         }
@@ -102,7 +97,7 @@ namespace LobotomyPlaywright.Events
             }
             catch (Exception ex)
             {
-                LobotomyPlaywright.Server.TcpServer.LogError($"[LobotomyPlaywright] Failed to broadcast event {eventName}: {ex.Message}");
+                TcpServer.LogError($"[LobotomyPlaywright] Failed to broadcast event {eventName}: {ex.Message}");
             }
         }
 
@@ -173,7 +168,7 @@ namespace LobotomyPlaywright.Events
         /// <summary>
         /// Add a client's subscriptions.
         /// </summary>
-        public static void AddClient(Server.ClientHandler client, IEnumerable<string> events)
+        public static void AddClient(ClientHandler client, IEnumerable<string> events)
         {
             if (client == null)
             {
@@ -191,7 +186,7 @@ namespace LobotomyPlaywright.Events
                 {
                     if (!string.IsNullOrEmpty(eventName))
                     {
-                        s_clientSubscriptions[client].Add(eventName);
+                        _ = s_clientSubscriptions[client].Add(eventName);
                     }
                 }
             }
@@ -200,7 +195,7 @@ namespace LobotomyPlaywright.Events
         /// <summary>
         /// Remove a client's subscriptions.
         /// </summary>
-        public static void RemoveClient(Server.ClientHandler client)
+        public static void RemoveClient(ClientHandler client)
         {
             if (client == null)
             {
@@ -209,14 +204,14 @@ namespace LobotomyPlaywright.Events
 
             lock (s_lock)
             {
-                s_clientSubscriptions.Remove(client);
+                _ = s_clientSubscriptions.Remove(client);
             }
         }
 
         /// <summary>
         /// Remove specific event subscriptions for a client.
         /// </summary>
-        public static void RemoveClientEvents(Server.ClientHandler client, IEnumerable<string> events)
+        public static void RemoveClientEvents(ClientHandler client, IEnumerable<string> events)
         {
             if (client == null)
             {
@@ -229,7 +224,7 @@ namespace LobotomyPlaywright.Events
                 {
                     foreach (var eventName in events)
                     {
-                        s_clientSubscriptions[client].Remove(eventName);
+                        _ = s_clientSubscriptions[client].Remove(eventName);
                     }
                 }
             }
@@ -238,7 +233,7 @@ namespace LobotomyPlaywright.Events
         /// <summary>
         /// Check if a client is subscribed to an event.
         /// </summary>
-        public static bool IsClientSubscribed(Server.ClientHandler client, string eventName)
+        public static bool IsClientSubscribed(ClientHandler client, string eventName)
         {
             if (client == null || string.IsNullOrEmpty(eventName))
             {
@@ -255,11 +250,11 @@ namespace LobotomyPlaywright.Events
         /// <summary>
         /// Get all clients subscribed to a specific event.
         /// </summary>
-        public static Server.ClientHandler[] GetSubscribersForEvent(string eventName)
+        public static ClientHandler[] GetSubscribersForEvent(string eventName)
         {
             if (string.IsNullOrEmpty(eventName))
             {
-                return new Server.ClientHandler[0];
+                return new ClientHandler[0];
             }
 
             lock (s_lock)
@@ -275,7 +270,7 @@ namespace LobotomyPlaywright.Events
         /// <summary>
         /// Get all event names a client is subscribed to.
         /// </summary>
-        public static string[] GetClientEvents(Server.ClientHandler client)
+        public static string[] GetClientEvents(ClientHandler client)
         {
             if (client == null)
             {
@@ -300,11 +295,8 @@ namespace LobotomyPlaywright.Events
                 s_clientSubscriptions.Clear();
             }
 
-            if (s_noticeSubscriber != null)
-            {
-                s_noticeSubscriber.UnsubscribeFromAllEvents();
-                s_noticeSubscriber = null;
-            }
+            s_noticeSubscriber?.UnsubscribeFromAllEvents();
+            s_noticeSubscriber = null;
 
             s_server = null;
         }

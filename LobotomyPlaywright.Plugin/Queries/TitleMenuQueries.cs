@@ -15,13 +15,7 @@ namespace LobotomyPlaywright.Queries
         {
             try
             {
-                var globalGameManager = GlobalGameManager.instance;
-
-                if (globalGameManager == null)
-                {
-                    throw new InvalidOperationException("GlobalGameManager.instance is null. Game may not be initialized.");
-                }
-
+                var globalGameManager = GlobalGameManager.instance ?? throw new InvalidOperationException("GlobalGameManager.instance is null. Game may not be initialized.");
                 var sceneName = SceneManager.GetActiveScene().name;
 
                 return new TitleMenuData

@@ -3,7 +3,6 @@
 #region
 
 using AwesomeAssertions;
-using Customizing;
 using LobotomyCorporationMods.FreeCustomization.Patches;
 using LobotomyCorporationMods.Test.Extensions;
 using Xunit;

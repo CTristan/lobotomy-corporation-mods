@@ -155,16 +155,13 @@ namespace HarmonyDebugPanel.Rendering
 
         private static Color GetModColor(HarmonyVersion version)
         {
-            switch (version)
+            return version switch
             {
-                case HarmonyVersion.Harmony1:
-                    return new Color(0.56f, 0.86f, 1f, 1f);
-                case HarmonyVersion.Harmony2:
-                    return new Color(0.66f, 1f, 0.66f, 1f);
-                case HarmonyVersion.Unknown:
-                default:
-                    return Color.white;
-            }
+                HarmonyVersion.Harmony1 => new Color(0.56f, 0.86f, 1f, 1f),
+                HarmonyVersion.Harmony2 => new Color(0.66f, 1f, 0.66f, 1f),
+                HarmonyVersion.Unknown => throw new NotImplementedException(),
+                _ => Color.white,
+            };
         }
 
         private static void DrawPatchSection(DiagnosticReport report)

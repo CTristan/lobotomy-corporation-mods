@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: MIT
 
-using System.Collections.Generic;
 using AwesomeAssertions;
 using Xunit;
 

@@ -89,7 +89,7 @@ namespace LobotomyPlaywright.Plugin.Test.Server
         [Fact]
         public void ClientHandler_can_send_json_request()
         {
-            if (!LobotomyPlaywright.TestHelpers.UnityTestHelper.IsUnityAvailable)
+            if (!TestHelpers.UnityTestHelper.IsUnityAvailable)
             {
                 return;
             }
@@ -128,7 +128,7 @@ namespace LobotomyPlaywright.Plugin.Test.Server
         [Fact]
         public void ClientHandler_handles_multiple_requests()
         {
-            if (!LobotomyPlaywright.TestHelpers.UnityTestHelper.IsUnityAvailable)
+            if (!TestHelpers.UnityTestHelper.IsUnityAvailable)
             {
                 return;
             }
@@ -177,7 +177,7 @@ namespace LobotomyPlaywright.Plugin.Test.Server
         [Fact]
         public void ClientHandler_handles_malformed_json_gracefully()
         {
-            if (!LobotomyPlaywright.TestHelpers.UnityTestHelper.IsUnityAvailable)
+            if (!TestHelpers.UnityTestHelper.IsUnityAvailable)
             {
                 return;
             }
@@ -211,7 +211,7 @@ namespace LobotomyPlaywright.Plugin.Test.Server
         [Fact]
         public void ClientHandler_with_large_request_handles_gracefully()
         {
-            if (!LobotomyPlaywright.TestHelpers.UnityTestHelper.IsUnityAvailable)
+            if (!TestHelpers.UnityTestHelper.IsUnityAvailable)
             {
                 return;
             }
@@ -250,7 +250,7 @@ namespace LobotomyPlaywright.Plugin.Test.Server
         [Fact]
         public void ClientHandler_json_line_protocol_uses_newline_delimiter()
         {
-            if (!LobotomyPlaywright.TestHelpers.UnityTestHelper.IsUnityAvailable)
+            if (!TestHelpers.UnityTestHelper.IsUnityAvailable)
             {
                 return;
             }
@@ -289,7 +289,7 @@ namespace LobotomyPlaywright.Plugin.Test.Server
         [Fact]
         public void ClientHandler_handles_concurrent_clients()
         {
-            if (!LobotomyPlaywright.TestHelpers.UnityTestHelper.IsUnityAvailable)
+            if (!TestHelpers.UnityTestHelper.IsUnityAvailable)
             {
                 return;
             }

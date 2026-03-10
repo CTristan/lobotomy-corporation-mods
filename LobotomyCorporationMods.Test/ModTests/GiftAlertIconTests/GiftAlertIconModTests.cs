@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: MIT
 
-using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.GiftAlertIcon;
 using LobotomyCorporationMods.Test.Extensions;
-using Moq;
 
 namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests
 {

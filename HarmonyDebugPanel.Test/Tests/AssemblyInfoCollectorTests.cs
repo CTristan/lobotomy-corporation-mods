@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using AwesomeAssertions;
 using HarmonyDebugPanel.Implementations.Collectors;
 using HarmonyDebugPanel.Interfaces;
-using HarmonyDebugPanel.Models;
 using Xunit;
 
 namespace HarmonyDebugPanel.Test.Tests

@@ -64,7 +64,7 @@ namespace LobotomyPlaywright.Commands
 
                     using (var doneEvent = new ManualResetEvent(false))
                     {
-                        ThreadPool.QueueUserWorkItem(_ =>
+                        _ = ThreadPool.QueueUserWorkItem(_ =>
                         {
                             try
                             {
@@ -93,7 +93,7 @@ namespace LobotomyPlaywright.Commands
                             }
                             finally
                             {
-                                doneEvent.Set();
+                                _ = doneEvent.Set();
                             }
                         });
 

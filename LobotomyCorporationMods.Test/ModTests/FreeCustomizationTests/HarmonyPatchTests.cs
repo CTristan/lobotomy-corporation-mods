@@ -5,7 +5,6 @@
 using System;
 using AwesomeAssertions;
 using Customizing;
-using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.FreeCustomization;
 using LobotomyCorporationMods.FreeCustomization.Patches;
 using LobotomyCorporationMods.Test.Extensions;

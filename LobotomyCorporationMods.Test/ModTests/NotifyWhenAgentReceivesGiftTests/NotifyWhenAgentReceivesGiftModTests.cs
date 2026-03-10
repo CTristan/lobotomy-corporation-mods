@@ -4,7 +4,6 @@
 
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
 using LobotomyCorporationMods.Test.Extensions;
 using LobotomyCorporationMods.Test.Parameters;

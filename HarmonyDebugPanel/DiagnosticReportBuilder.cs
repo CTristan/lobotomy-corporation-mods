@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using HarmonyDebugPanel.Implementations.Collectors;
 using HarmonyDebugPanel.Interfaces;
 using HarmonyDebugPanel.Models;
@@ -65,7 +64,7 @@ namespace HarmonyDebugPanel
             catch (Exception ex)
             {
                 report.Warnings.Add("ExpectedPatchSource failed: " + ex.Message);
-                expectedPatches = new List<ExpectedPatchInfo>();
+                expectedPatches = [];
             }
             CompareExpectedWithActual(report, expectedPatches, report.Patches);
 
@@ -93,7 +92,7 @@ namespace HarmonyDebugPanel
 
                 if (!expectedByAssembly.TryGetValue(expected.PatchAssembly, out var list))
                 {
-                    list = new List<ExpectedPatchInfo>();
+                    list = [];
                     expectedByAssembly[expected.PatchAssembly] = list;
                 }
                 list.Add(expected);
@@ -110,7 +109,7 @@ namespace HarmonyDebugPanel
 
                 if (!actualByAssembly.TryGetValue(actual.PatchAssemblyName, out var list))
                 {
-                    list = new List<PatchInfo>();
+                    list = [];
                     actualByAssembly[actual.PatchAssemblyName] = list;
                 }
                 list.Add(actual);
@@ -195,7 +194,7 @@ namespace HarmonyDebugPanel
             catch (Exception ex)
             {
                 warnings.Add(collectorName + " failed: " + ex.Message);
-                return new List<T>();
+                return [];
             }
         }
 

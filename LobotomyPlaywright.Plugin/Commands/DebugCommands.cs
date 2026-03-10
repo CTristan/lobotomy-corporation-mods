@@ -4,8 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using LobotomyPlaywright.JsonModels;
-using LobotomyPlaywright.Protocol;
-using UnityEngine;
 
 // Use alias to avoid conflicts with Unity's Debug
 using TcpServer = LobotomyPlaywright.Server.TcpServer;
@@ -75,7 +73,7 @@ namespace LobotomyPlaywright.Commands
                 }
 
                 TcpServer.LogDebug($"[LobotomyPlaywright] Set agent {paramsObj.agentId} stats");
-                return Response.CreateSuccess(request.Id, new { result = "stats_updated", agentId = paramsObj.agentId });
+                return Response.CreateSuccess(request.Id, new { result = "stats_updated", paramsObj.agentId });
             }
             catch (Exception ex)
             {
@@ -120,7 +118,7 @@ namespace LobotomyPlaywright.Commands
                     TcpServer.LogDebug($"[LobotomyPlaywright] Added gift {paramsObj.giftId} to agent {paramsObj.agentId}");
                 }
 
-                return Response.CreateSuccess(request.Id, new { result = "gift_added", agentId = paramsObj.agentId, giftId = paramsObj.giftId });
+                return Response.CreateSuccess(request.Id, new { result = "gift_added", paramsObj.agentId, paramsObj.giftId });
             }
             catch (Exception ex)
             {
@@ -155,11 +153,11 @@ namespace LobotomyPlaywright.Commands
                 var giftList = GetPrivateField<List<int>>(agent, "giftList");
                 if (giftList != null && giftList.Contains(paramsObj.giftId))
                 {
-                    giftList.Remove(paramsObj.giftId);
+                    _ = giftList.Remove(paramsObj.giftId);
                     TcpServer.LogDebug($"[LobotomyPlaywright] Removed gift {paramsObj.giftId} from agent {paramsObj.agentId}");
                 }
 
-                return Response.CreateSuccess(request.Id, new { result = "gift_removed", agentId = paramsObj.agentId, giftId = paramsObj.giftId });
+                return Response.CreateSuccess(request.Id, new { result = "gift_removed", paramsObj.agentId, paramsObj.giftId });
             }
             catch (Exception ex)
             {
@@ -193,7 +191,7 @@ namespace LobotomyPlaywright.Commands
             {
                 SetPrivateField(creature, "qliphothCounter", paramsObj.counter);
                 TcpServer.LogDebug($"[LobotomyPlaywright] Set creature {paramsObj.creatureId} qliphoth to {paramsObj.counter}");
-                return Response.CreateSuccess(request.Id, new { result = "qliphoth_set", creatureId = paramsObj.creatureId, counter = paramsObj.counter });
+                return Response.CreateSuccess(request.Id, new { result = "qliphoth_set", paramsObj.creatureId, paramsObj.counter });
             }
             catch (Exception ex)
             {
@@ -253,7 +251,7 @@ namespace LobotomyPlaywright.Commands
 
                 SetPrivateField(gameManager, "speed", paramsObj.speed);
                 TcpServer.LogDebug($"[LobotomyPlaywright] Set game speed to {paramsObj.speed}");
-                return Response.CreateSuccess(request.Id, new { result = "speed_set", speed = paramsObj.speed });
+                return Response.CreateSuccess(request.Id, new { result = "speed_set", paramsObj.speed });
             }
             catch (Exception ex)
             {
@@ -287,7 +285,7 @@ namespace LobotomyPlaywright.Commands
             {
                 SetPrivateField(agent, "invincibility", paramsObj.invincible);
                 TcpServer.LogDebug($"[LobotomyPlaywright] Set agent {paramsObj.agentId} invincible to {paramsObj.invincible}");
-                return Response.CreateSuccess(request.Id, new { result = "invincibility_set", agentId = paramsObj.agentId, invincible = paramsObj.invincible });
+                return Response.CreateSuccess(request.Id, new { result = "invincibility_set", paramsObj.agentId, paramsObj.invincible });
             }
             catch (Exception ex)
             {
@@ -361,10 +359,16 @@ namespace LobotomyPlaywright.Commands
             try
             {
                 var agentManager = GetAgentManager();
-                if (agentManager == null) return null;
+                if (agentManager == null)
+                {
+                    return null;
+                }
 
                 var agentList = GetPrivateField<List<object>>(agentManager, "agentList");
-                if (agentList == null) return null;
+                if (agentList == null)
+                {
+                    return null;
+                }
 
                 foreach (var agent in agentList)
                 {
@@ -388,10 +392,16 @@ namespace LobotomyPlaywright.Commands
             try
             {
                 var creatureManager = GetCreatureManager();
-                if (creatureManager == null) return null;
+                if (creatureManager == null)
+                {
+                    return null;
+                }
 
                 var creatureList = GetPrivateField<List<object>>(creatureManager, "creatureList");
-                if (creatureList == null) return null;
+                if (creatureList == null)
+                {
+                    return null;
+                }
 
                 foreach (var creature in creatureList)
                 {
@@ -448,7 +458,11 @@ namespace LobotomyPlaywright.Commands
                 return default;
             }
             var value = field.GetValue(obj);
-            if (value is T typedValue) return typedValue;
+            if (value is T typedValue)
+            {
+                return typedValue;
+            }
+
             return default;
         }
 

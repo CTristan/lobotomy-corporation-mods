@@ -83,7 +83,7 @@ namespace LobotomyPlaywright.Events
             }
             catch (Exception ex)
             {
-                LobotomyPlaywright.Server.TcpServer.LogError($"[LobotomyPlaywright] Failed to subscribe to events: {ex.Message}");
+                Server.TcpServer.LogError($"[LobotomyPlaywright] Failed to subscribe to events: {ex.Message}");
             }
         }
 
@@ -106,7 +106,7 @@ namespace LobotomyPlaywright.Events
             }
             catch (Exception ex)
             {
-                LobotomyPlaywright.Server.TcpServer.LogError($"[LobotomyPlaywright] Failed to unsubscribe from events: {ex.Message}");
+                Server.TcpServer.LogError($"[LobotomyPlaywright] Failed to unsubscribe from events: {ex.Message}");
             }
         }
 
@@ -118,7 +118,7 @@ namespace LobotomyPlaywright.Events
             }
             catch (Exception ex)
             {
-                LobotomyPlaywright.Server.TcpServer.LogError($"[LobotomyPlaywright] Failed to broadcast event {eventName}: {ex.Message}");
+                Server.TcpServer.LogError($"[LobotomyPlaywright] Failed to broadcast event {eventName}: {ex.Message}");
             }
         }
 

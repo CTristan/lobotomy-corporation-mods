@@ -5,11 +5,9 @@
 using System;
 using AwesomeAssertions;
 using CommandWindow;
-using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.Test.Extensions;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches;
-using Moq;
 using Xunit;
 
 #endregion

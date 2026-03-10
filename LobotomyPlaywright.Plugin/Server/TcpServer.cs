@@ -7,7 +7,6 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Threading;
 using LobotomyPlaywright.JsonModels;
-using UnityEngine;
 
 namespace LobotomyPlaywright.Server
 {
@@ -17,7 +16,6 @@ namespace LobotomyPlaywright.Server
     /// </summary>
     public class TcpServer
     {
-        private readonly int _port;
         private TcpListener _listener;
         private Thread _listenerThread;
         private volatile bool _isRunning;
@@ -25,8 +23,8 @@ namespace LobotomyPlaywright.Server
         private readonly object _clientsLock = new object();
         private readonly Queue<QueuedRequest> _requestQueue = new Queue<QueuedRequest>();
         private readonly object _queueLock = new object();
-        private readonly Dictionary<System.Net.Sockets.TcpClient, ClientHandler> _clientHandlers =
-            new Dictionary<System.Net.Sockets.TcpClient, ClientHandler>();
+        private readonly Dictionary<TcpClient, ClientHandler> _clientHandlers =
+            new Dictionary<TcpClient, ClientHandler>();
         private static MethodInfo s_debugLogMethod;
         private static MethodInfo s_debugLogErrorMethod;
         private static bool s_methodsInitialized;
@@ -67,7 +65,7 @@ namespace LobotomyPlaywright.Server
             {
                 try
                 {
-                    s_debugLogMethod.Invoke(null, new object[] { message });
+                    _ = s_debugLogMethod.Invoke(null, new object[] { message });
                 }
                 catch
                 {
@@ -84,7 +82,7 @@ namespace LobotomyPlaywright.Server
             {
                 try
                 {
-                    s_debugLogErrorMethod.Invoke(null, new object[] { message });
+                    _ = s_debugLogErrorMethod.Invoke(null, new object[] { message });
                 }
                 catch
                 {
@@ -94,7 +92,7 @@ namespace LobotomyPlaywright.Server
         }
 
         public bool IsRunning => _isRunning;
-        public int Port => _port;
+        public int Port { get; }
         public int ClientCount
         {
             get
@@ -113,7 +111,7 @@ namespace LobotomyPlaywright.Server
                 throw new ArgumentOutOfRangeException(nameof(port), "Port must be between 1 and 65535.");
             }
 
-            _port = port;
+            Port = port;
         }
 
         public void Start()
@@ -141,10 +139,7 @@ namespace LobotomyPlaywright.Server
 
             _isRunning = false;
 
-            if (_listener != null)
-            {
-                _listener.Stop();
-            }
+            _listener?.Stop();
 
             // Disconnect all clients
             lock (_clientsLock)
@@ -196,7 +191,7 @@ namespace LobotomyPlaywright.Server
                     ClientHandler clientHandler;
                     lock (_clientsLock)
                     {
-                        _clientHandlers.TryGetValue(queued.Client, out clientHandler);
+                        _ = _clientHandlers.TryGetValue(queued.Client, out clientHandler);
                     }
 
                     var response = RequestHandler.ProcessRequest(queued.Request, clientHandler);
@@ -218,10 +213,10 @@ namespace LobotomyPlaywright.Server
         {
             try
             {
-                _listener = new TcpListener(IPAddress.Loopback, _port);
+                _listener = new TcpListener(IPAddress.Loopback, Port);
                 _listener.Start();
 
-                LogDebug($"[LobotomyPlaywright] TCP server listening on 127.0.0.1:{_port}");
+                LogDebug($"[LobotomyPlaywright] TCP server listening on 127.0.0.1:{Port}");
 
                 while (_isRunning)
                 {
@@ -264,10 +259,7 @@ namespace LobotomyPlaywright.Server
             }
             finally
             {
-                if (_listener != null)
-                {
-                    _listener.Stop();
-                }
+                _listener?.Stop();
             }
         }
 
@@ -303,14 +295,14 @@ namespace LobotomyPlaywright.Server
         {
             lock (_clientsLock)
             {
-                _clients.Remove(handler);
+                _ = _clients.Remove(handler);
                 // Also remove from the client handler mapping
                 // We need to find the TcpClient associated with this handler
                 foreach (var kvp in _clientHandlers)
                 {
                     if (kvp.Value == handler)
                     {
-                        _clientHandlers.Remove(kvp.Key);
+                        _ = _clientHandlers.Remove(kvp.Key);
                         break;
                     }
                 }

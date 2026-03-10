@@ -5,7 +5,6 @@
 using System;
 using AwesomeAssertions;
 using CommandWindow;
-using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.GiftAlertIcon;
 using LobotomyCorporationMods.GiftAlertIcon.Patches;
 using LobotomyCorporationMods.Test.Extensions;

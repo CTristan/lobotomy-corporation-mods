@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: MIT
 
-using System.Collections.Generic;
 using JetBrains.Annotations;
 
 namespace LobotomyCorporationMods.Common.Extensions

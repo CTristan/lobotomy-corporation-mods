@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-using System;
 using BepInEx;
-using BepInEx.Logging;
 using LobotomyPlaywright.Events;
 using LobotomyPlaywright.JsonModels;
 using LobotomyPlaywright.Server;
@@ -13,18 +11,17 @@ namespace LobotomyPlaywright
     [BepInPlugin(PluginConstants.PluginGuid, PluginConstants.PluginName, PluginConstants.PluginVersion)]
     public sealed class Plugin : BaseUnityPlugin
     {
-        private static Plugin _instance;
         private PluginConfiguration _configuration;
         private TcpServer _tcpServer;
         private bool _shutdownQueued;
 
-        internal static Plugin Instance => _instance;
+        internal static Plugin Instance { get; private set; }
 
         private void Awake()
         {
             try
             {
-                _instance = this;
+                Instance = this;
 
                 if (Config == null)
                 {
@@ -114,7 +111,7 @@ namespace LobotomyPlaywright
                 _tcpServer.ProcessQueuedRequests();
 
                 // Try to subscribe to events if not already done
-                Events.EventSubscriptionManager.TrySubscribeToEvents();
+                EventSubscriptionManager.TrySubscribeToEvents();
             }
         }
 
@@ -129,11 +126,8 @@ namespace LobotomyPlaywright
 
         private void OnDestroy()
         {
-            if (_tcpServer != null)
-            {
-                _tcpServer.Stop();
-                _tcpServer = null;
-            }
+            _tcpServer?.Stop();
+            _tcpServer = null;
 
             // Shutdown event streaming
             EventSubscriptionManager.Shutdown();

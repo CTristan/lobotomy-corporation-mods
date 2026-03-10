@@ -2,7 +2,6 @@
 
 using System;
 using System.IO;
-using System.Reflection;
 using LobotomyPlaywright.JsonModels;
 using UnityEngine.SceneManagement;
 
@@ -49,7 +48,7 @@ namespace LobotomyPlaywright.Queries
             try
             {
                 var sceneName = CurrentScene;
-                LobotomyPlaywright.Server.TcpServer.LogDebug($"[LobotomyPlaywright] GetStatus called, scene={sceneName}");
+                Server.TcpServer.LogDebug($"[LobotomyPlaywright] GetStatus called, scene={sceneName}");
 
                 var gameManager = GameManager.currentGameManager;
                 var playerModel = PlayerModel.instance;

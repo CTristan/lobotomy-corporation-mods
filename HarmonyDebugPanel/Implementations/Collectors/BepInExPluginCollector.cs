@@ -7,20 +7,14 @@ using HarmonyDebugPanel.Models;
 
 namespace HarmonyDebugPanel.Implementations.Collectors
 {
-    public sealed class BepInExPluginCollector : IInfoCollector<IList<ModInfo>>
+    public sealed class BepInExPluginCollector(IPluginInfoSource pluginInfoSource, IHarmonyVersionClassifier harmonyVersionClassifier) : IInfoCollector<IList<ModInfo>>
     {
-        private readonly IPluginInfoSource _pluginInfoSource;
-        private readonly IHarmonyVersionClassifier _harmonyVersionClassifier;
+        private readonly IPluginInfoSource _pluginInfoSource = pluginInfoSource ?? throw new ArgumentNullException(nameof(pluginInfoSource));
+        private readonly IHarmonyVersionClassifier _harmonyVersionClassifier = harmonyVersionClassifier ?? throw new ArgumentNullException(nameof(harmonyVersionClassifier));
 
         public BepInExPluginCollector()
             : this(new ChainloaderPluginInfoSource(), new HarmonyVersionClassifier())
         {
-        }
-
-        public BepInExPluginCollector(IPluginInfoSource pluginInfoSource, IHarmonyVersionClassifier harmonyVersionClassifier)
-        {
-            _pluginInfoSource = pluginInfoSource ?? throw new ArgumentNullException(nameof(pluginInfoSource));
-            _harmonyVersionClassifier = harmonyVersionClassifier ?? throw new ArgumentNullException(nameof(harmonyVersionClassifier));
         }
 
         public IList<ModInfo> Collect()

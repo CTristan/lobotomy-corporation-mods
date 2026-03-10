@@ -7,7 +7,6 @@ using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations.Adapters;
 using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
-using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
 using LobotomyCorporationMods.Common.ParameterObjects;
 using UnityEngine;
 using UnityEngine.UI;

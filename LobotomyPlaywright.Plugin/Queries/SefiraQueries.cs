@@ -2,9 +2,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using UnityEngine;
 
 namespace LobotomyPlaywright.Queries
 {
@@ -50,12 +48,7 @@ namespace LobotomyPlaywright.Queries
         public static List<SefiraData> ListSefira()
         {
             var sefiraList = new List<SefiraData>();
-            var sefiraManager = SefiraManager.instance;
-
-            if (sefiraManager == null)
-            {
-                throw new InvalidOperationException("SefiraManager.instance is null. Game may not be initialized.");
-            }
+            var sefiraManager = SefiraManager.instance ?? throw new InvalidOperationException("SefiraManager.instance is null. Game may not be initialized.");
 
             // Iterate through all SefiraEnum values
             foreach (SefiraEnum sefiraEnum in Enum.GetValues(typeof(SefiraEnum)))
@@ -77,19 +70,8 @@ namespace LobotomyPlaywright.Queries
 
         public static SefiraData GetSefira(SefiraEnum sefiraEnum)
         {
-            var sefiraManager = SefiraManager.instance;
-
-            if (sefiraManager == null)
-            {
-                throw new InvalidOperationException("SefiraManager.instance is null. Game may not be initialized.");
-            }
-
-            var sefira = sefiraManager.GetSefira(sefiraEnum);
-            if (sefira == null)
-            {
-                throw new ArgumentException($"Sefira {sefiraEnum} not found.");
-            }
-
+            var sefiraManager = SefiraManager.instance ?? throw new InvalidOperationException("SefiraManager.instance is null. Game may not be initialized.");
+            var sefira = sefiraManager.GetSefira(sefiraEnum) ?? throw new ArgumentException($"Sefira {sefiraEnum} not found.");
             return CreateSefiraData(sefira);
         }
 

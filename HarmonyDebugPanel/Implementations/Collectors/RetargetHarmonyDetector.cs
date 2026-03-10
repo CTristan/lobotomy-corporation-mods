@@ -7,18 +7,13 @@ using HarmonyDebugPanel.Models;
 
 namespace HarmonyDebugPanel.Implementations.Collectors
 {
-    public sealed class RetargetHarmonyDetector : IInfoCollector<RetargetHarmonyStatus>
+    public sealed class RetargetHarmonyDetector(IAssemblyInspectionSource assemblySource) : IInfoCollector<RetargetHarmonyStatus>
     {
-        private readonly IAssemblyInspectionSource _assemblySource;
+        private readonly IAssemblyInspectionSource _assemblySource = assemblySource ?? throw new ArgumentNullException(nameof(assemblySource));
 
         public RetargetHarmonyDetector()
             : this(new AppDomainAssemblyInspectionSource())
         {
-        }
-
-        public RetargetHarmonyDetector(IAssemblyInspectionSource assemblySource)
-        {
-            _assemblySource = assemblySource ?? throw new ArgumentNullException(nameof(assemblySource));
         }
 
         public RetargetHarmonyStatus Collect()

@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using LobotomyPlaywright.JsonModels;
-using UnityEngine;
 
 namespace LobotomyPlaywright.Queries
 {
@@ -19,7 +18,7 @@ namespace LobotomyPlaywright.Queries
 
         public static Response HandleQuery(Request request)
         {
-            LobotomyPlaywright.Server.TcpServer.LogDebug($"[LobotomyPlaywright] HandleQuery called: target={request?.Target}, id={request?.Id}");
+            Server.TcpServer.LogDebug($"[LobotomyPlaywright] HandleQuery called: target={request?.Target}, id={request?.Id}");
 
             if (request == null || string.IsNullOrEmpty(request.Target))
             {
@@ -59,7 +58,7 @@ namespace LobotomyPlaywright.Queries
                 // All other queries require the game to be queryable
                 if (!GameStateQueries.IsGameQueryable())
                 {
-                    LobotomyPlaywright.Server.TcpServer.LogDebug("[LobotomyPlaywright] Game not queryable!");
+                    Server.TcpServer.LogDebug("[LobotomyPlaywright] Game not queryable!");
                     return Response.CreateError(
                         request.Id,
                         "Game is not in a queryable state",
@@ -68,7 +67,7 @@ namespace LobotomyPlaywright.Queries
                 }
 
                 var paramsDict = request.Params ?? new Dictionary<string, object>();
-                LobotomyPlaywright.Server.TcpServer.LogDebug($"[LobotomyPlaywright] Routing query: target={target}, isQueryable=true");
+                Server.TcpServer.LogDebug($"[LobotomyPlaywright] Routing query: target={target}, isQueryable=true");
 
                 return RouteQuery(target, request.Id, paramsDict);
             }
@@ -82,9 +81,15 @@ namespace LobotomyPlaywright.Queries
             }
         }
 
-        private static bool IsValidTarget(string target) => ValidTargets.Contains(target);
+        private static bool IsValidTarget(string target)
+        {
+            return ValidTargets.Contains(target);
+        }
 
-        private static bool IsTitleMenuTarget(string target) => target == "titlemenu" || target == "title";
+        private static bool IsTitleMenuTarget(string target)
+        {
+            return target == "titlemenu" || target == "title";
+        }
 
         private static Response RouteQuery(string target, string requestId, Dictionary<string, object> parameters)
         {

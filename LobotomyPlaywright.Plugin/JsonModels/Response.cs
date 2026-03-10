@@ -27,14 +27,14 @@ namespace LobotomyPlaywright.JsonModels
         public object DataObject;
 
         // PascalCase accessors for C# code
-        public string Id { get { return id; } set { id = value; } }
-        public string Type { get { return type; } set { type = value; } }
-        public string Status { get { return status; } set { status = value; } }
-        public string Data { get { return data; } set { data = value; } }
-        public string Error { get { return error; } set { error = value; } }
-        public string Code { get { return code; } set { code = value; } }
-        public string Event { get { return @event; } set { @event = value; } }
-        public string Timestamp { get { return timestamp; } set { timestamp = value; } }
+        public string Id { get => id; set => id = value; }
+        public string Type { get => type; set => type = value; }
+        public string Status { get => status; set => status = value; }
+        public string Data { get => data; set => data = value; }
+        public string Error { get => error; set => error = value; }
+        public string Code { get => code; set => code = value; }
+        public string Event { get => @event; set => @event = value; }
+        public string Timestamp { get => timestamp; set => timestamp = value; }
 
         public static Response CreateSuccess(string requestId, object responseData)
         {

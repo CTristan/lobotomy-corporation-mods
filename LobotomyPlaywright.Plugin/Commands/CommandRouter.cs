@@ -2,8 +2,6 @@
 
 using System;
 using LobotomyPlaywright.JsonModels;
-using LobotomyPlaywright.Protocol;
-using UnityEngine;
 
 namespace LobotomyPlaywright.Commands
 {

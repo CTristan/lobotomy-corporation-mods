@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 
 using LobotomyCorporationMods.Common.Implementations.LoggerTargets;
-using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.Test.Extensions;
 using Moq;
 using Xunit;

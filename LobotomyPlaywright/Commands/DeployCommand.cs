@@ -1,441 +1,433 @@
 // SPDX-License-Identifier: MIT
 
 using System;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using LobotomyPlaywright.Implementations.Configuration;
 using LobotomyPlaywright.Implementations.System;
 using LobotomyPlaywright.Interfaces.Configuration;
 using LobotomyPlaywright.Interfaces.System;
 
-namespace LobotomyPlaywright.Commands;
-
-/// <summary>
-/// Command to build and deploy the plugin DLLs to the game.
-/// </summary>
-public class DeployCommand
+namespace LobotomyPlaywright.Commands
 {
-    private const string PluginDllName = "LobotomyPlaywright.Plugin.dll";
-    private const string HarmonyDebugPanelDllName = "HarmonyDebugPanel.dll";
-    private const string RetargetHarmonyDllName = "RetargetHarmony.dll";
-    private static readonly string[] HarmonyInteropDlls = { "0Harmony109.dll", "0Harmony12.dll", "12Harmony.dll" };
-
-    private readonly IConfigManager _configManager;
-    private readonly IFileSystem _fileSystem;
-    private readonly IProcessRunner _processRunner;
-
     /// <summary>
-    /// Initializes a new instance of DeployCommand class.
+    /// Command to build and deploy the plugin DLLs to the game.
     /// </summary>
+    /// <remarks>
+    /// Initializes a new instance of DeployCommand class.
+    /// </remarks>
     /// <param name="configManager">The config manager.</param>
     /// <param name="fileSystem">The file system.</param>
     /// <param name="processRunner">The process runner.</param>
-    public DeployCommand(IConfigManager configManager, IFileSystem fileSystem, IProcessRunner processRunner)
+    public class DeployCommand(IConfigManager configManager, IFileSystem fileSystem, IProcessRunner processRunner)
     {
-        _configManager = configManager;
-        _fileSystem = fileSystem;
-        _processRunner = processRunner;
-    }
+        private const string PluginDllName = "LobotomyPlaywright.Plugin.dll";
+        private const string HarmonyDebugPanelDllName = "HarmonyDebugPanel.dll";
+        private const string RetargetHarmonyDllName = "RetargetHarmony.dll";
+        private static readonly string[] HarmonyInteropDlls = { "0Harmony109.dll", "0Harmony12.dll", "12Harmony.dll" };
 
-    /// <summary>
-    /// Initializes a new instance of DeployCommand class with default implementations.
-    /// </summary>
-    public DeployCommand()
-        : this(new ConfigManager(new FileSystem()), new FileSystem(), new ProcessRunner())
-    {
-    }
+        private readonly IConfigManager _configManager = configManager;
+        private readonly IFileSystem _fileSystem = fileSystem;
+        private readonly IProcessRunner _processRunner = processRunner;
 
-    /// <summary>
-    /// Runs the deploy command.
-    /// </summary>
-    /// <param name="args">Command arguments.</param>
-    /// <returns>Exit code (0 for success, non-zero for failure).</returns>
-    public int Run(string[] args)
-    {
-        ArgumentNullException.ThrowIfNull(args);
-
-        var configuration = GetArgValue(args, "--configuration") ?? "Release";
-        var skipBuild = HasArg(args, "--skip-build");
-        var dryRun = HasArg(args, "--dry-run");
-
-        // Load configuration
-        Config config;
-        try
+        /// <summary>
+        /// Initializes a new instance of DeployCommand class with default implementations.
+        /// </summary>
+        public DeployCommand()
+            : this(new ConfigManager(new FileSystem()), new FileSystem(), new ProcessRunner())
         {
-            config = _configManager.Load();
-        }
-        catch (Exception ex) when (ex is FileNotFoundException || ex is InvalidOperationException)
-        {
-            Console.Error.WriteLine($"ERROR: {ex.Message}");
-            return 1;
         }
 
-        var gamePath = config.GamePath;
-
-        if (!_fileSystem.DirectoryExists(gamePath))
+        /// <summary>
+        /// Runs the deploy command.
+        /// </summary>
+        /// <param name="args">Command arguments.</param>
+        /// <returns>Exit code (0 for success, non-zero for failure).</returns>
+        public int Run(string[] args)
         {
-            Console.Error.WriteLine($"ERROR: Game path does not exist: {gamePath}");
-            Console.Error.WriteLine("The volume may not be mounted. Run 'dotnet playwright find-game' to reconfigure.");
-            return 1;
-        }
+            ArgumentNullException.ThrowIfNull(args);
 
-        // Repository root
-        var repoRoot = FindRepositoryRoot() ?? throw new InvalidOperationException("Could not find repository root");
+            var configuration = GetArgValue(args, "--configuration") ?? "Release";
+            var skipBuild = HasArg(args, "--skip-build");
+            var dryRun = HasArg(args, "--dry-run");
 
-        var pluginProject = Path.Combine(repoRoot, "LobotomyPlaywright.Plugin", "LobotomyPlaywright.Plugin.csproj");
-        var harmonyDebugPanelProject = Path.Combine(repoRoot, "HarmonyDebugPanel", "HarmonyDebugPanel.csproj");
-        var retharmonyProject = Path.Combine(repoRoot, "RetargetHarmony", "RetargetHarmony.csproj");
-
-        if (!_fileSystem.FileExists(pluginProject))
-        {
-            Console.Error.WriteLine($"ERROR: Plugin project not found: {pluginProject}");
-            return 1;
-        }
-
-        if (!_fileSystem.FileExists(harmonyDebugPanelProject))
-        {
-            Console.Error.WriteLine($"ERROR: HarmonyDebugPanel project not found: {harmonyDebugPanelProject}");
-            return 1;
-        }
-
-        if (!_fileSystem.FileExists(retharmonyProject))
-        {
-            Console.Error.WriteLine($"ERROR: RetargetHarmony project not found: {retharmonyProject}");
-            return 1;
-        }
-
-        // Build projects
-        string pluginDllPath;
-        string harmonyDebugPanelDllPath;
-        string retharmonyDllPath;
-
-        if (!skipBuild)
-        {
-            Console.WriteLine("".PadRight(60, '='));
-            Console.WriteLine("Building Projects");
-            Console.WriteLine("".PadRight(60, '='));
-
+            // Load configuration
+            Config config;
             try
             {
-                pluginDllPath = BuildProject(pluginProject, configuration);
-                harmonyDebugPanelDllPath = BuildProject(harmonyDebugPanelProject, configuration);
-                retharmonyDllPath = BuildProject(retharmonyProject, configuration);
+                config = _configManager.Load();
             }
-            catch (Exception ex) when (ex is BuildFailedException || ex is FileNotFoundException)
+            catch (Exception ex) when (ex is FileNotFoundException or InvalidOperationException)
             {
-                Console.Error.WriteLine();
-                Console.Error.WriteLine($"ERROR: Build failed: {ex.Message}");
-                return 1;
-            }
-        }
-        else
-        {
-            Console.WriteLine("".PadRight(60, '='));
-            Console.WriteLine("Skipping Build (using existing DLLs)");
-            Console.WriteLine("".PadRight(60, '='));
-
-            pluginDllPath = Path.Combine(
-                Path.GetDirectoryName(pluginProject) ?? string.Empty,
-                "bin",
-                configuration,
-                "net35",
-                PluginDllName
-            );
-
-            harmonyDebugPanelDllPath = Path.Combine(
-                Path.GetDirectoryName(harmonyDebugPanelProject) ?? string.Empty,
-                "bin",
-                configuration,
-                "net35",
-                HarmonyDebugPanelDllName
-            );
-
-            retharmonyDllPath = Path.Combine(
-                Path.GetDirectoryName(retharmonyProject) ?? string.Empty,
-                "bin",
-                configuration,
-                "net35",
-                RetargetHarmonyDllName
-            );
-
-            if (!_fileSystem.FileExists(pluginDllPath))
-            {
-                Console.Error.WriteLine($"ERROR: Plugin DLL not found: {pluginDllPath}");
-                Console.Error.WriteLine("Run without --skip-build to build the project first.");
+                Console.Error.WriteLine($"ERROR: {ex.Message}");
                 return 1;
             }
 
-            if (!_fileSystem.FileExists(harmonyDebugPanelDllPath))
+            var gamePath = config.GamePath;
+
+            if (!_fileSystem.DirectoryExists(gamePath))
             {
-                Console.Error.WriteLine($"ERROR: HarmonyDebugPanel DLL not found: {harmonyDebugPanelDllPath}");
-                Console.Error.WriteLine("Run without --skip-build to build the project first.");
+                Console.Error.WriteLine($"ERROR: Game path does not exist: {gamePath}");
+                Console.Error.WriteLine("The volume may not be mounted. Run 'dotnet playwright find-game' to reconfigure.");
                 return 1;
             }
 
-            if (!_fileSystem.FileExists(retharmonyDllPath))
+            // Repository root
+            var repoRoot = FindRepositoryRoot() ?? throw new InvalidOperationException("Could not find repository root");
+
+            var pluginProject = Path.Combine(repoRoot, "LobotomyPlaywright.Plugin", "LobotomyPlaywright.Plugin.csproj");
+            var harmonyDebugPanelProject = Path.Combine(repoRoot, "HarmonyDebugPanel", "HarmonyDebugPanel.csproj");
+            var retharmonyProject = Path.Combine(repoRoot, "RetargetHarmony", "RetargetHarmony.csproj");
+
+            if (!_fileSystem.FileExists(pluginProject))
             {
-                Console.Error.WriteLine($"ERROR: RetargetHarmony DLL not found: {retharmonyDllPath}");
-                Console.Error.WriteLine("Run without --skip-build to build the project first.");
+                Console.Error.WriteLine($"ERROR: Plugin project not found: {pluginProject}");
                 return 1;
             }
 
-            Console.WriteLine($"Using existing plugin DLL: {pluginDllPath}");
-            Console.WriteLine($"Using existing HarmonyDebugPanel DLL: {harmonyDebugPanelDllPath}");
-            Console.WriteLine($"Using existing RetargetHarmony DLL: {retharmonyDllPath}");
-        }
-
-        // Deploy DLLs
-        Console.WriteLine();
-        Console.WriteLine("".PadRight(60, '='));
-        Console.WriteLine("Deploying DLLs");
-        Console.WriteLine("".PadRight(60, '='));
-
-        if (dryRun)
-        {
-            Console.WriteLine();
-            Console.WriteLine($"Would deploy {PluginDllName} to:");
-            Console.WriteLine($"  {Path.Combine(gamePath, "LobotomyCorp_Data", "BaseMods", "LobotomyPlaywright", PluginDllName)}");
-            Console.WriteLine();
-            Console.WriteLine($"Would deploy {HarmonyDebugPanelDllName} to:");
-            Console.WriteLine($"  {Path.Combine(gamePath, "LobotomyCorp_Data", "BaseMods", "HarmonyDebugPanel", HarmonyDebugPanelDllName)}");
-            Console.WriteLine();
-            Console.WriteLine($"Would deploy {RetargetHarmonyDllName} to:");
-            Console.WriteLine($"  {Path.Combine(gamePath, "BepInEx", "patchers", "RetargetHarmony", RetargetHarmonyDllName)}");
-            foreach (var dllName in HarmonyInteropDlls)
+            if (!_fileSystem.FileExists(harmonyDebugPanelProject))
             {
-                Console.WriteLine();
-                Console.WriteLine($"Would deploy {dllName} to:");
-                Console.WriteLine($"  {Path.Combine(gamePath, "BepInEx", "core", dllName)}");
+                Console.Error.WriteLine($"ERROR: HarmonyDebugPanel project not found: {harmonyDebugPanelProject}");
+                return 1;
             }
 
-            Console.WriteLine();
-            Console.WriteLine("Dry run complete. Remove --dry-run to actually deploy.");
-            return 0;
-        }
-
-        try
-        {
-            var deployPluginPath = DeployDll(pluginDllPath, gamePath, "BaseMods/LobotomyPlaywright");
-            var deployHarmonyDebugPanelPath = DeployDll(harmonyDebugPanelDllPath, gamePath, "BaseMods/HarmonyDebugPanel");
-            var deployRetharmonyPath = DeployDll(retharmonyDllPath, gamePath, "patchers/RetargetHarmony");
-
-            Console.WriteLine();
-            Console.WriteLine("".PadRight(60, '='));
-            Console.WriteLine("Deployment Summary");
-            Console.WriteLine("".PadRight(60, '='));
-            Console.WriteLine($"Plugin: {deployPluginPath}");
-            Console.WriteLine($"Size: {_fileSystem.GetFileSize(deployPluginPath):N0} bytes");
-            Console.WriteLine($"HarmonyDebugPanel: {deployHarmonyDebugPanelPath}");
-            Console.WriteLine($"Size: {_fileSystem.GetFileSize(deployHarmonyDebugPanelPath):N0} bytes");
-            Console.WriteLine($"RetargetHarmony: {deployRetharmonyPath}");
-            Console.WriteLine($"Size: {_fileSystem.GetFileSize(deployRetharmonyPath):N0} bytes");
-
-            foreach (var dllName in HarmonyInteropDlls)
+            if (!_fileSystem.FileExists(retharmonyProject))
             {
-                Console.WriteLine($"DEBUG: Deploying interop DLL: {dllName}");
-                DeployInteropDll(repoRoot, dllName, gamePath);
+                Console.Error.WriteLine($"ERROR: RetargetHarmony project not found: {retharmonyProject}");
+                return 1;
             }
 
-            Console.WriteLine("".PadRight(60, '='));
-            Console.WriteLine();
-            Console.WriteLine("Deployment successful!");
-            Console.WriteLine();
-            Console.WriteLine("Next steps:");
-            Console.WriteLine("  dotnet playwright launch   # Launch the game");
-            Console.WriteLine("  dotnet playwright status   # Check game status");
+            // Build projects
+            string pluginDllPath;
+            string harmonyDebugPanelDllPath;
+            string retharmonyDllPath;
 
-            return 0;
-        }
-        catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException)
-        {
-            Console.Error.WriteLine();
-            Console.Error.WriteLine($"ERROR: Deployment failed: {ex.Message}");
-            return 1;
-        }
-    }
-
-    private string BuildProject(string projectPath, string configuration)
-    {
-        var projectName = Path.GetFileNameWithoutExtension(projectPath);
-        Console.WriteLine();
-        Console.WriteLine($"Building {projectName}...");
-
-        var result = _processRunner.Run(
-            "dotnet",
-            $"build \"{projectPath}\" --configuration {configuration}",
-            Path.GetDirectoryName(projectPath),
-            null
-        );
-
-        if (result != 0)
-        {
-            throw new BuildFailedException($"Build failed for {projectName}");
-        }
-
-        // Find the output DLL
-        var projectDir = Path.GetDirectoryName(projectPath) ?? string.Empty;
-        var dllPath = Path.Combine(projectDir, "bin", configuration, "net35", projectName, $"{projectName}.dll");
-
-        if (!_fileSystem.FileExists(dllPath))
-        {
-            // Try alternate naming
-            dllPath = Path.Combine(projectDir, "bin", configuration, "net35", $"{projectName}.dll");
-        }
-
-        if (!_fileSystem.FileExists(dllPath))
-        {
-            throw new FileNotFoundException($"Built DLL not found: {dllPath}");
-        }
-
-        Console.WriteLine($"Built: {dllPath}");
-        Console.WriteLine($"Size: {_fileSystem.GetFileSize(dllPath):N0} bytes");
-
-        return dllPath;
-    }
-
-    private string DeployDll(string sourceDll, string gamePath, string destSubdir)
-    {
-        // Handle BaseMods separately (goes to LobotomyCorp_Data/BaseMods/[PluginName])
-        // All other folders go under BepInEx/
-        string destDir;
-        if (destSubdir.StartsWith("BaseMods", StringComparison.OrdinalIgnoreCase))
-        {
-            // Extract optional subfolder name from "BaseMods/SubFolder"
-            var subFolder = destSubdir.Length > 8 ? destSubdir.Substring(9) : null;
-            if (!string.IsNullOrEmpty(subFolder))
+            if (!skipBuild)
             {
-                destDir = Path.Combine(gamePath, "LobotomyCorp_Data", "BaseMods", subFolder);
+                Console.WriteLine("".PadRight(60, '='));
+                Console.WriteLine("Building Projects");
+                Console.WriteLine("".PadRight(60, '='));
+
+                try
+                {
+                    pluginDllPath = BuildProject(pluginProject, configuration);
+                    harmonyDebugPanelDllPath = BuildProject(harmonyDebugPanelProject, configuration);
+                    retharmonyDllPath = BuildProject(retharmonyProject, configuration);
+                }
+                catch (Exception ex) when (ex is BuildFailedException or FileNotFoundException)
+                {
+                    Console.Error.WriteLine();
+                    Console.Error.WriteLine($"ERROR: Build failed: {ex.Message}");
+                    return 1;
+                }
             }
             else
             {
-                destDir = Path.Combine(gamePath, "LobotomyCorp_Data", "BaseMods");
+                Console.WriteLine("".PadRight(60, '='));
+                Console.WriteLine("Skipping Build (using existing DLLs)");
+                Console.WriteLine("".PadRight(60, '='));
+
+                pluginDllPath = Path.Combine(
+                    Path.GetDirectoryName(pluginProject) ?? string.Empty,
+                    "bin",
+                    configuration,
+                    "net35",
+                    PluginDllName
+                );
+
+                harmonyDebugPanelDllPath = Path.Combine(
+                    Path.GetDirectoryName(harmonyDebugPanelProject) ?? string.Empty,
+                    "bin",
+                    configuration,
+                    "net35",
+                    HarmonyDebugPanelDllName
+                );
+
+                retharmonyDllPath = Path.Combine(
+                    Path.GetDirectoryName(retharmonyProject) ?? string.Empty,
+                    "bin",
+                    configuration,
+                    "net35",
+                    RetargetHarmonyDllName
+                );
+
+                if (!_fileSystem.FileExists(pluginDllPath))
+                {
+                    Console.Error.WriteLine($"ERROR: Plugin DLL not found: {pluginDllPath}");
+                    Console.Error.WriteLine("Run without --skip-build to build the project first.");
+                    return 1;
+                }
+
+                if (!_fileSystem.FileExists(harmonyDebugPanelDllPath))
+                {
+                    Console.Error.WriteLine($"ERROR: HarmonyDebugPanel DLL not found: {harmonyDebugPanelDllPath}");
+                    Console.Error.WriteLine("Run without --skip-build to build the project first.");
+                    return 1;
+                }
+
+                if (!_fileSystem.FileExists(retharmonyDllPath))
+                {
+                    Console.Error.WriteLine($"ERROR: RetargetHarmony DLL not found: {retharmonyDllPath}");
+                    Console.Error.WriteLine("Run without --skip-build to build the project first.");
+                    return 1;
+                }
+
+                Console.WriteLine($"Using existing plugin DLL: {pluginDllPath}");
+                Console.WriteLine($"Using existing HarmonyDebugPanel DLL: {harmonyDebugPanelDllPath}");
+                Console.WriteLine($"Using existing RetargetHarmony DLL: {retharmonyDllPath}");
             }
-        }
-        else
-        {
-            destDir = Path.Combine(gamePath, "BepInEx", destSubdir);
-        }
 
-        var destDll = Path.Combine(destDir, Path.GetFileName(sourceDll) ?? string.Empty);
+            // Deploy DLLs
+            Console.WriteLine();
+            Console.WriteLine("".PadRight(60, '='));
+            Console.WriteLine("Deploying DLLs");
+            Console.WriteLine("".PadRight(60, '='));
 
-        Console.WriteLine();
-        Console.WriteLine($"Deploying {Path.GetFileName(sourceDll)} to {destDir}...");
-
-        // Create destination directory if it doesn't exist
-        if (!_fileSystem.DirectoryExists(destDir))
-        {
-            _fileSystem.CreateDirectory(destDir);
-        }
-
-        // Copy the DLL
-        _fileSystem.CopyFile(sourceDll, destDll, true);
-
-        // Verify deployment
-        if (!_fileSystem.FileExists(destDll))
-        {
-            throw new IOException($"Failed to copy {Path.GetFileName(sourceDll)} to {destDll}");
-        }
-
-        var fileSize = _fileSystem.GetFileSize(destDll);
-        if (fileSize == 0)
-        {
-            throw new IOException($"Deployed DLL is empty: {destDll}");
-        }
-
-        Console.WriteLine($"Deployed: {destDll}");
-        Console.WriteLine($"Size: {fileSize:N0} bytes");
-
-        return destDll;
-    }
-
-    private void DeployInteropDll(string repoRoot, string dllName, string gamePath)
-    {
-        // Special case: 12Harmony.dll is needed for mods that reference Harmony 1.2 by that name
-        // Copy from 0Harmony12.dll since they're the same library
-        string sourceDll;
-        if (dllName == "12Harmony.dll")
-        {
-            sourceDll = Path.Combine(repoRoot, "RetargetHarmony", "lib", "0Harmony12.dll");
-        }
-        else
-        {
-            sourceDll = Path.Combine(repoRoot, "RetargetHarmony", "lib", dllName);
-        }
-
-        if (!_fileSystem.FileExists(sourceDll))
-        {
-            throw new FileNotFoundException(
-                $"Harmony interop DLL not found: {sourceDll}\n" +
-                $"Expected vendored DLLs from BepInEx/HarmonyInteropDlls in RetargetHarmony/lib/");
-        }
-
-        var destPath = DeployDll(sourceDll, gamePath, "core");
-        Console.WriteLine($"Interop: {destPath}");
-        Console.WriteLine($"Size: {_fileSystem.GetFileSize(destPath):N0} bytes");
-    }
-
-    private string? FindRepositoryRoot()
-    {
-        var currentDir = _fileSystem.GetCurrentDirectory();
-        var dir = currentDir;
-
-        while (!string.IsNullOrEmpty(dir))
-        {
-            if (_fileSystem.DirectoryExists(Path.Combine(dir, ".git")))
+            if (dryRun)
             {
-                return dir;
+                Console.WriteLine();
+                Console.WriteLine($"Would deploy {PluginDllName} to:");
+                Console.WriteLine($"  {Path.Combine(gamePath, "LobotomyCorp_Data", "BaseMods", "LobotomyPlaywright", PluginDllName)}");
+                Console.WriteLine();
+                Console.WriteLine($"Would deploy {HarmonyDebugPanelDllName} to:");
+                Console.WriteLine($"  {Path.Combine(gamePath, "LobotomyCorp_Data", "BaseMods", "HarmonyDebugPanel", HarmonyDebugPanelDllName)}");
+                Console.WriteLine();
+                Console.WriteLine($"Would deploy {RetargetHarmonyDllName} to:");
+                Console.WriteLine($"  {Path.Combine(gamePath, "BepInEx", "patchers", "RetargetHarmony", RetargetHarmonyDllName)}");
+                foreach (var dllName in HarmonyInteropDlls)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine($"Would deploy {dllName} to:");
+                    Console.WriteLine($"  {Path.Combine(gamePath, "BepInEx", "core", dllName)}");
+                }
+
+                Console.WriteLine();
+                Console.WriteLine("Dry run complete. Remove --dry-run to actually deploy.");
+                return 0;
             }
 
-            if (_fileSystem.FileExists(Path.Combine(dir, "LobotomyCorporationMods.sln")))
+            try
             {
-                return dir;
+                var deployPluginPath = DeployDll(pluginDllPath, gamePath, "BaseMods/LobotomyPlaywright");
+                var deployHarmonyDebugPanelPath = DeployDll(harmonyDebugPanelDllPath, gamePath, "BaseMods/HarmonyDebugPanel");
+                var deployRetharmonyPath = DeployDll(retharmonyDllPath, gamePath, "patchers/RetargetHarmony");
+
+                Console.WriteLine();
+                Console.WriteLine("".PadRight(60, '='));
+                Console.WriteLine("Deployment Summary");
+                Console.WriteLine("".PadRight(60, '='));
+                Console.WriteLine($"Plugin: {deployPluginPath}");
+                Console.WriteLine($"Size: {_fileSystem.GetFileSize(deployPluginPath):N0} bytes");
+                Console.WriteLine($"HarmonyDebugPanel: {deployHarmonyDebugPanelPath}");
+                Console.WriteLine($"Size: {_fileSystem.GetFileSize(deployHarmonyDebugPanelPath):N0} bytes");
+                Console.WriteLine($"RetargetHarmony: {deployRetharmonyPath}");
+                Console.WriteLine($"Size: {_fileSystem.GetFileSize(deployRetharmonyPath):N0} bytes");
+
+                foreach (var dllName in HarmonyInteropDlls)
+                {
+                    Console.WriteLine($"DEBUG: Deploying interop DLL: {dllName}");
+                    DeployInteropDll(repoRoot, dllName, gamePath);
+                }
+
+                Console.WriteLine("".PadRight(60, '='));
+                Console.WriteLine();
+                Console.WriteLine("Deployment successful!");
+                Console.WriteLine();
+                Console.WriteLine("Next steps:");
+                Console.WriteLine("  dotnet playwright launch   # Launch the game");
+                Console.WriteLine("  dotnet playwright status   # Check game status");
+
+                return 0;
             }
-
-            dir = Path.GetDirectoryName(dir);
-        }
-
-        return null;
-    }
-
-    private static string? GetArgValue(string[] args, string argName)
-    {
-        for (var i = 0; i < args.Length; i++)
-        {
-            if (args[i] == argName && i + 1 < args.Length)
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
             {
-                return args[i + 1];
+                Console.Error.WriteLine();
+                Console.Error.WriteLine($"ERROR: Deployment failed: {ex.Message}");
+                return 1;
             }
         }
 
-        return null;
-    }
-
-    private static bool HasArg(string[] args, string argName)
-    {
-        foreach (var arg in args)
+        private string BuildProject(string projectPath, string configuration)
         {
-            if (arg == argName)
+            var projectName = Path.GetFileNameWithoutExtension(projectPath);
+            Console.WriteLine();
+            Console.WriteLine($"Building {projectName}...");
+
+            var result = _processRunner.Run(
+                "dotnet",
+                $"build \"{projectPath}\" --configuration {configuration}",
+                Path.GetDirectoryName(projectPath),
+                null
+            );
+
+            if (result != 0)
             {
-                return true;
+                throw new BuildFailedException($"Build failed for {projectName}");
             }
+
+            // Find the output DLL
+            var projectDir = Path.GetDirectoryName(projectPath) ?? string.Empty;
+            var dllPath = Path.Combine(projectDir, "bin", configuration, "net35", projectName, $"{projectName}.dll");
+
+            if (!_fileSystem.FileExists(dllPath))
+            {
+                // Try alternate naming
+                dllPath = Path.Combine(projectDir, "bin", configuration, "net35", $"{projectName}.dll");
+            }
+
+            if (!_fileSystem.FileExists(dllPath))
+            {
+                throw new FileNotFoundException($"Built DLL not found: {dllPath}");
+            }
+
+            Console.WriteLine($"Built: {dllPath}");
+            Console.WriteLine($"Size: {_fileSystem.GetFileSize(dllPath):N0} bytes");
+
+            return dllPath;
         }
 
-        return false;
-    }
-
-    public class BuildFailedException : Exception
-    {
-        public BuildFailedException(string message) : base(message)
+        private string DeployDll(string sourceDll, string gamePath, string destSubdir)
         {
+            // Handle BaseMods separately (goes to LobotomyCorp_Data/BaseMods/[PluginName])
+            // All other folders go under BepInEx/
+            string destDir;
+            if (destSubdir.StartsWith("BaseMods", StringComparison.OrdinalIgnoreCase))
+            {
+                // Extract optional subfolder name from "BaseMods/SubFolder"
+                var subFolder = destSubdir.Length > 8 ? destSubdir[9..] : null;
+                if (!string.IsNullOrEmpty(subFolder))
+                {
+                    destDir = Path.Combine(gamePath, "LobotomyCorp_Data", "BaseMods", subFolder);
+                }
+                else
+                {
+                    destDir = Path.Combine(gamePath, "LobotomyCorp_Data", "BaseMods");
+                }
+            }
+            else
+            {
+                destDir = Path.Combine(gamePath, "BepInEx", destSubdir);
+            }
+
+            var destDll = Path.Combine(destDir, Path.GetFileName(sourceDll) ?? string.Empty);
+
+            Console.WriteLine();
+            Console.WriteLine($"Deploying {Path.GetFileName(sourceDll)} to {destDir}...");
+
+            // Create destination directory if it doesn't exist
+            if (!_fileSystem.DirectoryExists(destDir))
+            {
+                _fileSystem.CreateDirectory(destDir);
+            }
+
+            // Copy the DLL
+            _fileSystem.CopyFile(sourceDll, destDll, true);
+
+            // Verify deployment
+            if (!_fileSystem.FileExists(destDll))
+            {
+                throw new IOException($"Failed to copy {Path.GetFileName(sourceDll)} to {destDll}");
+            }
+
+            var fileSize = _fileSystem.GetFileSize(destDll);
+            if (fileSize == 0)
+            {
+                throw new IOException($"Deployed DLL is empty: {destDll}");
+            }
+
+            Console.WriteLine($"Deployed: {destDll}");
+            Console.WriteLine($"Size: {fileSize:N0} bytes");
+
+            return destDll;
         }
 
-        public BuildFailedException()
+        private void DeployInteropDll(string repoRoot, string dllName, string gamePath)
         {
+            // Special case: 12Harmony.dll is needed for mods that reference Harmony 1.2 by that name
+            // Copy from 0Harmony12.dll since they're the same library
+            string sourceDll;
+            if (dllName == "12Harmony.dll")
+            {
+                sourceDll = Path.Combine(repoRoot, "RetargetHarmony", "lib", "0Harmony12.dll");
+            }
+            else
+            {
+                sourceDll = Path.Combine(repoRoot, "RetargetHarmony", "lib", dllName);
+            }
+
+            if (!_fileSystem.FileExists(sourceDll))
+            {
+                throw new FileNotFoundException(
+                    $"Harmony interop DLL not found: {sourceDll}\n" +
+                    $"Expected vendored DLLs from BepInEx/HarmonyInteropDlls in RetargetHarmony/lib/");
+            }
+
+            var destPath = DeployDll(sourceDll, gamePath, "core");
+            Console.WriteLine($"Interop: {destPath}");
+            Console.WriteLine($"Size: {_fileSystem.GetFileSize(destPath):N0} bytes");
         }
 
-        public BuildFailedException(string message, Exception innerException) : base(message, innerException)
+        private string? FindRepositoryRoot()
         {
+            var currentDir = _fileSystem.GetCurrentDirectory();
+            var dir = currentDir;
+
+            while (!string.IsNullOrEmpty(dir))
+            {
+                if (_fileSystem.DirectoryExists(Path.Combine(dir, ".git")))
+                {
+                    return dir;
+                }
+
+                if (_fileSystem.FileExists(Path.Combine(dir, "LobotomyCorporationMods.sln")))
+                {
+                    return dir;
+                }
+
+                dir = Path.GetDirectoryName(dir);
+            }
+
+            return null;
+        }
+
+        private static string? GetArgValue(string[] args, string argName)
+        {
+            for (var i = 0; i < args.Length; i++)
+            {
+                if (args[i] == argName && i + 1 < args.Length)
+                {
+                    return args[i + 1];
+                }
+            }
+
+            return null;
+        }
+
+        private static bool HasArg(string[] args, string argName)
+        {
+            foreach (var arg in args)
+            {
+                if (arg == argName)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public class BuildFailedException : Exception
+        {
+            public BuildFailedException(string message) : base(message)
+            {
+            }
+
+            public BuildFailedException()
+            {
+            }
+
+            public BuildFailedException(string message, Exception innerException) : base(message, innerException)
+            {
+            }
         }
     }
 }

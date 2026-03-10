@@ -7,18 +7,13 @@ using HarmonyDebugPanel.Models;
 
 namespace HarmonyDebugPanel.Implementations.Collectors
 {
-    public sealed class ActivePatchCollector : IInfoCollector<IList<PatchInfo>>
+    public sealed class ActivePatchCollector(IPatchInspectionSource patchInspectionSource) : IInfoCollector<IList<PatchInfo>>
     {
-        private readonly IPatchInspectionSource _patchInspectionSource;
+        private readonly IPatchInspectionSource _patchInspectionSource = patchInspectionSource ?? throw new ArgumentNullException(nameof(patchInspectionSource));
 
         public ActivePatchCollector()
             : this(new HarmonyPatchInspectionSource())
         {
-        }
-
-        public ActivePatchCollector(IPatchInspectionSource patchInspectionSource)
-        {
-            _patchInspectionSource = patchInspectionSource ?? throw new ArgumentNullException(nameof(patchInspectionSource));
         }
 
         public IList<PatchInfo> Collect()

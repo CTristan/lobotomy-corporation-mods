@@ -20,11 +20,11 @@ namespace LobotomyPlaywright.JsonModels
         public List<string> events;
 
         // PascalCase accessors for C# code
-        public string Id { get { return id; } set { id = value; } }
-        public string Type { get { return type; } set { type = value; } }
-        public string Target { get { return target; } set { target = value; } }
-        public string Action { get { return action; } set { action = value; } }
-        public Dictionary<string, object> Params { get { return @params; } set { @params = value; } }
-        public List<string> Events { get { return events; } set { events = value; } }
+        public string Id { get => id; set => id = value; }
+        public string Type { get => type; set => type = value; }
+        public string Target { get => target; set => target = value; }
+        public string Action { get => action; set => action = value; }
+        public Dictionary<string, object> Params { get => @params; set => @params = value; }
+        public List<string> Events { get => events; set => events = value; }
     }
 }

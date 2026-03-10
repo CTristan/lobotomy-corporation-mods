@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
@@ -170,7 +169,7 @@ namespace LobotomyPlaywright.Queries
                 {
                     Name = "ManualUI",
                     WindowType = "Manual",
-                    Check = (Func<GameObject, bool>)((go) => CheckSingletonProperty("ManualUI", "Instance", go, out var isOpen) ? isOpen : false)
+                    Check = (Func<GameObject, bool>)((go) => CheckSingletonProperty("ManualUI", "Instance", go, out var isOpen) && isOpen)
                 },
 
                 // 5. Option UI
@@ -178,7 +177,7 @@ namespace LobotomyPlaywright.Queries
                 {
                     Name = "OptionUI",
                     WindowType = "Option",
-                    Check = (Func<GameObject, bool>)((go) => CheckSingletonProperty("OptionUI", "Instance", go, out var isOpen) ? isOpen : false)
+                    Check = (Func<GameObject, bool>)((go) => CheckSingletonProperty("OptionUI", "Instance", go, out var isOpen) && isOpen)
                 },
 
                 // 6. Deploy UI
@@ -186,7 +185,7 @@ namespace LobotomyPlaywright.Queries
                 {
                     Name = "DeployUI",
                     WindowType = "Deploy",
-                    Check = (Func<GameObject, bool>)((go) => CheckSingletonProperty("DeployUI", "instance", go, out var isOpen) ? isOpen : false)
+                    Check = (Func<GameObject, bool>)((go) => CheckSingletonProperty("DeployUI", "instance", go, out var isOpen) && isOpen)
                 },
 
                 // 7. Research Window (uses FindObjectOfType)
@@ -292,7 +291,10 @@ namespace LobotomyPlaywright.Queries
                 var texts = root.GetComponentsInChildren<Text>();
                 foreach (var text in texts)
                 {
-                    if (nodes.Count >= maxNodes) break;
+                    if (nodes.Count >= maxNodes)
+                    {
+                        break;
+                    }
 
                     if (text != null && text.gameObject != root)
                     {
@@ -304,7 +306,10 @@ namespace LobotomyPlaywright.Queries
                 var buttons = root.GetComponentsInChildren<Button>();
                 foreach (var button in buttons)
                 {
-                    if (nodes.Count >= maxNodes) break;
+                    if (nodes.Count >= maxNodes)
+                    {
+                        break;
+                    }
 
                     if (button != null && button.gameObject != root)
                     {
@@ -316,7 +321,10 @@ namespace LobotomyPlaywright.Queries
                 var toggles = root.GetComponentsInChildren<Toggle>();
                 foreach (var toggle in toggles)
                 {
-                    if (nodes.Count >= maxNodes) break;
+                    if (nodes.Count >= maxNodes)
+                    {
+                        break;
+                    }
 
                     if (toggle != null && toggle.gameObject != root)
                     {
@@ -328,7 +336,10 @@ namespace LobotomyPlaywright.Queries
                 var sliders = root.GetComponentsInChildren<Slider>();
                 foreach (var slider in sliders)
                 {
-                    if (nodes.Count >= maxNodes) break;
+                    if (nodes.Count >= maxNodes)
+                    {
+                        break;
+                    }
 
                     if (slider != null && slider.gameObject != root)
                     {
@@ -391,8 +402,7 @@ namespace LobotomyPlaywright.Queries
 
                     if (activatedField != null)
                     {
-                        var activatedArray = activatedField.GetValue(uiActivateManager) as Array;
-                        if (activatedArray != null)
+                        if (activatedField.GetValue(uiActivateManager) is Array activatedArray)
                         {
                             for (var i = 0; i < Math.Min(activatedArray.Length, 5); i++)
                             {
@@ -430,10 +440,13 @@ namespace LobotomyPlaywright.Queries
             {
                 // Look for known mod patterns in the scene
                 // Example: GiftAlertIcon from BadLuckProtectionForGifts mod
-                var allGameObjects = GameObject.FindObjectsOfType<GameObject>();
+                var allGameObjects = UnityEngine.Object.FindObjectsOfType<GameObject>();
                 foreach (var go in allGameObjects)
                 {
-                    if (modElements.Count >= MaxModElements) break;
+                    if (modElements.Count >= MaxModElements)
+                    {
+                        break;
+                    }
 
                     if (go != null && IsModElement(go))
                     {
@@ -472,7 +485,7 @@ namespace LobotomyPlaywright.Queries
                 }
 
                 // Try to find GameObject by name
-                var gameObjects = GameObject.FindObjectsOfType<GameObject>();
+                var gameObjects = UnityEngine.Object.FindObjectsOfType<GameObject>();
                 foreach (var go in gameObjects)
                 {
                     if (go != null && go.name.Contains(windowName))
@@ -641,17 +654,37 @@ namespace LobotomyPlaywright.Queries
 
         private static string GetUiNodeType(GameObject go)
         {
-            if (go.GetComponent<Text>() != null) return "text";
-            if (go.GetComponent<Button>() != null) return "button";
-            if (go.GetComponent<Toggle>() != null) return "toggle";
-            if (go.GetComponent<Slider>() != null) return "slider";
-            if (go.GetComponent<Image>() != null) return "image";
+            if (go.GetComponent<Text>() != null)
+            {
+                return "text";
+            }
+
+            if (go.GetComponent<Button>() != null)
+            {
+                return "button";
+            }
+
+            if (go.GetComponent<Toggle>() != null)
+            {
+                return "toggle";
+            }
+
+            if (go.GetComponent<Slider>() != null)
+            {
+                return "slider";
+            }
+
+            if (go.GetComponent<Image>() != null)
+            {
+                return "image";
+            }
+
             return "other";
         }
 
         private static bool IsInteractable(GameObject go)
         {
-            var selectable = go.GetComponent<UnityEngine.UI.Selectable>();
+            var selectable = go.GetComponent<Selectable>();
             return selectable != null && selectable.interactable;
         }
 
@@ -680,7 +713,7 @@ namespace LobotomyPlaywright.Queries
 
         private static UiNodeData CreateNodeFromToggle(Toggle toggle, GameObject root)
         {
-            var labelText = toggle.GetComponentInChildren<Text>();
+            _ = toggle.GetComponentInChildren<Text>();
             return new UiNodeData
             {
                 Path = BuildNodePath(toggle.transform, root.transform),

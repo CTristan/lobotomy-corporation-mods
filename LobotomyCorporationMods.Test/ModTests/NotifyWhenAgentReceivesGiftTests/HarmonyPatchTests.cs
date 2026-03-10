@@ -4,7 +4,6 @@
 
 using System;
 using AwesomeAssertions;
-using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.NotifyWhenAgentReceivesGift;
 using LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches;
 using LobotomyCorporationMods.Test.Extensions;

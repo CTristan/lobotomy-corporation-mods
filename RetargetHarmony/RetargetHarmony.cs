@@ -11,7 +11,6 @@ using BepInEx.Bootstrap;
 using BepInEx.Logging;
 using HarmonyLib;
 using Mono.Cecil;
-using Mono.Collections.Generic;
 
 namespace RetargetHarmony
 {

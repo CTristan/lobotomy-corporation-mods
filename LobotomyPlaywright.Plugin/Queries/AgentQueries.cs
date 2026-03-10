@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using UnityEngine;
 
 namespace LobotomyPlaywright.Queries
 {
@@ -58,17 +57,8 @@ namespace LobotomyPlaywright.Queries
             InitializeFields();
 
             var agents = new List<AgentData>();
-            var agentManager = AgentManager.instance;
-
-            if (agentManager == null)
-            {
-                throw new InvalidOperationException("AgentManager.instance is null. Game may not be initialized.");
-            }
-
-            var agentList = s_agentListField?.GetValue(agentManager) as List<AgentModel>;
-            var spareList = s_agentListSpareField?.GetValue(agentManager) as List<AgentModel>;
-
-            if (agentList != null)
+            var agentManager = AgentManager.instance ?? throw new InvalidOperationException("AgentManager.instance is null. Game may not be initialized.");
+            if (s_agentListField?.GetValue(agentManager) is List<AgentModel> agentList)
             {
                 foreach (var agent in agentList)
                 {
@@ -76,7 +66,7 @@ namespace LobotomyPlaywright.Queries
                 }
             }
 
-            if (spareList != null)
+            if (s_agentListSpareField?.GetValue(agentManager) is List<AgentModel> spareList)
             {
                 foreach (var agent in spareList)
                 {

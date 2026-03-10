@@ -7,18 +7,13 @@ using HarmonyDebugPanel.Models;
 
 namespace HarmonyDebugPanel.Implementations.Collectors
 {
-    public sealed class AssemblyInfoCollector : IInfoCollector<IList<AssemblyInfo>>
+    public sealed class AssemblyInfoCollector(IAssemblyInspectionSource assemblySource) : IInfoCollector<IList<AssemblyInfo>>
     {
-        private readonly IAssemblyInspectionSource _assemblySource;
+        private readonly IAssemblyInspectionSource _assemblySource = assemblySource ?? throw new ArgumentNullException(nameof(assemblySource));
 
         public AssemblyInfoCollector()
             : this(new AppDomainAssemblyInspectionSource())
         {
-        }
-
-        public AssemblyInfoCollector(IAssemblyInspectionSource assemblySource)
-        {
-            _assemblySource = assemblySource ?? throw new ArgumentNullException(nameof(assemblySource));
         }
 
         public IList<AssemblyInfo> Collect()

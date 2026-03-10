@@ -3,7 +3,6 @@
 #region
 
 using System.Collections.Generic;
-using Customizing;
 using LobotomyCorporationMods.BugFixes.Patches;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.Test.Extensions;

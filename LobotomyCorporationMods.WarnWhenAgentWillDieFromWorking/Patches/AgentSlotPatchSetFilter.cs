@@ -19,7 +19,6 @@ using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
-using UnityEngine;
 
 #endregion
 
