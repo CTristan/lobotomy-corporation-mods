@@ -22,7 +22,7 @@ using UnityEngine;
 
 namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingTests
 {
-    internal class WarnWhenAgentWillDieFromWorkingModTests
+    public class WarnWhenAgentWillDieFromWorkingModTests
     {
         private const string DeadAgentString = "AgentState_Dead";
         protected const AgentState IdleAgentState = AgentState.IDLE;

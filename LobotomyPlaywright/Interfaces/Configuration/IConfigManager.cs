@@ -5,7 +5,7 @@ namespace LobotomyPlaywright.Interfaces.Configuration;
 /// <summary>
 /// Interface for managing the LobotomyPlaywright configuration.
 /// </summary>
-public interface IConfigManager
+internal interface IConfigManager
 {
     /// <summary>
     /// Loads the configuration from disk.
@@ -24,7 +24,7 @@ public interface IConfigManager
 /// <summary>
 /// Configuration for LobotomyPlaywright.
 /// </summary>
-public class Config
+internal class Config
 {
     /// <summary>
     /// Gets or sets the game installation path.

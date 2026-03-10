@@ -11,7 +11,7 @@ using Moq;
 
 namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests
 {
-    internal class BugFixesModTests
+    public class BugFixesModTests
     {
         protected const int FourTimes = 4;
 

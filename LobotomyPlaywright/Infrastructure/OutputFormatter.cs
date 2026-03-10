@@ -10,7 +10,7 @@ namespace LobotomyPlaywright.Infrastructure;
 /// <summary>
 /// Formats query results for human-readable output.
 /// </summary>
-public static class OutputFormatter
+internal static class OutputFormatter
 {
     /// <summary>
     /// Formats agent data for display.

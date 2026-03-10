@@ -13,7 +13,7 @@ using Moq;
 
 namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests
 {
-    internal class FreeCustomizationModTests
+    public class FreeCustomizationModTests
     {
         protected const int Twice = 2;
         private const AgentModel DefaultAgentModel = null;

@@ -13,7 +13,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    internal class ComponentTestAdapter<T> : TestAdapter<T>, IComponentTestAdapter<T> where T : Component
+    public class ComponentTestAdapter<T> : TestAdapter<T>, IComponentTestAdapter<T> where T : Component
     {
         internal ComponentTestAdapter([NotNull] T gameObject) : base(gameObject)
         {

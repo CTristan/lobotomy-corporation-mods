@@ -14,7 +14,7 @@ namespace LobotomyPlaywright.Commands;
 /// <summary>
 /// Command to send commands to the game.
 /// </summary>
-public class CommandCommand
+internal class CommandCommand
 {
     private readonly IConfigManager _configManager;
     private readonly Func<ITcpClient> _tcpClientFactory;

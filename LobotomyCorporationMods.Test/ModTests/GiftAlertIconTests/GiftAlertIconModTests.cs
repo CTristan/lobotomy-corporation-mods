@@ -7,7 +7,7 @@ using Moq;
 
 namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests
 {
-    internal class GiftAlertIconModTests
+    public class GiftAlertIconModTests
     {
         protected GiftAlertIconModTests()
         {

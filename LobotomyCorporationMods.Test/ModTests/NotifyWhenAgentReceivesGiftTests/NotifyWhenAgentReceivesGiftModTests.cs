@@ -15,7 +15,7 @@ using Moq;
 
 namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
 {
-    internal class NotifyWhenAgentReceivesGiftModTests
+    public class NotifyWhenAgentReceivesGiftModTests
     {
         protected const string ColorAgentString = "#66bfcd";
         protected const string ColorGiftString = "#84bd36";

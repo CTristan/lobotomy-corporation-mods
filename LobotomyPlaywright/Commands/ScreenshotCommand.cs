@@ -14,7 +14,7 @@ namespace LobotomyPlaywright.Commands;
 /// <summary>
 /// Command to capture a screenshot of the current game state.
 /// </summary>
-public class ScreenshotCommand
+internal class ScreenshotCommand
 {
     private readonly IConfigManager _configManager;
     private readonly Func<ITcpClient> _tcpClientFactory;

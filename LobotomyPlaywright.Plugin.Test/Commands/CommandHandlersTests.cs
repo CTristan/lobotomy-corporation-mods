@@ -157,7 +157,7 @@ namespace LobotomyPlaywright.Plugin.Test.Commands
         }
     }
 
-    internal class PlayerActionCommandsTests
+    public class PlayerActionCommandsTests
     {
         [Fact]
         public void HandleAssignWork_missing_agentId_returns_error()

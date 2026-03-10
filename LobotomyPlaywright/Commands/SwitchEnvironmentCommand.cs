@@ -14,7 +14,7 @@ namespace LobotomyPlaywright.Commands;
 /// <summary>
 /// Command to switch between debug and release game environments by swapping UnityPlayer.dll.
 /// </summary>
-public class SwitchEnvironmentCommand
+internal class SwitchEnvironmentCommand
 {
     private readonly IConfigManager _configManager;
     private readonly IFileSystem _fileSystem;

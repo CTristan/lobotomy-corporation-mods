@@ -10,7 +10,7 @@ using LobotomyCorporationMods.Test.Extensions;
 
 namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
 {
-    internal class BadLuckProtectionForGiftsModTests
+    public class BadLuckProtectionForGiftsModTests
     {
         protected const string GiftName = "DefaultGiftName";
 

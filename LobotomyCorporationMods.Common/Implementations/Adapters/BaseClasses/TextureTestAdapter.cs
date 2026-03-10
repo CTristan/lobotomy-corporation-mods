@@ -12,7 +12,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    internal class TextureTestAdapter<T> : TestAdapter<T>, ITextureTestAdapter<T> where T : Texture
+    public class TextureTestAdapter<T> : TestAdapter<T>, ITextureTestAdapter<T> where T : Texture
     {
         protected TextureTestAdapter([NotNull] T gameObject) : base(gameObject)
         {
