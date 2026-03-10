@@ -415,7 +415,7 @@ namespace LobotomyPlaywright.Commands
             return false;
         }
 
-        public class BuildFailedException : Exception
+        internal sealed class BuildFailedException : Exception
         {
             public BuildFailedException(string message) : base(message)
             {

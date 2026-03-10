@@ -8,6 +8,18 @@ using System.Text;
 namespace SetupExternal
 {
     /// <summary>
+    /// Result of a file sync operation.
+    /// </summary>
+    public sealed class SyncResult
+    {
+        public int FilesCopied { get; set; }
+        public int FilesUpdated { get; set; }
+        public int FilesSkipped { get; set; }
+        public bool AssemblyCSharpChanged { get; set; }
+        public bool LobotomyBaseModLibChanged { get; set; }
+    }
+
+    /// <summary>
     /// Handles copying game DLLs with SHA256 hash comparison to avoid unnecessary copies.
     /// </summary>
     public static class FileSyncer
@@ -20,18 +32,6 @@ namespace SetupExternal
         private static void DebugLog(string message)
         {
             Program.DebugLog($"[FileSyncer] {message}");
-        }
-
-        /// <summary>
-        /// Result of a file sync operation.
-        /// </summary>
-        public sealed class SyncResult
-        {
-            public int FilesCopied { get; set; }
-            public int FilesUpdated { get; set; }
-            public int FilesSkipped { get; set; }
-            public bool AssemblyCSharpChanged { get; set; }
-            public bool LobotomyBaseModLibChanged { get; set; }
         }
 
         /// <summary>

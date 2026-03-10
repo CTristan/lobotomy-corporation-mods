@@ -7,8 +7,6 @@ indent_style = space
 [*.{cs,csx}]
 # BEGIN TEMPORARY BUILD WORKAROUND: Disable analyzers that cause build errors until the underlying issues are resolved
 
-# WHY: Disable CA1034 (nested types) - nested types are sometimes appropriate
-dotnet_diagnostic.CA1034.severity = none
 # WHY: Disable CA1051 (visible instance fields) - required for JsonUtility serialization
 dotnet_diagnostic.CA1051.severity = none
 # WHY: Disable CA1062 (validate parameters) - too many false positives for parameter validation

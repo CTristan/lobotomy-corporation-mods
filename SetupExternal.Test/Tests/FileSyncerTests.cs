@@ -45,7 +45,7 @@ namespace SetupExternal.Test.Tests
             CreateTestFile(_sourceManagedDir, "Test2.dll", "content2");
 
             // Act
-            FileSyncer.SyncResult result = FileSyncer.SyncDlls(_sourceDir, _destDir);
+            SyncResult result = FileSyncer.SyncDlls(_sourceDir, _destDir);
 
             // Assert
             _ = result.FilesCopied.Should().Be(2);
@@ -64,7 +64,7 @@ namespace SetupExternal.Test.Tests
             CreateTestFile(_sourceManagedDir, "Assembly-CSharp.dll", "content");
 
             // Act
-            FileSyncer.SyncResult result = FileSyncer.SyncDlls(_sourceDir, _destDir);
+            SyncResult result = FileSyncer.SyncDlls(_sourceDir, _destDir);
 
             // Assert
             _ = result.FilesCopied.Should().Be(1);
@@ -78,7 +78,7 @@ namespace SetupExternal.Test.Tests
             CreateTestFile(_sourceManagedDir, "LobotomyBaseModLib.dll", "content");
 
             // Act
-            FileSyncer.SyncResult result = FileSyncer.SyncDlls(_sourceDir, _destDir);
+            SyncResult result = FileSyncer.SyncDlls(_sourceDir, _destDir);
 
             // Assert
             _ = result.FilesCopied.Should().Be(1);
@@ -94,7 +94,7 @@ namespace SetupExternal.Test.Tests
             CreateTestFile(_destManagedDir, "Test.dll", content);
 
             // Act
-            FileSyncer.SyncResult result = FileSyncer.SyncDlls(_sourceDir, _destDir);
+            SyncResult result = FileSyncer.SyncDlls(_sourceDir, _destDir);
 
             // Assert
             _ = result.FilesCopied.Should().Be(0);
@@ -110,7 +110,7 @@ namespace SetupExternal.Test.Tests
             CreateTestFile(_destManagedDir, "Test.dll", "old content");
 
             // Act
-            FileSyncer.SyncResult result = FileSyncer.SyncDlls(_sourceDir, _destDir);
+            SyncResult result = FileSyncer.SyncDlls(_sourceDir, _destDir);
 
             // Assert
             _ = result.FilesCopied.Should().Be(0);
@@ -137,7 +137,7 @@ namespace SetupExternal.Test.Tests
             CreateTestFile(_destManagedDir, "Extra.dll", "extra");
 
             // Act
-            FileSyncer.SyncResult result = FileSyncer.SyncDlls(_sourceDir, _destDir);
+            SyncResult result = FileSyncer.SyncDlls(_sourceDir, _destDir);
 
             // Assert
             _ = result.FilesCopied.Should().Be(1); // New.dll
@@ -151,7 +151,7 @@ namespace SetupExternal.Test.Tests
             // Arrange - no DLL files created
 
             // Act
-            FileSyncer.SyncResult result = FileSyncer.SyncDlls(_sourceDir, _destDir);
+            SyncResult result = FileSyncer.SyncDlls(_sourceDir, _destDir);
 
             // Assert
             _ = result.FilesCopied.Should().Be(0);
