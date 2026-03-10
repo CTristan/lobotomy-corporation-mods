@@ -6,7 +6,6 @@ using System.IO;
 using AwesomeAssertions;
 using BepInEx.Logging;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace RetargetHarmony.Test.Tests
 {

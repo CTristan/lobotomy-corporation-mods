@@ -1,57 +1,57 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <IsPackable>false</IsPackable>
-    <IsTestProject>true</IsTestProject>
-    <ProjectGuid>{D4E5F6A7-8B9C-0D1E-2F3A-4B5C6D7E8F9A}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <!-- NU1605: RetargetHarmony project (net35) uses Mono.Cecil 0.10.4; BepInEx transitive deps require 0.11.4+, but 0.10.4 is needed for net35 compatibility -->
-    <NoWarn>$(NoWarn);NU1605</NoWarn>
-    <Nullable>enable</Nullable>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="BepInEx.BaseLib" Version="5.4.21"/>
-    <PackageReference Include="BepInEx.Core" Version="5.4.21"/>
-    <PackageReference Include="coverlet.collector" Version="8.0.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="coverlet.msbuild" Version="8.0.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="AwesomeAssertions" Version="9.4.0"/>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
-    <PackageReference Include="Mono.Cecil" Version="0.11.4">
-      <IncludeAssets>compile; runtime</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="xunit" Version="2.8.1"/>
-    <PackageReference Include="xunit.runner.console" Version="2.8.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\RetargetHarmony\RetargetHarmony.csproj"/>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="0Harmony">
-      <HintPath>..\external\LobotomyCorp_Data\Managed\0Harmony.dll</HintPath>
-      <Private>true</Private>
-    </Reference>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>..\external\LobotomyCorp_Data\Managed\Assembly-CSharp.dll</HintPath>
-      <Private>true</Private>
-    </Reference>
-    <Reference Include="UnityEngine">
-      <HintPath>..\external\LobotomyCorp_Data\Managed\UnityEngine.dll</HintPath>
-      <Private>true</Private>
-    </Reference>
-  </ItemGroup>
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <IsPackable>false</IsPackable>
+        <IsTestProject>true</IsTestProject>
+        <ProjectGuid>{D4E5F6A7-8B9C-0D1E-2F3A-4B5C6D7E8F9A}</ProjectGuid>
+        <OutputType>Library</OutputType>
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+        <!-- NU1605: RetargetHarmony project (net35) uses Mono.Cecil 0.10.4; BepInEx transitive deps require 0.11.4+, but 0.10.4 is needed for net35 compatibility -->
+        <NoWarn>$(NoWarn);NU1605</NoWarn>
+        <Nullable>enable</Nullable>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="BepInEx.BaseLib" Version="5.4.21"/>
+        <PackageReference Include="BepInEx.Core" Version="5.4.21"/>
+        <PackageReference Include="coverlet.collector" Version="8.0.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="coverlet.msbuild" Version="8.0.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="AwesomeAssertions" Version="9.4.0"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.3.0"/>
+        <PackageReference Include="Mono.Cecil" Version="0.11.4">
+            <IncludeAssets>compile; runtime</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="xunit.v3" Version="3.2.2"/>
+        <PackageReference Include="xunit.v3.runner.console" Version="3.2.2">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\RetargetHarmony\RetargetHarmony.csproj"/>
+    </ItemGroup>
+    <ItemGroup>
+        <Reference Include="0Harmony">
+            <HintPath>..\external\LobotomyCorp_Data\Managed\0Harmony.dll</HintPath>
+            <Private>true</Private>
+        </Reference>
+        <Reference Include="Assembly-CSharp">
+            <HintPath>..\external\LobotomyCorp_Data\Managed\Assembly-CSharp.dll</HintPath>
+            <Private>true</Private>
+        </Reference>
+        <Reference Include="UnityEngine">
+            <HintPath>..\external\LobotomyCorp_Data\Managed\UnityEngine.dll</HintPath>
+            <Private>true</Private>
+        </Reference>
+    </ItemGroup>
 </Project>

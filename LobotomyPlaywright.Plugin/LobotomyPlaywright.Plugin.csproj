@@ -30,6 +30,9 @@
       <Private>false</Private>
     </Reference>
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\shared\ExcludeFromCodeCoverageAttribute.cs" Link="Attributes\ExcludeFromCodeCoverageAttribute.cs"/>
+  </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all"/>
   </ItemGroup>

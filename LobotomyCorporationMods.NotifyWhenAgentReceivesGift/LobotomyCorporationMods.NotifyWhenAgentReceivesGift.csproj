@@ -27,6 +27,9 @@
     <ProjectReference Include="..\LobotomyCorporationMods.Common\LobotomyCorporationMods.Common.csproj"/>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\shared\ExcludeFromCodeCoverageAttribute.cs" Link="Attributes\ExcludeFromCodeCoverageAttribute.cs"/>
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="Info\GlobalInfo.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

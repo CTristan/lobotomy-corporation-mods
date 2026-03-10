@@ -8,7 +8,6 @@ using System.Reflection;
 using AwesomeAssertions;
 using Mono.Cecil;
 using Xunit;
-using Xunit.Abstractions;
 using static RetargetHarmony.RetargetHarmony;
 
 namespace RetargetHarmony.Test.Tests

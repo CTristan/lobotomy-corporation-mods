@@ -1,56 +1,56 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <IsPackable>false</IsPackable>
-    <IsTestProject>true</IsTestProject>
-    <ProjectGuid>{E5F6A7B8-9C0D-1E2F-3A4B-5C6D7E8F9A0B}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <Nullable>enable</Nullable>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="BepInEx.BaseLib" Version="5.4.21"/>
-    <PackageReference Include="BepInEx.Core" Version="5.4.21"/>
-    <PackageReference Include="coverlet.collector" Version="8.0.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="coverlet.msbuild" Version="8.0.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="AwesomeAssertions" Version="9.4.0"/>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
-    <PackageReference Include="xunit" Version="2.8.1"/>
-    <PackageReference Include="xunit.runner.console" Version="2.8.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\HarmonyDebugPanel\HarmonyDebugPanel.csproj"/>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="$(NuGetPackageRoot)bepinex.baselib/5.4.21/lib/netstandard2.0/BepInEx.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Link>BepInEx.dll</Link>
-    </Content>
-    <Content Include="$(NuGetPackageRoot)harmonyx/2.7.0/lib/netstandard2.0/0Harmony.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Link>0Harmony.dll</Link>
-    </Content>
-    <Content Include="..\external\LobotomyCorp_Data\Managed\UnityEngine.CoreModule.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Link>UnityEngine.CoreModule.dll</Link>
-    </Content>
-    <Content Include="..\external\LobotomyCorp_Data\Managed\UnityEngine.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Link>UnityEngine.dll</Link>
-    </Content>
-  </ItemGroup>
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <IsPackable>false</IsPackable>
+        <IsTestProject>true</IsTestProject>
+        <ProjectGuid>{E5F6A7B8-9C0D-1E2F-3A4B-5C6D7E8F9A0B}</ProjectGuid>
+        <OutputType>Library</OutputType>
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+        <Nullable>enable</Nullable>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="BepInEx.BaseLib" Version="5.4.21"/>
+        <PackageReference Include="BepInEx.Core" Version="5.4.21"/>
+        <PackageReference Include="coverlet.collector" Version="8.0.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="coverlet.msbuild" Version="8.0.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="AwesomeAssertions" Version="9.4.0"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.3.0"/>
+        <PackageReference Include="xunit.v3" Version="3.2.2"/>
+        <PackageReference Include="xunit.v3.runner.console" Version="3.2.2">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\HarmonyDebugPanel\HarmonyDebugPanel.csproj"/>
+    </ItemGroup>
+    <ItemGroup>
+        <Content Include="$(NuGetPackageRoot)bepinex.baselib/5.4.21/lib/netstandard2.0/BepInEx.dll">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <Link>BepInEx.dll</Link>
+        </Content>
+        <Content Include="$(NuGetPackageRoot)harmonyx/2.7.0/lib/netstandard2.0/0Harmony.dll">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <Link>0Harmony.dll</Link>
+        </Content>
+        <Content Include="..\external\LobotomyCorp_Data\Managed\UnityEngine.CoreModule.dll">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <Link>UnityEngine.CoreModule.dll</Link>
+        </Content>
+        <Content Include="..\external\LobotomyCorp_Data\Managed\UnityEngine.dll">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <Link>UnityEngine.dll</Link>
+        </Content>
+    </ItemGroup>
 </Project>

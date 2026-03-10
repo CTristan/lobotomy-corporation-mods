@@ -5,7 +5,6 @@ using AwesomeAssertions;
 using LobotomyPlaywright.JsonModels;
 using LobotomyPlaywright.Protocol;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace LobotomyPlaywright.Plugin.Test.Protocol
 {

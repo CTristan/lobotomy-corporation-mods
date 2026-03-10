@@ -8,7 +8,6 @@ using System.Threading;
 using AwesomeAssertions;
 using LobotomyPlaywright.Server;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace LobotomyPlaywright.Plugin.Test.Server
 {
