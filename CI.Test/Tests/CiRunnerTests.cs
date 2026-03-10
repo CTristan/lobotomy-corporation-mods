@@ -30,7 +30,7 @@ namespace CI.Test.Tests
 
             _ = mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
             _ = mockProcessRunner
-                .Setup(pr => pr.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string, bool>>()))
+                .Setup(pr => pr.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string?, bool>>()))
                 .Returns(Success());
             _ = mockCoverageThresholdChecker.Setup(c => c.CheckThresholds(It.IsAny<string>(), out It.Ref<string>.IsAny))
                 .Returns(true);
@@ -44,7 +44,7 @@ namespace CI.Test.Tests
                     "dotnet",
                     It.Is<string>(s => s.Contains("format --verify-no-changes", StringComparison.Ordinal)),
                     It.IsAny<string>(),
-                    It.IsAny<Func<string, bool>>()),
+                    It.IsAny<Func<string?, bool>>()),
                 Times.Once);
         }
 
@@ -59,7 +59,7 @@ namespace CI.Test.Tests
 
             _ = mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
             _ = mockProcessRunner
-                .Setup(pr => pr.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string, bool>>()))
+                .Setup(pr => pr.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string?, bool>>()))
                 .Returns(Success());
             _ = mockCoverageThresholdChecker.Setup(c => c.CheckThresholds(It.IsAny<string>(), out It.Ref<string>.IsAny))
                 .Returns(true);
@@ -73,7 +73,7 @@ namespace CI.Test.Tests
                     "dotnet",
                     It.Is<string>(s => s.Contains("format", StringComparison.Ordinal) && !s.Contains("--verify-no-changes", StringComparison.Ordinal)),
                     It.IsAny<string>(),
-                    It.IsAny<Func<string, bool>>()),
+                    It.IsAny<Func<string?, bool>>()),
                 Times.Once);
         }
 
@@ -88,7 +88,7 @@ namespace CI.Test.Tests
 
             _ = mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
             _ = mockProcessRunner
-                .Setup(pr => pr.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string, bool>>()))
+                .Setup(pr => pr.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string?, bool>>()))
                 .Returns(Success());
             _ = mockCoverageThresholdChecker.Setup(c => c.CheckThresholds(It.IsAny<string>(), out It.Ref<string>.IsAny))
                 .Returns(true);
@@ -98,7 +98,7 @@ namespace CI.Test.Tests
             _ = runner.Run(checkMode: true);
 
             mockProcessRunner.Verify(
-                pr => pr.Run("dotnet", It.Is<string>(s => s.Contains("test", StringComparison.Ordinal)), It.IsAny<string>(), It.IsAny<Func<string, bool>>()),
+                pr => pr.Run("dotnet", It.Is<string>(s => s.Contains("test", StringComparison.Ordinal)), It.IsAny<string>(), It.IsAny<Func<string?, bool>>()),
                 Times.Once);
         }
 
@@ -113,7 +113,7 @@ namespace CI.Test.Tests
 
             _ = mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
             _ = mockProcessRunner
-                .Setup(pr => pr.Run("dotnet", It.Is<string>(s => s.Contains("format", StringComparison.Ordinal)), It.IsAny<string>(), It.IsAny<Func<string, bool>>()))
+                .Setup(pr => pr.Run("dotnet", It.Is<string>(s => s.Contains("format", StringComparison.Ordinal)), It.IsAny<string>(), It.IsAny<Func<string?, bool>>()))
                 .Returns(Failure("error: formatting issue"));
 
             CiRunner runner = new(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageConfigReader.Object, mockCoverageThresholdChecker.Object);
@@ -122,7 +122,7 @@ namespace CI.Test.Tests
 
             _ = exitCode.Should().Be(1);
             mockProcessRunner.Verify(
-                pr => pr.Run("dotnet", It.Is<string>(s => s.Contains("test", StringComparison.Ordinal)), It.IsAny<string>(), It.IsAny<Func<string, bool>>()),
+                pr => pr.Run("dotnet", It.Is<string>(s => s.Contains("test", StringComparison.Ordinal)), It.IsAny<string>(), It.IsAny<Func<string?, bool>>()),
                 Times.Never);
         }
 
@@ -137,7 +137,7 @@ namespace CI.Test.Tests
 
             _ = mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
             _ = mockProcessRunner
-                .SetupSequence(pr => pr.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string, bool>>()))
+                .SetupSequence(pr => pr.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string?, bool>>()))
                 .Returns(Success())
                 .Returns(Failure("error CS1234: some build error"));
 
@@ -165,7 +165,7 @@ namespace CI.Test.Tests
 
             _ = exitCode.Should().Be(1);
             mockProcessRunner.Verify(
-                pr => pr.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string, bool>>()),
+                pr => pr.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string?, bool>>()),
                 Times.Never);
         }
 
@@ -180,7 +180,7 @@ namespace CI.Test.Tests
 
             _ = mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
             _ = mockProcessRunner
-                .Setup(pr => pr.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string, bool>>()))
+                .Setup(pr => pr.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string?, bool>>()))
                 .Returns(Success());
             mockCoverageThresholdChecker.Setup(c => c.CheckThresholds(It.IsAny<string>(), out It.Ref<string>.IsAny))
                 .Returns(true)
@@ -205,7 +205,7 @@ namespace CI.Test.Tests
 
             _ = mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
             _ = mockProcessRunner
-                .Setup(pr => pr.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string, bool>>()))
+                .Setup(pr => pr.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string?, bool>>()))
                 .Returns(Success());
             mockCoverageThresholdChecker.Setup(c => c.CheckThresholds(It.IsAny<string>(), out It.Ref<string>.IsAny))
                 .Returns(false)
