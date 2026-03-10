@@ -10,7 +10,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces
 {
     public interface IGift
     {
-        List<IAgent> GetAgents();
+        ICollection<IAgent> GetAgents();
         string GetName();
 
         IAgent GetOrAddAgent(long agentId);

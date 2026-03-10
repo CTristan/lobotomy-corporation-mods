@@ -33,7 +33,7 @@ namespace LobotomyPlaywright.Infrastructure
         /// Finds all Lobotomy Corporation game processes.
         /// </summary>
         /// <returns>List of process IDs.</returns>
-        public virtual List<int> FindGameProcesses()
+        public virtual IReadOnlyList<int> FindGameProcesses()
         {
             var pids = new List<int>();
 
@@ -123,7 +123,7 @@ namespace LobotomyPlaywright.Infrastructure
         /// <param name="pids">List of process IDs to kill.</param>
         /// <param name="force">Whether to force kill (SIGKILL) instead of graceful termination (SIGTERM).</param>
         /// <returns>True if all processes were killed.</returns>
-        public virtual bool KillProcesses(List<int> pids, bool force = false)
+        public virtual bool KillProcesses(IReadOnlyList<int> pids, bool force = false)
         {
             ArgumentNullException.ThrowIfNull(pids);
 

@@ -46,7 +46,7 @@ namespace LobotomyPlaywright.Queries
             }
         }
 
-        public static List<CreatureData> ListCreatures()
+        public static ICollection<CreatureData> ListCreatures()
         {
             InitializeField();
 

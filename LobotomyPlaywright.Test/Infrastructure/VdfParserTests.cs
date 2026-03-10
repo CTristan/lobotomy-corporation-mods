@@ -37,7 +37,7 @@ namespace LobotomyPlaywright.Tests.Infrastructure
 """;
 
             // Act
-            List<string> paths = VdfParser.ExtractLibraryPaths(vdfContent);
+            IReadOnlyList<string> paths = VdfParser.ExtractLibraryPaths(vdfContent);
 
             // Assert
             _ = paths.Should().HaveCount(2);
@@ -55,7 +55,7 @@ namespace LobotomyPlaywright.Tests.Infrastructure
             var vdfContent = "";
 
             // Act
-            List<string> paths = VdfParser.ExtractLibraryPaths(vdfContent);
+            IReadOnlyList<string> paths = VdfParser.ExtractLibraryPaths(vdfContent);
 
             // Assert
             _ = paths.Should().BeEmpty();
@@ -68,7 +68,7 @@ namespace LobotomyPlaywright.Tests.Infrastructure
         public void ExtractLibraryPaths_WithNullContent_ReturnsEmptyList()
         {
             // Act
-            List<string> paths = VdfParser.ExtractLibraryPaths(null!);
+            IReadOnlyList<string> paths = VdfParser.ExtractLibraryPaths(null!);
 
             // Assert
             _ = paths.Should().BeEmpty();
@@ -92,7 +92,7 @@ namespace LobotomyPlaywright.Tests.Infrastructure
 """;
 
             // Act
-            List<string> paths = VdfParser.ExtractLibraryPaths(vdfContent);
+            IReadOnlyList<string> paths = VdfParser.ExtractLibraryPaths(vdfContent);
 
             // Assert
             _ = paths.Should().BeEmpty();

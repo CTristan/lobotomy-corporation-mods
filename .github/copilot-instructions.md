@@ -107,11 +107,57 @@ When business logic lives in a class that takes concrete types, refactor: create
 
 ## JsonUtility Serialization Rules
 
+Based on [Unity 2017.4 JsonSerialization docs](https://docs.unity3d.com/2017.4/Documentation/Manual/JSONSerialization.html). JsonUtility uses Unity's serializer internally, so all [Unity serialization rules](https://docs.unity3d.com/2017.4/Documentation/Manual/script-Serialization.html) apply.
+
+### Folder convention
+
 All JsonUtility data classes **must** live in a `JsonModels/` folder (`.editorconfig` suppresses CA1051/IDE1006/CA1708 via `[**/JsonModels/**.cs]`). Do not place non-JsonUtility classes there.
 
-**Data class requirements**: `[Serializable]`, public lowercase fields only (no properties), supported types only (`string`, `int`, `float`, `double`, `bool`, `long`, `byte`, enums, arrays, nested `[Serializable]`). No `Dictionary`, no `List<T>` (use arrays), no anonymous objects, no PascalCase property shadows.
+### Class requirements
 
-**Placeholder pattern** for polymorphic data: Use a `string` placeholder field + `[NonSerialized] object` field, serialize separately and string-replace. See `MessageSerializer.cs` for reference implementation.
+- Must have `[Serializable]` attribute
+- Must not be `abstract`, `static`, or generic (but may inherit from a generic base class)
+- Structs are serialized by value
+
+### Field requirements
+
+- Must be `public`, OR `private`/`protected` with `[SerializeField]`
+- Must NOT be `static`, `const`, or `readonly`
+- `[NonSerialized]` excludes a field from serialization
+- Only **fields** are serialized — **properties are ignored**
+
+### Supported field types
+
+| Category | Types |
+|----------|-------|
+| Primitives | `string`, `int`, `float`, `double`, `bool`, `long`, `byte`, `char`, enums |
+| Containers | `T[]` (arrays) and `List<T>` of any supported type |
+| Nested objects | `[Serializable]` classes/structs (serialized inline by value) |
+| Unity built-ins | `Vector2`, `Vector3`, `Vector4`, `Rect`, `Quaternion`, `Matrix4x4`, `Color`, `Color32`, `LayerMask`, `AnimationCurve`, `Gradient`, `RectOffset`, `GUIStyle` |
+
+### Unsupported types (silently ignored or cause errors)
+
+- `Dictionary<K,V>` — silently ignored, field will be `null`/default
+- `object` fields — no type information preserved
+- Multidimensional arrays (`T[,]`), jagged arrays (`T[][]`), nested containers (`List<List<T>>`, `List<T[]>`)
+- Interfaces as field types
+- Anonymous objects (not `[Serializable]`, serialize as `{}`)
+
+### Critical behavioral gotchas
+
+- **No null for custom objects**: Unity auto-instantiates new objects for null fields of custom `[Serializable]` types. Can cause unexpected allocations; recursive types can cause infinite loops and stack overflows.
+- **No polymorphism**: Fields serialize by **declared** type, not runtime type. A field typed `Animal` holding a `Dog` deserializes as `Animal`, losing `Dog`-specific data.
+- **Inline by-value (no reference preservation)**: Custom class references are serialized inline like structs. Two fields pointing to the same object become two separate copies after round-trip.
+- **7-level depth limit**: Serializer stops processing nested custom classes/structs/lists/arrays beyond 7 levels deep.
+- **Missing JSON fields**: C# field keeps its default value.
+- **Extra JSON fields**: Silently ignored.
+- **MonoBehaviour/ScriptableObject**: Cannot use `FromJson()` — must use `FromJsonOverwrite()`.
+
+### Project patterns
+
+**Placeholder pattern** for polymorphic/dynamic data: Use a `string` placeholder field + `[NonSerialized] object` field, serialize separately and string-replace. See `MessageSerializer.cs` for reference implementation.
+
+**PascalCase accessors**: Lowercase public fields for serialization, optional PascalCase property accessors for C# code ergonomics. Properties are not serialized by JsonUtility so they do not affect the JSON output.
 
 ## Test Conventions
 

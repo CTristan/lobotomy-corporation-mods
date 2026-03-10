@@ -15,18 +15,18 @@ namespace LobotomyPlaywright.Queries
         /// For summary queries, contains all windows with IsOpen boolean.
         /// For full queries, includes Children for open windows.
         /// </summary>
-        public List<UiWindowData> Windows { get; set; }
+        public ICollection<UiWindowData> Windows { get; set; }
 
         /// <summary>
         /// Current activated slot names (0-4) from UIActivateManager.
         /// Represents which agent slots are currently active in the UI.
         /// </summary>
-        public List<string> ActivatedSlots { get; set; }
+        public ICollection<string> ActivatedSlots { get; set; }
 
         /// <summary>
         /// List of mod-specific UI elements detected in the scene.
         /// Populated by scanning for known mod UI patterns (e.g., GiftAlertIcon).
         /// </summary>
-        public List<UiNodeData> ModElements { get; set; }
+        public ICollection<UiNodeData> ModElements { get; set; }
     }
 }

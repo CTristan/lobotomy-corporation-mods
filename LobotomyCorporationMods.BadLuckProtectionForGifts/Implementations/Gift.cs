@@ -21,7 +21,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
             _name = giftName;
         }
 
-        public List<IAgent> GetAgents()
+        public ICollection<IAgent> GetAgents()
         {
             return _agents;
         }

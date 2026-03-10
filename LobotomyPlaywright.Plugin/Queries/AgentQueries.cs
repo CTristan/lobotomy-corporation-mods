@@ -52,7 +52,7 @@ namespace LobotomyPlaywright.Queries
             }
         }
 
-        public static List<AgentData> ListAgents()
+        public static ICollection<AgentData> ListAgents()
         {
             InitializeFields();
 

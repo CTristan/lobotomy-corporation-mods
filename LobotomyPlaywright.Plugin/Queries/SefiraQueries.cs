@@ -45,7 +45,7 @@ namespace LobotomyPlaywright.Queries
             }
         }
 
-        public static List<SefiraData> ListSefira()
+        public static ICollection<SefiraData> ListSefira()
         {
             var sefiraList = new List<SefiraData>();
             var sefiraManager = SefiraManager.instance ?? throw new InvalidOperationException("SefiraManager.instance is null. Game may not be initialized.");

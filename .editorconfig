@@ -7,10 +7,6 @@ indent_style = space
 [*.{cs,csx}]
 # BEGIN TEMPORARY BUILD WORKAROUND: Disable analyzers that cause build errors until the underlying issues are resolved
 
-# WHY: Disable CS9113 (unread parameter) - sometimes parameters are intentionally unused
-dotnet_diagnostic.CS9113.severity = none
-# WHY: Disable CA1002 (use Collection<T> instead of List<T>) - List<T> is appropriate in many cases
-dotnet_diagnostic.CA1002.severity = none
 # WHY: Disable CA1031 (catch specific exception) - too strict for practical exception handling
 dotnet_diagnostic.CA1031.severity = none
 # WHY: Disable CA1034 (nested types) - nested types are sometimes appropriate
@@ -76,6 +72,8 @@ dotnet_diagnostic.IDE0305.severity = none
 dotnet_diagnostic.IDE1006.severity = none
 # WHY: Disable RCS1075 (avoid empty catch clause) - empty catch is sometimes intentional
 dotnet_diagnostic.RCS1075.severity = none
+# WHY: Disable CS9113 (unread parameter) - sometimes parameters are intentionally unused
+dotnet_diagnostic.CS9113.severity = none
 
 # END TEMPORARY BUILD WORKAROUND
 
@@ -96,7 +94,7 @@ dotnet_diagnostic.IDE0052.severity = none
 dotnet_diagnostic.IDE0130.severity = suggestion
 
 # WHY: All test projects share these conventions
-[*.Test/**/*.cs]
+[{*.Test,**/*.Test}/{*.cs,**/*.cs}]
 # WHY: Tests should not have unused private members (opposite of earlier exclusion for Unity private methods)
 dotnet_diagnostic.IDE0051.severity = error
 dotnet_diagnostic.IDE0052.severity = error
@@ -108,25 +106,19 @@ dotnet_diagnostic.CA1515.severity = none
 dotnet_diagnostic.CA1707.severity = none
 
 # WHY: All Harmony_Patch classes share these conventions
-[**/Harmony_Patch.cs]
+[{Harmony_Patch.cs,**/Harmony_Patch.cs}]
 # WHY: Harmony_Patch class names contain underscores (Basemod convention)
 dotnet_diagnostic.CA1707.severity = none
 
 # WHY: These are required for JsonUtility serialization
-[**/JsonModels/**/*.cs]
+[{JsonModels,**/JsonModels}/{*.cs,**/*.cs}]
+# WHY: JsonUtility does not support collections other than arrays and List<T>
+dotnet_diagnostic.CA1002.severity = none
+
 # WHY: JsonUtility data classes require public lowercase fields and case-differing PascalCase accessors — Unity's serializer only works with public fields
 dotnet_diagnostic.CA1708.severity = none
 
 # WHY: Harmony patches use __ prefixed parameters (__instance, __result) that violate naming rules
-[**/Patches/**.cs]
+[{Patches,**/Patches}/{*.cs,**/*.cs}]
 dotnet_diagnostic.IDE1006.severity = none
 dotnet_diagnostic.CA1707.severity = none
-
-# WHY: Harmony_Patch class names contain underscores (Basemod convention)
-[**/Harmony_Patch.cs]
-dotnet_diagnostic.CA1707.severity = none
-
-# WHY: All test projects share these conventions
-[**.Test/**.cs]
-# WHY: xUnit requires test classes to be public — dotnet format incorrectly converts them to internal
-dotnet_diagnostic.CA1515.severity = none

@@ -17,7 +17,7 @@ namespace SetupExternal
         /// </summary>
         /// <param name="vdfContent">The content of the VDF file.</param>
         /// <returns>A list of Steam library folder paths.</returns>
-        public static List<string> ExtractLibraryPaths(string vdfContent)
+        public static IReadOnlyList<string> ExtractLibraryPaths(string vdfContent)
         {
             List<string> paths = [];
 

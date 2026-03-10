@@ -216,7 +216,7 @@ namespace LobotomyPlaywright.Commands
             return false;
         }
 
-        private bool TryForceKill(List<int> pids)
+        private bool TryForceKill(IReadOnlyList<int> pids)
         {
             Console.WriteLine($"Force killing processes: {string.Join(", ", pids)}");
 

@@ -28,6 +28,6 @@ namespace LobotomyPlaywright.Queries
         /// Child UI elements within this window (populated when depth="full" or depth="window").
         /// May be null for summary queries.
         /// </summary>
-        public List<UiNodeData> Children { get; set; }
+        public ICollection<UiNodeData> Children { get; set; }
     }
 }
