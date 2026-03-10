@@ -7,8 +7,6 @@ indent_style = space
 [*.{cs,csx}]
 # BEGIN TEMPORARY BUILD WORKAROUND: Disable analyzers that cause build errors until the underlying issues are resolved
 
-# WHY: Disable CS8625 (null literal to non-nullable) - nullable reference types are too strict for this codebase
-dotnet_diagnostic.CS8625.severity = none
 # WHY: Disable CS9113 (unread parameter) - sometimes parameters are intentionally unused
 dotnet_diagnostic.CS9113.severity = none
 # WHY: Disable CA1002 (use Collection<T> instead of List<T>) - List<T> is appropriate in many cases

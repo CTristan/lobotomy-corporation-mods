@@ -179,9 +179,9 @@ namespace HarmonyDebugPanel.Test.Tests
         public void BuildReport_HandlesNullModListOrPatchList()
         {
             DiagnosticReportBuilder builder = new(
-                new StubListCollector<ModInfo>(null),
-                new StubListCollector<ModInfo>(null),
-                new StubListCollector<PatchInfo>(null),
+                new StubListCollector<ModInfo>(null!),
+                new StubListCollector<ModInfo>(null!),
+                new StubListCollector<PatchInfo>(null!),
                 new StubListCollector<AssemblyInfo>([]),
                 new StubValueCollector<RetargetHarmonyStatus>(new RetargetHarmonyStatus()),
                 new StubExpectedPatchSource());

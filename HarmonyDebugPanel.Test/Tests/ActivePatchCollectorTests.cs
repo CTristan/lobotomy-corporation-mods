@@ -17,7 +17,7 @@ namespace HarmonyDebugPanel.Test.Tests
             ActivePatchCollector collector = new(new StubPatchInspectionSource(
             [
                 new("TargetType", "TargetMethod", PatchType.Prefix, "owner1", "PatchClass.Prefix", "Assembly1", "1.0.0", []),
-                null,
+                null!,
                 new("TargetType", "TargetMethod", PatchType.Postfix, "owner2", "PatchClass.Postfix", "Assembly2", "2.0.0", []),
             ]));
 

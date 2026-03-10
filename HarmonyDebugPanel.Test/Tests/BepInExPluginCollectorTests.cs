@@ -16,7 +16,7 @@ namespace HarmonyDebugPanel.Test.Tests
         {
             StubPluginInfoSource source = new(
             [
-                null,
+                null!,
             ]);
 
             BepInExPluginCollector collector = new(source, new HarmonyVersionClassifier());

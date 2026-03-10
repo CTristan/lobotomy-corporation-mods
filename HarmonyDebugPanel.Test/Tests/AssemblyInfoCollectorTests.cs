@@ -16,7 +16,7 @@ namespace HarmonyDebugPanel.Test.Tests
             AssemblyInfoCollector collector = new(new StubAssemblySource(
             [
                 new("0Harmony", "2.7.0", "0Harmony.dll", []),
-                null,
+                null!,
                 new("SomeOtherAssembly", "1.0.0", "SomeOtherAssembly.dll", []),
             ]));
 
