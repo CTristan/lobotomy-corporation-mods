@@ -52,8 +52,8 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         protected bool AgentWillDie([NotNull] IImageTestAdapter workFilterFill,
             [NotNull] ITextTestAdapter workFilterTextTest)
         {
-            _ = Guard.Against.Null(workFilterFill, nameof(workFilterFill));
-            _ = Guard.Against.Null(workFilterTextTest, nameof(workFilterTextTest));
+            ThrowHelper.ThrowIfNull(workFilterFill, nameof(workFilterFill));
+            ThrowHelper.ThrowIfNull(workFilterTextTest, nameof(workFilterTextTest));
             var agentWillDie = workFilterFill.Color == DeadAgentColor && workFilterTextTest.Text == DeadAgentString;
 
             return agentWillDie;
@@ -99,7 +99,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
             int fortitude,
             bool isDisguised = false)
         {
-            _ = Guard.Against.Null(agentSlot, nameof(agentSlot));
+            ThrowHelper.ThrowIfNull(agentSlot, nameof(agentSlot));
             agentSlot.CurrentAgent.primaryStat.hp = fortitude;
 
             CreatureModel creature = (CreatureModel)CommandWindow.CommandWindow.CurrentWindow.CurrentTarget;

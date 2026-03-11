@@ -8,7 +8,6 @@ using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Enums;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
 
@@ -24,7 +23,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 
         public AgentDataAdapter([NotNull] AgentModel agent)
         {
-            _ = Guard.Against.Null(agent, nameof(agent));
+            ThrowHelper.ThrowIfNull(agent, nameof(agent));
             _agent = agent;
         }
 

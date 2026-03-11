@@ -28,6 +28,11 @@ namespace LobotomyPlaywright.Commands
         /// </summary>
         public static Response HandleSetAgentStats(Request request)
         {
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             var paramsObj = GetParams<SetAgentStatsParams>(request);
             if (paramsObj == null)
             {
@@ -87,6 +92,11 @@ namespace LobotomyPlaywright.Commands
         /// </summary>
         public static Response HandleAddGift(Request request)
         {
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             var paramsObj = GetParams<GiftParams>(request);
             if (paramsObj == null)
             {
@@ -133,6 +143,11 @@ namespace LobotomyPlaywright.Commands
         /// </summary>
         public static Response HandleRemoveGift(Request request)
         {
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             var paramsObj = GetParams<GiftParams>(request);
             if (paramsObj == null)
             {
@@ -173,6 +188,11 @@ namespace LobotomyPlaywright.Commands
         /// </summary>
         public static Response HandleSetQliphoth(Request request)
         {
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             var paramsObj = GetParams<SetQliphothParams>(request);
             if (paramsObj == null)
             {
@@ -208,6 +228,11 @@ namespace LobotomyPlaywright.Commands
         /// </summary>
         public static Response HandleFillEnergy(Request request)
         {
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             try
             {
                 var playerModel = GetPlayerModel();
@@ -235,6 +260,11 @@ namespace LobotomyPlaywright.Commands
         /// </summary>
         public static Response HandleSetGameSpeed(Request request)
         {
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             var paramsObj = GetParams<SetGameSpeedParams>(request);
             if (paramsObj == null)
             {
@@ -270,6 +300,11 @@ namespace LobotomyPlaywright.Commands
         /// </summary>
         public static Response HandleSetAgentInvincible(Request request)
         {
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             var paramsObj = GetParams<SetAgentInvincibleParams>(request);
             if (paramsObj == null)
             {

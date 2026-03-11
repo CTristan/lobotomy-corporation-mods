@@ -7,7 +7,6 @@ using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Implementations.Facades;
 
@@ -25,8 +24,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             float probability,
             [NotNull] IAgentWorkTracker agentWorkTracker)
         {
-            _ = Guard.Against.Null(instance, nameof(instance));
-            _ = Guard.Against.Null(agentWorkTracker, nameof(agentWorkTracker));
+            ThrowHelper.ThrowIfNull(instance, nameof(instance));
+            ThrowHelper.ThrowIfNull(agentWorkTracker, nameof(agentWorkTracker));
 
             var giftName = instance.GetAbnormalityGiftName();
             probability = ModifyProbabilityIfGiftNameIsValid(probability, agentWorkTracker, giftName);
@@ -69,7 +68,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
         {
             try
             {
-                _ = Guard.Against.Null(__instance, nameof(__instance));
+                ThrowHelper.ThrowIfNull(__instance, nameof(__instance));
+                ThrowHelper.ThrowIfNull(getAgentWorkTracker, nameof(getAgentWorkTracker));
 
                 __result = PatchAfterGetProb(__instance, __result, getAgentWorkTracker());
             }

@@ -10,7 +10,7 @@ namespace LobotomyCorporationMods.Common.Extensions
     {
         private static CreatureModel GetAbnormality([NotNull] this UseSkill useSkill)
         {
-            _ = Guard.Against.Null(useSkill, nameof(useSkill));
+            ThrowHelper.ThrowIfNull(useSkill, nameof(useSkill));
 
             return useSkill.targetCreature;
         }
@@ -39,7 +39,7 @@ namespace LobotomyCorporationMods.Common.Extensions
 
         internal static AgentModel GetAgent([NotNull] this UseSkill useSkill)
         {
-            _ = Guard.Against.Null(useSkill, nameof(useSkill));
+            ThrowHelper.ThrowIfNull(useSkill, nameof(useSkill));
 
             return useSkill.agent;
         }

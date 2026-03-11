@@ -15,8 +15,8 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         public static void LoadAgentData([NotNull] this CustomizingWindow customizingWindow,
             [NotNull] AgentModel agent)
         {
-            _ = Guard.Against.Null(customizingWindow, nameof(customizingWindow));
-            _ = Guard.Against.Null(agent, nameof(agent));
+            ThrowHelper.ThrowIfNull(customizingWindow, nameof(customizingWindow));
+            ThrowHelper.ThrowIfNull(agent, nameof(agent));
 
             customizingWindow.CurrentData.agentName = agent._agentName;
             customizingWindow.CurrentData.CustomName = agent.name;
@@ -28,7 +28,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             ICustomizingWindowTestAdapter customizingWindowTestAdapter = null,
             IGameObjectTestAdapter gameObjectTestAdapter = null)
         {
-            _ = Guard.Against.Null(agentInfoWindow, nameof(agentInfoWindow));
+            ThrowHelper.ThrowIfNull(agentInfoWindow, nameof(agentInfoWindow));
 
             gameObjectTestAdapter = gameObjectTestAdapter.EnsureNotNullWithMethod(() => new GameObjectTestAdapter(agentInfoWindow.customizingBlock));
             uiComponentsTestAdapter = uiComponentsTestAdapter.EnsureNotNullWithMethod(() => new AgentInfoWindowUiComponentsTestAdapter(agentInfoWindow.UIComponents));
@@ -52,7 +52,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             IAgentLayerTestAdapter agentLayerTestAdapter = null,
             IWorkerSpriteManagerTestAdapter workerSpriteManagerTestAdapter = null)
         {
-            _ = Guard.Against.Null(customizingWindow, nameof(customizingWindow));
+            ThrowHelper.ThrowIfNull(customizingWindow, nameof(customizingWindow));
 
             agentLayerTestAdapter = agentLayerTestAdapter.EnsureNotNullWithMethod(() => new AgentLayerTestAdapter(AgentLayer.currentLayer));
             workerSpriteManagerTestAdapter = workerSpriteManagerTestAdapter.EnsureNotNullWithMethod(() => new WorkerSpriteManagerTestAdapter(WorkerSpriteManager.instance));
@@ -77,8 +77,8 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             [NotNull] AgentData agentData,
             ICustomizingWindowTestAdapter customizingWindowTestAdapter = null)
         {
-            _ = Guard.Against.Null(agent, nameof(agent));
-            _ = Guard.Against.Null(agentData, nameof(agentData));
+            ThrowHelper.ThrowIfNull(agent, nameof(agent));
+            ThrowHelper.ThrowIfNull(agentData, nameof(agentData));
             customizingWindowTestAdapter = customizingWindowTestAdapter.EnsureNotNullWithMethod(() => new CustomizingWindowTestAdapter(customizingWindow));
 
             agent.primaryStat.hp = customizingWindowTestAdapter.SetRandomStatValue(agent.primaryStat.hp, agent.originFortitudeLevel, agentData.statBonus.rBonus);

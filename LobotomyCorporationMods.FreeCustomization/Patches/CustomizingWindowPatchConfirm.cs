@@ -9,7 +9,6 @@ using Harmony;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Implementations.Facades;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
@@ -25,7 +24,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
             [CanBeNull] IAgentLayerTestAdapter agentLayerTestAdapter = null,
             [CanBeNull] IWorkerSpriteManagerTestAdapter workerSpriteManagerTestAdapter = null)
         {
-            _ = Guard.Against.Null(instance, nameof(instance));
+            ThrowHelper.ThrowIfNull(instance, nameof(instance));
 
             instance.SaveAppearanceData(agentLayerTestAdapter, workerSpriteManagerTestAdapter);
         }
@@ -34,6 +33,8 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         {
             try
             {
+                ThrowHelper.ThrowIfNull(getCustomizingWindow, nameof(getCustomizingWindow));
+
                 getCustomizingWindow().PatchBeforeConfirm();
             }
             catch (Exception ex)

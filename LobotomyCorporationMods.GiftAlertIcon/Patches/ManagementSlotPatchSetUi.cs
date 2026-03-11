@@ -29,7 +29,7 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Patches
             [CanBeNull] IFileManager fileManager = null,
             [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null)
         {
-            _ = Guard.Against.Null(instance, nameof(instance));
+            ThrowHelper.ThrowIfNull(instance, nameof(instance));
             fileManager = fileManager.EnsureNotNullWithMethod(() => Harmony_Patch.Instance.FileManager);
             testAdapterParameters = testAdapterParameters.EnsureNotNullWithMethod(() => new OptionalTestAdapterParameters());
 
@@ -60,7 +60,9 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Patches
         {
             try
             {
-                _ = Guard.Against.Null(agent, nameof(agent));
+                ThrowHelper.ThrowIfNull(getManagementSlot, nameof(getManagementSlot));
+                ThrowHelper.ThrowIfNull(agent, nameof(agent));
+                ThrowHelper.ThrowIfNull(getFileManager, nameof(getFileManager));
 
                 const string ImagePath = "Assets/gift.png";
 

@@ -25,8 +25,8 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches
             EquipmentModel gift,
             INoticeTestAdapter noticeTestAdapter = null)
         {
-            _ = Guard.Against.Null(instance, nameof(instance));
-            _ = Guard.Against.Null(gift, nameof(gift));
+            ThrowHelper.ThrowIfNull(instance, nameof(instance));
+            ThrowHelper.ThrowIfNull(gift, nameof(gift));
 
             // Some gifts are in special slots that don't show up in an agent's gift window and are used for abnormality effects.
             // For example, Snow Queen's icicle
@@ -61,6 +61,8 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches
         {
             try
             {
+                ThrowHelper.ThrowIfNull(getUnitModel, nameof(getUnitModel));
+
                 getUnitModel().PatchBeforeAttachEgoGift(gift);
             }
             catch (Exception ex)

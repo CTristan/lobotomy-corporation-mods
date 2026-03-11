@@ -7,7 +7,6 @@ using System.IO;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Interfaces;
 
 #endregion
@@ -22,7 +21,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 
         public DirectoryInfoAdapter([NotNull] DirectoryInfo directoryInfo)
         {
-            _ = Guard.Against.Null(directoryInfo, nameof(directoryInfo));
+            ThrowHelper.ThrowIfNull(directoryInfo, nameof(directoryInfo));
             _directoryInfo = directoryInfo;
         }
 

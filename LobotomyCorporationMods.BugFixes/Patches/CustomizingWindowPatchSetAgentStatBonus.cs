@@ -9,7 +9,6 @@ using Harmony;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Implementations.Facades;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
@@ -26,9 +25,9 @@ namespace LobotomyCorporationMods.BugFixes.Patches
             [NotNull] AgentData data,
             [CanBeNull] ICustomizingWindowTestAdapter customizingWindowTestAdapter = null)
         {
-            _ = Guard.Against.Null(instance, nameof(instance));
-            _ = Guard.Against.Null(agent, nameof(agent));
-            _ = Guard.Against.Null(data, nameof(data));
+            ThrowHelper.ThrowIfNull(instance, nameof(instance));
+            ThrowHelper.ThrowIfNull(agent, nameof(agent));
+            ThrowHelper.ThrowIfNull(data, nameof(data));
 
             // This is our custom fixed update
             instance.UpdateAgentStats(agent, data, customizingWindowTestAdapter);
@@ -38,6 +37,8 @@ namespace LobotomyCorporationMods.BugFixes.Patches
         {
             try
             {
+                ThrowHelper.ThrowIfNull(getCustomizingWindow, nameof(getCustomizingWindow));
+
                 getCustomizingWindow().PatchBeforeSetAgentStatBonus(agent, data);
 
                 // Since we're replacing the method we never want to call the original method

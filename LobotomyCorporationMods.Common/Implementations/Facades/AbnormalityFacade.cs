@@ -38,7 +38,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         public static void ReloadCrumblingArmorAgentList([NotNull] this ArmorCreature armorCreature,
             IArmorCreatureTestAdapter testAdapter = null)
         {
-            _ = Guard.Against.Null(armorCreature, nameof(armorCreature));
+            ThrowHelper.ThrowIfNull(armorCreature);
 
             testAdapter = testAdapter.EnsureNotNullWithMethod(() => new ArmorCreatureTestAdapter(armorCreature));
 

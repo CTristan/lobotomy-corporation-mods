@@ -106,6 +106,11 @@ namespace LobotomyPlaywright.Events
         /// </summary>
         public static Response HandleSubscribe(Request request, ClientHandler clientHandler)
         {
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             if (request.Events == null || request.Events.Count == 0)
             {
                 return Response.CreateError(
@@ -144,6 +149,11 @@ namespace LobotomyPlaywright.Events
         /// </summary>
         public static Response HandleUnsubscribe(Request request, ClientHandler clientHandler)
         {
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             if (request.Events == null || request.Events.Count == 0)
             {
                 return Response.CreateError(
@@ -170,9 +180,14 @@ namespace LobotomyPlaywright.Events
         /// </summary>
         public static void AddClient(ClientHandler client, IEnumerable<string> events)
         {
-            if (client == null)
+            if (client is null)
             {
-                return;
+                throw new ArgumentNullException(nameof(client));
+            }
+
+            if (events is null)
+            {
+                throw new ArgumentNullException(nameof(events));
             }
 
             lock (s_lock)
@@ -213,9 +228,14 @@ namespace LobotomyPlaywright.Events
         /// </summary>
         public static void RemoveClientEvents(ClientHandler client, IEnumerable<string> events)
         {
-            if (client == null)
+            if (client is null)
             {
-                return;
+                throw new ArgumentNullException(nameof(client));
+            }
+
+            if (events is null)
+            {
+                throw new ArgumentNullException(nameof(events));
             }
 
             lock (s_lock)

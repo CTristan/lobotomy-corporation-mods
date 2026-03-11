@@ -61,7 +61,7 @@ namespace LobotomyCorporationMods.Common.Implementations
         {
             try
             {
-                _ = Guard.Against.Null(harmonyPatchType, nameof(harmonyPatchType));
+                ThrowHelper.ThrowIfNull(harmonyPatchType, nameof(harmonyPatchType));
 
                 HarmonyInstance harmony = HarmonyInstance.Create(modFileName);
                 harmony.PatchAll(harmonyPatchType.Assembly);

@@ -24,8 +24,8 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             [NotNull] IFileManager fileManager,
             [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null)
         {
-            _ = Guard.Against.Null(managementSlot, nameof(managementSlot));
-            _ = Guard.Against.Null(fileManager, nameof(fileManager));
+            ThrowHelper.ThrowIfNull(managementSlot, nameof(managementSlot));
+            ThrowHelper.ThrowIfNull(fileManager, nameof(fileManager));
 
             s_imagesDictionary = s_imagesDictionary.EnsureNotNullWithMethod(() => new UnityAdapterDictionary<string, IImageTestAdapter, Image>());
             testAdapterParameters = testAdapterParameters.EnsureNotNullWithMethod(() => new OptionalTestAdapterParameters());
@@ -63,7 +63,8 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             [NotNull] IFileManager fileManager,
             [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null)
         {
-            _ = Guard.Against.Null(imageParameters, nameof(imageParameters));
+            ThrowHelper.ThrowIfNull(imageParameters, nameof(imageParameters));
+            ThrowHelper.ThrowIfNull(fileManager, nameof(fileManager));
 
             CreateImageObjectIfNotExist(managementSlot, imageParameters, fileManager, testAdapterParameters);
             var image = GetImage(imageParameters.ImageId);
@@ -82,7 +83,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         /// <returns><c>true</c> if the current CommandWindow is an abnormality work window, otherwise <c>false</c>.</returns>
         public static bool IsAbnormalityWorkWindow([NotNull] this CommandWindow.CommandWindow commandWindow)
         {
-            _ = Guard.Against.Null(commandWindow, nameof(commandWindow));
+            ThrowHelper.ThrowIfNull(commandWindow, nameof(commandWindow));
 
             // Validation checks to confirm we have everything we need
             var isAbnormalityWorkWindow = commandWindow.CurrentSkill.IsNotNull() && commandWindow.CurrentWindowType == CommandType.Management;
@@ -96,7 +97,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             [CanBeNull] IImageTestAdapter imageTestAdapter = null,
             [CanBeNull] ITextTestAdapter textTestAdapter = null)
         {
-            _ = Guard.Against.Null(agentSlot, nameof(agentSlot));
+            ThrowHelper.ThrowIfNull(agentSlot, nameof(agentSlot));
 
             imageTestAdapter = imageTestAdapter.EnsureNotNullWithMethod(() => new ImageTestAdapter(agentSlot.WorkFilterFill));
             textTestAdapter = textTestAdapter.EnsureNotNullWithMethod(() => new TextTestAdapter(agentSlot.WorkFilterText));
@@ -113,7 +114,8 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             [CanBeNull] string tooltipMessage = "",
             [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null)
         {
-            _ = Guard.Against.Null(imageParameters, nameof(imageParameters));
+            ThrowHelper.ThrowIfNull(imageParameters, nameof(imageParameters));
+            ThrowHelper.ThrowIfNull(fileManager, nameof(fileManager));
 
             CreateImageObjectIfNotExist(managementSlot, imageParameters, fileManager, testAdapterParameters);
 

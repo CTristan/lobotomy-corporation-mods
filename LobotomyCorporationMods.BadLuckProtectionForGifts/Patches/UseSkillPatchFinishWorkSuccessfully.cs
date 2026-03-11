@@ -9,7 +9,6 @@ using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Implementations.Facades;
 
@@ -23,8 +22,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
         public static void PatchAfterFinishWorkSuccessfully([NotNull] this UseSkill instance,
             [NotNull] IAgentWorkTracker agentWorkTracker)
         {
-            _ = Guard.Against.Null(instance, nameof(instance));
-            _ = Guard.Against.Null(agentWorkTracker, nameof(agentWorkTracker));
+            ThrowHelper.ThrowIfNull(instance, nameof(instance));
+            ThrowHelper.ThrowIfNull(agentWorkTracker, nameof(agentWorkTracker));
 
             var giftName = instance.GetAbnormalityGiftName();
 
@@ -44,6 +43,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
         {
             try
             {
+                ThrowHelper.ThrowIfNull(getAgentWorkTracker, nameof(getAgentWorkTracker));
+
                 __instance.PatchAfterFinishWorkSuccessfully(getAgentWorkTracker());
             }
             catch (Exception ex)

@@ -9,7 +9,6 @@ using Harmony;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 
 #endregion
@@ -23,6 +22,8 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         {
             try
             {
+                ThrowHelper.ThrowIfNull(getCustomizingWindow, nameof(getCustomizingWindow));
+
                 getCustomizingWindow().PatchAfterOpenAppearanceWindow();
             }
             catch (Exception ex)
@@ -48,7 +49,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
 
         public static void PatchAfterOpenAppearanceWindow([NotNull] this CustomizingWindow instance)
         {
-            _ = Guard.Against.Null(instance, nameof(instance));
+            ThrowHelper.ThrowIfNull(instance, nameof(instance));
 
             instance.CurrentData.isCustomAppearance = false;
         }

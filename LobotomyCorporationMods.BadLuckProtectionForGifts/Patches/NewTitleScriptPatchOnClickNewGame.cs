@@ -9,7 +9,6 @@ using JetBrains.Annotations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 
 #endregion
@@ -21,7 +20,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
     {
         public static void PatchAfterOnClickNewGame([NotNull] IAgentWorkTracker agentWorkTracker)
         {
-            _ = Guard.Against.Null(agentWorkTracker, nameof(agentWorkTracker));
+            ThrowHelper.ThrowIfNull(agentWorkTracker, nameof(agentWorkTracker));
 
             agentWorkTracker.Reset();
         }
@@ -30,6 +29,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
         {
             try
             {
+                ThrowHelper.ThrowIfNull(getAgentWorkTracker, nameof(getAgentWorkTracker));
+
                 PatchAfterOnClickNewGame(getAgentWorkTracker());
             }
             catch (Exception ex)

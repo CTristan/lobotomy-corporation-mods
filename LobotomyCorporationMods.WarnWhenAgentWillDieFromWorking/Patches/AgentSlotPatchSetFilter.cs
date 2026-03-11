@@ -11,7 +11,6 @@ using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.Common.Enums;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Implementations.Facades;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
@@ -38,7 +37,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
             [CanBeNull] ITextTestAdapter textTestAdapter = null,
             [CanBeNull] IYggdrasilAnimTestAdapter yggdrasilAnimTestAdapter = null)
         {
-            _ = Guard.Against.Null(instance, nameof(instance));
+            ThrowHelper.ThrowIfNull(instance, nameof(instance));
 
             if (!currentGameManager.IsValidGameStage(state))
             {
@@ -113,6 +112,9 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
         {
             try
             {
+                ThrowHelper.ThrowIfNull(getAgentSlot, nameof(getAgentSlot));
+                ThrowHelper.ThrowIfNull(getCurrentGameManager, nameof(getCurrentGameManager));
+
                 getAgentSlot().PatchAfterSetFilter(state, getCurrentGameManager());
             }
             catch (Exception ex)

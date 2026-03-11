@@ -46,6 +46,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 
         public void SetParent([NotNull] ITransformTestAdapter parent)
         {
+            ThrowHelper.ThrowIfNull(parent);
             GameObjectInternal.SetParent(parent.GameObject);
         }
     }

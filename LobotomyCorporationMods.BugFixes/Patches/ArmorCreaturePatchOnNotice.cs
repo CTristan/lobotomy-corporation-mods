@@ -8,7 +8,6 @@ using Harmony;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Implementations.Facades;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
@@ -25,9 +24,9 @@ namespace LobotomyCorporationMods.BugFixes.Patches
             [CanBeNull] IArmorCreatureTestAdapter armorCreatureTestAdapter = null,
             [NotNull] params object[] noticeParameters)
         {
-            _ = Guard.Against.Null(instance, nameof(instance));
-            _ = Guard.Against.Null(noticeName, nameof(noticeName));
-            _ = Guard.Against.Null(noticeParameters, nameof(noticeParameters));
+            ThrowHelper.ThrowIfNull(instance, nameof(instance));
+            ThrowHelper.ThrowIfNull(noticeName, nameof(noticeName));
+            ThrowHelper.ThrowIfNull(noticeParameters, nameof(noticeParameters));
 
             if (!noticeName.Equals(NoticeName.OnChangeGift, StringComparison.Ordinal))
             {
@@ -41,6 +40,8 @@ namespace LobotomyCorporationMods.BugFixes.Patches
         {
             try
             {
+                ThrowHelper.ThrowIfNull(getArmorCreature, nameof(getArmorCreature));
+
                 getArmorCreature().PatchAfterOnNotice(notice, noticeParameters: param);
             }
             catch (Exception ex)

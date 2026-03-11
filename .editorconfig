@@ -7,8 +7,9 @@ indent_style = space
 [*.{cs,csx}]
 # BEGIN TEMPORARY BUILD WORKAROUND: Disable analyzers that cause build errors until the underlying issues are resolved
 
-# WHY: Disable CA1062 (validate parameters) - too many false positives for parameter validation
-dotnet_diagnostic.CA1062.severity = none
+# WHY: Set our helper method as a null check validator to satisfy CA1062 without needing to add redundant null checks or suppressions
+dotnet_code_quality.CA1062.null_check_validation_methods = ThrowIfNull
+
 # WHY: Disable CA1303 (use resources for strings) - literal strings are fine for CLI tools
 dotnet_diagnostic.CA1303.severity = none
 # WHY: Disable CA1304/CA1305/CA1310/CA1311 (culture-specific string methods) - not relevant for CLI tools

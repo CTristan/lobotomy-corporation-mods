@@ -46,6 +46,8 @@ namespace LobotomyPlaywright.Commands
         /// <returns>Exit code (0 for success, non-zero for failure).</returns>
         public int Run(string[] args)
         {
+            ArgumentNullException.ThrowIfNull(args);
+
             var host = GetArgValue(args, "--host") ?? "localhost";
             var portArg = GetArgValue(args, "--port");
             var timeoutArg = GetArgValue(args, "--timeout");

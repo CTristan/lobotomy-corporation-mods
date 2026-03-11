@@ -5,7 +5,6 @@
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Implementations.Facades;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
@@ -23,7 +22,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 
         public CreatureDataAdapter([NotNull] CreatureModel creature)
         {
-            _ = Guard.Against.Null(creature, nameof(creature));
+            ThrowHelper.ThrowIfNull(creature, nameof(creature));
             _creature = creature;
         }
 

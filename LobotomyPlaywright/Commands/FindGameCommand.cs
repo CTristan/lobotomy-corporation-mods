@@ -43,6 +43,8 @@ namespace LobotomyPlaywright.Commands
         /// <returns>Exit code (0 for success, non-zero for failure).</returns>
         public int Run(string[] args)
         {
+            ArgumentNullException.ThrowIfNull(args);
+
             var path = GetArgValue(args, "--path");
             var bottle = GetArgValue(args, "--bottle");
             var checkMode = HasArg(args, "--check");

@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: MIT
 
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
@@ -15,8 +14,8 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
             IBeautyBeastAnimTestAdapter beautyBeastAnimTestAdapter,
             IYggdrasilAnimTestAdapter yggdrasilAnimTestAdapter)
         {
-            _ = Guard.Against.Null(agent, nameof(agent));
-            _ = Guard.Against.Null(creature, nameof(creature));
+            ThrowHelper.ThrowIfNull(agent, nameof(agent));
+            ThrowHelper.ThrowIfNull(creature, nameof(creature));
             Agent = agent;
             Creature = creature;
             SkillType = skillType;

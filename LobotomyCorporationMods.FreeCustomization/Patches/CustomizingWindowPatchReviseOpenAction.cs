@@ -9,7 +9,6 @@ using Harmony;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Implementations.Facades;
 
@@ -23,8 +22,8 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         public static void PatchAfterReviseOpenAction([NotNull] this CustomizingWindow instance,
             [NotNull] AgentModel agent)
         {
-            _ = Guard.Against.Null(instance, nameof(instance));
-            _ = Guard.Against.Null(agent, nameof(agent));
+            ThrowHelper.ThrowIfNull(instance, nameof(instance));
+            ThrowHelper.ThrowIfNull(agent, nameof(agent));
 
             instance.LoadAgentData(agent);
         }
@@ -33,6 +32,8 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         {
             try
             {
+                ThrowHelper.ThrowIfNull(getCustomizingWindow, nameof(getCustomizingWindow));
+
                 getCustomizingWindow().PatchAfterReviseOpenAction(agent);
             }
             catch (Exception ex)

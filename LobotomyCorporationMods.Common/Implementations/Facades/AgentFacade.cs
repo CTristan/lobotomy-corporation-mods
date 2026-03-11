@@ -13,12 +13,13 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
     {
         public static long GetAgentId([NotNull] this UseSkill useSkill)
         {
+            ThrowHelper.ThrowIfNull(useSkill);
             return useSkill.GetAgent().instanceId;
         }
 
         public static bool HasFairyFestivalEffect([NotNull] this UnitModel agent)
         {
-            _ = Guard.Against.Null(agent, nameof(agent));
+            ThrowHelper.ThrowIfNull(agent, nameof(agent));
             var effects = agent.GetUnitBufList();
 
             return effects.OfType<FairyBuf>().Any();
@@ -26,7 +27,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
 
         public static bool HasLaetitiaEffect([NotNull] this UnitModel agent)
         {
-            _ = Guard.Against.Null(agent, nameof(agent));
+            ThrowHelper.ThrowIfNull(agent, nameof(agent));
             var effects = agent.GetUnitBufList();
 
             return effects.OfType<LittleWitchBuf>().Any();
@@ -34,7 +35,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
 
         public static bool HasCrumblingArmor([NotNull] this UnitModel agent)
         {
-            _ = Guard.Against.Null(agent, nameof(agent));
+            ThrowHelper.ThrowIfNull(agent, nameof(agent));
 
             List<int> crumblingArmorGiftsId = new List<int>
             {
@@ -49,7 +50,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
 
         public static bool HasParasiteTreeEffect([NotNull] this UnitModel agent)
         {
-            _ = Guard.Against.Null(agent, nameof(agent));
+            ThrowHelper.ThrowIfNull(agent, nameof(agent));
             var effects = agent.GetUnitBufList();
 
             return effects.OfType<YggdrasilBlessBuf>().Any();

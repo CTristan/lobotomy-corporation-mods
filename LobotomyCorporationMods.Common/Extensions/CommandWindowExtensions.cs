@@ -17,7 +17,7 @@ namespace LobotomyCorporationMods.Common.Extensions
         private static bool TryGetCreature([NotNull] this CommandWindow.CommandWindow commandWindow,
             [CanBeNull] out CreatureModel creature)
         {
-            _ = Guard.Against.Null(commandWindow, nameof(commandWindow));
+            ThrowHelper.ThrowIfNull(commandWindow, nameof(commandWindow));
 
             creature = null;
             var unitModel = commandWindow.CurrentTarget;

@@ -28,6 +28,11 @@ namespace LobotomyPlaywright.Commands
         /// </summary>
         public static Response HandlePause(Request request)
         {
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             try
             {
                 var gameManager = GetGameManager();
@@ -58,6 +63,11 @@ namespace LobotomyPlaywright.Commands
         /// </summary>
         public static Response HandleUnpause(Request request)
         {
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             try
             {
                 var gameManager = GetGameManager();
@@ -88,6 +98,11 @@ namespace LobotomyPlaywright.Commands
         /// </summary>
         public static Response HandleAssignWork(Request request)
         {
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             var paramsObj = GetParams<AssignWorkParams>(request);
             if (paramsObj == null)
             {
@@ -156,6 +171,11 @@ namespace LobotomyPlaywright.Commands
         /// </summary>
         public static Response HandleDeployAgent(Request request)
         {
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             var paramsObj = GetParams<DeployAgentParams>(request);
             if (paramsObj == null)
             {
@@ -210,6 +230,11 @@ namespace LobotomyPlaywright.Commands
         /// </summary>
         public static Response HandleRecallAgent(Request request)
         {
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             var paramsObj = GetParams<RecallAgentParams>(request);
             if (paramsObj == null)
             {
@@ -253,6 +278,11 @@ namespace LobotomyPlaywright.Commands
         /// </summary>
         public static Response HandleSuppress(Request request)
         {
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             var paramsObj = GetParams<SuppressParams>(request);
             if (paramsObj == null)
             {

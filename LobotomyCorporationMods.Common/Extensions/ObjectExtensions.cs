@@ -22,7 +22,7 @@ namespace LobotomyCorporationMods.Common.Extensions
         public static T EnsureNotNullWithMethod<T>([CanBeNull] this T value,
             [NotNull] Func<T> defaultMethod) where T : class
         {
-            _ = Guard.Against.Null(defaultMethod, nameof(defaultMethod));
+            ThrowHelper.ThrowIfNull(defaultMethod, nameof(defaultMethod));
 
             return value ?? defaultMethod();
         }

@@ -30,6 +30,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         [CanBeNull]
         public static string GetAbnormalityGiftName([NotNull] this CreatureEquipmentMakeInfo creatureEquipmentMakeInfo)
         {
+            ThrowHelper.ThrowIfNull(creatureEquipmentMakeInfo, nameof(creatureEquipmentMakeInfo));
             return creatureEquipmentMakeInfo.GetAbnormalityGiftInfo()?.Name;
         }
 
@@ -48,7 +49,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         public static bool HasGift([NotNull] this UnitModel unitModel,
             int? giftId)
         {
-            _ = Guard.Against.Null(unitModel, nameof(unitModel));
+            ThrowHelper.ThrowIfNull(unitModel, nameof(unitModel));
 
             var equippedGifts = unitModel.GetEquippedGifts();
 
@@ -59,7 +60,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             string positionName,
             EGOgiftAttachType attachType)
         {
-            _ = Guard.Against.Null(unitModel, nameof(unitModel));
+            ThrowHelper.ThrowIfNull(unitModel, nameof(unitModel));
 
             return unitModel.GetEquippedGifts().Exists(model => model.metaInfo.attachPos.Equals(positionName, StringComparison.OrdinalIgnoreCase) && model.metaInfo.attachType.Equals(attachType));
         }
@@ -69,7 +70,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         /// <returns>True if the equipment is in a valid slot, otherwise false.</returns>
         public static bool IsInValidSlot([NotNull] this EquipmentModel equipmentModel)
         {
-            _ = Guard.Against.Null(equipmentModel, nameof(equipmentModel));
+            ThrowHelper.ThrowIfNull(equipmentModel, nameof(equipmentModel));
 
             return !equipmentModel.metaInfo.attachPos.Equals(EGOgiftAttachRegion.BODY_UP.ToString(), StringComparison.OrdinalIgnoreCase);
         }
@@ -77,7 +78,7 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         public static bool PositionHasLockedGift([NotNull] this UnitModel unitModel,
             [NotNull] EquipmentModel gift)
         {
-            _ = Guard.Against.Null(gift, nameof(gift));
+            ThrowHelper.ThrowIfNull(gift, nameof(gift));
 
             var matchingGiftAtPosition = unitModel.FindGiftAtPosition(gift.metaInfo.attachPos);
 

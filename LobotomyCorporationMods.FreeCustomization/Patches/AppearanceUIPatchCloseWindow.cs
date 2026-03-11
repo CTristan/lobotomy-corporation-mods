@@ -21,7 +21,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
     {
         public static bool PatchBeforeCloseWindow([NotNull] this AppearanceUI instance)
         {
-            _ = Guard.Against.Null(instance, nameof(instance));
+            ThrowHelper.ThrowIfNull(instance, nameof(instance));
 
             return !instance.closeAction.IsNull();
         }
@@ -30,6 +30,8 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         {
             try
             {
+                ThrowHelper.ThrowIfNull(getAppearanceUI, nameof(getAppearanceUI));
+
                 return getAppearanceUI().PatchBeforeCloseWindow();
             }
             catch (Exception ex)

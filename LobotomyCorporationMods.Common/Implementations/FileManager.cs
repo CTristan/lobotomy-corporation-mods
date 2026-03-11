@@ -24,7 +24,7 @@ namespace LobotomyCorporationMods.Common.Implementations
         public FileManager([NotNull] string modFileName,
             [NotNull] ICollection<IDirectoryInfo> directories)
         {
-            _ = Guard.Against.Null(directories, nameof(directories));
+            ThrowHelper.ThrowIfNull(directories, nameof(directories));
 
             var directory = directories.FirstOrDefault(directoryInfo => File.Exists(Path.Combine(directoryInfo.FullName, modFileName)));
 
