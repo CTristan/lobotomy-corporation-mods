@@ -55,8 +55,6 @@ dotnet_diagnostic.CA2213.severity = none
 dotnet_diagnostic.CA2227.severity = none
 # WHY: Disable CA2243 (GUID parsing) - BepInEx uses string GUIDs, not System.Guid
 dotnet_diagnostic.CA2243.severity = none
-# WHY: Disable CS9113 (unread parameter) - sometimes parameters are intentionally unused
-dotnet_diagnostic.CS9113.severity = none
 
 # Microsoft code style analyzers (IDE*)
 # WHY: Disable IDE0008 (explicit type instead of var) - var is preferred in this codebase

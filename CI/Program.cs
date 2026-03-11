@@ -178,7 +178,7 @@ dotnet ci --check
         }
     }
 
-    public class CiRunner(IProcessRunner processRunner, IGitHookSetup gitHookSetup, IFileSystem fileSystem, ICoverageConfigReader coverageConfigReader, ICoverageThresholdChecker coverageThresholdChecker, string? baseDirectory)
+    public class CiRunner(IProcessRunner processRunner, IGitHookSetup gitHookSetup, IFileSystem fileSystem, ICoverageThresholdChecker coverageThresholdChecker, string? baseDirectory)
     {
         private readonly IProcessRunner _processRunner = processRunner;
         private readonly IGitHookSetup _gitHookSetup = gitHookSetup;
@@ -187,17 +187,17 @@ dotnet ci --check
         private readonly string? _baseDirectory = baseDirectory;
 
         public CiRunner()
-            : this(new ProcessRunner(), new GitHookSetup(), new FileSystem(), new CoverageConfigReader(), new CoverageThresholdChecker())
+            : this(new ProcessRunner(), new GitHookSetup(), new FileSystem(), new CoverageThresholdChecker())
         {
         }
 
         public CiRunner(IProcessRunner processRunner, IGitHookSetup gitHookSetup, IFileSystem fileSystem)
-            : this(processRunner, gitHookSetup, fileSystem, new CoverageConfigReader(), new CoverageThresholdChecker())
+            : this(processRunner, gitHookSetup, fileSystem, new CoverageThresholdChecker())
         {
         }
 
-        public CiRunner(IProcessRunner processRunner, IGitHookSetup gitHookSetup, IFileSystem fileSystem, ICoverageConfigReader coverageConfigReader, ICoverageThresholdChecker coverageThresholdChecker)
-            : this(processRunner, gitHookSetup, fileSystem, coverageConfigReader, coverageThresholdChecker, null)
+        public CiRunner(IProcessRunner processRunner, IGitHookSetup gitHookSetup, IFileSystem fileSystem, ICoverageThresholdChecker coverageThresholdChecker)
+            : this(processRunner, gitHookSetup, fileSystem, coverageThresholdChecker, null)
         {
         }
 

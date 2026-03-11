@@ -9,7 +9,6 @@ using System.Text.Json;
 using System.Threading;
 using LobotomyPlaywright.Implementations.Configuration;
 using LobotomyPlaywright.Implementations.System;
-using LobotomyPlaywright.Infrastructure;
 using LobotomyPlaywright.Interfaces.Configuration;
 
 namespace LobotomyPlaywright.Commands
@@ -28,12 +27,8 @@ namespace LobotomyPlaywright.Commands
     /// <summary>
     /// Command to check the status of the game and TCP server.
     /// </summary>
-    /// <remarks>
-    /// Initializes a new instance of StatusCommand class.
-    /// </remarks>
     /// <param name="configManager">The config manager.</param>
-    /// <param name="processManager">The process manager.</param>
-    public class StatusCommand(IConfigManager configManager, ProcessManager processManager)
+    public class StatusCommand(IConfigManager configManager)
     {
         private readonly IConfigManager _configManager = configManager;
 
@@ -41,7 +36,7 @@ namespace LobotomyPlaywright.Commands
         /// Initializes a new instance of StatusCommand class with default implementations.
         /// </summary>
         public StatusCommand()
-            : this(new ConfigManager(new FileSystem()), new ProcessManager())
+            : this(new ConfigManager(new FileSystem()))
         {
         }
 

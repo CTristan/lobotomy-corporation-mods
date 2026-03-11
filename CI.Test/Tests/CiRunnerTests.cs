@@ -25,7 +25,6 @@ namespace CI.Test.Tests
             Mock<IProcessRunner> mockProcessRunner = new();
             Mock<IFileSystem> mockFileSystem = new();
             Mock<IGitHookSetup> mockGitHookSetup = new();
-            Mock<ICoverageConfigReader> mockCoverageConfigReader = new();
             Mock<ICoverageThresholdChecker> mockCoverageThresholdChecker = new();
 
             _ = mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
@@ -35,7 +34,7 @@ namespace CI.Test.Tests
             _ = mockCoverageThresholdChecker.Setup(c => c.CheckThresholds(It.IsAny<string>(), out It.Ref<string>.IsAny))
                 .Returns(true);
 
-            CiRunner runner = new(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageConfigReader.Object, mockCoverageThresholdChecker.Object);
+            CiRunner runner = new(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageThresholdChecker.Object, null);
 
             _ = runner.Run(checkMode: true);
 
@@ -54,7 +53,6 @@ namespace CI.Test.Tests
             Mock<IProcessRunner> mockProcessRunner = new();
             Mock<IFileSystem> mockFileSystem = new();
             Mock<IGitHookSetup> mockGitHookSetup = new();
-            Mock<ICoverageConfigReader> mockCoverageConfigReader = new();
             Mock<ICoverageThresholdChecker> mockCoverageThresholdChecker = new();
 
             _ = mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
@@ -64,7 +62,7 @@ namespace CI.Test.Tests
             _ = mockCoverageThresholdChecker.Setup(c => c.CheckThresholds(It.IsAny<string>(), out It.Ref<string>.IsAny))
                 .Returns(true);
 
-            CiRunner runner = new(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageConfigReader.Object, mockCoverageThresholdChecker.Object);
+            CiRunner runner = new(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageThresholdChecker.Object, null);
 
             _ = runner.Run(checkMode: false);
 
@@ -83,7 +81,6 @@ namespace CI.Test.Tests
             Mock<IProcessRunner> mockProcessRunner = new();
             Mock<IFileSystem> mockFileSystem = new();
             Mock<IGitHookSetup> mockGitHookSetup = new();
-            Mock<ICoverageConfigReader> mockCoverageConfigReader = new();
             Mock<ICoverageThresholdChecker> mockCoverageThresholdChecker = new();
 
             _ = mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
@@ -93,7 +90,7 @@ namespace CI.Test.Tests
             _ = mockCoverageThresholdChecker.Setup(c => c.CheckThresholds(It.IsAny<string>(), out It.Ref<string>.IsAny))
                 .Returns(true);
 
-            CiRunner runner = new(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageConfigReader.Object, mockCoverageThresholdChecker.Object);
+            CiRunner runner = new(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageThresholdChecker.Object, null);
 
             _ = runner.Run(checkMode: true);
 
@@ -108,7 +105,6 @@ namespace CI.Test.Tests
             Mock<IProcessRunner> mockProcessRunner = new();
             Mock<IFileSystem> mockFileSystem = new();
             Mock<IGitHookSetup> mockGitHookSetup = new();
-            Mock<ICoverageConfigReader> mockCoverageConfigReader = new();
             Mock<ICoverageThresholdChecker> mockCoverageThresholdChecker = new();
 
             _ = mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
@@ -116,7 +112,7 @@ namespace CI.Test.Tests
                 .Setup(pr => pr.Run("dotnet", It.Is<string>(s => s.Contains("format", StringComparison.Ordinal)), It.IsAny<string>(), It.IsAny<Func<string?, bool>>()))
                 .Returns(Failure("error: formatting issue"));
 
-            CiRunner runner = new(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageConfigReader.Object, mockCoverageThresholdChecker.Object);
+            CiRunner runner = new(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageThresholdChecker.Object, null);
 
             var exitCode = runner.Run(checkMode: true);
 
@@ -132,7 +128,6 @@ namespace CI.Test.Tests
             Mock<IProcessRunner> mockProcessRunner = new();
             Mock<IFileSystem> mockFileSystem = new();
             Mock<IGitHookSetup> mockGitHookSetup = new();
-            Mock<ICoverageConfigReader> mockCoverageConfigReader = new();
             Mock<ICoverageThresholdChecker> mockCoverageThresholdChecker = new();
 
             _ = mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
@@ -141,7 +136,7 @@ namespace CI.Test.Tests
                 .Returns(Success())
                 .Returns(Failure("error CS1234: some build error"));
 
-            CiRunner runner = new(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageConfigReader.Object, mockCoverageThresholdChecker.Object);
+            CiRunner runner = new(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageThresholdChecker.Object, null);
 
             var exitCode = runner.Run(checkMode: true);
 
@@ -154,12 +149,11 @@ namespace CI.Test.Tests
             Mock<IProcessRunner> mockProcessRunner = new();
             Mock<IFileSystem> mockFileSystem = new();
             Mock<IGitHookSetup> mockGitHookSetup = new();
-            Mock<ICoverageConfigReader> mockCoverageConfigReader = new();
             Mock<ICoverageThresholdChecker> mockCoverageThresholdChecker = new();
 
             _ = mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(false);
 
-            CiRunner runner = new(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageConfigReader.Object, mockCoverageThresholdChecker.Object);
+            CiRunner runner = new(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageThresholdChecker.Object, null);
 
             var exitCode = runner.Run(checkMode: true);
 
@@ -175,7 +169,6 @@ namespace CI.Test.Tests
             Mock<IProcessRunner> mockProcessRunner = new();
             Mock<IFileSystem> mockFileSystem = new();
             Mock<IGitHookSetup> mockGitHookSetup = new();
-            Mock<ICoverageConfigReader> mockCoverageConfigReader = new();
             Mock<ICoverageThresholdChecker> mockCoverageThresholdChecker = new();
 
             _ = mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
@@ -186,7 +179,7 @@ namespace CI.Test.Tests
                 .Returns(true)
                 .Verifiable();
 
-            CiRunner runner = new(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageConfigReader.Object, mockCoverageThresholdChecker.Object);
+            CiRunner runner = new(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageThresholdChecker.Object, null);
 
             var exitCode = runner.Run(checkMode: true);
 
@@ -200,7 +193,6 @@ namespace CI.Test.Tests
             Mock<IProcessRunner> mockProcessRunner = new();
             Mock<IFileSystem> mockFileSystem = new();
             Mock<IGitHookSetup> mockGitHookSetup = new();
-            Mock<ICoverageConfigReader> mockCoverageConfigReader = new();
             Mock<ICoverageThresholdChecker> mockCoverageThresholdChecker = new();
 
             _ = mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
@@ -211,7 +203,7 @@ namespace CI.Test.Tests
                 .Returns(false)
                 .Verifiable();
 
-            CiRunner runner = new(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageConfigReader.Object, mockCoverageThresholdChecker.Object);
+            CiRunner runner = new(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageThresholdChecker.Object, null);
 
             var exitCode = runner.Run(checkMode: true);
 
@@ -225,12 +217,11 @@ namespace CI.Test.Tests
             Mock<IProcessRunner> mockProcessRunner = new();
             Mock<IFileSystem> mockFileSystem = new();
             Mock<IGitHookSetup> mockGitHookSetup = new();
-            Mock<ICoverageConfigReader> mockCoverageConfigReader = new();
             Mock<ICoverageThresholdChecker> mockCoverageThresholdChecker = new();
 
             _ = mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
 
-            CiRunner runner = new(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageConfigReader.Object, mockCoverageThresholdChecker.Object);
+            CiRunner runner = new(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageThresholdChecker.Object, null);
 
             runner.SetupHooks();
 
@@ -243,12 +234,11 @@ namespace CI.Test.Tests
             Mock<IProcessRunner> mockProcessRunner = new();
             Mock<IFileSystem> mockFileSystem = new();
             Mock<IGitHookSetup> mockGitHookSetup = new();
-            Mock<ICoverageConfigReader> mockCoverageConfigReader = new();
             Mock<ICoverageThresholdChecker> mockCoverageThresholdChecker = new();
 
             _ = mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(false);
 
-            CiRunner runner = new(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageConfigReader.Object, mockCoverageThresholdChecker.Object);
+            CiRunner runner = new(mockProcessRunner.Object, mockGitHookSetup.Object, mockFileSystem.Object, mockCoverageThresholdChecker.Object, null);
 
             Action action = runner.SetupHooks;
             _ = action.Should().Throw<InvalidOperationException>();
