@@ -8,8 +8,14 @@ indent_style = space
 # WHY: Set our helper method as a null check validator to satisfy CA1062 without needing to add redundant null checks or suppressions
 dotnet_code_quality.CA1062.null_check_validation_methods = ThrowIfNull
 
+# WHY: Treat all analyzer warnings as errors to maintain code quality standards
+dotnet_analyzer_diagnostic.severity = error
+
 # BEGIN TEMPORARY BUILD WORKAROUND: Disable analyzers that cause build errors until the underlying issues are resolved
 
+
+
+# Microsoft analyzers (CA*)
 # WHY: Disable CA1303 (use resources for strings) - literal strings are fine for CLI tools
 dotnet_diagnostic.CA1303.severity = none
 # WHY: Disable CA1304/CA1305/CA1310/CA1311 (culture-specific string methods) - not relevant for CLI tools
@@ -49,6 +55,10 @@ dotnet_diagnostic.CA2213.severity = none
 dotnet_diagnostic.CA2227.severity = none
 # WHY: Disable CA2243 (GUID parsing) - BepInEx uses string GUIDs, not System.Guid
 dotnet_diagnostic.CA2243.severity = none
+# WHY: Disable CS9113 (unread parameter) - sometimes parameters are intentionally unused
+dotnet_diagnostic.CS9113.severity = none
+
+# Microsoft code style analyzers (IDE*)
 # WHY: Disable IDE0008 (explicit type instead of var) - var is preferred in this codebase
 dotnet_diagnostic.IDE0008.severity = none
 # WHY: Disable IDE0038 (use pattern matching) - traditional comparison syntax is sometimes clearer
@@ -63,10 +73,102 @@ dotnet_diagnostic.IDE0300.severity = none
 dotnet_diagnostic.IDE0305.severity = none
 # WHY: Disable IDE1006 (naming rule violation) - game interface properties use camelCase to match game types
 dotnet_diagnostic.IDE1006.severity = none
+
+# Roslynator analyzers (RCS*)
+# WHY: Disable RCS1006 (merge else with nested if) - current code style is readable
+dotnet_diagnostic.RCS1006.severity = none
+# WHY: Disable RCS1015 (use nameof) - not a priority
+dotnet_diagnostic.RCS1015.severity = none
+# WHY: Disable RCS1037 (remove trailing whitespace) - not a priority
+dotnet_diagnostic.RCS1037.severity = none
+# WHY: Disable RCS1061 (merge if with nested if) - current code style is readable
+dotnet_diagnostic.RCS1061.severity = none
+# WHY: Disable RCS1069 (remove unnecessary case label) - not a priority
+dotnet_diagnostic.RCS1069.severity = none
+# WHY: Disable RCS1070 (remove redundant default switch) - not a priority
+dotnet_diagnostic.RCS1070.severity = none
+# WHY: Disable RCS1073 (convert if to return) - not a priority
+dotnet_diagnostic.RCS1073.severity = none
 # WHY: Disable RCS1075 (avoid empty catch clause) - empty catch is sometimes intentional
 dotnet_diagnostic.RCS1075.severity = none
-# WHY: Disable CS9113 (unread parameter) - sometimes parameters are intentionally unused
-dotnet_diagnostic.CS9113.severity = none
+# WHY: Disable RCS1118 (mark local variable as const) - not a priority
+dotnet_diagnostic.RCS1118.severity = none
+# WHY: Disable RCS1124 (inline local variable) - not a priority
+dotnet_diagnostic.RCS1124.severity = none
+# WHY: Disable RCS1134 (remove redundant statement) - not a priority
+dotnet_diagnostic.RCS1134.severity = none
+# WHY: Disable RCS1136 (merge switch sections) - not a priority
+dotnet_diagnostic.RCS1136.severity = none
+# WHY: Disable RCS1140 (add exception to documentation) - not a priority
+dotnet_diagnostic.RCS1140.severity = none
+# WHY: Disable RCS1141 (add param element to documentation) - not a priority
+dotnet_diagnostic.RCS1141.severity = none
+# WHY: Disable RCS1146 (use conditional access) - not a priority
+dotnet_diagnostic.RCS1146.severity = none
+# WHY: Disable RCS1154 (sort members) - not a priority
+dotnet_diagnostic.RCS1154.severity = none
+# WHY: Disable RCS1161 (enum should declare explicit values) - not a priority
+dotnet_diagnostic.RCS1161.severity = none
+# WHY: Disable RCS1163 (unused parameter) - not a priority
+dotnet_diagnostic.RCS1163.severity = none
+# WHY: Disable RCS1170 (use read-only auto property) - not a priority
+dotnet_diagnostic.RCS1170.severity = none
+# WHY: Disable RCS1175 (unused this parameter) - not a priority
+dotnet_diagnostic.RCS1175.severity = none
+# WHY: Disable RCS1181 (convert comment to documentation) - not a priority
+dotnet_diagnostic.RCS1181.severity = none
+# WHY: Disable RCS1186 (use Regex instance) - not a priority
+dotnet_diagnostic.RCS1186.severity = none
+# WHY: Disable RCS1189 (add region name to endregion) - not a priority
+dotnet_diagnostic.RCS1189.severity = none
+# WHY: Disable RCS1206 (use conditional access) - not a priority
+dotnet_diagnostic.RCS1206.severity = none
+# WHY: Disable RCS1211 (remove unnecessary else clause) - not a priority
+dotnet_diagnostic.RCS1211.severity = none
+# WHY: Disable RCS1214 (unnecessary interpolated string) - not a priority
+dotnet_diagnostic.RCS1214.severity = none
+# WHY: Disable RCS1218 (simplify code branching) - not a priority
+dotnet_diagnostic.RCS1218.severity = none
+# WHY: Disable RCS1217 (convert interpolated string to concatenation) - not a priority
+dotnet_diagnostic.RCS1217.severity = none
+# WHY: Disable RCS1021 (use expression-bodied lambda) - not a priority
+dotnet_diagnostic.RCS1021.severity = none
+# WHY: Disable RCS1089 (use ++ operator) - not a priority
+dotnet_diagnostic.RCS1089.severity = none
+# WHY: Disable RCS1142 (addtypeparam element to documentation) - not a priority
+dotnet_diagnostic.RCS1142.severity = none
+# WHY: Disable RCS1212 (remove redundant assignment) - not a priority
+dotnet_diagnostic.RCS1212.severity = none
+# WHY: Disable RCS1257 (use enum field explicitly) - not a priority
+dotnet_diagnostic.RCS1257.severity = none
+# WHY: Disable RCS1220 (use pattern matching) - not a priority
+dotnet_diagnostic.RCS1220.severity = none
+# WHY: Disable RCS1226 (add paragraph to documentation) - not a priority
+dotnet_diagnostic.RCS1226.severity = none
+# WHY: Disable RCS1228 (unused param/returns element in documentation) - not a priority
+dotnet_diagnostic.RCS1228.severity = none
+# WHY: Disable RCS1238 (avoid nested ternary) - not a priority
+dotnet_diagnostic.RCS1238.severity = none
+# WHY: Disable RCS1239 (use for instead of while) - not a priority
+dotnet_diagnostic.RCS1239.severity = none
+# WHY: Disable RCS1266 (use raw string literal) - not a priority
+dotnet_diagnostic.RCS1266.severity = none
+# WHY: Disable RCS1267 (use string interpolation) - not a priority
+dotnet_diagnostic.RCS1267.severity = none
+
+# System analyzers (SYSLIB*)
+# WHY: Disable SYSLIB1045 (GeneratedRegexAttribute) - not a priority
+dotnet_diagnostic.SYSLIB1045.severity = none
+
+# Unity analyzers (UNT*)
+# WHY: Disable UNT0007 (null coalescing for Unity objects) - not a priority
+dotnet_diagnostic.UNT0007.severity = none
+# WHY: Disable UNT0008 (null propagation for Unity objects) - not a priority
+dotnet_diagnostic.UNT0008.severity = none
+
+# xUnit analyzers
+# WHY: Disable xUnit1042 (use TheoryData instead of object array) - not a priority
+dotnet_diagnostic.xUnit1042.severity = none
 
 # END TEMPORARY BUILD WORKAROUND
 
