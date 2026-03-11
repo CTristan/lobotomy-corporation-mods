@@ -1,5 +1,6 @@
 <Project>
   <PropertyGroup>
+    <CentralPackageVersionOverrideEnabled>true</CentralPackageVersionOverrideEnabled>
     <AnalysisLevel>latest-all</AnalysisLevel>
     <Deterministic>true</Deterministic>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
@@ -16,16 +17,6 @@
     <DebugType>none</DebugType>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="Roslynator.Analyzers" Version="4.15.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Roslynator.Formatting.Analyzers" Version="4.15.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
   <!-- NU1702: net35 project references intentionally loaded via modern .NET compatibility -->
   <PropertyGroup Condition="'$(IsTestProject)' == 'true'">
     <NoWarn>$(NoWarn);NU1702</NoWarn>

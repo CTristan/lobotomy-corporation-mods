@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="AwesomeAssertions" Version="9.4.0" />
+    <PackageVersion Include="BepInEx.Analyzers" Version="1.0.8" />
+    <PackageVersion Include="BepInEx.BaseLib" Version="5.4.21" />
+    <PackageVersion Include="BepInEx.Core" Version="5.4.21" />
+    <PackageVersion Include="BepInEx.PluginInfoProps" Version="2.1.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
+    <PackageVersion Include="Mono.Cecil" Version="0.11.6" />
+    <PackageVersion Include="Moq" Version="4.20.72" />
+    <PackageVersion Include="UnityEngine.Modules" Version="2017.4.7" />
+    <PackageVersion Include="coverlet.collector" Version="8.0.0" />
+    <PackageVersion Include="coverlet.msbuild" Version="8.0.0" />
+    <PackageVersion Include="xunit.analyzers" Version="1.27.0" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
+    <PackageVersion Include="xunit.v3" Version="3.2.2" />
+    <PackageVersion Include="xunit.v3.runner.console" Version="3.2.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <GlobalPackageReference Include="Microsoft.Unity.Analyzers" Version="1.26.0">
+        <PrivateAssets>all</PrivateAssets>
+    </GlobalPackageReference>
+    <GlobalPackageReference Include="Roslynator.Analyzers" Version="4.15.0">
+      <PrivateAssets>all</PrivateAssets>
+    </GlobalPackageReference>
+    <GlobalPackageReference Include="Roslynator.Formatting.Analyzers" Version="4.15.0">
+      <PrivateAssets>all</PrivateAssets>
+    </GlobalPackageReference>
+  </ItemGroup>
+</Project>

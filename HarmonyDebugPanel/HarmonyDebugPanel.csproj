@@ -8,15 +8,14 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="BepInEx.Analyzers" Version="1.0.8" PrivateAssets="all" ExcludeAssets="runtime">
+    <PackageReference Include="BepInEx.Analyzers" PrivateAssets="all" ExcludeAssets="runtime">
       <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="BepInEx.BaseLib" Version="5.4.21" ExcludeAssets="runtime"/>
-    <PackageReference Include="BepInEx.Core" Version="5.4.21" ExcludeAssets="runtime"/>
-    <PackageReference Include="BepInEx.PluginInfoProps" Version="2.1.0" ExcludeAssets="runtime"/>
-    <PackageReference Include="UnityEngine.Modules" Version="2017.4.7" IncludeAssets="compile" ExcludeAssets="runtime"/>
+    <PackageReference Include="BepInEx.BaseLib" ExcludeAssets="runtime"/>
+    <PackageReference Include="BepInEx.Core" ExcludeAssets="runtime"/>
+    <PackageReference Include="BepInEx.PluginInfoProps" ExcludeAssets="runtime"/>
+    <PackageReference Include="UnityEngine.Modules" IncludeAssets="compile" ExcludeAssets="runtime"/>
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all"/>
   </ItemGroup>
 </Project>
