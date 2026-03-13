@@ -1,0 +1,158 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <!-- Lobotomy Corporation-themed dark color scheme -->
+  <Style Selector="Window">
+    <Setter Property="Background" Value="#1a1a2e" />
+    <Setter Property="Foreground" Value="#e0e0e0" />
+  </Style>
+
+  <!-- Amber/gold accent buttons -->
+  <Style Selector="Button.accent">
+    <Setter Property="Background" Value="#d4a017" />
+    <Setter Property="Foreground" Value="#1a1a2e" />
+    <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="Padding" Value="20,12" />
+    <Setter Property="CornerRadius" Value="4" />
+    <Setter Property="FontSize" Value="16" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector="Button.accent:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="#e6b422" />
+  </Style>
+
+  <Style Selector="Button.accent:pressed /template/ ContentPresenter">
+    <Setter Property="Background" Value="#b8860b" />
+  </Style>
+
+  <Style Selector="Button.accent:disabled /template/ ContentPresenter">
+    <Setter Property="Background" Value="#6b5a1e" />
+    <Setter Property="Foreground" Value="#808080" />
+  </Style>
+
+  <!-- Danger button style for uninstall -->
+  <Style Selector="Button.danger">
+    <Setter Property="Background" Value="#8b2500" />
+    <Setter Property="Foreground" Value="#e0e0e0" />
+    <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="Padding" Value="20,12" />
+    <Setter Property="CornerRadius" Value="4" />
+    <Setter Property="FontSize" Value="16" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector="Button.danger:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="#a83200" />
+  </Style>
+
+  <Style Selector="Button.danger:pressed /template/ ContentPresenter">
+    <Setter Property="Background" Value="#6b1a00" />
+  </Style>
+
+  <Style Selector="Button.danger:disabled /template/ ContentPresenter">
+    <Setter Property="Background" Value="#4a1a00" />
+    <Setter Property="Foreground" Value="#808080" />
+  </Style>
+
+  <!-- Secondary button -->
+  <Style Selector="Button.secondary">
+    <Setter Property="Background" Value="#2a2a4e" />
+    <Setter Property="Foreground" Value="#e0e0e0" />
+    <Setter Property="Padding" Value="12,8" />
+    <Setter Property="CornerRadius" Value="4" />
+  </Style>
+
+  <Style Selector="Button.secondary:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="#3a3a5e" />
+  </Style>
+
+  <!-- Panel styling -->
+  <Style Selector="Border.panel">
+    <Setter Property="Background" Value="#16162b" />
+    <Setter Property="BorderBrush" Value="#d4a017" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="4" />
+    <Setter Property="Padding" Value="16" />
+  </Style>
+
+  <!-- Warning panel -->
+  <Style Selector="Border.warning">
+    <Setter Property="Background" Value="#2e1a1a" />
+    <Setter Property="BorderBrush" Value="#d44017" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="4" />
+    <Setter Property="Padding" Value="16" />
+  </Style>
+
+  <!-- Success panel -->
+  <Style Selector="Border.success">
+    <Setter Property="Background" Value="#1a2e1a" />
+    <Setter Property="BorderBrush" Value="#17d440" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="4" />
+    <Setter Property="Padding" Value="16" />
+  </Style>
+
+  <!-- Section header -->
+  <Style Selector="TextBlock.header">
+    <Setter Property="FontSize" Value="20" />
+    <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="Foreground" Value="#d4a017" />
+    <Setter Property="Margin" Value="0,0,0,8" />
+  </Style>
+
+  <!-- Sub-header -->
+  <Style Selector="TextBlock.subheader">
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="Foreground" Value="#c0c0c0" />
+    <Setter Property="Margin" Value="0,0,0,4" />
+  </Style>
+
+  <!-- Status text -->
+  <Style Selector="TextBlock.status">
+    <Setter Property="FontSize" Value="13" />
+    <Setter Property="Foreground" Value="#a0a0a0" />
+  </Style>
+
+  <!-- Valid path indicator -->
+  <Style Selector="TextBlock.valid">
+    <Setter Property="Foreground" Value="#17d440" />
+  </Style>
+
+  <!-- Invalid path indicator -->
+  <Style Selector="TextBlock.invalid">
+    <Setter Property="Foreground" Value="#d44017" />
+  </Style>
+
+  <!-- TextBox styling -->
+  <Style Selector="TextBox">
+    <Setter Property="Background" Value="#0e0e1e" />
+    <Setter Property="Foreground" Value="#e0e0e0" />
+    <Setter Property="BorderBrush" Value="#3a3a5e" />
+    <Setter Property="CornerRadius" Value="4" />
+  </Style>
+
+  <Style Selector="TextBox:focus">
+    <Setter Property="BorderBrush" Value="#d4a017" />
+  </Style>
+
+  <!-- ScrollViewer log area -->
+  <Style Selector="TextBox.log">
+    <Setter Property="Background" Value="#0a0a18" />
+    <Setter Property="Foreground" Value="#b0b0b0" />
+    <Setter Property="FontFamily" Value="Cascadia Mono, Consolas, monospace" />
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="IsReadOnly" Value="True" />
+    <Setter Property="TextWrapping" Value="Wrap" />
+    <Setter Property="AcceptsReturn" Value="True" />
+  </Style>
+
+  <!-- Separator -->
+  <Style Selector="Separator">
+    <Setter Property="Background" Value="#2a2a4e" />
+    <Setter Property="Margin" Value="0,8" />
+  </Style>
+
+</Styles>

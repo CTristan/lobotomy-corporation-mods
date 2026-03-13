@@ -182,6 +182,7 @@ namespace CI
             return moduleName is "CI" or
                    "SetupExternal" or
                    "RetargetHarmony" or
+                   "RetargetHarmony.Installer" or
                    "HarmonyDebugPanel" or
                    "LobotomyPlaywright" or
                    "LobotomyPlaywright.Plugin";

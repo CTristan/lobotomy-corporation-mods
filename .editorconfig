@@ -201,6 +201,9 @@ dotnet_diagnostic.CA1515.severity = none
 # WHY: xUnit test methods use underscores in names (descriptive naming convention)
 dotnet_diagnostic.CA1707.severity = none
 
+# WHY: Assertion libraries (AwesomeAssertions) and test setup (Directory.CreateDirectory) return values that are intentionally unused
+dotnet_diagnostic.IDE0058.severity = none
+
 # WHY: All Harmony_Patch classes share these conventions
 [{Harmony_Patch.cs,**/Harmony_Patch.cs}]
 # WHY: Harmony_Patch class names contain underscores (Basemod convention)
