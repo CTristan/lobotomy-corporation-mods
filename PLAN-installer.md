@@ -163,9 +163,11 @@ It does NOT need to target net35.
   - `win-x86` self-contained, single file, trimmed
   - `linux-x64` framework-dependent
   - `osx-x64` / `osx-arm64` framework-dependent
-- [ ] **Build script or CI integration**
-  - Script to produce release artifacts for each platform
-  - Test that trimming doesn't break Avalonia or Mono.Cecil reflection
+- [x] **Build script** (`scripts/publish-installer.sh`)
+  - Builds RetargetHarmony (Release) and stages DLL into installer Resources
+  - Publishes for all or specific platforms: `./scripts/publish-installer.sh [win-x64|osx-arm64|...]`
+  - Self-contained + single-file + trimmed for Windows; framework-dependent for Linux/macOS
+  - `RetargetHarmony.dll` is a build artifact (gitignored in Resources/, staged at publish time)
 
 ### Phase 7: Tests
 

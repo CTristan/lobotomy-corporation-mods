@@ -30,5 +30,9 @@
     <Content Include="..\RetargetHarmony\lib\0Harmony12.dll" Link="Resources\0Harmony12.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <!-- Staged by scripts/publish-installer.sh from RetargetHarmony Release build output -->
+    <Content Include="Resources\RetargetHarmony.dll" Condition="Exists('Resources\RetargetHarmony.dll')" Link="Resources\RetargetHarmony.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>
