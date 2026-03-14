@@ -217,12 +217,12 @@ types before checking `using` directives, causing CS1729 errors.
 
 ### Phase 4: IMGUI overlay and lifecycle
 
-- [ ] Create `DebugPanelBehaviour : MonoBehaviour` (Category 2)
+- [x] Create `DebugPanelBehaviour : MonoBehaviour` (Category 2)
   - `OnGUI()` — delegates to `IOverlayRenderer`
   - `Update()` — delegates to `IInputHandler`
   - Holds references to report builder and renderer
   - `DontDestroyOnLoad` to survive scene changes
-- [ ] Create `IOverlayRenderer` interface and `DiagnosticOverlay` implementation
+- [x] Create `IOverlayRenderer` interface and `DiagnosticOverlay` implementation
   - Port rendering logic from HarmonyDebugPanel's `DiagnosticOverlay.cs`
   - `GUI.Window()` — draggable window
   - `GUILayout.BeginScrollView()` — scrollable content
@@ -231,18 +231,32 @@ types before checking `using` directives, causing CS1729 errors.
   - Section toggles based on config
   - "Generate Log" button
   - Environment mode indicator (standalone vs enhanced)
-- [ ] Create `IInputHandler` interface and implementation
+- [x] Create `IInputHandler` interface and implementation
   - Hotkey detection (`Input.GetKeyDown`) for overlay toggle and refresh
   - Reads hotkey bindings from config
-- [ ] Create startup patch to inject the `GameObject`
-  - Patch an early game lifecycle method (e.g., `GameManager.Awake` or
-    `TitleSceneController`)
-  - In postfix: `new GameObject("DebugPanel").AddComponent<DebugPanelBehaviour>()`
+- [x] Create startup patch to inject the `GameObject`
+  - Patches `GlobalGameManager.Awake` (private method, earliest lifecycle)
+  - In postfix: `new GameObject("DebugPanelBehaviour").AddComponent<DebugPanelBehaviour>()`
   - Standard two-method pattern: extension method (testable setup logic) +
     `[EntryPoint]` postfix
-- [ ] Create `ILogFileWriter` interface and implementation
+  - Duplicate guard via `FindObjectOfType<DebugPanelBehaviour>()`
+- [x] Create `ILogFileWriter` interface and `LogFileWriter` implementation
+  (Category 1)
   - Writes diagnostic report to timestamped log file in mod directory
-  - Opens file in default text editor (or just writes, depending on platform)
+  - Uses `IFileManager` + `IReportFormatter` for full testability
+- [x] Create `KeyCodeParser` (Category 1) — parses config key strings
+  ("F9", "F10", etc.) to `KeyCode` enum values
+- [x] Add `UnityEngine.IMGUIModule` and `UnityEngine.InputModule` references
+  to csproj
+- [x] Add `PrivateMethods.GlobalGameManager.Awake` constant to Common
+- [x] Tests for `KeyCodeParser` — function keys, common keys, case
+  insensitivity, defaults for null/empty/unrecognized
+- [x] Tests for `LogFileWriter` — null guards, formatting, file writing,
+  filename generation
+- [x] Registration test and exception logging test for
+  `GlobalGameManagerPatchAwake`
+- [x] Business logic tests for `PatchAfterAwake` extension method
+- [x] Verify: solution builds, all 396 tests pass
 
 ### Phase 5: Testing
 
