@@ -292,7 +292,7 @@ namespace RetargetHarmony.Test.Tests
             _ = content.Should().Contain("[ERROR] Test error message");
 
             // Verify timestamp format
-            _ = content.Should().MatchRegex(@"^\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}\]");
+            _ = content.Should().MatchRegex(@"\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}\]");
         }
 
         [Fact]

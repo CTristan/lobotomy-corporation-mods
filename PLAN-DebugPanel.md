@@ -140,61 +140,62 @@ via `IFileManager` + `JsonUtility`. Fields:
   - Falls back to defaults if config file doesn't exist
 - [x] Add test folder `LobotomyCorporationMods.Test/ModTests/DebugPanelTests/`
 
-### Phase 2: Runtime detection and collector interfaces
+### Phase 2: Runtime detection, data models, and collector interfaces
 
-- [ ] Create `IEnvironmentDetector` interface
-  - `bool IsHarmony2Available { get; }`
-  - `bool IsBepInExAvailable { get; }`
-  - `bool IsMonoCecilAvailable { get; }`
-- [ ] Create `EnvironmentDetector` (Category 2) — scans
+- [x] Create data models (`Models/`):
+  - `PatchType` enum, `HarmonyVersion` enum, `ModSource` enum
+  - `PatchInfo`, `AssemblyInfo`, `DetectedModInfo` (renamed from `ModInfo` to
+    avoid collision with game's global-namespace `ModInfo` in Assembly-CSharp),
+    `ExpectedPatchInfo`, `RetargetHarmonyStatus`, `EnvironmentInfo`
+- [x] Create DTOs (`Interfaces/`):
+  - `PatchInspectionInfo`, `AssemblyInspectionInfo`,
+    `BepInExPluginInspectionInfo`
+- [x] Create interfaces (`Interfaces/`):
+  - `IInfoCollector<T>`, `IEnvironmentDetector`, `IPatchInspectionSource`,
+    `IAssemblyInspectionSource`, `IPluginInfoSource`, `IActivePatchCollector`,
+    `IExpectedPatchSource`, `IHarmonyVersionClassifier`, `ICollectorFactory`
+- [x] Create `EnvironmentDetector` (Category 2) — scans
   `AppDomain.CurrentDomain.GetAssemblies()` for known assembly names
-- [ ] Create `IActivePatchCollector` interface
-  - `IReadOnlyList<PatchInfo> GetActivePatches()`
-- [ ] Create `Harmony1PatchCollector` (Category 2) — reflects into
-  `HarmonySharedState` to extract active patch data from Harmony 1.09
-  - Target: `Harmony.HarmonySharedState` static class
-  - Access internal dictionary mapping `MethodBase` to patch info
-  - Extract: target method, patch method, owner ID, patch type
-    (prefix/postfix/transpiler)
-- [ ] Create `Harmony2PatchCollector` (Category 2) — reflects into
-  `HarmonyLib.Harmony.GetAllPatchedMethods()` and `Harmony.GetPatchInfo()`
-  - This is the preferred source when available — covers both Harmony 1 and 2
-    patches
-- [ ] Create `IExpectedPatchSource` interface (port from HarmonyDebugPanel)
-  - Three-phase scan: reflection for `[HarmonyPatch]` attributes, source file
-    regex fallback, runtime fallback
-- [ ] Create `ExpectedPatchSource` implementation
-  - Phase 1 (reflection) and Phase 2 (source scanning) are Category 1
-  - Phase 3 (runtime query) delegates to `IActivePatchCollector`
-- [ ] Create `IAssemblyInfoCollector` interface and implementation
-  - Lists loaded assemblies, highlights Harmony-related ones
-- [ ] Create `IHarmonyVersionClassifier` interface and implementation
-  - Inspects assembly references to classify Harmony 1 vs 2 usage
-- [ ] Create `IBaseModCollector` interface and implementation
-  - Filesystem scan of `BaseMods/` directory for LMM mods
-- [ ] Create `IBepInExPluginCollector` interface
-  - Implementation reflects into `BepInEx.Bootstrap.Chainloader.PluginInfos`
-  - Returns empty list when BepInEx is not available
-- [ ] Create `IRetargetHarmonyDetector` interface
-  - Implementation checks for RetargetHarmony patcher assembly
-  - Returns "not available" when BepInEx is not present
-- [ ] Create collector factory/strategy that selects implementations based on
-  `IEnvironmentDetector` results
-  - When Harmony 2 available: use `Harmony2PatchCollector` for all active
-    patches
-  - When Harmony 1.09 only: use `Harmony1PatchCollector`
-  - When BepInEx available: enable `IBepInExPluginCollector` and
-    `IRetargetHarmonyDetector`
+- [x] Create `Harmony1PatchInspectionSource` (Category 2) — reflects into
+  `Harmony.HarmonySharedState` to extract active patch data from Harmony 1.09
+- [x] Create `Harmony2PatchInspectionSource` (Category 2) — reflects into
+  `HarmonyLib.Harmony.GetAllPatchedMethods()` and `GetPatchInfo()`
+- [x] Create `AppDomainAssemblyInspectionSource` (Category 2) — wraps
+  `AppDomain.CurrentDomain.GetAssemblies()`
+- [x] Create `ReflectionBepInExPluginInfoSource` (Category 2) — reflects into
+  `BepInEx.Bootstrap.Chainloader.PluginInfos`
+- [x] Create `ActivePatchCollector` (Category 1) — maps
+  `PatchInspectionInfo` → `PatchInfo`
+- [x] Create `AssemblyInfoCollector` (Category 1) — maps assemblies, detects
+  Harmony-related
+- [x] Create `HarmonyVersionClassifier` (Category 1) — classifies by assembly
+  reference names
+- [x] Create `BaseModCollector` (Category 1) — groups patches by assembly,
+  filters framework assemblies
+- [x] Create `BepInExPluginCollector` (Category 1) — maps plugins to
+  `DetectedModInfo`
+- [x] Create `RetargetHarmonyDetector` (Category 1) — checks for
+  RetargetHarmony assembly
+- [x] Create `ExpectedPatchSource` — three-phase scan ported from
+  HarmonyDebugPanel (reflection, source file regex, runtime fallback)
+- [x] Create `CollectorFactory` (Category 1) — selects implementations based
+  on `IEnvironmentDetector` results
+- [x] Add CA1031 suppression in `.editorconfig` for DebugPanel project
+  (reflection code intentionally catches general exceptions)
+- [x] Verify: solution builds, all existing tests pass
 
-### Phase 3: Data models and report builder
+Note: `DetectedModInfo` was renamed from `ModInfo` because Assembly-CSharp.dll
+contains a global-namespace `ModInfo` class. C# name resolution finds global
+types before checking `using` directives, causing CS1729 errors.
 
-- [ ] Port/adapt data models from HarmonyDebugPanel:
-  - `PatchInfo` — target method, patch method, owner, patch type, Harmony
-    version
-  - `ModInfo` — mod name, path, Harmony version, expected/actual patch counts
-  - `AssemblyInfo` — name, version, is Harmony-related flag
-  - `DiagnosticReport` — aggregated report with all sections
-  - `PatchComparisonResult` — expected vs actual with missing/extra lists
+### Phase 3: Report builder and remaining models
+
+- [x] Data models ported in Phase 2 (`PatchInfo`, `DetectedModInfo`,
+  `AssemblyInfo`, `ExpectedPatchInfo`, `RetargetHarmonyStatus`,
+  `EnvironmentInfo`)
+- [ ] Create `DiagnosticReport` model — aggregated report with all sections
+- [ ] Create `PatchComparisonResult` model — expected vs actual with
+  missing/extra lists
 - [ ] Create `IDiagnosticReportBuilder` interface
 - [ ] Create `DiagnosticReportBuilder` (Category 1) — orchestrates collectors,
   builds `DiagnosticReport`
@@ -244,7 +245,7 @@ via `IFileManager` + `JsonUtility`. Fields:
   verify three-phase scan
 - [ ] Tests for `HarmonyVersionClassifier` — various assembly reference
   scenarios
-- [ ] Tests for `BaseModCollector` — mock filesystem, verify mod detection
+- [ ] Tests for `BaseModCollector` — mock inspection source, verify mod detection
 - [ ] Tests for `ReportFormatter` — verify overlay and log file formatting
 - [ ] Tests for `InputHandler` — verify hotkey config parsing
 - [ ] Tests for config loading — missing file (defaults), valid file, malformed
