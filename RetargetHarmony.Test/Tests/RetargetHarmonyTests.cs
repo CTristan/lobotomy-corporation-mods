@@ -264,6 +264,100 @@ namespace RetargetHarmony.Test.Tests
             }
         }
 
+        [Fact]
+        public void Patch_WritesAuditLog_ForBaseModsDll()
+        {
+            var tempDir = Path.Combine(Path.GetTempPath(), "RetargetHarmonyTest_AuditLog_" + Guid.NewGuid().ToString("N"));
+            _ = Directory.CreateDirectory(tempDir);
+
+            try
+            {
+                AuditLogDirectoryOverride = tempDir;
+                using var assemblyDefinition = CreateSyntheticAssembly("0Harmony");
+                // Rename to simulate a BaseMods DLL
+                assemblyDefinition.Name.Name = "TestBaseMod";
+
+                Patch(assemblyDefinition);
+
+                var logPath = Path.Combine(tempDir, "patched_mods.log");
+                _ = File.Exists(logPath).Should().BeTrue("audit log should be created");
+                var entries = File.ReadAllLines(logPath).Where(l => !string.IsNullOrWhiteSpace(l)).ToList();
+                _ = entries.Should().HaveCount(1);
+                _ = entries[0].Should().Contain("TestBaseMod.dll");
+                _ = entries[0].Should().Contain(Path.Combine("LobotomyCorp_Data", "BaseMods"));
+            }
+            finally
+            {
+                AuditLogDirectoryOverride = null;
+                Directory.Delete(tempDir, true);
+            }
+        }
+
+        [Fact]
+        public void Patch_DoesNotWriteAuditLog_ForCoreAssemblies()
+        {
+            var tempDir = Path.Combine(Path.GetTempPath(), "RetargetHarmonyTest_AuditLog_" + Guid.NewGuid().ToString("N"));
+            _ = Directory.CreateDirectory(tempDir);
+
+            try
+            {
+                AuditLogDirectoryOverride = tempDir;
+
+                using AssemblyDefinition assemblyDefinition = AssemblyDefinition.ReadAssembly(GetManagedAssemblyPath("Assembly-CSharp.dll"));
+                Patch(assemblyDefinition);
+
+                var logPath = Path.Combine(tempDir, "patched_mods.log");
+                _ = File.Exists(logPath).Should().BeFalse("audit log should not be created for core assemblies");
+            }
+            finally
+            {
+                AuditLogDirectoryOverride = null;
+                if (Directory.Exists(tempDir))
+                {
+                    Directory.Delete(tempDir, true);
+                }
+            }
+        }
+
+        [Fact]
+        public void Patch_DeduplicatesAuditLogEntries()
+        {
+            var tempDir = Path.Combine(Path.GetTempPath(), "RetargetHarmonyTest_AuditLog_" + Guid.NewGuid().ToString("N"));
+            _ = Directory.CreateDirectory(tempDir);
+
+            try
+            {
+                AuditLogDirectoryOverride = tempDir;
+
+                // Patch same BaseMods DLL twice
+                using var asm1 = CreateSyntheticAssembly("0Harmony");
+                asm1.Name.Name = "TestBaseMod";
+                Patch(asm1);
+
+                // Reset references so it can be patched again
+                using var asm2 = CreateSyntheticAssembly("0Harmony");
+                asm2.Name.Name = "TestBaseMod";
+                Patch(asm2);
+
+                var logPath = Path.Combine(tempDir, "patched_mods.log");
+                var entries = File.ReadAllLines(logPath).Where(l => !string.IsNullOrWhiteSpace(l)).ToList();
+                _ = entries.Should().HaveCount(1, "duplicate entries should not be added");
+            }
+            finally
+            {
+                AuditLogDirectoryOverride = null;
+                Directory.Delete(tempDir, true);
+            }
+        }
+
+        [Fact]
+        public void GameRootPath_ReturnsNonEmptyPath()
+        {
+            var gameRootPath = GameRootPath;
+
+            _ = gameRootPath.Should().NotBeNullOrEmpty("GameRootPath should not be empty");
+        }
+
         private static string GetManagedAssemblyPath(string fileName)
         {
             return Path.Combine(ManagedDir, fileName);

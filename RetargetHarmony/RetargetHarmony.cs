@@ -16,34 +16,13 @@ namespace RetargetHarmony
 {
     public static class RetargetHarmony
     {
+        private const string AuditLogFileName = "patched_mods.log";
+
         // Static log source managed by BepInEx framework (long-lived)
         private static readonly ManualLogSource Log = Logger.CreateLogSource("RetargetHarmony");
 
         // BaseMods directory path — hardcoded relative to game root
-        // Uses fallback to BepInExRootPath when GameRootPath is not available (e.g., in tests)
-        public static string BaseModsPath
-        {
-            get
-            {
-                string gameRoot;
-                if (!string.IsNullOrEmpty(Paths.GameRootPath))
-                {
-                    gameRoot = Paths.GameRootPath;
-                }
-                else if (!string.IsNullOrEmpty(Paths.BepInExRootPath))
-                {
-                    gameRoot = Path.GetFullPath(Path.Combine(Paths.BepInExRootPath, ".."));
-                }
-                else
-                {
-                    // Fallback for test context where BepInEx paths are not initialized
-                    // Use current directory as the game root
-                    gameRoot = Environment.CurrentDirectory;
-                }
-
-                return Path.GetFullPath(Path.Combine(Path.Combine(gameRoot, "LobotomyCorp_Data"), "BaseMods"));
-            }
-        }
+        public static string BaseModsPath => Path.GetFullPath(Path.Combine(Path.Combine(GameRootPath, "LobotomyCorp_Data"), "BaseMods"));
 
         // Flag to control whether assembly cache should be saved
         private static volatile bool s_shouldSaveCache = true;
@@ -93,6 +72,88 @@ namespace RetargetHarmony
         {
             s_configInitialized = false;
             s_patchBaseMods = false;
+        }
+
+        // Testability: override audit log directory path
+        public static string AuditLogDirectoryOverride { get; set; }
+
+        /// <summary>
+        /// Gets the game root directory path.
+        /// </summary>
+        public static string GameRootPath
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(Paths.GameRootPath))
+                {
+                    return Paths.GameRootPath;
+                }
+
+                if (!string.IsNullOrEmpty(Paths.BepInExRootPath))
+                {
+                    return Path.GetFullPath(Path.Combine(Paths.BepInExRootPath, ".."));
+                }
+
+                return Environment.CurrentDirectory;
+            }
+        }
+
+        /// <summary>
+        /// Writes a patched mod's relative path to the audit log, deduplicating entries.
+        /// </summary>
+        private static void WriteAuditLog(string assemblyName)
+        {
+            try
+            {
+                // Compute relative path from game root
+                var relativePath = Path.Combine(Path.Combine("LobotomyCorp_Data", "BaseMods"), assemblyName + ".dll");
+
+                // Determine audit log directory
+                string logDir;
+                if (AuditLogDirectoryOverride != null)
+                {
+                    logDir = AuditLogDirectoryOverride;
+                }
+                else
+                {
+                    var assemblyDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? "";
+                    logDir = Path.Combine(assemblyDir, "logs");
+                }
+
+                if (!Directory.Exists(logDir))
+                {
+                    _ = Directory.CreateDirectory(logDir);
+                }
+
+                var logPath = Path.Combine(logDir, AuditLogFileName);
+
+                // Read existing entries to deduplicate
+                var existingEntries = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                if (File.Exists(logPath))
+                {
+                    foreach (var line in File.ReadAllLines(logPath))
+                    {
+                        var trimmed = line.Trim();
+                        if (!string.IsNullOrEmpty(trimmed))
+                        {
+                            _ = existingEntries.Add(trimmed);
+                        }
+                    }
+                }
+
+                if (existingEntries.Contains(relativePath))
+                {
+                    SafeTrace(string.Format(CultureInfo.InvariantCulture, "Audit log already contains: {0}", relativePath));
+                    return;
+                }
+
+                File.AppendAllText(logPath, relativePath + Environment.NewLine);
+                SafeInfo(string.Format(CultureInfo.InvariantCulture, "Audit log entry added: {0}", relativePath));
+            }
+            catch (Exception ex)
+            {
+                SafeWarn(string.Format(CultureInfo.InvariantCulture, "Failed to write audit log: {0}", ex.Message));
+            }
         }
 
         /// <summary>
@@ -325,6 +386,12 @@ PatchBaseMods = false
                 if (changed)
                 {
                     SafeInfo(string.Format(CultureInfo.InvariantCulture, "Rewrote Harmony reference(s) -> 0Harmony109 in {0}", asm.Name.Name));
+
+                    // Write audit log for BaseMods DLLs (not the core game assemblies)
+                    if (asm.Name.Name != "Assembly-CSharp" && asm.Name.Name != "LobotomyBaseModLib")
+                    {
+                        WriteAuditLog(asm.Name.Name);
+                    }
                 }
                 else
                 {
