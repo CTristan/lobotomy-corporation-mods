@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<info>
+    <name>Debug Panel v1.0.0</name>
+    <descs>
+        <desc>In-game diagnostic overlay for inspecting Harmony patches,</desc>
+        <desc>loaded mods, assembly info, and DLL integrity status.</desc>
+    </descs>
+</info>
