@@ -288,24 +288,26 @@ types before checking `using` directives, causing CS1729 errors.
 
 ### Phase 6: DLL integrity detection — source interfaces
 
-- [ ] Create `IDllFileInspector` interface
+- [x] Create `IDllFileInspector` interface
   - `IList<string> GetAssemblyReferences(string dllPath)` — returns assembly
     reference names found in a DLL file on disk
   - `bool IsDeepInspectionAvailable { get; }` — true when using Mono.Cecil
-- [ ] Create `CecilDllFileInspector` (Category 2) — uses
-  `AssemblyDefinition.ReadAssembly()` for precise reference extraction
+- [x] Create `CecilDllFileInspector` (Category 2) — uses
+  `AssemblyDefinition.ReadAssembly()` for precise reference extraction via
+  reflection into Mono.Cecil (only available at runtime with BepInEx)
   - Pattern from `BaseModsAnalyzer.cs`: `ReadAssembly(path, new ReaderParameters { ReadWrite = false })`
   - Handle `BadImageFormatException`, `IOException`, `InvalidOperationException`
   - Only instantiated when `IEnvironmentDetector.IsMonoCecilAvailable` is true
-- [ ] Create `BasicDllFileInspector` (Category 2) — standalone fallback
+- [x] Create `BasicDllFileInspector` (Category 2) — standalone fallback
   - Reads raw DLL bytes via `File.ReadAllBytes()`
+  - Delegates to `BytePatternScanner` (Category 1) for testable byte scanning
   - Scans for known UTF-8 byte sequences: `0Harmony109`, `0Harmony12`,
     `12Harmony`, `0Harmony` (excluding matches that are substrings of longer
-    names)
-  - Less precise than Cecil (could match string literals), but sufficient for
-    detecting shimming
+    names via consumed-positions array)
   - `IsDeepInspectionAvailable` returns `false`
-- [ ] Create `IShimArtifactSource` interface
+- [x] Create `BytePatternScanner` (Category 1) — extracted testable byte
+  scanning logic with 10 tests covering all patterns and edge cases
+- [x] Create `IShimArtifactSource` interface
   - `bool BackupDirectoryExists { get; }`
   - `string BackupDirectoryPath { get; }`
   - `IList<string> GetBackupFileNames()` — list files in backup dir
@@ -313,16 +315,19 @@ types before checking `using` directives, causing CS1729 errors.
   - `bool InteropCacheExists { get; }`
   - `string InteropCachePath { get; }`
   - `int GetInteropCacheEntryCount()` — parse binary cache, return count or -1
-- [ ] Create `FileSystemShimArtifactSource` (Category 2) — looks for
+- [x] Create `FileSystemShimArtifactSource` (Category 2) — looks for
   `{gameRoot}/BepInEx_Shim_Backup/` and
   `{gameRoot}/BepInEx/cache/harmony_interop_cache.dat`
   - Game root derived from `Application.dataPath` (up one level from `_Data/`)
   - Cache format: `BinaryReader` with string-long pairs; wrap in try/catch
-- [ ] Create `ILoadedAssemblyReferenceSource` interface
+- [x] Create `LoadedAssemblyInfo` DTO in `Interfaces/` — name, location, and
+  reference names with Guard.Against.Null checks and 4 tests
+- [x] Create `ILoadedAssemblyReferenceSource` interface
   - `IList<LoadedAssemblyInfo> GetBaseModAssemblies()` — returns name, location,
     and reference names for assemblies loaded from the BaseMods directory
-- [ ] Create `AppDomainLoadedAssemblySource` (Category 2) — filters
+- [x] Create `AppDomainLoadedAssemblySource` (Category 2) — filters
   `AppDomain.CurrentDomain.GetAssemblies()` to those loaded from `BaseMods/`
+- [x] Verify: solution builds, all 461 tests pass
 
 ### Phase 7: DLL integrity detection — data models and collector
 
