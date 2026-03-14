@@ -260,22 +260,31 @@ types before checking `using` directives, causing CS1729 errors.
 
 ### Phase 5: Testing
 
-- [ ] Tests for `DiagnosticReportBuilder` — mock all collectors, verify report
-  assembly and patch comparison logic
-- [ ] Tests for `ExpectedPatchSource` — mock filesystem/reflection inputs,
-  verify three-phase scan
-- [ ] Tests for `HarmonyVersionClassifier` — various assembly reference
+- [x] Tests for `DiagnosticReportBuilder` — 14 tests (existed from Phase 3)
+- [x] Tests for `ExpectedPatchSource` — Category 2 (`[AdapterClass]`), excluded
+  from coverage
+- [x] Tests for `HarmonyVersionClassifier` — 8 tests covering all reference
+  name variants, null handling, precedence
+- [x] Tests for `BaseModCollector` — 8 tests covering grouping, framework
+  filtering, Harmony version filtering
+- [x] Tests for `ReportFormatter` — 19 tests (existed from Phase 3)
+- [x] Tests for `InputHandler` — Category 2 (`[AdapterClass]`), excluded from
+  coverage
+- [x] Tests for config loading — Category 2 (`ConfigProvider` is
+  `[AdapterClass]`), excluded from coverage
+- [x] Tests for collector factory/strategy — 14 tests verifying correct source
+  selection and null guards
+- [x] Tests for patch comparison — covered by `DiagnosticReportBuilderTests`
+  and `PatchComparisonResultTests`
+- [x] Registration tests and exception logging tests for all Harmony patches
+- [x] Tests for `ActivePatchCollector` — 4 tests covering mapping and null
+  handling
+- [x] Tests for `AssemblyInfoCollector` — 5 tests covering mapping, Harmony
+  detection, null handling
+- [x] Tests for `BepInExPluginCollector` — 5 tests covering plugin mapping
+- [x] Tests for `RetargetHarmonyDetector` — 7 tests covering all detection
   scenarios
-- [ ] Tests for `BaseModCollector` — mock inspection source, verify mod detection
-- [ ] Tests for `ReportFormatter` — verify overlay and log file formatting
-- [ ] Tests for `InputHandler` — verify hotkey config parsing
-- [ ] Tests for config loading — missing file (defaults), valid file, malformed
-  file
-- [ ] Tests for collector factory/strategy — verify correct implementation
-  selected based on environment
-- [ ] Tests for patch comparison — expected vs actual matching, missing patch
-  detection, extra patch detection
-- [ ] Registration tests and exception logging tests for all Harmony patches
+- [x] Verify: solution builds, all 447 tests pass, CI check passes
 
 ### Phase 6: DLL integrity detection — source interfaces
 
