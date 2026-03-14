@@ -125,20 +125,20 @@ via `IFileManager` + `JsonUtility`. Fields:
 
 ### Phase 1: Project scaffolding and configuration
 
-- [ ] Create `LobotomyCorporationMods.DebugPanel/` project (net35, SDK-style
+- [x] Create `LobotomyCorporationMods.DebugPanel/` project (net35, SDK-style
   csproj)
   - References: `UnityEngine.dll`, `0Harmony109.dll`,
     `LobotomyCorporationMods.Common`
   - `<Private>false</Private>` on all external game DLL references
-- [ ] Create `Harmony_Patch.cs` following the standard singleton pattern
+- [x] Create `Harmony_Patch.cs` following the standard singleton pattern
   extending `HarmonyPatchBase`
-- [ ] Define config JSON model class in `JsonModels/DebugPanelConfig.cs`
+- [x] Define config JSON model class in `JsonModels/DebugPanelConfig.cs`
   - `[Serializable]`, public fields, PascalCase property accessors
   - All supported config fields with sensible defaults
-- [ ] Create `IConfigProvider` interface and `ConfigProvider` implementation
+- [x] Create `IConfigProvider` interface and `ConfigProvider` implementation
   - Category 2 wrapper for file I/O, reads/writes JSON config
   - Falls back to defaults if config file doesn't exist
-- [ ] Add test folder `LobotomyCorporationMods.Test/ModTests/DebugPanelTests/`
+- [x] Add test folder `LobotomyCorporationMods.Test/ModTests/DebugPanelTests/`
 
 ### Phase 2: Runtime detection and collector interfaces
 
