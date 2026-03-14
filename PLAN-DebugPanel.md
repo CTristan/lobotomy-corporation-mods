@@ -193,20 +193,27 @@ types before checking `using` directives, causing CS1729 errors.
 - [x] Data models ported in Phase 2 (`PatchInfo`, `DetectedModInfo`,
   `AssemblyInfo`, `ExpectedPatchInfo`, `RetargetHarmonyStatus`,
   `EnvironmentInfo`)
-- [ ] Create `DiagnosticReport` model — aggregated report with all sections
-- [ ] Create `PatchComparisonResult` model — expected vs actual with
+- [x] Create `DiagnosticReport` model — aggregated report with all sections
+- [x] Create `PatchComparisonResult` model — expected vs actual with
   missing/extra lists
-- [ ] Create `IDiagnosticReportBuilder` interface
-- [ ] Create `DiagnosticReportBuilder` (Category 1) — orchestrates collectors,
+- [x] Create `MissingPatchInfo` model — represents expected patch not found at
+  runtime
+- [x] Create `IDiagnosticReportBuilder` interface
+- [x] Create `DiagnosticReportBuilder` (Category 1) — orchestrates collectors,
   builds `DiagnosticReport`
-  - Accepts all collectors via interface injection
+  - Accepts `ICollectorFactory` + `IEnvironmentDetector` via interface injection
   - Performs expected vs actual patch comparison
   - Flags missing/failed patches with warnings
-- [ ] Create `IReportFormatter` interface
-  - `string FormatForOverlay(DiagnosticReport report)` — structured text for
-    IMGUI
-  - `string FormatForLogFile(DiagnosticReport report)` — detailed text for file
-    export
+  - Correlates patches with originating mods
+- [x] Create `IReportFormatter` interface
+  - `IList<string> FormatForOverlay(DiagnosticReport report)` — compact text
+    for IMGUI
+  - `IList<string> FormatForLogFile(DiagnosticReport report)` — detailed text
+    for file export
+- [x] Create `ReportFormatter` (Category 1) — implements `IReportFormatter`
+  with overlay/log formatting, environment mode labels, patch status display
+- [x] Tests for all Phase 3 models and implementations
+- [x] Verify: solution builds, all existing tests pass
 
 ### Phase 4: IMGUI overlay and lifecycle
 
