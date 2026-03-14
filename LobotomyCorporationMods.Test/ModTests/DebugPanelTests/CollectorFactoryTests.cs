@@ -21,6 +21,10 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         private readonly Mock<IAssemblyInspectionSource> _mockAssemblySource;
         private readonly Mock<IPluginInfoSource> _mockPluginSource;
         private readonly Mock<IHarmonyVersionClassifier> _mockClassifier;
+        private readonly Mock<IDllFileInspector> _mockBasicDllInspector;
+        private readonly Mock<IDllFileInspector> _mockCecilDllInspector;
+        private readonly Mock<IShimArtifactSource> _mockShimArtifactSource;
+        private readonly Mock<ILoadedAssemblyReferenceSource> _mockLoadedAssemblySource;
 
         public CollectorFactoryTests()
         {
@@ -30,11 +34,17 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             _mockAssemblySource = new Mock<IAssemblyInspectionSource>();
             _mockPluginSource = new Mock<IPluginInfoSource>();
             _mockClassifier = new Mock<IHarmonyVersionClassifier>();
+            _mockBasicDllInspector = new Mock<IDllFileInspector>();
+            _mockCecilDllInspector = new Mock<IDllFileInspector>();
+            _mockShimArtifactSource = new Mock<IShimArtifactSource>();
+            _mockLoadedAssemblySource = new Mock<ILoadedAssemblyReferenceSource>();
 
             _mockHarmony1Source.Setup(s => s.GetPatches()).Returns([]);
             _mockHarmony2Source.Setup(s => s.GetPatches()).Returns([]);
             _mockAssemblySource.Setup(s => s.GetAssemblies()).Returns([]);
             _mockPluginSource.Setup(s => s.GetPlugins()).Returns([]);
+            _mockShimArtifactSource.Setup(s => s.GetBackupFileNames()).Returns([]);
+            _mockLoadedAssemblySource.Setup(s => s.GetBaseModAssemblies()).Returns([]);
         }
 
         private CollectorFactory CreateFactory()
@@ -45,13 +55,17 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
                 _mockHarmony2Source.Object,
                 _mockAssemblySource.Object,
                 _mockPluginSource.Object,
-                _mockClassifier.Object);
+                _mockClassifier.Object,
+                _mockBasicDllInspector.Object,
+                _mockCecilDllInspector.Object,
+                _mockShimArtifactSource.Object,
+                _mockLoadedAssemblySource.Object);
         }
 
         [Fact]
         public void Constructor_throws_when_environmentDetector_is_null()
         {
-            Action act = () => _ = new CollectorFactory(null, _mockHarmony1Source.Object, _mockHarmony2Source.Object, _mockAssemblySource.Object, _mockPluginSource.Object, _mockClassifier.Object);
+            Action act = () => _ = new CollectorFactory(null, _mockHarmony1Source.Object, _mockHarmony2Source.Object, _mockAssemblySource.Object, _mockPluginSource.Object, _mockClassifier.Object, _mockBasicDllInspector.Object, _mockCecilDllInspector.Object, _mockShimArtifactSource.Object, _mockLoadedAssemblySource.Object);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("environmentDetector");
         }
@@ -59,7 +73,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         [Fact]
         public void Constructor_throws_when_harmony1Source_is_null()
         {
-            Action act = () => _ = new CollectorFactory(_mockDetector.Object, null, _mockHarmony2Source.Object, _mockAssemblySource.Object, _mockPluginSource.Object, _mockClassifier.Object);
+            Action act = () => _ = new CollectorFactory(_mockDetector.Object, null, _mockHarmony2Source.Object, _mockAssemblySource.Object, _mockPluginSource.Object, _mockClassifier.Object, _mockBasicDllInspector.Object, _mockCecilDllInspector.Object, _mockShimArtifactSource.Object, _mockLoadedAssemblySource.Object);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("harmony1Source");
         }
@@ -67,7 +81,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         [Fact]
         public void Constructor_throws_when_harmony2Source_is_null()
         {
-            Action act = () => _ = new CollectorFactory(_mockDetector.Object, _mockHarmony1Source.Object, null, _mockAssemblySource.Object, _mockPluginSource.Object, _mockClassifier.Object);
+            Action act = () => _ = new CollectorFactory(_mockDetector.Object, _mockHarmony1Source.Object, null, _mockAssemblySource.Object, _mockPluginSource.Object, _mockClassifier.Object, _mockBasicDllInspector.Object, _mockCecilDllInspector.Object, _mockShimArtifactSource.Object, _mockLoadedAssemblySource.Object);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("harmony2Source");
         }
@@ -75,7 +89,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         [Fact]
         public void Constructor_throws_when_assemblySource_is_null()
         {
-            Action act = () => _ = new CollectorFactory(_mockDetector.Object, _mockHarmony1Source.Object, _mockHarmony2Source.Object, null, _mockPluginSource.Object, _mockClassifier.Object);
+            Action act = () => _ = new CollectorFactory(_mockDetector.Object, _mockHarmony1Source.Object, _mockHarmony2Source.Object, null, _mockPluginSource.Object, _mockClassifier.Object, _mockBasicDllInspector.Object, _mockCecilDllInspector.Object, _mockShimArtifactSource.Object, _mockLoadedAssemblySource.Object);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("assemblySource");
         }
@@ -83,7 +97,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         [Fact]
         public void Constructor_throws_when_pluginInfoSource_is_null()
         {
-            Action act = () => _ = new CollectorFactory(_mockDetector.Object, _mockHarmony1Source.Object, _mockHarmony2Source.Object, _mockAssemblySource.Object, null, _mockClassifier.Object);
+            Action act = () => _ = new CollectorFactory(_mockDetector.Object, _mockHarmony1Source.Object, _mockHarmony2Source.Object, _mockAssemblySource.Object, null, _mockClassifier.Object, _mockBasicDllInspector.Object, _mockCecilDllInspector.Object, _mockShimArtifactSource.Object, _mockLoadedAssemblySource.Object);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("pluginInfoSource");
         }
@@ -91,7 +105,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         [Fact]
         public void Constructor_throws_when_classifier_is_null()
         {
-            Action act = () => _ = new CollectorFactory(_mockDetector.Object, _mockHarmony1Source.Object, _mockHarmony2Source.Object, _mockAssemblySource.Object, _mockPluginSource.Object, null);
+            Action act = () => _ = new CollectorFactory(_mockDetector.Object, _mockHarmony1Source.Object, _mockHarmony2Source.Object, _mockAssemblySource.Object, _mockPluginSource.Object, null, _mockBasicDllInspector.Object, _mockCecilDllInspector.Object, _mockShimArtifactSource.Object, _mockLoadedAssemblySource.Object);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("classifier");
         }
@@ -185,6 +199,74 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var factory = CreateFactory();
 
             var collector = factory.CreateRetargetHarmonyDetector();
+
+            collector.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void Constructor_throws_when_basicDllInspector_is_null()
+        {
+            Action act = () => _ = new CollectorFactory(_mockDetector.Object, _mockHarmony1Source.Object, _mockHarmony2Source.Object, _mockAssemblySource.Object, _mockPluginSource.Object, _mockClassifier.Object, null, _mockCecilDllInspector.Object, _mockShimArtifactSource.Object, _mockLoadedAssemblySource.Object);
+
+            act.Should().Throw<ArgumentNullException>().WithParameterName("basicDllInspector");
+        }
+
+        [Fact]
+        public void Constructor_throws_when_cecilDllInspector_is_null()
+        {
+            Action act = () => _ = new CollectorFactory(_mockDetector.Object, _mockHarmony1Source.Object, _mockHarmony2Source.Object, _mockAssemblySource.Object, _mockPluginSource.Object, _mockClassifier.Object, _mockBasicDllInspector.Object, null, _mockShimArtifactSource.Object, _mockLoadedAssemblySource.Object);
+
+            act.Should().Throw<ArgumentNullException>().WithParameterName("cecilDllInspector");
+        }
+
+        [Fact]
+        public void Constructor_throws_when_shimArtifactSource_is_null()
+        {
+            Action act = () => _ = new CollectorFactory(_mockDetector.Object, _mockHarmony1Source.Object, _mockHarmony2Source.Object, _mockAssemblySource.Object, _mockPluginSource.Object, _mockClassifier.Object, _mockBasicDllInspector.Object, _mockCecilDllInspector.Object, null, _mockLoadedAssemblySource.Object);
+
+            act.Should().Throw<ArgumentNullException>().WithParameterName("shimArtifactSource");
+        }
+
+        [Fact]
+        public void Constructor_throws_when_loadedAssemblySource_is_null()
+        {
+            Action act = () => _ = new CollectorFactory(_mockDetector.Object, _mockHarmony1Source.Object, _mockHarmony2Source.Object, _mockAssemblySource.Object, _mockPluginSource.Object, _mockClassifier.Object, _mockBasicDllInspector.Object, _mockCecilDllInspector.Object, _mockShimArtifactSource.Object, null);
+
+            act.Should().Throw<ArgumentNullException>().WithParameterName("loadedAssemblySource");
+        }
+
+        [Fact]
+        public void CreateDllIntegrityCollector_uses_cecil_inspector_when_available()
+        {
+            _mockDetector.Setup(d => d.IsMonoCecilAvailable).Returns(true);
+            _mockCecilDllInspector.Setup(i => i.GetAssemblyReferences(It.IsAny<string>())).Returns([]);
+            var factory = CreateFactory();
+
+            var collector = factory.CreateDllIntegrityCollector();
+            _ = collector.Collect();
+
+            _mockCecilDllInspector.Verify(i => i.IsDeepInspectionAvailable, Times.AtLeastOnce);
+        }
+
+        [Fact]
+        public void CreateDllIntegrityCollector_uses_basic_inspector_when_cecil_unavailable()
+        {
+            _mockDetector.Setup(d => d.IsMonoCecilAvailable).Returns(false);
+            _mockBasicDllInspector.Setup(i => i.GetAssemblyReferences(It.IsAny<string>())).Returns([]);
+            var factory = CreateFactory();
+
+            var collector = factory.CreateDllIntegrityCollector();
+            _ = collector.Collect();
+
+            _mockBasicDllInspector.Verify(i => i.IsDeepInspectionAvailable, Times.AtLeastOnce);
+        }
+
+        [Fact]
+        public void CreateDllIntegrityCollector_returns_collector()
+        {
+            var factory = CreateFactory();
+
+            var collector = factory.CreateDllIntegrityCollector();
 
             collector.Should().NotBeNull();
         }

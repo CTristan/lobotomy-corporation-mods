@@ -20,6 +20,10 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
         private readonly IAssemblyInspectionSource _assemblySource;
         private readonly IPluginInfoSource _pluginInfoSource;
         private readonly IHarmonyVersionClassifier _classifier;
+        private readonly IDllFileInspector _basicDllInspector;
+        private readonly IDllFileInspector _cecilDllInspector;
+        private readonly IShimArtifactSource _shimArtifactSource;
+        private readonly ILoadedAssemblyReferenceSource _loadedAssemblySource;
 
         public CollectorFactory(
             IEnvironmentDetector environmentDetector,
@@ -27,7 +31,11 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             IPatchInspectionSource harmony2Source,
             IAssemblyInspectionSource assemblySource,
             IPluginInfoSource pluginInfoSource,
-            IHarmonyVersionClassifier classifier)
+            IHarmonyVersionClassifier classifier,
+            IDllFileInspector basicDllInspector,
+            IDllFileInspector cecilDllInspector,
+            IShimArtifactSource shimArtifactSource,
+            ILoadedAssemblyReferenceSource loadedAssemblySource)
         {
             _environmentDetector = Guard.Against.Null(environmentDetector, nameof(environmentDetector));
             _harmony1Source = Guard.Against.Null(harmony1Source, nameof(harmony1Source));
@@ -35,6 +43,10 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             _assemblySource = Guard.Against.Null(assemblySource, nameof(assemblySource));
             _pluginInfoSource = Guard.Against.Null(pluginInfoSource, nameof(pluginInfoSource));
             _classifier = Guard.Against.Null(classifier, nameof(classifier));
+            _basicDllInspector = Guard.Against.Null(basicDllInspector, nameof(basicDllInspector));
+            _cecilDllInspector = Guard.Against.Null(cecilDllInspector, nameof(cecilDllInspector));
+            _shimArtifactSource = Guard.Against.Null(shimArtifactSource, nameof(shimArtifactSource));
+            _loadedAssemblySource = Guard.Against.Null(loadedAssemblySource, nameof(loadedAssemblySource));
         }
 
         public IActivePatchCollector CreateActivePatchCollector()
@@ -71,6 +83,13 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             var source = _environmentDetector.IsHarmony2Available ? _harmony2Source : _harmony1Source;
 
             return new ExpectedPatchSource(source);
+        }
+
+        public IInfoCollector<DllIntegrityReport> CreateDllIntegrityCollector()
+        {
+            var inspector = _environmentDetector.IsMonoCecilAvailable ? _cecilDllInspector : _basicDllInspector;
+
+            return new DllIntegrityCollector(inspector, _shimArtifactSource, _loadedAssemblySource);
         }
     }
 }

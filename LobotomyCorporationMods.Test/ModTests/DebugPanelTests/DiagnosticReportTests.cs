@@ -14,6 +14,13 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
 {
     public sealed class DiagnosticReportTests
     {
+        private static DllIntegrityReport CreateDefaultDllIntegrityReport()
+        {
+            return new DllIntegrityReport(
+                [], false, string.Empty, false, string.Empty,
+                -1, false, 0, [], "No findings");
+        }
+
         [Fact]
         public void Constructor_stores_all_properties()
         {
@@ -23,11 +30,12 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var patchComparison = new PatchComparisonResult([], 0, 0);
             var retargetStatus = new RetargetHarmonyStatus(true, true, false, "Detected");
             var envInfo = new EnvironmentInfo(true, true, false);
+            var dllIntegrity = CreateDefaultDllIntegrityReport();
             var warnings = new List<string> { "test warning" };
             var debugInfo = new List<string> { "debug line" };
             var collectedAt = new DateTime(2025, 1, 15, 12, 0, 0, DateTimeKind.Utc);
 
-            var report = new DiagnosticReport(mods, patches, assemblies, patchComparison, retargetStatus, envInfo, warnings, debugInfo, collectedAt);
+            var report = new DiagnosticReport(mods, patches, assemblies, patchComparison, retargetStatus, envInfo, dllIntegrity, warnings, debugInfo, collectedAt);
 
             report.Mods.Should().BeSameAs(mods);
             report.Patches.Should().BeSameAs(patches);
@@ -35,6 +43,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             report.PatchComparison.Should().BeSameAs(patchComparison);
             report.RetargetHarmonyStatus.Should().BeSameAs(retargetStatus);
             report.EnvironmentInfo.Should().BeSameAs(envInfo);
+            report.DllIntegrity.Should().BeSameAs(dllIntegrity);
             report.Warnings.Should().BeSameAs(warnings);
             report.DebugInfo.Should().BeSameAs(debugInfo);
             report.CollectedAt.Should().Be(collectedAt);
@@ -46,7 +55,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             Action act = () => _ = new DiagnosticReport(null, [], [],
                 new PatchComparisonResult([], 0, 0),
                 new RetargetHarmonyStatus(false, false, false, ""), new EnvironmentInfo(false, false, false),
-                [], [], DateTime.UtcNow);
+                CreateDefaultDllIntegrityReport(), [], [], DateTime.UtcNow);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("mods");
         }
@@ -57,7 +66,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             Action act = () => _ = new DiagnosticReport([], null, [],
                 new PatchComparisonResult([], 0, 0),
                 new RetargetHarmonyStatus(false, false, false, ""), new EnvironmentInfo(false, false, false),
-                [], [], DateTime.UtcNow);
+                CreateDefaultDllIntegrityReport(), [], [], DateTime.UtcNow);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("patches");
         }
@@ -68,7 +77,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             Action act = () => _ = new DiagnosticReport([], [], null,
                 new PatchComparisonResult([], 0, 0),
                 new RetargetHarmonyStatus(false, false, false, ""), new EnvironmentInfo(false, false, false),
-                [], [], DateTime.UtcNow);
+                CreateDefaultDllIntegrityReport(), [], [], DateTime.UtcNow);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("assemblies");
         }
@@ -79,7 +88,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             Action act = () => _ = new DiagnosticReport([], [], [],
                 null,
                 new RetargetHarmonyStatus(false, false, false, ""), new EnvironmentInfo(false, false, false),
-                [], [], DateTime.UtcNow);
+                CreateDefaultDllIntegrityReport(), [], [], DateTime.UtcNow);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("patchComparison");
         }
@@ -90,7 +99,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             Action act = () => _ = new DiagnosticReport([], [], [],
                 new PatchComparisonResult([], 0, 0),
                 null, new EnvironmentInfo(false, false, false),
-                [], [], DateTime.UtcNow);
+                CreateDefaultDllIntegrityReport(), [], [], DateTime.UtcNow);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("retargetHarmonyStatus");
         }
@@ -101,9 +110,20 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             Action act = () => _ = new DiagnosticReport([], [], [],
                 new PatchComparisonResult([], 0, 0),
                 new RetargetHarmonyStatus(false, false, false, ""), null,
-                [], [], DateTime.UtcNow);
+                CreateDefaultDllIntegrityReport(), [], [], DateTime.UtcNow);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("environmentInfo");
+        }
+
+        [Fact]
+        public void Constructor_throws_when_dllIntegrity_is_null()
+        {
+            Action act = () => _ = new DiagnosticReport([], [], [],
+                new PatchComparisonResult([], 0, 0),
+                new RetargetHarmonyStatus(false, false, false, ""), new EnvironmentInfo(false, false, false),
+                null, [], [], DateTime.UtcNow);
+
+            act.Should().Throw<ArgumentNullException>().WithParameterName("dllIntegrity");
         }
 
         [Fact]
@@ -112,7 +132,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             Action act = () => _ = new DiagnosticReport([], [], [],
                 new PatchComparisonResult([], 0, 0),
                 new RetargetHarmonyStatus(false, false, false, ""), new EnvironmentInfo(false, false, false),
-                null, [], DateTime.UtcNow);
+                CreateDefaultDllIntegrityReport(), null, [], DateTime.UtcNow);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("warnings");
         }
@@ -123,7 +143,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             Action act = () => _ = new DiagnosticReport([], [], [],
                 new PatchComparisonResult([], 0, 0),
                 new RetargetHarmonyStatus(false, false, false, ""), new EnvironmentInfo(false, false, false),
-                [], null, DateTime.UtcNow);
+                CreateDefaultDllIntegrityReport(), [], null, DateTime.UtcNow);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("debugInfo");
         }

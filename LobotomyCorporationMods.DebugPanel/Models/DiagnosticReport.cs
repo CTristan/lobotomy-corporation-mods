@@ -20,6 +20,7 @@ namespace LobotomyCorporationMods.DebugPanel.Models
             PatchComparisonResult patchComparison,
             RetargetHarmonyStatus retargetHarmonyStatus,
             EnvironmentInfo environmentInfo,
+            DllIntegrityReport dllIntegrity,
             IList<string> warnings,
             IList<string> debugInfo,
             DateTime collectedAt)
@@ -30,6 +31,7 @@ namespace LobotomyCorporationMods.DebugPanel.Models
             PatchComparison = Guard.Against.Null(patchComparison, nameof(patchComparison));
             RetargetHarmonyStatus = Guard.Against.Null(retargetHarmonyStatus, nameof(retargetHarmonyStatus));
             EnvironmentInfo = Guard.Against.Null(environmentInfo, nameof(environmentInfo));
+            DllIntegrity = Guard.Against.Null(dllIntegrity, nameof(dllIntegrity));
             Warnings = Guard.Against.Null(warnings, nameof(warnings));
             DebugInfo = Guard.Against.Null(debugInfo, nameof(debugInfo));
             CollectedAt = collectedAt;
@@ -46,6 +48,8 @@ namespace LobotomyCorporationMods.DebugPanel.Models
         public RetargetHarmonyStatus RetargetHarmonyStatus { get; private set; }
 
         public EnvironmentInfo EnvironmentInfo { get; private set; }
+
+        public DllIntegrityReport DllIntegrity { get; private set; }
 
         public IList<string> Warnings { get; private set; }
 

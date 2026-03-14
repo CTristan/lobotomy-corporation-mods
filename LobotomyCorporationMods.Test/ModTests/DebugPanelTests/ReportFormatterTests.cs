@@ -23,6 +23,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             PatchComparisonResult? patchComparison = null,
             RetargetHarmonyStatus? retargetHarmonyStatus = null,
             EnvironmentInfo? environmentInfo = null,
+            DllIntegrityReport? dllIntegrity = null,
             IList<string>? warnings = null,
             IList<string>? debugInfo = null,
             DateTime? collectedAt = null)
@@ -34,6 +35,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
                 patchComparison ?? new PatchComparisonResult([], 0, 0),
                 retargetHarmonyStatus ?? new RetargetHarmonyStatus(false, false, false, "Not detected"),
                 environmentInfo ?? new EnvironmentInfo(false, false, false),
+                dllIntegrity ?? new DllIntegrityReport([], false, string.Empty, false, string.Empty, -1, false, 0, [], "No findings"),
                 warnings ?? [],
                 debugInfo ?? [],
                 collectedAt ?? DateTime.UtcNow);

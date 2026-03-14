@@ -22,5 +22,7 @@ namespace LobotomyCorporationMods.DebugPanel.Interfaces
         IInfoCollector<RetargetHarmonyStatus> CreateRetargetHarmonyDetector();
 
         IExpectedPatchSource CreateExpectedPatchSource();
+
+        IInfoCollector<DllIntegrityReport> CreateDllIntegrityCollector();
     }
 }

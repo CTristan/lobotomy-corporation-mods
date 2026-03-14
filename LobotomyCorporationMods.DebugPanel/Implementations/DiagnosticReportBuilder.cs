@@ -51,6 +51,7 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             var patchComparison = CompareExpectedWithActual(mods, expectedPatches, patches);
             CorrelatePatchesWithMods(mods, patches);
 
+            var dllIntegrity = CollectDllIntegritySafe(warnings);
             var environmentInfo = DetectEnvironmentSafe(warnings);
 
             return new DiagnosticReport(
@@ -60,6 +61,7 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
                 patchComparison,
                 retargetHarmonyStatus,
                 environmentInfo,
+                dllIntegrity,
                 warnings,
                 debugInfo,
                 DateTime.UtcNow);
@@ -76,6 +78,30 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
                 warnings.Add("RetargetHarmonyDetector failed: " + ex.Message);
 
                 return new RetargetHarmonyStatus(false, false, false, "Detection failed: " + ex.Message);
+            }
+        }
+
+        private DllIntegrityReport CollectDllIntegritySafe(IList<string> warnings)
+        {
+            try
+            {
+                return _collectorFactory.CreateDllIntegrityCollector().Collect();
+            }
+            catch (Exception ex)
+            {
+                warnings.Add("DllIntegrityCollector failed: " + ex.Message);
+
+                return new DllIntegrityReport(
+                    new List<DllIntegrityFinding>(),
+                    false,
+                    string.Empty,
+                    false,
+                    string.Empty,
+                    -1,
+                    false,
+                    0,
+                    new List<string>(),
+                    "Collection failed: " + ex.Message);
             }
         }
 

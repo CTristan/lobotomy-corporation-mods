@@ -46,7 +46,12 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
                 var pluginInfoSource = new ReflectionBepInExPluginInfoSource();
                 var classifier = new HarmonyVersionClassifier();
 
-                var factory = new CollectorFactory(detector, harmony1Source, harmony2Source, assemblySource, pluginInfoSource, classifier);
+                var basicDllInspector = new BasicDllFileInspector(new BytePatternScanner());
+                var cecilDllInspector = new CecilDllFileInspector();
+                var shimArtifactSource = new FileSystemShimArtifactSource();
+                var loadedAssemblySource = new AppDomainLoadedAssemblySource();
+
+                var factory = new CollectorFactory(detector, harmony1Source, harmony2Source, assemblySource, pluginInfoSource, classifier, basicDllInspector, cecilDllInspector, shimArtifactSource, loadedAssemblySource);
                 _reportBuilder = new DiagnosticReportBuilder(factory, detector);
                 _overlay = new DiagnosticOverlay();
                 _inputHandler = new InputHandler(_config);

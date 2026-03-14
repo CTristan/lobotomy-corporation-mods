@@ -25,6 +25,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         private readonly Mock<IInfoCollector<IList<AssemblyInfo>>> _mockAssemblyCollector;
         private readonly Mock<IInfoCollector<RetargetHarmonyStatus>> _mockRetargetDetector;
         private readonly Mock<IExpectedPatchSource> _mockExpectedPatchSource;
+        private readonly Mock<IInfoCollector<DllIntegrityReport>> _mockDllIntegrityCollector;
 
         public DiagnosticReportBuilderTests()
         {
@@ -36,6 +37,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             _mockAssemblyCollector = new Mock<IInfoCollector<IList<AssemblyInfo>>>();
             _mockRetargetDetector = new Mock<IInfoCollector<RetargetHarmonyStatus>>();
             _mockExpectedPatchSource = new Mock<IExpectedPatchSource>();
+            _mockDllIntegrityCollector = new Mock<IInfoCollector<DllIntegrityReport>>();
 
             _mockFactory.Setup(f => f.CreateActivePatchCollector()).Returns(_mockPatchCollector.Object);
             _mockFactory.Setup(f => f.CreateBaseModCollector()).Returns(_mockBaseModCollector.Object);
@@ -43,12 +45,14 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             _mockFactory.Setup(f => f.CreateAssemblyInfoCollector()).Returns(_mockAssemblyCollector.Object);
             _mockFactory.Setup(f => f.CreateRetargetHarmonyDetector()).Returns(_mockRetargetDetector.Object);
             _mockFactory.Setup(f => f.CreateExpectedPatchSource()).Returns(_mockExpectedPatchSource.Object);
+            _mockFactory.Setup(f => f.CreateDllIntegrityCollector()).Returns(_mockDllIntegrityCollector.Object);
 
             _mockPatchCollector.Setup(c => c.Collect()).Returns([]);
             _mockBaseModCollector.Setup(c => c.Collect()).Returns([]);
             _mockBepInExPluginCollector.Setup(c => c.Collect()).Returns([]);
             _mockAssemblyCollector.Setup(c => c.Collect()).Returns([]);
             _mockRetargetDetector.Setup(c => c.Collect()).Returns(new RetargetHarmonyStatus(false, false, false, "Not detected"));
+            _mockDllIntegrityCollector.Setup(c => c.Collect()).Returns(new DllIntegrityReport([], false, string.Empty, false, string.Empty, -1, false, 0, [], "No findings"));
             _mockExpectedPatchSource.Setup(s => s.GetExpectedPatches(It.IsAny<IList<string>>())).Returns([]);
             _mockDetector.Setup(d => d.DetectEnvironment()).Returns(new EnvironmentInfo(false, false, false));
         }
@@ -310,6 +314,36 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             report.EnvironmentInfo.IsHarmony2Available.Should().BeTrue();
             report.EnvironmentInfo.IsBepInExAvailable.Should().BeTrue();
             report.EnvironmentInfo.IsMonoCecilAvailable.Should().BeFalse();
+        }
+
+        [Fact]
+        public void BuildReport_includes_dll_integrity_data()
+        {
+            var findings = new List<DllIntegrityFinding>
+            {
+                new("/path/mod.dll", "mod.dll", FindingSeverity.Info, [], [], false, "", false, "Not modified"),
+            };
+            var dllIntegrity = new DllIntegrityReport(findings, true, "/backup", false, "", -1, false, 0, [], "1 DLLs checked, 0 rewritten");
+            _mockDllIntegrityCollector.Setup(c => c.Collect()).Returns(dllIntegrity);
+
+            var builder = CreateBuilder();
+            var report = builder.BuildReport();
+
+            report.DllIntegrity.Should().BeSameAs(dllIntegrity);
+            report.DllIntegrity.Findings.Should().HaveCount(1);
+        }
+
+        [Fact]
+        public void BuildReport_captures_dll_integrity_collector_failure_as_warning()
+        {
+            _mockDllIntegrityCollector.Setup(c => c.Collect()).Throws(new InvalidOperationException("integrity error"));
+
+            var builder = CreateBuilder();
+            var report = builder.BuildReport();
+
+            report.Warnings.Should().Contain(w => w.Contains("DllIntegrityCollector failed") && w.Contains("integrity error"));
+            report.DllIntegrity.Findings.Should().BeEmpty();
+            report.DllIntegrity.Summary.Should().Contain("Collection failed");
         }
     }
 }

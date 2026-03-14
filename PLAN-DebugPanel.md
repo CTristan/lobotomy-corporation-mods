@@ -331,10 +331,9 @@ types before checking `using` directives, causing CS1729 errors.
 
 ### Phase 7: DLL integrity detection — data models and collector
 
-- [ ] Create `FindingSeverity` enum — `Info`, `Warning`, `Error`
-- [ ] Create `LoadedAssemblyInfo` data class — `Name`, `Location`,
-  `References` (list of reference names)
-- [ ] Create `DllIntegrityFinding` model:
+- [x] Create `FindingSeverity` enum — `Info`, `Warning`, `Error`
+- [x] `LoadedAssemblyInfo` data class — already existed from Phase 6
+- [x] Create `DllIntegrityFinding` model:
   - `DllPath` (string) — full path to DLL on disk
   - `DllName` (string) — filename only
   - `FindingSeverity` (enum)
@@ -344,7 +343,7 @@ types before checking `using` directives, causing CS1729 errors.
   - `BackupPath` (string)
   - `WasRewritten` (bool) — true if on-disk differs from backup/original
   - `Summary` (string) — human-readable description
-- [ ] Create `DllIntegrityReport` model:
+- [x] Create `DllIntegrityReport` model:
   - `Findings` (IList<DllIntegrityFinding>)
   - `ShimBackupDirectoryExists` (bool)
   - `ShimBackupDirectoryPath` (string)
@@ -355,10 +354,11 @@ types before checking `using` directives, causing CS1729 errors.
   - `TotalRewrittenCount` (int)
   - `Warnings` (IList<string>)
   - `Summary` (string) — overall status
-- [ ] Create `DllIntegrityCollector` implementing
+- [x] Create `DllIntegrityCollector` implementing
   `IInfoCollector<DllIntegrityReport>` (Category 1)
   - Constructor takes `IDllFileInspector`, `IShimArtifactSource`,
     `ILoadedAssemblyReferenceSource`
+  - Uses `BytePatternScanner` internally for backup byte scanning
   - Algorithm:
     1. Check shim backup dir and interop cache existence
     2. Get loaded BaseMod assemblies from `ILoadedAssemblyReferenceSource`
@@ -375,10 +375,17 @@ types before checking `using` directives, causing CS1729 errors.
        | DLL unreadable | Warning | "Unable to read DLL: {error}" |
 
     5. Build summary message
-- [ ] Add `DllIntegrityReport DllIntegrity` property to `DiagnosticReport`
-- [ ] Update `DiagnosticReportBuilder` to include `DllIntegrityCollector`
-- [ ] Update collector factory to create appropriate `IDllFileInspector` based
-  on `IEnvironmentDetector.IsMonoCecilAvailable`
+- [x] Add `DllIntegrityReport DllIntegrity` property to `DiagnosticReport`
+- [x] Update `DiagnosticReportBuilder` to include `DllIntegrityCollector`
+  with `CollectDllIntegritySafe` graceful degradation pattern
+- [x] Update `CollectorFactory` with dual `IDllFileInspector` parameters
+  (basic + Cecil), selects based on `IEnvironmentDetector.IsMonoCecilAvailable`
+- [x] Update `DebugPanelBehaviour` composition root with new dependencies
+- [x] Tests: 37 new tests (DllIntegrityFindingTests, DllIntegrityReportTests,
+  DllIntegrityCollectorTests, updated DiagnosticReportTests,
+  DiagnosticReportBuilderTests, CollectorFactoryTests, ReportFormatterTests,
+  LogFileWriterTests)
+- [x] Verify: solution builds, all 498 tests pass, CI check passes
 
 ### Phase 8: DLL integrity detection — overlay and formatting
 

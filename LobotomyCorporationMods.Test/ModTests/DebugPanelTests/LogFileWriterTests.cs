@@ -112,6 +112,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
                 new PatchComparisonResult([], 0, 0),
                 new RetargetHarmonyStatus(false, false, false, "Not detected"),
                 new EnvironmentInfo(false, false, false),
+                new DllIntegrityReport([], false, string.Empty, false, string.Empty, -1, false, 0, [], "No findings"),
                 [],
                 [],
                 DateTime.UtcNow);
