@@ -341,5 +341,349 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
 
             lines.Should().Contain(l => l.Contains("[0 loaded]"));
         }
+
+        private static DllIntegrityFinding CreateFinding(
+            string dllName = "Test.dll",
+            FindingSeverity severity = FindingSeverity.Info,
+            bool wasRewritten = false,
+            bool hasBackup = false,
+            string summary = "Not modified",
+            IList<string>? onDiskRefs = null,
+            IList<string>? originalRefs = null,
+            string backupPath = "")
+        {
+            return new DllIntegrityFinding(
+                "/path/" + dllName, dllName, severity,
+                onDiskRefs ?? [], originalRefs ?? [],
+                hasBackup, backupPath, wasRewritten, summary);
+        }
+
+        private static DllIntegrityReport CreateDllIntegrityReport(
+            IList<DllIntegrityFinding>? findings = null,
+            bool shimBackupDirectoryExists = false,
+            string shimBackupDirectoryPath = "",
+            bool interopCacheExists = false,
+            string interopCachePath = "",
+            int interopCacheEntryCount = -1,
+            bool monoCecilAvailable = false,
+            int totalRewrittenCount = 0,
+            IList<string>? warnings = null,
+            string summary = "No findings")
+        {
+            return new DllIntegrityReport(
+                findings ?? [],
+                shimBackupDirectoryExists, shimBackupDirectoryPath,
+                interopCacheExists, interopCachePath, interopCacheEntryCount,
+                monoCecilAvailable, totalRewrittenCount,
+                warnings ?? [], summary);
+        }
+
+        [Fact]
+        public void FormatForOverlay_includes_dll_integrity_header_with_counts()
+        {
+            var findings = new List<DllIntegrityFinding>
+            {
+                CreateFinding("ModA.dll"),
+                CreateFinding("ModB.dll"),
+                CreateFinding("ModC.dll"),
+            };
+            var dllIntegrity = CreateDllIntegrityReport(findings: findings, totalRewrittenCount: 1);
+            var report = CreateReport(dllIntegrity: dllIntegrity);
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForOverlay(report);
+
+            lines.Should().Contain(l => l.Contains("DLL Integrity (3 checked, 1 rewritten)"));
+        }
+
+        [Fact]
+        public void FormatForOverlay_shows_none_when_no_dll_findings()
+        {
+            var report = CreateReport();
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForOverlay(report);
+
+            var headerIndex = lines.ToList().FindIndex(l => l.Contains("DLL Integrity", StringComparison.Ordinal));
+            lines[headerIndex + 1].Should().Be("  - None");
+        }
+
+        [Fact]
+        public void FormatForOverlay_includes_finding_name_and_summary()
+        {
+            var findings = new List<DllIntegrityFinding> { CreateFinding("MyMod.dll", summary: "Not modified") };
+            var dllIntegrity = CreateDllIntegrityReport(findings: findings);
+            var report = CreateReport(dllIntegrity: dllIntegrity);
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForOverlay(report);
+
+            lines.Should().Contain(l => l.Contains("MyMod.dll") && l.Contains("Not modified"));
+        }
+
+        [Fact]
+        public void FormatForOverlay_includes_severity_label_for_info()
+        {
+            var findings = new List<DllIntegrityFinding> { CreateFinding(severity: FindingSeverity.Info) };
+            var dllIntegrity = CreateDllIntegrityReport(findings: findings);
+            var report = CreateReport(dllIntegrity: dllIntegrity);
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForOverlay(report);
+
+            lines.Should().Contain(l => l.Contains("[Info]"));
+        }
+
+        [Fact]
+        public void FormatForOverlay_includes_severity_label_for_warning()
+        {
+            var findings = new List<DllIntegrityFinding> { CreateFinding(severity: FindingSeverity.Warning) };
+            var dllIntegrity = CreateDllIntegrityReport(findings: findings);
+            var report = CreateReport(dllIntegrity: dllIntegrity);
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForOverlay(report);
+
+            lines.Should().Contain(l => l.Contains("[Warning]"));
+        }
+
+        [Fact]
+        public void FormatForOverlay_includes_severity_label_for_error()
+        {
+            var findings = new List<DllIntegrityFinding> { CreateFinding(severity: FindingSeverity.Error) };
+            var dllIntegrity = CreateDllIntegrityReport(findings: findings);
+            var report = CreateReport(dllIntegrity: dllIntegrity);
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForOverlay(report);
+
+            lines.Should().Contain(l => l.Contains("[Error]"));
+        }
+
+        [Fact]
+        public void FormatForOverlay_includes_reference_details_for_rewritten_dll()
+        {
+            var findings = new List<DllIntegrityFinding>
+            {
+                CreateFinding(wasRewritten: true, onDiskRefs: ["0Harmony109"], originalRefs: ["0Harmony"]),
+            };
+            var dllIntegrity = CreateDllIntegrityReport(findings: findings, totalRewrittenCount: 1);
+            var report = CreateReport(dllIntegrity: dllIntegrity);
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForOverlay(report);
+
+            lines.Should().Contain(l => l.Contains("On-disk: 0Harmony109") && l.Contains("Original: 0Harmony"));
+        }
+
+        [Fact]
+        public void FormatForOverlay_omits_reference_details_for_unmodified_dll()
+        {
+            var findings = new List<DllIntegrityFinding> { CreateFinding(wasRewritten: false) };
+            var dllIntegrity = CreateDllIntegrityReport(findings: findings);
+            var report = CreateReport(dllIntegrity: dllIntegrity);
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForOverlay(report);
+
+            lines.Should().NotContain(l => l.Contains("On-disk:"));
+        }
+
+        [Fact]
+        public void FormatForOverlay_shows_deep_inspection_mode()
+        {
+            var dllIntegrity = CreateDllIntegrityReport(monoCecilAvailable: true);
+            var report = CreateReport(dllIntegrity: dllIntegrity);
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForOverlay(report);
+
+            lines.Should().Contain(l => l.Contains("Deep (Mono.Cecil)"));
+        }
+
+        [Fact]
+        public void FormatForOverlay_shows_basic_inspection_mode()
+        {
+            var dllIntegrity = CreateDllIntegrityReport(monoCecilAvailable: false);
+            var report = CreateReport(dllIntegrity: dllIntegrity);
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForOverlay(report);
+
+            lines.Should().Contain(l => l.Contains("Basic (byte scan)"));
+        }
+
+        [Fact]
+        public void FormatForLogFile_includes_dll_integrity_section_header()
+        {
+            var report = CreateReport();
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report);
+
+            lines.Should().Contain(l => l.Contains("DLL INTEGRITY"));
+        }
+
+        [Fact]
+        public void FormatForLogFile_includes_dll_integrity_summary()
+        {
+            var dllIntegrity = CreateDllIntegrityReport(summary: "All DLLs clean");
+            var report = CreateReport(dllIntegrity: dllIntegrity);
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report);
+
+            lines.Should().Contain("  Summary: All DLLs clean");
+        }
+
+        [Fact]
+        public void FormatForLogFile_includes_total_checked_and_rewritten_counts()
+        {
+            var findings = new List<DllIntegrityFinding> { CreateFinding(), CreateFinding("Other.dll") };
+            var dllIntegrity = CreateDllIntegrityReport(findings: findings, totalRewrittenCount: 1);
+            var report = CreateReport(dllIntegrity: dllIntegrity);
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report);
+
+            lines.Should().Contain("  Total Checked: 2");
+            lines.Should().Contain("  Total Rewritten: 1");
+        }
+
+        [Fact]
+        public void FormatForLogFile_includes_inspection_mode()
+        {
+            var dllIntegrity = CreateDllIntegrityReport(monoCecilAvailable: true);
+            var report = CreateReport(dllIntegrity: dllIntegrity);
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report);
+
+            lines.Should().Contain("  Inspection Mode: Deep (Mono.Cecil)");
+        }
+
+        [Fact]
+        public void FormatForLogFile_includes_shim_backup_when_exists()
+        {
+            var dllIntegrity = CreateDllIntegrityReport(shimBackupDirectoryExists: true, shimBackupDirectoryPath: "/game/BepInEx_Shim_Backup");
+            var report = CreateReport(dllIntegrity: dllIntegrity);
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report);
+
+            lines.Should().Contain("  Shim Backup: /game/BepInEx_Shim_Backup");
+        }
+
+        [Fact]
+        public void FormatForLogFile_shows_shim_backup_not_found()
+        {
+            var dllIntegrity = CreateDllIntegrityReport(shimBackupDirectoryExists: false);
+            var report = CreateReport(dllIntegrity: dllIntegrity);
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report);
+
+            lines.Should().Contain("  Shim Backup: Not found");
+        }
+
+        [Fact]
+        public void FormatForLogFile_includes_interop_cache_when_exists()
+        {
+            var dllIntegrity = CreateDllIntegrityReport(interopCacheExists: true, interopCachePath: "/game/BepInEx/cache/harmony_interop_cache.dat", interopCacheEntryCount: 5);
+            var report = CreateReport(dllIntegrity: dllIntegrity);
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report);
+
+            lines.Should().Contain(l => l.Contains("/game/BepInEx/cache/harmony_interop_cache.dat") && l.Contains("5 entries"));
+        }
+
+        [Fact]
+        public void FormatForLogFile_shows_interop_cache_not_found()
+        {
+            var dllIntegrity = CreateDllIntegrityReport(interopCacheExists: false);
+            var report = CreateReport(dllIntegrity: dllIntegrity);
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report);
+
+            lines.Should().Contain("  Interop Cache: Not found");
+        }
+
+        [Fact]
+        public void FormatForLogFile_includes_finding_severity_and_path()
+        {
+            var findings = new List<DllIntegrityFinding>
+            {
+                new("/mods/MyMod.dll", "MyMod.dll", FindingSeverity.Warning, [], [], false, "", false, "Shimmed"),
+            };
+            var dllIntegrity = CreateDllIntegrityReport(findings: findings);
+            var report = CreateReport(dllIntegrity: dllIntegrity);
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report);
+
+            lines.Should().Contain(l => l.Contains("[Warning]") && l.Contains("MyMod.dll") && l.Contains("Shimmed"));
+            lines.Should().Contain("      Path: /mods/MyMod.dll");
+        }
+
+        [Fact]
+        public void FormatForLogFile_includes_reference_details_for_rewritten()
+        {
+            var findings = new List<DllIntegrityFinding>
+            {
+                CreateFinding(wasRewritten: true, onDiskRefs: ["0Harmony109"], originalRefs: ["0Harmony"]),
+            };
+            var dllIntegrity = CreateDllIntegrityReport(findings: findings, totalRewrittenCount: 1);
+            var report = CreateReport(dllIntegrity: dllIntegrity);
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report);
+
+            lines.Should().Contain("      On-disk refs: 0Harmony109");
+            lines.Should().Contain("      Original refs: 0Harmony");
+        }
+
+        [Fact]
+        public void FormatForLogFile_includes_backup_path_when_exists()
+        {
+            var findings = new List<DllIntegrityFinding>
+            {
+                CreateFinding(hasBackup: true, backupPath: "/backup/Test.dll"),
+            };
+            var dllIntegrity = CreateDllIntegrityReport(findings: findings);
+            var report = CreateReport(dllIntegrity: dllIntegrity);
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report);
+
+            lines.Should().Contain("      Backup: /backup/Test.dll");
+        }
+
+        [Fact]
+        public void FormatForLogFile_includes_dll_integrity_warnings()
+        {
+            var dllIntegrity = CreateDllIntegrityReport(warnings: ["Backup directory missing"]);
+            var report = CreateReport(dllIntegrity: dllIntegrity);
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report);
+
+            lines.Should().Contain("  Warning: Backup directory missing");
+        }
+
+        [Fact]
+        public void FormatForLogFile_dll_integrity_section_after_assemblies()
+        {
+            var report = CreateReport();
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report);
+
+            var linesList = lines.ToList();
+            var asmIndex = linesList.FindIndex(l => l.Contains("LOADED ASSEMBLIES", StringComparison.Ordinal));
+            var dllIndex = linesList.FindIndex(l => l.Contains("DLL INTEGRITY", StringComparison.Ordinal));
+            dllIndex.Should().BeGreaterThan(asmIndex);
+        }
     }
 }

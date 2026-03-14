@@ -33,6 +33,7 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             AddMods(lines, lmmMods);
 
             lines.Add("RetargetHarmony: " + report.RetargetHarmonyStatus.Message);
+            AddDllIntegrityOverlay(lines, report.DllIntegrity);
             lines.Add("Active Harmony Patches: " + report.Patches.Count + " patches");
 
             if (report.PatchComparison.HasMissingPatches)
@@ -99,6 +100,10 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             lines.Add(string.Empty);
             lines.Add("========== LOADED ASSEMBLIES (" + report.Assemblies.Count + ") ==========");
             AddAssemblies(lines, report.Assemblies);
+
+            lines.Add(string.Empty);
+            lines.Add("========== DLL INTEGRITY (" + report.DllIntegrity.Findings.Count + ") ==========");
+            AddDllIntegrityLogFile(lines, report.DllIntegrity);
 
             if (report.DebugInfo.Count > 0)
             {
@@ -240,6 +245,115 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
                 var harmonyLabel = assembly.IsHarmonyRelated ? " [Harmony]" : string.Empty;
                 lines.Add("  - " + assembly.Name + " v" + assembly.Version + " :: " + assembly.Location + harmonyLabel);
             }
+        }
+
+        private static void AddDllIntegrityOverlay(List<string> lines, DllIntegrityReport dllIntegrity)
+        {
+            lines.Add("DLL Integrity (" + dllIntegrity.Findings.Count + " checked, " + dllIntegrity.TotalRewrittenCount + " rewritten):");
+
+            if (dllIntegrity.Findings.Count == 0)
+            {
+                lines.Add("  - None");
+            }
+            else
+            {
+                foreach (var finding in dllIntegrity.Findings)
+                {
+                    lines.Add("  " + finding.DllName + " [" + GetSeverityLabel(finding.Severity) + "] \u2014 " + finding.Summary);
+                    if (finding.WasRewritten)
+                    {
+                        lines.Add("    On-disk: " + JoinStrings(finding.OnDiskHarmonyReferences) + " | Original: " + JoinStrings(finding.OriginalHarmonyReferences));
+                    }
+                }
+            }
+
+            lines.Add("  Inspection: " + (dllIntegrity.MonoCecilAvailable ? "Deep (Mono.Cecil)" : "Basic (byte scan)"));
+        }
+
+        private static void AddDllIntegrityLogFile(List<string> lines, DllIntegrityReport dllIntegrity)
+        {
+            lines.Add("  Summary: " + dllIntegrity.Summary);
+            lines.Add("  Total Checked: " + dllIntegrity.Findings.Count);
+            lines.Add("  Total Rewritten: " + dllIntegrity.TotalRewrittenCount);
+            lines.Add("  Inspection Mode: " + (dllIntegrity.MonoCecilAvailable ? "Deep (Mono.Cecil)" : "Basic (byte scan)"));
+
+            if (dllIntegrity.ShimBackupDirectoryExists)
+            {
+                lines.Add("  Shim Backup: " + dllIntegrity.ShimBackupDirectoryPath);
+            }
+            else
+            {
+                lines.Add("  Shim Backup: Not found");
+            }
+
+            if (dllIntegrity.InteropCacheExists)
+            {
+                lines.Add("  Interop Cache: " + dllIntegrity.InteropCachePath + " (" + dllIntegrity.InteropCacheEntryCount + " entries)");
+            }
+            else
+            {
+                lines.Add("  Interop Cache: Not found");
+            }
+
+            if (dllIntegrity.Findings.Count > 0)
+            {
+                lines.Add(string.Empty);
+                lines.Add("  Findings:");
+                foreach (var finding in dllIntegrity.Findings)
+                {
+                    lines.Add("    [" + GetSeverityLabel(finding.Severity) + "] " + finding.DllName + " \u2014 " + finding.Summary);
+                    lines.Add("      Path: " + finding.DllPath);
+                    if (finding.WasRewritten)
+                    {
+                        lines.Add("      On-disk refs: " + JoinStrings(finding.OnDiskHarmonyReferences));
+                        lines.Add("      Original refs: " + JoinStrings(finding.OriginalHarmonyReferences));
+                    }
+
+                    if (finding.HasBackup)
+                    {
+                        lines.Add("      Backup: " + finding.BackupPath);
+                    }
+                }
+            }
+
+            if (dllIntegrity.Warnings.Count > 0)
+            {
+                foreach (var warning in dllIntegrity.Warnings)
+                {
+                    lines.Add("  Warning: " + warning);
+                }
+            }
+        }
+
+        private static string GetSeverityLabel(FindingSeverity severity)
+        {
+            if (severity == FindingSeverity.Info)
+            {
+                return "Info";
+            }
+
+            if (severity == FindingSeverity.Warning)
+            {
+                return "Warning";
+            }
+
+            return "Error";
+        }
+
+        private static string JoinStrings(IList<string> items)
+        {
+            if (items.Count == 0)
+            {
+                return "(none)";
+            }
+
+            var result = items[0];
+            for (var i = 1; i < items.Count; i++)
+            {
+                result += ", " + items[i];
+            }
+
+            return result;
         }
     }
 }

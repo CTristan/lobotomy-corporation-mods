@@ -3,6 +3,7 @@
 #region
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
@@ -74,6 +75,11 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
 
             GUILayout.Space(8f);
             GUILayout.Label("RetargetHarmony: " + _currentReport.RetargetHarmonyStatus.Message);
+
+            if (_currentConfig.ShowDllIntegrity)
+            {
+                DrawDllIntegritySection(_currentReport);
+            }
 
             if (_currentConfig.ShowActivePatches)
             {
@@ -247,6 +253,85 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             {
                 GUILayout.Label("- None");
             }
+        }
+
+        private static void DrawDllIntegritySection(DiagnosticReport report)
+        {
+            GUILayout.Space(8f);
+            GUILayout.Label("DLL Integrity (" + report.DllIntegrity.Findings.Count + " checked, " + report.DllIntegrity.TotalRewrittenCount + " rewritten)", GUI.skin.box);
+
+            if (report.DllIntegrity.Findings.Count == 0)
+            {
+                GUILayout.Label("  - None");
+            }
+            else
+            {
+                foreach (var finding in report.DllIntegrity.Findings)
+                {
+                    var originalColor = GUI.contentColor;
+                    GUI.contentColor = GetSeverityColor(finding.Severity);
+                    GUILayout.Label("  " + finding.DllName + " \u2014 " + finding.Summary);
+                    if (finding.WasRewritten && (finding.OnDiskHarmonyReferences.Count > 0 || finding.OriginalHarmonyReferences.Count > 0))
+                    {
+                        var onDiskRefs = JoinReferences(finding.OnDiskHarmonyReferences);
+                        var originalRefs = JoinReferences(finding.OriginalHarmonyReferences);
+                        GUILayout.Label("           On-disk: " + onDiskRefs + " | Original: " + originalRefs);
+                    }
+
+                    GUI.contentColor = originalColor;
+                }
+            }
+
+            if (report.DllIntegrity.ShimBackupDirectoryExists)
+            {
+                GUILayout.Label("  Shim Backup: " + report.DllIntegrity.ShimBackupDirectoryPath);
+            }
+            else
+            {
+                GUILayout.Label("  Shim Backup: Not found");
+            }
+
+            if (report.DllIntegrity.InteropCacheExists)
+            {
+                GUILayout.Label("  Interop Cache: " + report.DllIntegrity.InteropCachePath + " (" + report.DllIntegrity.InteropCacheEntryCount + " entries)");
+            }
+            else
+            {
+                GUILayout.Label("  Interop Cache: Not found");
+            }
+
+            GUILayout.Label("  Inspection Mode: " + (report.DllIntegrity.MonoCecilAvailable ? "Deep (Mono.Cecil)" : "Basic (byte scan)"));
+        }
+
+        private static Color GetSeverityColor(FindingSeverity severity)
+        {
+            if (severity == FindingSeverity.Info)
+            {
+                return new Color(0.66f, 1f, 0.66f, 1f);
+            }
+
+            if (severity == FindingSeverity.Warning)
+            {
+                return new Color(1f, 0.6f, 0.4f, 1f);
+            }
+
+            return new Color(1f, 0.4f, 0.4f, 1f);
+        }
+
+        private static string JoinReferences(IList<string> items)
+        {
+            if (items.Count == 0)
+            {
+                return "(none)";
+            }
+
+            var result = items[0];
+            for (var i = 1; i < items.Count; i++)
+            {
+                result += ", " + items[i];
+            }
+
+            return result;
         }
     }
 }

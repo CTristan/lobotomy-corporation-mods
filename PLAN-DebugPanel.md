@@ -389,26 +389,28 @@ types before checking `using` directives, causing CS1729 errors.
 
 ### Phase 8: DLL integrity detection — overlay and formatting
 
-- [ ] Add `DrawDllIntegritySection` to `DiagnosticOverlay`
+- [x] Add `DrawDllIntegritySection` to `DiagnosticOverlay`
   - Rendered after RetargetHarmony status, before Active Patches section
   - Toggleable via `showDllIntegrity` config field
-  - Color coding:
+  - Color coding via `GetSeverityColor`:
     - Green (`0.66f, 1f, 0.66f`) — Info (clean)
     - Orange (`1f, 0.6f, 0.4f`) — Warning (rewritten with backup)
     - Red (`1f, 0.4f, 0.4f`) — Error (rewritten without backup, unexpected)
-  - Layout:
-    ```
-    DLL Integrity (3 checked, 1 rewritten)
-      [green]  ModA.dll — Not modified
-      [orange] ModB.dll — Rewritten by BepInEx shim (backup available)
-               On-disk: 0Harmony109 | Original: 0Harmony
-      [red]    ModC.dll — Rewritten (no backup!)
-
-      Shim Backup: BepInEx_Shim_Backup/ (2 files)
-      Interop Cache: harmony_interop_cache.dat (5 entries)
-      Inspection Mode: Deep (Mono.Cecil) | Basic (byte scan)
-    ```
-- [ ] Add DLL integrity section to `IReportFormatter.FormatForLogFile()`
+  - Layout: header with checked/rewritten counts, per-finding severity-colored
+    labels with reference details for rewritten DLLs, infrastructure status
+    (shim backup, interop cache, inspection mode)
+- [x] Add DLL integrity section to `ReportFormatter.FormatForOverlay()`
+  - `AddDllIntegrityOverlay` with severity labels, reference details, inspection
+    mode
+- [x] Add DLL integrity section to `ReportFormatter.FormatForLogFile()`
+  - `AddDllIntegrityLogFile` with summary, counts, inspection mode, shim
+    backup/interop cache status, per-finding details with paths and backup info
+- [x] Add `GetSeverityLabel` and `JoinStrings` helper methods to
+  `ReportFormatter` (net35-safe string joining)
+- [x] Tests: 23 new tests in `ReportFormatterTests` covering overlay and log
+  file DLL integrity formatting (severity labels, reference details, inspection
+  mode, shim backup, interop cache, section ordering)
+- [x] Verify: solution builds, all 521 tests pass, CI check passes
 
 ### Phase 9: DLL integrity detection — testing
 
