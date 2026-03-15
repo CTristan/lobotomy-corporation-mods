@@ -118,5 +118,45 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
 
             result.Should().BeEmpty();
         }
+
+        [Fact]
+        public void FindHarmonyReferences_reports_pattern_only_once_even_with_multiple_occurrences()
+        {
+            var bytes = Encoding.UTF8.GetBytes("first 0Harmony then another 0Harmony end");
+
+            var result = _scanner.FindHarmonyReferences(bytes);
+
+            result.Should().ContainSingle().Which.Should().Be("0Harmony");
+        }
+
+        [Fact]
+        public void FindHarmonyReferences_returns_empty_for_bytes_shorter_than_shortest_pattern()
+        {
+            var bytes = "ABC"u8.ToArray();
+
+            var result = _scanner.FindHarmonyReferences(bytes);
+
+            result.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void FindHarmonyReferences_detects_pattern_at_start_of_bytes()
+        {
+            var bytes = Encoding.UTF8.GetBytes("0Harmony rest of data");
+
+            var result = _scanner.FindHarmonyReferences(bytes);
+
+            result.Should().ContainSingle().Which.Should().Be("0Harmony");
+        }
+
+        [Fact]
+        public void FindHarmonyReferences_detects_pattern_at_end_of_bytes()
+        {
+            var bytes = Encoding.UTF8.GetBytes("some data 0Harmony");
+
+            var result = _scanner.FindHarmonyReferences(bytes);
+
+            result.Should().ContainSingle().Which.Should().Be("0Harmony");
+        }
     }
 }

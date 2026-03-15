@@ -414,26 +414,42 @@ types before checking `using` directives, causing CS1729 errors.
 
 ### Phase 9: DLL integrity detection — testing
 
-- [ ] `DllIntegrityCollector` tests with mocked sources — all severity
-  combinations:
+- [x] `DllIntegrityCollector` tests with mocked sources — all severity
+  combinations (14 tests from Phase 7, 6 boundary tests added in Phase 9):
   - Clean DLL (no shimming, no backup) → Info
   - Shimmed DLL with backup available → Warning
   - Shimmed DLL without backup → Error
   - Unexpected reference name → Error
   - Unreadable DLL → Warning with error message
   - Empty BaseMods directory → empty report
-- [ ] `BasicDllFileInspector` tests — byte arrays with known patterns:
+  - No Harmony references → Info
+  - Null assembly entries → skipped
+  - Shimmed takes priority over unexpected reference
+  - Deep inspection availability reflected in report
+  - Interop cache count -1 when cache absent
+  - Mixed findings across multiple DLLs
+- [x] `BasicDllFileInspector` tests — Category 2 (`[AdapterClass]`,
+  `[ExcludeFromCodeCoverage]`), excluded from coverage. Extractable logic
+  tested via `BytePatternScanner` (14 tests from Phase 6, 4 boundary tests
+  added in Phase 9):
   - Contains `0Harmony` only → detected
   - Contains `0Harmony109` → detected (distinguishes from `0Harmony`)
   - Contains both → both detected
   - No Harmony references → empty list
-  - Partial match / string in non-reference context → handled appropriately
-- [ ] Severity classification boundary tests
-- [ ] Graceful degradation when Mono.Cecil unavailable — verify factory selects
-  `BasicDllFileInspector`, findings note "approximate" mode
-- [ ] Shim artifact detection tests — backup dir exists/missing, cache
-  readable/corrupt/missing
-- [ ] `DllIntegrityReport` summary generation tests
+  - Longest-first matching prevents false positives
+  - Multiple occurrences of same pattern → reported once
+  - Pattern at start/end of byte array → detected
+  - Bytes shorter than any pattern → empty list
+- [x] Severity classification boundary tests — covered by
+  `DllIntegrityCollectorTests` (shimmed priority, no Harmony refs, mixed DLLs)
+- [x] Graceful degradation when Mono.Cecil unavailable — `CollectorFactoryTests`
+  verifies basic inspector selected; `DllIntegrityCollectorTests` verifies
+  `MonoCecilAvailable` reflects inspector
+- [x] Shim artifact detection tests — `DllIntegrityCollectorTests` covers
+  backup dir exists/missing, cache exists/missing, backup read failure
+- [x] `DllIntegrityReport` summary generation tests — 6 tests in
+  `DllIntegrityReportTests` + summary assertions in collector tests
+- [x] Verify: solution builds, all 531 tests pass, CI check passes
 
 ### Phase 10: Integration and migration
 

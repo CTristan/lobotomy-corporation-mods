@@ -287,5 +287,108 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             report.Findings[0].OriginalHarmonyReferences.Should().BeEmpty();
             report.Warnings.Should().Contain(w => w.Contains("Unable to read backup") && w.Contains("corrupt backup"));
         }
+
+        [Fact]
+        public void Collect_returns_info_for_dll_with_no_harmony_references()
+        {
+            var assemblies = new List<LoadedAssemblyInfo>
+            {
+                new("TestMod", "/mods/TestMod.dll", ["mscorlib", "UnityEngine"]),
+            };
+            _mockAssemblySource.Setup(s => s.GetBaseModAssemblies()).Returns(assemblies);
+            _mockInspector.Setup(i => i.GetAssemblyReferences("/mods/TestMod.dll")).Returns(["mscorlib", "UnityEngine"]);
+
+            var collector = CreateCollector();
+            var report = collector.Collect();
+
+            report.Findings.Should().HaveCount(1);
+            report.Findings[0].Severity.Should().Be(FindingSeverity.Info);
+            report.Findings[0].Summary.Should().Be("Not modified");
+            report.Findings[0].WasRewritten.Should().BeFalse();
+        }
+
+        [Fact]
+        public void Collect_skips_null_assembly_entries()
+        {
+            var assemblies = new List<LoadedAssemblyInfo>
+            {
+                null!,
+                new("TestMod", "/mods/TestMod.dll", ["0Harmony"]),
+            };
+            _mockAssemblySource.Setup(s => s.GetBaseModAssemblies()).Returns(assemblies);
+            _mockInspector.Setup(i => i.GetAssemblyReferences("/mods/TestMod.dll")).Returns(["0Harmony"]);
+
+            var collector = CreateCollector();
+            var report = collector.Collect();
+
+            report.Findings.Should().HaveCount(1);
+            report.Findings[0].DllName.Should().Be("TestMod.dll");
+        }
+
+        [Fact]
+        public void Collect_reflects_deep_inspection_availability_in_report()
+        {
+            _mockInspector.Setup(i => i.IsDeepInspectionAvailable).Returns(true);
+
+            var collector = CreateCollector();
+            var report = collector.Collect();
+
+            report.MonoCecilAvailable.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Collect_shimmed_reference_takes_priority_over_unexpected()
+        {
+            var assemblies = new List<LoadedAssemblyInfo>
+            {
+                new("TestMod", "/mods/TestMod.dll", ["0Harmony109", "0Harmony12"]),
+            };
+            _mockAssemblySource.Setup(s => s.GetBaseModAssemblies()).Returns(assemblies);
+            _mockInspector.Setup(i => i.GetAssemblyReferences("/mods/TestMod.dll")).Returns(["0Harmony109", "0Harmony12"]);
+
+            var collector = CreateCollector();
+            var report = collector.Collect();
+
+            report.Findings.Should().HaveCount(1);
+            report.Findings[0].WasRewritten.Should().BeTrue();
+            report.Findings[0].Summary.Should().Contain("Rewritten by BepInEx shim");
+        }
+
+        [Fact]
+        public void Collect_returns_negative_one_cache_count_when_cache_not_exists()
+        {
+            _mockShimSource.Setup(s => s.InteropCacheExists).Returns(false);
+
+            var collector = CreateCollector();
+            var report = collector.Collect();
+
+            report.InteropCacheEntryCount.Should().Be(-1);
+            _mockShimSource.Verify(s => s.GetInteropCacheEntryCount(), Times.Never);
+        }
+
+        [Fact]
+        public void Collect_handles_mixed_findings_across_multiple_dlls()
+        {
+            var assemblies = new List<LoadedAssemblyInfo>
+            {
+                new("CleanMod", "/mods/CleanMod.dll", ["0Harmony"]),
+                new("ShimmedMod", "/mods/ShimmedMod.dll", ["0Harmony109"]),
+                new("BrokenMod", "/mods/BrokenMod.dll", ["0Harmony"]),
+            };
+            _mockAssemblySource.Setup(s => s.GetBaseModAssemblies()).Returns(assemblies);
+            _mockInspector.Setup(i => i.GetAssemblyReferences("/mods/CleanMod.dll")).Returns(["0Harmony"]);
+            _mockInspector.Setup(i => i.GetAssemblyReferences("/mods/ShimmedMod.dll")).Returns(["0Harmony109"]);
+            _mockInspector.Setup(i => i.GetAssemblyReferences("/mods/BrokenMod.dll")).Throws(new InvalidOperationException("locked"));
+
+            var collector = CreateCollector();
+            var report = collector.Collect();
+
+            report.Findings.Should().HaveCount(3);
+            report.Findings[0].Severity.Should().Be(FindingSeverity.Info);
+            report.Findings[1].Severity.Should().Be(FindingSeverity.Error);
+            report.Findings[2].Severity.Should().Be(FindingSeverity.Warning);
+            report.TotalRewrittenCount.Should().Be(1);
+            report.Summary.Should().Be("3 DLLs checked, 1 rewritten");
+        }
     }
 }
