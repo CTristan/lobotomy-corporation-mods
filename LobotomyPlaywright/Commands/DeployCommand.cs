@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using LobotomyPlaywright.Implementations.Configuration;
 using LobotomyPlaywright.Implementations.System;
@@ -20,10 +21,21 @@ namespace LobotomyPlaywright.Commands
     /// <param name="processRunner">The process runner.</param>
     public class DeployCommand(IConfigManager configManager, IFileSystem fileSystem, IProcessRunner processRunner)
     {
-        private const string PluginDllName = "LobotomyPlaywright.Plugin.dll";
-        private const string HarmonyDebugPanelDllName = "HarmonyDebugPanel.dll";
-        private const string RetargetHarmonyDllName = "RetargetHarmony.dll";
-        private static readonly string[] HarmonyInteropDlls = { "0Harmony109.dll", "0Harmony12.dll", "12Harmony.dll" };
+        private static readonly string[] s_harmonyInteropDlls = { "0Harmony109.dll", "0Harmony12.dll", "12Harmony.dll" };
+        private static readonly string[] s_modContentDirs = { "Info", "Assets", "Localize" };
+
+        private static readonly DeploymentTarget[] s_deploymentTargets =
+        [
+            new("LobotomyPlaywright.Plugin", "BaseMods/LobotomyPlaywright", false),
+            new("RetargetHarmony", "patchers/RetargetHarmony", false),
+            new("LobotomyCorporationMods.BadLuckProtectionForGifts", "BaseMods/LobotomyCorporationMods.BadLuckProtectionForGifts", true),
+            new("LobotomyCorporationMods.BugFixes", "BaseMods/LobotomyCorporationMods.BugFixes", true),
+            new("LobotomyCorporationMods.DebugPanel", "BaseMods/LobotomyCorporationMods.DebugPanel", true),
+            new("LobotomyCorporationMods.FreeCustomization", "BaseMods/LobotomyCorporationMods.FreeCustomization", true),
+            new("LobotomyCorporationMods.GiftAlertIcon", "BaseMods/LobotomyCorporationMods.GiftAlertIcon", true),
+            new("LobotomyCorporationMods.NotifyWhenAgentReceivesGift", "BaseMods/LobotomyCorporationMods.NotifyWhenAgentReceivesGift", true),
+            new("LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking", "BaseMods/LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking", true),
+        ];
 
         private readonly IConfigManager _configManager = configManager;
         private readonly IFileSystem _fileSystem = fileSystem;
@@ -74,32 +86,22 @@ namespace LobotomyPlaywright.Commands
             // Repository root
             var repoRoot = FindRepositoryRoot() ?? throw new InvalidOperationException("Could not find repository root");
 
-            var pluginProject = Path.Combine(repoRoot, "LobotomyPlaywright.Plugin", "LobotomyPlaywright.Plugin.csproj");
-            var harmonyDebugPanelProject = Path.Combine(repoRoot, "HarmonyDebugPanel", "HarmonyDebugPanel.csproj");
-            var retharmonyProject = Path.Combine(repoRoot, "RetargetHarmony", "RetargetHarmony.csproj");
-
-            if (!_fileSystem.FileExists(pluginProject))
+            // Validate all project files exist
+            var projectPaths = new Dictionary<string, string>();
+            foreach (var target in s_deploymentTargets)
             {
-                Console.Error.WriteLine($"ERROR: Plugin project not found: {pluginProject}");
-                return 1;
+                var projectPath = Path.Combine(repoRoot, target.ProjectName, $"{target.ProjectName}.csproj");
+                if (!_fileSystem.FileExists(projectPath))
+                {
+                    Console.Error.WriteLine($"ERROR: Project not found: {projectPath}");
+                    return 1;
+                }
+
+                projectPaths[target.ProjectName] = projectPath;
             }
 
-            if (!_fileSystem.FileExists(harmonyDebugPanelProject))
-            {
-                Console.Error.WriteLine($"ERROR: HarmonyDebugPanel project not found: {harmonyDebugPanelProject}");
-                return 1;
-            }
-
-            if (!_fileSystem.FileExists(retharmonyProject))
-            {
-                Console.Error.WriteLine($"ERROR: RetargetHarmony project not found: {retharmonyProject}");
-                return 1;
-            }
-
-            // Build projects
-            string pluginDllPath;
-            string harmonyDebugPanelDllPath;
-            string retharmonyDllPath;
+            // Build or locate DLLs
+            var dllPaths = new Dictionary<string, string>();
 
             if (!skipBuild)
             {
@@ -109,9 +111,10 @@ namespace LobotomyPlaywright.Commands
 
                 try
                 {
-                    pluginDllPath = BuildProject(pluginProject, configuration);
-                    harmonyDebugPanelDllPath = BuildProject(harmonyDebugPanelProject, configuration);
-                    retharmonyDllPath = BuildProject(retharmonyProject, configuration);
+                    foreach (var target in s_deploymentTargets)
+                    {
+                        dllPaths[target.ProjectName] = BuildProject(projectPaths[target.ProjectName], configuration);
+                    }
                 }
                 catch (Exception ex) when (ex is BuildFailedException or FileNotFoundException)
                 {
@@ -126,54 +129,22 @@ namespace LobotomyPlaywright.Commands
                 Console.WriteLine("Skipping Build (using existing DLLs)");
                 Console.WriteLine("".PadRight(60, '='));
 
-                pluginDllPath = Path.Combine(
-                    Path.GetDirectoryName(pluginProject) ?? string.Empty,
-                    "bin",
-                    configuration,
-                    "net35",
-                    PluginDllName
-                );
-
-                harmonyDebugPanelDllPath = Path.Combine(
-                    Path.GetDirectoryName(harmonyDebugPanelProject) ?? string.Empty,
-                    "bin",
-                    configuration,
-                    "net35",
-                    HarmonyDebugPanelDllName
-                );
-
-                retharmonyDllPath = Path.Combine(
-                    Path.GetDirectoryName(retharmonyProject) ?? string.Empty,
-                    "bin",
-                    configuration,
-                    "net35",
-                    RetargetHarmonyDllName
-                );
-
-                if (!_fileSystem.FileExists(pluginDllPath))
+                foreach (var target in s_deploymentTargets)
                 {
-                    Console.Error.WriteLine($"ERROR: Plugin DLL not found: {pluginDllPath}");
-                    Console.Error.WriteLine("Run without --skip-build to build the project first.");
-                    return 1;
-                }
+                    var projectDir = Path.GetDirectoryName(projectPaths[target.ProjectName]) ?? string.Empty;
+                    var dllName = $"{target.ProjectName}.dll";
+                    var dllPath = FindExistingDll(projectDir, configuration, dllName);
 
-                if (!_fileSystem.FileExists(harmonyDebugPanelDllPath))
-                {
-                    Console.Error.WriteLine($"ERROR: HarmonyDebugPanel DLL not found: {harmonyDebugPanelDllPath}");
-                    Console.Error.WriteLine("Run without --skip-build to build the project first.");
-                    return 1;
-                }
+                    if (dllPath is null)
+                    {
+                        Console.Error.WriteLine($"ERROR: {target.ProjectName} DLL not found in build output.");
+                        Console.Error.WriteLine("Run without --skip-build to build the project first.");
+                        return 1;
+                    }
 
-                if (!_fileSystem.FileExists(retharmonyDllPath))
-                {
-                    Console.Error.WriteLine($"ERROR: RetargetHarmony DLL not found: {retharmonyDllPath}");
-                    Console.Error.WriteLine("Run without --skip-build to build the project first.");
-                    return 1;
+                    dllPaths[target.ProjectName] = dllPath;
+                    Console.WriteLine($"Using existing {target.ProjectName} DLL: {dllPath}");
                 }
-
-                Console.WriteLine($"Using existing plugin DLL: {pluginDllPath}");
-                Console.WriteLine($"Using existing HarmonyDebugPanel DLL: {harmonyDebugPanelDllPath}");
-                Console.WriteLine($"Using existing RetargetHarmony DLL: {retharmonyDllPath}");
             }
 
             // Deploy DLLs
@@ -184,16 +155,21 @@ namespace LobotomyPlaywright.Commands
 
             if (dryRun)
             {
-                Console.WriteLine();
-                Console.WriteLine($"Would deploy {PluginDllName} to:");
-                Console.WriteLine($"  {Path.Combine(gamePath, "LobotomyCorp_Data", "BaseMods", "LobotomyPlaywright", PluginDllName)}");
-                Console.WriteLine();
-                Console.WriteLine($"Would deploy {HarmonyDebugPanelDllName} to:");
-                Console.WriteLine($"  {Path.Combine(gamePath, "LobotomyCorp_Data", "BaseMods", "HarmonyDebugPanel", HarmonyDebugPanelDllName)}");
-                Console.WriteLine();
-                Console.WriteLine($"Would deploy {RetargetHarmonyDllName} to:");
-                Console.WriteLine($"  {Path.Combine(gamePath, "BepInEx", "patchers", "RetargetHarmony", RetargetHarmonyDllName)}");
-                foreach (var dllName in HarmonyInteropDlls)
+                foreach (var target in s_deploymentTargets)
+                {
+                    var destDir = GetDeployDestDir(gamePath, target.DeploySubdir);
+                    var dllName = $"{target.ProjectName}.dll";
+                    Console.WriteLine();
+                    Console.WriteLine($"Would deploy {dllName} to:");
+                    Console.WriteLine($"  {Path.Combine(destDir, dllName)}");
+
+                    if (target.IsMod)
+                    {
+                        Console.WriteLine($"  + Common DLL and content directories");
+                    }
+                }
+
+                foreach (var dllName in s_harmonyInteropDlls)
                 {
                     Console.WriteLine();
                     Console.WriteLine($"Would deploy {dllName} to:");
@@ -207,25 +183,33 @@ namespace LobotomyPlaywright.Commands
 
             try
             {
-                var deployPluginPath = DeployDll(pluginDllPath, gamePath, "BaseMods/LobotomyPlaywright");
-                var deployHarmonyDebugPanelPath = DeployDll(harmonyDebugPanelDllPath, gamePath, "BaseMods/HarmonyDebugPanel");
-                var deployRetharmonyPath = DeployDll(retharmonyDllPath, gamePath, "patchers/RetargetHarmony");
+                var deployedPaths = new Dictionary<string, string>();
+                foreach (var target in s_deploymentTargets)
+                {
+                    deployedPaths[target.ProjectName] = DeployDll(dllPaths[target.ProjectName], gamePath, target.DeploySubdir);
+
+                    if (target.IsMod)
+                    {
+                        DeployModContent(dllPaths[target.ProjectName], gamePath, target.DeploySubdir);
+                    }
+                }
+
+                foreach (var dllName in s_harmonyInteropDlls)
+                {
+                    Console.WriteLine($"DEBUG: Deploying interop DLL: {dllName}");
+                    DeployInteropDll(repoRoot, dllName, gamePath);
+                }
 
                 Console.WriteLine();
                 Console.WriteLine("".PadRight(60, '='));
                 Console.WriteLine("Deployment Summary");
                 Console.WriteLine("".PadRight(60, '='));
-                Console.WriteLine($"Plugin: {deployPluginPath}");
-                Console.WriteLine($"Size: {_fileSystem.GetFileSize(deployPluginPath):N0} bytes");
-                Console.WriteLine($"HarmonyDebugPanel: {deployHarmonyDebugPanelPath}");
-                Console.WriteLine($"Size: {_fileSystem.GetFileSize(deployHarmonyDebugPanelPath):N0} bytes");
-                Console.WriteLine($"RetargetHarmony: {deployRetharmonyPath}");
-                Console.WriteLine($"Size: {_fileSystem.GetFileSize(deployRetharmonyPath):N0} bytes");
 
-                foreach (var dllName in HarmonyInteropDlls)
+                foreach (var target in s_deploymentTargets)
                 {
-                    Console.WriteLine($"DEBUG: Deploying interop DLL: {dllName}");
-                    DeployInteropDll(repoRoot, dllName, gamePath);
+                    var path = deployedPaths[target.ProjectName];
+                    Console.WriteLine($"{target.ProjectName}: {path}");
+                    Console.WriteLine($"Size: {_fileSystem.GetFileSize(path):N0} bytes");
                 }
 
                 Console.WriteLine("".PadRight(60, '='));
@@ -266,18 +250,9 @@ namespace LobotomyPlaywright.Commands
 
             // Find the output DLL
             var projectDir = Path.GetDirectoryName(projectPath) ?? string.Empty;
-            var dllPath = Path.Combine(projectDir, "bin", configuration, "net35", projectName, $"{projectName}.dll");
-
-            if (!_fileSystem.FileExists(dllPath))
-            {
-                // Try alternate naming
-                dllPath = Path.Combine(projectDir, "bin", configuration, "net35", $"{projectName}.dll");
-            }
-
-            if (!_fileSystem.FileExists(dllPath))
-            {
-                throw new FileNotFoundException($"Built DLL not found: {dllPath}");
-            }
+            var dllName = $"{projectName}.dll";
+            var dllPath = FindExistingDll(projectDir, configuration, dllName)
+                ?? throw new FileNotFoundException($"Built DLL not found for {projectName}");
 
             Console.WriteLine($"Built: {dllPath}");
             Console.WriteLine($"Size: {_fileSystem.GetFileSize(dllPath):N0} bytes");
@@ -285,29 +260,37 @@ namespace LobotomyPlaywright.Commands
             return dllPath;
         }
 
-        private string DeployDll(string sourceDll, string gamePath, string destSubdir)
+        private string? FindExistingDll(string projectDir, string configuration, string dllName)
         {
-            // Handle BaseMods separately (goes to LobotomyCorp_Data/BaseMods/[PluginName])
-            // All other folders go under BepInEx/
-            string destDir;
-            if (destSubdir.StartsWith("BaseMods", StringComparison.OrdinalIgnoreCase))
+            var projectName = Path.GetFileNameWithoutExtension(dllName);
+
+            // Try bin/{config}/net35/{projectName}/{dllName}
+            var path = Path.Combine(projectDir, "bin", configuration, "net35", projectName, dllName);
+            if (_fileSystem.FileExists(path))
             {
-                // Extract optional subfolder name from "BaseMods/SubFolder"
-                var subFolder = destSubdir.Length > 8 ? destSubdir[9..] : null;
-                if (!string.IsNullOrEmpty(subFolder))
-                {
-                    destDir = Path.Combine(gamePath, "LobotomyCorp_Data", "BaseMods", subFolder);
-                }
-                else
-                {
-                    destDir = Path.Combine(gamePath, "LobotomyCorp_Data", "BaseMods");
-                }
-            }
-            else
-            {
-                destDir = Path.Combine(gamePath, "BepInEx", destSubdir);
+                return path;
             }
 
+            // Try bin/{config}/net35/{dllName}
+            path = Path.Combine(projectDir, "bin", configuration, "net35", dllName);
+            if (_fileSystem.FileExists(path))
+            {
+                return path;
+            }
+
+            // Try bin/net35/{dllName} (OutputPath=bin\ in Directory.Build.props)
+            path = Path.Combine(projectDir, "bin", "net35", dllName);
+            if (_fileSystem.FileExists(path))
+            {
+                return path;
+            }
+
+            return null;
+        }
+
+        private string DeployDll(string sourceDll, string gamePath, string destSubdir)
+        {
+            var destDir = GetDeployDestDir(gamePath, destSubdir);
             var destDll = Path.Combine(destDir, Path.GetFileName(sourceDll) ?? string.Empty);
 
             Console.WriteLine();
@@ -340,6 +323,33 @@ namespace LobotomyPlaywright.Commands
             return destDll;
         }
 
+        private void DeployModContent(string modDllPath, string gamePath, string destSubdir)
+        {
+            var sourceDir = Path.GetDirectoryName(modDllPath) ?? string.Empty;
+            var destDir = GetDeployDestDir(gamePath, destSubdir);
+
+            // Deploy Common DLL
+            var commonDlls = _fileSystem.GetFiles(sourceDir, "LobotomyCorporationMods.Common.*.dll");
+            foreach (var commonDll in commonDlls)
+            {
+                var destCommonDll = Path.Combine(destDir, Path.GetFileName(commonDll));
+                _fileSystem.CopyFile(commonDll, destCommonDll, true);
+                Console.WriteLine($"Deployed: {Path.GetFileName(commonDll)} -> {destDir}");
+            }
+
+            // Deploy content directories (Info/, Assets/, Localize/)
+            foreach (var contentDir in s_modContentDirs)
+            {
+                var sourceContentDir = Path.Combine(sourceDir, contentDir);
+                if (_fileSystem.DirectoryExists(sourceContentDir))
+                {
+                    var destContentDir = Path.Combine(destDir, contentDir);
+                    _fileSystem.CopyDirectory(sourceContentDir, destContentDir, true);
+                    Console.WriteLine($"Deployed: {contentDir}/ -> {destContentDir}");
+                }
+            }
+        }
+
         private void DeployInteropDll(string repoRoot, string dllName, string gamePath)
         {
             // Special case: 12Harmony.dll is needed for mods that reference Harmony 1.2 by that name
@@ -364,6 +374,22 @@ namespace LobotomyPlaywright.Commands
             var destPath = DeployDll(sourceDll, gamePath, "core");
             Console.WriteLine($"Interop: {destPath}");
             Console.WriteLine($"Size: {_fileSystem.GetFileSize(destPath):N0} bytes");
+        }
+
+        private static string GetDeployDestDir(string gamePath, string destSubdir)
+        {
+            if (destSubdir.StartsWith("BaseMods", StringComparison.OrdinalIgnoreCase))
+            {
+                var subFolder = destSubdir.Length > 8 ? destSubdir[9..] : null;
+                if (!string.IsNullOrEmpty(subFolder))
+                {
+                    return Path.Combine(gamePath, "LobotomyCorp_Data", "BaseMods", subFolder);
+                }
+
+                return Path.Combine(gamePath, "LobotomyCorp_Data", "BaseMods");
+            }
+
+            return Path.Combine(gamePath, "BepInEx", destSubdir);
         }
 
         private string? FindRepositoryRoot()
@@ -414,6 +440,8 @@ namespace LobotomyPlaywright.Commands
 
             return false;
         }
+
+        private record DeploymentTarget(string ProjectName, string DeploySubdir, bool IsMod);
 
         internal sealed class BuildFailedException : Exception
         {

@@ -37,6 +37,7 @@ namespace LobotomyPlaywright.Tests.Commands
             _ = _mockFileSystem.Setup(f => f.GetCurrentDirectory()).Returns(_repoRoot);
             _ = _mockFileSystem.Setup(f => f.FileExists(Path.Combine(_repoRoot, "LobotomyCorporationMods.sln"))).Returns(true);
             _ = _mockFileSystem.Setup(f => f.GetFileSize(It.IsAny<string>())).Returns(100);
+            _ = _mockFileSystem.Setup(f => f.GetFiles(It.IsAny<string>(), It.IsAny<string>())).Returns([]);
         }
 
         [Fact]
@@ -45,6 +46,8 @@ namespace LobotomyPlaywright.Tests.Commands
             // Arrange
             _ = _mockFileSystem.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
             _ = _mockFileSystem.Setup(f => f.FileExists(It.IsAny<string>())).Returns(true);
+            _ = _mockFileSystem.Setup(f => f.GetFiles(It.IsAny<string>(), "LobotomyCorporationMods.Common.*.dll"))
+                .Returns(["LobotomyCorporationMods.Common.6.0.2.dll"]);
 
             _ = _mockProcessRunner.Setup(p => p.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string?, bool>>()))
                 .Returns(0);
@@ -55,16 +58,25 @@ namespace LobotomyPlaywright.Tests.Commands
             // Assert
             _ = result.Should().Be(0);
 
-            // Verify file copy calls via IFileSystem
-            // Note: 12Harmony.dll uses 0Harmony12.dll as source, so 0Harmony12.dll gets copied twice
-            // Plugin DLLs
+            // Verify tool project DLL deployments
             _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyPlaywright.Plugin.dll")), It.IsAny<string>(), true), Times.Once);
-            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("HarmonyDebugPanel.dll")), It.IsAny<string>(), true), Times.Once);
             _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("RetargetHarmony.dll")), It.IsAny<string>(), true), Times.Once);
 
-            // Interop DLLs
+            // Verify mod DLL deployments
+            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyCorporationMods.BadLuckProtectionForGifts.dll")), It.IsAny<string>(), true), Times.Once);
+            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyCorporationMods.BugFixes.dll")), It.IsAny<string>(), true), Times.Once);
+            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyCorporationMods.DebugPanel.dll")), It.IsAny<string>(), true), Times.Once);
+            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyCorporationMods.FreeCustomization.dll")), It.IsAny<string>(), true), Times.Once);
+            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyCorporationMods.GiftAlertIcon.dll")), It.IsAny<string>(), true), Times.Once);
+            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyCorporationMods.NotifyWhenAgentReceivesGift.dll")), It.IsAny<string>(), true), Times.Once);
+            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.dll")), It.IsAny<string>(), true), Times.Once);
+
+            // Verify Common DLL deployed for each mod (7 mods)
+            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyCorporationMods.Common")), It.IsAny<string>(), true), Times.Exactly(7));
+
+            // Verify interop DLLs
             _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("0Harmony109.dll")), It.IsAny<string>(), true), Times.Once);
-            // 0Harmony12.dll is copied twice: once from loop item "0Harmony12.dll", once from loop item "12Harmony.dll" (which uses 0Harmony12.dll as source)
+            // 0Harmony12.dll is copied twice: once for itself, once as source for 12Harmony.dll
             _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("0Harmony12.dll")), It.IsAny<string>(), true), Times.Exactly(2));
         }
 
@@ -72,7 +84,6 @@ namespace LobotomyPlaywright.Tests.Commands
         public void Run_BuildPhase_HandlesBuildFailures()
         {
             // Arrange
-            var repoRoot = Directory.GetCurrentDirectory();
             _ = _mockFileSystem.Setup(f => f.FileExists(It.Is<string>(s => s.EndsWith("LobotomyCorporationMods.sln")))).Returns(true);
             _ = _mockFileSystem.Setup(f => f.FileExists(It.IsAny<string>())).Returns(true);
             _ = _mockFileSystem.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
@@ -85,6 +96,28 @@ namespace LobotomyPlaywright.Tests.Commands
 
             // Assert
             _ = result.Should().Be(1);
+        }
+
+        [Fact]
+        public void Run_Deployment_DeploysModContentDirectories()
+        {
+            // Arrange
+            _ = _mockFileSystem.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
+            _ = _mockFileSystem.Setup(f => f.FileExists(It.IsAny<string>())).Returns(true);
+            _ = _mockFileSystem.Setup(f => f.GetFiles(It.IsAny<string>(), "LobotomyCorporationMods.Common.*.dll"))
+                .Returns(["LobotomyCorporationMods.Common.6.0.2.dll"]);
+
+            _ = _mockProcessRunner.Setup(p => p.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string?, bool>>()))
+                .Returns(0);
+
+            // Act
+            int result = _deployCommand.Run([]);
+
+            // Assert
+            _ = result.Should().Be(0);
+
+            // Verify CopyDirectory called for content dirs (Info, Assets, Localize exist for all 7 mods since DirectoryExists returns true)
+            _mockFileSystem.Verify(f => f.CopyDirectory(It.IsAny<string>(), It.IsAny<string>(), true), Times.Exactly(21));
         }
     }
 }

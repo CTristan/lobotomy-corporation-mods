@@ -99,5 +99,13 @@ namespace LobotomyPlaywright.Interfaces.System
         /// <param name="path">The file path.</param>
         /// <returns>The file contents as a byte array.</returns>
         byte[] ReadAllBytes(string path);
+
+        /// <summary>
+        /// Recursively copies a directory and its contents.
+        /// </summary>
+        /// <param name="sourceDir">The source directory path.</param>
+        /// <param name="destDir">The destination directory path.</param>
+        /// <param name="overwrite">True to overwrite existing files.</param>
+        void CopyDirectory(string sourceDir, string destDir, bool overwrite);
     }
 }

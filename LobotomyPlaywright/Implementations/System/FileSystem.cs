@@ -90,5 +90,22 @@ namespace LobotomyPlaywright.Implementations.System
         {
             return File.ReadAllBytes(path);
         }
+
+        public void CopyDirectory(string sourceDir, string destDir, bool overwrite)
+        {
+            _ = Directory.CreateDirectory(destDir);
+
+            foreach (var file in Directory.GetFiles(sourceDir))
+            {
+                var destFile = Path.Combine(destDir, Path.GetFileName(file));
+                File.Copy(file, destFile, overwrite);
+            }
+
+            foreach (var subDir in Directory.GetDirectories(sourceDir))
+            {
+                var destSubDir = Path.Combine(destDir, Path.GetFileName(subDir));
+                CopyDirectory(subDir, destSubDir, overwrite);
+            }
+        }
     }
 }
