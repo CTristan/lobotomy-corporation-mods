@@ -39,12 +39,12 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             _mockExpectedPatchSource = new Mock<IExpectedPatchSource>();
             _mockDllIntegrityCollector = new Mock<IInfoCollector<DllIntegrityReport>>();
 
-            _mockFactory.Setup(f => f.CreateActivePatchCollector()).Returns(_mockPatchCollector.Object);
-            _mockFactory.Setup(f => f.CreateBaseModCollector()).Returns(_mockBaseModCollector.Object);
+            _mockFactory.Setup(f => f.CreateActivePatchCollector(It.IsAny<IList<string>>())).Returns(_mockPatchCollector.Object);
+            _mockFactory.Setup(f => f.CreateBaseModCollector(It.IsAny<IList<string>>())).Returns(_mockBaseModCollector.Object);
             _mockFactory.Setup(f => f.CreateBepInExPluginCollector()).Returns(_mockBepInExPluginCollector.Object);
             _mockFactory.Setup(f => f.CreateAssemblyInfoCollector()).Returns(_mockAssemblyCollector.Object);
             _mockFactory.Setup(f => f.CreateRetargetHarmonyDetector()).Returns(_mockRetargetDetector.Object);
-            _mockFactory.Setup(f => f.CreateExpectedPatchSource()).Returns(_mockExpectedPatchSource.Object);
+            _mockFactory.Setup(f => f.CreateExpectedPatchSource(It.IsAny<IList<string>>())).Returns(_mockExpectedPatchSource.Object);
             _mockFactory.Setup(f => f.CreateDllIntegrityCollector()).Returns(_mockDllIntegrityCollector.Object);
 
             _mockPatchCollector.Setup(c => c.Collect()).Returns([]);

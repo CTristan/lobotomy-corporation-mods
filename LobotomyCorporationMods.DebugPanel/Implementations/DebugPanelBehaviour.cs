@@ -3,6 +3,7 @@
 #region
 
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
@@ -55,7 +56,7 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
                 _reportBuilder = new DiagnosticReportBuilder(factory, detector);
                 _overlay = new DiagnosticOverlay();
                 _inputHandler = new InputHandler(_config);
-                _logFileWriter = new LogFileWriter(fileManager, new ReportFormatter());
+                _logFileWriter = new LogFileWriter(fileManager, new ReportFormatter(), new ExternalLogSource());
 
                 _startTime = Time.time;
                 _report = _reportBuilder.BuildReport();
@@ -139,7 +140,8 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
 
             try
             {
-                _logFileWriter.WriteReport(_report);
+                var filePath = _logFileWriter.WriteReport(_report);
+                _ = Process.Start("notepad.exe", filePath);
             }
             catch (Exception ex)
             {

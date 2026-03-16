@@ -150,7 +150,7 @@ namespace LobotomyPlaywright.Commands
             }
             catch (Exception ex)
             {
-                Plugin.HandleFatalException(ex, "HandleScreenshot");
+                PlaywrightCore.HandleFatalException(ex, "HandleScreenshot");
                 return Response.CreateError(
                     request.Id,
                     "Failed to capture screenshot: " + ex.Message,

@@ -18,22 +18,28 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
     {
         private readonly IFileManager _fileManager;
         private readonly IReportFormatter _reportFormatter;
+        private readonly IExternalLogSource _externalLogSource;
 
-        public LogFileWriter(IFileManager fileManager, IReportFormatter reportFormatter)
+        public LogFileWriter(IFileManager fileManager, IReportFormatter reportFormatter, IExternalLogSource externalLogSource)
         {
             _fileManager = Guard.Against.Null(fileManager, nameof(fileManager));
             _reportFormatter = Guard.Against.Null(reportFormatter, nameof(reportFormatter));
+            _externalLogSource = Guard.Against.Null(externalLogSource, nameof(externalLogSource));
         }
 
-        public void WriteReport(DiagnosticReport report)
+        public string WriteReport(DiagnosticReport report)
         {
             _ = Guard.Against.Null(report, nameof(report));
 
-            var lines = _reportFormatter.FormatForLogFile(report);
+            var externalLogs = _externalLogSource.GetExternalLogs();
+            var lines = _reportFormatter.FormatForLogFile(report, externalLogs);
             var content = string.Join(Environment.NewLine, ToArray(lines));
             var timestamp = DateTime.Now.ToString("yyyy-MM-dd_HHmmss", CultureInfo.InvariantCulture);
             var fileName = "DebugPanel_" + timestamp + ".log";
-            _fileManager.WriteAllText(fileName, content);
+            var filePath = _fileManager.GetFile(fileName);
+            _fileManager.WriteAllText(filePath, content);
+
+            return filePath;
         }
 
         private static string[] ToArray(System.Collections.Generic.IList<string> list)

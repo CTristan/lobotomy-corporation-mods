@@ -66,6 +66,17 @@ namespace LobotomyPlaywright
             Console.WriteLine("Commands:");
             Console.WriteLine("  find-game               Auto-detect and configure game installation path");
             Console.WriteLine("  deploy                  Build and deploy plugin DLLs to game");
+            Console.WriteLine("    --profile <name>      Use a deployment profile (restores to vanilla first)");
+            Console.WriteLine("    --full                Full game restore instead of targeted (use with --profile)");
+            Console.WriteLine();
+            Console.WriteLine("  Profiles:");
+            Console.WriteLine("    vanilla               Clean game, no mods");
+            Console.WriteLine("    lmm                   Game + LMM (Lobotomy Mod Manager)");
+            Console.WriteLine("    bepinex               Game + BepInEx");
+            Console.WriteLine("    mods                  LMM + all gameplay mods");
+            Console.WriteLine("    mods-playwright       LMM + all gameplay mods + Playwright plugin");
+            Console.WriteLine("    playwright            LMM + BepInEx + Playwright + RetargetHarmony");
+            Console.WriteLine("    all                   Everything");
             Console.WriteLine("  launch                  Launch game and wait for TCP readiness");
             Console.WriteLine("  status                  Check game status");
             Console.WriteLine("  stop                    Stop the game");

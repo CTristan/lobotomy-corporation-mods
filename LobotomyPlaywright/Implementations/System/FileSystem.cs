@@ -91,6 +91,16 @@ namespace LobotomyPlaywright.Implementations.System
             return File.ReadAllBytes(path);
         }
 
+        public void DeleteDirectory(string path, bool recursive)
+        {
+            Directory.Delete(path, recursive);
+        }
+
+        public void DeleteFile(string path)
+        {
+            File.Delete(path);
+        }
+
         public void CopyDirectory(string sourceDir, string destDir, bool overwrite)
         {
             _ = Directory.CreateDirectory(destDir);

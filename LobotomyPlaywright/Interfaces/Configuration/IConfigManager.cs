@@ -52,5 +52,6 @@ namespace LobotomyPlaywright.Interfaces.Configuration
         /// Gets or sets the shutdown timeout in seconds.
         /// </summary>
         public int ShutdownTimeoutSeconds { get; set; } = 10;
+
     }
 }

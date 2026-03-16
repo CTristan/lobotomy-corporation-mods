@@ -9,7 +9,7 @@ namespace PrivateMethods
         public const string ReviseOpenAction = "ReviseOpenAction";
     }
 
-    public static class GlobalGameManager
+    public static class IntroPlayer
     {
         public const string Awake = "Awake";
     }

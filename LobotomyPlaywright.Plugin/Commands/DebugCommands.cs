@@ -82,7 +82,7 @@ namespace LobotomyPlaywright.Commands
             }
             catch (Exception ex)
             {
-                Plugin.HandleFatalException(ex, "HandleSetAgentStats");
+                PlaywrightCore.HandleFatalException(ex, "HandleSetAgentStats");
                 return Response.CreateError(request.Id, $"Failed to set agent stats: {ex.Message}", "COMMAND_ERROR");
             }
         }
@@ -133,7 +133,7 @@ namespace LobotomyPlaywright.Commands
             }
             catch (Exception ex)
             {
-                Plugin.HandleFatalException(ex, "HandleAddGift");
+                PlaywrightCore.HandleFatalException(ex, "HandleAddGift");
                 return Response.CreateError(request.Id, $"Failed to add gift: {ex.Message}", "COMMAND_ERROR");
             }
         }
@@ -178,7 +178,7 @@ namespace LobotomyPlaywright.Commands
             }
             catch (Exception ex)
             {
-                Plugin.HandleFatalException(ex, "HandleRemoveGift");
+                PlaywrightCore.HandleFatalException(ex, "HandleRemoveGift");
                 return Response.CreateError(request.Id, $"Failed to remove gift: {ex.Message}", "COMMAND_ERROR");
             }
         }
@@ -218,7 +218,7 @@ namespace LobotomyPlaywright.Commands
             }
             catch (Exception ex)
             {
-                Plugin.HandleFatalException(ex, "HandleSetQliphoth");
+                PlaywrightCore.HandleFatalException(ex, "HandleSetQliphoth");
                 return Response.CreateError(request.Id, $"Failed to set qliphoth: {ex.Message}", "COMMAND_ERROR");
             }
         }
@@ -250,7 +250,7 @@ namespace LobotomyPlaywright.Commands
             }
             catch (Exception ex)
             {
-                Plugin.HandleFatalException(ex, "HandleFillEnergy");
+                PlaywrightCore.HandleFatalException(ex, "HandleFillEnergy");
                 return Response.CreateError(request.Id, $"Failed to fill energy: {ex.Message}", "COMMAND_ERROR");
             }
         }
@@ -290,7 +290,7 @@ namespace LobotomyPlaywright.Commands
             }
             catch (Exception ex)
             {
-                Plugin.HandleFatalException(ex, "HandleSetGameSpeed");
+                PlaywrightCore.HandleFatalException(ex, "HandleSetGameSpeed");
                 return Response.CreateError(request.Id, $"Failed to set game speed: {ex.Message}", "COMMAND_ERROR");
             }
         }
@@ -330,7 +330,7 @@ namespace LobotomyPlaywright.Commands
             }
             catch (Exception ex)
             {
-                Plugin.HandleFatalException(ex, "HandleSetAgentInvincible");
+                PlaywrightCore.HandleFatalException(ex, "HandleSetAgentInvincible");
                 return Response.CreateError(request.Id, $"Failed to set invincibility: {ex.Message}", "COMMAND_ERROR");
             }
         }

@@ -10,6 +10,6 @@ namespace LobotomyCorporationMods.DebugPanel.Interfaces
 {
     public interface ILogFileWriter
     {
-        void WriteReport(DiagnosticReport report);
+        string WriteReport(DiagnosticReport report);
     }
 }

@@ -11,9 +11,9 @@ namespace LobotomyCorporationMods.DebugPanel.Interfaces
 {
     public interface ICollectorFactory
     {
-        IActivePatchCollector CreateActivePatchCollector();
+        IActivePatchCollector CreateActivePatchCollector(IList<string> debugInfo);
 
-        IInfoCollector<IList<DetectedModInfo>> CreateBaseModCollector();
+        IInfoCollector<IList<DetectedModInfo>> CreateBaseModCollector(IList<string> debugInfo);
 
         IInfoCollector<IList<DetectedModInfo>> CreateBepInExPluginCollector();
 
@@ -21,7 +21,7 @@ namespace LobotomyCorporationMods.DebugPanel.Interfaces
 
         IInfoCollector<RetargetHarmonyStatus> CreateRetargetHarmonyDetector();
 
-        IExpectedPatchSource CreateExpectedPatchSource();
+        IExpectedPatchSource CreateExpectedPatchSource(IList<string> debugInfo);
 
         IInfoCollector<DllIntegrityReport> CreateDllIntegrityCollector();
     }

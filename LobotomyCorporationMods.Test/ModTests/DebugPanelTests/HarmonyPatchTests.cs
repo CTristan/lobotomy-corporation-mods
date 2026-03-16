@@ -27,24 +27,25 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         }
 
         [Fact]
-        public void Class_GlobalGameManager_Method_Awake_is_patched_correctly()
+        public void Class_IntroPlayer_Method_Awake_is_patched_correctly()
         {
-            var patch = typeof(GlobalGameManagerPatchAwake);
-            var originalClass = typeof(GlobalGameManager);
+            _ = Harmony_Patch.Instance;
+            var patch = typeof(IntroPlayerPatchAwake);
+            var originalClass = typeof(IntroPlayer);
             const string MethodName = "Awake";
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
         }
 
         [Fact]
-        public void Class_GlobalGameManager_Method_Awake_logs_exceptions()
+        public void Class_IntroPlayer_Method_Awake_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
             static void Action()
             {
-                GlobalGameManagerPatchAwake.PostfixWithLogging(null!, null!);
+                IntroPlayerPatchAwake.PostfixWithLogging(null!, null!);
             }
 
             mockLogger.VerifyArgumentNullException(Action);

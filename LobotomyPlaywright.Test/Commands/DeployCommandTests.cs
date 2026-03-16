@@ -1,10 +1,13 @@
 // SPDX-License-Identifier: MIT
 
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using AwesomeAssertions;
 using LobotomyPlaywright.Commands;
 using LobotomyPlaywright.Interfaces.Configuration;
+using LobotomyPlaywright.Interfaces.Deployment;
 using LobotomyPlaywright.Interfaces.System;
 using Moq;
 using Xunit;
@@ -16,6 +19,10 @@ namespace LobotomyPlaywright.Tests.Commands
         private readonly Mock<IFileSystem> _mockFileSystem;
         private readonly Mock<IConfigManager> _mockConfigManager;
         private readonly Mock<IProcessRunner> _mockProcessRunner;
+        private readonly Mock<IGameRestorer> _mockGameRestorer;
+        private readonly Mock<ILmmInstaller> _mockLmmInstaller;
+        private readonly Mock<IBepInExInstaller> _mockBepInExInstaller;
+        private readonly Mock<IProfileLoader> _mockProfileLoader;
         private readonly DeployCommand _deployCommand;
         private readonly string _gamePath = "/test/game/path";
         private readonly string _repoRoot = "/test/repo/root";
@@ -25,7 +32,11 @@ namespace LobotomyPlaywright.Tests.Commands
             _mockFileSystem = new Mock<IFileSystem>();
             _mockConfigManager = new Mock<IConfigManager>();
             _mockProcessRunner = new Mock<IProcessRunner>();
-            _deployCommand = new DeployCommand(_mockConfigManager.Object, _mockFileSystem.Object, _mockProcessRunner.Object);
+            _mockGameRestorer = new Mock<IGameRestorer>();
+            _mockLmmInstaller = new Mock<ILmmInstaller>();
+            _mockBepInExInstaller = new Mock<IBepInExInstaller>();
+            _mockProfileLoader = new Mock<IProfileLoader>();
+            _deployCommand = new DeployCommand(_mockConfigManager.Object, _mockFileSystem.Object, _mockProcessRunner.Object, _mockGameRestorer.Object, _mockLmmInstaller.Object, _mockBepInExInstaller.Object, _mockProfileLoader.Object);
 
             // Setup default config
             Config config = new()
@@ -118,6 +129,253 @@ namespace LobotomyPlaywright.Tests.Commands
 
             // Verify CopyDirectory called for content dirs (Info, Assets, Localize exist for all 7 mods since DirectoryExists returns true)
             _mockFileSystem.Verify(f => f.CopyDirectory(It.IsAny<string>(), It.IsAny<string>(), true), Times.Exactly(21));
+        }
+
+        [Fact]
+        public void Run_with_profile_restores_game_before_deploying()
+        {
+            // Arrange
+            SetupProfileLoader();
+            SetupSuccessfulBuildAndDeploy();
+
+            // Act
+            int result = _deployCommand.Run(["--profile", "all"]);
+
+            // Assert
+            _ = result.Should().Be(0);
+            _mockGameRestorer.Verify(r => r.RestoreTargeted(_gamePath, Path.Combine(_repoRoot, "testdata")), Times.Once);
+        }
+
+        [Fact]
+        public void Run_with_full_flag_uses_full_restore()
+        {
+            // Arrange
+            SetupProfileLoader();
+            SetupSuccessfulBuildAndDeploy();
+
+            // Act
+            int result = _deployCommand.Run(["--profile", "all", "--full"]);
+
+            // Assert
+            _ = result.Should().Be(0);
+            _mockGameRestorer.Verify(r => r.RestoreFull(_gamePath, Path.Combine(_repoRoot, "testdata")), Times.Once);
+        }
+
+        [Fact]
+        public void Run_with_vanilla_profile_deploys_nothing_after_clean()
+        {
+            // Arrange
+            SetupProfileLoader();
+
+            // Act
+            int result = _deployCommand.Run(["--profile", "vanilla"]);
+
+            // Assert
+            _ = result.Should().Be(0);
+            _mockGameRestorer.Verify(r => r.RestoreTargeted(_gamePath, It.IsAny<string>()), Times.Once);
+            _mockLmmInstaller.Verify(i => i.Install(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+            _mockBepInExInstaller.Verify(i => i.Install(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+            _mockProcessRunner.Verify(p => p.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string?, bool>>()), Times.Never);
+        }
+
+        [Fact]
+        public void Run_with_lmm_profile_installs_lmm_but_not_mod_loader()
+        {
+            // Arrange
+            SetupProfileLoader();
+
+            // Act
+            int result = _deployCommand.Run(["--profile", "lmm"]);
+
+            // Assert
+            _ = result.Should().Be(0);
+            _mockLmmInstaller.Verify(i => i.Install(_gamePath, Path.Combine(_repoRoot, "testdata")), Times.Once);
+            _mockBepInExInstaller.Verify(i => i.Install(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+        }
+
+        [Fact]
+        public void Run_with_bepinex_profile_installs_mod_loader_but_not_lmm()
+        {
+            // Arrange
+            SetupProfileLoader();
+
+            // Act
+            int result = _deployCommand.Run(["--profile", "bepinex"]);
+
+            // Assert
+            _ = result.Should().Be(0);
+            _mockBepInExInstaller.Verify(i => i.Install(_gamePath, Path.Combine(_repoRoot, "RetargetHarmony.Installer", "Resources", "bepinex")), Times.Once);
+            _mockLmmInstaller.Verify(i => i.Install(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+        }
+
+        [Fact]
+        public void Run_with_playwright_profile_deploys_only_tool_targets()
+        {
+            // Arrange
+            SetupProfileLoader();
+            SetupSuccessfulBuildAndDeploy();
+
+            // Act
+            int result = _deployCommand.Run(["--profile", "playwright"]);
+
+            // Assert
+            _ = result.Should().Be(0);
+            _mockLmmInstaller.Verify(i => i.Install(_gamePath, It.IsAny<string>()), Times.Once);
+            _mockBepInExInstaller.Verify(i => i.Install(_gamePath, It.IsAny<string>()), Times.Once);
+
+            // Only tool DLLs deployed, not mod DLLs
+            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyPlaywright.Plugin.dll")), It.IsAny<string>(), true), Times.Once);
+            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("RetargetHarmony.dll")), It.IsAny<string>(), true), Times.Once);
+            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyCorporationMods.BadLuckProtectionForGifts.dll")), It.IsAny<string>(), true), Times.Never);
+        }
+
+        [Fact]
+        public void Run_with_unknown_profile_returns_error()
+        {
+            // Arrange
+            SetupProfileLoader();
+
+            // Act
+            int result = _deployCommand.Run(["--profile", "nonexistent"]);
+
+            // Assert
+            _ = result.Should().Be(1);
+        }
+
+        [Fact]
+        public void Run_with_deploy_overrides_routes_plugin_to_bepinex_plugins()
+        {
+            // Arrange
+            var profiles = new Dictionary<string, DeploymentProfile>
+            {
+                ["bepinex-playwright"] = new DeploymentProfile
+                {
+                    DeployTargets = new Collection<string>(["LobotomyPlaywright.Plugin", "RetargetHarmony"]),
+                    InstallLmm = false,
+                    InstallModLoader = true,
+                    DeployOverrides = new Dictionary<string, string>
+                    {
+                        ["LobotomyPlaywright.Plugin"] = "plugins/LobotomyPlaywright"
+                    }
+                }
+            };
+            _ = _mockProfileLoader.Setup(p => p.Load()).Returns(profiles);
+            SetupSuccessfulBuildAndDeploy();
+
+            // Act
+            int result = _deployCommand.Run(["--profile", "bepinex-playwright"]);
+
+            // Assert
+            _ = result.Should().Be(0);
+
+            // Plugin should be deployed to BepInEx/plugins/LobotomyPlaywright, not BaseMods
+            _mockFileSystem.Verify(f => f.CopyFile(
+                It.Is<string>(s => s.Contains("LobotomyPlaywright.Plugin.dll")),
+                It.Is<string>(s => s.Contains(Path.Combine("BepInEx", "plugins", "LobotomyPlaywright"))),
+                true), Times.Once);
+
+            // RetargetHarmony should still go to BepInEx/patchers (no override)
+            _mockFileSystem.Verify(f => f.CopyFile(
+                It.Is<string>(s => s.Contains("RetargetHarmony.dll")),
+                It.Is<string>(s => s.Contains(Path.Combine("BepInEx", "patchers", "RetargetHarmony"))),
+                true), Times.Once);
+        }
+
+        [Fact]
+        public void Run_without_deploy_overrides_uses_default_paths()
+        {
+            // Arrange
+            SetupProfileLoader();
+            SetupSuccessfulBuildAndDeploy();
+
+            // Act
+            int result = _deployCommand.Run(["--profile", "playwright"]);
+
+            // Assert
+            _ = result.Should().Be(0);
+
+            // Plugin should go to BaseMods (default, no override)
+            _mockFileSystem.Verify(f => f.CopyFile(
+                It.Is<string>(s => s.Contains("LobotomyPlaywright.Plugin.dll")),
+                It.Is<string>(s => s.Contains(Path.Combine("BaseMods", "LobotomyPlaywright"))),
+                true), Times.Once);
+        }
+
+        [Fact]
+        public void Run_with_profile_but_profiles_file_missing_returns_error()
+        {
+            // Arrange
+            _ = _mockProfileLoader.Setup(p => p.Load()).Throws(new FileNotFoundException("Profiles file not found"));
+
+            // Act
+            int result = _deployCommand.Run(["--profile", "vanilla"]);
+
+            // Assert
+            _ = result.Should().Be(1);
+        }
+
+        [Fact]
+        public void Run_without_profile_deploys_all_targets_unchanged()
+        {
+            // Arrange
+            _ = _mockFileSystem.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
+            _ = _mockFileSystem.Setup(f => f.FileExists(It.IsAny<string>())).Returns(true);
+            _ = _mockFileSystem.Setup(f => f.GetFiles(It.IsAny<string>(), "LobotomyCorporationMods.Common.*.dll"))
+                .Returns(["LobotomyCorporationMods.Common.6.0.2.dll"]);
+            _ = _mockProcessRunner.Setup(p => p.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string?, bool>>()))
+                .Returns(0);
+
+            // Act
+            int result = _deployCommand.Run([]);
+
+            // Assert
+            _ = result.Should().Be(0);
+            _mockGameRestorer.Verify(r => r.RestoreTargeted(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+            _mockGameRestorer.Verify(r => r.RestoreFull(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+
+            // All 9 targets deployed
+            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyPlaywright.Plugin.dll")), It.IsAny<string>(), true), Times.Once);
+            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyCorporationMods.BadLuckProtectionForGifts.dll")), It.IsAny<string>(), true), Times.Once);
+        }
+
+        private void SetupProfileLoader()
+        {
+            var profiles = new Dictionary<string, DeploymentProfile>
+            {
+                ["vanilla"] = new DeploymentProfile { DeployTargets = [], InstallLmm = false, InstallModLoader = false },
+                ["lmm"] = new DeploymentProfile { DeployTargets = [], InstallLmm = true, InstallModLoader = false },
+                ["bepinex"] = new DeploymentProfile { DeployTargets = [], InstallLmm = false, InstallModLoader = true },
+                ["playwright"] = new DeploymentProfile
+                {
+                    DeployTargets = new Collection<string>(["LobotomyPlaywright.Plugin", "RetargetHarmony"]),
+                    InstallLmm = true,
+                    InstallModLoader = true
+                },
+                ["all"] = new DeploymentProfile
+                {
+                    DeployTargets = new Collection<string>(
+                    [
+                        "LobotomyPlaywright.Plugin", "RetargetHarmony",
+                        "LobotomyCorporationMods.BadLuckProtectionForGifts", "LobotomyCorporationMods.BugFixes",
+                        "LobotomyCorporationMods.DebugPanel", "LobotomyCorporationMods.FreeCustomization",
+                        "LobotomyCorporationMods.GiftAlertIcon", "LobotomyCorporationMods.NotifyWhenAgentReceivesGift",
+                        "LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking"
+                    ]),
+                    InstallLmm = true,
+                    InstallModLoader = true
+                }
+            };
+            _ = _mockProfileLoader.Setup(p => p.Load()).Returns(profiles);
+        }
+
+        private void SetupSuccessfulBuildAndDeploy()
+        {
+            _ = _mockFileSystem.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
+            _ = _mockFileSystem.Setup(f => f.FileExists(It.IsAny<string>())).Returns(true);
+            _ = _mockFileSystem.Setup(f => f.GetFiles(It.IsAny<string>(), "LobotomyCorporationMods.Common.*.dll"))
+                .Returns(["LobotomyCorporationMods.Common.6.0.2.dll"]);
+            _ = _mockProcessRunner.Setup(p => p.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string?, bool>>()))
+                .Returns(0);
         }
     }
 }

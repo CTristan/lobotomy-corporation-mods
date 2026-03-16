@@ -65,11 +65,6 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
                 var firstPatch = assemblyPatches[0];
                 var harmonyVersion = _harmonyVersionClassifier.Classify(firstPatch.PatchAssemblyReferences);
 
-                if (harmonyVersion != HarmonyVersion.Harmony1)
-                {
-                    continue;
-                }
-
                 mods.Add(new DetectedModInfo(
                     assemblyName,
                     firstPatch.PatchAssemblyVersion,

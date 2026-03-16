@@ -24,15 +24,22 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             var lines = new List<string>
             {
                 "Collected: " + report.CollectedAt.ToString("u"),
-                "Mode: " + GetEnvironmentModeLabel(report.EnvironmentInfo),
-                "BepInEx Plugins (" + bepInExPlugins.Count + "):"
+                "Mode: " + GetEnvironmentModeLabel(report.EnvironmentInfo)
             };
-            AddMods(lines, bepInExPlugins);
+
+            if (report.EnvironmentInfo.IsBepInExAvailable)
+            {
+                lines.Add("BepInEx Plugins (" + bepInExPlugins.Count + "):");
+                AddMods(lines, bepInExPlugins);
+            }
 
             lines.Add("LMM/Basemod Mods (" + lmmMods.Count + "):");
             AddMods(lines, lmmMods);
 
-            lines.Add("RetargetHarmony: " + report.RetargetHarmonyStatus.Message);
+            if (report.EnvironmentInfo.IsBepInExAvailable)
+            {
+                lines.Add("RetargetHarmony: " + report.RetargetHarmonyStatus.Message);
+            }
             AddDllIntegrityOverlay(lines, report.DllIntegrity);
             lines.Add("Active Harmony Patches: " + report.Patches.Count + " patches");
 
@@ -53,9 +60,10 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             return lines;
         }
 
-        public IList<string> FormatForLogFile(DiagnosticReport report)
+        public IList<string> FormatForLogFile(DiagnosticReport report, ExternalLogData externalLogs)
         {
             _ = Guard.Against.Null(report, nameof(report));
+            _ = Guard.Against.Null(externalLogs, nameof(externalLogs));
 
             var bepInExPlugins = FilterBySource(report.Mods, ModSource.BepInExPlugin);
             var lmmMods = FilterBySource(report.Mods, ModSource.Lmm);
@@ -104,6 +112,18 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             lines.Add(string.Empty);
             lines.Add("========== DLL INTEGRITY (" + report.DllIntegrity.Findings.Count + ") ==========");
             AddDllIntegrityLogFile(lines, report.DllIntegrity);
+
+            lines.Add(string.Empty);
+            lines.Add("========== RETARGETHARMONY LOG ==========");
+            AddExternalLogContent(lines, externalLogs.RetargetHarmonyLog, "RetargetHarmony log");
+
+            lines.Add(string.Empty);
+            lines.Add("========== BEPINEX LOGOUTPUT.LOG ==========");
+            AddExternalLogContent(lines, externalLogs.BepInExLog, "BepInEx LogOutput.log");
+
+            lines.Add(string.Empty);
+            lines.Add("========== UNITY OUTPUT_LOG.TXT ==========");
+            AddExternalLogContent(lines, externalLogs.UnityLog, "Unity output_log.txt");
 
             if (report.DebugInfo.Count > 0)
             {
@@ -338,6 +358,22 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             }
 
             return "Error";
+        }
+
+        private static void AddExternalLogContent(List<string> lines, string logContent, string logName)
+        {
+            if (string.IsNullOrEmpty(logContent))
+            {
+                lines.Add("  - No " + logName + " found or file does not exist");
+
+                return;
+            }
+
+            var logLines = logContent.Split(new[] { "\r\n", "\n" }, System.StringSplitOptions.None);
+            foreach (var line in logLines)
+            {
+                lines.Add("  " + line);
+            }
         }
 
         private static string JoinStrings(IList<string> items)

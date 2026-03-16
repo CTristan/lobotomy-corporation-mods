@@ -63,7 +63,7 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
 
             _scrollPosition = GUILayout.BeginScrollView(_scrollPosition);
 
-            if (_currentConfig.ShowBepInExPlugins)
+            if (_currentConfig.ShowBepInExPlugins && _currentReport.EnvironmentInfo.IsBepInExAvailable)
             {
                 DrawModSection(_currentReport, ModSource.BepInExPlugin, "BepInEx Plugins");
             }
@@ -73,8 +73,11 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
                 DrawModSection(_currentReport, ModSource.Lmm, "LMM/Basemod Mods");
             }
 
-            GUILayout.Space(8f);
-            GUILayout.Label("RetargetHarmony: " + _currentReport.RetargetHarmonyStatus.Message);
+            if (_currentReport.EnvironmentInfo.IsBepInExAvailable)
+            {
+                GUILayout.Space(8f);
+                GUILayout.Label("RetargetHarmony: " + _currentReport.RetargetHarmonyStatus.Message);
+            }
 
             if (_currentConfig.ShowDllIntegrity)
             {

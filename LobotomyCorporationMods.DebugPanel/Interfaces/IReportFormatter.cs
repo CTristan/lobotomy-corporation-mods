@@ -13,6 +13,6 @@ namespace LobotomyCorporationMods.DebugPanel.Interfaces
     {
         IList<string> FormatForOverlay(DiagnosticReport report);
 
-        IList<string> FormatForLogFile(DiagnosticReport report);
+        IList<string> FormatForLogFile(DiagnosticReport report, ExternalLogData externalLogs);
     }
 }

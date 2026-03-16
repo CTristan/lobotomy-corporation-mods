@@ -53,7 +53,7 @@ namespace LobotomyPlaywright.Commands
             }
             catch (Exception ex)
             {
-                Plugin.HandleFatalException(ex, "HandlePause");
+                PlaywrightCore.HandleFatalException(ex, "HandlePause");
                 return Response.CreateError(request.Id, $"Failed to pause: {ex.Message}", "COMMAND_ERROR");
             }
         }
@@ -88,7 +88,7 @@ namespace LobotomyPlaywright.Commands
             }
             catch (Exception ex)
             {
-                Plugin.HandleFatalException(ex, "HandleUnpause");
+                PlaywrightCore.HandleFatalException(ex, "HandleUnpause");
                 return Response.CreateError(request.Id, $"Failed to unpause: {ex.Message}", "COMMAND_ERROR");
             }
         }
@@ -161,7 +161,7 @@ namespace LobotomyPlaywright.Commands
             }
             catch (Exception ex)
             {
-                Plugin.HandleFatalException(ex, "HandleAssignWork");
+                PlaywrightCore.HandleFatalException(ex, "HandleAssignWork");
                 return Response.CreateError(request.Id, $"Failed to assign work: {ex.Message}", "COMMAND_ERROR");
             }
         }
@@ -220,7 +220,7 @@ namespace LobotomyPlaywright.Commands
             }
             catch (Exception ex)
             {
-                Plugin.HandleFatalException(ex, "HandleDeployAgent");
+                PlaywrightCore.HandleFatalException(ex, "HandleDeployAgent");
                 return Response.CreateError(request.Id, $"Failed to deploy agent: {ex.Message}", "COMMAND_ERROR");
             }
         }
@@ -268,7 +268,7 @@ namespace LobotomyPlaywright.Commands
             }
             catch (Exception ex)
             {
-                Plugin.HandleFatalException(ex, "HandleRecallAgent");
+                PlaywrightCore.HandleFatalException(ex, "HandleRecallAgent");
                 return Response.CreateError(request.Id, $"Failed to recall agent: {ex.Message}", "COMMAND_ERROR");
             }
         }
@@ -314,7 +314,7 @@ namespace LobotomyPlaywright.Commands
             }
             catch (Exception ex)
             {
-                Plugin.HandleFatalException(ex, "HandleSuppress");
+                PlaywrightCore.HandleFatalException(ex, "HandleSuppress");
                 return Response.CreateError(request.Id, $"Failed to suppress: {ex.Message}", "COMMAND_ERROR");
             }
         }

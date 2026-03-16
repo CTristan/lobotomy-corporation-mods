@@ -80,7 +80,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         }
 
         [Fact]
-        public void Collect_skips_assemblies_classified_as_Harmony2()
+        public void Collect_includes_assemblies_classified_as_Harmony2()
         {
             var patch = CreatePatch("MyH2Mod");
             _mockSource.Setup(s => s.GetPatches()).Returns([patch]);
@@ -89,7 +89,9 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var collector = new BaseModCollector(_mockSource.Object, _mockClassifier.Object);
             var result = collector.Collect();
 
-            result.Should().BeEmpty();
+            result.Should().HaveCount(1);
+            result[0].Name.Should().Be("MyH2Mod");
+            result[0].HarmonyVersion.Should().Be(HarmonyVersion.Harmony2);
         }
 
         [Fact]

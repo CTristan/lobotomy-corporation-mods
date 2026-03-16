@@ -31,16 +31,16 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
 
             var mods = new List<DetectedModInfo>();
             Append(mods, CollectSafe(_collectorFactory.CreateBepInExPluginCollector(), "BepInExPluginCollector", warnings));
-            Append(mods, CollectSafe(_collectorFactory.CreateBaseModCollector(), "BaseModCollector", warnings));
+            Append(mods, CollectSafe(_collectorFactory.CreateBaseModCollector(debugInfo), "BaseModCollector", warnings));
 
-            var patches = CollectSafe(_collectorFactory.CreateActivePatchCollector(), "ActivePatchCollector", warnings);
+            var patches = CollectSafe(_collectorFactory.CreateActivePatchCollector(debugInfo), "ActivePatchCollector", warnings);
             var assemblies = CollectSafe(_collectorFactory.CreateAssemblyInfoCollector(), "AssemblyInfoCollector", warnings);
             var retargetHarmonyStatus = CollectRetargetHarmonyStatus(warnings);
 
             IList<ExpectedPatchInfo> expectedPatches;
             try
             {
-                expectedPatches = _collectorFactory.CreateExpectedPatchSource().GetExpectedPatches(debugInfo);
+                expectedPatches = _collectorFactory.CreateExpectedPatchSource(debugInfo).GetExpectedPatches(debugInfo);
             }
             catch (Exception ex)
             {

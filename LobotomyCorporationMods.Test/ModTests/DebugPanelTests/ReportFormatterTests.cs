@@ -55,10 +55,22 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         public void FormatForLogFile_throws_when_report_is_null()
         {
             var formatter = new ReportFormatter();
+            var externalLogs = new ExternalLogData(string.Empty, string.Empty, string.Empty);
 
-            Action act = () => formatter.FormatForLogFile(null);
+            Action act = () => formatter.FormatForLogFile(null!, externalLogs);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("report");
+        }
+
+        [Fact]
+        public void FormatForLogFile_throws_when_externalLogs_is_null()
+        {
+            var formatter = new ReportFormatter();
+            var report = CreateReport();
+
+            Action act = () => formatter.FormatForLogFile(report, null!);
+
+            act.Should().Throw<ArgumentNullException>().WithParameterName("externalLogs");
         }
 
         [Fact]
@@ -122,15 +134,47 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         }
 
         [Fact]
-        public void FormatForOverlay_shows_none_when_no_bepinex_plugins()
+        public void FormatForOverlay_hides_bepinex_section_when_bepinex_unavailable()
         {
-            var report = CreateReport();
+            var report = CreateReport(environmentInfo: new EnvironmentInfo(false, false, false));
 
             var formatter = new ReportFormatter();
             var lines = formatter.FormatForOverlay(report);
 
-            var bepInExIndex = lines.ToList().FindIndex(l => l.Contains("BepInEx Plugins", StringComparison.Ordinal));
-            lines[bepInExIndex + 1].Should().Be("  - None");
+            lines.Should().NotContain(l => l.Contains("BepInEx Plugins", StringComparison.Ordinal));
+        }
+
+        [Fact]
+        public void FormatForOverlay_shows_bepinex_section_when_bepinex_available()
+        {
+            var report = CreateReport(environmentInfo: new EnvironmentInfo(true, true, false));
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForOverlay(report);
+
+            lines.Should().Contain(l => l.Contains("BepInEx Plugins", StringComparison.Ordinal));
+        }
+
+        [Fact]
+        public void FormatForOverlay_hides_retargetharmony_when_bepinex_unavailable()
+        {
+            var report = CreateReport(environmentInfo: new EnvironmentInfo(false, false, false));
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForOverlay(report);
+
+            lines.Should().NotContain(l => l.Contains("RetargetHarmony:", StringComparison.Ordinal));
+        }
+
+        [Fact]
+        public void FormatForOverlay_shows_retargetharmony_when_bepinex_available()
+        {
+            var report = CreateReport(environmentInfo: new EnvironmentInfo(true, true, false));
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForOverlay(report);
+
+            lines.Should().Contain(l => l.Contains("RetargetHarmony:", StringComparison.Ordinal));
         }
 
         [Fact]
@@ -184,7 +228,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             {
                 new("TestPlugin", "1.0", ModSource.BepInExPlugin, HarmonyVersion.Harmony2, "TestPlugin", "com.test.plugin", false, 0, 0),
             };
-            var report = CreateReport(mods: mods);
+            var report = CreateReport(mods: mods, environmentInfo: new EnvironmentInfo(true, true, false));
 
             var formatter = new ReportFormatter();
             var lines = formatter.FormatForOverlay(report);
@@ -198,7 +242,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var report = CreateReport();
 
             var formatter = new ReportFormatter();
-            var lines = formatter.FormatForLogFile(report);
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
 
             lines[0].Should().Contain("###");
             lines.Should().Contain(l => l.Contains("Harmony Diagnostic Report"));
@@ -210,7 +254,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var report = CreateReport(environmentInfo: new EnvironmentInfo(true, false, true));
 
             var formatter = new ReportFormatter();
-            var lines = formatter.FormatForLogFile(report);
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
 
             lines.Should().Contain(l => l.Contains("ENVIRONMENT"));
             lines.Should().Contain("  Harmony 2: Available");
@@ -229,7 +273,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var report = CreateReport(assemblies: assemblies);
 
             var formatter = new ReportFormatter();
-            var lines = formatter.FormatForLogFile(report);
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
 
             lines.Should().Contain(l => l.Contains("LOADED ASSEMBLIES (2)"));
             lines.Should().Contain(l => l.Contains("TestDll") && l.Contains("1.0.0"));
@@ -243,7 +287,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var report = CreateReport(debugInfo: debugInfo);
 
             var formatter = new ReportFormatter();
-            var lines = formatter.FormatForLogFile(report);
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
 
             lines.Should().Contain(l => l.Contains("DEBUG INFO (2)"));
             lines.Should().Contain("  - Phase 1: scanned 5 assemblies");
@@ -256,7 +300,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var report = CreateReport();
 
             var formatter = new ReportFormatter();
-            var lines = formatter.FormatForLogFile(report);
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
 
             lines.Should().NotContain(l => l.Contains("DEBUG INFO"));
         }
@@ -267,7 +311,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var report = CreateReport();
 
             var formatter = new ReportFormatter();
-            var lines = formatter.FormatForLogFile(report);
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
 
             lines[^1].Should().Be("===============================");
         }
@@ -306,7 +350,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var report = CreateReport();
 
             var formatter = new ReportFormatter();
-            var lines = formatter.FormatForLogFile(report);
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
 
             var asmIndex = lines.ToList().FindIndex(l => l.Contains("LOADED ASSEMBLIES", StringComparison.Ordinal));
             lines[asmIndex + 1].Should().Be("  - None");
@@ -340,6 +384,14 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var lines = formatter.FormatForOverlay(report);
 
             lines.Should().Contain(l => l.Contains("[0 loaded]"));
+        }
+
+        private static ExternalLogData CreateExternalLogs(
+            string retargetHarmonyLog = "",
+            string bepInExLog = "",
+            string unityLog = "")
+        {
+            return new ExternalLogData(retargetHarmonyLog, bepInExLog, unityLog);
         }
 
         private static DllIntegrityFinding CreateFinding(
@@ -519,7 +571,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var report = CreateReport();
 
             var formatter = new ReportFormatter();
-            var lines = formatter.FormatForLogFile(report);
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
 
             lines.Should().Contain(l => l.Contains("DLL INTEGRITY"));
         }
@@ -531,7 +583,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var report = CreateReport(dllIntegrity: dllIntegrity);
 
             var formatter = new ReportFormatter();
-            var lines = formatter.FormatForLogFile(report);
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
 
             lines.Should().Contain("  Summary: All DLLs clean");
         }
@@ -544,7 +596,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var report = CreateReport(dllIntegrity: dllIntegrity);
 
             var formatter = new ReportFormatter();
-            var lines = formatter.FormatForLogFile(report);
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
 
             lines.Should().Contain("  Total Checked: 2");
             lines.Should().Contain("  Total Rewritten: 1");
@@ -557,7 +609,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var report = CreateReport(dllIntegrity: dllIntegrity);
 
             var formatter = new ReportFormatter();
-            var lines = formatter.FormatForLogFile(report);
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
 
             lines.Should().Contain("  Inspection Mode: Deep (Mono.Cecil)");
         }
@@ -569,7 +621,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var report = CreateReport(dllIntegrity: dllIntegrity);
 
             var formatter = new ReportFormatter();
-            var lines = formatter.FormatForLogFile(report);
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
 
             lines.Should().Contain("  Shim Backup: /game/BepInEx_Shim_Backup");
         }
@@ -581,7 +633,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var report = CreateReport(dllIntegrity: dllIntegrity);
 
             var formatter = new ReportFormatter();
-            var lines = formatter.FormatForLogFile(report);
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
 
             lines.Should().Contain("  Shim Backup: Not found");
         }
@@ -593,7 +645,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var report = CreateReport(dllIntegrity: dllIntegrity);
 
             var formatter = new ReportFormatter();
-            var lines = formatter.FormatForLogFile(report);
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
 
             lines.Should().Contain(l => l.Contains("/game/BepInEx/cache/harmony_interop_cache.dat") && l.Contains("5 entries"));
         }
@@ -605,7 +657,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var report = CreateReport(dllIntegrity: dllIntegrity);
 
             var formatter = new ReportFormatter();
-            var lines = formatter.FormatForLogFile(report);
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
 
             lines.Should().Contain("  Interop Cache: Not found");
         }
@@ -621,7 +673,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var report = CreateReport(dllIntegrity: dllIntegrity);
 
             var formatter = new ReportFormatter();
-            var lines = formatter.FormatForLogFile(report);
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
 
             lines.Should().Contain(l => l.Contains("[Warning]") && l.Contains("MyMod.dll") && l.Contains("Shimmed"));
             lines.Should().Contain("      Path: /mods/MyMod.dll");
@@ -638,7 +690,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var report = CreateReport(dllIntegrity: dllIntegrity);
 
             var formatter = new ReportFormatter();
-            var lines = formatter.FormatForLogFile(report);
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
 
             lines.Should().Contain("      On-disk refs: 0Harmony109");
             lines.Should().Contain("      Original refs: 0Harmony");
@@ -655,7 +707,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var report = CreateReport(dllIntegrity: dllIntegrity);
 
             var formatter = new ReportFormatter();
-            var lines = formatter.FormatForLogFile(report);
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
 
             lines.Should().Contain("      Backup: /backup/Test.dll");
         }
@@ -667,7 +719,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var report = CreateReport(dllIntegrity: dllIntegrity);
 
             var formatter = new ReportFormatter();
-            var lines = formatter.FormatForLogFile(report);
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
 
             lines.Should().Contain("  Warning: Backup directory missing");
         }
@@ -678,12 +730,85 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var report = CreateReport();
 
             var formatter = new ReportFormatter();
-            var lines = formatter.FormatForLogFile(report);
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
 
             var linesList = lines.ToList();
             var asmIndex = linesList.FindIndex(l => l.Contains("LOADED ASSEMBLIES", StringComparison.Ordinal));
             var dllIndex = linesList.FindIndex(l => l.Contains("DLL INTEGRITY", StringComparison.Ordinal));
             dllIndex.Should().BeGreaterThan(asmIndex);
+        }
+
+        [Fact]
+        public void FormatForLogFile_includes_retarget_harmony_log_section()
+        {
+            var report = CreateReport();
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
+
+            lines.Should().Contain(l => l.Contains("RETARGETHARMONY LOG"));
+        }
+
+        [Fact]
+        public void FormatForLogFile_includes_bepinex_log_section()
+        {
+            var report = CreateReport();
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
+
+            lines.Should().Contain(l => l.Contains("BEPINEX LOGOUTPUT.LOG"));
+        }
+
+        [Fact]
+        public void FormatForLogFile_includes_unity_log_section()
+        {
+            var report = CreateReport();
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
+
+            lines.Should().Contain(l => l.Contains("UNITY OUTPUT_LOG.TXT"));
+        }
+
+        [Fact]
+        public void FormatForLogFile_shows_not_found_for_empty_external_logs()
+        {
+            var report = CreateReport();
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
+
+            lines.Should().Contain("  - No RetargetHarmony log found or file does not exist");
+            lines.Should().Contain("  - No BepInEx LogOutput.log found or file does not exist");
+            lines.Should().Contain("  - No Unity output_log.txt found or file does not exist");
+        }
+
+        [Fact]
+        public void FormatForLogFile_includes_external_log_content_when_present()
+        {
+            var report = CreateReport();
+            var externalLogs = CreateExternalLogs(retargetHarmonyLog: "Retarget line 1\nRetarget line 2");
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report, externalLogs);
+
+            lines.Should().Contain("  Retarget line 1");
+            lines.Should().Contain("  Retarget line 2");
+        }
+
+        [Fact]
+        public void FormatForLogFile_external_log_sections_appear_after_dll_integrity()
+        {
+            var report = CreateReport();
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
+
+            var linesList = lines.ToList();
+            var dllIndex = linesList.FindIndex(l => l.Contains("DLL INTEGRITY", StringComparison.Ordinal));
+            var retargetIndex = linesList.FindIndex(l => l.Contains("RETARGETHARMONY LOG", StringComparison.Ordinal));
+            retargetIndex.Should().BeGreaterThan(dllIndex);
         }
     }
 }

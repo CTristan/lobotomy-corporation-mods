@@ -49,18 +49,14 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             _loadedAssemblySource = Guard.Against.Null(loadedAssemblySource, nameof(loadedAssemblySource));
         }
 
-        public IActivePatchCollector CreateActivePatchCollector()
+        public IActivePatchCollector CreateActivePatchCollector(IList<string> debugInfo)
         {
-            var source = _environmentDetector.IsHarmony2Available ? _harmony2Source : _harmony1Source;
-
-            return new ActivePatchCollector(source);
+            return new ActivePatchCollector(CreatePatchSource(debugInfo));
         }
 
-        public IInfoCollector<IList<DetectedModInfo>> CreateBaseModCollector()
+        public IInfoCollector<IList<DetectedModInfo>> CreateBaseModCollector(IList<string> debugInfo)
         {
-            var source = _environmentDetector.IsHarmony2Available ? _harmony2Source : _harmony1Source;
-
-            return new BaseModCollector(source, _classifier);
+            return new BaseModCollector(CreatePatchSource(debugInfo), _classifier);
         }
 
         public IInfoCollector<IList<DetectedModInfo>> CreateBepInExPluginCollector()
@@ -78,11 +74,19 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             return new RetargetHarmonyDetector(_assemblySource);
         }
 
-        public IExpectedPatchSource CreateExpectedPatchSource()
+        public IExpectedPatchSource CreateExpectedPatchSource(IList<string> debugInfo)
         {
-            var source = _environmentDetector.IsHarmony2Available ? _harmony2Source : _harmony1Source;
+            return new ExpectedPatchSource(CreatePatchSource(debugInfo));
+        }
 
-            return new ExpectedPatchSource(source);
+        private IPatchInspectionSource CreatePatchSource(IList<string> debugInfo)
+        {
+            if (_environmentDetector.IsHarmony2Available)
+            {
+                return new FallbackPatchInspectionSource(_harmony2Source, _harmony1Source, debugInfo, "Harmony2", "Harmony1");
+            }
+
+            return _harmony1Source;
         }
 
         public IInfoCollector<DllIntegrityReport> CreateDllIntegrityCollector()

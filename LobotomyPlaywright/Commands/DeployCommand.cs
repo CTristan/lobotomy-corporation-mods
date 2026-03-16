@@ -3,9 +3,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using LobotomyPlaywright.Implementations.Configuration;
+using LobotomyPlaywright.Implementations.Deployment;
 using LobotomyPlaywright.Implementations.System;
 using LobotomyPlaywright.Interfaces.Configuration;
+using LobotomyPlaywright.Interfaces.Deployment;
 using LobotomyPlaywright.Interfaces.System;
 
 namespace LobotomyPlaywright.Commands
@@ -19,7 +22,11 @@ namespace LobotomyPlaywright.Commands
     /// <param name="configManager">The config manager.</param>
     /// <param name="fileSystem">The file system.</param>
     /// <param name="processRunner">The process runner.</param>
-    public class DeployCommand(IConfigManager configManager, IFileSystem fileSystem, IProcessRunner processRunner)
+    /// <param name="gameRestorer">The game restorer.</param>
+    /// <param name="lmmInstaller">The LMM installer.</param>
+    /// <param name="bepInExInstaller">The BepInEx installer.</param>
+    /// <param name="profileLoader">The profile loader.</param>
+    public class DeployCommand(IConfigManager configManager, IFileSystem fileSystem, IProcessRunner processRunner, IGameRestorer gameRestorer, ILmmInstaller lmmInstaller, IBepInExInstaller bepInExInstaller, IProfileLoader profileLoader)
     {
         private static readonly string[] s_harmonyInteropDlls = { "0Harmony109.dll", "0Harmony12.dll", "12Harmony.dll" };
         private static readonly string[] s_modContentDirs = { "Info", "Assets", "Localize" };
@@ -40,12 +47,16 @@ namespace LobotomyPlaywright.Commands
         private readonly IConfigManager _configManager = configManager;
         private readonly IFileSystem _fileSystem = fileSystem;
         private readonly IProcessRunner _processRunner = processRunner;
+        private readonly IGameRestorer _gameRestorer = gameRestorer;
+        private readonly ILmmInstaller _lmmInstaller = lmmInstaller;
+        private readonly IBepInExInstaller _bepInExInstaller = bepInExInstaller;
+        private readonly IProfileLoader _profileLoader = profileLoader;
 
         /// <summary>
         /// Initializes a new instance of DeployCommand class with default implementations.
         /// </summary>
         public DeployCommand()
-            : this(new ConfigManager(new FileSystem()), new FileSystem(), new ProcessRunner())
+            : this(new ConfigManager(new FileSystem()), new FileSystem(), new ProcessRunner(), new GameRestorer(new FileSystem()), new LmmInstaller(new FileSystem()), new BepInExInstaller(new FileSystem()), new ProfileLoader(new FileSystem(), Path.GetFullPath("profiles.json")))
         {
         }
 
@@ -61,6 +72,8 @@ namespace LobotomyPlaywright.Commands
             var configuration = GetArgValue(args, "--configuration") ?? "Release";
             var skipBuild = HasArg(args, "--skip-build");
             var dryRun = HasArg(args, "--dry-run");
+            var profileName = GetArgValue(args, "--profile");
+            var fullRestore = HasArg(args, "--full");
 
             // Load configuration
             Config config;
@@ -86,9 +99,108 @@ namespace LobotomyPlaywright.Commands
             // Repository root
             var repoRoot = FindRepositoryRoot() ?? throw new InvalidOperationException("Could not find repository root");
 
+            // Resolve profile if specified
+            DeploymentProfile? profile = null;
+            var targets = s_deploymentTargets;
+
+            if (profileName is not null)
+            {
+                Dictionary<string, DeploymentProfile> profiles;
+                try
+                {
+                    profiles = _profileLoader.Load();
+                }
+                catch (Exception ex) when (ex is FileNotFoundException or InvalidOperationException)
+                {
+                    Console.Error.WriteLine($"ERROR: {ex.Message}");
+                    return 1;
+                }
+
+                if (!profiles.TryGetValue(profileName, out profile))
+                {
+                    Console.Error.WriteLine($"ERROR: Unknown profile '{profileName}'");
+                    if (profiles.Count > 0)
+                    {
+                        Console.Error.WriteLine($"Available profiles: {string.Join(", ", profiles.Keys)}");
+                    }
+
+                    return 1;
+                }
+
+                // Restore game to vanilla state and install layers
+                var testdataPath = Path.Combine(repoRoot, "testdata");
+
+                if (dryRun)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("".PadRight(60, '='));
+                    Console.WriteLine($"Profile: {profileName}");
+                    Console.WriteLine("".PadRight(60, '='));
+                    Console.WriteLine($"Would restore game to vanilla state ({(fullRestore ? "full" : "targeted")})");
+                    if (profile.InstallLmm)
+                    {
+                        Console.WriteLine("Would install LMM");
+                    }
+
+                    if (profile.InstallModLoader)
+                    {
+                        Console.WriteLine("Would install BepInEx");
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        if (fullRestore)
+                        {
+                            _gameRestorer.RestoreFull(gamePath, testdataPath);
+                        }
+                        else
+                        {
+                            _gameRestorer.RestoreTargeted(gamePath, testdataPath);
+                        }
+
+                        // Install layers
+                        if (profile.InstallLmm)
+                        {
+                            _lmmInstaller.Install(gamePath, testdataPath);
+                        }
+
+                        if (profile.InstallModLoader)
+                        {
+                            var bepInExSourcePath = Path.Combine(repoRoot, "RetargetHarmony.Installer", "Resources", "bepinex");
+                            _bepInExInstaller.Install(gamePath, bepInExSourcePath);
+                        }
+                    }
+                    catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or DirectoryNotFoundException)
+                    {
+                        Console.Error.WriteLine();
+                        Console.Error.WriteLine($"ERROR: Profile setup failed: {ex.Message}");
+                        return 1;
+                    }
+                }
+
+                // Filter deployment targets to profile
+                targets = s_deploymentTargets
+                    .Where(t => profile.DeployTargets.Contains(t.ProjectName))
+                    .ToArray();
+            }
+
+            // If profile has no deploy targets, skip build and deploy phases
+            if (targets.Length == 0)
+            {
+                Console.WriteLine();
+                Console.WriteLine("".PadRight(60, '='));
+                Console.WriteLine("No deployment targets for this profile.");
+                Console.WriteLine("".PadRight(60, '='));
+                Console.WriteLine();
+                Console.WriteLine("Deployment successful!");
+                return 0;
+            }
+
             // Validate all project files exist
             var projectPaths = new Dictionary<string, string>();
-            foreach (var target in s_deploymentTargets)
+            foreach (var target in targets)
             {
                 var projectPath = Path.Combine(repoRoot, target.ProjectName, $"{target.ProjectName}.csproj");
                 if (!_fileSystem.FileExists(projectPath))
@@ -111,7 +223,7 @@ namespace LobotomyPlaywright.Commands
 
                 try
                 {
-                    foreach (var target in s_deploymentTargets)
+                    foreach (var target in targets)
                     {
                         dllPaths[target.ProjectName] = BuildProject(projectPaths[target.ProjectName], configuration);
                     }
@@ -129,7 +241,7 @@ namespace LobotomyPlaywright.Commands
                 Console.WriteLine("Skipping Build (using existing DLLs)");
                 Console.WriteLine("".PadRight(60, '='));
 
-                foreach (var target in s_deploymentTargets)
+                foreach (var target in targets)
                 {
                     var projectDir = Path.GetDirectoryName(projectPaths[target.ProjectName]) ?? string.Empty;
                     var dllName = $"{target.ProjectName}.dll";
@@ -153,11 +265,14 @@ namespace LobotomyPlaywright.Commands
             Console.WriteLine("Deploying DLLs");
             Console.WriteLine("".PadRight(60, '='));
 
+            var deployInteropDlls = profile?.InstallModLoader != false;
+
             if (dryRun)
             {
-                foreach (var target in s_deploymentTargets)
+                foreach (var target in targets)
                 {
-                    var destDir = GetDeployDestDir(gamePath, target.DeploySubdir);
+                    var deploySubdir = ResolveDeploySubdir(target, profile);
+                    var destDir = GetDeployDestDir(gamePath, deploySubdir);
                     var dllName = $"{target.ProjectName}.dll";
                     Console.WriteLine();
                     Console.WriteLine($"Would deploy {dllName} to:");
@@ -169,11 +284,14 @@ namespace LobotomyPlaywright.Commands
                     }
                 }
 
-                foreach (var dllName in s_harmonyInteropDlls)
+                if (deployInteropDlls)
                 {
-                    Console.WriteLine();
-                    Console.WriteLine($"Would deploy {dllName} to:");
-                    Console.WriteLine($"  {Path.Combine(gamePath, "BepInEx", "core", dllName)}");
+                    foreach (var dllName in s_harmonyInteropDlls)
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine($"Would deploy {dllName} to:");
+                        Console.WriteLine($"  {Path.Combine(gamePath, "BepInEx", "core", dllName)}");
+                    }
                 }
 
                 Console.WriteLine();
@@ -184,20 +302,24 @@ namespace LobotomyPlaywright.Commands
             try
             {
                 var deployedPaths = new Dictionary<string, string>();
-                foreach (var target in s_deploymentTargets)
+                foreach (var target in targets)
                 {
-                    deployedPaths[target.ProjectName] = DeployDll(dllPaths[target.ProjectName], gamePath, target.DeploySubdir);
+                    var deploySubdir = ResolveDeploySubdir(target, profile);
+                    deployedPaths[target.ProjectName] = DeployDll(dllPaths[target.ProjectName], gamePath, deploySubdir);
 
                     if (target.IsMod)
                     {
-                        DeployModContent(dllPaths[target.ProjectName], gamePath, target.DeploySubdir);
+                        DeployModContent(dllPaths[target.ProjectName], gamePath, deploySubdir);
                     }
                 }
 
-                foreach (var dllName in s_harmonyInteropDlls)
+                if (deployInteropDlls)
                 {
-                    Console.WriteLine($"DEBUG: Deploying interop DLL: {dllName}");
-                    DeployInteropDll(repoRoot, dllName, gamePath);
+                    foreach (var dllName in s_harmonyInteropDlls)
+                    {
+                        Console.WriteLine($"DEBUG: Deploying interop DLL: {dllName}");
+                        DeployInteropDll(repoRoot, dllName, gamePath);
+                    }
                 }
 
                 Console.WriteLine();
@@ -205,7 +327,7 @@ namespace LobotomyPlaywright.Commands
                 Console.WriteLine("Deployment Summary");
                 Console.WriteLine("".PadRight(60, '='));
 
-                foreach (var target in s_deploymentTargets)
+                foreach (var target in targets)
                 {
                     var path = deployedPaths[target.ProjectName];
                     Console.WriteLine($"{target.ProjectName}: {path}");
@@ -374,6 +496,17 @@ namespace LobotomyPlaywright.Commands
             var destPath = DeployDll(sourceDll, gamePath, "core");
             Console.WriteLine($"Interop: {destPath}");
             Console.WriteLine($"Size: {_fileSystem.GetFileSize(destPath):N0} bytes");
+        }
+
+        private static string ResolveDeploySubdir(DeploymentTarget target, DeploymentProfile? profile)
+        {
+            if (profile?.DeployOverrides != null &&
+                profile.DeployOverrides.TryGetValue(target.ProjectName, out var overrideSubdir))
+            {
+                return overrideSubdir;
+            }
+
+            return target.DeploySubdir;
         }
 
         private static string GetDeployDestDir(string gamePath, string destSubdir)

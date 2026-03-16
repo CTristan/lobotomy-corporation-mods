@@ -18,7 +18,6 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
     public sealed class InputHandler : IInputHandler
     {
         private const int AutoRefreshFrameInterval = 60;
-        private const float AutoRefreshDurationSeconds = 60f;
 
         private readonly KeyCode _toggleKey;
         private readonly KeyCode _refreshKey;
@@ -41,7 +40,7 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
 
         public bool ShouldAutoRefresh(float elapsedTime, int frameCount)
         {
-            return elapsedTime < AutoRefreshDurationSeconds && frameCount % AutoRefreshFrameInterval == 0;
+            return frameCount % AutoRefreshFrameInterval == 0;
         }
     }
 }

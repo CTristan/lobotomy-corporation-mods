@@ -3,6 +3,7 @@
 #region
 
 using System;
+using System.Collections.Generic;
 using AwesomeAssertions;
 using LobotomyCorporationMods.DebugPanel.Implementations;
 using LobotomyCorporationMods.DebugPanel.Interfaces;
@@ -111,16 +112,30 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         }
 
         [Fact]
-        public void CreateActivePatchCollector_uses_harmony2_source_when_available()
+        public void CreateActivePatchCollector_uses_harmony2_source_first_when_available()
         {
             _mockDetector.Setup(d => d.IsHarmony2Available).Returns(true);
             var factory = CreateFactory();
+            var debugInfo = new List<string>();
 
-            var collector = factory.CreateActivePatchCollector();
+            var collector = factory.CreateActivePatchCollector(debugInfo);
             _ = collector.Collect();
 
             _mockHarmony2Source.Verify(s => s.GetPatches(), Times.Once);
-            _mockHarmony1Source.Verify(s => s.GetPatches(), Times.Never);
+        }
+
+        [Fact]
+        public void CreateActivePatchCollector_falls_back_to_harmony1_when_harmony2_returns_empty()
+        {
+            _mockDetector.Setup(d => d.IsHarmony2Available).Returns(true);
+            var factory = CreateFactory();
+            var debugInfo = new List<string>();
+
+            var collector = factory.CreateActivePatchCollector(debugInfo);
+            _ = collector.Collect();
+
+            _mockHarmony2Source.Verify(s => s.GetPatches(), Times.Once);
+            _mockHarmony1Source.Verify(s => s.GetPatches(), Times.Once);
         }
 
         [Fact]
@@ -128,8 +143,9 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         {
             _mockDetector.Setup(d => d.IsHarmony2Available).Returns(false);
             var factory = CreateFactory();
+            var debugInfo = new List<string>();
 
-            var collector = factory.CreateActivePatchCollector();
+            var collector = factory.CreateActivePatchCollector(debugInfo);
             _ = collector.Collect();
 
             _mockHarmony1Source.Verify(s => s.GetPatches(), Times.Once);
@@ -137,16 +153,16 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         }
 
         [Fact]
-        public void CreateBaseModCollector_uses_harmony2_source_when_available()
+        public void CreateBaseModCollector_uses_harmony2_source_first_when_available()
         {
             _mockDetector.Setup(d => d.IsHarmony2Available).Returns(true);
             var factory = CreateFactory();
+            var debugInfo = new List<string>();
 
-            var collector = factory.CreateBaseModCollector();
+            var collector = factory.CreateBaseModCollector(debugInfo);
             _ = collector.Collect();
 
             _mockHarmony2Source.Verify(s => s.GetPatches(), Times.Once);
-            _mockHarmony1Source.Verify(s => s.GetPatches(), Times.Never);
         }
 
         [Fact]
@@ -154,8 +170,9 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         {
             _mockDetector.Setup(d => d.IsHarmony2Available).Returns(false);
             var factory = CreateFactory();
+            var debugInfo = new List<string>();
 
-            var collector = factory.CreateBaseModCollector();
+            var collector = factory.CreateBaseModCollector(debugInfo);
             _ = collector.Collect();
 
             _mockHarmony1Source.Verify(s => s.GetPatches(), Times.Once);
@@ -167,8 +184,9 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         {
             _mockDetector.Setup(d => d.IsHarmony2Available).Returns(false);
             var factory = CreateFactory();
+            var debugInfo = new List<string>();
 
-            var source = factory.CreateExpectedPatchSource();
+            var source = factory.CreateExpectedPatchSource(debugInfo);
 
             source.Should().NotBeNull();
         }

@@ -104,7 +104,7 @@ namespace LobotomyPlaywright.Commands
             {
                 // Schedule Application.Quit on the next frame
                 // This allows the response to be sent before quitting
-                Plugin.Instance?.QueueShutdown();
+                PlaywrightCore.Instance?.QueueShutdown();
 
                 return Response.CreateSuccess(
                     request.Id,
@@ -113,7 +113,7 @@ namespace LobotomyPlaywright.Commands
             }
             catch (Exception ex)
             {
-                Plugin.HandleFatalException(ex, "HandleShutdown");
+                PlaywrightCore.HandleFatalException(ex, "HandleShutdown");
                 return Response.CreateError(
                     request.Id,
                     $"Failed to queue shutdown: {ex.Message}",

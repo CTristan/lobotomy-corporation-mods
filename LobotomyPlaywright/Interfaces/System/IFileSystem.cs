@@ -107,5 +107,18 @@ namespace LobotomyPlaywright.Interfaces.System
         /// <param name="destDir">The destination directory path.</param>
         /// <param name="overwrite">True to overwrite existing files.</param>
         void CopyDirectory(string sourceDir, string destDir, bool overwrite);
+
+        /// <summary>
+        /// Deletes a directory.
+        /// </summary>
+        /// <param name="path">The directory path.</param>
+        /// <param name="recursive">True to delete contents recursively.</param>
+        void DeleteDirectory(string path, bool recursive);
+
+        /// <summary>
+        /// Deletes a file.
+        /// </summary>
+        /// <param name="path">The file path.</param>
+        void DeleteFile(string path);
     }
 }
