@@ -7,7 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.DebugPanel.Interfaces;
-using LobotomyCorporationMods.DebugPanel.Models;
+using LobotomyCorporationMods.Common.Models.Diagnostics;
 
 #endregion
 

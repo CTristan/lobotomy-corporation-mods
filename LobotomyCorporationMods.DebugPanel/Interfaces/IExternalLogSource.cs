@@ -2,7 +2,7 @@
 
 #region
 
-using LobotomyCorporationMods.DebugPanel.Models;
+using LobotomyCorporationMods.Common.Models.Diagnostics;
 
 #endregion
 

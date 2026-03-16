@@ -4,10 +4,9 @@
 
 using System;
 using System.Collections.Generic;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.DebugPanel.Interfaces;
-using LobotomyCorporationMods.DebugPanel.Models;
+using LobotomyCorporationMods.Common.Models.Diagnostics;
 
 #endregion
 
@@ -20,8 +19,10 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
 
         public DiagnosticReportBuilder(ICollectorFactory collectorFactory, IEnvironmentDetector environmentDetector)
         {
-            _collectorFactory = Guard.Against.Null(collectorFactory, nameof(collectorFactory));
-            _environmentDetector = Guard.Against.Null(environmentDetector, nameof(environmentDetector));
+            ThrowHelper.ThrowIfNull(collectorFactory);
+            _collectorFactory = collectorFactory;
+            ThrowHelper.ThrowIfNull(environmentDetector);
+            _environmentDetector = environmentDetector;
         }
 
         public DiagnosticReport BuildReport()

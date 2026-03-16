@@ -4,10 +4,10 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using AwesomeAssertions;
-using LobotomyPlaywright.Server;
+using LobotomyCorporationMods.Playwright.Server;
 using Xunit;
 
-namespace LobotomyPlaywright.Plugin.Test.Server
+namespace LobotomyCorporationMods.Playwright.Test.Server
 {
     /// <summary>
     /// Tests for TcpServer.

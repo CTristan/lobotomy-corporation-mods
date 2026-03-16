@@ -4,7 +4,7 @@
 
 using System;
 using LobotomyCorporationMods.DebugPanel.JsonModels;
-using LobotomyCorporationMods.DebugPanel.Models;
+using LobotomyCorporationMods.Common.Models.Diagnostics;
 
 #endregion
 

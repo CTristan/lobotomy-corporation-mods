@@ -3,7 +3,6 @@
 #region
 
 using System.Collections.Generic;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 
 #endregion
@@ -14,9 +13,12 @@ namespace LobotomyCorporationMods.DebugPanel.Interfaces
     {
         public LoadedAssemblyInfo(string name, string location, IList<string> referenceNames)
         {
-            Name = Guard.Against.Null(name, nameof(name));
-            Location = Guard.Against.Null(location, nameof(location));
-            ReferenceNames = Guard.Against.Null(referenceNames, nameof(referenceNames));
+            ThrowHelper.ThrowIfNull(name);
+            Name = name;
+            ThrowHelper.ThrowIfNull(location);
+            Location = location;
+            ThrowHelper.ThrowIfNull(referenceNames);
+            ReferenceNames = referenceNames;
         }
 
         public string Name { get; private set; }

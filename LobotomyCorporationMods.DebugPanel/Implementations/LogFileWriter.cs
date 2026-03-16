@@ -4,11 +4,10 @@
 
 using System;
 using System.Globalization;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.DebugPanel.Interfaces;
-using LobotomyCorporationMods.DebugPanel.Models;
+using LobotomyCorporationMods.Common.Models.Diagnostics;
 
 #endregion
 
@@ -22,14 +21,18 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
 
         public LogFileWriter(IFileManager fileManager, IReportFormatter reportFormatter, IExternalLogSource externalLogSource)
         {
-            _fileManager = Guard.Against.Null(fileManager, nameof(fileManager));
-            _reportFormatter = Guard.Against.Null(reportFormatter, nameof(reportFormatter));
-            _externalLogSource = Guard.Against.Null(externalLogSource, nameof(externalLogSource));
+            ThrowHelper.ThrowIfNull(fileManager);
+            _fileManager = fileManager;
+            ThrowHelper.ThrowIfNull(reportFormatter);
+            _reportFormatter = reportFormatter;
+            ThrowHelper.ThrowIfNull(externalLogSource);
+            _externalLogSource = externalLogSource;
         }
 
         public string WriteReport(DiagnosticReport report)
         {
-            _ = Guard.Against.Null(report, nameof(report));
+            ThrowHelper.ThrowIfNull(report);
+            _ = report;
 
             var externalLogs = _externalLogSource.GetExternalLogs();
             var lines = _reportFormatter.FormatForLogFile(report, externalLogs);

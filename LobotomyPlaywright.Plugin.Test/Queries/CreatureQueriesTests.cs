@@ -2,10 +2,10 @@
 
 using System;
 using AwesomeAssertions;
-using LobotomyPlaywright.Queries;
+using LobotomyCorporationMods.Playwright.Queries;
 using Xunit;
 
-namespace LobotomyPlaywright.Plugin.Test.Queries
+namespace LobotomyCorporationMods.Playwright.Test.Queries
 {
     /// <summary>
     /// Tests for CreatureQueries.

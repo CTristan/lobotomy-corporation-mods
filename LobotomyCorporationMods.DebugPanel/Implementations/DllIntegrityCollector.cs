@@ -5,10 +5,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.DebugPanel.Interfaces;
-using LobotomyCorporationMods.DebugPanel.Models;
+using LobotomyCorporationMods.Common.Enums.Diagnostics;
+using LobotomyCorporationMods.Common.Models.Diagnostics;
 
 #endregion
 
@@ -26,9 +26,12 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             IShimArtifactSource shimArtifactSource,
             ILoadedAssemblyReferenceSource loadedAssemblySource)
         {
-            _dllFileInspector = Guard.Against.Null(dllFileInspector, nameof(dllFileInspector));
-            _shimArtifactSource = Guard.Against.Null(shimArtifactSource, nameof(shimArtifactSource));
-            _loadedAssemblySource = Guard.Against.Null(loadedAssemblySource, nameof(loadedAssemblySource));
+            ThrowHelper.ThrowIfNull(dllFileInspector);
+            _dllFileInspector = dllFileInspector;
+            ThrowHelper.ThrowIfNull(shimArtifactSource);
+            _shimArtifactSource = shimArtifactSource;
+            ThrowHelper.ThrowIfNull(loadedAssemblySource);
+            _loadedAssemblySource = loadedAssemblySource;
             _bytePatternScanner = new BytePatternScanner();
         }
 

@@ -7,11 +7,11 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.DebugPanel.Interfaces;
 using LobotomyCorporationMods.DebugPanel.JsonModels;
-using LobotomyCorporationMods.DebugPanel.Models;
+using LobotomyCorporationMods.Common.Enums.Diagnostics;
+using LobotomyCorporationMods.Common.Models.Diagnostics;
 using UnityEngine;
 
 #endregion
@@ -34,9 +34,12 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
 
         public void Draw(DiagnosticReport report, DebugPanelConfig config, Action refreshAction, Action generateLogAction)
         {
-            _currentReport = Guard.Against.Null(report, nameof(report));
-            _currentConfig = Guard.Against.Null(config, nameof(config));
-            _currentRefreshAction = Guard.Against.Null(refreshAction, nameof(refreshAction));
+            ThrowHelper.ThrowIfNull(report);
+            _currentReport = report;
+            ThrowHelper.ThrowIfNull(config);
+            _currentConfig = config;
+            ThrowHelper.ThrowIfNull(refreshAction);
+            _currentRefreshAction = refreshAction;
             _currentGenerateLogAction = generateLogAction;
 
             var title = "Debug Panel (" + config.OverlayToggleKey + " to hide)";

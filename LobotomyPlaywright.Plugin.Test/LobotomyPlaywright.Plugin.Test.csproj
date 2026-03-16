@@ -40,7 +40,7 @@
         <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all"/>
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\LobotomyPlaywright.Plugin\LobotomyPlaywright.Plugin.csproj"/>
+        <ProjectReference Include="..\LobotomyCorporationMods.Playwright\LobotomyCorporationMods.Playwright.csproj"/>
     </ItemGroup>
     <ItemGroup>
         <Reference Include="0Harmony">

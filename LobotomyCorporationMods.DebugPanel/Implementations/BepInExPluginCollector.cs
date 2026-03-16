@@ -3,10 +3,10 @@
 #region
 
 using System.Collections.Generic;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.DebugPanel.Interfaces;
-using LobotomyCorporationMods.DebugPanel.Models;
+using LobotomyCorporationMods.Common.Enums.Diagnostics;
+using LobotomyCorporationMods.Common.Models.Diagnostics;
 
 #endregion
 
@@ -19,8 +19,10 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
 
         public BepInExPluginCollector(IPluginInfoSource pluginInfoSource, IHarmonyVersionClassifier harmonyVersionClassifier)
         {
-            _pluginInfoSource = Guard.Against.Null(pluginInfoSource, nameof(pluginInfoSource));
-            _harmonyVersionClassifier = Guard.Against.Null(harmonyVersionClassifier, nameof(harmonyVersionClassifier));
+            ThrowHelper.ThrowIfNull(pluginInfoSource);
+            _pluginInfoSource = pluginInfoSource;
+            ThrowHelper.ThrowIfNull(harmonyVersionClassifier);
+            _harmonyVersionClassifier = harmonyVersionClassifier;
         }
 
         public IList<DetectedModInfo> Collect()

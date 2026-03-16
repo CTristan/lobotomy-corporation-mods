@@ -6,10 +6,10 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using AwesomeAssertions;
-using LobotomyPlaywright.Server;
+using LobotomyCorporationMods.Playwright.Server;
 using Xunit;
 
-namespace LobotomyPlaywright.Plugin.Test.Server
+namespace LobotomyCorporationMods.Playwright.Test.Server
 {
     /// <summary>
     /// Tests for ClientHandler.

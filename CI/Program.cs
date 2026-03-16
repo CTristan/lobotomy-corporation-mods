@@ -233,7 +233,7 @@ dotnet ci --check
             }
 
             Console.WriteLine("=== Running dotnet test ===");
-            var testArgs = "test /p:CollectCoverage=true /p:CoverletOutput=\"./coverage.opencover.xml\" /p:CoverletOutputFormat=opencover --verbosity normal LobotomyCorporationMods.sln";
+            var testArgs = "test /p:CollectCoverage=true /p:CoverletOutput=\"./coverage.opencover.xml\" /p:CoverletOutputFormat=opencover --verbosity normal --blame-hang-timeout 10s LobotomyCorporationMods.sln";
             var testResult = _processRunner.Run("dotnet", testArgs, repoRoot);
 
             if (testResult.ExitCode != 0)

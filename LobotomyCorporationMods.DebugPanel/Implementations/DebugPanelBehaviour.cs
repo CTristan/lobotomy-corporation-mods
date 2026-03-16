@@ -7,9 +7,10 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
+using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.DebugPanel.Interfaces;
 using LobotomyCorporationMods.DebugPanel.JsonModels;
-using LobotomyCorporationMods.DebugPanel.Models;
+using LobotomyCorporationMods.Common.Models.Diagnostics;
 using UnityEngine;
 
 #endregion
@@ -56,7 +57,10 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
                 _reportBuilder = new DiagnosticReportBuilder(factory, detector);
                 _overlay = new DiagnosticOverlay();
                 _inputHandler = new InputHandler(_config);
-                _logFileWriter = new LogFileWriter(fileManager, new ReportFormatter(), new ExternalLogSource());
+                var externalLogSource = new ExternalLogSource();
+                _logFileWriter = new LogFileWriter(fileManager, new ReportFormatter(), externalLogSource);
+
+                DiagnosticDataRegistry.Register(new DiagnosticDataProvider(_reportBuilder, externalLogSource));
 
                 _startTime = Time.time;
                 _report = _reportBuilder.BuildReport();
@@ -65,6 +69,11 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             {
                 Harmony_Patch.Instance.Logger.WriteException(ex);
             }
+        }
+
+        private void OnDestroy()
+        {
+            DiagnosticDataRegistry.Unregister();
         }
 
         private void Update()

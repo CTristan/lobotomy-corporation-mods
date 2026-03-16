@@ -12,10 +12,10 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.DebugPanel.Interfaces;
-using LobotomyCorporationMods.DebugPanel.Models;
+using LobotomyCorporationMods.Common.Enums.Diagnostics;
+using LobotomyCorporationMods.Common.Models.Diagnostics;
 
 #endregion
 
@@ -48,7 +48,8 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
 
         public ExpectedPatchSource(IPatchInspectionSource runtimePatchSource)
         {
-            _runtimePatchSource = Guard.Against.Null(runtimePatchSource, nameof(runtimePatchSource));
+            ThrowHelper.ThrowIfNull(runtimePatchSource);
+            _runtimePatchSource = runtimePatchSource;
         }
 
         public IList<ExpectedPatchInfo> GetExpectedPatches(IList<string> debugInfo)

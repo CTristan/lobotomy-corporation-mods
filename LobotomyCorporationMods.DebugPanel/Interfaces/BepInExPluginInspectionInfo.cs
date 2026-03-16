@@ -2,7 +2,6 @@
 
 #region
 
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 
 #endregion
@@ -13,10 +12,14 @@ namespace LobotomyCorporationMods.DebugPanel.Interfaces
     {
         public BepInExPluginInspectionInfo(string pluginId, string name, string version, AssemblyInspectionInfo assembly)
         {
-            PluginId = Guard.Against.Null(pluginId, nameof(pluginId));
-            Name = Guard.Against.Null(name, nameof(name));
-            Version = Guard.Against.Null(version, nameof(version));
-            Assembly = Guard.Against.Null(assembly, nameof(assembly));
+            ThrowHelper.ThrowIfNull(pluginId);
+            PluginId = pluginId;
+            ThrowHelper.ThrowIfNull(name);
+            Name = name;
+            ThrowHelper.ThrowIfNull(version);
+            Version = version;
+            ThrowHelper.ThrowIfNull(assembly);
+            Assembly = assembly;
         }
 
         public string PluginId { get; private set; }

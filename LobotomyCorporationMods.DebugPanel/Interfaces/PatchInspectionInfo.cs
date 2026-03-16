@@ -4,9 +4,8 @@
 
 using System.Collections.Generic;
 using System.Reflection;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.DebugPanel.Models;
+using LobotomyCorporationMods.Common.Enums.Diagnostics;
 
 #endregion
 
@@ -24,14 +23,21 @@ namespace LobotomyCorporationMods.DebugPanel.Interfaces
             string patchAssemblyVersion,
             IList<AssemblyName> patchAssemblyReferences)
         {
-            TargetType = Guard.Against.Null(targetType, nameof(targetType));
-            TargetMethod = Guard.Against.Null(targetMethod, nameof(targetMethod));
+            ThrowHelper.ThrowIfNull(targetType);
+            TargetType = targetType;
+            ThrowHelper.ThrowIfNull(targetMethod);
+            TargetMethod = targetMethod;
             PatchType = patchType;
-            Owner = Guard.Against.Null(owner, nameof(owner));
-            PatchMethod = Guard.Against.Null(patchMethod, nameof(patchMethod));
-            PatchAssemblyName = Guard.Against.Null(patchAssemblyName, nameof(patchAssemblyName));
-            PatchAssemblyVersion = Guard.Against.Null(patchAssemblyVersion, nameof(patchAssemblyVersion));
-            PatchAssemblyReferences = Guard.Against.Null(patchAssemblyReferences, nameof(patchAssemblyReferences));
+            ThrowHelper.ThrowIfNull(owner);
+            Owner = owner;
+            ThrowHelper.ThrowIfNull(patchMethod);
+            PatchMethod = patchMethod;
+            ThrowHelper.ThrowIfNull(patchAssemblyName);
+            PatchAssemblyName = patchAssemblyName;
+            ThrowHelper.ThrowIfNull(patchAssemblyVersion);
+            PatchAssemblyVersion = patchAssemblyVersion;
+            ThrowHelper.ThrowIfNull(patchAssemblyReferences);
+            PatchAssemblyReferences = patchAssemblyReferences;
         }
 
         public string TargetType { get; private set; }

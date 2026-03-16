@@ -8,9 +8,9 @@
 
 | Project | Target | Purpose |
 |---------|--------|---------|
-| `LobotomyCorporationMods.Common` | net35 | Shared library: base classes, interfaces, extensions, facades, guard clauses |
+| `LobotomyCorporationMods.Common` | net35 | Shared library: base classes, interfaces, extensions, facades |
 | `LobotomyCorporationMods.<ModName>` | net35 | Individual mod — one per feature |
-| `LobotomyCorporationMods.Test` | net481 | Single test project covering all mods |
+| `LobotomyCorporationMods.Test` | net10.0 | Single test project covering all mods |
 | `CI` / `CI.Test` | net10.0 | Local dotnet tool for CI checks |
 | `SetupExternal` / `SetupExternal.Test` | net10.0 | Local dotnet tool for project setup |
 | `scripts/` | — | Helper shell/C# scripts for development workflows |
@@ -38,7 +38,7 @@ Each mod has: `Harmony_Patch.cs` (sealed singleton extending `HarmonyPatchBase`)
 - Every `.cs` file starts with `// SPDX-License-Identifier: MIT`
 - `var` preferred everywhere; Allman brace style; `#region` blocks wrap `using` directives
 - **Private fields**: `_camelCase`; **private static fields**: `s_camelCase`
-- **Null checks**: `Guard.Against.Null(param, nameof(param))`
+- **Null checks**: `ThrowHelper.ThrowIfNull(param)` — uses `CallerArgumentExpression` to auto-capture parameter name
 - **Harmony parameters**: Suppress `CA1707`/`IDE1006` with `// ReSharper disable InconsistentNaming`
 - `PrivateMethods` class holds string constants for non-public game methods patched via Harmony
 
@@ -170,7 +170,7 @@ All JsonUtility data classes **must** live in a `JsonModels/` folder (`.editorco
 
 ## Test Conventions
 
-- **Framework**: xUnit + FluentAssertions (never raw `Assert`) + Moq
+- **Framework**: xUnit + AwesomeAssertions (never raw `Assert`) + Moq
 - **Organization**: Test files must be in subfolders, never in the test project root. Mod tests in `ModTests/{ModName}Tests/`, patch tests in `PatchTests/`. Each mod has a `{ModName}ModTests` base class.
 - **Naming**: Descriptive sentences with underscores (e.g., `A_gift_that_has_not_been_worked_on_yet_displays_the_base_value`)
 - **Unity objects**: Use `UnityTestExtensions` factory methods — never `new` Unity types directly

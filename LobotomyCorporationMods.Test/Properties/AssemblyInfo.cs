@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 using System.Runtime.InteropServices;
+using LobotomyCorporationMods.Test.Attributes;
 using Xunit;
 
 // In SDK-style projects such as this one, several assembly attributes that were historically
@@ -21,3 +22,6 @@ using Xunit;
 // The following GUID is for the ID of the typelib if this project is exposed to COM.
 
 [assembly: Guid("c5f8d1d8-5f4e-40d6-b66b-1e2bdf84176b")]
+
+// Enforces a 1-second timeout on all tests.
+[assembly: GlobalTimeout(1000)]

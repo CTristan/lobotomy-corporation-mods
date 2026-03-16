@@ -4,7 +4,7 @@
 
 using System;
 using AwesomeAssertions;
-using LobotomyCorporationMods.DebugPanel.Models;
+using LobotomyCorporationMods.Common.Models.Diagnostics;
 using Xunit;
 
 // ReSharper disable ObjectCreationAsStatement

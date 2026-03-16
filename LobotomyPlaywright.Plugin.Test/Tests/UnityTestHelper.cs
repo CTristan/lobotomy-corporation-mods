@@ -4,7 +4,7 @@ using System;
 using System.IO;
 using System.Reflection;
 
-namespace LobotomyPlaywright.TestHelpers
+namespace LobotomyCorporationMods.Playwright.Test.TestHelpers
 {
     /// <summary>
     /// Helper to check if Unity runtime is available for testing.

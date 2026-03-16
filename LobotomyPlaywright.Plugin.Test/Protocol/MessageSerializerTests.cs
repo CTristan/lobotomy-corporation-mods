@@ -2,11 +2,11 @@
 
 using System;
 using AwesomeAssertions;
-using LobotomyPlaywright.JsonModels;
-using LobotomyPlaywright.Protocol;
+using LobotomyCorporationMods.Playwright.JsonModels;
+using LobotomyCorporationMods.Playwright.Protocol;
 using Xunit;
 
-namespace LobotomyPlaywright.Plugin.Test.Protocol
+namespace LobotomyCorporationMods.Playwright.Test.Protocol
 {
     /// <summary>
     /// Tests for MessageSerializer.

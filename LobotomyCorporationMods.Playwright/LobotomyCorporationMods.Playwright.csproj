@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyVersion>1.0.0</AssemblyVersion>
+    <ProjectGuid>{B1C2D3E4-F5A6-7B8C-9D0E-1F2A3B4C5D6F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RuntimeIdentifiers>win</RuntimeIdentifiers>
+    <TargetFramework>net35</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="BepInEx.Analyzers" PrivateAssets="all" ExcludeAssets="runtime">
+      <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="BepInEx.BaseLib" ExcludeAssets="runtime"/>
+    <PackageReference Include="BepInEx.Core" ExcludeAssets="runtime"/>
+    <PackageReference Include="BepInEx.PluginInfoProps" ExcludeAssets="runtime"/>
+    <PackageReference Include="UnityEngine.Modules" IncludeAssets="compile" ExcludeAssets="runtime"/>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\external\LobotomyCorp_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>..\external\LobotomyCorp_Data\Managed\0Harmony.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>..\external\LobotomyCorp_Data\Managed\UnityEngine.UI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LobotomyCorporationMods.Common\LobotomyCorporationMods.Common.csproj"/>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\shared\ExcludeFromCodeCoverageAttribute.cs" Link="Attributes\ExcludeFromCodeCoverageAttribute.cs"/>
+  </ItemGroup>
+</Project>

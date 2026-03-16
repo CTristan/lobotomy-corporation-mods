@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.DebugPanel.Interfaces;
 
@@ -28,11 +27,16 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             string primaryLabel,
             string fallbackLabel)
         {
-            _primarySource = Guard.Against.Null(primarySource, nameof(primarySource));
-            _fallbackSource = Guard.Against.Null(fallbackSource, nameof(fallbackSource));
-            _diagnosticLog = Guard.Against.Null(diagnosticLog, nameof(diagnosticLog));
-            _primaryLabel = Guard.Against.Null(primaryLabel, nameof(primaryLabel));
-            _fallbackLabel = Guard.Against.Null(fallbackLabel, nameof(fallbackLabel));
+            ThrowHelper.ThrowIfNull(primarySource);
+            _primarySource = primarySource;
+            ThrowHelper.ThrowIfNull(fallbackSource);
+            _fallbackSource = fallbackSource;
+            ThrowHelper.ThrowIfNull(diagnosticLog);
+            _diagnosticLog = diagnosticLog;
+            ThrowHelper.ThrowIfNull(primaryLabel);
+            _primaryLabel = primaryLabel;
+            ThrowHelper.ThrowIfNull(fallbackLabel);
+            _fallbackLabel = fallbackLabel;
         }
 
         public IEnumerable<PatchInspectionInfo> GetPatches()

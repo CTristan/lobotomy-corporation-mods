@@ -5,7 +5,8 @@
 using System;
 using System.Collections.Generic;
 using AwesomeAssertions;
-using LobotomyCorporationMods.DebugPanel.Models;
+using LobotomyCorporationMods.Common.Enums.Diagnostics;
+using LobotomyCorporationMods.Common.Models.Diagnostics;
 using Xunit;
 
 #endregion

@@ -10,7 +10,7 @@ using System.Reflection;
 using LobotomyCorporationMods.Common.Attributes;
 using LobotomyCorporationMods.Common.Constants;
 using LobotomyCorporationMods.DebugPanel.Interfaces;
-using LobotomyCorporationMods.DebugPanel.Models;
+using LobotomyCorporationMods.Common.Enums.Diagnostics;
 
 #endregion
 

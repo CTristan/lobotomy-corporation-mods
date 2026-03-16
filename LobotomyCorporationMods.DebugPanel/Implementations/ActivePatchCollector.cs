@@ -3,10 +3,9 @@
 #region
 
 using System.Collections.Generic;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.DebugPanel.Interfaces;
-using LobotomyCorporationMods.DebugPanel.Models;
+using LobotomyCorporationMods.Common.Models.Diagnostics;
 
 #endregion
 
@@ -18,7 +17,8 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
 
         public ActivePatchCollector(IPatchInspectionSource patchInspectionSource)
         {
-            _patchInspectionSource = Guard.Against.Null(patchInspectionSource, nameof(patchInspectionSource));
+            ThrowHelper.ThrowIfNull(patchInspectionSource);
+            _patchInspectionSource = patchInspectionSource;
         }
 
         public IList<PatchInfo> Collect()

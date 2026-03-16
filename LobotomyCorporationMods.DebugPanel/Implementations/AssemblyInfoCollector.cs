@@ -4,10 +4,9 @@
 
 using System;
 using System.Collections.Generic;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.DebugPanel.Interfaces;
-using LobotomyCorporationMods.DebugPanel.Models;
+using LobotomyCorporationMods.Common.Models.Diagnostics;
 
 #endregion
 
@@ -19,7 +18,8 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
 
         public AssemblyInfoCollector(IAssemblyInspectionSource assemblySource)
         {
-            _assemblySource = Guard.Against.Null(assemblySource, nameof(assemblySource));
+            ThrowHelper.ThrowIfNull(assemblySource);
+            _assemblySource = assemblySource;
         }
 
         public IList<AssemblyInfo> Collect()

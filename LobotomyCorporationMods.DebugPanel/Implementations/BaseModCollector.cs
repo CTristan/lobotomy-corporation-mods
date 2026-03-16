@@ -4,10 +4,10 @@
 
 using System;
 using System.Collections.Generic;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.DebugPanel.Interfaces;
-using LobotomyCorporationMods.DebugPanel.Models;
+using LobotomyCorporationMods.Common.Enums.Diagnostics;
+using LobotomyCorporationMods.Common.Models.Diagnostics;
 
 #endregion
 
@@ -42,8 +42,10 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
 
         public BaseModCollector(IPatchInspectionSource patchInspectionSource, IHarmonyVersionClassifier harmonyVersionClassifier)
         {
-            _patchInspectionSource = Guard.Against.Null(patchInspectionSource, nameof(patchInspectionSource));
-            _harmonyVersionClassifier = Guard.Against.Null(harmonyVersionClassifier, nameof(harmonyVersionClassifier));
+            ThrowHelper.ThrowIfNull(patchInspectionSource);
+            _patchInspectionSource = patchInspectionSource;
+            ThrowHelper.ThrowIfNull(harmonyVersionClassifier);
+            _harmonyVersionClassifier = harmonyVersionClassifier;
         }
 
         public IList<DetectedModInfo> Collect()

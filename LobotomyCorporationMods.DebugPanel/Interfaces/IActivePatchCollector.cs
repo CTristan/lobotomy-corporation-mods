@@ -3,7 +3,7 @@
 #region
 
 using System.Collections.Generic;
-using LobotomyCorporationMods.DebugPanel.Models;
+using LobotomyCorporationMods.Common.Models.Diagnostics;
 
 #endregion
 

@@ -4,7 +4,6 @@
 
 using System.Collections.Generic;
 using System.Reflection;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 
 #endregion
@@ -15,10 +14,13 @@ namespace LobotomyCorporationMods.DebugPanel.Interfaces
     {
         public AssemblyInspectionInfo(string name, string version, string location, IList<AssemblyName> references)
         {
-            Name = Guard.Against.Null(name, nameof(name));
-            Version = Guard.Against.Null(version, nameof(version));
+            ThrowHelper.ThrowIfNull(name);
+            Name = name;
+            ThrowHelper.ThrowIfNull(version);
+            Version = version;
             Location = location ?? string.Empty;
-            References = Guard.Against.Null(references, nameof(references));
+            ThrowHelper.ThrowIfNull(references);
+            References = references;
         }
 
         public string Name { get; private set; }

@@ -36,7 +36,7 @@ jobs:
         run: dotnet build --no-restore LobotomyCorporationMods.sln
 
       - name: Test
-        run: dotnet test /p:CollectCoverage=true /p:CoverletOutput="./coverage.opencover.xml" /p:CoverletOutputFormat=opencover --no-build --verbosity normal LobotomyCorporationMods.sln
+        run: dotnet test /p:CollectCoverage=true /p:CoverletOutput="./coverage.opencover.xml" /p:CoverletOutputFormat=opencover --no-build --verbosity normal --blame-hang-timeout 10s LobotomyCorporationMods.sln
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3

@@ -250,7 +250,7 @@ namespace CI
 
         private static List<ModuleCoverage> GetModuleCoverages(List<string> coverageReports)
         {
-            List<ModuleCoverage> moduleCoverages = [];
+            Dictionary<string, ModuleCoverage> bestCoverages = new(StringComparer.OrdinalIgnoreCase);
 
             foreach (var reportPath in coverageReports)
             {
@@ -274,12 +274,18 @@ namespace CI
                     var moduleCoverage = CreateModuleCoverage(moduleName, module, namespaceName);
                     if (moduleCoverage != null)
                     {
-                        moduleCoverages.Add(moduleCoverage);
+                        // When the same module appears in multiple test projects,
+                        // keep the entry with the highest line coverage
+                        if (!bestCoverages.TryGetValue(moduleName, out var existing) ||
+                            moduleCoverage.Totals.LineCoverage > existing.Totals.LineCoverage)
+                        {
+                            bestCoverages[moduleName] = moduleCoverage;
+                        }
                     }
                 }
             }
 
-            return moduleCoverages;
+            return [.. bestCoverages.Values];
         }
 
         private static CoverageTotals CalculateOverallCoverage(List<ModuleCoverage> moduleCoverages)

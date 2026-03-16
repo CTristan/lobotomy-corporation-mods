@@ -4,7 +4,6 @@
 
 using System.Collections.Generic;
 using System.Text;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 
 #endregion
@@ -24,7 +23,8 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
 
         public IList<string> FindHarmonyReferences(byte[] dllBytes)
         {
-            _ = Guard.Against.Null(dllBytes, nameof(dllBytes));
+            ThrowHelper.ThrowIfNull(dllBytes);
+            _ = dllBytes;
 
             var results = new List<string>();
 

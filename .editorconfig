@@ -245,6 +245,12 @@ dotnet_diagnostic.CA1031.severity = none
 dotnet_diagnostic.IDE1006.severity = none
 dotnet_diagnostic.CA1707.severity = none
 
+# WHY: LobotomyCorporationMods.Playwright is an automated testing tool that uses reflection to
+# access game internals where exception types are unpredictable. General exception catching is
+# intentional — the plugin logs errors and shuts down the game to make failures loud and obvious.
+[{LobotomyCorporationMods.Playwright,**/LobotomyCorporationMods.Playwright}/{*.cs,**/*.cs}]
+dotnet_diagnostic.CA1031.severity = none
+
 # WHY: RetargetHarmony is a BepInEx preloader patcher — an unhandled exception here prevents
 # ALL mods from loading. General exception catching is intentional to ensure patcher resilience.
 [{RetargetHarmony,**/RetargetHarmony}/{*.cs,**/*.cs}]

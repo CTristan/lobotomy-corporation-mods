@@ -8,7 +8,7 @@ using AwesomeAssertions;
 using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.DebugPanel.Implementations;
 using LobotomyCorporationMods.DebugPanel.Interfaces;
-using LobotomyCorporationMods.DebugPanel.Models;
+using LobotomyCorporationMods.Common.Models.Diagnostics;
 using Moq;
 using Xunit;
 

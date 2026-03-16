@@ -3,10 +3,10 @@
 #region
 
 using System.Collections.Generic;
-using LobotomyCorporationMods.Common.Extensions;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.DebugPanel.Interfaces;
-using LobotomyCorporationMods.DebugPanel.Models;
+using LobotomyCorporationMods.Common.Enums.Diagnostics;
+using LobotomyCorporationMods.Common.Models.Diagnostics;
 
 #endregion
 
@@ -16,7 +16,8 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
     {
         public IList<string> FormatForOverlay(DiagnosticReport report)
         {
-            _ = Guard.Against.Null(report, nameof(report));
+            ThrowHelper.ThrowIfNull(report);
+            _ = report;
 
             var bepInExPlugins = FilterBySource(report.Mods, ModSource.BepInExPlugin);
             var lmmMods = FilterBySource(report.Mods, ModSource.Lmm);
@@ -62,8 +63,10 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
 
         public IList<string> FormatForLogFile(DiagnosticReport report, ExternalLogData externalLogs)
         {
-            _ = Guard.Against.Null(report, nameof(report));
-            _ = Guard.Against.Null(externalLogs, nameof(externalLogs));
+            ThrowHelper.ThrowIfNull(report);
+            _ = report;
+            ThrowHelper.ThrowIfNull(externalLogs);
+            _ = externalLogs;
 
             var bepInExPlugins = FilterBySource(report.Mods, ModSource.BepInExPlugin);
             var lmmMods = FilterBySource(report.Mods, ModSource.Lmm);
