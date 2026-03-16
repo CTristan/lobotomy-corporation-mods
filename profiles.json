@@ -1,0 +1,67 @@
+{
+  "vanilla": {
+    "DeployTargets": [],
+    "InstallLmm": false,
+    "InstallModLoader": false
+  },
+  "lmm": {
+    "DeployTargets": [],
+    "InstallLmm": true,
+    "InstallModLoader": false
+  },
+  "bepinex": {
+    "DeployTargets": [],
+    "InstallLmm": false,
+    "InstallModLoader": true
+  },
+  "mods": {
+    "DeployTargets": [
+      "LobotomyCorporationMods.BadLuckProtectionForGifts",
+      "LobotomyCorporationMods.BugFixes",
+      "LobotomyCorporationMods.DebugPanel",
+      "LobotomyCorporationMods.FreeCustomization",
+      "LobotomyCorporationMods.GiftAlertIcon",
+      "LobotomyCorporationMods.NotifyWhenAgentReceivesGift",
+      "LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking"
+    ],
+    "InstallLmm": true,
+    "InstallModLoader": false
+  },
+  "mods-playwright": {
+    "DeployTargets": [
+      "LobotomyPlaywright.Plugin",
+      "LobotomyCorporationMods.BadLuckProtectionForGifts",
+      "LobotomyCorporationMods.BugFixes",
+      "LobotomyCorporationMods.DebugPanel",
+      "LobotomyCorporationMods.FreeCustomization",
+      "LobotomyCorporationMods.GiftAlertIcon",
+      "LobotomyCorporationMods.NotifyWhenAgentReceivesGift",
+      "LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking"
+    ],
+    "InstallLmm": true,
+    "InstallModLoader": false
+  },
+  "playwright": {
+    "DeployTargets": [
+      "LobotomyPlaywright.Plugin",
+      "RetargetHarmony"
+    ],
+    "InstallLmm": true,
+    "InstallModLoader": true
+  },
+  "all": {
+    "DeployTargets": [
+      "LobotomyPlaywright.Plugin",
+      "RetargetHarmony",
+      "LobotomyCorporationMods.BadLuckProtectionForGifts",
+      "LobotomyCorporationMods.BugFixes",
+      "LobotomyCorporationMods.DebugPanel",
+      "LobotomyCorporationMods.FreeCustomization",
+      "LobotomyCorporationMods.GiftAlertIcon",
+      "LobotomyCorporationMods.NotifyWhenAgentReceivesGift",
+      "LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking"
+    ],
+    "InstallLmm": true,
+    "InstallModLoader": true
+  }
+}
