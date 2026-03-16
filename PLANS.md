@@ -12,6 +12,7 @@ Tracks all planning documents in the repository. Plans are generated via the `/p
 | Draft | RetargetHarmony Improvements | [`PLAN-RetargetHarmonyRefactor.md`](PLAN-RetargetHarmonyRefactor.md) | 0/17 (0%) | Config dedup, dead code cleanup, test coverage |
 | Draft | Non-Destructive Harmony Shim | [`PLAN-NonDestructiveHarmonyShim.md`](PLAN-NonDestructiveHarmonyShim.md) | 0/10 (0%) | Prevent BepInEx from rewriting BaseMods DLLs on disk |
 | Draft | Unified XML Localization | [`PLAN-Localization.md`](PLAN-Localization.md) | 0/16 (0%) | Localization system for tooling projects |
+| Draft | ConfigurationManager | [`PLAN-ConfigurationManager.md`](PLAN-ConfigurationManager.md) | 0/27 (0%) | Shared config API in Common + BepInEx-free ConfigurationManager fork as git submodule |
 
 \* Tasks complete but manual testing tasks still need to be added.
 
