@@ -13,7 +13,6 @@ namespace LobotomyCorporationMods.Playwright
 {
     /// <summary>
     /// Static entry point for LobotomyPlaywright initialization.
-    /// Provides the shared API surface used by both the BepInEx Plugin and LMM Harmony_Patch entry points.
     /// </summary>
     [ExcludeFromCodeCoverage]
     public static class PlaywrightCore
@@ -30,7 +29,7 @@ namespace LobotomyCorporationMods.Playwright
 
         /// <summary>
         /// Initializes the Playwright TCP server on a persistent GameObject.
-        /// No-op if already initialized (prevents double-init when both LMM and BepInEx are present).
+        /// No-op if already initialized.
         /// </summary>
         /// <param name="port">TCP port to listen on.</param>
         public static void Initialize(int port)
