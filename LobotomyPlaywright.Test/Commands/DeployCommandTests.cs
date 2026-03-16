@@ -143,7 +143,7 @@ namespace LobotomyPlaywright.Tests.Commands
 
             // Assert
             _ = result.Should().Be(0);
-            _mockGameRestorer.Verify(r => r.RestoreTargeted(_gamePath, Path.Combine(_repoRoot, "testdata")), Times.Once);
+            _mockGameRestorer.Verify(r => r.RestoreTargeted(_gamePath, Path.Combine(_repoRoot, "external", "snapshots")), Times.Once);
         }
 
         [Fact]
@@ -158,7 +158,7 @@ namespace LobotomyPlaywright.Tests.Commands
 
             // Assert
             _ = result.Should().Be(0);
-            _mockGameRestorer.Verify(r => r.RestoreFull(_gamePath, Path.Combine(_repoRoot, "testdata")), Times.Once);
+            _mockGameRestorer.Verify(r => r.RestoreFull(_gamePath, Path.Combine(_repoRoot, "external", "snapshots")), Times.Once);
         }
 
         [Fact]
@@ -189,7 +189,7 @@ namespace LobotomyPlaywright.Tests.Commands
 
             // Assert
             _ = result.Should().Be(0);
-            _mockLmmInstaller.Verify(i => i.Install(_gamePath, Path.Combine(_repoRoot, "testdata")), Times.Once);
+            _mockLmmInstaller.Verify(i => i.Install(_gamePath, Path.Combine(_repoRoot, "external", "snapshots", "LobotomyModManager")), Times.Once);
             _mockBepInExInstaller.Verify(i => i.Install(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         }
 
@@ -315,6 +315,53 @@ namespace LobotomyPlaywright.Tests.Commands
         }
 
         [Fact]
+        public void Run_with_profile_creates_snapshot_directory_when_missing()
+        {
+            // Arrange - use raw profile loader without SetupProfileLoader (which sets vanilla path to exist)
+            var profiles = new Dictionary<string, DeploymentProfile>
+            {
+                ["vanilla"] = new DeploymentProfile { DeployTargets = [], InstallLmm = false, InstallModLoader = false }
+            };
+            _ = _mockProfileLoader.Setup(p => p.Load()).Returns(profiles);
+
+            // Vanilla path does NOT exist (default mock behavior)
+            var vanillaManagedPath = Path.Combine(_repoRoot, "external", "snapshots", "LobotomyCorp_vanilla", "LobotomyCorp_Data", "Managed");
+
+            // Act
+            int result = _deployCommand.Run(["--profile", "vanilla"]);
+
+            // Assert
+            _ = result.Should().Be(1);
+            _mockFileSystem.Verify(f => f.CreateDirectory(vanillaManagedPath), Times.Once);
+            _mockGameRestorer.Verify(r => r.RestoreTargeted(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+        }
+
+        [Fact]
+        public void Run_with_profile_creates_LMM_directory_when_missing()
+        {
+            // Arrange - vanilla exists but LMM does not
+            var vanillaPath = Path.Combine(_repoRoot, "external", "snapshots", "LobotomyCorp_vanilla");
+            _ = _mockFileSystem.Setup(f => f.DirectoryExists(vanillaPath)).Returns(true);
+
+            var profiles = new Dictionary<string, DeploymentProfile>
+            {
+                ["lmm"] = new DeploymentProfile { DeployTargets = [], InstallLmm = true, InstallModLoader = false }
+            };
+            _ = _mockProfileLoader.Setup(p => p.Load()).Returns(profiles);
+
+            // LMM path does NOT exist (default mock behavior)
+            var lmmPath = Path.Combine(_repoRoot, "external", "snapshots", "LobotomyModManager");
+
+            // Act
+            int result = _deployCommand.Run(["--profile", "lmm"]);
+
+            // Assert
+            _ = result.Should().Be(1);
+            _mockFileSystem.Verify(f => f.CreateDirectory(lmmPath), Times.Once);
+            _mockLmmInstaller.Verify(i => i.Install(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+        }
+
+        [Fact]
         public void Run_without_profile_deploys_all_targets_unchanged()
         {
             // Arrange
@@ -340,6 +387,14 @@ namespace LobotomyPlaywright.Tests.Commands
 
         private void SetupProfileLoader()
         {
+            // Vanilla snapshot must exist for profile-based deployment
+            var vanillaPath = Path.Combine(_repoRoot, "external", "snapshots", "LobotomyCorp_vanilla");
+            _ = _mockFileSystem.Setup(f => f.DirectoryExists(vanillaPath)).Returns(true);
+
+            // LMM source must exist for profiles that install LMM
+            var lmmPath = Path.Combine(_repoRoot, "external", "snapshots", "LobotomyModManager");
+            _ = _mockFileSystem.Setup(f => f.DirectoryExists(lmmPath)).Returns(true);
+
             var profiles = new Dictionary<string, DeploymentProfile>
             {
                 ["vanilla"] = new DeploymentProfile { DeployTargets = [], InstallLmm = false, InstallModLoader = false },

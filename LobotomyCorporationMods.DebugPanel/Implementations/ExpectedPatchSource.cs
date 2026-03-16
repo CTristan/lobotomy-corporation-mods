@@ -164,8 +164,21 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
                     }
                 }
 
-                // Fall back to Harmony 1.09 type
-                var harmony1Type = typeof(Harmony.HarmonyInstance).Assembly.GetType("Harmony.HarmonyPatch");
+                // Fall back to Harmony 1.09 type via reflection
+                Type harmony1Type = null;
+                foreach (var asm in assemblies)
+                {
+                    if (asm == null)
+                    {
+                        continue;
+                    }
+
+                    harmony1Type = asm.GetType("Harmony.HarmonyPatch");
+                    if (harmony1Type != null)
+                    {
+                        break;
+                    }
+                }
                 if (harmony1Type != null)
                 {
                     debugInfo.Add("Reflection: HarmonyPatch attribute type resolved: " + harmony1Type.FullName + " from " + harmony1Type.Assembly.GetName().Name);

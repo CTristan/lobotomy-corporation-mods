@@ -32,8 +32,22 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
 
             try
             {
-                var harmony109Assembly = typeof(Harmony.HarmonyInstance).Assembly;
-                var sharedStateType = harmony109Assembly.GetType("Harmony.HarmonySharedState");
+                Type sharedStateType = null;
+
+                var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+                foreach (var asm in assemblies)
+                {
+                    if (asm == null)
+                    {
+                        continue;
+                    }
+
+                    sharedStateType = asm.GetType("Harmony.HarmonySharedState");
+                    if (sharedStateType != null)
+                    {
+                        break;
+                    }
+                }
                 if (sharedStateType == null)
                 {
                     return patches;

@@ -128,7 +128,55 @@ namespace LobotomyPlaywright.Commands
                 }
 
                 // Restore game to vanilla state and install layers
-                var testdataPath = Path.Combine(repoRoot, "testdata");
+                var snapshotPath = Path.Combine(repoRoot, "external", "snapshots");
+                var lmmSourcePath = Path.Combine(snapshotPath, "LobotomyModManager");
+                var vanillaPath = Path.Combine(snapshotPath, "LobotomyCorp_vanilla");
+
+                if (!_fileSystem.DirectoryExists(vanillaPath))
+                {
+                    var vanillaManagedPath = Path.Combine(vanillaPath, "LobotomyCorp_Data", "Managed");
+                    _fileSystem.CreateDirectory(vanillaManagedPath);
+
+                    Console.Error.WriteLine();
+                    Console.Error.WriteLine("".PadRight(60, '='));
+                    Console.Error.WriteLine("Vanilla game snapshot required");
+                    Console.Error.WriteLine("".PadRight(60, '='));
+                    Console.Error.WriteLine();
+                    Console.Error.WriteLine("Profile-based deployment needs a vanilla copy of the game's DLLs.");
+                    Console.Error.WriteLine("The following directory has been created for you:");
+                    Console.Error.WriteLine();
+                    Console.Error.WriteLine($"  {vanillaPath}");
+                    Console.Error.WriteLine();
+                    Console.Error.WriteLine("Copy the vanilla game's LobotomyCorp_Data/Managed/ folder into it.");
+                    Console.Error.WriteLine($"Your game is installed at: {gamePath}");
+                    Console.Error.WriteLine();
+                    Console.Error.WriteLine("If your game is currently unmodified, you can run:");
+                    Console.Error.WriteLine($"  cp -r \"{Path.Combine(gamePath, "LobotomyCorp_Data")}\" \"{vanillaPath}/\"");
+                    Console.Error.WriteLine();
+
+                    return 1;
+                }
+
+                if (profile.InstallLmm && !_fileSystem.DirectoryExists(lmmSourcePath))
+                {
+                    _fileSystem.CreateDirectory(lmmSourcePath);
+
+                    Console.Error.WriteLine();
+                    Console.Error.WriteLine("".PadRight(60, '='));
+                    Console.Error.WriteLine("LobotomyModManager installation required");
+                    Console.Error.WriteLine("".PadRight(60, '='));
+                    Console.Error.WriteLine();
+                    Console.Error.WriteLine("This profile requires LMM (Lobotomy Mod Manager) to patch the game.");
+                    Console.Error.WriteLine("The following directory has been created for you:");
+                    Console.Error.WriteLine();
+                    Console.Error.WriteLine($"  {lmmSourcePath}");
+                    Console.Error.WriteLine();
+                    Console.Error.WriteLine("Extract the LobotomyModManager tool into this directory.");
+                    Console.Error.WriteLine("After extracting, the directory should contain LobotomyModManager_Data/PatchFiles/.");
+                    Console.Error.WriteLine();
+
+                    return 1;
+                }
 
                 if (dryRun)
                 {
@@ -153,17 +201,17 @@ namespace LobotomyPlaywright.Commands
                     {
                         if (fullRestore)
                         {
-                            _gameRestorer.RestoreFull(gamePath, testdataPath);
+                            _gameRestorer.RestoreFull(gamePath, snapshotPath);
                         }
                         else
                         {
-                            _gameRestorer.RestoreTargeted(gamePath, testdataPath);
+                            _gameRestorer.RestoreTargeted(gamePath, snapshotPath);
                         }
 
                         // Install layers
                         if (profile.InstallLmm)
                         {
-                            _lmmInstaller.Install(gamePath, testdataPath);
+                            _lmmInstaller.Install(gamePath, lmmSourcePath);
                         }
 
                         if (profile.InstallModLoader)

@@ -13,12 +13,18 @@ namespace LobotomyPlaywright.Tests.Deployment
         private readonly Mock<IFileSystem> _mockFileSystem;
         private readonly GameRestorer _gameRestorer;
         private readonly string _gamePath = "/test/game/path";
-        private readonly string _testdataPath = "/test/repo/testdata";
+        private readonly string _snapshotPath = "/test/repo/external/snapshots";
+        private readonly string _vanillaManagedPath;
 
         public GameRestorerTests()
         {
             _mockFileSystem = new Mock<IFileSystem>();
             _gameRestorer = new GameRestorer(_mockFileSystem.Object);
+            _vanillaManagedPath = Path.Combine(_snapshotPath, "LobotomyCorp_vanilla", "LobotomyCorp_Data", "Managed");
+
+            // By default, vanilla snapshot exists
+            _ = _mockFileSystem.Setup(f => f.DirectoryExists(_vanillaManagedPath)).Returns(true);
+            _ = _mockFileSystem.Setup(f => f.DirectoryExists(Path.Combine(_snapshotPath, "LobotomyCorp_vanilla"))).Returns(true);
         }
 
         [Fact]
@@ -29,7 +35,7 @@ namespace LobotomyPlaywright.Tests.Deployment
             _ = _mockFileSystem.Setup(f => f.DirectoryExists(baseModsPath)).Returns(true);
 
             // Act
-            _gameRestorer.RestoreTargeted(_gamePath, _testdataPath);
+            _gameRestorer.RestoreTargeted(_gamePath, _snapshotPath);
 
             // Assert
             _mockFileSystem.Verify(f => f.DeleteDirectory(baseModsPath, true), Times.Once);
@@ -43,7 +49,7 @@ namespace LobotomyPlaywright.Tests.Deployment
             _ = _mockFileSystem.Setup(f => f.DirectoryExists(bepInExPath)).Returns(true);
 
             // Act
-            _gameRestorer.RestoreTargeted(_gamePath, _testdataPath);
+            _gameRestorer.RestoreTargeted(_gamePath, _snapshotPath);
 
             // Assert
             _mockFileSystem.Verify(f => f.DeleteDirectory(bepInExPath, true), Times.Once);
@@ -54,24 +60,21 @@ namespace LobotomyPlaywright.Tests.Deployment
         {
             // Arrange
             var managedPath = Path.Combine(_gamePath, "LobotomyCorp_Data", "Managed");
-            var testdataManagedPath = Path.Combine(_testdataPath, "LobotomyCorp_vanilla", "LobotomyCorp_Data", "Managed");
             _ = _mockFileSystem.Setup(f => f.DirectoryExists(managedPath)).Returns(true);
 
             // Act
-            _gameRestorer.RestoreTargeted(_gamePath, _testdataPath);
+            _gameRestorer.RestoreTargeted(_gamePath, _snapshotPath);
 
             // Assert
             _mockFileSystem.Verify(f => f.DeleteDirectory(managedPath, true), Times.Once);
-            _mockFileSystem.Verify(f => f.CopyDirectory(testdataManagedPath, managedPath, true), Times.Once);
+            _mockFileSystem.Verify(f => f.CopyDirectory(_vanillaManagedPath, managedPath, true), Times.Once);
         }
 
         [Fact]
         public void RestoreTargeted_skips_delete_when_directories_do_not_exist()
         {
-            // Arrange - DirectoryExists returns false by default
-
             // Act
-            _gameRestorer.RestoreTargeted(_gamePath, _testdataPath);
+            _gameRestorer.RestoreTargeted(_gamePath, _snapshotPath);
 
             // Assert
             _mockFileSystem.Verify(f => f.DeleteDirectory(It.IsAny<string>(), It.IsAny<bool>()), Times.Never);
@@ -79,30 +82,53 @@ namespace LobotomyPlaywright.Tests.Deployment
         }
 
         [Fact]
-        public void RestoreFull_copies_entire_testdata_to_game_path()
+        public void RestoreTargeted_throws_when_vanilla_snapshot_missing()
         {
             // Arrange
-            var testdataGamePath = Path.Combine(_testdataPath, "LobotomyCorp_vanilla");
+            _ = _mockFileSystem.Setup(f => f.DirectoryExists(_vanillaManagedPath)).Returns(false);
+
+            // Act & Assert
+            _ = Assert.Throws<DirectoryNotFoundException>(() => _gameRestorer.RestoreTargeted(_gamePath, _snapshotPath));
+
+            // Verify no directories were deleted
+            _mockFileSystem.Verify(f => f.DeleteDirectory(It.IsAny<string>(), It.IsAny<bool>()), Times.Never);
+        }
+
+        [Fact]
+        public void RestoreFull_copies_entire_snapshot_to_game_path()
+        {
+            // Arrange
+            var vanillaGamePath = Path.Combine(_snapshotPath, "LobotomyCorp_vanilla");
 
             // Act
-            _gameRestorer.RestoreFull(_gamePath, _testdataPath);
+            _gameRestorer.RestoreFull(_gamePath, _snapshotPath);
 
             // Assert
-            _mockFileSystem.Verify(f => f.CopyDirectory(testdataGamePath, _gamePath, true), Times.Once);
+            _mockFileSystem.Verify(f => f.CopyDirectory(vanillaGamePath, _gamePath, true), Times.Once);
+        }
+
+        [Fact]
+        public void RestoreFull_throws_when_vanilla_snapshot_missing()
+        {
+            // Arrange
+            _ = _mockFileSystem.Setup(f => f.DirectoryExists(Path.Combine(_snapshotPath, "LobotomyCorp_vanilla"))).Returns(false);
+
+            // Act & Assert
+            _ = Assert.Throws<DirectoryNotFoundException>(() => _gameRestorer.RestoreFull(_gamePath, _snapshotPath));
         }
 
         [Fact]
         public void RestoreTargeted_throws_when_gamePath_is_null()
         {
             // Act & Assert
-            _ = Assert.Throws<System.ArgumentNullException>(() => _gameRestorer.RestoreTargeted(null!, _testdataPath));
+            _ = Assert.Throws<System.ArgumentNullException>(() => _gameRestorer.RestoreTargeted(null!, _snapshotPath));
         }
 
         [Fact]
         public void RestoreFull_throws_when_gamePath_is_null()
         {
             // Act & Assert
-            _ = Assert.Throws<System.ArgumentNullException>(() => _gameRestorer.RestoreFull(null!, _testdataPath));
+            _ = Assert.Throws<System.ArgumentNullException>(() => _gameRestorer.RestoreFull(null!, _snapshotPath));
         }
     }
 }

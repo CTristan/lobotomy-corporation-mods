@@ -11,7 +11,7 @@ namespace LobotomyPlaywright.Interfaces.Deployment
         /// Installs LMM patch files into the game directory.
         /// </summary>
         /// <param name="gamePath">The game installation path.</param>
-        /// <param name="testdataPath">The testdata directory path.</param>
-        void Install(string gamePath, string testdataPath);
+        /// <param name="lmmSourcePath">The root directory of the LobotomyModManager tool installation.</param>
+        void Install(string gamePath, string lmmSourcePath);
     }
 }
