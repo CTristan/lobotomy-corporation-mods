@@ -18,6 +18,8 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
 {
     /// <summary>
     ///     Reflects into Harmony 1.09's internal HarmonySharedState to extract active patch data.
+    ///     Scans ALL assemblies containing HarmonySharedState (not just the first) to handle
+    ///     BepInEx environments where multiple Harmony assemblies coexist.
     /// </summary>
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
@@ -26,13 +28,20 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
         private const BindingFlags NonPublicStatic = BindingFlags.NonPublic | BindingFlags.Static;
         private const BindingFlags InstanceFields = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 
+        private static readonly List<string> s_lastDiagnostics = new List<string>();
+
+        public static IList<string> LastDiagnostics => s_lastDiagnostics;
+
         public IEnumerable<PatchInspectionInfo> GetPatches()
         {
             var patches = new List<PatchInspectionInfo>();
+            var seenTargets = new HashSet<string>(StringComparer.Ordinal);
+
+            s_lastDiagnostics.Clear();
 
             try
             {
-                Type sharedStateType = null;
+                var sharedStateTypes = new List<TypeAssemblyPair>();
 
                 var assemblies = AppDomain.CurrentDomain.GetAssemblies();
                 foreach (var asm in assemblies)
@@ -42,60 +51,110 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
                         continue;
                     }
 
-                    sharedStateType = asm.GetType("Harmony.HarmonySharedState");
+                    var sharedStateType = asm.GetType("Harmony.HarmonySharedState");
                     if (sharedStateType != null)
                     {
-                        break;
+                        sharedStateTypes.Add(new TypeAssemblyPair(sharedStateType, asm));
                     }
                 }
-                if (sharedStateType == null)
+
+                s_lastDiagnostics.Add("Harmony1: found " + sharedStateTypes.Count + " assemblies with Harmony.HarmonySharedState");
+
+                if (sharedStateTypes.Count == 0)
                 {
                     return patches;
                 }
 
-                var getStateMethod = sharedStateType.GetMethod("GetState", NonPublicStatic);
-                if (getStateMethod == null)
+                foreach (var pair in sharedStateTypes)
                 {
-                    return patches;
-                }
-
-                if (!(getStateMethod.Invoke(null, null) is IDictionary state))
-                {
-                    return patches;
-                }
-
-                var getPatchInfoMethod = sharedStateType.GetMethod("GetPatchInfo", NonPublicStatic);
-
-                foreach (DictionaryEntry entry in state)
-                {
-                    if (!(entry.Key is MethodBase targetMethod))
-                    {
-                        continue;
-                    }
-
                     try
                     {
-                        if (getPatchInfoMethod != null)
-                        {
-                            var patchInfo = getPatchInfoMethod.Invoke(null, new object[] { targetMethod });
-                            if (patchInfo != null)
-                            {
-                                AddPatchesFromPatchInfo(patches, patchInfo, targetMethod);
-                            }
-                        }
+                        var assemblyName = pair.Assembly.GetName().Name ?? "Unknown";
+                        var patchesFromState = ExtractPatchesFromSharedState(pair.SharedStateType, seenTargets);
+
+                        s_lastDiagnostics.Add("Harmony1: " + assemblyName + " (v" +
+                            (pair.Assembly.GetName().Version != null ? pair.Assembly.GetName().Version.ToString() : "?") +
+                            "): " + patchesFromState.Count + " patches");
+
+                        patches.AddRange(patchesFromState);
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
-                        // Skip individual patch extraction failures
+                        s_lastDiagnostics.Add("Harmony1: error querying assembly: " + ex.GetType().Name + ": " + ex.Message);
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // Return empty list if reflection fails
+                s_lastDiagnostics.Add("Harmony1: top-level error: " + ex.GetType().Name + ": " + ex.Message);
+            }
+
+            s_lastDiagnostics.Add("Harmony1: total patches from all shared states: " + patches.Count);
+
+            return patches;
+        }
+
+        private static List<PatchInspectionInfo> ExtractPatchesFromSharedState(Type sharedStateType, HashSet<string> seenTargets)
+        {
+            var patches = new List<PatchInspectionInfo>();
+
+            var getStateMethod = sharedStateType.GetMethod("GetState", NonPublicStatic);
+            if (getStateMethod == null)
+            {
+                return patches;
+            }
+
+            if (!(getStateMethod.Invoke(null, null) is IDictionary state))
+            {
+                return patches;
+            }
+
+            var getPatchInfoMethod = sharedStateType.GetMethod("GetPatchInfo", NonPublicStatic);
+
+            foreach (DictionaryEntry entry in state)
+            {
+                if (!(entry.Key is MethodBase targetMethod))
+                {
+                    continue;
+                }
+
+                var targetKey = (targetMethod.DeclaringType != null ? targetMethod.DeclaringType.FullName : "") + "." + targetMethod.Name;
+                if (!seenTargets.Add(targetKey))
+                {
+                    continue;
+                }
+
+                try
+                {
+                    if (getPatchInfoMethod != null)
+                    {
+                        var patchInfo = getPatchInfoMethod.Invoke(null, new object[] { targetMethod });
+                        if (patchInfo != null)
+                        {
+                            AddPatchesFromPatchInfo(patches, patchInfo, targetMethod);
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    // Skip individual patch extraction failures
+                }
             }
 
             return patches;
+        }
+
+        private sealed class TypeAssemblyPair
+        {
+            public TypeAssemblyPair(Type sharedStateType, Assembly assembly)
+            {
+                SharedStateType = sharedStateType;
+                Assembly = assembly;
+            }
+
+            public Type SharedStateType { get; }
+
+            public Assembly Assembly { get; }
         }
 
         private static void AddPatchesFromPatchInfo(List<PatchInspectionInfo> destination, object patchInfo, MethodBase targetMethod)

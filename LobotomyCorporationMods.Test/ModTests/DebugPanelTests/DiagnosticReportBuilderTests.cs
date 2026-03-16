@@ -346,5 +346,252 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             report.DllIntegrity.Findings.Should().BeEmpty();
             report.DllIntegrity.Summary.Should().Contain("Collection failed");
         }
+
+        [Fact]
+        public void BuildReport_synthesizes_mods_from_expected_patches_when_base_mod_collector_returns_empty()
+        {
+            var expectedPatches = new List<ExpectedPatchInfo>
+            {
+                new("TestMod", "GameClass", "Method1", "Postfix", PatchType.Postfix),
+                new("TestMod", "GameClass", "Method2", "Prefix", PatchType.Prefix),
+                new("OtherMod", "OtherClass", "OtherMethod", "Postfix", PatchType.Postfix),
+            };
+            var assemblies = new List<AssemblyInfo>
+            {
+                new("TestMod", "1.2.0", "/path/TestMod.dll", false),
+                new("OtherMod", "3.0.0", "/path/OtherMod.dll", false),
+            };
+
+            _mockExpectedPatchSource.Setup(s => s.GetExpectedPatches(It.IsAny<IList<string>>())).Returns(expectedPatches);
+            _mockAssemblyCollector.Setup(c => c.Collect()).Returns(assemblies);
+
+            var builder = CreateBuilder();
+            var report = builder.BuildReport();
+
+            report.Mods.Should().HaveCount(2);
+            report.Mods.Should().Contain(m => m.Name == "TestMod" && m.Version == "1.2.0" && m.Source == ModSource.Lmm);
+            report.Mods.Should().Contain(m => m.Name == "OtherMod" && m.Version == "3.0.0" && m.Source == ModSource.Lmm);
+            report.PatchComparison.HasMissingPatches.Should().BeFalse();
+        }
+
+        [Fact]
+        public void BuildReport_does_not_synthesize_when_base_mod_collector_returns_lmm_mods()
+        {
+            var baseMods = new List<DetectedModInfo>
+            {
+                new("TestMod", "1.0", ModSource.Lmm, HarmonyVersion.Harmony1, "TestMod", "", true, 1, 0),
+            };
+            var expectedPatches = new List<ExpectedPatchInfo>
+            {
+                new("TestMod", "GameClass", "Method1", "Postfix", PatchType.Postfix),
+                new("OtherMod", "OtherClass", "OtherMethod", "Postfix", PatchType.Postfix),
+            };
+
+            _mockBaseModCollector.Setup(c => c.Collect()).Returns(baseMods);
+            _mockExpectedPatchSource.Setup(s => s.GetExpectedPatches(It.IsAny<IList<string>>())).Returns(expectedPatches);
+
+            var builder = CreateBuilder();
+            var report = builder.BuildReport();
+
+            report.Mods.Should().HaveCount(1);
+            report.Mods[0].Name.Should().Be("TestMod");
+        }
+
+        [Fact]
+        public void HasLmmMods_returns_false_for_empty_list()
+        {
+            DiagnosticReportBuilder.HasLmmMods([]).Should().BeFalse();
+        }
+
+        [Fact]
+        public void HasLmmMods_returns_false_for_null()
+        {
+            DiagnosticReportBuilder.HasLmmMods(null).Should().BeFalse();
+        }
+
+        [Fact]
+        public void HasLmmMods_returns_true_when_lmm_mod_exists()
+        {
+            var mods = new List<DetectedModInfo>
+            {
+                new("Mod", "1.0", ModSource.Lmm, HarmonyVersion.Harmony1, "Mod", "", false, 0, 0),
+            };
+
+            DiagnosticReportBuilder.HasLmmMods(mods).Should().BeTrue();
+        }
+
+        [Fact]
+        public void HasLmmMods_returns_false_when_only_bepinex_mods_exist()
+        {
+            var mods = new List<DetectedModInfo>
+            {
+                new("Plugin", "1.0", ModSource.BepInExPlugin, HarmonyVersion.Harmony2, "Plugin", "id", false, 0, 0),
+            };
+
+            DiagnosticReportBuilder.HasLmmMods(mods).Should().BeFalse();
+        }
+
+        [Fact]
+        public void SynthesizeModsFromExpectedPatches_throws_when_expectedPatches_is_null()
+        {
+            Action act = () => DiagnosticReportBuilder.SynthesizeModsFromExpectedPatches(null, []);
+
+            act.Should().Throw<ArgumentNullException>().WithParameterName("expectedPatches");
+        }
+
+        [Fact]
+        public void SynthesizeModsFromExpectedPatches_groups_patches_by_assembly()
+        {
+            var expectedPatches = new List<ExpectedPatchInfo>
+            {
+                new("ModA", "ClassA", "Method1", "Postfix", PatchType.Postfix),
+                new("ModA", "ClassB", "Method2", "Prefix", PatchType.Prefix),
+                new("ModB", "ClassC", "Method3", "Postfix", PatchType.Postfix),
+            };
+
+            var result = DiagnosticReportBuilder.SynthesizeModsFromExpectedPatches(expectedPatches, []);
+
+            result.Should().HaveCount(2);
+            result.Should().Contain(m => m.Name == "ModA" && m.ExpectedPatchCount == 2 && m.ActivePatchCount == 2 && m.HasActivePatches);
+            result.Should().Contain(m => m.Name == "ModB" && m.ExpectedPatchCount == 1 && m.ActivePatchCount == 1 && m.HasActivePatches);
+        }
+
+        [Fact]
+        public void SynthesizeModsFromExpectedPatches_uses_version_from_assemblies()
+        {
+            var expectedPatches = new List<ExpectedPatchInfo>
+            {
+                new("ModA", "ClassA", "Method1", "Postfix", PatchType.Postfix),
+            };
+            var assemblies = new List<AssemblyInfo>
+            {
+                new("ModA", "2.5.0", "/path/ModA.dll", false),
+            };
+
+            var result = DiagnosticReportBuilder.SynthesizeModsFromExpectedPatches(expectedPatches, assemblies);
+
+            result.Should().HaveCount(1);
+            result[0].Version.Should().Be("2.5.0");
+        }
+
+        [Fact]
+        public void SynthesizeModsFromExpectedPatches_excludes_framework_assemblies()
+        {
+            var expectedPatches = new List<ExpectedPatchInfo>
+            {
+                new("ModA", "ClassA", "Method1", "Postfix", PatchType.Postfix),
+                new("BepInEx.Preloader", "Console", "SetOut", "Prefix", PatchType.Prefix),
+                new("Mono.Cecil", "SomeType", "SomeMethod", "Postfix", PatchType.Postfix),
+            };
+
+            var result = DiagnosticReportBuilder.SynthesizeModsFromExpectedPatches(expectedPatches, []);
+
+            result.Should().HaveCount(1);
+            result[0].Name.Should().Be("ModA");
+        }
+
+        [Fact]
+        public void SynthesizeModsFromExpectedPatches_handles_null_assemblies()
+        {
+            var expectedPatches = new List<ExpectedPatchInfo>
+            {
+                new("ModA", "ClassA", "Method1", "Postfix", PatchType.Postfix),
+            };
+
+            var result = DiagnosticReportBuilder.SynthesizeModsFromExpectedPatches(expectedPatches, null);
+
+            result.Should().HaveCount(1);
+            result[0].Version.Should().BeEmpty();
+        }
+        [Fact]
+        public void SynthesizePatchesFromExpected_throws_when_null()
+        {
+            Action act = () => DiagnosticReportBuilder.SynthesizePatchesFromExpected(null);
+
+            act.Should().Throw<ArgumentNullException>().WithParameterName("expectedPatches");
+        }
+
+        [Fact]
+        public void SynthesizePatchesFromExpected_converts_expected_patches_to_patch_info()
+        {
+            var expectedPatches = new List<ExpectedPatchInfo>
+            {
+                new("ModA", "ClassA", "Method1", "Postfix", PatchType.Postfix),
+                new("ModB", "ClassB", "Method2", "Prefix", PatchType.Prefix),
+            };
+
+            var result = DiagnosticReportBuilder.SynthesizePatchesFromExpected(expectedPatches);
+
+            result.Should().HaveCount(2);
+            result[0].TargetType.Should().Be("ClassA");
+            result[0].TargetMethod.Should().Be("Method1");
+            result[0].PatchType.Should().Be(PatchType.Postfix);
+            result[0].PatchAssemblyName.Should().Be("ModA");
+            result[1].TargetType.Should().Be("ClassB");
+            result[1].PatchAssemblyName.Should().Be("ModB");
+        }
+
+        [Fact]
+        public void BuildReport_synthesizes_patches_from_expected_when_active_patches_empty()
+        {
+            var expectedPatches = new List<ExpectedPatchInfo>
+            {
+                new("TestMod", "GameClass", "Method1", "Postfix", PatchType.Postfix),
+                new("OtherMod", "OtherClass", "OtherMethod", "Postfix", PatchType.Postfix),
+            };
+            var assemblies = new List<AssemblyInfo>
+            {
+                new("TestMod", "1.0.0", "/path/TestMod.dll", false),
+                new("OtherMod", "2.0.0", "/path/OtherMod.dll", false),
+            };
+
+            _mockExpectedPatchSource.Setup(s => s.GetExpectedPatches(It.IsAny<IList<string>>())).Returns(expectedPatches);
+            _mockAssemblyCollector.Setup(c => c.Collect()).Returns(assemblies);
+
+            var builder = CreateBuilder();
+            var report = builder.BuildReport();
+
+            report.Patches.Should().HaveCount(2);
+            report.Patches.Should().Contain(p => p.TargetType == "GameClass" && p.PatchAssemblyName == "TestMod");
+            report.Patches.Should().Contain(p => p.TargetType == "OtherClass" && p.PatchAssemblyName == "OtherMod");
+        }
+        [Fact]
+        public void SynthesizeModsFromExpectedPatches_detects_harmony2_from_assemblies()
+        {
+            var expectedPatches = new List<ExpectedPatchInfo>
+            {
+                new("ModA", "ClassA", "Method1", "Postfix", PatchType.Postfix),
+            };
+            var assemblies = new List<AssemblyInfo>
+            {
+                new("ModA", "1.0.0", "/path/ModA.dll", false),
+                new("0Harmony", "2.9.0", "/path/0Harmony.dll", true),
+                new("0Harmony109", "1.0.9", "/path/0Harmony109.dll", true),
+            };
+
+            var result = DiagnosticReportBuilder.SynthesizeModsFromExpectedPatches(expectedPatches, assemblies);
+
+            result.Should().HaveCount(1);
+            result[0].HarmonyVersion.Should().Be(HarmonyVersion.Harmony2);
+        }
+
+        [Fact]
+        public void SynthesizeModsFromExpectedPatches_detects_harmony1_when_no_harmony2()
+        {
+            var expectedPatches = new List<ExpectedPatchInfo>
+            {
+                new("ModA", "ClassA", "Method1", "Postfix", PatchType.Postfix),
+            };
+            var assemblies = new List<AssemblyInfo>
+            {
+                new("ModA", "1.0.0", "/path/ModA.dll", false),
+                new("0Harmony109", "1.0.9", "/path/0Harmony109.dll", true),
+            };
+
+            var result = DiagnosticReportBuilder.SynthesizeModsFromExpectedPatches(expectedPatches, assemblies);
+
+            result.Should().HaveCount(1);
+            result[0].HarmonyVersion.Should().Be(HarmonyVersion.Harmony1);
+        }
     }
 }
