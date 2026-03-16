@@ -71,6 +71,15 @@ dotnet ci                              # Auto-fix format + test
 dotnet ci --check                      # Verify mode (no auto-fix)
 ```
 
+## Planning
+
+Plan documents track ongoing and future work. See [`PLANS.md`](../PLANS.md) for the full index with statuses and progress.
+
+- Plan files live at the repo root, named `PLAN-<Topic>.md` in PascalCase
+- Statuses: **Draft** | **Active** | **Blocked** | **Completed** | **Archived**
+- When creating a new plan via `/planning`, use the `PLAN-<Topic>.md` naming convention and add an entry to `PLANS.md`
+- When completing plan tasks, update the progress fraction in `PLANS.md`
+
 ## Constructor Parameter Rules
 
 Every class falls into exactly one category. No exceptions.
