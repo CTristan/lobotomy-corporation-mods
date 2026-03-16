@@ -7,7 +7,6 @@ Tracks all planning documents in the repository. Plans are generated via the `/p
 | Status | Plan | File | Progress | Summary |
 |--------|------|------|----------|---------|
 | Active | LobotomyPlaywright | [`PLAN-LobotomyPlaywright.md`](PLAN-LobotomyPlaywright.md) | 61/171 (36%) | Agent-driven game observability and control bridge |
-| Active | Unified Debug Panel | [`PLAN-DebugPanel.md`](PLAN-DebugPanel.md) | 95/109 (87%) | BepInEx-agnostic Harmony inspection mod |
 | Active | RetargetHarmony Installer | [`PLAN-RetargetHarmonyInstaller.md`](PLAN-RetargetHarmonyInstaller.md) | 24/24 (100%)* | Cross-platform installer/uninstaller GUI |
 | Draft | RetargetHarmony Improvements | [`PLAN-RetargetHarmonyRefactor.md`](PLAN-RetargetHarmonyRefactor.md) | 0/17 (0%) | Config dedup, dead code cleanup, test coverage |
 | Draft | Non-Destructive Harmony Shim | [`PLAN-NonDestructiveHarmonyShim.md`](PLAN-NonDestructiveHarmonyShim.md) | 0/10 (0%) | Prevent BepInEx from rewriting BaseMods DLLs on disk |
