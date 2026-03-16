@@ -33,7 +33,7 @@ namespace LobotomyPlaywright.Commands
 
         private static readonly DeploymentTarget[] s_deploymentTargets =
         [
-            new("LobotomyPlaywright.Plugin", "BaseMods/LobotomyPlaywright", false),
+            new("LobotomyCorporationMods.Playwright", "BaseMods/LobotomyCorporationMods.Playwright", true),
             new("RetargetHarmony", "patchers/RetargetHarmony", false),
             new("LobotomyCorporationMods.BadLuckProtectionForGifts", "BaseMods/LobotomyCorporationMods.BadLuckProtectionForGifts", true),
             new("LobotomyCorporationMods.BugFixes", "BaseMods/LobotomyCorporationMods.BugFixes", true),

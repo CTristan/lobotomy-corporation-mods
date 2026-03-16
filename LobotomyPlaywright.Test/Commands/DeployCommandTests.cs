@@ -70,7 +70,7 @@ namespace LobotomyPlaywright.Tests.Commands
             _ = result.Should().Be(0);
 
             // Verify tool project DLL deployments
-            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyPlaywright.Plugin.dll")), It.IsAny<string>(), true), Times.Once);
+            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyCorporationMods.Playwright.dll")), It.IsAny<string>(), true), Times.Once);
             _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("RetargetHarmony.dll")), It.IsAny<string>(), true), Times.Once);
 
             // Verify mod DLL deployments
@@ -82,8 +82,8 @@ namespace LobotomyPlaywright.Tests.Commands
             _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyCorporationMods.NotifyWhenAgentReceivesGift.dll")), It.IsAny<string>(), true), Times.Once);
             _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.dll")), It.IsAny<string>(), true), Times.Once);
 
-            // Verify Common DLL deployed for each mod (7 mods)
-            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyCorporationMods.Common")), It.IsAny<string>(), true), Times.Exactly(7));
+            // Verify Common DLL deployed for each mod (8 mods)
+            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyCorporationMods.Common")), It.IsAny<string>(), true), Times.Exactly(8));
 
             // Verify interop DLLs
             _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("0Harmony109.dll")), It.IsAny<string>(), true), Times.Once);
@@ -127,8 +127,8 @@ namespace LobotomyPlaywright.Tests.Commands
             // Assert
             _ = result.Should().Be(0);
 
-            // Verify CopyDirectory called for content dirs (Info, Assets, Localize exist for all 7 mods since DirectoryExists returns true)
-            _mockFileSystem.Verify(f => f.CopyDirectory(It.IsAny<string>(), It.IsAny<string>(), true), Times.Exactly(21));
+            // Verify CopyDirectory called for content dirs (Info, Assets, Localize exist for all 8 mods since DirectoryExists returns true)
+            _mockFileSystem.Verify(f => f.CopyDirectory(It.IsAny<string>(), It.IsAny<string>(), true), Times.Exactly(24));
         }
 
         [Fact]
@@ -209,24 +209,26 @@ namespace LobotomyPlaywright.Tests.Commands
         }
 
         [Fact]
-        public void Run_with_playwright_profile_deploys_only_tool_targets()
+        public void Run_with_mods_profile_deploys_all_mods_but_not_retarget()
         {
             // Arrange
             SetupProfileLoader();
             SetupSuccessfulBuildAndDeploy();
 
             // Act
-            int result = _deployCommand.Run(["--profile", "playwright"]);
+            int result = _deployCommand.Run(["--profile", "mods"]);
 
             // Assert
             _ = result.Should().Be(0);
             _mockLmmInstaller.Verify(i => i.Install(_gamePath, It.IsAny<string>()), Times.Once);
-            _mockBepInExInstaller.Verify(i => i.Install(_gamePath, It.IsAny<string>()), Times.Once);
+            _mockBepInExInstaller.Verify(i => i.Install(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
 
-            // Only tool DLLs deployed, not mod DLLs
-            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyPlaywright.Plugin.dll")), It.IsAny<string>(), true), Times.Once);
-            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("RetargetHarmony.dll")), It.IsAny<string>(), true), Times.Once);
-            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyCorporationMods.BadLuckProtectionForGifts.dll")), It.IsAny<string>(), true), Times.Never);
+            // All mod DLLs deployed including Playwright
+            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyCorporationMods.Playwright.dll")), It.IsAny<string>(), true), Times.Once);
+            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyCorporationMods.BadLuckProtectionForGifts.dll")), It.IsAny<string>(), true), Times.Once);
+
+            // RetargetHarmony not deployed in mods profile
+            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("RetargetHarmony.dll")), It.IsAny<string>(), true), Times.Never);
         }
 
         [Fact]
@@ -250,12 +252,12 @@ namespace LobotomyPlaywright.Tests.Commands
             {
                 ["bepinex-playwright"] = new DeploymentProfile
                 {
-                    DeployTargets = new Collection<string>(["LobotomyPlaywright.Plugin", "RetargetHarmony"]),
+                    DeployTargets = new Collection<string>(["LobotomyCorporationMods.Playwright", "RetargetHarmony"]),
                     InstallLmm = false,
                     InstallModLoader = true,
                     DeployOverrides = new Dictionary<string, string>
                     {
-                        ["LobotomyPlaywright.Plugin"] = "plugins/LobotomyPlaywright"
+                        ["LobotomyCorporationMods.Playwright"] = "plugins/LobotomyCorporationMods.Playwright"
                     }
                 }
             };
@@ -268,10 +270,10 @@ namespace LobotomyPlaywright.Tests.Commands
             // Assert
             _ = result.Should().Be(0);
 
-            // Plugin should be deployed to BepInEx/plugins/LobotomyPlaywright, not BaseMods
+            // Plugin should be deployed to BepInEx/plugins/LobotomyCorporationMods.Playwright, not BaseMods
             _mockFileSystem.Verify(f => f.CopyFile(
-                It.Is<string>(s => s.Contains("LobotomyPlaywright.Plugin.dll")),
-                It.Is<string>(s => s.Contains(Path.Combine("BepInEx", "plugins", "LobotomyPlaywright"))),
+                It.Is<string>(s => s.Contains("LobotomyCorporationMods.Playwright.dll")),
+                It.Is<string>(s => s.Contains(Path.Combine("BepInEx", "plugins", "LobotomyCorporationMods.Playwright"))),
                 true), Times.Once);
 
             // RetargetHarmony should still go to BepInEx/patchers (no override)
@@ -289,15 +291,15 @@ namespace LobotomyPlaywright.Tests.Commands
             SetupSuccessfulBuildAndDeploy();
 
             // Act
-            int result = _deployCommand.Run(["--profile", "playwright"]);
+            int result = _deployCommand.Run(["--profile", "mods"]);
 
             // Assert
             _ = result.Should().Be(0);
 
-            // Plugin should go to BaseMods (default, no override)
+            // Playwright should go to BaseMods (default, no override)
             _mockFileSystem.Verify(f => f.CopyFile(
-                It.Is<string>(s => s.Contains("LobotomyPlaywright.Plugin.dll")),
-                It.Is<string>(s => s.Contains(Path.Combine("BaseMods", "LobotomyPlaywright"))),
+                It.Is<string>(s => s.Contains("LobotomyCorporationMods.Playwright.dll")),
+                It.Is<string>(s => s.Contains(Path.Combine("BaseMods", "LobotomyCorporationMods.Playwright"))),
                 true), Times.Once);
         }
 
@@ -381,7 +383,7 @@ namespace LobotomyPlaywright.Tests.Commands
             _mockGameRestorer.Verify(r => r.RestoreFull(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
 
             // All 9 targets deployed
-            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyPlaywright.Plugin.dll")), It.IsAny<string>(), true), Times.Once);
+            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyCorporationMods.Playwright.dll")), It.IsAny<string>(), true), Times.Once);
             _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyCorporationMods.BadLuckProtectionForGifts.dll")), It.IsAny<string>(), true), Times.Once);
         }
 
@@ -400,21 +402,27 @@ namespace LobotomyPlaywright.Tests.Commands
                 ["vanilla"] = new DeploymentProfile { DeployTargets = [], InstallLmm = false, InstallModLoader = false },
                 ["lmm"] = new DeploymentProfile { DeployTargets = [], InstallLmm = true, InstallModLoader = false },
                 ["bepinex"] = new DeploymentProfile { DeployTargets = [], InstallLmm = false, InstallModLoader = true },
-                ["playwright"] = new DeploymentProfile
+                ["mods"] = new DeploymentProfile
                 {
-                    DeployTargets = new Collection<string>(["LobotomyPlaywright.Plugin", "RetargetHarmony"]),
+                    DeployTargets = new Collection<string>(
+                    [
+                        "LobotomyCorporationMods.BadLuckProtectionForGifts", "LobotomyCorporationMods.BugFixes",
+                        "LobotomyCorporationMods.DebugPanel", "LobotomyCorporationMods.FreeCustomization",
+                        "LobotomyCorporationMods.GiftAlertIcon", "LobotomyCorporationMods.NotifyWhenAgentReceivesGift",
+                        "LobotomyCorporationMods.Playwright", "LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking"
+                    ]),
                     InstallLmm = true,
-                    InstallModLoader = true
+                    InstallModLoader = false
                 },
                 ["all"] = new DeploymentProfile
                 {
                     DeployTargets = new Collection<string>(
                     [
-                        "LobotomyPlaywright.Plugin", "RetargetHarmony",
                         "LobotomyCorporationMods.BadLuckProtectionForGifts", "LobotomyCorporationMods.BugFixes",
                         "LobotomyCorporationMods.DebugPanel", "LobotomyCorporationMods.FreeCustomization",
                         "LobotomyCorporationMods.GiftAlertIcon", "LobotomyCorporationMods.NotifyWhenAgentReceivesGift",
-                        "LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking"
+                        "LobotomyCorporationMods.Playwright", "LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking",
+                        "RetargetHarmony"
                     ]),
                     InstallLmm = true,
                     InstallModLoader = true

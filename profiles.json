@@ -22,44 +22,23 @@
       "LobotomyCorporationMods.FreeCustomization",
       "LobotomyCorporationMods.GiftAlertIcon",
       "LobotomyCorporationMods.NotifyWhenAgentReceivesGift",
+      "LobotomyCorporationMods.Playwright",
       "LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking"
     ],
     "InstallLmm": true,
     "InstallModLoader": false
-  },
-  "mods-playwright": {
-    "DeployTargets": [
-      "LobotomyPlaywright.Plugin",
-      "LobotomyCorporationMods.BadLuckProtectionForGifts",
-      "LobotomyCorporationMods.BugFixes",
-      "LobotomyCorporationMods.DebugPanel",
-      "LobotomyCorporationMods.FreeCustomization",
-      "LobotomyCorporationMods.GiftAlertIcon",
-      "LobotomyCorporationMods.NotifyWhenAgentReceivesGift",
-      "LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking"
-    ],
-    "InstallLmm": true,
-    "InstallModLoader": false
-  },
-  "playwright": {
-    "DeployTargets": [
-      "LobotomyPlaywright.Plugin",
-      "RetargetHarmony"
-    ],
-    "InstallLmm": true,
-    "InstallModLoader": true
   },
   "all": {
     "DeployTargets": [
-      "LobotomyPlaywright.Plugin",
-      "RetargetHarmony",
       "LobotomyCorporationMods.BadLuckProtectionForGifts",
       "LobotomyCorporationMods.BugFixes",
       "LobotomyCorporationMods.DebugPanel",
       "LobotomyCorporationMods.FreeCustomization",
       "LobotomyCorporationMods.GiftAlertIcon",
       "LobotomyCorporationMods.NotifyWhenAgentReceivesGift",
-      "LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking"
+      "LobotomyCorporationMods.Playwright",
+      "LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking",
+      "RetargetHarmony"
     ],
     "InstallLmm": true,
     "InstallModLoader": true
