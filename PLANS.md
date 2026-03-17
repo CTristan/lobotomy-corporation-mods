@@ -12,7 +12,8 @@ Tracks all planning documents in the repository. Plans are generated via the `/p
 | Active | Non-Destructive Harmony Shim | [`PLAN-NonDestructiveHarmonyShim.md`](PLAN-NonDestructiveHarmonyShim.md) | 10/10 (100%) | Prevent BepInEx from rewriting BaseMods DLLs on disk |
 | Draft | Unified XML Localization | [`PLAN-Localization.md`](PLAN-Localization.md) | 0/16 (0%) | Localization system for tooling projects |
 | Draft | ConfigurationManager | [`PLAN-ConfigurationManager.md`](PLAN-ConfigurationManager.md) | 0/27 (0%) | Shared config API in Common + BepInEx-free ConfigurationManager fork as git submodule |
-| Draft | DebugPanel Troubleshooting | [`PLAN-DebugPanel.md`](PLAN-DebugPanel.md) | 0/37 (0%) | Filesystem validation, known issues DB, error log detection, dependency checks, tabbed UI overhaul |
+| Active | DebugPanel Troubleshooting | [`PLAN-DebugPanel.md`](PLAN-DebugPanel.md) | 37/37 (100%) | Filesystem validation, known issues DB, error log detection, dependency checks, tabbed UI overhaul |
+| Draft | AutoFixture + AutoMoq | [`PLAN-AutoFixture.md`](PLAN-AutoFixture.md) | 0/23 (0%) | Adopt AutoFixture + AutoMoq to reduce test boilerplate and enable anonymous test data |
 
 \* Tasks complete but manual testing tasks still need to be added.
 

@@ -24,5 +24,13 @@ namespace LobotomyCorporationMods.DebugPanel.Interfaces
         IExpectedPatchSource CreateExpectedPatchSource(IList<string> debugInfo);
 
         IInfoCollector<DllIntegrityReport> CreateDllIntegrityCollector();
+
+        IInfoCollector<FilesystemValidationReport> CreateFilesystemValidationCollector();
+
+        IInfoCollector<ErrorLogReport> CreateErrorLogCollector();
+
+        IInfoCollector<KnownIssuesReport> CreateKnownIssuesChecker(IList<DetectedModInfo> mods, IList<AssemblyInfo> assemblies);
+
+        IInfoCollector<DependencyReport> CreateDependencyChecker(IList<DetectedModInfo> mods, IList<AssemblyInfo> assemblies);
     }
 }

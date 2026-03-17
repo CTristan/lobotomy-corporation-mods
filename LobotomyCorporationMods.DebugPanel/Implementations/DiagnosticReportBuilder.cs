@@ -98,8 +98,12 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
 
             var dllIntegrity = CollectDllIntegritySafe(warnings);
             var environmentInfo = DetectEnvironmentSafe(warnings);
+            var filesystemValidation = CollectFilesystemValidationSafe(warnings);
+            var errorLogReport = CollectErrorLogReportSafe(warnings);
+            var knownIssuesReport = CollectKnownIssuesSafe(mods, assemblies, warnings);
+            var dependencyReport = CollectDependencyReportSafe(mods, assemblies, warnings);
 
-            return new DiagnosticReport(
+            var report = new DiagnosticReport(
                 mods,
                 patches,
                 assemblies,
@@ -109,7 +113,30 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
                 dllIntegrity,
                 warnings,
                 debugInfo,
-                DateTime.UtcNow);
+                DateTime.UtcNow,
+                filesystemValidation,
+                errorLogReport,
+                knownIssuesReport,
+                dependencyReport);
+
+            var aggregatedIssues = AggregateIssuesSafe(report, warnings);
+
+            return new DiagnosticReport(
+                report.Mods,
+                report.Patches,
+                report.Assemblies,
+                report.PatchComparison,
+                report.RetargetHarmonyStatus,
+                report.EnvironmentInfo,
+                report.DllIntegrity,
+                report.Warnings,
+                report.DebugInfo,
+                report.CollectedAt,
+                report.FilesystemValidation,
+                report.ErrorLogReport,
+                report.KnownIssuesReport,
+                report.DependencyReport,
+                aggregatedIssues);
         }
 
         private RetargetHarmonyStatus CollectRetargetHarmonyStatus(IList<string> warnings)
@@ -147,6 +174,78 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
                     0,
                     new List<string>(),
                     "Collection failed: " + ex.Message);
+            }
+        }
+
+        private KnownIssuesReport CollectKnownIssuesSafe(IList<DetectedModInfo> mods, IList<AssemblyInfo> assemblies, IList<string> warnings)
+        {
+            try
+            {
+                return _collectorFactory.CreateKnownIssuesChecker(mods, assemblies).Collect();
+            }
+            catch (Exception ex)
+            {
+                warnings.Add("KnownIssuesChecker failed: " + ex.Message);
+
+                return new KnownIssuesReport(new List<KnownIssueMatch>(), string.Empty);
+            }
+        }
+
+        private DependencyReport CollectDependencyReportSafe(IList<DetectedModInfo> mods, IList<AssemblyInfo> assemblies, IList<string> warnings)
+        {
+            try
+            {
+                return _collectorFactory.CreateDependencyChecker(mods, assemblies).Collect();
+            }
+            catch (Exception ex)
+            {
+                warnings.Add("DependencyChecker failed: " + ex.Message);
+
+                return new DependencyReport(new List<DiagnosticIssue>(), string.Empty, false);
+            }
+        }
+
+        private static IList<DiagnosticIssue> AggregateIssuesSafe(DiagnosticReport report, IList<string> warnings)
+        {
+            try
+            {
+                var aggregator = new IssuesAggregator();
+
+                return aggregator.AggregateIssues(report);
+            }
+            catch (Exception ex)
+            {
+                warnings.Add("IssuesAggregator failed: " + ex.Message);
+
+                return new List<DiagnosticIssue>();
+            }
+        }
+
+        private FilesystemValidationReport CollectFilesystemValidationSafe(IList<string> warnings)
+        {
+            try
+            {
+                return _collectorFactory.CreateFilesystemValidationCollector().Collect();
+            }
+            catch (Exception ex)
+            {
+                warnings.Add("FilesystemValidationCollector failed: " + ex.Message);
+
+                return new FilesystemValidationReport(new List<DiagnosticIssue>(), "Collection failed: " + ex.Message);
+            }
+        }
+
+        private ErrorLogReport CollectErrorLogReportSafe(IList<string> warnings)
+        {
+            try
+            {
+                return _collectorFactory.CreateErrorLogCollector().Collect();
+            }
+            catch (Exception ex)
+            {
+                warnings.Add("ErrorLogCollector failed: " + ex.Message);
+
+                return new ErrorLogReport(new List<ErrorLogEntry>());
             }
         }
 

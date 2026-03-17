@@ -22,7 +22,12 @@ namespace LobotomyCorporationMods.Common.Models.Diagnostics
             DllIntegrityReport dllIntegrity,
             IList<string> warnings,
             IList<string> debugInfo,
-            DateTime collectedAt)
+            DateTime collectedAt,
+            FilesystemValidationReport filesystemValidation = null,
+            ErrorLogReport errorLogReport = null,
+            KnownIssuesReport knownIssuesReport = null,
+            DependencyReport dependencyReport = null,
+            IList<DiagnosticIssue> aggregatedIssues = null)
         {
             ThrowHelper.ThrowIfNull(mods);
             Mods = mods;
@@ -43,6 +48,11 @@ namespace LobotomyCorporationMods.Common.Models.Diagnostics
             ThrowHelper.ThrowIfNull(debugInfo);
             DebugInfo = debugInfo;
             CollectedAt = collectedAt;
+            FilesystemValidation = filesystemValidation ?? new FilesystemValidationReport(new List<DiagnosticIssue>(), string.Empty);
+            ErrorLogReport = errorLogReport ?? new ErrorLogReport(new List<ErrorLogEntry>());
+            KnownIssuesReport = knownIssuesReport ?? new KnownIssuesReport(new List<KnownIssueMatch>(), string.Empty);
+            DependencyReport = dependencyReport ?? new DependencyReport(new List<DiagnosticIssue>(), string.Empty, false);
+            AggregatedIssues = aggregatedIssues ?? new List<DiagnosticIssue>();
         }
 
         public IList<DetectedModInfo> Mods { get; private set; }
@@ -64,5 +74,15 @@ namespace LobotomyCorporationMods.Common.Models.Diagnostics
         public IList<string> DebugInfo { get; private set; }
 
         public DateTime CollectedAt { get; private set; }
+
+        public FilesystemValidationReport FilesystemValidation { get; private set; }
+
+        public ErrorLogReport ErrorLogReport { get; private set; }
+
+        public KnownIssuesReport KnownIssuesReport { get; private set; }
+
+        public DependencyReport DependencyReport { get; private set; }
+
+        public IList<DiagnosticIssue> AggregatedIssues { get; private set; }
     }
 }

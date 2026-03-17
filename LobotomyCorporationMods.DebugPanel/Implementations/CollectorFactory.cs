@@ -23,6 +23,8 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
         private readonly IDllFileInspector _cecilDllInspector;
         private readonly IShimArtifactSource _shimArtifactSource;
         private readonly ILoadedAssemblyReferenceSource _loadedAssemblySource;
+        private readonly IFileSystemScanner _fileSystemScanner;
+        private readonly IKnownIssuesDatabase _knownIssuesDatabase;
 
         public CollectorFactory(
             IEnvironmentDetector environmentDetector,
@@ -34,7 +36,9 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             IDllFileInspector basicDllInspector,
             IDllFileInspector cecilDllInspector,
             IShimArtifactSource shimArtifactSource,
-            ILoadedAssemblyReferenceSource loadedAssemblySource)
+            ILoadedAssemblyReferenceSource loadedAssemblySource,
+            IFileSystemScanner fileSystemScanner,
+            IKnownIssuesDatabase knownIssuesDatabase)
         {
             ThrowHelper.ThrowIfNull(environmentDetector);
             _environmentDetector = environmentDetector;
@@ -56,6 +60,10 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             _shimArtifactSource = shimArtifactSource;
             ThrowHelper.ThrowIfNull(loadedAssemblySource);
             _loadedAssemblySource = loadedAssemblySource;
+            ThrowHelper.ThrowIfNull(fileSystemScanner);
+            _fileSystemScanner = fileSystemScanner;
+            ThrowHelper.ThrowIfNull(knownIssuesDatabase);
+            _knownIssuesDatabase = knownIssuesDatabase;
         }
 
         public IActivePatchCollector CreateActivePatchCollector(IList<string> debugInfo)
@@ -103,6 +111,26 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             var inspector = _environmentDetector.IsMonoCecilAvailable ? _cecilDllInspector : _basicDllInspector;
 
             return new DllIntegrityCollector(inspector, _shimArtifactSource, _loadedAssemblySource);
+        }
+
+        public IInfoCollector<FilesystemValidationReport> CreateFilesystemValidationCollector()
+        {
+            return new FilesystemValidationCollector(_fileSystemScanner);
+        }
+
+        public IInfoCollector<ErrorLogReport> CreateErrorLogCollector()
+        {
+            return new ErrorLogCollector(_fileSystemScanner);
+        }
+
+        public IInfoCollector<KnownIssuesReport> CreateKnownIssuesChecker(IList<DetectedModInfo> mods, IList<AssemblyInfo> assemblies)
+        {
+            return new KnownIssuesChecker(_knownIssuesDatabase, mods, assemblies, _fileSystemScanner);
+        }
+
+        public IInfoCollector<DependencyReport> CreateDependencyChecker(IList<DetectedModInfo> mods, IList<AssemblyInfo> assemblies)
+        {
+            return new DependencyChecker(_fileSystemScanner, mods, assemblies);
         }
     }
 }

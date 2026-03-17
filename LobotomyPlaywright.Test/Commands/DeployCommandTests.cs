@@ -127,8 +127,8 @@ namespace LobotomyPlaywright.Tests.Commands
             // Assert
             _ = result.Should().Be(0);
 
-            // Verify CopyDirectory called for content dirs (Info, Assets, Localize exist for all 8 mods since DirectoryExists returns true)
-            _mockFileSystem.Verify(f => f.CopyDirectory(It.IsAny<string>(), It.IsAny<string>(), true), Times.Exactly(24));
+            // Verify CopyDirectory called for content dirs (Info, Assets, Localize, Data exist for all 8 mods since DirectoryExists returns true)
+            _mockFileSystem.Verify(f => f.CopyDirectory(It.IsAny<string>(), It.IsAny<string>(), true), Times.Exactly(32));
         }
 
         [Fact]

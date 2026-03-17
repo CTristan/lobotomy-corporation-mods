@@ -4,6 +4,7 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
+    <PackageVersion Include="AutoFixture.AutoMoq" Version="4.18.1" />
     <PackageVersion Include="Avalonia" Version="11.2.3" />
     <PackageVersion Include="Avalonia.Desktop" Version="11.2.3" />
     <PackageVersion Include="Avalonia.Themes.Fluent" Version="11.2.3" />
@@ -26,7 +27,7 @@
   </ItemGroup>
   <ItemGroup>
     <GlobalPackageReference Include="Microsoft.Unity.Analyzers" Version="1.26.0">
-        <PrivateAssets>all</PrivateAssets>
+      <PrivateAssets>all</PrivateAssets>
     </GlobalPackageReference>
     <GlobalPackageReference Include="Roslynator.Analyzers" Version="4.15.0">
       <PrivateAssets>all</PrivateAssets>

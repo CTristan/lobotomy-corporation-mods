@@ -53,7 +53,11 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
                 var shimArtifactSource = new FileSystemShimArtifactSource();
                 var loadedAssemblySource = new AppDomainLoadedAssemblySource();
 
-                var factory = new CollectorFactory(detector, harmony1Source, harmony2Source, assemblySource, pluginInfoSource, classifier, basicDllInspector, cecilDllInspector, shimArtifactSource, loadedAssemblySource);
+                var fileSystemScanner = new GameFileSystemScanner();
+                var jsonParser = new UnityJsonParser();
+                var knownIssuesDatabase = new JsonKnownIssuesDatabase(fileSystemScanner, jsonParser);
+
+                var factory = new CollectorFactory(detector, harmony1Source, harmony2Source, assemblySource, pluginInfoSource, classifier, basicDllInspector, cecilDllInspector, shimArtifactSource, loadedAssemblySource, fileSystemScanner, knownIssuesDatabase);
                 _reportBuilder = new DiagnosticReportBuilder(factory, detector);
                 _overlay = new DiagnosticOverlay();
                 _inputHandler = new InputHandler(_config);

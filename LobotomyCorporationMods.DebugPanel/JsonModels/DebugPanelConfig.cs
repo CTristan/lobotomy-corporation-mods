@@ -19,6 +19,10 @@ namespace LobotomyCorporationMods.DebugPanel.JsonModels
         public bool showBepInExPlugins = true;
         public bool showLmmMods = true;
         public bool showDllIntegrity = true;
+        public bool showFilesystemValidation = true;
+        public bool showErrorLogs = true;
+        public bool showKnownIssues = true;
+        public bool showDependencies = true;
 
         public string OverlayToggleKey => overlayToggleKey;
 
@@ -35,5 +39,13 @@ namespace LobotomyCorporationMods.DebugPanel.JsonModels
         public bool ShowLmmMods => showLmmMods;
 
         public bool ShowDllIntegrity => showDllIntegrity;
+
+        public bool ShowFilesystemValidation => showFilesystemValidation;
+
+        public bool ShowErrorLogs => showErrorLogs;
+
+        public bool ShowKnownIssues => showKnownIssues;
+
+        public bool ShowDependencies => showDependencies;
     }
 }

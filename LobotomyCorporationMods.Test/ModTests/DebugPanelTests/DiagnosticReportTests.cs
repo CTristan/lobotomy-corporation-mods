@@ -147,5 +147,47 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("debugInfo");
         }
+
+        [Fact]
+        public void Constructor_defaults_new_properties_when_not_provided()
+        {
+            var report = new DiagnosticReport([], [], [],
+                new PatchComparisonResult([], 0, 0),
+                new RetargetHarmonyStatus(false, false, false, ""), new EnvironmentInfo(false, false, false),
+                CreateDefaultDllIntegrityReport(), [], [], DateTime.UtcNow);
+
+            report.FilesystemValidation.Should().NotBeNull();
+            report.FilesystemValidation.Issues.Should().BeEmpty();
+            report.ErrorLogReport.Should().NotBeNull();
+            report.ErrorLogReport.Entries.Should().BeEmpty();
+            report.KnownIssuesReport.Should().NotBeNull();
+            report.KnownIssuesReport.Matches.Should().BeEmpty();
+            report.DependencyReport.Should().NotBeNull();
+            report.DependencyReport.Issues.Should().BeEmpty();
+            report.AggregatedIssues.Should().NotBeNull();
+            report.AggregatedIssues.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void Constructor_stores_new_properties_when_explicitly_provided()
+        {
+            var filesystemValidation = new FilesystemValidationReport([], "test");
+            var errorLogReport = new ErrorLogReport([]);
+            var knownIssuesReport = new KnownIssuesReport([], "1.0");
+            var dependencyReport = new DependencyReport([], "2.0", true);
+            IList<DiagnosticIssue> aggregatedIssues = [];
+
+            var report = new DiagnosticReport([], [], [],
+                new PatchComparisonResult([], 0, 0),
+                new RetargetHarmonyStatus(false, false, false, ""), new EnvironmentInfo(false, false, false),
+                CreateDefaultDllIntegrityReport(), [], [], DateTime.UtcNow,
+                filesystemValidation, errorLogReport, knownIssuesReport, dependencyReport, aggregatedIssues);
+
+            report.FilesystemValidation.Should().BeSameAs(filesystemValidation);
+            report.ErrorLogReport.Should().BeSameAs(errorLogReport);
+            report.KnownIssuesReport.Should().BeSameAs(knownIssuesReport);
+            report.DependencyReport.Should().BeSameAs(dependencyReport);
+            report.AggregatedIssues.Should().BeSameAs(aggregatedIssues);
+        }
     }
 }

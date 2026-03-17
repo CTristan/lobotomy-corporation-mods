@@ -29,7 +29,7 @@ namespace LobotomyPlaywright.Commands
     public class DeployCommand(IConfigManager configManager, IFileSystem fileSystem, IProcessRunner processRunner, IGameRestorer gameRestorer, ILmmInstaller lmmInstaller, IBepInExInstaller bepInExInstaller, IProfileLoader profileLoader)
     {
         private static readonly string[] s_harmonyInteropDlls = { "0Harmony109.dll", "0Harmony12.dll", "12Harmony.dll" };
-        private static readonly string[] s_modContentDirs = { "Info", "Assets", "Localize" };
+        private static readonly string[] s_modContentDirs = { "Info", "Assets", "Localize", "Data" };
 
         private static readonly DeploymentTarget[] s_deploymentTargets =
         [

@@ -50,6 +50,36 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
                 AddMissingPatches(lines, report.PatchComparison.MissingPatches);
             }
 
+            if (report.FilesystemValidation.Issues.Count > 0)
+            {
+                lines.Add("Filesystem Issues (" + report.FilesystemValidation.Issues.Count + "):");
+                AddDiagnosticIssues(lines, report.FilesystemValidation.Issues);
+            }
+
+            if (report.ErrorLogReport.Entries.Count > 0)
+            {
+                lines.Add("Error Logs Found (" + report.ErrorLogReport.Entries.Count + "):");
+                foreach (var entry in report.ErrorLogReport.Entries)
+                {
+                    lines.Add("  - " + entry.FileName);
+                }
+            }
+
+            if (report.KnownIssuesReport.Matches.Count > 0)
+            {
+                lines.Add("Known Issues (" + report.KnownIssuesReport.Matches.Count + "):");
+                foreach (var match in report.KnownIssuesReport.Matches)
+                {
+                    lines.Add("  [" + GetSeverityLabel(match.Severity) + "] " + match.ModName + ": " + match.Description);
+                }
+            }
+
+            if (report.DependencyReport.Issues.Count > 0)
+            {
+                lines.Add("Dependency Issues (" + report.DependencyReport.Issues.Count + "):");
+                AddDiagnosticIssues(lines, report.DependencyReport.Issues);
+            }
+
             if (report.Warnings.Count > 0)
             {
                 foreach (var warning in report.Warnings)
@@ -115,6 +145,22 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             lines.Add(string.Empty);
             lines.Add("========== DLL INTEGRITY (" + report.DllIntegrity.Findings.Count + ") ==========");
             AddDllIntegrityLogFile(lines, report.DllIntegrity);
+
+            lines.Add(string.Empty);
+            lines.Add("========== FILESYSTEM VALIDATION ==========");
+            AddFilesystemValidation(lines, report.FilesystemValidation);
+
+            lines.Add(string.Empty);
+            lines.Add("========== ERROR LOGS ==========");
+            AddErrorLogs(lines, report.ErrorLogReport);
+
+            lines.Add(string.Empty);
+            lines.Add("========== KNOWN ISSUES ==========");
+            AddKnownIssues(lines, report.KnownIssuesReport);
+
+            lines.Add(string.Empty);
+            lines.Add("========== DEPENDENCIES ==========");
+            AddDependencies(lines, report.DependencyReport);
 
             lines.Add(string.Empty);
             lines.Add("========== RETARGETHARMONY LOG ==========");
@@ -376,6 +422,92 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             foreach (var line in logLines)
             {
                 lines.Add("  " + line);
+            }
+        }
+
+        private static void AddKnownIssues(List<string> lines, KnownIssuesReport knownIssuesReport)
+        {
+            lines.Add("  Database Version: " + (string.IsNullOrEmpty(knownIssuesReport.DatabaseVersion) ? "N/A" : knownIssuesReport.DatabaseVersion));
+            if (knownIssuesReport.Matches.Count == 0)
+            {
+                lines.Add("  - No known issues detected");
+
+                return;
+            }
+
+            foreach (var match in knownIssuesReport.Matches)
+            {
+                lines.Add("  [" + GetSeverityLabel(match.Severity) + "] " + match.ModName + " \u2014 " + match.Description);
+                lines.Add("    Matched by: " + match.MatchedBy);
+                if (!string.IsNullOrEmpty(match.FixSuggestion))
+                {
+                    lines.Add("    Fix: " + match.FixSuggestion);
+                }
+
+                if (!string.IsNullOrEmpty(match.WikiLink))
+                {
+                    lines.Add("    Wiki: " + match.WikiLink);
+                }
+            }
+        }
+
+        private static void AddDependencies(List<string> lines, DependencyReport dependencyReport)
+        {
+            lines.Add("  BaseMod Version: " + (string.IsNullOrEmpty(dependencyReport.BaseModVersion) ? "Not detected" : dependencyReport.BaseModVersion));
+            lines.Add("  BaseModList_v2.xml: " + (dependencyReport.BaseModListExists ? "Found" : "Missing"));
+
+            if (dependencyReport.Issues.Count == 0)
+            {
+                lines.Add("  - No dependency issues detected");
+
+                return;
+            }
+
+            AddDiagnosticIssues(lines, dependencyReport.Issues);
+        }
+
+        private static void AddDiagnosticIssues(List<string> lines, IList<DiagnosticIssue> issues)
+        {
+            foreach (var issue in issues)
+            {
+                lines.Add("  [" + GetSeverityLabel(issue.Severity) + "] " + issue.Description);
+                if (!string.IsNullOrEmpty(issue.FixSuggestion))
+                {
+                    lines.Add("    Fix: " + issue.FixSuggestion);
+                }
+            }
+        }
+
+        private static void AddFilesystemValidation(List<string> lines, FilesystemValidationReport filesystemValidation)
+        {
+            lines.Add("  Summary: " + filesystemValidation.Summary);
+            if (filesystemValidation.Issues.Count > 0)
+            {
+                AddDiagnosticIssues(lines, filesystemValidation.Issues);
+            }
+            else
+            {
+                lines.Add("  - No issues found");
+            }
+        }
+
+        private static void AddErrorLogs(List<string> lines, ErrorLogReport errorLogReport)
+        {
+            if (errorLogReport.Entries.Count == 0)
+            {
+                lines.Add("  - No error logs found");
+
+                return;
+            }
+
+            foreach (var entry in errorLogReport.Entries)
+            {
+                lines.Add("  " + entry.FileName + " (" + entry.FilePath + "):");
+                var contentLines = entry.Content.Split(new[] { "\r\n", "\n" }, System.StringSplitOptions.None);
+                foreach (var line in contentLines)
+                {
+                    lines.Add("    " + line);
+                }
             }
         }
 

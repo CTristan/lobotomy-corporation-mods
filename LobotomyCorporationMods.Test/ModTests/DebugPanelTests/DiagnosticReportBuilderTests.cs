@@ -27,6 +27,10 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         private readonly Mock<IInfoCollector<RetargetHarmonyStatus>> _mockRetargetDetector;
         private readonly Mock<IExpectedPatchSource> _mockExpectedPatchSource;
         private readonly Mock<IInfoCollector<DllIntegrityReport>> _mockDllIntegrityCollector;
+        private readonly Mock<IInfoCollector<FilesystemValidationReport>> _mockFilesystemCollector;
+        private readonly Mock<IInfoCollector<ErrorLogReport>> _mockErrorLogCollector;
+        private readonly Mock<IInfoCollector<KnownIssuesReport>> _mockKnownIssuesChecker;
+        private readonly Mock<IInfoCollector<DependencyReport>> _mockDependencyChecker;
 
         public DiagnosticReportBuilderTests()
         {
@@ -39,6 +43,10 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             _mockRetargetDetector = new Mock<IInfoCollector<RetargetHarmonyStatus>>();
             _mockExpectedPatchSource = new Mock<IExpectedPatchSource>();
             _mockDllIntegrityCollector = new Mock<IInfoCollector<DllIntegrityReport>>();
+            _mockFilesystemCollector = new Mock<IInfoCollector<FilesystemValidationReport>>();
+            _mockErrorLogCollector = new Mock<IInfoCollector<ErrorLogReport>>();
+            _mockKnownIssuesChecker = new Mock<IInfoCollector<KnownIssuesReport>>();
+            _mockDependencyChecker = new Mock<IInfoCollector<DependencyReport>>();
 
             _mockFactory.Setup(f => f.CreateActivePatchCollector(It.IsAny<IList<string>>())).Returns(_mockPatchCollector.Object);
             _mockFactory.Setup(f => f.CreateBaseModCollector(It.IsAny<IList<string>>())).Returns(_mockBaseModCollector.Object);
@@ -47,6 +55,10 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             _mockFactory.Setup(f => f.CreateRetargetHarmonyDetector()).Returns(_mockRetargetDetector.Object);
             _mockFactory.Setup(f => f.CreateExpectedPatchSource(It.IsAny<IList<string>>())).Returns(_mockExpectedPatchSource.Object);
             _mockFactory.Setup(f => f.CreateDllIntegrityCollector()).Returns(_mockDllIntegrityCollector.Object);
+            _mockFactory.Setup(f => f.CreateFilesystemValidationCollector()).Returns(_mockFilesystemCollector.Object);
+            _mockFactory.Setup(f => f.CreateErrorLogCollector()).Returns(_mockErrorLogCollector.Object);
+            _mockFactory.Setup(f => f.CreateKnownIssuesChecker(It.IsAny<IList<DetectedModInfo>>(), It.IsAny<IList<AssemblyInfo>>())).Returns(_mockKnownIssuesChecker.Object);
+            _mockFactory.Setup(f => f.CreateDependencyChecker(It.IsAny<IList<DetectedModInfo>>(), It.IsAny<IList<AssemblyInfo>>())).Returns(_mockDependencyChecker.Object);
 
             _mockPatchCollector.Setup(c => c.Collect()).Returns([]);
             _mockBaseModCollector.Setup(c => c.Collect()).Returns([]);
@@ -56,6 +68,10 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             _mockDllIntegrityCollector.Setup(c => c.Collect()).Returns(new DllIntegrityReport([], false, string.Empty, false, string.Empty, -1, false, 0, [], "No findings"));
             _mockExpectedPatchSource.Setup(s => s.GetExpectedPatches(It.IsAny<IList<string>>())).Returns([]);
             _mockDetector.Setup(d => d.DetectEnvironment()).Returns(new EnvironmentInfo(false, false, false));
+            _mockFilesystemCollector.Setup(c => c.Collect()).Returns(new FilesystemValidationReport([], string.Empty));
+            _mockErrorLogCollector.Setup(c => c.Collect()).Returns(new ErrorLogReport([]));
+            _mockKnownIssuesChecker.Setup(c => c.Collect()).Returns(new KnownIssuesReport([], string.Empty));
+            _mockDependencyChecker.Setup(c => c.Collect()).Returns(new DependencyReport([], string.Empty, false));
         }
 
         private DiagnosticReportBuilder CreateBuilder()
@@ -592,6 +608,123 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
 
             result.Should().HaveCount(1);
             result[0].HarmonyVersion.Should().Be(HarmonyVersion.Harmony1);
+        }
+
+        [Fact]
+        public void BuildReport_includes_filesystem_validation_data()
+        {
+            var filesystemReport = new FilesystemValidationReport(
+                [
+                    new(FindingSeverity.Error, "Filesystem", "Test issue", "Files", "Fix it"),
+                ],
+                "1 issue found");
+            _mockFilesystemCollector.Setup(c => c.Collect()).Returns(filesystemReport);
+
+            var builder = CreateBuilder();
+            var report = builder.BuildReport();
+
+            report.FilesystemValidation.Should().BeSameAs(filesystemReport);
+            report.FilesystemValidation.Issues.Should().HaveCount(1);
+        }
+
+        [Fact]
+        public void BuildReport_captures_filesystem_validation_failure_as_warning()
+        {
+            _mockFilesystemCollector.Setup(c => c.Collect()).Throws(new InvalidOperationException("fs error"));
+
+            var builder = CreateBuilder();
+            var report = builder.BuildReport();
+
+            report.Warnings.Should().Contain(w => w.Contains("FilesystemValidationCollector failed") && w.Contains("fs error"));
+            report.FilesystemValidation.Issues.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void BuildReport_includes_error_log_data()
+        {
+            var errorLogReport = new ErrorLogReport(
+                [
+                    new("Herror.txt", "error content", "/path/Herror.txt"),
+                ]);
+            _mockErrorLogCollector.Setup(c => c.Collect()).Returns(errorLogReport);
+
+            var builder = CreateBuilder();
+            var report = builder.BuildReport();
+
+            report.ErrorLogReport.Should().BeSameAs(errorLogReport);
+            report.ErrorLogReport.Entries.Should().HaveCount(1);
+        }
+
+        [Fact]
+        public void BuildReport_captures_error_log_failure_as_warning()
+        {
+            _mockErrorLogCollector.Setup(c => c.Collect()).Throws(new InvalidOperationException("log error"));
+
+            var builder = CreateBuilder();
+            var report = builder.BuildReport();
+
+            report.Warnings.Should().Contain(w => w.Contains("ErrorLogCollector failed") && w.Contains("log error"));
+            report.ErrorLogReport.Entries.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void BuildReport_includes_known_issues_data()
+        {
+            var knownIssuesReport = new KnownIssuesReport(
+                [
+                    new("BadMod", FindingSeverity.Error, "Bad mod detected", "Remove it", "https://wiki", "DLL file"),
+                ],
+                "1.0");
+            _mockKnownIssuesChecker.Setup(c => c.Collect()).Returns(knownIssuesReport);
+
+            var builder = CreateBuilder();
+            var report = builder.BuildReport();
+
+            report.KnownIssuesReport.Should().BeSameAs(knownIssuesReport);
+            report.KnownIssuesReport.Matches.Should().HaveCount(1);
+        }
+
+        [Fact]
+        public void BuildReport_captures_known_issues_failure_as_warning()
+        {
+            _mockKnownIssuesChecker.Setup(c => c.Collect()).Throws(new InvalidOperationException("known issues error"));
+
+            var builder = CreateBuilder();
+            var report = builder.BuildReport();
+
+            report.Warnings.Should().Contain(w => w.Contains("KnownIssuesChecker failed") && w.Contains("known issues error"));
+            report.KnownIssuesReport.Matches.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void BuildReport_includes_dependency_data()
+        {
+            var dependencyReport = new DependencyReport(
+                [
+                    new(FindingSeverity.Error, "Dependencies", "Missing 12Harmony.dll", "Mods", "Install 12Harmony"),
+                ],
+                "3.1.0",
+                true);
+            _mockDependencyChecker.Setup(c => c.Collect()).Returns(dependencyReport);
+
+            var builder = CreateBuilder();
+            var report = builder.BuildReport();
+
+            report.DependencyReport.Should().BeSameAs(dependencyReport);
+            report.DependencyReport.Issues.Should().HaveCount(1);
+            report.DependencyReport.BaseModVersion.Should().Be("3.1.0");
+        }
+
+        [Fact]
+        public void BuildReport_captures_dependency_checker_failure_as_warning()
+        {
+            _mockDependencyChecker.Setup(c => c.Collect()).Throws(new InvalidOperationException("dep error"));
+
+            var builder = CreateBuilder();
+            var report = builder.BuildReport();
+
+            report.Warnings.Should().Contain(w => w.Contains("DependencyChecker failed") && w.Contains("dep error"));
+            report.DependencyReport.Issues.Should().BeEmpty();
         }
     }
 }

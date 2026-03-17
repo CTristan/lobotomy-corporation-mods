@@ -24,8 +24,11 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
     {
         private const int WindowId = 0xD1349;
 
-        private Rect _windowRect = new Rect(20f, 20f, 600f, 450f);
+        private static readonly string[] s_tabLabels = { "Issues", "Harmony", "Files", "Mods", "Environment" };
+
+        private Rect _windowRect = new Rect(20f, 20f, 650f, 500f);
         private Vector2 _scrollPosition = Vector2.zero;
+        private int _selectedTab;
 
         private DiagnosticReport _currentReport;
         private DebugPanelConfig _currentConfig;
@@ -50,6 +53,39 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
         {
             GUILayout.BeginVertical();
 
+            DrawHeaderBar();
+
+            _selectedTab = GUILayout.Toolbar(_selectedTab, s_tabLabels);
+
+            _scrollPosition = GUILayout.BeginScrollView(_scrollPosition);
+
+            switch (_selectedTab)
+            {
+                case 0:
+                    DrawIssuesTab();
+                    break;
+                case 1:
+                    DrawHarmonyTab();
+                    break;
+                case 2:
+                    DrawFilesTab();
+                    break;
+                case 3:
+                    DrawModsTab();
+                    break;
+                default:
+                    DrawEnvironmentTab();
+                    break;
+            }
+
+            GUILayout.EndScrollView();
+            GUILayout.EndVertical();
+
+            GUI.DragWindow(new Rect(0f, 0f, 10000f, 20f));
+        }
+
+        private void DrawHeaderBar()
+        {
             GUILayout.BeginHorizontal();
             GUILayout.Label("Collected: " + _currentReport.CollectedAt.ToString("u"));
             if (GUILayout.Button("Refresh", GUILayout.Width(100f)))
@@ -63,9 +99,72 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             }
 
             GUILayout.EndHorizontal();
+        }
 
-            _scrollPosition = GUILayout.BeginScrollView(_scrollPosition);
+        private void DrawIssuesTab()
+        {
+            var issues = _currentReport.AggregatedIssues;
+            if (issues.Count == 0)
+            {
+                GUILayout.Label("No issues detected.");
 
+                return;
+            }
+
+            GUILayout.Label("Issues (" + issues.Count + ")", GUI.skin.box);
+            foreach (var issue in issues)
+            {
+                var originalColor = GUI.contentColor;
+                GUI.contentColor = GetSeverityColor(issue.Severity);
+                GUILayout.Label("[" + GetSeverityLabel(issue.Severity) + "] " + issue.Description);
+                if (!string.IsNullOrEmpty(issue.FixSuggestion))
+                {
+                    GUILayout.Label("  Fix: " + issue.FixSuggestion);
+                }
+
+                GUI.contentColor = originalColor;
+            }
+        }
+
+        private void DrawHarmonyTab()
+        {
+            if (_currentConfig.ShowActivePatches)
+            {
+                DrawPatchSection(_currentReport);
+            }
+
+            if (_currentReport.PatchComparison.HasMissingPatches)
+            {
+                DrawMissingPatchesSection(_currentReport);
+            }
+
+            if (_currentConfig.ShowExpectedPatches && _currentReport.PatchComparison.TotalExpected > 0)
+            {
+                GUILayout.Space(8f);
+                GUILayout.Label("Expected Patches: " + _currentReport.PatchComparison.TotalExpected + " total, " + _currentReport.PatchComparison.TotalMatched + " matched");
+            }
+        }
+
+        private void DrawFilesTab()
+        {
+            if (_currentConfig.ShowFilesystemValidation)
+            {
+                DrawFilesystemValidationSection(_currentReport);
+            }
+
+            if (_currentConfig.ShowDllIntegrity)
+            {
+                DrawDllIntegritySection(_currentReport);
+            }
+
+            if (_currentConfig.ShowErrorLogs)
+            {
+                DrawErrorLogsSection(_currentReport);
+            }
+        }
+
+        private void DrawModsTab()
+        {
             if (_currentConfig.ShowBepInExPlugins && _currentReport.EnvironmentInfo.IsBepInExAvailable)
             {
                 DrawModSection(_currentReport, ModSource.BepInExPlugin, "BepInEx Plugins");
@@ -76,31 +175,35 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
                 DrawModSection(_currentReport, ModSource.Lmm, "LMM/Basemod Mods");
             }
 
+            if (_currentConfig.ShowKnownIssues)
+            {
+                DrawKnownIssuesSection(_currentReport);
+            }
+
+            if (_currentConfig.ShowDependencies)
+            {
+                DrawDependenciesSection(_currentReport);
+            }
+        }
+
+        private void DrawEnvironmentTab()
+        {
+            if (_currentConfig.ShowAssemblyInfo)
+            {
+                DrawAssemblySection(_currentReport);
+            }
+
             if (_currentReport.EnvironmentInfo.IsBepInExAvailable)
             {
                 GUILayout.Space(8f);
                 GUILayout.Label("RetargetHarmony: " + _currentReport.RetargetHarmonyStatus.Message);
             }
 
-            if (_currentConfig.ShowDllIntegrity)
-            {
-                DrawDllIntegritySection(_currentReport);
-            }
-
-            if (_currentConfig.ShowActivePatches)
-            {
-                DrawPatchSection(_currentReport);
-            }
-
-            if (_currentConfig.ShowAssemblyInfo)
-            {
-                DrawAssemblySection(_currentReport);
-            }
-
-            if (_currentReport.PatchComparison.HasMissingPatches)
-            {
-                DrawMissingPatchesSection(_currentReport);
-            }
+            GUILayout.Space(8f);
+            GUILayout.Label("Environment", GUI.skin.box);
+            GUILayout.Label("  Harmony 2: " + (_currentReport.EnvironmentInfo.IsHarmony2Available ? "Available" : "Not detected"));
+            GUILayout.Label("  BepInEx: " + (_currentReport.EnvironmentInfo.IsBepInExAvailable ? "Available" : "Not detected"));
+            GUILayout.Label("  Mono.Cecil: " + (_currentReport.EnvironmentInfo.IsMonoCecilAvailable ? "Available" : "Not detected"));
 
             if (_currentReport.Warnings.Count > 0)
             {
@@ -111,11 +214,6 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
                     GUILayout.Label("- " + warning);
                 }
             }
-
-            GUILayout.EndScrollView();
-            GUILayout.EndVertical();
-
-            GUI.DragWindow(new Rect(0f, 0f, 10000f, 20f));
         }
 
         private static void DrawModSection(DiagnosticReport report, ModSource source, string title)
@@ -309,6 +407,121 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             GUILayout.Label("  Inspection Mode: " + (report.DllIntegrity.MonoCecilAvailable ? "Deep (Mono.Cecil)" : "Basic (byte scan)"));
         }
 
+        private static void DrawFilesystemValidationSection(DiagnosticReport report)
+        {
+            GUILayout.Space(8f);
+            var issues = report.FilesystemValidation.Issues;
+            GUILayout.Label("Filesystem Validation (" + issues.Count + " issues)", GUI.skin.box);
+
+            if (issues.Count == 0)
+            {
+                GUILayout.Label("  - No issues found");
+            }
+            else
+            {
+                foreach (var issue in issues)
+                {
+                    var originalColor = GUI.contentColor;
+                    GUI.contentColor = GetSeverityColor(issue.Severity);
+                    GUILayout.Label("  [" + GetSeverityLabel(issue.Severity) + "] " + issue.Description);
+                    if (!string.IsNullOrEmpty(issue.FixSuggestion))
+                    {
+                        GUILayout.Label("    Fix: " + issue.FixSuggestion);
+                    }
+
+                    GUI.contentColor = originalColor;
+                }
+            }
+        }
+
+        private static void DrawErrorLogsSection(DiagnosticReport report)
+        {
+            GUILayout.Space(8f);
+            var entries = report.ErrorLogReport.Entries;
+            GUILayout.Label("Error Logs (" + entries.Count + " found)", GUI.skin.box);
+
+            if (entries.Count == 0)
+            {
+                GUILayout.Label("  - No error logs found");
+            }
+            else
+            {
+                foreach (var entry in entries)
+                {
+                    var originalColor = GUI.contentColor;
+                    GUI.contentColor = new Color(1f, 0.6f, 0.4f, 1f);
+                    GUILayout.Label("  - " + entry.FileName);
+                    GUI.contentColor = originalColor;
+                }
+            }
+        }
+
+        private static void DrawKnownIssuesSection(DiagnosticReport report)
+        {
+            GUILayout.Space(8f);
+            var matches = report.KnownIssuesReport.Matches;
+            GUILayout.Label("Known Issues (" + matches.Count + ")", GUI.skin.box);
+
+            if (!string.IsNullOrEmpty(report.KnownIssuesReport.DatabaseVersion))
+            {
+                GUILayout.Label("  Database v" + report.KnownIssuesReport.DatabaseVersion);
+            }
+
+            if (matches.Count == 0)
+            {
+                GUILayout.Label("  - No known issues detected");
+            }
+            else
+            {
+                foreach (var match in matches)
+                {
+                    var originalColor = GUI.contentColor;
+                    GUI.contentColor = GetSeverityColor(match.Severity);
+                    GUILayout.Label("  [" + GetSeverityLabel(match.Severity) + "] " + match.ModName + ": " + match.Description);
+                    if (!string.IsNullOrEmpty(match.FixSuggestion))
+                    {
+                        GUILayout.Label("    Fix: " + match.FixSuggestion);
+                    }
+
+                    GUI.contentColor = originalColor;
+                }
+            }
+        }
+
+        private static void DrawDependenciesSection(DiagnosticReport report)
+        {
+            GUILayout.Space(8f);
+            var issues = report.DependencyReport.Issues;
+            GUILayout.Label("Dependencies (" + issues.Count + " issues)", GUI.skin.box);
+
+            if (!string.IsNullOrEmpty(report.DependencyReport.BaseModVersion))
+            {
+                GUILayout.Label("  BaseMod Version: " + report.DependencyReport.BaseModVersion);
+            }
+
+            GUILayout.Label("  BaseModList_v2.xml: " + (report.DependencyReport.BaseModListExists ? "Found" : "Missing"));
+
+            if (issues.Count == 0)
+            {
+                GUILayout.Label("  - No dependency issues");
+            }
+            else
+            {
+                foreach (var issue in issues)
+                {
+                    var originalColor = GUI.contentColor;
+                    GUI.contentColor = GetSeverityColor(issue.Severity);
+                    GUILayout.Label("  [" + GetSeverityLabel(issue.Severity) + "] " + issue.Description);
+                    if (!string.IsNullOrEmpty(issue.FixSuggestion))
+                    {
+                        GUILayout.Label("    Fix: " + issue.FixSuggestion);
+                    }
+
+                    GUI.contentColor = originalColor;
+                }
+            }
+        }
+
         private static Color GetSeverityColor(FindingSeverity severity)
         {
             if (severity == FindingSeverity.Info)
@@ -322,6 +535,21 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             }
 
             return new Color(1f, 0.4f, 0.4f, 1f);
+        }
+
+        private static string GetSeverityLabel(FindingSeverity severity)
+        {
+            if (severity == FindingSeverity.Info)
+            {
+                return "Info";
+            }
+
+            if (severity == FindingSeverity.Warning)
+            {
+                return "Warning";
+            }
+
+            return "Error";
         }
 
         private static string JoinReferences(IList<string> items)

@@ -1,0 +1,106 @@
+{
+  "version": "1.0",
+  "lastUpdated": "2026-03-16",
+  "issues": [
+    {
+      "modName": "Memory Leak Fix",
+      "dllName": "Assembly-CSharp.dll",
+      "assemblyName": "",
+      "severity": 2,
+      "description": "Assembly replacement, not a mod. Causes conflicts preventing mod loading.",
+      "fixSuggestion": "Remove from BaseMods. Use 'Reticle Memory Leak Fix' instead.",
+      "wikiLink": "https://lobotomycorporationmodded.wiki.gg/wiki/Troubleshooting",
+      "conflictsWith": []
+    },
+    {
+      "modName": "ALotOptimization",
+      "dllName": "",
+      "assemblyName": "ALotOptimization",
+      "severity": 1,
+      "description": "Known to cause crashes, invisible agents, and invisible ordeals.",
+      "fixSuggestion": "Remove ALotOptimization if experiencing crashes or invisible entities.",
+      "wikiLink": "https://lobotomycorporationmodded.wiki.gg/wiki/Troubleshooting",
+      "conflictsWith": []
+    },
+    {
+      "modName": "Weapon Texture Fix",
+      "dllName": "",
+      "assemblyName": "WeaponTextureFix",
+      "severity": 1,
+      "description": "Breaks modded EGO weapon textures. Only useful for vanilla.",
+      "fixSuggestion": "Remove if using modded EGO weapons.",
+      "wikiLink": "https://lobotomycorporationmodded.wiki.gg/wiki/Troubleshooting",
+      "conflictsWith": []
+    },
+    {
+      "modName": "Agent Delete",
+      "dllName": "",
+      "assemblyName": "AgentDelete",
+      "severity": 1,
+      "description": "Causes NullReferenceException when selecting agents in certain conditions.",
+      "fixSuggestion": "Remove Agent Delete if experiencing NullRef errors on agent selection.",
+      "wikiLink": "https://lobotomycorporationmodded.wiki.gg/wiki/Troubleshooting",
+      "conflictsWith": []
+    },
+    {
+      "modName": "Bamboo Hatted Kim",
+      "dllName": "",
+      "assemblyName": "BambooHattedKim",
+      "severity": 1,
+      "description": "Known to cause numerous bugs including crashes and save corruption.",
+      "fixSuggestion": "Remove Bamboo Hatted Kim if experiencing unexplained crashes.",
+      "wikiLink": "https://lobotomycorporationmodded.wiki.gg/wiki/Troubleshooting",
+      "conflictsWith": []
+    },
+    {
+      "modName": "Save Data Profiles",
+      "dllName": "",
+      "assemblyName": "SaveDataProfiles",
+      "severity": 0,
+      "description": "Relatively new and potentially unstable. May cause save-related issues.",
+      "fixSuggestion": "Back up saves frequently when using this mod.",
+      "wikiLink": "https://lobotomycorporationmodded.wiki.gg/wiki/Troubleshooting",
+      "conflictsWith": []
+    },
+    {
+      "modName": "Colored Fixer",
+      "dllName": "",
+      "assemblyName": "ColoredFixer",
+      "severity": 0,
+      "description": "Has a known stall bug. A bugfix version is available.",
+      "fixSuggestion": "Update to the latest version with the stall bugfix.",
+      "wikiLink": "https://lobotomycorporationmodded.wiki.gg/wiki/Troubleshooting",
+      "conflictsWith": []
+    },
+    {
+      "modName": "Suppress Leveling",
+      "dllName": "",
+      "assemblyName": "SuppressLeveling",
+      "severity": 1,
+      "description": "Conflicts with Weapon Remakes when both are active.",
+      "fixSuggestion": "Remove one of the conflicting mods.",
+      "wikiLink": "https://lobotomycorporationmodded.wiki.gg/wiki/Troubleshooting",
+      "conflictsWith": ["Weapon Remakes"]
+    },
+    {
+      "modName": "NewGiftBox",
+      "dllName": "",
+      "assemblyName": "NewGiftBox",
+      "severity": 1,
+      "description": "Conflicts with The King in Binds and QingYuXie.",
+      "fixSuggestion": "Remove one of the conflicting mods.",
+      "wikiLink": "https://lobotomycorporationmodded.wiki.gg/wiki/Troubleshooting",
+      "conflictsWith": ["The King in Binds", "QingYuXie"]
+    },
+    {
+      "modName": "Gift Alert Icon",
+      "dllName": "",
+      "assemblyName": "GiftAlertIcon",
+      "severity": 1,
+      "description": "Conflicts with The King in Binds and QingYuXie.",
+      "fixSuggestion": "Remove one of the conflicting mods.",
+      "wikiLink": "https://lobotomycorporationmodded.wiki.gg/wiki/Troubleshooting",
+      "conflictsWith": ["The King in Binds", "QingYuXie"]
+    }
+  ]
+}
