@@ -255,6 +255,8 @@ dotnet_diagnostic.CA1031.severity = none
 # ALL mods from loading. General exception catching is intentional to ensure patcher resilience.
 [{RetargetHarmony,**/RetargetHarmony}/{*.cs,**/*.cs}]
 dotnet_diagnostic.CA1031.severity = none
+# WHY: net35 target does not support using declarations (C# 8+), so nested using statements are required.
+dotnet_diagnostic.RCS1005.severity = none
 
 # WHY: DebugPanel uses reflection to inspect Harmony internals, AppDomain assemblies, and BepInEx APIs
 # at runtime. General exception catching is intentional — reflection can throw any exception type

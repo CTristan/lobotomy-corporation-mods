@@ -44,6 +44,17 @@ namespace LobotomyPlaywright.Implementations.Deployment
                 _fileSystem.DeleteDirectory(bepInExPath, true);
             }
 
+            var shimBackupPath = Path.Combine(gamePath, "BepInEx_Shim_Backup");
+            if (_fileSystem.DirectoryExists(shimBackupPath))
+            {
+                Console.WriteLine($"Deleting {shimBackupPath}");
+                _fileSystem.DeleteDirectory(shimBackupPath, true);
+            }
+
+            DeleteFileIfExists(gamePath, "doorstop_config.ini");
+            DeleteFileIfExists(gamePath, "winhttp.dll");
+            DeleteFileIfExists(gamePath, ".doorstop_version");
+
             if (_fileSystem.DirectoryExists(managedPath))
             {
                 Console.WriteLine($"Deleting {managedPath}");
@@ -76,6 +87,16 @@ namespace LobotomyPlaywright.Implementations.Deployment
             _fileSystem.CopyDirectory(vanillaGamePath, gamePath, true);
 
             Console.WriteLine("Full restore complete.");
+        }
+
+        private void DeleteFileIfExists(string directory, string fileName)
+        {
+            var filePath = Path.Combine(directory, fileName);
+            if (_fileSystem.FileExists(filePath))
+            {
+                Console.WriteLine($"Deleting {filePath}");
+                _fileSystem.DeleteFile(filePath);
+            }
         }
 
         private void ValidateVanillaSnapshot(string vanillaManagedPath, string snapshotPath)

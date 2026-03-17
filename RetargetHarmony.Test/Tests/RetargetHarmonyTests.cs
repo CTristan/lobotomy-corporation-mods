@@ -230,41 +230,6 @@ namespace RetargetHarmony.Test.Tests
         }
 
         [Fact]
-        public void TargetDLLs_IncludesBaseModsDlls_WhenPatchBaseModsEnabled()
-        {
-            // Set override to true to enable BaseMods patching
-            PatchBaseModsOverride = true;
-
-            try
-            {
-                // Note: BaseMods directory may not exist in test environment
-                // The property should handle this gracefully
-                List<string> targetDlls = [.. TargetDLLs];
-
-                // Should contain Managed DLLs
-                _ = targetDlls.Should().Contain("Assembly-CSharp.dll");
-                _ = targetDlls.Should().Contain("LobotomyBaseModLib.dll");
-
-                // If BaseMods directory exists, should also contain those DLLs
-                var baseModsPath = BaseModsPath;
-                if (Directory.Exists(baseModsPath))
-                {
-                    var baseModsDlls = Directory.GetFiles(baseModsPath, "*.dll", SearchOption.TopDirectoryOnly);
-                    foreach (var dll in baseModsDlls)
-                    {
-                        var dllName = Path.GetFileName(dll);
-                        _ = targetDlls.Should().Contain(dllName, $"BaseMods DLL {dllName} should be included when PatchBaseMods is enabled");
-                    }
-                }
-            }
-            finally
-            {
-                // Clean up
-                PatchBaseModsOverride = false;
-            }
-        }
-
-        [Fact]
         public void Patch_WritesAuditLog_ForBaseModsDll()
         {
             var tempDir = Path.Combine(Path.GetTempPath(), "RetargetHarmonyTest_AuditLog_" + Guid.NewGuid().ToString("N"));
@@ -358,6 +323,183 @@ namespace RetargetHarmony.Test.Tests
             _ = gameRootPath.Should().NotBeNullOrEmpty("GameRootPath should not be empty");
         }
 
+        [Fact]
+        public void RetargetHarmonyReferences_ReturnsTrue_WhenHarmonyReferenceRetargeted()
+        {
+            using var assemblyDefinition = CreateSyntheticAssembly("0Harmony");
+
+            var changed = RetargetHarmonyReferences(assemblyDefinition);
+
+            _ = changed.Should().BeTrue("retargeting should report changes were made");
+            var harmonyRefs = GetHarmonyReferences(assemblyDefinition);
+            _ = harmonyRefs.Should().HaveCount(1);
+            _ = harmonyRefs[0].Name.Should().Be("0Harmony109");
+        }
+
+        [Fact]
+        public void RetargetHarmonyReferences_ReturnsFalse_WhenNoHarmonyReference()
+        {
+            using var assemblyDefinition = CreateSyntheticAssembly("mscorlib");
+
+            var changed = RetargetHarmonyReferences(assemblyDefinition);
+
+            _ = changed.Should().BeFalse("no Harmony references means no changes");
+        }
+
+        [Fact]
+        public void RetargetHarmonyReferences_ReturnsFalse_WhenAlreadyRetargeted()
+        {
+            using var assemblyDefinition = CreateSyntheticAssembly("0Harmony109");
+
+            var changed = RetargetHarmonyReferences(assemblyDefinition);
+
+            _ = changed.Should().BeFalse("already retargeted assembly should report no changes");
+        }
+
+        [Fact]
+        public void OnAssemblyLoadFile_RetargetsDllInMemory()
+        {
+            var tempDir = Path.Combine(Path.GetTempPath(), "RetargetHarmonyTest_LoadFile_" + Guid.NewGuid().ToString("N"));
+            _ = Directory.CreateDirectory(tempDir);
+
+            try
+            {
+                BaseModsPathOverride = tempDir;
+
+                // Create a minimal DLL with a 0Harmony reference and write it to disk
+                var dllPath = Path.Combine(tempDir, "TestMod.dll");
+                WriteSyntheticAssemblyToDisk(dllPath, "0Harmony");
+
+                // Record original bytes
+                var originalBytes = File.ReadAllBytes(dllPath);
+
+                // Call the prefix
+                Assembly? result = null;
+                var shouldRunOriginal = OnAssemblyLoadFile(ref result, dllPath);
+
+                // Prefix should skip the original (return false) and provide a result
+                _ = shouldRunOriginal.Should().BeFalse("prefix should handle the load itself");
+                _ = result.Should().NotBeNull("prefix should return a loaded assembly");
+
+                // Verify the loaded assembly has retargeted references
+                var referencedAssemblies = result.GetReferencedAssemblies();
+                _ = referencedAssemblies.Should().Contain(r => r.Name == "0Harmony109",
+                    "loaded assembly should reference 0Harmony109");
+
+                // Verify original file on disk is UNCHANGED
+                var bytesAfter = File.ReadAllBytes(dllPath);
+                _ = bytesAfter.Should().BeEquivalentTo(originalBytes,
+                    "original DLL on disk must not be modified");
+            }
+            finally
+            {
+                BaseModsPathOverride = null;
+                Directory.Delete(tempDir, true);
+            }
+        }
+
+        [Fact]
+        public void OnAssemblyLoadFile_PassesThrough_WhenNotInBaseMods()
+        {
+            var tempDir = Path.Combine(Path.GetTempPath(), "RetargetHarmonyTest_NotBaseMods_" + Guid.NewGuid().ToString("N"));
+            _ = Directory.CreateDirectory(tempDir);
+
+            try
+            {
+                // Set BaseModsPath to a different directory
+                BaseModsPathOverride = Path.Combine(Path.GetTempPath(), "SomeOtherDir_" + Guid.NewGuid().ToString("N"));
+
+                var dllPath = Path.Combine(tempDir, "TestMod.dll");
+                WriteSyntheticAssemblyToDisk(dllPath, "0Harmony");
+
+                Assembly? result = null;
+                var shouldRunOriginal = OnAssemblyLoadFile(ref result, dllPath);
+
+                _ = shouldRunOriginal.Should().BeTrue("prefix should pass through for non-BaseMods paths");
+                _ = result.Should().BeNull("prefix should not set result when passing through");
+            }
+            finally
+            {
+                BaseModsPathOverride = null;
+                if (Directory.Exists(tempDir))
+                {
+                    Directory.Delete(tempDir, true);
+                }
+            }
+        }
+
+        [Fact]
+        public void OnAssemblyLoadFile_PassesThrough_WhenNoHarmonyReference()
+        {
+            var tempDir = Path.Combine(Path.GetTempPath(), "RetargetHarmonyTest_NoHarmony_" + Guid.NewGuid().ToString("N"));
+            _ = Directory.CreateDirectory(tempDir);
+
+            try
+            {
+                BaseModsPathOverride = tempDir;
+
+                var dllPath = Path.Combine(tempDir, "TestMod.dll");
+                WriteSyntheticAssemblyToDisk(dllPath, "mscorlib");
+
+                Assembly? result = null;
+                var shouldRunOriginal = OnAssemblyLoadFile(ref result, dllPath);
+
+                _ = shouldRunOriginal.Should().BeTrue("prefix should pass through when no Harmony reference");
+                _ = result.Should().BeNull("prefix should not set result when passing through");
+            }
+            finally
+            {
+                BaseModsPathOverride = null;
+                Directory.Delete(tempDir, true);
+            }
+        }
+
+        [Fact]
+        public void OnAssemblyLoadFile_PassesThrough_WhenAlreadyRetargeted()
+        {
+            var tempDir = Path.Combine(Path.GetTempPath(), "RetargetHarmonyTest_Already_" + Guid.NewGuid().ToString("N"));
+            _ = Directory.CreateDirectory(tempDir);
+
+            try
+            {
+                BaseModsPathOverride = tempDir;
+
+                var dllPath = Path.Combine(tempDir, "TestMod.dll");
+                WriteSyntheticAssemblyToDisk(dllPath, "0Harmony109");
+
+                Assembly? result = null;
+                var shouldRunOriginal = OnAssemblyLoadFile(ref result, dllPath);
+
+                _ = shouldRunOriginal.Should().BeTrue("prefix should pass through when already retargeted");
+                _ = result.Should().BeNull("prefix should not set result when passing through");
+            }
+            finally
+            {
+                BaseModsPathOverride = null;
+                Directory.Delete(tempDir, true);
+            }
+        }
+
+        [Fact]
+        public void TargetDLLs_NeverIncludesBaseMods()
+        {
+            // Regardless of PatchBaseModsEnabled, TargetDLLs should only return core assemblies
+            PatchBaseModsOverride = true;
+
+            try
+            {
+                List<string> targetDlls = [.. TargetDLLs];
+
+                _ = targetDlls.Should().HaveCount(2, "TargetDLLs should always return exactly 2 core assemblies");
+                _ = targetDlls.Should().Contain("Assembly-CSharp.dll");
+                _ = targetDlls.Should().Contain("LobotomyBaseModLib.dll");
+            }
+            finally
+            {
+                PatchBaseModsOverride = false;
+            }
+        }
+
         private static string GetManagedAssemblyPath(string fileName)
         {
             return Path.Combine(ManagedDir, fileName);
@@ -380,6 +522,18 @@ namespace RetargetHarmony.Test.Tests
             }
 
             return assembly;
+        }
+
+        /// <summary>
+        /// Writes a synthetic assembly to disk. Uses a MemoryStream intermediate step to avoid
+        /// Mono.Cecil type resolution errors when writing Assembly-CSharp-based synthetics.
+        /// </summary>
+        private static void WriteSyntheticAssemblyToDisk(string filePath, params string[] referencedAssemblies)
+        {
+            using var assembly = CreateSyntheticAssembly(referencedAssemblies);
+            // Clear all types to avoid resolution errors when writing
+            assembly.MainModule.Types.Clear();
+            assembly.Write(filePath);
         }
     }
 }

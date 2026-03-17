@@ -21,8 +21,22 @@ namespace RetargetHarmony
         // Static log source managed by BepInEx framework (long-lived)
         private static readonly ManualLogSource Log = Logger.CreateLogSource("RetargetHarmony");
 
+        // Testability: override BaseMods directory path
+        public static string BaseModsPathOverride { get; set; }
+
         // BaseMods directory path — hardcoded relative to game root
-        public static string BaseModsPath => Path.GetFullPath(Path.Combine(Path.Combine(GameRootPath, "LobotomyCorp_Data"), "BaseMods"));
+        public static string BaseModsPath
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(BaseModsPathOverride))
+                {
+                    return BaseModsPathOverride;
+                }
+
+                return Path.GetFullPath(Path.Combine(Path.Combine(GameRootPath, "LobotomyCorp_Data"), "BaseMods"));
+            }
+        }
 
         // Flag to control whether assembly cache should be saved
         private static volatile bool s_shouldSaveCache = true;
@@ -45,16 +59,6 @@ namespace RetargetHarmony
             {
                 yield return "Assembly-CSharp.dll";
                 yield return "LobotomyBaseModLib.dll";
-
-                // Optionally include BaseMods DLLs if enabled via configuration
-                if (PatchBaseModsEnabled && Directory.Exists(BaseModsPath))
-                {
-                    SafeTrace("Including BaseMods DLLs in TargetDLLs");
-                    foreach (var dll in GetBaseModsDlls())
-                    {
-                        yield return dll;
-                    }
-                }
             }
         }
 
@@ -153,25 +157,6 @@ namespace RetargetHarmony
             catch (Exception ex)
             {
                 SafeWarn(string.Format(CultureInfo.InvariantCulture, "Failed to write audit log: {0}", ex.Message));
-            }
-        }
-
-        /// <summary>
-        /// Gets the list of DLL filenames from the BaseMods directory.
-        /// </summary>
-        private static IEnumerable<string> GetBaseModsDlls()
-        {
-            if (!Directory.Exists(BaseModsPath))
-            {
-                yield break;
-            }
-
-            // Use GetFiles instead of EnumerateFiles for .NET 3.5 compatibility
-            foreach (var file in Directory.GetFiles(BaseModsPath, "*.dll", SearchOption.AllDirectories))
-            {
-                var fileName = Path.GetFileName(file);
-                SafeTrace(string.Format(CultureInfo.InvariantCulture, "Checking BaseMods DLL: {0}", fileName));
-                yield return fileName;
             }
         }
 
@@ -327,6 +312,58 @@ PatchBaseMods = false
             }
         }
 
+        /// <summary>
+        /// Core retargeting logic: rewrites Harmony references to 0Harmony109 and removes duplicates.
+        /// Returns true if any changes were made.
+        /// </summary>
+        public static bool RetargetHarmonyReferences(AssemblyDefinition asm)
+        {
+            if (asm == null)
+            {
+                throw new ArgumentNullException(nameof(asm));
+            }
+
+            var refs = asm.MainModule.AssemblyReferences;
+
+            // List all assembly references for debugging
+            var allRefNames = refs.Select(r => r.Name).ToArray();
+            SafeTrace(string.Format(CultureInfo.InvariantCulture, "Assembly references: [{0}]", string.Join(", ", allRefNames)));
+
+            var changed = false;
+
+            // 1) Find all Harmony references (both old and potentially already retargeted)
+            List<AssemblyNameReference> harmonyRefs = refs.Where(r =>
+                r.Name == "0Harmony" ||
+                r.Name == "0Harmony109" ||
+                r.Name == "12Harmony" ||
+                r.Name == "0Harmony12").ToList();
+
+            SafeDebug(string.Format(CultureInfo.InvariantCulture, "Harmony references found: {0} - {1}", harmonyRefs.Count, string.Join(", ", harmonyRefs.Select(r => r.Name).ToArray())));
+
+            // Defensive check: ToList() should never return null, but guard against unexpected behavior
+            if (harmonyRefs != null && harmonyRefs.Count > 0)
+            {
+                // Ensure the first reference points to 0Harmony109
+                if (harmonyRefs[0].Name != "0Harmony109")
+                {
+                    SafeDebug(string.Format(CultureInfo.InvariantCulture, "Rewriting reference {0} -> 0Harmony109", harmonyRefs[0].Name));
+                    harmonyRefs[0].Name = "0Harmony109";
+                    changed = true;
+                }
+
+                // 2) Defensive sweep: remove any duplicate Harmony metadata references
+                // Safe to modify refs while iterating over harmonyRefs (a separate list copy)
+                for (var i = 1; i < harmonyRefs.Count; i++)
+                {
+                    SafeTrace(string.Format(CultureInfo.InvariantCulture, "Removing duplicate Harmony reference: {0}", harmonyRefs[i].Name));
+                    _ = refs.Remove(harmonyRefs[i]);
+                    changed = true;
+                }
+            }
+
+            return changed;
+        }
+
         // BepInEx 5 requires static Patch method
         public static void Patch(AssemblyDefinition asm)
         {
@@ -345,43 +382,7 @@ PatchBaseMods = false
 
                 SafeTrace(string.Format(CultureInfo.InvariantCulture, "Patch() entry with assembly: {0}", asm.Name.Name));
 
-                var refs = asm.MainModule.AssemblyReferences;
-
-                // List all assembly references for debugging
-                var allRefNames = refs.Select(r => r.Name).ToArray();
-                SafeTrace(string.Format(CultureInfo.InvariantCulture, "Assembly references: [{0}]", string.Join(", ", allRefNames)));
-
-                var changed = false;
-
-                // 1) Find all Harmony references (both old and potentially already retargeted)
-                List<AssemblyNameReference> harmonyRefs = refs.Where(r =>
-                    r.Name == "0Harmony" ||
-                    r.Name == "0Harmony109" ||
-                    r.Name == "12Harmony" ||
-                    r.Name == "0Harmony12").ToList();
-
-                SafeDebug(string.Format(CultureInfo.InvariantCulture, "Harmony references found: {0} - {1}", harmonyRefs.Count, string.Join(", ", harmonyRefs.Select(r => r.Name).ToArray())));
-
-                // Defensive check: ToList() should never return null, but guard against unexpected behavior
-                if (harmonyRefs != null && harmonyRefs.Count > 0)
-                {
-                    // Ensure the first reference points to 0Harmony109
-                    if (harmonyRefs[0].Name != "0Harmony109")
-                    {
-                        SafeDebug(string.Format(CultureInfo.InvariantCulture, "Rewriting reference {0} -> 0Harmony109", harmonyRefs[0].Name));
-                        harmonyRefs[0].Name = "0Harmony109";
-                        changed = true;
-                    }
-
-                    // 2) Defensive sweep: remove any duplicate Harmony metadata references
-                    // Safe to modify refs while iterating over harmonyRefs (a separate list copy)
-                    for (var i = 1; i < harmonyRefs.Count; i++)
-                    {
-                        SafeTrace(string.Format(CultureInfo.InvariantCulture, "Removing duplicate Harmony reference: {0}", harmonyRefs[i].Name));
-                        _ = refs.Remove(harmonyRefs[i]);
-                        changed = true;
-                    }
-                }
+                var changed = RetargetHarmonyReferences(asm);
 
                 if (changed)
                 {
@@ -402,6 +403,65 @@ PatchBaseMods = false
             {
                 SafeError(string.Format(CultureInfo.InvariantCulture, "Exception in Patch(): {0}", ex.Message));
                 throw;
+            }
+        }
+
+        /// <summary>
+        /// Harmony prefix for Assembly.LoadFile(string). Intercepts BaseMods DLL loads
+        /// to retarget Harmony references in memory without writing to disk.
+        /// </summary>
+        public static bool OnAssemblyLoadFile(ref Assembly __result, string assemblyFile)
+        {
+            try
+            {
+                // Only intercept loads from the BaseMods directory
+                if (string.IsNullOrEmpty(assemblyFile) || !assemblyFile.StartsWith(BaseModsPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true; // Let original proceed
+                }
+
+                SafeTrace(string.Format(CultureInfo.InvariantCulture, "OnAssemblyLoadFile() intercepting: {0}", assemblyFile));
+
+                // Read file bytes (never write back)
+                var originalBytes = File.ReadAllBytes(assemblyFile);
+
+                // Load into Mono.Cecil for inspection
+                using (var ms = new MemoryStream(originalBytes))
+                {
+                    using (var asm = AssemblyDefinition.ReadAssembly(ms))
+                    {
+                        var changed = RetargetHarmonyReferences(asm);
+                        if (!changed)
+                        {
+                            SafeTrace(string.Format(CultureInfo.InvariantCulture, "No retargeting needed for: {0}", assemblyFile));
+                            return true; // Let original proceed — no changes needed
+                        }
+
+                        // Write retargeted assembly to memory
+                        using (var outputMs = new MemoryStream())
+                        {
+                            asm.Write(outputMs);
+                            var patchedBytes = outputMs.ToArray();
+
+                            SafeInfo(string.Format(CultureInfo.InvariantCulture, "Retargeted Harmony references in memory for: {0}", Path.GetFileName(assemblyFile)));
+
+                            // Load from bytes — no disk write
+                            __result = Assembly.Load(patchedBytes);
+
+                            // Write audit log
+                            var assemblyName = Path.GetFileNameWithoutExtension(assemblyFile);
+                            WriteAuditLog(assemblyName);
+
+                            return false; // Skip original Assembly.LoadFile
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // On any failure, fall through to original Assembly.LoadFile so the game still works
+                SafeError(string.Format(CultureInfo.InvariantCulture, "OnAssemblyLoadFile() failed, falling through: {0}", ex.Message));
+                return true;
             }
         }
 
@@ -449,11 +509,56 @@ PatchBaseMods = false
                 SafeDebug("Patched TypeLoader.SaveAssemblyCache successfully");
 
                 SafeInfo(string.Format(CultureInfo.InvariantCulture, "Registered BaseMods plugin directory: {0}", BaseModsPath));
+
+                // Neutralize BepInEx's HarmonyInteropFix and install non-destructive replacement
+                NeutralizeHarmonyInteropFix(harmony);
             }
             catch (Exception ex)
             {
                 SafeError(string.Format(CultureInfo.InvariantCulture, "Exception in Finish(): {0}", ex.Message));
                 throw;
+            }
+        }
+
+        /// <summary>
+        /// Unpatches BepInEx's HarmonyInteropFix from Assembly.LoadFile/LoadFrom and installs
+        /// our own non-destructive prefix that retargets Harmony references in memory only.
+        /// </summary>
+        private static void NeutralizeHarmonyInteropFix(Harmony harmony)
+        {
+            try
+            {
+                SafeTrace("NeutralizeHarmonyInteropFix() entry");
+
+                var loadFileMethod = typeof(Assembly).GetMethod("LoadFile", new Type[] { typeof(string) });
+                var loadFromMethod = typeof(Assembly).GetMethod("LoadFrom", new Type[] { typeof(string) });
+
+                if (loadFileMethod == null || loadFromMethod == null)
+                {
+                    SafeWarn("Could not find Assembly.LoadFile or Assembly.LoadFrom methods via reflection");
+                    return;
+                }
+
+                // Unpatch BepInEx's HarmonyInteropFix from both methods
+                // Note: The owner ID has a typo in BepInEx source — "bepinex" not "bepinex"
+                var harmonyInteropOwner = "org.bepinex.fixes.harmonyinterop";
+
+                harmony.Unpatch(loadFileMethod, HarmonyPatchType.All, harmonyInteropOwner);
+                SafeDebug("Unpatched HarmonyInteropFix from Assembly.LoadFile");
+
+                harmony.Unpatch(loadFromMethod, HarmonyPatchType.All, harmonyInteropOwner);
+                SafeDebug("Unpatched HarmonyInteropFix from Assembly.LoadFrom");
+
+                // Install our non-destructive prefix on Assembly.LoadFile only
+                // (game's Add_On.cs only calls Assembly.LoadFile, not LoadFrom)
+                var ourPrefix = AccessTools.Method(typeof(RetargetHarmony), nameof(OnAssemblyLoadFile));
+                _ = harmony.Patch(loadFileMethod, new HarmonyMethod(ourPrefix));
+                SafeInfo("Installed non-destructive Assembly.LoadFile prefix for BaseMods retargeting");
+            }
+            catch (Exception ex)
+            {
+                // On failure, the original HarmonyInteropFix stays active (degraded but functional)
+                SafeError(string.Format(CultureInfo.InvariantCulture, "Failed to neutralize HarmonyInteropFix: {0}", ex.Message));
             }
         }
 

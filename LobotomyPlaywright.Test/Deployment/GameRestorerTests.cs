@@ -71,14 +71,71 @@ namespace LobotomyPlaywright.Tests.Deployment
         }
 
         [Fact]
-        public void RestoreTargeted_skips_delete_when_directories_do_not_exist()
+        public void RestoreTargeted_skips_delete_when_directories_and_files_do_not_exist()
         {
             // Act
             _gameRestorer.RestoreTargeted(_gamePath, _snapshotPath);
 
             // Assert
             _mockFileSystem.Verify(f => f.DeleteDirectory(It.IsAny<string>(), It.IsAny<bool>()), Times.Never);
+            _mockFileSystem.Verify(f => f.DeleteFile(It.IsAny<string>()), Times.Never);
             _mockFileSystem.Verify(f => f.CopyDirectory(It.IsAny<string>(), It.IsAny<string>(), true), Times.Once);
+        }
+
+        [Fact]
+        public void RestoreTargeted_deletes_BepInEx_Shim_Backup_directory_when_it_exists()
+        {
+            // Arrange
+            var shimBackupPath = Path.Combine(_gamePath, "BepInEx_Shim_Backup");
+            _ = _mockFileSystem.Setup(f => f.DirectoryExists(shimBackupPath)).Returns(true);
+
+            // Act
+            _gameRestorer.RestoreTargeted(_gamePath, _snapshotPath);
+
+            // Assert
+            _mockFileSystem.Verify(f => f.DeleteDirectory(shimBackupPath, true), Times.Once);
+        }
+
+        [Fact]
+        public void RestoreTargeted_deletes_doorstop_config_ini_when_it_exists()
+        {
+            // Arrange
+            var filePath = Path.Combine(_gamePath, "doorstop_config.ini");
+            _ = _mockFileSystem.Setup(f => f.FileExists(filePath)).Returns(true);
+
+            // Act
+            _gameRestorer.RestoreTargeted(_gamePath, _snapshotPath);
+
+            // Assert
+            _mockFileSystem.Verify(f => f.DeleteFile(filePath), Times.Once);
+        }
+
+        [Fact]
+        public void RestoreTargeted_deletes_winhttp_dll_when_it_exists()
+        {
+            // Arrange
+            var filePath = Path.Combine(_gamePath, "winhttp.dll");
+            _ = _mockFileSystem.Setup(f => f.FileExists(filePath)).Returns(true);
+
+            // Act
+            _gameRestorer.RestoreTargeted(_gamePath, _snapshotPath);
+
+            // Assert
+            _mockFileSystem.Verify(f => f.DeleteFile(filePath), Times.Once);
+        }
+
+        [Fact]
+        public void RestoreTargeted_deletes_doorstop_version_when_it_exists()
+        {
+            // Arrange
+            var filePath = Path.Combine(_gamePath, ".doorstop_version");
+            _ = _mockFileSystem.Setup(f => f.FileExists(filePath)).Returns(true);
+
+            // Act
+            _gameRestorer.RestoreTargeted(_gamePath, _snapshotPath);
+
+            // Assert
+            _mockFileSystem.Verify(f => f.DeleteFile(filePath), Times.Once);
         }
 
         [Fact]

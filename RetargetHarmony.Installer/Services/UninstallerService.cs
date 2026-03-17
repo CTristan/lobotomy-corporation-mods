@@ -30,6 +30,7 @@ namespace RetargetHarmony.Installer.Services
                     RemoveFlaggedBaseMods(gamePath, filesRemoved);
                 }
 
+                RestoreShimmedBaseMods(gamePath, filesRemoved);
                 RemoveRetargetHarmony(gamePath, filesRemoved, directoriesRemoved);
                 RemoveHarmonyInteropDlls(gamePath, filesRemoved);
                 RemoveBepInExRootFiles(gamePath, filesRemoved);
@@ -54,6 +55,26 @@ namespace RetargetHarmony.Installer.Services
                     filesRemoved.Add(mod.FilePath);
                 }
             }
+        }
+
+        private static void RestoreShimmedBaseMods(string gamePath, List<string> filesRestored)
+        {
+            var backupDir = Path.Combine(gamePath, "BepInEx_Shim_Backup");
+            if (!Directory.Exists(backupDir))
+            {
+                return;
+            }
+
+            var baseModsDir = Path.Combine(gamePath, "LobotomyCorp_Data", "BaseMods");
+            foreach (var backupFile in Directory.GetFiles(backupDir, "*.dll", SearchOption.AllDirectories))
+            {
+                var fileName = Path.GetFileName(backupFile);
+                var destinationPath = Path.Combine(baseModsDir, fileName);
+                File.Copy(backupFile, destinationPath, overwrite: true);
+                filesRestored.Add(destinationPath);
+            }
+
+            Directory.Delete(backupDir, recursive: true);
         }
 
         private static void RemoveRetargetHarmony(string gamePath, List<string> filesRemoved, List<string> directoriesRemoved)

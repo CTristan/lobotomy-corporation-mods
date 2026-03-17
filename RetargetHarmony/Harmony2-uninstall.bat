@@ -77,7 +77,21 @@ for /f "delims=" %%F in ('dir /b /s /a-d ".DS_Store" 2^>nul') do (
 )
 
 :: ============================================================
-:: Phase 3: Detect BepInEx mods in BaseMods (from audit log)
+:: Phase 3: Detect BepInEx_Shim_Backup (original BaseMods DLLs)
+:: ============================================================
+
+set "hasShimBackup=0"
+set "shimBackupCount=0"
+
+if exist "BepInEx_Shim_Backup" (
+    set "hasShimBackup=1"
+    for /f "delims=" %%F in ('dir /b /s /a-d "BepInEx_Shim_Backup\*.dll" 2^>nul') do (
+        set /a shimBackupCount+=1
+    )
+)
+
+:: ============================================================
+:: Phase 4: Detect BepInEx mods in BaseMods (from audit log)
 :: ============================================================
 
 set "auditLogPath=BepInEx\patchers\RetargetHarmony\logs\patched_mods.log"
@@ -123,6 +137,16 @@ if not "!bepinexFiles!"=="" (
 if !hasBepInExDir! equ 1 (
     echo --- BepInEx Directory ---
     echo    BepInEx\ ^(entire directory^)
+    echo.
+)
+
+:: Display shim backup files (will be restored, not deleted)
+if !hasShimBackup! equ 1 (
+    echo --- BepInEx Shim Backup ^(!shimBackupCount! DLL^(s^) to restore^) ---
+    echo    Original BaseMods DLLs will be restored from BepInEx_Shim_Backup\
+    for /f "delims=" %%F in ('dir /b "BepInEx_Shim_Backup\*.dll" 2^>nul') do (
+        echo      %%F
+    )
     echo.
 )
 
@@ -184,6 +208,26 @@ echo ============================================================ >> "!logFile!"
 echo. >> "!logFile!"
 
 set "errors=0"
+
+:: Restore original BaseMods DLLs from BepInEx_Shim_Backup
+if !hasShimBackup! equ 1 (
+    for /f "delims=" %%F in ('dir /b "BepInEx_Shim_Backup\*.dll" 2^>nul') do (
+        copy /y "BepInEx_Shim_Backup\%%F" "LobotomyCorp_Data\BaseMods\%%F" >nul 2>nul
+        if errorlevel 1 (
+            echo FAILED: Could not restore %%F
+            echo FAILED: Restore %%F >> "!logFile!"
+            set /a errors+=1
+        ) else (
+            echo Restored: %%F
+            echo Restored: %%F >> "!logFile!"
+        )
+    )
+    rmdir /s /q "BepInEx_Shim_Backup" 2>nul
+    if not exist "BepInEx_Shim_Backup" (
+        echo Deleted: BepInEx_Shim_Backup\ directory
+        echo Deleted: BepInEx_Shim_Backup\ >> "!logFile!"
+    )
+)
 
 :: Delete BepInEx mods in BaseMods first (before BepInEx directory is removed)
 if !baseModsCount! gtr 0 (

@@ -40,7 +40,7 @@ In RetargetHarmony's `Finish()`, unpatch BepInEx's `HarmonyInteropFix` from `Ass
 
 ### Phase 1: Documentation
 
-- [ ] Save investigation findings to `docs/harmony-interop-investigation.md`
+- [x] Save investigation findings to `docs/harmony-interop-investigation.md`
   - Root cause analysis (HarmonyInteropFix chain of events)
   - Decompiled evidence from BepInEx.Preloader.dll and HarmonyXInterop.dll
   - Why only BaseMods DLLs are affected
@@ -48,11 +48,11 @@ In RetargetHarmony's `Finish()`, unpatch BepInEx's `HarmonyInteropFix` from `Ass
 
 ### Phase 2: Implement Non-Destructive Assembly Loading
 
-- [ ] Add method to `RetargetHarmony.cs` to unpatch HarmonyInteropFix
+- [x] Add method to `RetargetHarmony.cs` to unpatch HarmonyInteropFix
   - Use `Harmony.Unpatch` targeting `Assembly.LoadFile` and `Assembly.LoadFrom` with patch owner `"org.bepinex.fixes.harmonyinterop"`
   - Must run in `Finish()` AFTER `HarmonyInteropFix.Apply()` has already been called
 
-- [ ] Add our own `Assembly.LoadFile` prefix that does in-memory-only retargeting
+- [x] Add our own `Assembly.LoadFile` prefix that does in-memory-only retargeting
   - Read file bytes with `File.ReadAllBytes(path)`
   - Use Mono.Cecil on byte stream to check for Harmony references needing retargeting
   - If retargeting needed: patch in memory, return `Assembly.Load(patchedBytes)`, skip original
@@ -60,39 +60,37 @@ In RetargetHarmony's `Finish()`, unpatch BepInEx's `HarmonyInteropFix` from `Ass
   - Cache results to avoid re-patching the same assembly
   - NEVER call `File.WriteAllBytes` or any disk write
 
-- [ ] Reuse existing `Patch(AssemblyDefinition)` logic for the in-memory retargeting
-  - File: `RetargetHarmony/RetargetHarmony.cs:331-406`
+- [x] Reuse existing `Patch(AssemblyDefinition)` logic for the in-memory retargeting
+  - Extracted into `RetargetHarmonyReferences(AssemblyDefinition)` shared method
 
 ### Phase 3: Remove Redundant PatchBaseMods from TargetDLLs
 
-- [ ] Remove BaseMods DLL yielding from `TargetDLLs` property
+- [x] Remove BaseMods DLL yielding from `TargetDLLs` property
   - The preloader path never actually patches BaseMods (they're not in `Managed/`)
   - The new `LoadFile` prefix handles BaseMods retargeting instead
   - Keep `PatchBaseModsEnabled` config to control whether the `LoadFile` prefix is active
 
 ### Phase 4: Restore Already-Shimmed DLLs (Optional)
 
-- [ ] Consider adding restore logic for DLLs already modified by HarmonyInteropFix
-  - Check `BepInEx_Shim_Backup/` for original copies
-  - Restore on first run after update
-  - Or document manual restore process
+- [x] Consider adding restore logic for DLLs already modified by HarmonyInteropFix
+  - Added restore from `BepInEx_Shim_Backup/` in both UninstallerService and batch script
 
 ### Phase 5: Update Tests
 
-- [ ] Add tests for the new `Assembly.LoadFile` prefix behavior
+- [x] Add tests for the new `Assembly.LoadFile` prefix behavior
   - Test: DLL with `0Harmony` reference gets retargeted in memory
   - Test: DLL without Harmony references passes through unchanged
   - Test: DLL already referencing `0Harmony109` passes through unchanged
   - Test: No disk writes occur during retargeting
 
-- [ ] Update existing tests if `TargetDLLs` behavior changes
+- [x] Update existing tests if `TargetDLLs` behavior changes
 
 ### Phase 6: Update Installer/Uninstaller
 
-- [ ] Update `UninstallerService.cs` to restore from `BepInEx_Shim_Backup/` if present
+- [x] Update `UninstallerService.cs` to restore from `BepInEx_Shim_Backup/` if present
   - File: `RetargetHarmony.Installer/Services/UninstallerService.cs`
 
-- [ ] Update `Harmony2-uninstall.bat` similarly
+- [x] Update `Harmony2-uninstall.bat` similarly
   - File: `RetargetHarmony/Harmony2-uninstall.bat`
 
 ## Key Files
