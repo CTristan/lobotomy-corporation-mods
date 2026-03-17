@@ -297,16 +297,13 @@ namespace RetargetHarmony
                 case LogLevel.Warn:
                     s_bepInExLog.LogWarning(message);
                     break;
-                case LogLevel.None:
-                    break;
-                case LogLevel.Trace:
-                    break;
-                case LogLevel.Debug:
-                    break;
                 case LogLevel.Info:
-                    break;
-                default:
                     s_bepInExLog.LogInfo(message);
+                    break;
+                case LogLevel.None:
+                case LogLevel.Trace:
+                case LogLevel.Debug:
+                default:
                     break;
             }
         }

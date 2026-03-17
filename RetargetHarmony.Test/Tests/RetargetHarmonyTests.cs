@@ -500,6 +500,53 @@ namespace RetargetHarmony.Test.Tests
             }
         }
 
+        [Fact]
+        public void BlockTryShim_ReturnsFalse_ForBaseModsPath()
+        {
+            var tempDir = Path.Combine(Path.GetTempPath(), "RetargetHarmonyTest_BlockTryShim_" + Guid.NewGuid().ToString("N"));
+            _ = Directory.CreateDirectory(tempDir);
+
+            try
+            {
+                BaseModsPathOverride = tempDir;
+
+                var dllPath = Path.Combine(tempDir, "TestMod.dll");
+                var result = BlockTryShim(dllPath);
+
+                _ = result.Should().BeFalse("BlockTryShim should block TryShim for BaseMods paths");
+            }
+            finally
+            {
+                BaseModsPathOverride = null;
+                Directory.Delete(tempDir, true);
+            }
+        }
+
+        [Fact]
+        public void BlockTryShim_ReturnsTrue_ForNonBaseModsPath()
+        {
+            try
+            {
+                BaseModsPathOverride = Path.Combine(Path.GetTempPath(), "SomeOtherDir_" + Guid.NewGuid().ToString("N"));
+
+                var result = BlockTryShim("/some/other/path/TestMod.dll");
+
+                _ = result.Should().BeTrue("BlockTryShim should allow TryShim for non-BaseMods paths");
+            }
+            finally
+            {
+                BaseModsPathOverride = null;
+            }
+        }
+
+        [Fact]
+        public void BlockTryShim_ReturnsTrue_WhenPathIsNull()
+        {
+            var result = BlockTryShim(null);
+
+            _ = result.Should().BeTrue("BlockTryShim should allow TryShim when path is null");
+        }
+
         private static string GetManagedAssemblyPath(string fileName)
         {
             return Path.Combine(ManagedDir, fileName);

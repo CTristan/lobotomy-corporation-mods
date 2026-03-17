@@ -410,10 +410,18 @@ PatchBaseMods = false
         /// Harmony prefix for Assembly.LoadFile(string). Intercepts BaseMods DLL loads
         /// to retarget Harmony references in memory without writing to disk.
         /// </summary>
-        public static bool OnAssemblyLoadFile(ref Assembly __result, string assemblyFile)
+        /// <remarks>
+        /// Uses positional parameter injection (__0) instead of named parameter to avoid
+        /// HarmonyX "parameter not found" errors from name mismatches across runtimes.
+        /// </remarks>
+        // ReSharper disable InconsistentNaming
+        public static bool OnAssemblyLoadFile(ref Assembly __result, string __0)
+        // ReSharper restore InconsistentNaming
         {
             try
             {
+                var assemblyFile = __0;
+
                 // Only intercept loads from the BaseMods directory
                 if (string.IsNullOrEmpty(assemblyFile) || !assemblyFile.StartsWith(BaseModsPath, StringComparison.OrdinalIgnoreCase))
                 {
@@ -476,6 +484,25 @@ PatchBaseMods = false
 
                 SafeTrace("Finish() entry");
 
+                // Create Harmony instance — needed for both neutralization and TypeLoader patching
+                Harmony harmony = new Harmony("com.lobotomycorp.retargetharmony.chainloaderhook");
+
+                SafeDebug("Created Harmony instance");
+
+                // Neutralize BepInEx's HarmonyInteropFix FIRST — this is the most critical operation.
+                // Must run before TypeLoader patching which can throw and prevent execution.
+                // NeutralizeHarmonyInteropFix has its own try/catch that does NOT rethrow,
+                // so a failure here won't prevent TypeLoader patching from proceeding.
+                NeutralizeHarmonyInteropFix(harmony);
+
+                // Register CLR-level assembly resolve handler for in-memory loaded assemblies.
+                // When OnAssemblyLoadFile returns Assembly.Load(bytes), the loaded assembly has no
+                // file location, so the CLR can't probe the original directory for dependencies.
+                // This handler resolves missing assemblies from BaseMods subdirectories.
+                AppDomain.CurrentDomain.AssemblyResolve += OnClrAssemblyResolve;
+
+                SafeDebug("Registered AppDomain.AssemblyResolve handler for BaseMods dependencies");
+
                 // Register assembly resolve handler for BaseMods dependencies
                 // NOTE: This is NOT AppDomain.AssemblyResolve (System.Reflection).
                 // BepInEx's TypeLoader.AssemblyResolve is a custom event using Mono.Cecil types:
@@ -483,11 +510,6 @@ PatchBaseMods = false
                 TypeLoader.AssemblyResolve += OnAssemblyResolve;
 
                 SafeDebug("Registered AssemblyResolve handler");
-
-                // Create Harmony instance to patch TypeLoader
-                Harmony harmony = new Harmony("com.lobotomycorp.retargetharmony.chainloaderhook");
-
-                SafeDebug("Created Harmony instance");
 
                 // Patch FindPluginTypes to include BaseMods directory
                 var findPluginTypesMethod = AccessTools.Method(typeof(TypeLoader), nameof(TypeLoader.FindPluginTypes))
@@ -509,9 +531,6 @@ PatchBaseMods = false
                 SafeDebug("Patched TypeLoader.SaveAssemblyCache successfully");
 
                 SafeInfo(string.Format(CultureInfo.InvariantCulture, "Registered BaseMods plugin directory: {0}", BaseModsPath));
-
-                // Neutralize BepInEx's HarmonyInteropFix and install non-destructive replacement
-                NeutralizeHarmonyInteropFix(harmony);
             }
             catch (Exception ex)
             {
@@ -523,6 +542,7 @@ PatchBaseMods = false
         /// <summary>
         /// Unpatches BepInEx's HarmonyInteropFix from Assembly.LoadFile/LoadFrom and installs
         /// our own non-destructive prefix that retargets Harmony references in memory only.
+        /// Falls back to patching HarmonyInterop.TryShim if unpatch fails.
         /// </summary>
         private static void NeutralizeHarmonyInteropFix(Harmony harmony)
         {
@@ -540,8 +560,10 @@ PatchBaseMods = false
                 }
 
                 // Unpatch BepInEx's HarmonyInteropFix from both methods
-                // Note: The owner ID has a typo in BepInEx source — "bepinex" not "bepinex"
+                // Note: The owner ID has a typo in BepInEx source — "bepinex" not "bepinEx"
                 var harmonyInteropOwner = "org.bepinex.fixes.harmonyinterop";
+
+                LogPatchInfo(loadFileMethod, "Assembly.LoadFile BEFORE unpatch");
 
                 harmony.Unpatch(loadFileMethod, HarmonyPatchType.All, harmonyInteropOwner);
                 SafeDebug("Unpatched HarmonyInteropFix from Assembly.LoadFile");
@@ -549,16 +571,167 @@ PatchBaseMods = false
                 harmony.Unpatch(loadFromMethod, HarmonyPatchType.All, harmonyInteropOwner);
                 SafeDebug("Unpatched HarmonyInteropFix from Assembly.LoadFrom");
 
+                LogPatchInfo(loadFileMethod, "Assembly.LoadFile AFTER unpatch");
+
                 // Install our non-destructive prefix on Assembly.LoadFile only
                 // (game's Add_On.cs only calls Assembly.LoadFile, not LoadFrom)
                 var ourPrefix = AccessTools.Method(typeof(RetargetHarmony), nameof(OnAssemblyLoadFile));
                 _ = harmony.Patch(loadFileMethod, new HarmonyMethod(ourPrefix));
                 SafeInfo("Installed non-destructive Assembly.LoadFile prefix for BaseMods retargeting");
+
+                LogPatchInfo(loadFileMethod, "Assembly.LoadFile FINAL state");
+
+                // Verify HarmonyInteropFix was actually removed — if not, escalate to TryShim fallback
+                if (HasPatchesFromOwner(loadFileMethod, harmonyInteropOwner))
+                {
+                    SafeWarn("Unpatch did not remove HarmonyInteropFix — escalating to TryShim fallback");
+                    PatchTryShimFallback(harmony);
+                }
             }
             catch (Exception ex)
             {
                 // On failure, the original HarmonyInteropFix stays active (degraded but functional)
                 SafeError(string.Format(CultureInfo.InvariantCulture, "Failed to neutralize HarmonyInteropFix: {0}", ex.Message));
+            }
+        }
+
+        /// <summary>
+        /// Logs Harmony patch info for a method to aid diagnostics.
+        /// </summary>
+        private static void LogPatchInfo(MethodBase method, string label)
+        {
+            try
+            {
+                var patchInfo = Harmony.GetPatchInfo(method);
+                if (patchInfo == null)
+                {
+                    SafeDebug(string.Format(CultureInfo.InvariantCulture, "[{0}] No patch info found", label));
+                    return;
+                }
+
+                if (patchInfo.Prefixes != null)
+                {
+                    foreach (var prefix in patchInfo.Prefixes)
+                    {
+                        SafeDebug(string.Format(CultureInfo.InvariantCulture,
+                            "[{0}] Prefix: owner={1}, method={2}, priority={3}",
+                            label, prefix.owner, prefix.PatchMethod.Name, prefix.priority));
+                    }
+                }
+
+                if (patchInfo.Prefixes == null || patchInfo.Prefixes.Count == 0)
+                {
+                    SafeDebug(string.Format(CultureInfo.InvariantCulture, "[{0}] No prefixes", label));
+                }
+            }
+            catch (Exception ex)
+            {
+                SafeTrace(string.Format(CultureInfo.InvariantCulture, "[{0}] Failed to get patch info: {1}", label, ex.Message));
+            }
+        }
+
+        /// <summary>
+        /// Checks whether a method has any Harmony patches from a specific owner.
+        /// </summary>
+        private static bool HasPatchesFromOwner(MethodBase method, string owner)
+        {
+            try
+            {
+                var patchInfo = Harmony.GetPatchInfo(method);
+                if (patchInfo == null)
+                {
+                    return false;
+                }
+
+                if (patchInfo.Prefixes != null)
+                {
+                    foreach (var prefix in patchInfo.Prefixes)
+                    {
+                        if (prefix.owner == owner)
+                        {
+                            return true;
+                        }
+                    }
+                }
+
+                if (patchInfo.Postfixes != null)
+                {
+                    foreach (var postfix in patchInfo.Postfixes)
+                    {
+                        if (postfix.owner == owner)
+                        {
+                            return true;
+                        }
+                    }
+                }
+
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Fallback: patches HarmonyInterop.TryShim directly to prevent disk writes
+        /// when Harmony.Unpatch fails to remove HarmonyInteropFix.
+        /// </summary>
+        private static void PatchTryShimFallback(Harmony harmony)
+        {
+            try
+            {
+                // HarmonyInterop is in HarmonyXInterop.dll
+                var harmonyInteropType = Type.GetType("HarmonyInterop, HarmonyXInterop");
+                if (harmonyInteropType == null)
+                {
+                    SafeWarn("Could not find HarmonyInterop type for TryShim fallback");
+                    return;
+                }
+
+                var tryShimMethod = AccessTools.Method(harmonyInteropType, "TryShim");
+                if (tryShimMethod == null)
+                {
+                    SafeWarn("Could not find HarmonyInterop.TryShim method for fallback");
+                    return;
+                }
+
+                var blockPrefix = AccessTools.Method(typeof(RetargetHarmony), nameof(BlockTryShim));
+                _ = harmony.Patch(tryShimMethod, new HarmonyMethod(blockPrefix));
+                SafeInfo("Installed TryShim blocking prefix as fallback");
+            }
+            catch (Exception ex)
+            {
+                SafeError(string.Format(CultureInfo.InvariantCulture, "Failed to install TryShim fallback: {0}", ex.Message));
+            }
+        }
+
+        /// <summary>
+        /// Fallback prefix that blocks HarmonyInterop.TryShim for BaseMods paths,
+        /// preventing disk writes when Unpatch fails.
+        /// </summary>
+        /// <remarks>
+        /// Uses positional parameter injection (__0) to avoid HarmonyX name mismatches.
+        /// </remarks>
+        // ReSharper disable InconsistentNaming
+        public static bool BlockTryShim(string __0)
+        // ReSharper restore InconsistentNaming
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(__0) &&
+                    __0.StartsWith(BaseModsPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    SafeTrace(string.Format(CultureInfo.InvariantCulture,
+                        "Blocked TryShim for BaseMods path: {0}", Path.GetFileName(__0)));
+                    return false;
+                }
+
+                return true;
+            }
+            catch
+            {
+                return true;
             }
         }
 
@@ -663,6 +836,60 @@ PatchBaseMods = false
             }
 
             return s_shouldSaveCache;
+        }
+
+        /// <summary>
+        /// CLR-level assembly resolve handler. When OnAssemblyLoadFile loads assemblies via
+        /// Assembly.Load(byte[]), the loaded assembly has no file location and the CLR can't
+        /// probe the original directory for dependencies. This handler searches BaseMods
+        /// subdirectories for the requested assembly.
+        /// </summary>
+        private static Assembly OnClrAssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            try
+            {
+                if (args == null || string.IsNullOrEmpty(args.Name))
+                {
+                    return null;
+                }
+
+                // Extract simple assembly name from full name (e.g., "MyAssembly, Version=1.0.0.0, ...")
+                var assemblyName = args.Name;
+                var commaIndex = assemblyName.IndexOf(',');
+                if (commaIndex > 0)
+                {
+                    assemblyName = assemblyName.Substring(0, commaIndex);
+                }
+
+                SafeTrace(string.Format(CultureInfo.InvariantCulture, "OnClrAssemblyResolve() resolving: {0}", assemblyName));
+
+                // Search BaseMods subdirectories for matching DLL
+                if (!Directory.Exists(BaseModsPath))
+                {
+                    return null;
+                }
+
+                foreach (var subDir in Directory.GetDirectories(BaseModsPath))
+                {
+                    // Try exact name match
+                    var dllPath = Path.Combine(subDir, assemblyName + ".dll");
+                    if (File.Exists(dllPath))
+                    {
+                        SafeDebug(string.Format(CultureInfo.InvariantCulture, "OnClrAssemblyResolve() found: {0}", dllPath));
+
+                        // Use Assembly.LoadFile so our prefix can handle retargeting if needed.
+                        // For DLLs that don't need retargeting, the prefix passes through to original LoadFile.
+                        return Assembly.LoadFile(dllPath);
+                    }
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                SafeTrace(string.Format(CultureInfo.InvariantCulture, "OnClrAssemblyResolve() failed: {0}", ex.Message));
+                return null;
+            }
         }
 
         // Assembly resolve handler — tries to resolve assemblies from BaseMods directory

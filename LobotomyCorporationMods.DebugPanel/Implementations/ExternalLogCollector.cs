@@ -53,14 +53,16 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
 
                 if (_scanner.FileExists(primaryPath))
                 {
-                    return _scanner.ReadAllText(primaryPath);
+                    var content = _scanner.ReadAllText(primaryPath);
+                    return string.IsNullOrEmpty(content) ? "(Log file exists but is empty — no warnings or errors recorded)" : content;
                 }
 
                 var fallbackPath = Path.Combine(Path.Combine(Path.Combine(gameRoot, "BepInEx"), "patchers"), "RetargetHarmony.log");
 
                 if (_scanner.FileExists(fallbackPath))
                 {
-                    return _scanner.ReadAllText(fallbackPath);
+                    var content = _scanner.ReadAllText(fallbackPath);
+                    return string.IsNullOrEmpty(content) ? "(Log file exists but is empty — no warnings or errors recorded)" : content;
                 }
             }
             catch (Exception)

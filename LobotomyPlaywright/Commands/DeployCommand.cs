@@ -434,8 +434,16 @@ namespace LobotomyPlaywright.Commands
         {
             var projectName = Path.GetFileNameWithoutExtension(dllName);
 
+            // Try bin/net35/{dllName} first (OutputPath=bin\ in Directory.Build.props)
+            // This is the canonical output path and takes priority over stale config-specific paths
+            var path = Path.Combine(projectDir, "bin", "net35", dllName);
+            if (_fileSystem.FileExists(path))
+            {
+                return path;
+            }
+
             // Try bin/{config}/net35/{projectName}/{dllName}
-            var path = Path.Combine(projectDir, "bin", configuration, "net35", projectName, dllName);
+            path = Path.Combine(projectDir, "bin", configuration, "net35", projectName, dllName);
             if (_fileSystem.FileExists(path))
             {
                 return path;
@@ -443,13 +451,6 @@ namespace LobotomyPlaywright.Commands
 
             // Try bin/{config}/net35/{dllName}
             path = Path.Combine(projectDir, "bin", configuration, "net35", dllName);
-            if (_fileSystem.FileExists(path))
-            {
-                return path;
-            }
-
-            // Try bin/net35/{dllName} (OutputPath=bin\ in Directory.Build.props)
-            path = Path.Combine(projectDir, "bin", "net35", dllName);
             if (_fileSystem.FileExists(path))
             {
                 return path;

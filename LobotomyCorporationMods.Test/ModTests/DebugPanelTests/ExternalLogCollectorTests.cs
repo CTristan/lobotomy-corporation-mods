@@ -87,6 +87,19 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         }
 
         [Fact]
+        public void Collect_returns_informative_message_when_retarget_log_is_empty()
+        {
+            var primaryPath = Path.Combine(Path.Combine(Path.Combine(Path.Combine("/game", "BepInEx"), "patchers"), "RetargetHarmony"), "logs");
+            primaryPath = Path.Combine(primaryPath, "RetargetHarmony.log");
+            _mockScanner.Setup(s => s.FileExists(primaryPath)).Returns(true);
+            _mockScanner.Setup(s => s.ReadAllText(primaryPath)).Returns(string.Empty);
+
+            var result = CreateCollector().Collect();
+
+            result.RetargetHarmonyLog.Should().Contain("empty");
+        }
+
+        [Fact]
         public void Collect_returns_empty_retarget_log_when_read_throws()
         {
             var primaryPath = Path.Combine(Path.Combine(Path.Combine(Path.Combine("/game", "BepInEx"), "patchers"), "RetargetHarmony"), "logs");
