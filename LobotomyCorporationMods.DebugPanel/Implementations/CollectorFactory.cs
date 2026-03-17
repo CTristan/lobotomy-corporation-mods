@@ -132,5 +132,10 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
         {
             return new DependencyChecker(_fileSystemScanner, mods, assemblies);
         }
+
+        public IInfoCollector<ExternalLogData> CreateExternalLogCollector()
+        {
+            return new ExternalLogCollector(_fileSystemScanner);
+        }
     }
 }

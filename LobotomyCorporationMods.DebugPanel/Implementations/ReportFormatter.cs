@@ -181,6 +181,26 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             lines.Add("========== UNITY OUTPUT_LOG.TXT ==========");
             AddExternalLogContent(lines, externalLogs.UnityLog, "Unity output_log.txt");
 
+            lines.Add(string.Empty);
+            lines.Add("========== GAMEPLAY LOG (BASEMOD) ==========");
+            AddExternalLogContent(lines, externalLogs.GameplayLog, "Gameplay log");
+
+            lines.Add(string.Empty);
+            lines.Add("========== SAVE FOLDER SESSION LOG ==========");
+            AddExternalLogContent(lines, externalLogs.SaveFolderLog, "Save folder session log");
+
+            lines.Add(string.Empty);
+            lines.Add("========== LMM DIRECTORY LOG ==========");
+            AddExternalLogContent(lines, externalLogs.LmmDirectoryLog, "LMM directory log");
+
+            lines.Add(string.Empty);
+            lines.Add("========== LMM SYSTEM LOG ==========");
+            AddExternalLogContent(lines, externalLogs.LmmSystemLog, "LMM system log");
+
+            lines.Add(string.Empty);
+            lines.Add("========== BASEMODS LOG ==========");
+            AddExternalLogContent(lines, externalLogs.BaseModsLog, "BaseMods log");
+
             if (report.DebugInfo.Count > 0)
             {
                 lines.Add(string.Empty);

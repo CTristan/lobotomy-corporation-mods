@@ -32,5 +32,7 @@ namespace LobotomyCorporationMods.DebugPanel.Interfaces
         IInfoCollector<KnownIssuesReport> CreateKnownIssuesChecker(IList<DetectedModInfo> mods, IList<AssemblyInfo> assemblies);
 
         IInfoCollector<DependencyReport> CreateDependencyChecker(IList<DetectedModInfo> mods, IList<AssemblyInfo> assemblies);
+
+        IInfoCollector<ExternalLogData> CreateExternalLogCollector();
     }
 }

@@ -16,6 +16,11 @@ namespace LobotomyCorporationMods.Playwright.JsonModels.Diagnostics
         public string retargetHarmonyLog;
         public string bepInExLog;
         public string unityLog;
+        public string gameplayLog;
+        public string saveFolderLog;
+        public string lmmDirectoryLog;
+        public string lmmSystemLog;
+        public string baseModsLog;
 
         public static ExternalLogDataModel FromModel(ExternalLogData model)
         {
@@ -26,6 +31,11 @@ namespace LobotomyCorporationMods.Playwright.JsonModels.Diagnostics
                 retargetHarmonyLog = model.RetargetHarmonyLog,
                 bepInExLog = model.BepInExLog,
                 unityLog = model.UnityLog,
+                gameplayLog = model.GameplayLog,
+                saveFolderLog = model.SaveFolderLog,
+                lmmDirectoryLog = model.LmmDirectoryLog,
+                lmmSystemLog = model.LmmSystemLog,
+                baseModsLog = model.BaseModsLog,
             };
         }
     }

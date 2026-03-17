@@ -2,6 +2,7 @@
 
 #region
 
+using System;
 using System.Collections.Generic;
 
 #endregion
@@ -29,5 +30,11 @@ namespace LobotomyCorporationMods.DebugPanel.Interfaces
         string GetGameRootPath();
 
         string GetExternalDataPath();
+
+        string GetUserProfilePath();
+
+        string ReadLockedFile(string path);
+
+        DateTime GetLastWriteTimeUtc(string path);
     }
 }

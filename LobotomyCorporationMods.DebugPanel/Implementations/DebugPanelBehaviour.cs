@@ -61,10 +61,10 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
                 _reportBuilder = new DiagnosticReportBuilder(factory, detector);
                 _overlay = new DiagnosticOverlay();
                 _inputHandler = new InputHandler(_config);
-                var externalLogSource = new ExternalLogSource();
-                _logFileWriter = new LogFileWriter(fileManager, new ReportFormatter(), externalLogSource);
+                var externalLogCollector = factory.CreateExternalLogCollector();
+                _logFileWriter = new LogFileWriter(fileManager, new ReportFormatter(), externalLogCollector);
 
-                DiagnosticDataRegistry.Register(new DiagnosticDataProvider(_reportBuilder, externalLogSource));
+                DiagnosticDataRegistry.Register(new DiagnosticDataProvider(_reportBuilder, externalLogCollector));
 
                 _startTime = Time.time;
                 _report = _reportBuilder.BuildReport();

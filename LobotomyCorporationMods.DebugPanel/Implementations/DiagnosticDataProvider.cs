@@ -15,15 +15,15 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
     public sealed class DiagnosticDataProvider : IDiagnosticDataProvider
     {
         private readonly IDiagnosticReportBuilder _reportBuilder;
-        private readonly IExternalLogSource _externalLogSource;
+        private readonly IInfoCollector<ExternalLogData> _externalLogCollector;
         private DiagnosticReport _cachedReport;
 
-        public DiagnosticDataProvider(IDiagnosticReportBuilder reportBuilder, IExternalLogSource externalLogSource)
+        public DiagnosticDataProvider(IDiagnosticReportBuilder reportBuilder, IInfoCollector<ExternalLogData> externalLogCollector)
         {
             ThrowHelper.ThrowIfNull(reportBuilder);
             _reportBuilder = reportBuilder;
-            ThrowHelper.ThrowIfNull(externalLogSource);
-            _externalLogSource = externalLogSource;
+            ThrowHelper.ThrowIfNull(externalLogCollector);
+            _externalLogCollector = externalLogCollector;
         }
 
         public DiagnosticReport GetFullReport()
@@ -70,7 +70,7 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
 
         public ExternalLogData GetExternalLogs()
         {
-            return _externalLogSource.GetExternalLogs();
+            return _externalLogCollector.Collect();
         }
 
         private DiagnosticReport GetOrBuildReport()

@@ -32,27 +32,27 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
 
         private static ExternalLogData CreateTestExternalLogs()
         {
-            return new ExternalLogData("retarget log", "bepinex log", "unity log");
+            return new ExternalLogData("retarget log", "bepinex log", "unity log", string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
         }
 
         [Fact]
         public void Constructor_throws_when_reportBuilder_is_null()
         {
-            var mockLogSource = new Mock<IExternalLogSource>();
+            var mockCollector = new Mock<IInfoCollector<ExternalLogData>>();
 
-            Action act = () => _ = new DiagnosticDataProvider(null, mockLogSource.Object);
+            Action act = () => _ = new DiagnosticDataProvider(null, mockCollector.Object);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("reportBuilder");
         }
 
         [Fact]
-        public void Constructor_throws_when_externalLogSource_is_null()
+        public void Constructor_throws_when_externalLogCollector_is_null()
         {
             var mockBuilder = new Mock<IDiagnosticReportBuilder>();
 
             Action act = () => _ = new DiagnosticDataProvider(mockBuilder.Object, null);
 
-            act.Should().Throw<ArgumentNullException>().WithParameterName("externalLogSource");
+            act.Should().Throw<ArgumentNullException>().WithParameterName("externalLogCollector");
         }
 
         [Fact]
@@ -61,8 +61,8 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var expectedReport = CreateTestReport();
             var mockBuilder = new Mock<IDiagnosticReportBuilder>();
             mockBuilder.Setup(b => b.BuildReport()).Returns(expectedReport);
-            var mockLogSource = new Mock<IExternalLogSource>();
-            var provider = new DiagnosticDataProvider(mockBuilder.Object, mockLogSource.Object);
+            var mockCollector = new Mock<IInfoCollector<ExternalLogData>>();
+            var provider = new DiagnosticDataProvider(mockBuilder.Object, mockCollector.Object);
 
             var result = provider.GetFullReport();
 
@@ -78,8 +78,8 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             mockBuilder.SetupSequence(b => b.BuildReport())
                 .Returns(firstReport)
                 .Returns(secondReport);
-            var mockLogSource = new Mock<IExternalLogSource>();
-            var provider = new DiagnosticDataProvider(mockBuilder.Object, mockLogSource.Object);
+            var mockCollector = new Mock<IInfoCollector<ExternalLogData>>();
+            var provider = new DiagnosticDataProvider(mockBuilder.Object, mockCollector.Object);
 
             var result1 = provider.GetFullReport();
             var result2 = provider.GetFullReport();
@@ -94,8 +94,8 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var expectedReport = CreateTestReport();
             var mockBuilder = new Mock<IDiagnosticReportBuilder>();
             mockBuilder.Setup(b => b.BuildReport()).Returns(expectedReport);
-            var mockLogSource = new Mock<IExternalLogSource>();
-            var provider = new DiagnosticDataProvider(mockBuilder.Object, mockLogSource.Object);
+            var mockCollector = new Mock<IInfoCollector<ExternalLogData>>();
+            var provider = new DiagnosticDataProvider(mockBuilder.Object, mockCollector.Object);
 
             var result = provider.GetMods();
 
@@ -108,8 +108,8 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var expectedReport = CreateTestReport();
             var mockBuilder = new Mock<IDiagnosticReportBuilder>();
             mockBuilder.Setup(b => b.BuildReport()).Returns(expectedReport);
-            var mockLogSource = new Mock<IExternalLogSource>();
-            var provider = new DiagnosticDataProvider(mockBuilder.Object, mockLogSource.Object);
+            var mockCollector = new Mock<IInfoCollector<ExternalLogData>>();
+            var provider = new DiagnosticDataProvider(mockBuilder.Object, mockCollector.Object);
 
             var result = provider.GetPatches();
 
@@ -122,8 +122,8 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var expectedReport = CreateTestReport();
             var mockBuilder = new Mock<IDiagnosticReportBuilder>();
             mockBuilder.Setup(b => b.BuildReport()).Returns(expectedReport);
-            var mockLogSource = new Mock<IExternalLogSource>();
-            var provider = new DiagnosticDataProvider(mockBuilder.Object, mockLogSource.Object);
+            var mockCollector = new Mock<IInfoCollector<ExternalLogData>>();
+            var provider = new DiagnosticDataProvider(mockBuilder.Object, mockCollector.Object);
 
             var result = provider.GetAssemblies();
 
@@ -136,8 +136,8 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var expectedReport = CreateTestReport();
             var mockBuilder = new Mock<IDiagnosticReportBuilder>();
             mockBuilder.Setup(b => b.BuildReport()).Returns(expectedReport);
-            var mockLogSource = new Mock<IExternalLogSource>();
-            var provider = new DiagnosticDataProvider(mockBuilder.Object, mockLogSource.Object);
+            var mockCollector = new Mock<IInfoCollector<ExternalLogData>>();
+            var provider = new DiagnosticDataProvider(mockBuilder.Object, mockCollector.Object);
 
             var result = provider.GetPatchComparison();
 
@@ -150,8 +150,8 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var expectedReport = CreateTestReport();
             var mockBuilder = new Mock<IDiagnosticReportBuilder>();
             mockBuilder.Setup(b => b.BuildReport()).Returns(expectedReport);
-            var mockLogSource = new Mock<IExternalLogSource>();
-            var provider = new DiagnosticDataProvider(mockBuilder.Object, mockLogSource.Object);
+            var mockCollector = new Mock<IInfoCollector<ExternalLogData>>();
+            var provider = new DiagnosticDataProvider(mockBuilder.Object, mockCollector.Object);
 
             var result = provider.GetRetargetHarmonyStatus();
 
@@ -164,8 +164,8 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var expectedReport = CreateTestReport();
             var mockBuilder = new Mock<IDiagnosticReportBuilder>();
             mockBuilder.Setup(b => b.BuildReport()).Returns(expectedReport);
-            var mockLogSource = new Mock<IExternalLogSource>();
-            var provider = new DiagnosticDataProvider(mockBuilder.Object, mockLogSource.Object);
+            var mockCollector = new Mock<IInfoCollector<ExternalLogData>>();
+            var provider = new DiagnosticDataProvider(mockBuilder.Object, mockCollector.Object);
 
             var result = provider.GetEnvironmentInfo();
 
@@ -178,8 +178,8 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var expectedReport = CreateTestReport();
             var mockBuilder = new Mock<IDiagnosticReportBuilder>();
             mockBuilder.Setup(b => b.BuildReport()).Returns(expectedReport);
-            var mockLogSource = new Mock<IExternalLogSource>();
-            var provider = new DiagnosticDataProvider(mockBuilder.Object, mockLogSource.Object);
+            var mockCollector = new Mock<IInfoCollector<ExternalLogData>>();
+            var provider = new DiagnosticDataProvider(mockBuilder.Object, mockCollector.Object);
 
             var result = provider.GetDllIntegrity();
 
@@ -187,13 +187,13 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         }
 
         [Fact]
-        public void GetExternalLogs_returns_logs_from_external_log_source()
+        public void GetExternalLogs_returns_logs_from_collector()
         {
             var expectedLogs = CreateTestExternalLogs();
             var mockBuilder = new Mock<IDiagnosticReportBuilder>();
-            var mockLogSource = new Mock<IExternalLogSource>();
-            mockLogSource.Setup(s => s.GetExternalLogs()).Returns(expectedLogs);
-            var provider = new DiagnosticDataProvider(mockBuilder.Object, mockLogSource.Object);
+            var mockCollector = new Mock<IInfoCollector<ExternalLogData>>();
+            mockCollector.Setup(s => s.Collect()).Returns(expectedLogs);
+            var provider = new DiagnosticDataProvider(mockBuilder.Object, mockCollector.Object);
 
             var result = provider.GetExternalLogs();
 
@@ -206,8 +206,8 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var expectedReport = CreateTestReport();
             var mockBuilder = new Mock<IDiagnosticReportBuilder>();
             mockBuilder.Setup(b => b.BuildReport()).Returns(expectedReport);
-            var mockLogSource = new Mock<IExternalLogSource>();
-            var provider = new DiagnosticDataProvider(mockBuilder.Object, mockLogSource.Object);
+            var mockCollector = new Mock<IInfoCollector<ExternalLogData>>();
+            var provider = new DiagnosticDataProvider(mockBuilder.Object, mockCollector.Object);
 
             provider.GetMods();
             provider.GetPatches();

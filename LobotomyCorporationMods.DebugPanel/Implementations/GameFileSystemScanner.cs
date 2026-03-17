@@ -103,5 +103,42 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
         {
             return Path.Combine(Path.Combine(Path.Combine(_dataPath, "BaseMods"), "LobotomyCorporationMods.DebugPanel"), "Data");
         }
+
+        public string GetUserProfilePath()
+        {
+            var userProfile = Environment.GetEnvironmentVariable("USERPROFILE");
+            if (string.IsNullOrEmpty(userProfile))
+            {
+                userProfile = Environment.GetEnvironmentVariable("HOME");
+            }
+
+            return userProfile ?? string.Empty;
+        }
+
+        public string ReadLockedFile(string path)
+        {
+            try
+            {
+                if (!File.Exists(path))
+                {
+                    return string.Empty;
+                }
+
+                using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
+                using (var reader = new StreamReader(stream))
+                {
+                    return reader.ReadToEnd();
+                }
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
+        }
+
+        public DateTime GetLastWriteTimeUtc(string path)
+        {
+            return File.GetLastWriteTimeUtc(path);
+        }
     }
 }

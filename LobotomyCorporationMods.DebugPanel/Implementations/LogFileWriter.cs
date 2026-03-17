@@ -17,16 +17,16 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
     {
         private readonly IFileManager _fileManager;
         private readonly IReportFormatter _reportFormatter;
-        private readonly IExternalLogSource _externalLogSource;
+        private readonly IInfoCollector<ExternalLogData> _externalLogCollector;
 
-        public LogFileWriter(IFileManager fileManager, IReportFormatter reportFormatter, IExternalLogSource externalLogSource)
+        public LogFileWriter(IFileManager fileManager, IReportFormatter reportFormatter, IInfoCollector<ExternalLogData> externalLogCollector)
         {
             ThrowHelper.ThrowIfNull(fileManager);
             _fileManager = fileManager;
             ThrowHelper.ThrowIfNull(reportFormatter);
             _reportFormatter = reportFormatter;
-            ThrowHelper.ThrowIfNull(externalLogSource);
-            _externalLogSource = externalLogSource;
+            ThrowHelper.ThrowIfNull(externalLogCollector);
+            _externalLogCollector = externalLogCollector;
         }
 
         public string WriteReport(DiagnosticReport report)
@@ -34,7 +34,7 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             ThrowHelper.ThrowIfNull(report);
             _ = report;
 
-            var externalLogs = _externalLogSource.GetExternalLogs();
+            var externalLogs = _externalLogCollector.Collect();
             var lines = _reportFormatter.FormatForLogFile(report, externalLogs);
             var content = string.Join(Environment.NewLine, ToArray(lines));
             var timestamp = DateTime.Now.ToString("yyyy-MM-dd_HHmmss", CultureInfo.InvariantCulture);

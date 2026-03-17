@@ -56,7 +56,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         public void FormatForLogFile_throws_when_report_is_null()
         {
             var formatter = new ReportFormatter();
-            var externalLogs = new ExternalLogData(string.Empty, string.Empty, string.Empty);
+            var externalLogs = CreateExternalLogs();
 
             Action act = () => formatter.FormatForLogFile(null!, externalLogs);
 
@@ -452,9 +452,14 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         private static ExternalLogData CreateExternalLogs(
             string retargetHarmonyLog = "",
             string bepInExLog = "",
-            string unityLog = "")
+            string unityLog = "",
+            string gameplayLog = "",
+            string saveFolderLog = "",
+            string lmmDirectoryLog = "",
+            string lmmSystemLog = "",
+            string baseModsLog = "")
         {
-            return new ExternalLogData(retargetHarmonyLog, bepInExLog, unityLog);
+            return new ExternalLogData(retargetHarmonyLog, bepInExLog, unityLog, gameplayLog, saveFolderLog, lmmDirectoryLog, lmmSystemLog, baseModsLog);
         }
 
         private static DllIntegrityFinding CreateFinding(
@@ -872,6 +877,102 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var dllIndex = linesList.FindIndex(l => l.Contains("DLL INTEGRITY", StringComparison.Ordinal));
             var retargetIndex = linesList.FindIndex(l => l.Contains("RETARGETHARMONY LOG", StringComparison.Ordinal));
             retargetIndex.Should().BeGreaterThan(dllIndex);
+        }
+
+        [Fact]
+        public void FormatForLogFile_includes_gameplay_log_section()
+        {
+            var report = CreateReport();
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
+
+            lines.Should().Contain(l => l.Contains("GAMEPLAY LOG (BASEMOD)"));
+        }
+
+        [Fact]
+        public void FormatForLogFile_includes_save_folder_session_log_section()
+        {
+            var report = CreateReport();
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
+
+            lines.Should().Contain(l => l.Contains("SAVE FOLDER SESSION LOG"));
+        }
+
+        [Fact]
+        public void FormatForLogFile_includes_lmm_directory_log_section()
+        {
+            var report = CreateReport();
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
+
+            lines.Should().Contain(l => l.Contains("LMM DIRECTORY LOG"));
+        }
+
+        [Fact]
+        public void FormatForLogFile_includes_lmm_system_log_section()
+        {
+            var report = CreateReport();
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
+
+            lines.Should().Contain(l => l.Contains("LMM SYSTEM LOG"));
+        }
+
+        [Fact]
+        public void FormatForLogFile_includes_basemods_log_section()
+        {
+            var report = CreateReport();
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
+
+            lines.Should().Contain(l => l.Contains("BASEMODS LOG"));
+        }
+
+        [Fact]
+        public void FormatForLogFile_shows_not_found_for_empty_new_external_logs()
+        {
+            var report = CreateReport();
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
+
+            lines.Should().Contain("  - No Gameplay log found or file does not exist");
+            lines.Should().Contain("  - No Save folder session log found or file does not exist");
+            lines.Should().Contain("  - No LMM directory log found or file does not exist");
+            lines.Should().Contain("  - No LMM system log found or file does not exist");
+            lines.Should().Contain("  - No BaseMods log found or file does not exist");
+        }
+
+        [Fact]
+        public void FormatForLogFile_includes_gameplay_log_content_when_present()
+        {
+            var report = CreateReport();
+            var externalLogs = CreateExternalLogs(gameplayLog: "Gameplay line 1\nGameplay line 2");
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report, externalLogs);
+
+            lines.Should().Contain("  Gameplay line 1");
+            lines.Should().Contain("  Gameplay line 2");
+        }
+
+        [Fact]
+        public void FormatForLogFile_includes_basemods_log_content_when_present()
+        {
+            var report = CreateReport();
+            var externalLogs = CreateExternalLogs(baseModsLog: "--- error.txt ---\nSome error");
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report, externalLogs);
+
+            lines.Should().Contain("  --- error.txt ---");
+            lines.Should().Contain("  Some error");
         }
 
         [Fact]

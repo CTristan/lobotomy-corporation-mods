@@ -350,5 +350,15 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
 
             collector.Should().NotBeNull();
         }
+
+        [Fact]
+        public void CreateExternalLogCollector_returns_collector()
+        {
+            var factory = CreateFactory();
+
+            var collector = factory.CreateExternalLogCollector();
+
+            collector.Should().NotBeNull();
+        }
     }
 }

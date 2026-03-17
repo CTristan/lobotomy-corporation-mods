@@ -15,10 +15,23 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
 {
     public sealed class ExternalLogDataTests
     {
+        private static ExternalLogData CreateData(
+            string retargetHarmonyLog = "",
+            string bepInExLog = "",
+            string unityLog = "",
+            string gameplayLog = "",
+            string saveFolderLog = "",
+            string lmmDirectoryLog = "",
+            string lmmSystemLog = "",
+            string baseModsLog = "")
+        {
+            return new ExternalLogData(retargetHarmonyLog, bepInExLog, unityLog, gameplayLog, saveFolderLog, lmmDirectoryLog, lmmSystemLog, baseModsLog);
+        }
+
         [Fact]
         public void Constructor_throws_when_retargetHarmonyLog_is_null()
         {
-            Action act = () => _ = new ExternalLogData(null!, string.Empty, string.Empty);
+            Action act = () => CreateData(retargetHarmonyLog: null!);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("retargetHarmonyLog");
         }
@@ -26,7 +39,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         [Fact]
         public void Constructor_throws_when_bepInExLog_is_null()
         {
-            Action act = () => _ = new ExternalLogData(string.Empty, null!, string.Empty);
+            Action act = () => CreateData(bepInExLog: null!);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("bepInExLog");
         }
@@ -34,19 +47,64 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         [Fact]
         public void Constructor_throws_when_unityLog_is_null()
         {
-            Action act = () => _ = new ExternalLogData(string.Empty, string.Empty, null!);
+            Action act = () => CreateData(unityLog: null!);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("unityLog");
         }
 
         [Fact]
+        public void Constructor_throws_when_gameplayLog_is_null()
+        {
+            Action act = () => CreateData(gameplayLog: null!);
+
+            act.Should().Throw<ArgumentNullException>().WithParameterName("gameplayLog");
+        }
+
+        [Fact]
+        public void Constructor_throws_when_saveFolderLog_is_null()
+        {
+            Action act = () => CreateData(saveFolderLog: null!);
+
+            act.Should().Throw<ArgumentNullException>().WithParameterName("saveFolderLog");
+        }
+
+        [Fact]
+        public void Constructor_throws_when_lmmDirectoryLog_is_null()
+        {
+            Action act = () => CreateData(lmmDirectoryLog: null!);
+
+            act.Should().Throw<ArgumentNullException>().WithParameterName("lmmDirectoryLog");
+        }
+
+        [Fact]
+        public void Constructor_throws_when_lmmSystemLog_is_null()
+        {
+            Action act = () => CreateData(lmmSystemLog: null!);
+
+            act.Should().Throw<ArgumentNullException>().WithParameterName("lmmSystemLog");
+        }
+
+        [Fact]
+        public void Constructor_throws_when_baseModsLog_is_null()
+        {
+            Action act = () => CreateData(baseModsLog: null!);
+
+            act.Should().Throw<ArgumentNullException>().WithParameterName("baseModsLog");
+        }
+
+        [Fact]
         public void Properties_return_constructor_values()
         {
-            var data = new ExternalLogData("retarget", "bepinex", "unity");
+            var data = new ExternalLogData("retarget", "bepinex", "unity", "gameplay", "savefolder", "lmmdir", "lmmsys", "basemods");
 
             data.RetargetHarmonyLog.Should().Be("retarget");
             data.BepInExLog.Should().Be("bepinex");
             data.UnityLog.Should().Be("unity");
+            data.GameplayLog.Should().Be("gameplay");
+            data.SaveFolderLog.Should().Be("savefolder");
+            data.LmmDirectoryLog.Should().Be("lmmdir");
+            data.LmmSystemLog.Should().Be("lmmsys");
+            data.BaseModsLog.Should().Be("basemods");
         }
     }
 }
