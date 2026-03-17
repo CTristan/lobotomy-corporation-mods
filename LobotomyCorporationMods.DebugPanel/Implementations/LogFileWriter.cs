@@ -38,8 +38,9 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             var lines = _reportFormatter.FormatForLogFile(report, externalLogs);
             var content = string.Join(Environment.NewLine, ToArray(lines));
             var timestamp = DateTime.Now.ToString("yyyy-MM-dd_HHmmss", CultureInfo.InvariantCulture);
-            var fileName = "DebugPanel_" + timestamp + ".log";
+            var fileName = "Logs/DebugPanel_" + timestamp + ".log";
             var filePath = _fileManager.GetFile(fileName);
+            _fileManager.EnsureDirectoryExists(filePath);
             _fileManager.WriteAllText(filePath, content);
 
             return filePath;

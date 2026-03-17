@@ -53,6 +53,15 @@ namespace LobotomyCorporationMods.Common.Implementations
             }
         }
 
+        public void EnsureDirectoryExists([NotNull] string filePath)
+        {
+            var directory = Path.GetDirectoryName(filePath);
+            if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+            {
+                _ = Directory.CreateDirectory(directory);
+            }
+        }
+
         public string GetFile([NotNull] string fileName)
         {
             if (_filesCache.TryGetValue(fileName, out var value))

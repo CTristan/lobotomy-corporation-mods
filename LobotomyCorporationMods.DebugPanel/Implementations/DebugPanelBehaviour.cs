@@ -48,7 +48,7 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
                 var pluginInfoSource = new ReflectionBepInExPluginInfoSource();
                 var classifier = new HarmonyVersionClassifier();
 
-                var basicDllInspector = new BasicDllFileInspector(new BytePatternScanner());
+                var basicDllInspector = new BasicDllFileInspector(new PeAssemblyRefReader());
                 var cecilDllInspector = new CecilDllFileInspector();
                 var shimArtifactSource = new FileSystemShimArtifactSource();
                 var loadedAssemblySource = new AppDomainLoadedAssemblySource();

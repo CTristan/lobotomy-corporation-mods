@@ -4,6 +4,8 @@ namespace LobotomyCorporationMods.Common.Interfaces
 {
     public interface IFileManager
     {
+        void EnsureDirectoryExists(string filePath);
+
         string GetFile(string fileName);
 
         byte[] ReadAllBytes(string filePath);

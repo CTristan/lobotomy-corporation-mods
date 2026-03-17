@@ -134,6 +134,13 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
                 }
             }
 
+            if (report.AggregatedIssues.Count > 0)
+            {
+                lines.Add(string.Empty);
+                lines.Add("========== ISSUES SUMMARY (" + report.AggregatedIssues.Count + ") ==========");
+                AddDiagnosticIssues(lines, report.AggregatedIssues);
+            }
+
             lines.Add(string.Empty);
             lines.Add("========== ENVIRONMENT ==========");
             AddEnvironmentInfo(lines, report.EnvironmentInfo);

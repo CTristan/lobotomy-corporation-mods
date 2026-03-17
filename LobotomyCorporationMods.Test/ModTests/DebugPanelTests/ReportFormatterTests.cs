@@ -238,6 +238,68 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         }
 
         [Fact]
+        public void FormatForLogFile_includes_issues_summary_when_aggregated_issues_exist()
+        {
+            var issues = new List<DiagnosticIssue>
+            {
+                new(FindingSeverity.Error, "DLL Integrity", "DebugPanel.dll: Unexpected Harmony reference", "Files", string.Empty),
+                new(FindingSeverity.Warning, "Missing Patch", "TestMod: Postfix for Method not loaded", "Harmony", "Verify installation"),
+            };
+            var report = new DiagnosticReport(
+                [], [], [],
+                new PatchComparisonResult([], 0, 0),
+                new RetargetHarmonyStatus(false, false, false, "Not detected"),
+                new EnvironmentInfo(false, false, false),
+                new DllIntegrityReport([], false, string.Empty, false, string.Empty, -1, false, 0, [], "No findings"),
+                [], [], DateTime.UtcNow,
+                aggregatedIssues: issues);
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
+
+            lines.Should().Contain(l => l.Contains("ISSUES SUMMARY (2)"));
+            lines.Should().Contain(l => l.Contains("[Error]") && l.Contains("Unexpected Harmony reference"));
+            lines.Should().Contain(l => l.Contains("[Warning]") && l.Contains("TestMod"));
+        }
+
+        [Fact]
+        public void FormatForLogFile_omits_issues_summary_when_no_aggregated_issues()
+        {
+            var report = CreateReport();
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
+
+            lines.Should().NotContain(l => l.Contains("ISSUES SUMMARY"));
+        }
+
+        [Fact]
+        public void FormatForLogFile_issues_summary_appears_before_environment_section()
+        {
+            var issues = new List<DiagnosticIssue>
+            {
+                new(FindingSeverity.Warning, "Test", "Test issue", "Files", string.Empty),
+            };
+            var report = new DiagnosticReport(
+                [], [], [],
+                new PatchComparisonResult([], 0, 0),
+                new RetargetHarmonyStatus(false, false, false, "Not detected"),
+                new EnvironmentInfo(false, false, false),
+                new DllIntegrityReport([], false, string.Empty, false, string.Empty, -1, false, 0, [], "No findings"),
+                [], [], DateTime.UtcNow,
+                aggregatedIssues: issues);
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
+
+            var linesList = lines.ToList();
+            var issuesIndex = linesList.FindIndex(l => l.Contains("ISSUES SUMMARY", StringComparison.Ordinal));
+            var envIndex = linesList.FindIndex(l => l.Contains("ENVIRONMENT", StringComparison.Ordinal));
+            issuesIndex.Should().BeGreaterThan(-1);
+            issuesIndex.Should().BeLessThan(envIndex);
+        }
+
+        [Fact]
         public void FormatForLogFile_includes_header_banner()
         {
             var report = CreateReport();
@@ -810,6 +872,110 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var dllIndex = linesList.FindIndex(l => l.Contains("DLL INTEGRITY", StringComparison.Ordinal));
             var retargetIndex = linesList.FindIndex(l => l.Contains("RETARGETHARMONY LOG", StringComparison.Ordinal));
             retargetIndex.Should().BeGreaterThan(dllIndex);
+        }
+
+        [Fact]
+        public void FormatForLogFile_includes_known_issues_with_matches()
+        {
+            var matches = new List<KnownIssueMatch>
+            {
+                new("TestMod", FindingSeverity.Warning, "Known conflict", "Remove TestMod", "https://wiki.example.com/testmod", "DLL name"),
+            };
+            var knownIssuesReport = new KnownIssuesReport(matches, "1.0.0");
+            var report = new DiagnosticReport(
+                [], [], [],
+                new PatchComparisonResult([], 0, 0),
+                new RetargetHarmonyStatus(false, false, false, "Not detected"),
+                new EnvironmentInfo(false, false, false),
+                new DllIntegrityReport([], false, string.Empty, false, string.Empty, -1, false, 0, [], "No findings"),
+                [], [], DateTime.UtcNow,
+                knownIssuesReport: knownIssuesReport);
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
+
+            lines.Should().Contain(l => l.Contains("KNOWN ISSUES"));
+            lines.Should().Contain(l => l.Contains("Database Version: 1.0.0"));
+            lines.Should().Contain(l => l.Contains("[Warning]") && l.Contains("TestMod"));
+            lines.Should().Contain(l => l.Contains("Fix: Remove TestMod"));
+            lines.Should().Contain(l => l.Contains("Wiki: https://wiki.example.com/testmod"));
+        }
+
+        [Fact]
+        public void FormatForLogFile_includes_error_logs_with_entries()
+        {
+            var entries = new List<ErrorLogEntry>
+            {
+                new("Herror.txt", "Error line 1\nError line 2", "/path/to/Herror.txt"),
+            };
+            var errorLogReport = new ErrorLogReport(entries);
+            var report = new DiagnosticReport(
+                [], [], [],
+                new PatchComparisonResult([], 0, 0),
+                new RetargetHarmonyStatus(false, false, false, "Not detected"),
+                new EnvironmentInfo(false, false, false),
+                new DllIntegrityReport([], false, string.Empty, false, string.Empty, -1, false, 0, [], "No findings"),
+                [], [], DateTime.UtcNow,
+                errorLogReport: errorLogReport);
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
+
+            lines.Should().Contain(l => l.Contains("ERROR LOGS"));
+            lines.Should().Contain(l => l.Contains("Herror.txt"));
+            lines.Should().Contain(l => l.Contains("Error line 1"));
+            lines.Should().Contain(l => l.Contains("Error line 2"));
+        }
+
+        [Fact]
+        public void FormatForLogFile_includes_dependencies_with_issues()
+        {
+            var issues = new List<DiagnosticIssue>
+            {
+                new(FindingSeverity.Error, "Dependency", "Missing 12Harmony.dll", "Mods", "Install BaseMod"),
+            };
+            var dependencyReport = new DependencyReport(issues, "2.1.0", true);
+            var report = new DiagnosticReport(
+                [], [], [],
+                new PatchComparisonResult([], 0, 0),
+                new RetargetHarmonyStatus(false, false, false, "Not detected"),
+                new EnvironmentInfo(false, false, false),
+                new DllIntegrityReport([], false, string.Empty, false, string.Empty, -1, false, 0, [], "No findings"),
+                [], [], DateTime.UtcNow,
+                dependencyReport: dependencyReport);
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
+
+            lines.Should().Contain(l => l.Contains("DEPENDENCIES"));
+            lines.Should().Contain(l => l.Contains("BaseMod Version: 2.1.0"));
+            lines.Should().Contain(l => l.Contains("BaseModList_v2.xml: Found"));
+            lines.Should().Contain(l => l.Contains("[Error]") && l.Contains("Missing 12Harmony.dll"));
+        }
+
+        [Fact]
+        public void FormatForLogFile_includes_filesystem_validation_with_issues()
+        {
+            var issues = new List<DiagnosticIssue>
+            {
+                new(FindingSeverity.Warning, "Filesystem", "Assembly-CSharp.dll found in BaseMods", "Files", "Remove it"),
+            };
+            var fsReport = new FilesystemValidationReport(issues, "1 issue found");
+            var report = new DiagnosticReport(
+                [], [], [],
+                new PatchComparisonResult([], 0, 0),
+                new RetargetHarmonyStatus(false, false, false, "Not detected"),
+                new EnvironmentInfo(false, false, false),
+                new DllIntegrityReport([], false, string.Empty, false, string.Empty, -1, false, 0, [], "No findings"),
+                [], [], DateTime.UtcNow,
+                filesystemValidation: fsReport);
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
+
+            lines.Should().Contain(l => l.Contains("FILESYSTEM VALIDATION"));
+            lines.Should().Contain(l => l.Contains("Summary: 1 issue found"));
+            lines.Should().Contain(l => l.Contains("[Warning]") && l.Contains("Assembly-CSharp.dll"));
         }
     }
 }

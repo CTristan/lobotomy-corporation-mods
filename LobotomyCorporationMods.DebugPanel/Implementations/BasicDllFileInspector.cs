@@ -22,11 +22,11 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
     public sealed class BasicDllFileInspector : IDllFileInspector
     {
-        private readonly BytePatternScanner _scanner;
+        private readonly PeAssemblyRefReader _peReader;
 
-        public BasicDllFileInspector(BytePatternScanner scanner)
+        public BasicDllFileInspector(PeAssemblyRefReader peReader)
         {
-            _scanner = scanner;
+            _peReader = peReader;
         }
 
         public bool IsDeepInspectionAvailable => false;
@@ -37,7 +37,7 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             {
                 var bytes = File.ReadAllBytes(dllPath);
 
-                return _scanner.FindHarmonyReferences(bytes);
+                return _peReader.ReadAssemblyReferences(bytes);
             }
             catch (Exception)
             {

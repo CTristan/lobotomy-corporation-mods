@@ -19,7 +19,7 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
         private readonly IDllFileInspector _dllFileInspector;
         private readonly IShimArtifactSource _shimArtifactSource;
         private readonly ILoadedAssemblyReferenceSource _loadedAssemblySource;
-        private readonly BytePatternScanner _bytePatternScanner;
+        private readonly PeAssemblyRefReader _peReader;
 
         public DllIntegrityCollector(
             IDllFileInspector dllFileInspector,
@@ -32,7 +32,7 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             _shimArtifactSource = shimArtifactSource;
             ThrowHelper.ThrowIfNull(loadedAssemblySource);
             _loadedAssemblySource = loadedAssemblySource;
-            _bytePatternScanner = new BytePatternScanner();
+            _peReader = new PeAssemblyRefReader();
         }
 
         public DllIntegrityReport Collect()
@@ -126,7 +126,7 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
                 try
                 {
                     var backupBytes = _shimArtifactSource.ReadBackupFileBytes(dllName);
-                    originalReferences = new List<string>(_bytePatternScanner.FindHarmonyReferences(backupBytes));
+                    originalReferences = new List<string>(FilterHarmonyReferences(_peReader.ReadAssemblyReferences(backupBytes)));
                 }
                 catch (Exception ex)
                 {
@@ -216,7 +216,9 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             foreach (var reference in harmonyReferences)
             {
                 if (!string.Equals(reference, "0Harmony", StringComparison.OrdinalIgnoreCase) &&
-                    !string.Equals(reference, "0Harmony109", StringComparison.OrdinalIgnoreCase))
+                    !string.Equals(reference, "0Harmony109", StringComparison.OrdinalIgnoreCase) &&
+                    !string.Equals(reference, "0Harmony12", StringComparison.OrdinalIgnoreCase) &&
+                    !string.Equals(reference, "12Harmony", StringComparison.OrdinalIgnoreCase))
                 {
                     return reference;
                 }

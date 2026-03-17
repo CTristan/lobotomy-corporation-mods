@@ -84,6 +84,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
 
             mockFormatter.Verify(f => f.FormatForLogFile(report, externalLogs), Times.Once());
             mockFileManager.Verify(f => f.GetFile(It.IsAny<string>()), Times.Once());
+            mockFileManager.Verify(f => f.EnsureDirectoryExists(It.IsAny<string>()), Times.Once());
             mockFileManager.Verify(f => f.WriteAllText(It.IsAny<string>(), It.IsAny<string>()), Times.Once());
         }
 
@@ -105,7 +106,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var writer = new LogFileWriter(mockFileManager.Object, mockFormatter.Object, mockExternalLogSource.Object);
             writer.WriteReport(report);
 
-            _ = capturedFileName.Should().StartWith("DebugPanel_");
+            _ = capturedFileName.Should().StartWith("Logs/DebugPanel_");
             _ = capturedFileName.Should().EndWith(".log");
         }
 
@@ -147,7 +148,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var writer = new LogFileWriter(mockFileManager.Object, mockFormatter.Object, mockExternalLogSource.Object);
             var result = writer.WriteReport(report);
 
-            _ = result.Should().StartWith("/mods/DebugPanel_");
+            _ = result.Should().StartWith("/mods/Logs/DebugPanel_");
             _ = result.Should().EndWith(".log");
         }
 

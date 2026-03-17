@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using AwesomeAssertions;
 using LobotomyCorporationMods.DebugPanel.Implementations;
 using LobotomyCorporationMods.DebugPanel.Interfaces;
@@ -111,7 +110,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             _mockShimSource.Setup(s => s.BackupDirectoryExists).Returns(true);
             _mockShimSource.Setup(s => s.BackupDirectoryPath).Returns("/backup");
             _mockShimSource.Setup(s => s.GetBackupFileNames()).Returns(["TestMod.dll"]);
-            _mockShimSource.Setup(s => s.ReadBackupFileBytes("TestMod.dll")).Returns(Encoding.UTF8.GetBytes("prefix0Harmonysuffix"));
+            _mockShimSource.Setup(s => s.ReadBackupFileBytes("TestMod.dll")).Returns(PeTestHelper.BuildAssemblyWithRefs("0Harmony"));
 
             var collector = CreateCollector();
             var report = collector.Collect();
@@ -150,17 +149,17 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         {
             var assemblies = new List<LoadedAssemblyInfo>
             {
-                new("TestMod", "/mods/TestMod.dll", ["0Harmony12"]),
+                new("TestMod", "/mods/TestMod.dll", ["SomeHarmonyFork"]),
             };
             _mockAssemblySource.Setup(s => s.GetBaseModAssemblies()).Returns(assemblies);
-            _mockInspector.Setup(i => i.GetAssemblyReferences("/mods/TestMod.dll")).Returns(["0Harmony12"]);
+            _mockInspector.Setup(i => i.GetAssemblyReferences("/mods/TestMod.dll")).Returns(["SomeHarmonyFork"]);
 
             var collector = CreateCollector();
             var report = collector.Collect();
 
             report.Findings.Should().HaveCount(1);
             report.Findings[0].Severity.Should().Be(FindingSeverity.Error);
-            report.Findings[0].Summary.Should().Contain("Unexpected Harmony reference: 0Harmony12");
+            report.Findings[0].Summary.Should().Contain("Unexpected Harmony reference: SomeHarmonyFork");
             report.Findings[0].WasRewritten.Should().BeFalse();
         }
 
@@ -254,7 +253,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             _mockShimSource.Setup(s => s.BackupDirectoryExists).Returns(true);
             _mockShimSource.Setup(s => s.BackupDirectoryPath).Returns("/backup");
             _mockShimSource.Setup(s => s.GetBackupFileNames()).Returns(["TestMod.dll"]);
-            _mockShimSource.Setup(s => s.ReadBackupFileBytes("TestMod.dll")).Returns(Encoding.UTF8.GetBytes("something0Harmonysomething"));
+            _mockShimSource.Setup(s => s.ReadBackupFileBytes("TestMod.dll")).Returns(PeTestHelper.BuildAssemblyWithRefs("0Harmony"));
 
             var collector = CreateCollector();
             var report = collector.Collect();
@@ -352,6 +351,26 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             report.Findings.Should().HaveCount(1);
             report.Findings[0].WasRewritten.Should().BeTrue();
             report.Findings[0].Summary.Should().Contain("Rewritten by BepInEx shim");
+        }
+
+        [Theory]
+        [InlineData("12Harmony")]
+        [InlineData("0Harmony12")]
+        public void Collect_returns_info_for_dll_with_known_harmony_variant(string harmonyReference)
+        {
+            var assemblies = new List<LoadedAssemblyInfo>
+            {
+                new("TestMod", "/mods/TestMod.dll", [harmonyReference]),
+            };
+            _mockAssemblySource.Setup(s => s.GetBaseModAssemblies()).Returns(assemblies);
+            _mockInspector.Setup(i => i.GetAssemblyReferences("/mods/TestMod.dll")).Returns([harmonyReference]);
+
+            var collector = CreateCollector();
+            var report = collector.Collect();
+
+            report.Findings.Should().HaveCount(1);
+            report.Findings[0].Severity.Should().Be(FindingSeverity.Info);
+            report.Findings[0].Summary.Should().Be("Not modified");
         }
 
         [Fact]
