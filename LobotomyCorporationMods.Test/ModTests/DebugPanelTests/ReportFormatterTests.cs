@@ -330,8 +330,8 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         {
             var assemblies = new List<AssemblyInfo>
             {
-                new("TestDll", "1.0.0", "/path/test.dll", false),
-                new("0Harmony", "2.0.0", "/path/harmony.dll", true),
+                new("TestDll", "1.0.0", "/path/test.dll", false, []),
+                new("0Harmony", "2.0.0", "/path/harmony.dll", true, []),
             };
             var report = CreateReport(assemblies: assemblies);
 

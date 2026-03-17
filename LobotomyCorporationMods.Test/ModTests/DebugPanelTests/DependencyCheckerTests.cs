@@ -55,7 +55,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         public void Collect_reports_missing_12harmony_when_referenced()
         {
             _mockScanner.Setup(s => s.FileExists("/basemods/BaseModList_v2.xml")).Returns(true);
-            var assemblies = new List<AssemblyInfo> { new("12Harmony", "1.0", "/path", false) };
+            var assemblies = new List<AssemblyInfo> { new("12Harmony", "1.0", "/path", false, []) };
             var checker = new DependencyChecker(_mockScanner.Object, [], assemblies);
 
             var result = checker.Collect();
@@ -70,7 +70,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         {
             _mockScanner.Setup(s => s.FileExists("/basemods/12Harmony.dll")).Returns(true);
             _mockScanner.Setup(s => s.FileExists("/basemods/BaseModList_v2.xml")).Returns(true);
-            var assemblies = new List<AssemblyInfo> { new("12Harmony", "1.0", "/path", false) };
+            var assemblies = new List<AssemblyInfo> { new("12Harmony", "1.0", "/path", false, []) };
             var checker = new DependencyChecker(_mockScanner.Object, [], assemblies);
 
             var result = checker.Collect();
@@ -105,7 +105,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         public void Collect_detects_basemod_version()
         {
             _mockScanner.Setup(s => s.FileExists("/basemods/BaseModList_v2.xml")).Returns(true);
-            var assemblies = new List<AssemblyInfo> { new("LobotomyBaseModLib", "3.1.0", "/path", false) };
+            var assemblies = new List<AssemblyInfo> { new("LobotomyBaseModLib", "3.1.0", "/path", false, []) };
             var checker = new DependencyChecker(_mockScanner.Object, [], assemblies);
 
             var result = checker.Collect();

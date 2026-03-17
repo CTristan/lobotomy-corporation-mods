@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using AwesomeAssertions;
 using LobotomyCorporationMods.DebugPanel.Implementations;
 using LobotomyCorporationMods.DebugPanel.Interfaces;
@@ -56,6 +57,21 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             result[0].Version.Should().Be("2.0.0");
             result[0].Location.Should().Be("/path/test.dll");
             result[0].IsHarmonyRelated.Should().BeFalse();
+            result[0].References.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void Collect_passes_references_from_inspection_info()
+        {
+            var references = new List<AssemblyName> { new("0Harmony109"), new("Assembly-CSharp") };
+            var assembly = new AssemblyInspectionInfo("TestMod", "1.0.0", "/path/test.dll", references);
+            _mockSource.Setup(s => s.GetAssemblies()).Returns([assembly]);
+
+            var collector = new AssemblyInfoCollector(_mockSource.Object);
+            var result = collector.Collect();
+
+            result.Should().HaveCount(1);
+            result[0].References.Should().BeSameAs(references);
         }
 
         [Fact]

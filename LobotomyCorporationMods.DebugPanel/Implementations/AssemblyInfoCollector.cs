@@ -37,7 +37,8 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
                     assembly.Name,
                     assembly.Version,
                     assembly.Location,
-                    isHarmonyRelated));
+                    isHarmonyRelated,
+                    assembly.References));
             }
 
             return assemblies;

@@ -112,7 +112,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
                 wikiLink = "https://wiki",
             };
             _mockDatabase.Setup(d => d.GetKnownIssues()).Returns([issue]);
-            var assemblies = new List<AssemblyInfo> { new("TestModAssembly", "1.0", "/path", false) };
+            var assemblies = new List<AssemblyInfo> { new("TestModAssembly", "1.0", "/path", false, []) };
 
             var checker = new KnownIssuesChecker(_mockDatabase.Object, [], assemblies, _mockScanner.Object);
             var result = checker.Collect();
@@ -157,7 +157,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
                 conflictsWith = new[] { "ModB" },
             };
             _mockDatabase.Setup(d => d.GetKnownIssues()).Returns([issue]);
-            var assemblies = new List<AssemblyInfo> { new("ModA", "1.0", "/path", false) };
+            var assemblies = new List<AssemblyInfo> { new("ModA", "1.0", "/path", false, []) };
             var mods = new List<DetectedModInfo>
             {
                 new("ModA", "1.0", ModSource.Lmm, HarmonyVersion.Harmony1, "ModA", "", false, 0, 0),

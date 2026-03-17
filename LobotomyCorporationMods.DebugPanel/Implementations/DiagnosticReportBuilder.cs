@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using LobotomyCorporationMods.Common.Enums.Diagnostics;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.DebugPanel.Interfaces;
@@ -40,13 +41,16 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
 
         private readonly ICollectorFactory _collectorFactory;
         private readonly IEnvironmentDetector _environmentDetector;
+        private readonly IHarmonyVersionClassifier _harmonyVersionClassifier;
 
-        public DiagnosticReportBuilder(ICollectorFactory collectorFactory, IEnvironmentDetector environmentDetector)
+        public DiagnosticReportBuilder(ICollectorFactory collectorFactory, IEnvironmentDetector environmentDetector, IHarmonyVersionClassifier harmonyVersionClassifier)
         {
             ThrowHelper.ThrowIfNull(collectorFactory);
             _collectorFactory = collectorFactory;
             ThrowHelper.ThrowIfNull(environmentDetector);
             _environmentDetector = environmentDetector;
+            ThrowHelper.ThrowIfNull(harmonyVersionClassifier);
+            _harmonyVersionClassifier = harmonyVersionClassifier;
         }
 
         public DiagnosticReport BuildReport()
@@ -446,7 +450,7 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             return patches;
         }
 
-        public static IList<DetectedModInfo> SynthesizeModsFromExpectedPatches(
+        public IList<DetectedModInfo> SynthesizeModsFromExpectedPatches(
             IList<ExpectedPatchInfo> expectedPatches,
             IList<AssemblyInfo> assemblies)
         {
@@ -475,7 +479,7 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             }
 
             var versionLookup = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            var harmonyVersion = HarmonyVersion.Unknown;
+            var referenceLookup = new Dictionary<string, IList<AssemblyName>>(StringComparer.OrdinalIgnoreCase);
             if (assemblies != null)
             {
                 foreach (var asm in assemblies)
@@ -483,17 +487,7 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
                     if (asm != null && !string.IsNullOrEmpty(asm.Name))
                     {
                         versionLookup[asm.Name] = asm.Version ?? string.Empty;
-
-                        if (asm.Name.Equals("0Harmony", StringComparison.OrdinalIgnoreCase))
-                        {
-                            harmonyVersion = HarmonyVersion.Harmony2;
-                        }
-                        else if (harmonyVersion == HarmonyVersion.Unknown &&
-                                 (asm.Name.Equals("0Harmony109", StringComparison.OrdinalIgnoreCase) ||
-                                  asm.Name.Equals("0Harmony12", StringComparison.OrdinalIgnoreCase)))
-                        {
-                            harmonyVersion = HarmonyVersion.Harmony1;
-                        }
+                        referenceLookup[asm.Name] = asm.References;
                     }
                 }
             }
@@ -504,6 +498,8 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
                 var assemblyName = kvp.Key;
                 var patchCount = kvp.Value;
                 var version = versionLookup.TryGetValue(assemblyName, out var v) ? v : string.Empty;
+                var references = referenceLookup.TryGetValue(assemblyName, out var refs) ? refs : new List<AssemblyName>();
+                var harmonyVersion = _harmonyVersionClassifier.Classify(references);
 
                 mods.Add(new DetectedModInfo(
                     assemblyName,

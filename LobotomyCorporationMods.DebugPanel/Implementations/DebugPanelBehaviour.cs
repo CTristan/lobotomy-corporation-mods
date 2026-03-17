@@ -58,7 +58,7 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
                 var knownIssuesDatabase = new JsonKnownIssuesDatabase(fileSystemScanner, jsonParser);
 
                 var factory = new CollectorFactory(detector, harmony1Source, harmony2Source, assemblySource, pluginInfoSource, classifier, basicDllInspector, cecilDllInspector, shimArtifactSource, loadedAssemblySource, fileSystemScanner, knownIssuesDatabase);
-                _reportBuilder = new DiagnosticReportBuilder(factory, detector);
+                _reportBuilder = new DiagnosticReportBuilder(factory, detector, classifier);
                 _overlay = new DiagnosticOverlay();
                 _inputHandler = new InputHandler(_config);
                 var externalLogCollector = factory.CreateExternalLogCollector();

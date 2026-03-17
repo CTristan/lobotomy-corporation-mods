@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using AwesomeAssertions;
 using LobotomyCorporationMods.DebugPanel.Implementations;
 using LobotomyCorporationMods.DebugPanel.Interfaces;
@@ -31,11 +32,13 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         private readonly Mock<IInfoCollector<ErrorLogReport>> _mockErrorLogCollector;
         private readonly Mock<IInfoCollector<KnownIssuesReport>> _mockKnownIssuesChecker;
         private readonly Mock<IInfoCollector<DependencyReport>> _mockDependencyChecker;
+        private readonly Mock<IHarmonyVersionClassifier> _mockClassifier;
 
         public DiagnosticReportBuilderTests()
         {
             _mockFactory = new Mock<ICollectorFactory>();
             _mockDetector = new Mock<IEnvironmentDetector>();
+            _mockClassifier = new Mock<IHarmonyVersionClassifier>();
             _mockPatchCollector = new Mock<IActivePatchCollector>();
             _mockBaseModCollector = new Mock<IInfoCollector<IList<DetectedModInfo>>>();
             _mockBepInExPluginCollector = new Mock<IInfoCollector<IList<DetectedModInfo>>>();
@@ -72,17 +75,18 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             _mockErrorLogCollector.Setup(c => c.Collect()).Returns(new ErrorLogReport([]));
             _mockKnownIssuesChecker.Setup(c => c.Collect()).Returns(new KnownIssuesReport([], string.Empty));
             _mockDependencyChecker.Setup(c => c.Collect()).Returns(new DependencyReport([], string.Empty, false));
+            _mockClassifier.Setup(c => c.Classify(It.IsAny<IList<AssemblyName>>())).Returns(HarmonyVersion.Unknown);
         }
 
         private DiagnosticReportBuilder CreateBuilder()
         {
-            return new DiagnosticReportBuilder(_mockFactory.Object, _mockDetector.Object);
+            return new DiagnosticReportBuilder(_mockFactory.Object, _mockDetector.Object, _mockClassifier.Object);
         }
 
         [Fact]
         public void Constructor_throws_when_collectorFactory_is_null()
         {
-            Action act = () => _ = new DiagnosticReportBuilder(null, _mockDetector.Object);
+            Action act = () => _ = new DiagnosticReportBuilder(null, _mockDetector.Object, _mockClassifier.Object);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("collectorFactory");
         }
@@ -90,9 +94,17 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         [Fact]
         public void Constructor_throws_when_environmentDetector_is_null()
         {
-            Action act = () => _ = new DiagnosticReportBuilder(_mockFactory.Object, null);
+            Action act = () => _ = new DiagnosticReportBuilder(_mockFactory.Object, null, _mockClassifier.Object);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("environmentDetector");
+        }
+
+        [Fact]
+        public void Constructor_throws_when_harmonyVersionClassifier_is_null()
+        {
+            Action act = () => _ = new DiagnosticReportBuilder(_mockFactory.Object, _mockDetector.Object, null);
+
+            act.Should().Throw<ArgumentNullException>().WithParameterName("harmonyVersionClassifier");
         }
 
         [Fact]
@@ -108,7 +120,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             };
             var assemblies = new List<AssemblyInfo>
             {
-                new("TestAssembly", "1.0.0", "/path/to/test.dll", false),
+                new("TestAssembly", "1.0.0", "/path/to/test.dll", false, []),
             };
 
             _mockBaseModCollector.Setup(c => c.Collect()).Returns(mods);
@@ -374,8 +386,8 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             };
             var assemblies = new List<AssemblyInfo>
             {
-                new("TestMod", "1.2.0", "/path/TestMod.dll", false),
-                new("OtherMod", "3.0.0", "/path/OtherMod.dll", false),
+                new("TestMod", "1.2.0", "/path/TestMod.dll", false, []),
+                new("OtherMod", "3.0.0", "/path/OtherMod.dll", false, []),
             };
 
             _mockExpectedPatchSource.Setup(s => s.GetExpectedPatches(It.IsAny<IList<string>>())).Returns(expectedPatches);
@@ -450,7 +462,8 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         [Fact]
         public void SynthesizeModsFromExpectedPatches_throws_when_expectedPatches_is_null()
         {
-            Action act = () => DiagnosticReportBuilder.SynthesizeModsFromExpectedPatches(null, []);
+            var builder = CreateBuilder();
+            Action act = () => builder.SynthesizeModsFromExpectedPatches(null, []);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("expectedPatches");
         }
@@ -465,7 +478,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
                 new("ModB", "ClassC", "Method3", "Postfix", PatchType.Postfix),
             };
 
-            var result = DiagnosticReportBuilder.SynthesizeModsFromExpectedPatches(expectedPatches, []);
+            var result = CreateBuilder().SynthesizeModsFromExpectedPatches(expectedPatches, []);
 
             result.Should().HaveCount(2);
             result.Should().Contain(m => m.Name == "ModA" && m.ExpectedPatchCount == 2 && m.ActivePatchCount == 2 && m.HasActivePatches);
@@ -481,10 +494,10 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             };
             var assemblies = new List<AssemblyInfo>
             {
-                new("ModA", "2.5.0", "/path/ModA.dll", false),
+                new("ModA", "2.5.0", "/path/ModA.dll", false, []),
             };
 
-            var result = DiagnosticReportBuilder.SynthesizeModsFromExpectedPatches(expectedPatches, assemblies);
+            var result = CreateBuilder().SynthesizeModsFromExpectedPatches(expectedPatches, assemblies);
 
             result.Should().HaveCount(1);
             result[0].Version.Should().Be("2.5.0");
@@ -500,7 +513,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
                 new("Mono.Cecil", "SomeType", "SomeMethod", "Postfix", PatchType.Postfix),
             };
 
-            var result = DiagnosticReportBuilder.SynthesizeModsFromExpectedPatches(expectedPatches, []);
+            var result = CreateBuilder().SynthesizeModsFromExpectedPatches(expectedPatches, []);
 
             result.Should().HaveCount(1);
             result[0].Name.Should().Be("ModA");
@@ -514,7 +527,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
                 new("ModA", "ClassA", "Method1", "Postfix", PatchType.Postfix),
             };
 
-            var result = DiagnosticReportBuilder.SynthesizeModsFromExpectedPatches(expectedPatches, null);
+            var result = CreateBuilder().SynthesizeModsFromExpectedPatches(expectedPatches, null);
 
             result.Should().HaveCount(1);
             result[0].Version.Should().BeEmpty();
@@ -557,8 +570,8 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             };
             var assemblies = new List<AssemblyInfo>
             {
-                new("TestMod", "1.0.0", "/path/TestMod.dll", false),
-                new("OtherMod", "2.0.0", "/path/OtherMod.dll", false),
+                new("TestMod", "1.0.0", "/path/TestMod.dll", false, []),
+                new("OtherMod", "2.0.0", "/path/OtherMod.dll", false, []),
             };
 
             _mockExpectedPatchSource.Setup(s => s.GetExpectedPatches(It.IsAny<IList<string>>())).Returns(expectedPatches);
@@ -572,42 +585,53 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             report.Patches.Should().Contain(p => p.TargetType == "OtherClass" && p.PatchAssemblyName == "OtherMod");
         }
         [Fact]
-        public void SynthesizeModsFromExpectedPatches_detects_harmony2_from_assemblies()
+        public void SynthesizeModsFromExpectedPatches_classifies_each_mod_individually()
         {
+            var harmony1Refs = new List<AssemblyName> { new("0Harmony109") };
+            var harmony2Refs = new List<AssemblyName> { new("0Harmony") };
             var expectedPatches = new List<ExpectedPatchInfo>
             {
                 new("ModA", "ClassA", "Method1", "Postfix", PatchType.Postfix),
+                new("ModB", "ClassB", "Method2", "Prefix", PatchType.Prefix),
             };
             var assemblies = new List<AssemblyInfo>
             {
-                new("ModA", "1.0.0", "/path/ModA.dll", false),
-                new("0Harmony", "2.9.0", "/path/0Harmony.dll", true),
-                new("0Harmony109", "1.0.9", "/path/0Harmony109.dll", true),
+                new("ModA", "1.0.0", "/path/ModA.dll", false, harmony1Refs),
+                new("ModB", "2.0.0", "/path/ModB.dll", false, harmony2Refs),
             };
 
-            var result = DiagnosticReportBuilder.SynthesizeModsFromExpectedPatches(expectedPatches, assemblies);
+            _mockClassifier.Setup(c => c.Classify(harmony1Refs)).Returns(HarmonyVersion.Harmony1);
+            _mockClassifier.Setup(c => c.Classify(harmony2Refs)).Returns(HarmonyVersion.Harmony2);
 
-            result.Should().HaveCount(1);
-            result[0].HarmonyVersion.Should().Be(HarmonyVersion.Harmony2);
+            var builder = CreateBuilder();
+            var result = builder.SynthesizeModsFromExpectedPatches(expectedPatches, assemblies);
+
+            result.Should().HaveCount(2);
+            result.Should().Contain(m => m.Name == "ModA" && m.HarmonyVersion == HarmonyVersion.Harmony1);
+            result.Should().Contain(m => m.Name == "ModB" && m.HarmonyVersion == HarmonyVersion.Harmony2);
         }
 
         [Fact]
-        public void SynthesizeModsFromExpectedPatches_detects_harmony1_when_no_harmony2()
+        public void SynthesizeModsFromExpectedPatches_uses_classifier_with_assembly_references()
         {
+            var modRefs = new List<AssemblyName> { new("0Harmony109") };
             var expectedPatches = new List<ExpectedPatchInfo>
             {
                 new("ModA", "ClassA", "Method1", "Postfix", PatchType.Postfix),
             };
             var assemblies = new List<AssemblyInfo>
             {
-                new("ModA", "1.0.0", "/path/ModA.dll", false),
-                new("0Harmony109", "1.0.9", "/path/0Harmony109.dll", true),
+                new("ModA", "1.0.0", "/path/ModA.dll", false, modRefs),
             };
 
-            var result = DiagnosticReportBuilder.SynthesizeModsFromExpectedPatches(expectedPatches, assemblies);
+            _mockClassifier.Setup(c => c.Classify(modRefs)).Returns(HarmonyVersion.Harmony1);
+
+            var builder = CreateBuilder();
+            var result = builder.SynthesizeModsFromExpectedPatches(expectedPatches, assemblies);
 
             result.Should().HaveCount(1);
             result[0].HarmonyVersion.Should().Be(HarmonyVersion.Harmony1);
+            _mockClassifier.Verify(c => c.Classify(modRefs), Times.Once);
         }
 
         [Fact]
