@@ -53,10 +53,12 @@ namespace RetargetHarmony.Test.Tests
         }
 
         [Fact]
-        public void Initialize_WithNoConfigFile_DoesNotEnableDebugLogging()
+        public void Initialize_WithNoConfigFile_DoesNotLogDebugMessages()
         {
             // Arrange - no config file
             DebugLogger.Reset();
+            DebugLogger.ConfigDirectoryOverride = _tempDir;
+            DebugLogger.LogFilePathOverride = Path.Combine(_tempDir, "test.log");
 
             // Act
             DebugLogger.Initialize(_mockLog);
@@ -65,9 +67,12 @@ namespace RetargetHarmony.Test.Tests
             DebugLogger.Info("Test info message");
             DebugLogger.Trace("Test trace message");
 
-            // Verify log file was not created (since debug is disabled)
+            // Log file exists (startup timestamp) but should not contain trace-level messages
             var logPath = Path.Combine(_tempDir, "test.log");
-            _ = File.Exists(logPath).Should().BeFalse("log file should not be created when debug is disabled");
+            _ = File.Exists(logPath).Should().BeTrue("log file should exist for startup timestamp");
+            var content = File.ReadAllText(logPath);
+            _ = content.Should().Contain("[STARTUP]");
+            _ = content.Should().NotContain("Test trace message");
         }
 
         [Fact]
@@ -404,6 +409,48 @@ LogLevel=Debug
 
             var logPath = Path.Combine(_tempDir, "test.log");
             _ = File.Exists(logPath).Should().BeTrue();
+        }
+
+        [Fact]
+        public void Initialize_writes_startup_timestamp_unconditionally()
+        {
+            // Arrange - no config file (default Warn level)
+            DebugLogger.Reset();
+            DebugLogger.ConfigDirectoryOverride = _tempDir;
+            DebugLogger.LogFilePathOverride = Path.Combine(_tempDir, "test.log");
+
+            // Act
+            DebugLogger.Initialize(_mockLog);
+
+            // Assert
+            var logPath = Path.Combine(_tempDir, "test.log");
+            _ = File.Exists(logPath).Should().BeTrue("startup timestamp should always be written");
+            var content = File.ReadAllText(logPath);
+            _ = content.Should().Contain("[STARTUP]");
+            _ = content.Should().Contain("DateTime.Now=");
+            _ = content.Should().Contain("DateTime.UtcNow=");
+            _ = content.Should().Contain("Environment.TickCount=");
+        }
+
+        [Fact]
+        public void Initialize_writes_startup_timestamp_with_config_file()
+        {
+            // Arrange - create config with Debug level
+            var configPath = Path.Combine(_tempDir, "RetargetHarmony.cfg");
+            File.WriteAllText(configPath, "LogLevel=Debug");
+
+            DebugLogger.Reset();
+            DebugLogger.ConfigDirectoryOverride = _tempDir;
+            DebugLogger.LogFilePathOverride = Path.Combine(_tempDir, "test.log");
+
+            // Act
+            DebugLogger.Initialize(_mockLog);
+
+            // Assert
+            var logPath = Path.Combine(_tempDir, "test.log");
+            var content = File.ReadAllText(logPath);
+            _ = content.Should().Contain("[STARTUP]");
+            _ = content.Should().MatchRegex(@"DateTime\.Now=\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}");
         }
 
         [Fact]

@@ -1078,5 +1078,70 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             lines.Should().Contain(l => l.Contains("Summary: 1 issue found"));
             lines.Should().Contain(l => l.Contains("[Warning]") && l.Contains("Assembly-CSharp.dll"));
         }
+
+        [Fact]
+        public void FormatForLogFile_includes_clock_diagnostics_section()
+        {
+            var report = CreateReport();
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
+
+            lines.Should().Contain(l => l.Contains("CLOCK DIAGNOSTICS"));
+            lines.Should().Contain(l => l.Contains("Current DateTime.Now:"));
+            lines.Should().Contain(l => l.Contains("Current DateTime.UtcNow:"));
+        }
+
+        [Fact]
+        public void FormatForLogFile_includes_bepinex_timestamp_when_parsed()
+        {
+            var report = CreateReport();
+            var externalLogs = CreateExternalLogs(bepInExLog: "BepInEx 5.4.23.2 - LobotomyCorp (3/15/2026 2:30:00 PM)");
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report, externalLogs);
+
+            lines.Should().Contain(l => l.Contains("BepInEx Preloader Timestamp: 2026-03-15"));
+        }
+
+        [Fact]
+        public void FormatForLogFile_shows_not_parsed_when_bepinex_timestamp_missing()
+        {
+            var report = CreateReport();
+            var externalLogs = CreateExternalLogs();
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report, externalLogs);
+
+            lines.Should().Contain(l => l.Contains("BepInEx Preloader Timestamp: (not parsed)"));
+        }
+
+        [Fact]
+        public void FormatForLogFile_shows_clock_skew_warning_when_delta_exceeds_one_hour()
+        {
+            var report = CreateReport();
+            // Use a date far in the past to ensure > 1 hour delta
+            var externalLogs = CreateExternalLogs(bepInExLog: "BepInEx 5.4.23.2 - LobotomyCorp (1/1/2020 12:00:00 AM)");
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report, externalLogs);
+
+            lines.Should().Contain(l => l.Contains("WARNING: Clock skew detected"));
+        }
+
+        [Fact]
+        public void FormatForLogFile_clock_diagnostics_appears_before_retarget_log()
+        {
+            var report = CreateReport();
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
+
+            var linesList = lines.ToList();
+            var clockIndex = linesList.FindIndex(l => l.Contains("CLOCK DIAGNOSTICS", StringComparison.Ordinal));
+            var retargetIndex = linesList.FindIndex(l => l.Contains("RETARGETHARMONY LOG", StringComparison.Ordinal));
+            clockIndex.Should().BeGreaterThan(-1);
+            retargetIndex.Should().BeGreaterThan(clockIndex);
+        }
     }
 }

@@ -106,5 +106,24 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             data.LmmSystemLog.Should().Be("lmmsys");
             data.BaseModsLog.Should().Be("basemods");
         }
+
+        [Fact]
+        public void BepInExLogTimestamp_is_null_when_log_has_no_timestamp()
+        {
+            var data = CreateData(bepInExLog: "some log without timestamp");
+
+            data.BepInExLogTimestamp.Should().BeNull();
+        }
+
+        [Fact]
+        public void BepInExLogTimestamp_is_parsed_when_log_has_timestamp()
+        {
+            var data = CreateData(bepInExLog: "BepInEx 5.4.23.2 - LobotomyCorp (3/15/2026 2:30:00 PM)\n[Message] stuff");
+
+            data.BepInExLogTimestamp.Should().NotBeNull();
+            data.BepInExLogTimestamp!.Value.Year.Should().Be(2026);
+            data.BepInExLogTimestamp!.Value.Month.Should().Be(3);
+            data.BepInExLogTimestamp!.Value.Day.Should().Be(15);
+        }
     }
 }

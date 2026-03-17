@@ -140,6 +140,10 @@ namespace RetargetHarmony
             }
 
             s_initialized = true;
+
+            // Always write startup timestamp diagnostics, regardless of log level.
+            // This helps diagnose Wine/CrossOver clock skew during the preloader phase.
+            WriteStartupTimestamp();
         }
 
         /// <summary>
@@ -257,6 +261,36 @@ namespace RetargetHarmony
             if (shouldLogToUnity)
             {
                 WriteToUnityDebug(level, message);
+            }
+        }
+
+        private static void WriteStartupTimestamp()
+        {
+            if (string.IsNullOrEmpty(s_logFilePath))
+            {
+                return;
+            }
+
+            try
+            {
+                var now = DateTime.Now;
+                var utcNow = DateTime.UtcNow;
+                var tickCount = Environment.TickCount;
+                var logLine = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "[STARTUP] DateTime.Now={0} DateTime.UtcNow={1} Environment.TickCount={2}{3}",
+                    now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture),
+                    utcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture),
+                    tickCount,
+                    Environment.NewLine);
+                lock (s_fileLock)
+                {
+                    File.AppendAllText(s_logFilePath, logLine, Encoding.UTF8);
+                }
+            }
+            catch (IOException)
+            {
+                // Silently ignore file write errors
             }
         }
 

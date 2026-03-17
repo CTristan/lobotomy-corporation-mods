@@ -5,6 +5,7 @@
 using System;
 using System.IO;
 using AwesomeAssertions;
+using LobotomyCorporationMods.Common.Models.Diagnostics;
 using LobotomyCorporationMods.DebugPanel.Implementations;
 using LobotomyCorporationMods.DebugPanel.Interfaces;
 using Moq;
@@ -393,6 +394,74 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var result = CreateCollector().Collect();
 
             result.BepInExLog.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void Collect_parses_bepinex_timestamp_from_log_content()
+        {
+            var logPath = Path.Combine(Path.Combine("/game", "BepInEx"), "LogOutput.log");
+            _mockScanner.Setup(s => s.FileExists(logPath)).Returns(true);
+            _mockScanner.Setup(s => s.ReadLockedFile(logPath)).Returns("BepInEx 5.4.23.2 - LobotomyCorp (3/15/2026 2:30:00 PM)\n[Message] stuff");
+
+            var result = CreateCollector().Collect();
+
+            result.BepInExLogTimestamp.Should().NotBeNull();
+            result.BepInExLogTimestamp!.Value.Month.Should().Be(3);
+            result.BepInExLogTimestamp!.Value.Day.Should().Be(15);
+            result.BepInExLogTimestamp!.Value.Year.Should().Be(2026);
+        }
+
+        [Fact]
+        public void Collect_returns_null_bepinex_timestamp_when_log_is_empty()
+        {
+            var result = CreateCollector().Collect();
+
+            result.BepInExLogTimestamp.Should().BeNull();
+        }
+
+        [Fact]
+        public void ParseBepInExTimestamp_returns_null_for_malformed_input()
+        {
+            var result = ExternalLogData.ParseBepInExTimestamp("no parentheses here");
+
+            result.Should().BeNull();
+        }
+
+        [Fact]
+        public void ParseBepInExTimestamp_returns_null_for_empty_string()
+        {
+            var result = ExternalLogData.ParseBepInExTimestamp(string.Empty);
+
+            result.Should().BeNull();
+        }
+
+        [Fact]
+        public void ParseBepInExTimestamp_returns_null_for_null()
+        {
+            var result = ExternalLogData.ParseBepInExTimestamp(null!);
+
+            result.Should().BeNull();
+        }
+
+        [Fact]
+        public void ParseBepInExTimestamp_returns_null_for_unparseable_date_in_parentheses()
+        {
+            var result = ExternalLogData.ParseBepInExTimestamp("BepInEx (not a date)");
+
+            result.Should().BeNull();
+        }
+
+        [Fact]
+        public void ParseBepInExTimestamp_parses_standard_bepinex_format()
+        {
+            var result = ExternalLogData.ParseBepInExTimestamp("BepInEx 5.4.23.2 - LobotomyCorp (1/5/2026 9:15:30 AM)");
+
+            result.Should().NotBeNull();
+            result!.Value.Year.Should().Be(2026);
+            result!.Value.Month.Should().Be(1);
+            result!.Value.Day.Should().Be(5);
+            result!.Value.Hour.Should().Be(9);
+            result!.Value.Minute.Should().Be(15);
         }
     }
 }

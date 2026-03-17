@@ -2,7 +2,9 @@
 
 #region
 
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using LobotomyCorporationMods.Common.Implementations;
 using LobotomyCorporationMods.DebugPanel.Interfaces;
 using LobotomyCorporationMods.Common.Enums.Diagnostics;
@@ -168,6 +170,10 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             lines.Add(string.Empty);
             lines.Add("========== DEPENDENCIES ==========");
             AddDependencies(lines, report.DependencyReport);
+
+            lines.Add(string.Empty);
+            lines.Add("========== CLOCK DIAGNOSTICS ==========");
+            AddClockDiagnostics(lines, externalLogs);
 
             lines.Add(string.Empty);
             lines.Add("========== RETARGETHARMONY LOG ==========");
@@ -445,7 +451,7 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
                 return;
             }
 
-            var logLines = logContent.Split(new[] { "\r\n", "\n" }, System.StringSplitOptions.None);
+            var logLines = logContent.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
             foreach (var line in logLines)
             {
                 lines.Add("  " + line);
@@ -530,11 +536,38 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             foreach (var entry in errorLogReport.Entries)
             {
                 lines.Add("  " + entry.FileName + " (" + entry.FilePath + "):");
-                var contentLines = entry.Content.Split(new[] { "\r\n", "\n" }, System.StringSplitOptions.None);
+                var contentLines = entry.Content.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
                 foreach (var line in contentLines)
                 {
                     lines.Add("    " + line);
                 }
+            }
+        }
+
+        private static void AddClockDiagnostics(List<string> lines, ExternalLogData externalLogs)
+        {
+            var now = DateTime.Now;
+            var utcNow = DateTime.UtcNow;
+            lines.Add("  Current DateTime.Now: " + now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture));
+            lines.Add("  Current DateTime.UtcNow: " + utcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture));
+
+            if (externalLogs.BepInExLogTimestamp.HasValue)
+            {
+                var bepTimestamp = externalLogs.BepInExLogTimestamp.Value;
+                lines.Add("  BepInEx Preloader Timestamp: " + bepTimestamp.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture));
+
+                var delta = utcNow - bepTimestamp;
+                var absDelta = delta.Duration();
+                lines.Add("  Delta (UtcNow - BepInEx): " + delta.ToString());
+
+                if (absDelta.TotalHours > 1)
+                {
+                    lines.Add("  WARNING: Clock skew detected! BepInEx timestamp differs by more than 1 hour.");
+                }
+            }
+            else
+            {
+                lines.Add("  BepInEx Preloader Timestamp: (not parsed)");
             }
         }
 
