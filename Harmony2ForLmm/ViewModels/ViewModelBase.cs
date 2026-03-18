@@ -25,13 +25,17 @@ namespace Harmony2ForLmm.ViewModels
         /// Sets a field value and raises <see cref="PropertyChanged"/> if it changed.
         /// For use with the <c>field</c> keyword in auto-property setters.
         /// </summary>
-        protected void SetAndNotify<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+        protected bool SetAndNotify<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
         {
             if (!Equals(field, value))
             {
                 field = value;
                 OnPropertyChanged(propertyName);
+
+                return true;
             }
+
+            return false;
         }
     }
 }

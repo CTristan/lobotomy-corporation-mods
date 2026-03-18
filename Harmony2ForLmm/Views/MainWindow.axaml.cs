@@ -18,6 +18,13 @@ namespace Harmony2ForLmm.Views
         public MainWindow()
         {
             InitializeComponent();
+            Loaded += (_, _) =>
+            {
+                if (DataContext is MainWindowViewModel viewModel)
+                {
+                    viewModel.SetCloseAction(Close);
+                }
+            };
         }
 
         private async void BrowseButton_Click(object? sender, RoutedEventArgs e)

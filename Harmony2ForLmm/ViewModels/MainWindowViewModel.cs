@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
 using System.Windows.Input;
 using Harmony2ForLmm.Interfaces;
@@ -21,6 +20,7 @@ namespace Harmony2ForLmm.ViewModels
         private readonly IUninstallerService _uninstallerService;
         private readonly IBaseModsAnalyzer _baseModsAnalyzer;
         private readonly IInstallationStateDetector _stateDetector;
+        private Action? _closeAction;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
@@ -43,6 +43,7 @@ namespace Harmony2ForLmm.ViewModels
             PrimaryActionCommand = new RelayCommand(ExecuteInstall, () => IsPathValid && !IsWorking);
             UninstallCommand = new RelayCommand(ExecuteUninstall, () => IsPathValid && !IsWorking && CurrentState != InstallationState.Fresh);
             AutoDetectCommand = new RelayCommand(ExecuteAutoDetect, () => !IsWorking);
+            CloseCommand = new RelayCommand(() => _closeAction?.Invoke());
 
             ExecuteAutoDetect();
         }
@@ -61,6 +62,7 @@ namespace Harmony2ForLmm.ViewModels
             PrimaryActionCommand = new RelayCommand(() => { });
             UninstallCommand = new RelayCommand(() => { });
             AutoDetectCommand = new RelayCommand(() => { });
+            CloseCommand = new RelayCommand(() => { });
         }
 
         /// <summary>
@@ -93,12 +95,32 @@ namespace Harmony2ForLmm.ViewModels
         /// <summary>
         /// Gets a value indicating whether the current path is valid.
         /// </summary>
-        public bool IsPathValid { get; private set => SetAndNotify(ref field, value); }
+        public bool IsPathValid
+        {
+            get;
+            private set
+            {
+                if (SetAndNotify(ref field, value))
+                {
+                    NotifyAllCommands();
+                }
+            }
+        }
 
         /// <summary>
         /// Gets a value indicating whether an operation is in progress.
         /// </summary>
-        public bool IsWorking { get; private set => SetAndNotify(ref field, value); }
+        public bool IsWorking
+        {
+            get;
+            private set
+            {
+                if (SetAndNotify(ref field, value))
+                {
+                    NotifyAllCommands();
+                }
+            }
+        }
 
         /// <summary>
         /// Gets the result details from the last operation.
@@ -126,6 +148,7 @@ namespace Harmony2ForLmm.ViewModels
                     OnPropertyChanged(nameof(ShowUninstallAction));
                     OnPropertyChanged(nameof(ShowVersionWarning));
                     OnPropertyChanged(nameof(VersionInfoText));
+                    NotifyAllCommands();
                 }
             }
         }
@@ -179,17 +202,37 @@ namespace Harmony2ForLmm.ViewModels
         /// <summary>
         /// Gets the primary action command (Install/Reinstall/Upgrade/Downgrade/Repair).
         /// </summary>
-        public ICommand PrimaryActionCommand { get; }
+        public RelayCommand PrimaryActionCommand { get; }
 
         /// <summary>
         /// Gets the command to uninstall.
         /// </summary>
-        public ICommand UninstallCommand { get; }
+        public RelayCommand UninstallCommand { get; }
 
         /// <summary>
         /// Gets the command to auto-detect the game path.
         /// </summary>
-        public ICommand AutoDetectCommand { get; }
+        public RelayCommand AutoDetectCommand { get; }
+
+        /// <summary>
+        /// Gets the command to close the window.
+        /// </summary>
+        public ICommand CloseCommand { get; }
+
+        /// <summary>
+        /// Sets the action to invoke when the close command is executed.
+        /// </summary>
+        public void SetCloseAction(Action closeAction)
+        {
+            _closeAction = closeAction;
+        }
+
+        private void NotifyAllCommands()
+        {
+            PrimaryActionCommand.NotifyCanExecuteChanged();
+            UninstallCommand.NotifyCanExecuteChanged();
+            AutoDetectCommand.NotifyCanExecuteChanged();
+        }
 
         private void ValidatePath()
         {
@@ -260,7 +303,7 @@ namespace Harmony2ForLmm.ViewModels
                     ResultDetails = result.ErrorMessage ?? "Unknown error.";
                 }
             }
-            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            catch (Exception ex)
             {
                 StatusMessage = "Installation failed with an unexpected error.";
                 ResultDetails = ex.Message;
@@ -306,7 +349,7 @@ namespace Harmony2ForLmm.ViewModels
                     ResultDetails = result.ErrorMessage ?? "Unknown error.";
                 }
             }
-            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            catch (Exception ex)
             {
                 StatusMessage = "Uninstallation failed with an unexpected error.";
                 ResultDetails = ex.Message;
