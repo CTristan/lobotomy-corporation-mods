@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 #endregion
 
-namespace LobotomyCorporationMods.Playwright.JsonModels
+namespace Hemocode.Playwright.JsonModels
 {
     /// <summary>
     /// Represents an inbound request message.

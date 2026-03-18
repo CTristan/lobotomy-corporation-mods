@@ -1,11 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <AssemblyName>Hemocode.WarnWhenAgentWillDieFromWorking</AssemblyName>
     <AssemblyVersion>15.0.0</AssemblyVersion>
-    <ProjectGuid>{715A5702-175E-461E-BDBA-029B65DCBFC5}</ProjectGuid>
     <OutputType>Library</OutputType>
+    <ProjectGuid>{715A5702-175E-461E-BDBA-029B65DCBFC5}</ProjectGuid>
+    <RootNamespace>Hemocode.WarnWhenAgentWillDieFromWorking</RootNamespace>
     <RuntimeIdentifiers>win</RuntimeIdentifiers>
     <TargetFramework>net35</TargetFramework>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">

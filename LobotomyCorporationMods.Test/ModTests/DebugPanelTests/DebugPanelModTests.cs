@@ -2,7 +2,7 @@
 
 #region
 
-using LobotomyCorporationMods.DebugPanel;
+using Hemocode.DebugPanel;
 using LobotomyCorporationMods.Test.Extensions;
 
 #endregion

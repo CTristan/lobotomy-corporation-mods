@@ -6,7 +6,7 @@ using System.Reflection;
 
 #endregion
 
-namespace LobotomyCorporationMods.Playwright.Events
+namespace Hemocode.Playwright.Events
 {
     /// <summary>
     /// Creates structured event data objects from game event parameters.

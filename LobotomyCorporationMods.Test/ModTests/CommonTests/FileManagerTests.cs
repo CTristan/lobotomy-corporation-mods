@@ -7,9 +7,9 @@ using System.Collections.Generic;
 using System.IO;
 using AwesomeAssertions;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Implementations.Adapters;
-using LobotomyCorporationMods.Common.Interfaces;
+using Hemocode.Common.Implementations;
+using Hemocode.Common.Implementations.Adapters;
+using Hemocode.Common.Interfaces;
 using Xunit;
 
 #endregion

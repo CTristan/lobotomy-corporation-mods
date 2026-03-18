@@ -4,11 +4,11 @@
 
 using System.Collections.Generic;
 using System.Reflection;
-using LobotomyCorporationMods.Common.Implementations;
+using Hemocode.Common.Implementations;
 
 #endregion
 
-namespace LobotomyCorporationMods.DebugPanel.Interfaces
+namespace Hemocode.DebugPanel.Interfaces
 {
     public sealed class AssemblyInspectionInfo
     {

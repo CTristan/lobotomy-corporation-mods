@@ -2,13 +2,13 @@
 
 using CommandWindow;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Implementations.Adapters;
-using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
-using LobotomyCorporationMods.Common.ParameterObjects;
+using Hemocode.Common.Implementations.Adapters;
+using Hemocode.Common.Interfaces.Adapters.BaseClasses;
+using Hemocode.Common.ParameterObjects;
 
 // ReSharper disable UnusedParameter.Global
 
-namespace LobotomyCorporationMods.Common.Extensions
+namespace Hemocode.Common.Extensions
 {
     public static class ManagementSlotExtensions
     {

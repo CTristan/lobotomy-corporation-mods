@@ -5,9 +5,9 @@
 using System;
 using System.Collections.Generic;
 using AwesomeAssertions;
-using LobotomyCorporationMods.Common.Enums.Diagnostics;
-using LobotomyCorporationMods.Common.Models.Diagnostics;
-using LobotomyCorporationMods.DebugPanel.Implementations;
+using Hemocode.Common.Enums.Diagnostics;
+using Hemocode.Common.Models.Diagnostics;
+using Hemocode.DebugPanel.Implementations;
 using Xunit;
 
 #endregion

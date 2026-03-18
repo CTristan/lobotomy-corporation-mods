@@ -6,7 +6,7 @@ using System;
 
 #endregion
 
-namespace LobotomyCorporationMods.Common.Interfaces
+namespace Hemocode.Common.Interfaces
 {
     public interface ILogger
     {

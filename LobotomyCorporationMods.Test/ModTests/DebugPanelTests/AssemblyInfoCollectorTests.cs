@@ -6,8 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using AwesomeAssertions;
-using LobotomyCorporationMods.DebugPanel.Implementations;
-using LobotomyCorporationMods.DebugPanel.Interfaces;
+using Hemocode.DebugPanel.Implementations;
+using Hemocode.DebugPanel.Interfaces;
 using Moq;
 using Xunit;
 

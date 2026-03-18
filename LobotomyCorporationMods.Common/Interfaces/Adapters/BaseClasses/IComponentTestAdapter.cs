@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses
+namespace Hemocode.Common.Interfaces.Adapters.BaseClasses
 {
     public interface IComponentTestAdapter<T> : ITestAdapter<T> where T : Component
     {

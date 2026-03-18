@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 
-using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
+using Hemocode.WarnWhenAgentWillDieFromWorking.Interfaces;
 
-namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators
+namespace Hemocode.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators
 {
     public sealed class VoidDreamEvaluator : CreatureEvaluator
     {

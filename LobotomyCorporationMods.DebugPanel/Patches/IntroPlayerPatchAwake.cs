@@ -6,17 +6,17 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.DebugPanel.Implementations;
+using Hemocode.Common.Attributes;
+using Hemocode.Common.Constants;
+using Hemocode.Common.Implementations;
+using Hemocode.DebugPanel.Implementations;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 #endregion
 
 // ReSharper disable InconsistentNaming
-namespace LobotomyCorporationMods.DebugPanel.Patches
+namespace Hemocode.DebugPanel.Patches
 {
     [HarmonyPatch(typeof(IntroPlayer), PrivateMethods.IntroPlayer.Awake)]
     public static class IntroPlayerPatchAwake

@@ -2,10 +2,10 @@
 
 using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Constants;
+using Hemocode.Common.Attributes;
+using Hemocode.Common.Constants;
 
-namespace LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses
+namespace Hemocode.Common.Implementations.Adapters.BaseClasses
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]

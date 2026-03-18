@@ -4,11 +4,11 @@
 
 using System;
 using System.Collections.Generic;
-using LobotomyCorporationMods.Common.Interfaces;
+using Hemocode.Common.Interfaces;
 
 #endregion
 
-namespace LobotomyCorporationMods.Common.Implementations
+namespace Hemocode.Common.Implementations
 {
     public sealed class Logger : ILogger
     {

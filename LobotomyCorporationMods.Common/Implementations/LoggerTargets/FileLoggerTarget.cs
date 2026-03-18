@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 
-using LobotomyCorporationMods.Common.Interfaces;
+using Hemocode.Common.Interfaces;
 
-namespace LobotomyCorporationMods.Common.Implementations.LoggerTargets
+namespace Hemocode.Common.Implementations.LoggerTargets
 {
     public sealed class FileLoggerTarget : ILoggerTarget
     {

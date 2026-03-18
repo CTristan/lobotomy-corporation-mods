@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
-using LobotomyCorporationMods.Common.Implementations.LoggerTargets;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
+using Hemocode.Common.Implementations.LoggerTargets;
+using Hemocode.Common.Interfaces.Adapters;
 using Moq;
 using Xunit;
 

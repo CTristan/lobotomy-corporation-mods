@@ -2,13 +2,13 @@
 
 #region
 
-using LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations;
-using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
-using LobotomyCorporationMods.Common.Implementations;
+using Hemocode.BadLuckProtectionForGifts.Implementations;
+using Hemocode.BadLuckProtectionForGifts.Interfaces;
+using Hemocode.Common.Implementations;
 
 #endregion
 
-namespace LobotomyCorporationMods.BadLuckProtectionForGifts
+namespace Hemocode.BadLuckProtectionForGifts
 {
     // ReSharper disable once InconsistentNaming
     public sealed class Harmony_Patch : HarmonyPatchBase
@@ -19,7 +19,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         {
         }
 
-        private Harmony_Patch(bool initialize) : base(typeof(Harmony_Patch), "LobotomyCorporationMods.BadLuckProtectionForGifts.dll", initialize)
+        private Harmony_Patch(bool initialize) : base(typeof(Harmony_Patch), "Hemocode.BadLuckProtectionForGifts.dll", initialize)
         {
             AgentWorkTracker = new AgentWorkTracker(FileManager, "BadLuckProtectionForGifts.dat");
         }

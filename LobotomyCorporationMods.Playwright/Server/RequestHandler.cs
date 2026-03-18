@@ -3,11 +3,11 @@
 #region
 
 using System;
-using LobotomyCorporationMods.Playwright.JsonModels;
+using Hemocode.Playwright.JsonModels;
 
 #endregion
 
-namespace LobotomyCorporationMods.Playwright.Server
+namespace Hemocode.Playwright.Server
 {
     /// <summary>
     /// Routes incoming requests to the appropriate handler (query, command, subscribe).

@@ -5,9 +5,9 @@
 using System;
 using System.IO;
 using AwesomeAssertions;
-using LobotomyCorporationMods.Common.Models.Diagnostics;
-using LobotomyCorporationMods.DebugPanel.Implementations;
-using LobotomyCorporationMods.DebugPanel.Interfaces;
+using Hemocode.Common.Models.Diagnostics;
+using Hemocode.DebugPanel.Implementations;
+using Hemocode.DebugPanel.Interfaces;
 using Moq;
 using Xunit;
 

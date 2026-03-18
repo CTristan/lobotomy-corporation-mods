@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-namespace LobotomyCorporationMods.Common.Interfaces
+namespace Hemocode.Common.Interfaces
 {
     public interface IFileManager
     {

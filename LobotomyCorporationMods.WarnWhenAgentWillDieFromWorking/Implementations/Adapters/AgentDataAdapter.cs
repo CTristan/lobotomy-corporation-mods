@@ -5,15 +5,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Enums;
-using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
+using Hemocode.Common.Attributes;
+using Hemocode.Common.Constants;
+using Hemocode.Common.Enums;
+using Hemocode.Common.Implementations;
+using Hemocode.WarnWhenAgentWillDieFromWorking.Interfaces;
 
 #endregion
 
-namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.Adapters
+namespace Hemocode.WarnWhenAgentWillDieFromWorking.Implementations.Adapters
 {
     [AdapterClass]
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]

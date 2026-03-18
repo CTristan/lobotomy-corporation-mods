@@ -6,7 +6,7 @@ using System;
 
 #endregion
 
-namespace LobotomyCorporationMods.Common.Attributes
+namespace Hemocode.Common.Attributes
 {
     [AttributeUsage(AttributeTargets.Method)]
     public sealed class EntryPointAttribute : Attribute

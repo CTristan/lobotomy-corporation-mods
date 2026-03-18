@@ -4,13 +4,13 @@
 
 using System;
 using System.Collections.Generic;
-using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.DebugPanel.Interfaces;
-using LobotomyCorporationMods.Common.Models.Diagnostics;
+using Hemocode.Common.Implementations;
+using Hemocode.DebugPanel.Interfaces;
+using Hemocode.Common.Models.Diagnostics;
 
 #endregion
 
-namespace LobotomyCorporationMods.DebugPanel.Implementations
+namespace Hemocode.DebugPanel.Implementations
 {
     public sealed class RetargetHarmonyDetector : IInfoCollector<RetargetHarmonyStatus>
     {

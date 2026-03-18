@@ -6,14 +6,14 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.DebugPanel.Interfaces;
+using Hemocode.Common.Attributes;
+using Hemocode.Common.Constants;
+using Hemocode.DebugPanel.Interfaces;
 using UnityEngine;
 
 #endregion
 
-namespace LobotomyCorporationMods.DebugPanel.Implementations
+namespace Hemocode.DebugPanel.Implementations
 {
     /// <summary>
     ///     Accesses BepInEx shim artifacts on the filesystem: the backup directory and interop cache file.

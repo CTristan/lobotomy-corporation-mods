@@ -3,11 +3,11 @@
 #region
 
 using System.Diagnostics.CodeAnalysis;
-using LobotomyCorporationMods.Playwright.JsonModels;
+using Hemocode.Playwright.JsonModels;
 
 #endregion
 
-namespace LobotomyCorporationMods.Playwright.Server
+namespace Hemocode.Playwright.Server
 {
     [ExcludeFromCodeCoverage]
     public sealed class QueuedRequest

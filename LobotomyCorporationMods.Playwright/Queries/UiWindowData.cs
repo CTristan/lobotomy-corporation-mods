@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 #endregion
 
-namespace LobotomyCorporationMods.Playwright.Queries
+namespace Hemocode.Playwright.Queries
 {
     /// <summary>
     /// Represents a game window or panel in the UI accessibility tree.

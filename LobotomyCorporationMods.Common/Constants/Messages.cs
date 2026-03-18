@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-namespace LobotomyCorporationMods.Common.Constants
+namespace Hemocode.Common.Constants
 {
     public static class Messages
     {

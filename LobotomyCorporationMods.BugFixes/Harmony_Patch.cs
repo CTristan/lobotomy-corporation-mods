@@ -2,11 +2,11 @@
 
 #region
 
-using LobotomyCorporationMods.Common.Implementations;
+using Hemocode.Common.Implementations;
 
 #endregion
 
-namespace LobotomyCorporationMods.BugFixes
+namespace Hemocode.BugFixes
 {
     // ReSharper disable once InconsistentNaming
     public sealed class Harmony_Patch : HarmonyPatchBase
@@ -17,7 +17,7 @@ namespace LobotomyCorporationMods.BugFixes
         {
         }
 
-        private Harmony_Patch(bool initialize) : base(typeof(Harmony_Patch), "LobotomyCorporationMods.BugFixes.dll", initialize)
+        private Harmony_Patch(bool initialize) : base(typeof(Harmony_Patch), "Hemocode.BugFixes.dll", initialize)
         {
         }
     }

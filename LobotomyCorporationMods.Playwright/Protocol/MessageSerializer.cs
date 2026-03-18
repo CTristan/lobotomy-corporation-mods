@@ -4,12 +4,12 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using LobotomyCorporationMods.Playwright.JsonModels;
+using Hemocode.Playwright.JsonModels;
 using UnityEngine;
 
 #endregion
 
-namespace LobotomyCorporationMods.Playwright.Protocol
+namespace Hemocode.Playwright.Protocol
 {
     /// <summary>
     /// JSON serializer compatible with .NET 3.5 and Unity.

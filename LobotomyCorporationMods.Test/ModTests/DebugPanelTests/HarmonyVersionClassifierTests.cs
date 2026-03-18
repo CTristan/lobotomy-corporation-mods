@@ -5,8 +5,8 @@
 using System.Collections.Generic;
 using System.Reflection;
 using AwesomeAssertions;
-using LobotomyCorporationMods.DebugPanel.Implementations;
-using LobotomyCorporationMods.Common.Enums.Diagnostics;
+using Hemocode.DebugPanel.Implementations;
+using Hemocode.Common.Enums.Diagnostics;
 using Xunit;
 
 #endregion

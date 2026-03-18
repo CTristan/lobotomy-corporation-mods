@@ -3,12 +3,12 @@
 #region
 
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
-using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
+using Hemocode.Common.Interfaces.Adapters;
+using Hemocode.WarnWhenAgentWillDieFromWorking.Interfaces;
 
 #endregion
 
-namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators
+namespace Hemocode.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators
 {
     public sealed class BeautyAndTheBeastEvaluator : CreatureEvaluator
     {

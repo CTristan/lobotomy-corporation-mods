@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 using AwesomeAssertions;
-using LobotomyCorporationMods.DebugPanel.Interfaces;
+using Hemocode.DebugPanel.Interfaces;
 using Xunit;
 
 #endregion

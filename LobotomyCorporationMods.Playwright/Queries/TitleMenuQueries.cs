@@ -4,12 +4,12 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using LobotomyCorporationMods.Playwright.JsonModels;
+using Hemocode.Playwright.JsonModels;
 using UnityEngine.SceneManagement;
 
 #endregion
 
-namespace LobotomyCorporationMods.Playwright.Queries
+namespace Hemocode.Playwright.Queries
 {
     /// <summary>
     /// Queries for title menu state and operations.

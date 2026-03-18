@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 
 using CommandWindow;
-using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
+using Hemocode.Common.Interfaces.Adapters.BaseClasses;
 
-namespace LobotomyCorporationMods.Common.Interfaces.Adapters
+namespace Hemocode.Common.Interfaces.Adapters
 {
     public interface IManagementSlotTestAdapter : IComponentTestAdapter<ManagementSlot>
     {

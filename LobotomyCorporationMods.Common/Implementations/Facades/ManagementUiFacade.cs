@@ -3,17 +3,17 @@
 using System;
 using CommandWindow;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations.Adapters;
-using LobotomyCorporationMods.Common.Interfaces;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
-using LobotomyCorporationMods.Common.ParameterObjects;
+using Hemocode.Common.Extensions;
+using Hemocode.Common.Implementations.Adapters;
+using Hemocode.Common.Interfaces;
+using Hemocode.Common.Interfaces.Adapters;
+using Hemocode.Common.ParameterObjects;
 using UnityEngine;
 using UnityEngine.UI;
 
 // ReSharper disable UnusedParameter.Global
 
-namespace LobotomyCorporationMods.Common.Implementations.Facades
+namespace Hemocode.Common.Implementations.Facades
 {
     public static class ManagementUiFacade
     {

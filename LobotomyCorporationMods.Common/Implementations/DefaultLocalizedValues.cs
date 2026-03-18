@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
 
-namespace LobotomyCorporationMods.Common.Implementations
+namespace Hemocode.Common.Implementations
 {
     public static class DefaultLocalizedValues
     {

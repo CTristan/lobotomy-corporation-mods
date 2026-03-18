@@ -4,14 +4,14 @@
 
 using System;
 using System.Globalization;
-using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Interfaces;
-using LobotomyCorporationMods.DebugPanel.Interfaces;
-using LobotomyCorporationMods.Common.Models.Diagnostics;
+using Hemocode.Common.Implementations;
+using Hemocode.Common.Interfaces;
+using Hemocode.DebugPanel.Interfaces;
+using Hemocode.Common.Models.Diagnostics;
 
 #endregion
 
-namespace LobotomyCorporationMods.DebugPanel.Implementations
+namespace Hemocode.DebugPanel.Implementations
 {
     public sealed class LogFileWriter : ILogFileWriter
     {

@@ -3,11 +3,11 @@
 #region
 
 using System.Collections.Generic;
-using LobotomyCorporationMods.Common.Models.Diagnostics;
+using Hemocode.Common.Models.Diagnostics;
 
 #endregion
 
-namespace LobotomyCorporationMods.Common.Interfaces
+namespace Hemocode.Common.Interfaces
 {
     public interface IDiagnosticDataProvider
     {

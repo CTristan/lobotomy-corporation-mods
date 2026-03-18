@@ -5,11 +5,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using LobotomyCorporationMods.Playwright.JsonModels;
+using Hemocode.Playwright.JsonModels;
 
 #endregion
 
-namespace LobotomyCorporationMods.Playwright.Queries
+namespace Hemocode.Playwright.Queries
 {
     /// <summary>
     /// Routes query requests to the appropriate handler.

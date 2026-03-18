@@ -4,11 +4,11 @@
 
 using System;
 using System.Globalization;
-using LobotomyCorporationMods.Common.Implementations;
+using Hemocode.Common.Implementations;
 
 #endregion
 
-namespace LobotomyCorporationMods.Common.Models.Diagnostics
+namespace Hemocode.Common.Models.Diagnostics
 {
     public sealed class ExternalLogData
     {

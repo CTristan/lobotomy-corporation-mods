@@ -4,8 +4,8 @@
 
 using System;
 using AwesomeAssertions;
-using LobotomyCorporationMods.NotifyWhenAgentReceivesGift;
-using LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches;
+using Hemocode.NotifyWhenAgentReceivesGift;
+using Hemocode.NotifyWhenAgentReceivesGift.Patches;
 using LobotomyCorporationMods.Test.Extensions;
 using Moq;
 using Xunit;

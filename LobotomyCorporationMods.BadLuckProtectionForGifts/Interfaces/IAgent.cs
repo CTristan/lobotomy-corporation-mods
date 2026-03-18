@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces
+namespace Hemocode.BadLuckProtectionForGifts.Interfaces
 {
     public interface IAgent
     {

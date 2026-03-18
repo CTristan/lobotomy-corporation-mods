@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-using LobotomyCorporationMods.GiftAlertIcon;
+using Hemocode.GiftAlertIcon;
 using LobotomyCorporationMods.Test.Extensions;
 
 namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests

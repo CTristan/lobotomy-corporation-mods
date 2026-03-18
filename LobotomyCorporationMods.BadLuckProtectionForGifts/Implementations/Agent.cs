@@ -2,11 +2,11 @@
 
 #region
 
-using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
+using Hemocode.BadLuckProtectionForGifts.Interfaces;
 
 #endregion
 
-namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
+namespace Hemocode.BadLuckProtectionForGifts.Implementations
 {
     public sealed class Agent : IAgent
     {

@@ -2,7 +2,7 @@
 
 using JetBrains.Annotations;
 
-namespace LobotomyCorporationMods.Common.Extensions
+namespace Hemocode.Common.Extensions
 {
     public static class CreatureTypeInfoExtensions
     {

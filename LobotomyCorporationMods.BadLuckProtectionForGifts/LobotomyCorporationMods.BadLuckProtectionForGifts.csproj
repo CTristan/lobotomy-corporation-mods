@@ -1,11 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <AssemblyName>Hemocode.BadLuckProtectionForGifts</AssemblyName>
     <AssemblyVersion>1.1.0</AssemblyVersion>
-    <ProjectGuid>{19D3E31B-FA1A-4C4C-A747-CD060FA9937F}</ProjectGuid>
     <OutputType>Library</OutputType>
+    <ProjectGuid>{19D3E31B-FA1A-4C4C-A747-CD060FA9937F}</ProjectGuid>
+    <RootNamespace>Hemocode.BadLuckProtectionForGifts</RootNamespace>
     <RuntimeIdentifiers>win</RuntimeIdentifiers>
     <TargetFramework>net35</TargetFramework>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">

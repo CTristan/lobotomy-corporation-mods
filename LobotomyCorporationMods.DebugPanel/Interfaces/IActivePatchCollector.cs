@@ -3,11 +3,11 @@
 #region
 
 using System.Collections.Generic;
-using LobotomyCorporationMods.Common.Models.Diagnostics;
+using Hemocode.Common.Models.Diagnostics;
 
 #endregion
 
-namespace LobotomyCorporationMods.DebugPanel.Interfaces
+namespace Hemocode.DebugPanel.Interfaces
 {
     public interface IActivePatchCollector : IInfoCollector<IList<PatchInfo>>
     {

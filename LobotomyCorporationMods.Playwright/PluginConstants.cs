@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-namespace LobotomyCorporationMods.Playwright
+namespace Hemocode.Playwright
 {
     public static class PluginConstants
     {

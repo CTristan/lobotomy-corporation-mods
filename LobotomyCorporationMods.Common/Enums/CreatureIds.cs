@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-namespace LobotomyCorporationMods.Common.Enums
+namespace Hemocode.Common.Enums
 {
     public enum CreatureIds
     {

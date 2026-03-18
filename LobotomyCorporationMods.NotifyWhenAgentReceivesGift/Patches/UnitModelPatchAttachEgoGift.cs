@@ -6,17 +6,17 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Harmony;
-using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Implementations.Facades;
-using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
-using LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Constants;
+using Hemocode.Common.Attributes;
+using Hemocode.Common.Constants;
+using Hemocode.Common.Extensions;
+using Hemocode.Common.Implementations;
+using Hemocode.Common.Implementations.Facades;
+using Hemocode.Common.Interfaces.Adapters.BaseClasses;
+using Hemocode.NotifyWhenAgentReceivesGift.Constants;
 
 #endregion
 
-namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches
+namespace Hemocode.NotifyWhenAgentReceivesGift.Patches
 {
     [HarmonyPatch(typeof(UnitModel), nameof(UnitModel.AttachEGOgift))]
     public static class UnitModelPatchAttachEgoGift

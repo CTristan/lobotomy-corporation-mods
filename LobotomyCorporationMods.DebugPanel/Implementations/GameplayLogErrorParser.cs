@@ -4,11 +4,11 @@
 
 using System;
 using System.Collections.Generic;
-using LobotomyCorporationMods.Common.Models.Diagnostics;
+using Hemocode.Common.Models.Diagnostics;
 
 #endregion
 
-namespace LobotomyCorporationMods.DebugPanel.Implementations
+namespace Hemocode.DebugPanel.Implementations
 {
     public sealed class GameplayLogErrorParser
     {

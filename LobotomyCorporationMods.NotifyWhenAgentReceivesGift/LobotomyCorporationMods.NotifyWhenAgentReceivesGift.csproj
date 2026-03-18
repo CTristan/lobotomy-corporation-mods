@@ -1,11 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <AssemblyName>Hemocode.NotifyWhenAgentReceivesGift</AssemblyName>
     <AssemblyVersion>1.1.0</AssemblyVersion>
-    <ProjectGuid>{23535F08-014D-47E4-B3A0-EC9C03E9931B}</ProjectGuid>
     <OutputType>Library</OutputType>
+    <ProjectGuid>{23535F08-014D-47E4-B3A0-EC9C03E9931B}</ProjectGuid>
+    <RootNamespace>Hemocode.NotifyWhenAgentReceivesGift</RootNamespace>
     <RuntimeIdentifiers>win</RuntimeIdentifiers>
     <TargetFramework>net35</TargetFramework>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">

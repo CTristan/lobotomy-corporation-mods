@@ -11,7 +11,7 @@ using UnityEngine.UI;
 
 #endregion
 
-namespace LobotomyCorporationMods.Playwright.Queries
+namespace Hemocode.Playwright.Queries
 {
     /// <summary>
     /// Queries for UI state and accessibility tree information.

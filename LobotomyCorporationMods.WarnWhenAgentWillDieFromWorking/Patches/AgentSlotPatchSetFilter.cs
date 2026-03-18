@@ -8,20 +8,20 @@ using System.Diagnostics.CodeAnalysis;
 using CommandWindow;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Enums;
-using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Implementations.Facades;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
-using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions;
-using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations;
-using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators;
-using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
+using Hemocode.Common.Attributes;
+using Hemocode.Common.Constants;
+using Hemocode.Common.Enums;
+using Hemocode.Common.Implementations;
+using Hemocode.Common.Implementations.Facades;
+using Hemocode.Common.Interfaces.Adapters;
+using Hemocode.WarnWhenAgentWillDieFromWorking.Extensions;
+using Hemocode.WarnWhenAgentWillDieFromWorking.Implementations;
+using Hemocode.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators;
+using Hemocode.WarnWhenAgentWillDieFromWorking.Interfaces;
 
 #endregion
 
-namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
+namespace Hemocode.WarnWhenAgentWillDieFromWorking.Patches
 {
     [HarmonyPatch(typeof(AgentSlot), nameof(AgentSlot.SetFilter))]
     public static class AgentSlotPatchSetFilter

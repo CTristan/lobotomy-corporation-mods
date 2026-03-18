@@ -2,9 +2,9 @@
 
 using Customizing;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
+using Hemocode.Common.Interfaces.Adapters;
 
-namespace LobotomyCorporationMods.Common.Extensions
+namespace Hemocode.Common.Extensions
 {
     public static class CustomizingWindowExtensions
     {

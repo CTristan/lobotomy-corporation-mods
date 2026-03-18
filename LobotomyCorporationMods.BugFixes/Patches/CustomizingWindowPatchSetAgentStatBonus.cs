@@ -7,15 +7,15 @@ using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Implementations.Facades;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
+using Hemocode.Common.Attributes;
+using Hemocode.Common.Constants;
+using Hemocode.Common.Implementations;
+using Hemocode.Common.Implementations.Facades;
+using Hemocode.Common.Interfaces.Adapters;
 
 #endregion
 
-namespace LobotomyCorporationMods.BugFixes.Patches
+namespace Hemocode.BugFixes.Patches
 {
     [HarmonyPatch(typeof(CustomizingWindow), nameof(CustomizingWindow.SetAgentStatBonus))]
     public static class CustomizingWindowPatchSetAgentStatBonus

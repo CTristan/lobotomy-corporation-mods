@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
-using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
+using Hemocode.Common.Interfaces.Adapters;
+using Hemocode.Common.Interfaces.Adapters.BaseClasses;
 
-namespace LobotomyCorporationMods.Common.ParameterObjects
+namespace Hemocode.Common.ParameterObjects
 {
     /// <summary>Represents a set of optional test adapter parameters.</summary>
     public sealed class OptionalTestAdapterParameters

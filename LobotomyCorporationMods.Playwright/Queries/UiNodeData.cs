@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-namespace LobotomyCorporationMods.Playwright.Queries
+namespace Hemocode.Playwright.Queries
 {
     /// <summary>
     /// Represents a single UI element in the accessibility tree.

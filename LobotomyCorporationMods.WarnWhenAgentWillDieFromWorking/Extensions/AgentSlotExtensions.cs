@@ -6,14 +6,14 @@ using System;
 using System.Collections.Generic;
 using CommandWindow;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Enums;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
-using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations;
-using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
+using Hemocode.Common.Enums;
+using Hemocode.Common.Interfaces.Adapters;
+using Hemocode.WarnWhenAgentWillDieFromWorking.Implementations;
+using Hemocode.WarnWhenAgentWillDieFromWorking.Interfaces;
 
 #endregion
 
-namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
+namespace Hemocode.WarnWhenAgentWillDieFromWorking.Extensions
 {
     public static class AgentSlotExtensions
     {

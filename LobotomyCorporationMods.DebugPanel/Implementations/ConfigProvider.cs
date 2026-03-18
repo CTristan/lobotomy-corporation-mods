@@ -3,15 +3,15 @@
 #region
 
 using System.Diagnostics.CodeAnalysis;
-using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Interfaces;
-using LobotomyCorporationMods.DebugPanel.Interfaces;
-using LobotomyCorporationMods.DebugPanel.JsonModels;
+using Hemocode.Common.Attributes;
+using Hemocode.Common.Constants;
+using Hemocode.Common.Interfaces;
+using Hemocode.DebugPanel.Interfaces;
+using Hemocode.DebugPanel.JsonModels;
 
 #endregion
 
-namespace LobotomyCorporationMods.DebugPanel.Implementations
+namespace Hemocode.DebugPanel.Implementations
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]

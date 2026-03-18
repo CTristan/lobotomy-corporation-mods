@@ -6,13 +6,13 @@ using System.IO;
 using System.Xml;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations.Adapters;
-using LobotomyCorporationMods.Common.Implementations.LoggerTargets;
-using LobotomyCorporationMods.Common.Interfaces;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
+using Hemocode.Common.Extensions;
+using Hemocode.Common.Implementations.Adapters;
+using Hemocode.Common.Implementations.LoggerTargets;
+using Hemocode.Common.Interfaces;
+using Hemocode.Common.Interfaces.Adapters;
 
-namespace LobotomyCorporationMods.Common.Implementations
+namespace Hemocode.Common.Implementations
 {
     public class HarmonyPatchBase
     {

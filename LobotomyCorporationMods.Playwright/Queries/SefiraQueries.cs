@@ -9,7 +9,7 @@ using System.Reflection;
 
 #endregion
 
-namespace LobotomyCorporationMods.Playwright.Queries
+namespace Hemocode.Playwright.Queries
 {
     /// <summary>
     /// Queries for department (Sefira) information from SefiraManager.

@@ -3,11 +3,11 @@
 #region
 
 using System.Collections.Generic;
-using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
+using Hemocode.Common.Interfaces.Adapters.BaseClasses;
 
 #endregion
 
-namespace LobotomyCorporationMods.Common.Interfaces.Adapters
+namespace Hemocode.Common.Interfaces.Adapters
 {
     public interface IYggdrasilAnimTestAdapter : IComponentTestAdapter<YggdrasilAnim>
     {

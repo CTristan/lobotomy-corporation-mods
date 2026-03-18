@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-namespace LobotomyCorporationMods.Common.Models.Diagnostics
+namespace Hemocode.Common.Models.Diagnostics
 {
     public sealed class RetargetHarmonyStatus
     {

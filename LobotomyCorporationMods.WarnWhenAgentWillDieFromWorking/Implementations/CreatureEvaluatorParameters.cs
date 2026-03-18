@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 
-using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
-using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
+using Hemocode.Common.Implementations;
+using Hemocode.Common.Interfaces.Adapters;
+using Hemocode.WarnWhenAgentWillDieFromWorking.Interfaces;
 
-namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations
+namespace Hemocode.WarnWhenAgentWillDieFromWorking.Implementations
 {
     public sealed class CreatureEvaluatorParameters
     {

@@ -6,7 +6,7 @@ using System;
 
 #endregion
 
-namespace LobotomyCorporationMods.Playwright.JsonModels
+namespace Hemocode.Playwright.JsonModels
 {
     [Serializable]
     public sealed class GameStateData

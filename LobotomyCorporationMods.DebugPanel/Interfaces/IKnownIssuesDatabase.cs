@@ -3,11 +3,11 @@
 #region
 
 using System.Collections.Generic;
-using LobotomyCorporationMods.DebugPanel.JsonModels;
+using Hemocode.DebugPanel.JsonModels;
 
 #endregion
 
-namespace LobotomyCorporationMods.DebugPanel.Interfaces
+namespace Hemocode.DebugPanel.Interfaces
 {
     public interface IKnownIssuesDatabase
     {

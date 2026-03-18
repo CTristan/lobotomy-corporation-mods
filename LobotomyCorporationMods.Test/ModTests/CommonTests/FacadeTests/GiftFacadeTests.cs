@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 using AwesomeAssertions;
-using LobotomyCorporationMods.Common.Implementations.Facades;
+using Hemocode.Common.Implementations.Facades;
 using LobotomyCorporationMods.Test.Extensions;
 using Xunit;
 

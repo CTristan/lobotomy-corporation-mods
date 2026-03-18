@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <AssemblyName>Hemocode.GiftAlertIcon</AssemblyName>
     <AssemblyVersion>1.0.2</AssemblyVersion>
-    <ProjectGuid>{0B066766-A14E-48C8-93CD-9813C22549F8}</ProjectGuid>
     <OutputType>Library</OutputType>
+    <ProjectGuid>{0B066766-A14E-48C8-93CD-9813C22549F8}</ProjectGuid>
+    <RootNamespace>Hemocode.GiftAlertIcon</RootNamespace>
     <RuntimeIdentifiers>win</RuntimeIdentifiers>
     <TargetFramework>net35</TargetFramework>
-    <RootNamespace>LobotomyCorporationMods.GiftAlertIcon</RootNamespace>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">

@@ -8,12 +8,12 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Interfaces;
+using Hemocode.Common.Extensions;
+using Hemocode.Common.Interfaces;
 
 #endregion
 
-namespace LobotomyCorporationMods.Common.Implementations
+namespace Hemocode.Common.Implementations
 {
     public sealed class FileManager : IFileManager
     {

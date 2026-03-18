@@ -6,12 +6,12 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading;
-using LobotomyCorporationMods.Playwright.JsonModels;
+using Hemocode.Playwright.JsonModels;
 using UnityEngine;
 
 #endregion
 
-namespace LobotomyCorporationMods.Playwright.Commands
+namespace Hemocode.Playwright.Commands
 {
     /// <summary>
     /// Handles screenshot capture commands.

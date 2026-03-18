@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses;
-using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
+using Hemocode.Common.Extensions;
+using Hemocode.Common.Implementations.Adapters.BaseClasses;
+using Hemocode.Common.Interfaces.Adapters.BaseClasses;
 
-namespace LobotomyCorporationMods.Common.Implementations.Facades
+namespace Hemocode.Common.Implementations.Facades
 {
     public static class MessagesFacade
     {

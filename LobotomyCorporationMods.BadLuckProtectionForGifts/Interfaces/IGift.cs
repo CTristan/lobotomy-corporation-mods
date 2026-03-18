@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 #endregion
 
-namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces
+namespace Hemocode.BadLuckProtectionForGifts.Interfaces
 {
     public interface IGift
     {

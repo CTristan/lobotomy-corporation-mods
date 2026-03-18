@@ -10,16 +10,16 @@ using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
-using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.DebugPanel.Interfaces;
-using LobotomyCorporationMods.Common.Enums.Diagnostics;
-using LobotomyCorporationMods.Common.Models.Diagnostics;
+using Hemocode.Common.Attributes;
+using Hemocode.Common.Constants;
+using Hemocode.Common.Implementations;
+using Hemocode.DebugPanel.Interfaces;
+using Hemocode.Common.Enums.Diagnostics;
+using Hemocode.Common.Models.Diagnostics;
 
 #endregion
 
-namespace LobotomyCorporationMods.DebugPanel.Implementations
+namespace Hemocode.DebugPanel.Implementations
 {
     /// <summary>
     ///     Three-phase expected patch detection: reflection scan, source file regex fallback, runtime fallback.

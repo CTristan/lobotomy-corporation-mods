@@ -2,11 +2,11 @@
 
 #region
 
-using LobotomyCorporationMods.Common.Implementations;
+using Hemocode.Common.Implementations;
 
 #endregion
 
-namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift
+namespace Hemocode.NotifyWhenAgentReceivesGift
 {
     // ReSharper disable once InconsistentNaming
     public sealed class Harmony_Patch : HarmonyPatchBase
@@ -17,7 +17,7 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift
         {
         }
 
-        private Harmony_Patch(bool initialize) : base(typeof(Harmony_Patch), "LobotomyCorporationMods.NotifyWhenAgentReceivesGift.dll", initialize)
+        private Harmony_Patch(bool initialize) : base(typeof(Harmony_Patch), "Hemocode.NotifyWhenAgentReceivesGift.dll", initialize)
         {
         }
     }

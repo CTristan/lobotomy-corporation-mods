@@ -7,7 +7,7 @@ using JetBrains.Annotations;
 
 #endregion
 
-namespace LobotomyCorporationMods.Common.Extensions
+namespace Hemocode.Common.Extensions
 {
     public static class WorkerModelExtensions
     {

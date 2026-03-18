@@ -5,8 +5,8 @@
 using System;
 using AwesomeAssertions;
 using CommandWindow;
-using LobotomyCorporationMods.GiftAlertIcon;
-using LobotomyCorporationMods.GiftAlertIcon.Patches;
+using Hemocode.GiftAlertIcon;
+using Hemocode.GiftAlertIcon.Patches;
 using LobotomyCorporationMods.Test.Extensions;
 using Moq;
 using Xunit;

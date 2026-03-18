@@ -5,17 +5,17 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.DebugPanel.Interfaces;
-using LobotomyCorporationMods.DebugPanel.JsonModels;
-using LobotomyCorporationMods.Common.Models.Diagnostics;
+using Hemocode.Common.Attributes;
+using Hemocode.Common.Constants;
+using Hemocode.Common.Implementations;
+using Hemocode.DebugPanel.Interfaces;
+using Hemocode.DebugPanel.JsonModels;
+using Hemocode.Common.Models.Diagnostics;
 using UnityEngine;
 
 #endregion
 
-namespace LobotomyCorporationMods.DebugPanel.Implementations
+namespace Hemocode.DebugPanel.Implementations
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]

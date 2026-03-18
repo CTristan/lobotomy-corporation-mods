@@ -7,14 +7,14 @@ using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
+using Hemocode.Common.Attributes;
+using Hemocode.Common.Constants;
+using Hemocode.Common.Extensions;
+using Hemocode.Common.Implementations;
 
 #endregion
 
-namespace LobotomyCorporationMods.FreeCustomization.Patches
+namespace Hemocode.FreeCustomization.Patches
 {
     [HarmonyPatch(typeof(AppearanceUI), nameof(AppearanceUI.CloseWindow))]
     public static class AppearanceUiPatchCloseWindow

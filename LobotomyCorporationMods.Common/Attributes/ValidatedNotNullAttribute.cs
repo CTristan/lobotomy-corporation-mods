@@ -2,7 +2,7 @@
 
 using System;
 
-namespace LobotomyCorporationMods.Common.Attributes
+namespace Hemocode.Common.Attributes
 {
     [AttributeUsage(AttributeTargets.Parameter)]
     public sealed class ValidatedNotNullAttribute : Attribute

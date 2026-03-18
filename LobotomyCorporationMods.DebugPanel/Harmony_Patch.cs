@@ -2,11 +2,11 @@
 
 #region
 
-using LobotomyCorporationMods.Common.Implementations;
+using Hemocode.Common.Implementations;
 
 #endregion
 
-namespace LobotomyCorporationMods.DebugPanel
+namespace Hemocode.DebugPanel
 {
     // ReSharper disable once InconsistentNaming
     public sealed class Harmony_Patch : HarmonyPatchBase
@@ -17,7 +17,7 @@ namespace LobotomyCorporationMods.DebugPanel
         {
         }
 
-        private Harmony_Patch(bool initialize) : base(typeof(Harmony_Patch), "LobotomyCorporationMods.DebugPanel.dll", initialize)
+        private Harmony_Patch(bool initialize) : base(typeof(Harmony_Patch), "Hemocode.DebugPanel.dll", initialize)
         {
         }
     }

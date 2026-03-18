@@ -7,18 +7,18 @@ using System.Diagnostics.CodeAnalysis;
 using CommandWindow;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Implementations.Facades;
-using LobotomyCorporationMods.Common.Interfaces;
-using LobotomyCorporationMods.Common.ParameterObjects;
-using LobotomyCorporationMods.GiftAlertIcon.Extensions;
+using Hemocode.Common.Attributes;
+using Hemocode.Common.Constants;
+using Hemocode.Common.Extensions;
+using Hemocode.Common.Implementations;
+using Hemocode.Common.Implementations.Facades;
+using Hemocode.Common.Interfaces;
+using Hemocode.Common.ParameterObjects;
+using Hemocode.GiftAlertIcon.Extensions;
 
 #endregion
 
-namespace LobotomyCorporationMods.GiftAlertIcon.Patches
+namespace Hemocode.GiftAlertIcon.Patches
 {
     [HarmonyPatch(typeof(ManagementSlot), nameof(ManagementSlot.SetUI))]
     public static class ManagementSlotPatchSetUi

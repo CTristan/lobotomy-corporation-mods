@@ -5,12 +5,12 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using LobotomyCorporationMods.DebugPanel.Interfaces;
-using LobotomyCorporationMods.Common.Enums.Diagnostics;
+using Hemocode.DebugPanel.Interfaces;
+using Hemocode.Common.Enums.Diagnostics;
 
 #endregion
 
-namespace LobotomyCorporationMods.DebugPanel.Implementations
+namespace Hemocode.DebugPanel.Implementations
 {
     public sealed class HarmonyVersionClassifier : IHarmonyVersionClassifier
     {

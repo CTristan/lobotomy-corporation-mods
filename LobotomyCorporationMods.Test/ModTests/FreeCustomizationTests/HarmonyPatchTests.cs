@@ -5,8 +5,8 @@
 using System;
 using AwesomeAssertions;
 using Customizing;
-using LobotomyCorporationMods.FreeCustomization;
-using LobotomyCorporationMods.FreeCustomization.Patches;
+using Hemocode.FreeCustomization;
+using Hemocode.FreeCustomization.Patches;
 using LobotomyCorporationMods.Test.Extensions;
 using Moq;
 using Xunit;

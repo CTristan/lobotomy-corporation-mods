@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 using AwesomeAssertions;
-using LobotomyCorporationMods.Common.Models.Diagnostics;
+using Hemocode.Common.Models.Diagnostics;
 using Xunit;
 
 #endregion

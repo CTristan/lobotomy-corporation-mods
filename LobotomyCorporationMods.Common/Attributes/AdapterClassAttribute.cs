@@ -6,7 +6,7 @@ using System;
 
 #endregion
 
-namespace LobotomyCorporationMods.Common.Attributes
+namespace Hemocode.Common.Attributes
 {
     [AttributeUsage(AttributeTargets.Class)]
     public sealed class AdapterClassAttribute : Attribute

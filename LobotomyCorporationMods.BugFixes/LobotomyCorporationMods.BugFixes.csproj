@@ -1,11 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <AssemblyName>Hemocode.BugFixes</AssemblyName>
     <AssemblyVersion>3.0.1</AssemblyVersion>
-    <ProjectGuid>{B4DFD7AE-4659-4FFB-866C-57487F6CDFB9}</ProjectGuid>
     <OutputType>Library</OutputType>
+    <ProjectGuid>{B4DFD7AE-4659-4FFB-866C-57487F6CDFB9}</ProjectGuid>
+    <RootNamespace>Hemocode.BugFixes</RootNamespace>
     <RuntimeIdentifiers>win</RuntimeIdentifiers>
     <TargetFramework>net35</TargetFramework>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">

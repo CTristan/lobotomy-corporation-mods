@@ -8,12 +8,12 @@ using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using LobotomyCorporationMods.Playwright.Events;
-using LobotomyCorporationMods.Playwright.JsonModels;
+using Hemocode.Playwright.Events;
+using Hemocode.Playwright.JsonModels;
 
 #endregion
 
-namespace LobotomyCorporationMods.Playwright.Server
+namespace Hemocode.Playwright.Server
 {
     /// <summary>
     /// Handles a single TCP client connection.

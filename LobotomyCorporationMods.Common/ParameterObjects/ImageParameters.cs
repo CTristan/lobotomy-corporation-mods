@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-namespace LobotomyCorporationMods.Common.ParameterObjects
+namespace Hemocode.Common.ParameterObjects
 {
     /// <summary>Represents the parameters of an image.</summary>
     public sealed class ImageParameters

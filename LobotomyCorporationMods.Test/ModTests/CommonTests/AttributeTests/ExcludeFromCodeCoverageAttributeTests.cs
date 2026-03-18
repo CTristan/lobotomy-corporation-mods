@@ -8,8 +8,8 @@ using System.Linq;
 using System.Reflection;
 using AwesomeAssertions;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Extensions;
+using Hemocode.Common.Attributes;
+using Hemocode.Common.Extensions;
 using Xunit;
 
 #endregion

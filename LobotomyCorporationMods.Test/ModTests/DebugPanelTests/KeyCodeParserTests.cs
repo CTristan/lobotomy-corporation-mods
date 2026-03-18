@@ -3,7 +3,7 @@
 #region
 
 using AwesomeAssertions;
-using LobotomyCorporationMods.DebugPanel.Implementations;
+using Hemocode.DebugPanel.Implementations;
 using UnityEngine;
 using Xunit;
 

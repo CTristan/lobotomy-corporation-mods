@@ -4,10 +4,10 @@
 
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
+using Hemocode.Common.Interfaces.Adapters.BaseClasses;
 using LobotomyCorporationMods.Test.Extensions;
 using LobotomyCorporationMods.Test.Parameters;
-using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking;
+using Hemocode.WarnWhenAgentWillDieFromWorking;
 using Moq;
 
 #endregion

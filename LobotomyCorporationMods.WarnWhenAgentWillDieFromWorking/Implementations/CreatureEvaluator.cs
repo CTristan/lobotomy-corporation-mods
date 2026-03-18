@@ -2,12 +2,12 @@
 
 #region
 
-using LobotomyCorporationMods.Common.Enums;
-using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
+using Hemocode.Common.Enums;
+using Hemocode.WarnWhenAgentWillDieFromWorking.Interfaces;
 
 #endregion
 
-namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations
+namespace Hemocode.WarnWhenAgentWillDieFromWorking.Implementations
 {
     public abstract class CreatureEvaluator : ICreatureEvaluator
     {

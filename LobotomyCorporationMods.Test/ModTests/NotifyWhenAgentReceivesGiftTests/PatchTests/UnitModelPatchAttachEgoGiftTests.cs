@@ -5,7 +5,7 @@
 using System.Collections.Generic;
 using AwesomeAssertions;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches;
+using Hemocode.NotifyWhenAgentReceivesGift.Patches;
 using LobotomyCorporationMods.Test.Extensions;
 using LobotomyCorporationMods.Test.Parameters;
 using Moq;

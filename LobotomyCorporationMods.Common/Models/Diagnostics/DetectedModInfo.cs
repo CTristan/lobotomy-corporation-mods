@@ -2,12 +2,12 @@
 
 #region
 
-using LobotomyCorporationMods.Common.Enums.Diagnostics;
-using LobotomyCorporationMods.Common.Implementations;
+using Hemocode.Common.Enums.Diagnostics;
+using Hemocode.Common.Implementations;
 
 #endregion
 
-namespace LobotomyCorporationMods.Common.Models.Diagnostics
+namespace Hemocode.Common.Models.Diagnostics
 {
     public sealed class DetectedModInfo
     {

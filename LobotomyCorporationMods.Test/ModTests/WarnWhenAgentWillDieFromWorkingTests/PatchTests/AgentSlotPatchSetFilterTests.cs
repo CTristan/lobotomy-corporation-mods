@@ -6,9 +6,9 @@ using System;
 using System.Collections.Generic;
 using AwesomeAssertions;
 using CommandWindow;
-using LobotomyCorporationMods.Common.Enums;
+using Hemocode.Common.Enums;
 using LobotomyCorporationMods.Test.Extensions;
-using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches;
+using Hemocode.WarnWhenAgentWillDieFromWorking.Patches;
 using Xunit;
 
 #endregion

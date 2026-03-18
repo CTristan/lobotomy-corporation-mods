@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-namespace LobotomyCorporationMods.GiftAlertIcon.Constants
+namespace Hemocode.GiftAlertIcon.Constants
 {
     public static class LocalizationIds
     {

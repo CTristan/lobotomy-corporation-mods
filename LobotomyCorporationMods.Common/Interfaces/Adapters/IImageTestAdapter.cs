@@ -2,13 +2,13 @@
 
 #region
 
-using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
+using Hemocode.Common.Interfaces.Adapters.BaseClasses;
 using UnityEngine;
 using UnityEngine.UI;
 
 #endregion
 
-namespace LobotomyCorporationMods.Common.Interfaces.Adapters
+namespace Hemocode.Common.Interfaces.Adapters
 {
     public interface IImageTestAdapter : IComponentTestAdapter<Image>
     {

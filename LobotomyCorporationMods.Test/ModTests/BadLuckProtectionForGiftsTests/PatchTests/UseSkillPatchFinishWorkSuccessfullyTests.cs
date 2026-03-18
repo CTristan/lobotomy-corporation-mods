@@ -2,8 +2,8 @@
 
 #region
 
-using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
-using LobotomyCorporationMods.BadLuckProtectionForGifts.Patches;
+using Hemocode.BadLuckProtectionForGifts.Interfaces;
+using Hemocode.BadLuckProtectionForGifts.Patches;
 using LobotomyCorporationMods.Test.Extensions;
 using Moq;
 using Xunit;

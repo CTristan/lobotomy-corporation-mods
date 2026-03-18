@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-namespace LobotomyCorporationMods.Common.Enums.Diagnostics
+namespace Hemocode.Common.Enums.Diagnostics
 {
     public enum HarmonyVersion
     {

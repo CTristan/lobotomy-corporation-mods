@@ -5,12 +5,12 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using LobotomyCorporationMods.Playwright.JsonModels;
+using Hemocode.Playwright.JsonModels;
 using UnityEngine.SceneManagement;
 
 #endregion
 
-namespace LobotomyCorporationMods.Playwright.Queries
+namespace Hemocode.Playwright.Queries
 {
     /// <summary>
     /// Queries for game state from GameManager and PlayerModel.

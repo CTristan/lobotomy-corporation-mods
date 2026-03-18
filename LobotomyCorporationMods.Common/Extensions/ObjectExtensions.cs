@@ -2,10 +2,10 @@
 
 using System;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Implementations;
+using Hemocode.Common.Attributes;
+using Hemocode.Common.Implementations;
 
-namespace LobotomyCorporationMods.Common.Extensions
+namespace Hemocode.Common.Extensions
 {
     public static class ObjectExtensions
     {

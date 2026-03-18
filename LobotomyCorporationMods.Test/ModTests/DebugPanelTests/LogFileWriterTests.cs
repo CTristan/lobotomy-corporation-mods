@@ -5,10 +5,10 @@
 using System;
 using System.Collections.Generic;
 using AwesomeAssertions;
-using LobotomyCorporationMods.Common.Interfaces;
-using LobotomyCorporationMods.DebugPanel.Implementations;
-using LobotomyCorporationMods.DebugPanel.Interfaces;
-using LobotomyCorporationMods.Common.Models.Diagnostics;
+using Hemocode.Common.Interfaces;
+using Hemocode.DebugPanel.Implementations;
+using Hemocode.DebugPanel.Interfaces;
+using Hemocode.Common.Models.Diagnostics;
 using Moq;
 using Xunit;
 

@@ -2,11 +2,11 @@
 
 #region
 
-using LobotomyCorporationMods.Common.Implementations;
+using Hemocode.Common.Implementations;
 
 #endregion
 
-namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking
+namespace Hemocode.WarnWhenAgentWillDieFromWorking
 {
     // ReSharper disable once InconsistentNaming
     public sealed class Harmony_Patch : HarmonyPatchBase
@@ -17,7 +17,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking
         {
         }
 
-        private Harmony_Patch(bool initialize) : base(typeof(Harmony_Patch), "LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.dll", initialize)
+        private Harmony_Patch(bool initialize) : base(typeof(Harmony_Patch), "Hemocode.WarnWhenAgentWillDieFromWorking.dll", initialize)
         {
         }
     }

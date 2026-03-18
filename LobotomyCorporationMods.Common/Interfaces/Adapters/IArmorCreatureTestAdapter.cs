@@ -2,7 +2,7 @@
 
 using System.Collections;
 
-namespace LobotomyCorporationMods.Common.Interfaces.Adapters
+namespace Hemocode.Common.Interfaces.Adapters
 {
     public interface IArmorCreatureTestAdapter
     {

@@ -6,8 +6,8 @@ using System;
 using AwesomeAssertions;
 using CommandWindow;
 using LobotomyCorporationMods.Test.Extensions;
-using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking;
-using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches;
+using Hemocode.WarnWhenAgentWillDieFromWorking;
+using Hemocode.WarnWhenAgentWillDieFromWorking.Patches;
 using Xunit;
 
 #endregion

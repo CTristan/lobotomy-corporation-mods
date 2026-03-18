@@ -4,7 +4,7 @@
 
 using System;
 using AwesomeAssertions;
-using LobotomyCorporationMods.Common.Models.Diagnostics;
+using Hemocode.Common.Models.Diagnostics;
 using Xunit;
 
 // ReSharper disable ObjectCreationAsStatement

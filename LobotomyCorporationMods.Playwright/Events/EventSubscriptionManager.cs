@@ -6,12 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using LobotomyCorporationMods.Playwright.JsonModels;
-using LobotomyCorporationMods.Playwright.Server;
+using Hemocode.Playwright.JsonModels;
+using Hemocode.Playwright.Server;
 
 #endregion
 
-namespace LobotomyCorporationMods.Playwright.Events
+namespace Hemocode.Playwright.Events
 {
     /// <summary>
     /// Manages event subscriptions for TCP clients.

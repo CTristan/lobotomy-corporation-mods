@@ -34,15 +34,15 @@ namespace LobotomyPlaywright.Commands
 
         private static readonly DeploymentTarget[] s_deploymentTargets =
         [
-            new("LobotomyCorporationMods.Playwright", "BaseMods/LobotomyCorporationMods.Playwright", true),
-            new("RetargetHarmony", "patchers/RetargetHarmony", false),
-            new("LobotomyCorporationMods.BadLuckProtectionForGifts", "BaseMods/LobotomyCorporationMods.BadLuckProtectionForGifts", true),
-            new("LobotomyCorporationMods.BugFixes", "BaseMods/LobotomyCorporationMods.BugFixes", true),
-            new("LobotomyCorporationMods.DebugPanel", "BaseMods/LobotomyCorporationMods.DebugPanel", true),
-            new("LobotomyCorporationMods.FreeCustomization", "BaseMods/LobotomyCorporationMods.FreeCustomization", true),
-            new("LobotomyCorporationMods.GiftAlertIcon", "BaseMods/LobotomyCorporationMods.GiftAlertIcon", true),
-            new("LobotomyCorporationMods.NotifyWhenAgentReceivesGift", "BaseMods/LobotomyCorporationMods.NotifyWhenAgentReceivesGift", true),
-            new("LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking", "BaseMods/LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking", true),
+            new("LobotomyCorporationMods.Playwright", "Hemocode.Playwright", "BaseMods/Hemocode.Playwright", true),
+            new("RetargetHarmony", "RetargetHarmony", "patchers/RetargetHarmony", false),
+            new("LobotomyCorporationMods.BadLuckProtectionForGifts", "Hemocode.BadLuckProtectionForGifts", "BaseMods/Hemocode.BadLuckProtectionForGifts", true),
+            new("LobotomyCorporationMods.BugFixes", "Hemocode.BugFixes", "BaseMods/Hemocode.BugFixes", true),
+            new("LobotomyCorporationMods.DebugPanel", "Hemocode.DebugPanel", "BaseMods/Hemocode.DebugPanel", true),
+            new("LobotomyCorporationMods.FreeCustomization", "Hemocode.FreeCustomization", "BaseMods/Hemocode.FreeCustomization", true),
+            new("LobotomyCorporationMods.GiftAlertIcon", "Hemocode.GiftAlertIcon", "BaseMods/Hemocode.GiftAlertIcon", true),
+            new("LobotomyCorporationMods.NotifyWhenAgentReceivesGift", "Hemocode.NotifyWhenAgentReceivesGift", "BaseMods/Hemocode.NotifyWhenAgentReceivesGift", true),
+            new("LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking", "Hemocode.WarnWhenAgentWillDieFromWorking", "BaseMods/Hemocode.WarnWhenAgentWillDieFromWorking", true),
         ];
 
         private readonly IConfigManager _configManager = configManager;
@@ -274,7 +274,7 @@ namespace LobotomyPlaywright.Commands
                 {
                     foreach (var target in targets)
                     {
-                        dllPaths[target.ProjectName] = BuildProject(projectPaths[target.ProjectName], configuration);
+                        dllPaths[target.ProjectName] = BuildProject(projectPaths[target.ProjectName], configuration, target.AssemblyName);
                     }
                 }
                 catch (Exception ex) when (ex is BuildFailedException or FileNotFoundException)
@@ -293,7 +293,7 @@ namespace LobotomyPlaywright.Commands
                 foreach (var target in targets)
                 {
                     var projectDir = Path.GetDirectoryName(projectPaths[target.ProjectName]) ?? string.Empty;
-                    var dllName = $"{target.ProjectName}.dll";
+                    var dllName = $"{target.AssemblyName}.dll";
                     var dllPath = FindExistingDll(projectDir, configuration, dllName);
 
                     if (dllPath is null)
@@ -329,7 +329,7 @@ namespace LobotomyPlaywright.Commands
                 {
                     var deploySubdir = ResolveDeploySubdir(target, profile);
                     var destDir = GetDeployDestDir(gamePath, deploySubdir);
-                    var dllName = $"{target.ProjectName}.dll";
+                    var dllName = $"{target.AssemblyName}.dll";
                     Console.WriteLine();
                     Console.WriteLine($"Would deploy {dllName} to:");
                     Console.WriteLine($"  {Path.Combine(destDir, dllName)}");
@@ -432,7 +432,7 @@ namespace LobotomyPlaywright.Commands
             }
         }
 
-        private string BuildProject(string projectPath, string configuration)
+        private string BuildProject(string projectPath, string configuration, string assemblyName)
         {
             var projectName = Path.GetFileNameWithoutExtension(projectPath);
             Console.WriteLine();
@@ -452,7 +452,7 @@ namespace LobotomyPlaywright.Commands
 
             // Find the output DLL
             var projectDir = Path.GetDirectoryName(projectPath) ?? string.Empty;
-            var dllName = $"{projectName}.dll";
+            var dllName = $"{assemblyName}.dll";
             var dllPath = FindExistingDll(projectDir, configuration, dllName)
                 ?? throw new FileNotFoundException($"Built DLL not found for {projectName}");
 
@@ -532,7 +532,7 @@ namespace LobotomyPlaywright.Commands
             var destDir = GetDeployDestDir(gamePath, destSubdir);
 
             // Deploy Common DLL
-            var commonDlls = _fileSystem.GetFiles(sourceDir, "LobotomyCorporationMods.Common.*.dll");
+            var commonDlls = _fileSystem.GetFiles(sourceDir, "Hemocode.Common.*.dll");
             foreach (var commonDll in commonDlls)
             {
                 var destCommonDll = Path.Combine(destDir, Path.GetFileName(commonDll));
@@ -707,7 +707,7 @@ namespace LobotomyPlaywright.Commands
             return false;
         }
 
-        private record DeploymentTarget(string ProjectName, string DeploySubdir, bool IsMod);
+        private record DeploymentTarget(string ProjectName, string AssemblyName, string DeploySubdir, bool IsMod);
 
         internal sealed class BuildFailedException : Exception
         {

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-namespace LobotomyCorporationMods.DebugPanel.Interfaces
+namespace Hemocode.DebugPanel.Interfaces
 {
     public interface IInfoCollector<T>
     {

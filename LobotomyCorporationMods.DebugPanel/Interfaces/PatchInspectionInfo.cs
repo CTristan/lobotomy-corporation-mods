@@ -4,12 +4,12 @@
 
 using System.Collections.Generic;
 using System.Reflection;
-using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Enums.Diagnostics;
+using Hemocode.Common.Implementations;
+using Hemocode.Common.Enums.Diagnostics;
 
 #endregion
 
-namespace LobotomyCorporationMods.DebugPanel.Interfaces
+namespace Hemocode.DebugPanel.Interfaces
 {
     public sealed class PatchInspectionInfo
     {

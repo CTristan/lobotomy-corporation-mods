@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
 
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Implementations.Adapters;
-using LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
-using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
-using LobotomyCorporationMods.Common.ParameterObjects;
+using Hemocode.Common.Implementations.Adapters;
+using Hemocode.Common.Implementations.Adapters.BaseClasses;
+using Hemocode.Common.Interfaces.Adapters;
+using Hemocode.Common.Interfaces.Adapters.BaseClasses;
+using Hemocode.Common.ParameterObjects;
 using UnityEngine;
 
-namespace LobotomyCorporationMods.Common.Extensions
+namespace Hemocode.Common.Extensions
 {
     public static class ManagementSlotTestAdapterExtensions
     {

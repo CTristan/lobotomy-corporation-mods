@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 #endregion
 
-namespace LobotomyCorporationMods.DebugPanel.Interfaces
+namespace Hemocode.DebugPanel.Interfaces
 {
     public interface IAssemblyInspectionSource
     {

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-namespace LobotomyCorporationMods.Common.Interfaces
+namespace Hemocode.Common.Interfaces
 {
     /// <summary>An adapter to use for testing Unity game objects.</summary>
     /// <typeparam name="T">The type of the game object being adapted.</typeparam>

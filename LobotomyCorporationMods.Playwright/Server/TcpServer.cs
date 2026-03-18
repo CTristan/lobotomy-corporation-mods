@@ -9,11 +9,11 @@ using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Threading;
-using LobotomyCorporationMods.Playwright.JsonModels;
+using Hemocode.Playwright.JsonModels;
 
 #endregion
 
-namespace LobotomyCorporationMods.Playwright.Server
+namespace Hemocode.Playwright.Server
 {
     /// <summary>
     /// TCP server that listens for incoming connections and manages client handlers.

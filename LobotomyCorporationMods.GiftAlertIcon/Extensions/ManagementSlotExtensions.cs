@@ -5,16 +5,16 @@
 using System.Text;
 using CommandWindow;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations.Facades;
-using LobotomyCorporationMods.Common.Interfaces;
-using LobotomyCorporationMods.Common.ParameterObjects;
-using LobotomyCorporationMods.GiftAlertIcon.Constants;
+using Hemocode.Common.Extensions;
+using Hemocode.Common.Implementations.Facades;
+using Hemocode.Common.Interfaces;
+using Hemocode.Common.ParameterObjects;
+using Hemocode.GiftAlertIcon.Constants;
 using UnityEngine;
 
 #endregion
 
-namespace LobotomyCorporationMods.GiftAlertIcon.Extensions
+namespace Hemocode.GiftAlertIcon.Extensions
 {
     public static class ManagementSlotExtensions
     {

@@ -6,7 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 
 #endregion
 
-namespace LobotomyCorporationMods.Playwright
+namespace Hemocode.Playwright
 {
     /// <summary>
     /// LMM (Lobotomy Mod Manager) entry point.

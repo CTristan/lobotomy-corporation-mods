@@ -3,14 +3,14 @@
 #region
 
 using System.Collections.Generic;
-using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Interfaces;
-using LobotomyCorporationMods.Common.Models.Diagnostics;
-using LobotomyCorporationMods.DebugPanel.Interfaces;
+using Hemocode.Common.Implementations;
+using Hemocode.Common.Interfaces;
+using Hemocode.Common.Models.Diagnostics;
+using Hemocode.DebugPanel.Interfaces;
 
 #endregion
 
-namespace LobotomyCorporationMods.DebugPanel.Implementations
+namespace Hemocode.DebugPanel.Implementations
 {
     public sealed class DiagnosticDataProvider : IDiagnosticDataProvider
     {

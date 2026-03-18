@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces
+namespace Hemocode.WarnWhenAgentWillDieFromWorking.Interfaces
 {
     public interface ICreatureEvaluator
     {

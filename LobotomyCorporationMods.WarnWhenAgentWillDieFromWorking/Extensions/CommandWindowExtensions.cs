@@ -5,17 +5,17 @@
 using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Enums;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
-using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations;
-using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.Adapters;
-using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators;
-using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
+using Hemocode.Common.Enums;
+using Hemocode.Common.Extensions;
+using Hemocode.Common.Interfaces.Adapters;
+using Hemocode.WarnWhenAgentWillDieFromWorking.Implementations;
+using Hemocode.WarnWhenAgentWillDieFromWorking.Implementations.Adapters;
+using Hemocode.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators;
+using Hemocode.WarnWhenAgentWillDieFromWorking.Interfaces;
 
 #endregion
 
-namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
+namespace Hemocode.WarnWhenAgentWillDieFromWorking.Extensions
 {
     public static class CommandWindowExtensions
     {

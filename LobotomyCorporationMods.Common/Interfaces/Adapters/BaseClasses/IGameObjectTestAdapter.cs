@@ -6,7 +6,7 @@ using UnityEngine;
 
 #endregion
 
-namespace LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses
+namespace Hemocode.Common.Interfaces.Adapters.BaseClasses
 {
     public interface IGameObjectTestAdapter : ITestAdapter<GameObject>
     {

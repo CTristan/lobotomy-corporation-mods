@@ -3,9 +3,9 @@
 using System;
 using CommandWindow;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
+using Hemocode.Common.Extensions;
 
-namespace LobotomyCorporationMods.Common.Implementations.Facades
+namespace Hemocode.Common.Implementations.Facades
 {
     public static class GiftFacade
     {

@@ -5,14 +5,14 @@
 using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
+using Hemocode.Common.Attributes;
+using Hemocode.Common.Constants;
+using Hemocode.Common.Implementations.Adapters.BaseClasses;
+using Hemocode.Common.Interfaces.Adapters;
 
 #endregion
 
-namespace LobotomyCorporationMods.Common.Implementations.Adapters
+namespace Hemocode.Common.Implementations.Adapters
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]

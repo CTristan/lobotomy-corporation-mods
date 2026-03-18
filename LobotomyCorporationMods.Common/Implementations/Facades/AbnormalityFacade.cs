@@ -2,11 +2,11 @@
 
 using System.Linq;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations.Adapters;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
+using Hemocode.Common.Extensions;
+using Hemocode.Common.Implementations.Adapters;
+using Hemocode.Common.Interfaces.Adapters;
 
-namespace LobotomyCorporationMods.Common.Implementations.Facades
+namespace Hemocode.Common.Implementations.Facades
 {
     public static class AbnormalityFacade
     {

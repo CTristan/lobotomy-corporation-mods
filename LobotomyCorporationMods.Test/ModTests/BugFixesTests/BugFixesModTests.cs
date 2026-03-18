@@ -3,8 +3,8 @@
 #region
 
 using JetBrains.Annotations;
-using LobotomyCorporationMods.BugFixes;
-using LobotomyCorporationMods.Common.Interfaces;
+using Hemocode.BugFixes;
+using Hemocode.Common.Interfaces;
 using Moq;
 
 #endregion

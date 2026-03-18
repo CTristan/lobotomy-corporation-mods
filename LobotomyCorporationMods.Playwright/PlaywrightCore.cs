@@ -4,12 +4,12 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using LobotomyCorporationMods.Playwright.Server;
+using Hemocode.Playwright.Server;
 using UnityEngine;
 
 #endregion
 
-namespace LobotomyCorporationMods.Playwright
+namespace Hemocode.Playwright
 {
     /// <summary>
     /// Static entry point for LobotomyPlaywright initialization.

@@ -6,14 +6,14 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
-using LobotomyCorporationMods.Playwright.JsonModels;
+using Hemocode.Playwright.JsonModels;
 
 // Use alias to avoid conflicts with Unity's Debug
-using TcpServer = LobotomyCorporationMods.Playwright.Server.TcpServer;
+using TcpServer = Hemocode.Playwright.Server.TcpServer;
 
 #endregion
 
-namespace LobotomyCorporationMods.Playwright.Commands
+namespace Hemocode.Playwright.Commands
 {
     /// <summary>
     /// Player action simulation commands - what a player would click.

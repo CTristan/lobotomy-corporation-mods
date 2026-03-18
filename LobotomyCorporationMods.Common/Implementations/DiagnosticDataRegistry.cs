@@ -2,11 +2,11 @@
 
 #region
 
-using LobotomyCorporationMods.Common.Interfaces;
+using Hemocode.Common.Interfaces;
 
 #endregion
 
-namespace LobotomyCorporationMods.Common.Implementations
+namespace Hemocode.Common.Implementations
 {
     public static class DiagnosticDataRegistry
     {

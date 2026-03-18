@@ -3,8 +3,8 @@
 #region
 
 using System.Collections.Generic;
-using LobotomyCorporationMods.BugFixes.Patches;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
+using Hemocode.BugFixes.Patches;
+using Hemocode.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.Test.Extensions;
 using LobotomyCorporationMods.Test.Parameters;
 using Moq;

@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Implementations;
+using Hemocode.Common.Implementations;
 
-namespace LobotomyCorporationMods.Common.Extensions
+namespace Hemocode.Common.Extensions
 {
     public static class CommandWindowExtensions
     {

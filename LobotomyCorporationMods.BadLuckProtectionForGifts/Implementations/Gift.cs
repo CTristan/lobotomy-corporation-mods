@@ -4,12 +4,12 @@
 
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
-using LobotomyCorporationMods.Common.Extensions;
+using Hemocode.BadLuckProtectionForGifts.Interfaces;
+using Hemocode.Common.Extensions;
 
 #endregion
 
-namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
+namespace Hemocode.BadLuckProtectionForGifts.Implementations
 {
     public sealed class Gift : IGift
     {

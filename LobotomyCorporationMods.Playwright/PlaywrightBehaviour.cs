@@ -3,14 +3,14 @@
 #region
 
 using System.Diagnostics.CodeAnalysis;
-using LobotomyCorporationMods.Playwright.Events;
-using LobotomyCorporationMods.Playwright.JsonModels;
-using LobotomyCorporationMods.Playwright.Server;
+using Hemocode.Playwright.Events;
+using Hemocode.Playwright.JsonModels;
+using Hemocode.Playwright.Server;
 using UnityEngine;
 
 #endregion
 
-namespace LobotomyCorporationMods.Playwright
+namespace Hemocode.Playwright
 {
     /// <summary>
     /// MonoBehaviour that manages the TCP server lifecycle.

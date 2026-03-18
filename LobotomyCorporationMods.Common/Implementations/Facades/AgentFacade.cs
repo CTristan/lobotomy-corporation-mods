@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using CommandWindow;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Enums;
-using LobotomyCorporationMods.Common.Extensions;
+using Hemocode.Common.Enums;
+using Hemocode.Common.Extensions;
 
-namespace LobotomyCorporationMods.Common.Implementations.Facades
+namespace Hemocode.Common.Implementations.Facades
 {
     public static class AgentFacade
     {

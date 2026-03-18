@@ -2,9 +2,9 @@
 
 #region
 
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
-using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
-using LobotomyCorporationMods.FreeCustomization.Patches;
+using Hemocode.Common.Interfaces.Adapters;
+using Hemocode.Common.Interfaces.Adapters.BaseClasses;
+using Hemocode.FreeCustomization.Patches;
 using Moq;
 using Xunit;
 

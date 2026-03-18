@@ -2,10 +2,10 @@
 
 using CommandWindow;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations.Facades;
+using Hemocode.Common.Extensions;
+using Hemocode.Common.Implementations.Facades;
 
-namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
+namespace Hemocode.WarnWhenAgentWillDieFromWorking.Extensions
 {
     public static class GameManagerExtensions
     {

@@ -8,7 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 
 #endregion
 
-namespace LobotomyCorporationMods.Playwright.Events
+namespace Hemocode.Playwright.Events
 {
     /// <summary>
     /// Subscribes to the game's Notice system and forwards events to subscribed TCP clients.

@@ -4,8 +4,8 @@
 
 using System;
 using AwesomeAssertions;
-using LobotomyCorporationMods.BadLuckProtectionForGifts;
-using LobotomyCorporationMods.BadLuckProtectionForGifts.Patches;
+using Hemocode.BadLuckProtectionForGifts;
+using Hemocode.BadLuckProtectionForGifts.Patches;
 using LobotomyCorporationMods.Test.Extensions;
 using Xunit;
 

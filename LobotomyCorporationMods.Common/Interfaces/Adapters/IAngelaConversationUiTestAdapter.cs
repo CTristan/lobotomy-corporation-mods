@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 
-using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
+using Hemocode.Common.Interfaces.Adapters.BaseClasses;
 
-namespace LobotomyCorporationMods.Common.Interfaces.Adapters
+namespace Hemocode.Common.Interfaces.Adapters
 {
     public interface IAngelaConversationUiTestAdapter : IComponentTestAdapter<AngelaConversationUI>
     {

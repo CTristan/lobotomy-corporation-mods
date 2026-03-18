@@ -6,10 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using AwesomeAssertions;
-using LobotomyCorporationMods.DebugPanel.Implementations;
-using LobotomyCorporationMods.DebugPanel.Interfaces;
-using LobotomyCorporationMods.Common.Enums.Diagnostics;
-using LobotomyCorporationMods.Common.Models.Diagnostics;
+using Hemocode.DebugPanel.Implementations;
+using Hemocode.DebugPanel.Interfaces;
+using Hemocode.Common.Enums.Diagnostics;
+using Hemocode.Common.Models.Diagnostics;
 using Moq;
 using Xunit;
 

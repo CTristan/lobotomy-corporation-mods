@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 
-using LobotomyCorporationMods.Common.Enums;
-using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
+using Hemocode.Common.Enums;
+using Hemocode.WarnWhenAgentWillDieFromWorking.Interfaces;
 
-namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators
+namespace Hemocode.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators
 {
     public sealed class SnowQueenEvaluator : CreatureEvaluator
     {

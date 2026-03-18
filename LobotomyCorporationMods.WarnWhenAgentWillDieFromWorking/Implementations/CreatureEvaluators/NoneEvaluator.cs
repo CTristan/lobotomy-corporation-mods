@@ -2,11 +2,11 @@
 
 #region
 
-using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
+using Hemocode.WarnWhenAgentWillDieFromWorking.Interfaces;
 
 #endregion
 
-namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators
+namespace Hemocode.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators
 {
     /// <summary>Only used if there is no creature to evaluate but we need to return something.</summary>
     public sealed class NoneEvaluator : ICreatureEvaluator

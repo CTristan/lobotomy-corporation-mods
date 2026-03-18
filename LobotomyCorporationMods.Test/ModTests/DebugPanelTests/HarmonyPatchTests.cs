@@ -4,8 +4,8 @@
 
 using System;
 using AwesomeAssertions;
-using LobotomyCorporationMods.DebugPanel;
-using LobotomyCorporationMods.DebugPanel.Patches;
+using Hemocode.DebugPanel;
+using Hemocode.DebugPanel.Patches;
 using LobotomyCorporationMods.Test.Extensions;
 using Xunit;
 

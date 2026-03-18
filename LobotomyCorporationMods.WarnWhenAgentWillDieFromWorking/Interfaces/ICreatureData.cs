@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
+using Hemocode.Common.Interfaces.Adapters;
 
-namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces
+namespace Hemocode.WarnWhenAgentWillDieFromWorking.Interfaces
 {
     public interface ICreatureData
     {

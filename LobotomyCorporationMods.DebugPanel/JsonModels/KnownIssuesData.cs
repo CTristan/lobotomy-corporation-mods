@@ -6,7 +6,7 @@ using System;
 
 #endregion
 
-namespace LobotomyCorporationMods.DebugPanel.JsonModels
+namespace Hemocode.DebugPanel.JsonModels
 {
     [Serializable]
     public class KnownIssuesData

@@ -3,13 +3,13 @@
 #region
 
 using System.Collections.Generic;
-using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Playwright.JsonModels;
-using LobotomyCorporationMods.Playwright.JsonModels.Diagnostics;
+using Hemocode.Common.Implementations;
+using Hemocode.Playwright.JsonModels;
+using Hemocode.Playwright.JsonModels.Diagnostics;
 
 #endregion
 
-namespace LobotomyCorporationMods.Playwright.Queries
+namespace Hemocode.Playwright.Queries
 {
     public static class DiagnosticsQueries
     {

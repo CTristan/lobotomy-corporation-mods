@@ -8,13 +8,13 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Interfaces;
+using Hemocode.BadLuckProtectionForGifts.Interfaces;
+using Hemocode.Common.Extensions;
+using Hemocode.Common.Interfaces;
 
 #endregion
 
-namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
+namespace Hemocode.BadLuckProtectionForGifts.Implementations
 {
     public sealed class AgentWorkTracker : IAgentWorkTracker
     {

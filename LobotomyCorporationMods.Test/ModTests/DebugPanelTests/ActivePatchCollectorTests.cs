@@ -4,9 +4,9 @@
 
 using System;
 using AwesomeAssertions;
-using LobotomyCorporationMods.DebugPanel.Implementations;
-using LobotomyCorporationMods.DebugPanel.Interfaces;
-using LobotomyCorporationMods.Common.Enums.Diagnostics;
+using Hemocode.DebugPanel.Implementations;
+using Hemocode.DebugPanel.Interfaces;
+using Hemocode.Common.Enums.Diagnostics;
 using Moq;
 using Xunit;
 

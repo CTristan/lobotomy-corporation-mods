@@ -8,7 +8,7 @@ using UnityEngine;
 
 #endregion
 
-namespace LobotomyCorporationMods.DebugPanel.Implementations
+namespace Hemocode.DebugPanel.Implementations
 {
     public static class KeyCodeParser
     {

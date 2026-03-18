@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 #endregion
 
-namespace LobotomyCorporationMods.Playwright.Queries
+namespace Hemocode.Playwright.Queries
 {
     /// <summary>
     /// Represents the complete UI state for accessibility queries.

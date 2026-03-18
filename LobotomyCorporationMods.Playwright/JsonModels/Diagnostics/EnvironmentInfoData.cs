@@ -3,12 +3,12 @@
 #region
 
 using System;
-using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Models.Diagnostics;
+using Hemocode.Common.Implementations;
+using Hemocode.Common.Models.Diagnostics;
 
 #endregion
 
-namespace LobotomyCorporationMods.Playwright.JsonModels.Diagnostics
+namespace Hemocode.Playwright.JsonModels.Diagnostics
 {
     [Serializable]
     public sealed class EnvironmentInfoData

@@ -57,8 +57,8 @@ namespace LobotomyPlaywright.Tests.Commands
             // Arrange
             _ = _mockFileSystem.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
             _ = _mockFileSystem.Setup(f => f.FileExists(It.IsAny<string>())).Returns(true);
-            _ = _mockFileSystem.Setup(f => f.GetFiles(It.IsAny<string>(), "LobotomyCorporationMods.Common.*.dll"))
-                .Returns(["LobotomyCorporationMods.Common.6.0.2.dll"]);
+            _ = _mockFileSystem.Setup(f => f.GetFiles(It.IsAny<string>(), "Hemocode.Common.*.dll"))
+                .Returns(["Hemocode.Common.6.0.2.dll"]);
 
             _ = _mockProcessRunner.Setup(p => p.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string?, bool>>()))
                 .Returns(0);
@@ -70,20 +70,20 @@ namespace LobotomyPlaywright.Tests.Commands
             _ = result.Should().Be(0);
 
             // Verify tool project DLL deployments
-            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyCorporationMods.Playwright.dll")), It.IsAny<string>(), true), Times.Once);
+            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("Hemocode.Playwright.dll")), It.IsAny<string>(), true), Times.Once);
             _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("RetargetHarmony.dll")), It.IsAny<string>(), true), Times.Once);
 
             // Verify mod DLL deployments
-            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyCorporationMods.BadLuckProtectionForGifts.dll")), It.IsAny<string>(), true), Times.Once);
-            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyCorporationMods.BugFixes.dll")), It.IsAny<string>(), true), Times.Once);
-            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyCorporationMods.DebugPanel.dll")), It.IsAny<string>(), true), Times.Once);
-            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyCorporationMods.FreeCustomization.dll")), It.IsAny<string>(), true), Times.Once);
-            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyCorporationMods.GiftAlertIcon.dll")), It.IsAny<string>(), true), Times.Once);
-            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyCorporationMods.NotifyWhenAgentReceivesGift.dll")), It.IsAny<string>(), true), Times.Once);
-            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.dll")), It.IsAny<string>(), true), Times.Once);
+            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("Hemocode.BadLuckProtectionForGifts.dll")), It.IsAny<string>(), true), Times.Once);
+            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("Hemocode.BugFixes.dll")), It.IsAny<string>(), true), Times.Once);
+            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("Hemocode.DebugPanel.dll")), It.IsAny<string>(), true), Times.Once);
+            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("Hemocode.FreeCustomization.dll")), It.IsAny<string>(), true), Times.Once);
+            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("Hemocode.GiftAlertIcon.dll")), It.IsAny<string>(), true), Times.Once);
+            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("Hemocode.NotifyWhenAgentReceivesGift.dll")), It.IsAny<string>(), true), Times.Once);
+            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("Hemocode.WarnWhenAgentWillDieFromWorking.dll")), It.IsAny<string>(), true), Times.Once);
 
             // Verify Common DLL deployed for each mod (8 mods)
-            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyCorporationMods.Common")), It.IsAny<string>(), true), Times.Exactly(8));
+            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("Hemocode.Common")), It.IsAny<string>(), true), Times.Exactly(8));
 
             // Verify interop DLLs
             _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("0Harmony109.dll")), It.IsAny<string>(), true), Times.Once);
@@ -115,8 +115,8 @@ namespace LobotomyPlaywright.Tests.Commands
             // Arrange
             _ = _mockFileSystem.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
             _ = _mockFileSystem.Setup(f => f.FileExists(It.IsAny<string>())).Returns(true);
-            _ = _mockFileSystem.Setup(f => f.GetFiles(It.IsAny<string>(), "LobotomyCorporationMods.Common.*.dll"))
-                .Returns(["LobotomyCorporationMods.Common.6.0.2.dll"]);
+            _ = _mockFileSystem.Setup(f => f.GetFiles(It.IsAny<string>(), "Hemocode.Common.*.dll"))
+                .Returns(["Hemocode.Common.6.0.2.dll"]);
 
             _ = _mockProcessRunner.Setup(p => p.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string?, bool>>()))
                 .Returns(0);
@@ -224,8 +224,8 @@ namespace LobotomyPlaywright.Tests.Commands
             _mockBepInExInstaller.Verify(i => i.Install(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
 
             // All mod DLLs deployed including Playwright
-            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyCorporationMods.Playwright.dll")), It.IsAny<string>(), true), Times.Once);
-            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyCorporationMods.BadLuckProtectionForGifts.dll")), It.IsAny<string>(), true), Times.Once);
+            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("Hemocode.Playwright.dll")), It.IsAny<string>(), true), Times.Once);
+            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("Hemocode.BadLuckProtectionForGifts.dll")), It.IsAny<string>(), true), Times.Once);
 
             // RetargetHarmony not deployed in mods profile
             _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("RetargetHarmony.dll")), It.IsAny<string>(), true), Times.Never);
@@ -257,7 +257,7 @@ namespace LobotomyPlaywright.Tests.Commands
                     InstallModLoader = true,
                     DeployOverrides = new Dictionary<string, string>
                     {
-                        ["LobotomyCorporationMods.Playwright"] = "plugins/LobotomyCorporationMods.Playwright"
+                        ["LobotomyCorporationMods.Playwright"] = "plugins/Hemocode.Playwright"
                     }
                 }
             };
@@ -270,10 +270,10 @@ namespace LobotomyPlaywright.Tests.Commands
             // Assert
             _ = result.Should().Be(0);
 
-            // Plugin should be deployed to BepInEx/plugins/LobotomyCorporationMods.Playwright, not BaseMods
+            // Plugin should be deployed to BepInEx/plugins/Hemocode.Playwright, not BaseMods
             _mockFileSystem.Verify(f => f.CopyFile(
-                It.Is<string>(s => s.Contains("LobotomyCorporationMods.Playwright.dll")),
-                It.Is<string>(s => s.Contains(Path.Combine("BepInEx", "plugins", "LobotomyCorporationMods.Playwright"))),
+                It.Is<string>(s => s.Contains("Hemocode.Playwright.dll")),
+                It.Is<string>(s => s.Contains(Path.Combine("BepInEx", "plugins", "Hemocode.Playwright"))),
                 true), Times.Once);
 
             // RetargetHarmony should still go to BepInEx/patchers (no override)
@@ -298,8 +298,8 @@ namespace LobotomyPlaywright.Tests.Commands
 
             // Playwright should go to BaseMods (default, no override)
             _mockFileSystem.Verify(f => f.CopyFile(
-                It.Is<string>(s => s.Contains("LobotomyCorporationMods.Playwright.dll")),
-                It.Is<string>(s => s.Contains(Path.Combine("BaseMods", "LobotomyCorporationMods.Playwright"))),
+                It.Is<string>(s => s.Contains("Hemocode.Playwright.dll")),
+                It.Is<string>(s => s.Contains(Path.Combine("BaseMods", "Hemocode.Playwright"))),
                 true), Times.Once);
         }
 
@@ -369,8 +369,8 @@ namespace LobotomyPlaywright.Tests.Commands
             // Arrange
             _ = _mockFileSystem.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
             _ = _mockFileSystem.Setup(f => f.FileExists(It.IsAny<string>())).Returns(true);
-            _ = _mockFileSystem.Setup(f => f.GetFiles(It.IsAny<string>(), "LobotomyCorporationMods.Common.*.dll"))
-                .Returns(["LobotomyCorporationMods.Common.6.0.2.dll"]);
+            _ = _mockFileSystem.Setup(f => f.GetFiles(It.IsAny<string>(), "Hemocode.Common.*.dll"))
+                .Returns(["Hemocode.Common.6.0.2.dll"]);
             _ = _mockProcessRunner.Setup(p => p.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string?, bool>>()))
                 .Returns(0);
 
@@ -383,8 +383,8 @@ namespace LobotomyPlaywright.Tests.Commands
             _mockGameRestorer.Verify(r => r.RestoreFull(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
 
             // All 9 targets deployed
-            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyCorporationMods.Playwright.dll")), It.IsAny<string>(), true), Times.Once);
-            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyCorporationMods.BadLuckProtectionForGifts.dll")), It.IsAny<string>(), true), Times.Once);
+            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("Hemocode.Playwright.dll")), It.IsAny<string>(), true), Times.Once);
+            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("Hemocode.BadLuckProtectionForGifts.dll")), It.IsAny<string>(), true), Times.Once);
         }
 
         private void SetupProfileLoader()
@@ -449,8 +449,8 @@ namespace LobotomyPlaywright.Tests.Commands
         {
             _ = _mockFileSystem.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
             _ = _mockFileSystem.Setup(f => f.FileExists(It.IsAny<string>())).Returns(true);
-            _ = _mockFileSystem.Setup(f => f.GetFiles(It.IsAny<string>(), "LobotomyCorporationMods.Common.*.dll"))
-                .Returns(["LobotomyCorporationMods.Common.6.0.2.dll"]);
+            _ = _mockFileSystem.Setup(f => f.GetFiles(It.IsAny<string>(), "Hemocode.Common.*.dll"))
+                .Returns(["Hemocode.Common.6.0.2.dll"]);
             _ = _mockProcessRunner.Setup(p => p.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string?, bool>>()))
                 .Returns(0);
         }
