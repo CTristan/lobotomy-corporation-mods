@@ -14,6 +14,7 @@ Tracks all planning documents in the repository. Plans are generated via the `/p
 | Draft | ConfigurationManager | [`PLAN-ConfigurationManager.md`](PLAN-ConfigurationManager.md) | 0/27 (0%) | Shared config API in Common + BepInEx-free ConfigurationManager fork as git submodule |
 | Active | DebugPanel Troubleshooting | [`PLAN-DebugPanel.md`](PLAN-DebugPanel.md) | 37/37 (100%) | Filesystem validation, known issues DB, error log detection, dependency checks, tabbed UI overhaul |
 | Draft | AutoFixture + AutoMoq | [`PLAN-AutoFixture.md`](PLAN-AutoFixture.md) | 0/23 (0%) | Adopt AutoFixture + AutoMoq to reduce test boilerplate and enable anonymous test data |
+| Active | Third-Party Mod Testing | [`PLAN-ThirdPartyModTesting.md`](PLAN-ThirdPartyModTesting.md) | 7/7 (100%) | Deploy pre-compiled third-party mods alongside first-party mods for compatibility testing |
 
 \* Tasks complete but manual testing tasks still need to be added.
 

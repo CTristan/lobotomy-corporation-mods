@@ -74,7 +74,8 @@ namespace LobotomyPlaywright
             Console.WriteLine("    lmm                   Game + LMM (Lobotomy Mod Manager)");
             Console.WriteLine("    bepinex               Game + BepInEx");
             Console.WriteLine("    mods                  LMM + all mods (including Playwright)");
-            Console.WriteLine("    all                   Everything (all mods + BepInEx + RetargetHarmony)");
+            Console.WriteLine("    dev                   All first-party mods + BepInEx + RetargetHarmony");
+            Console.WriteLine("    all                   Everything in dev + third-party mods");
             Console.WriteLine("  launch                  Launch game and wait for TCP readiness");
             Console.WriteLine("  status                  Check game status");
             Console.WriteLine("  stop                    Stop the game");

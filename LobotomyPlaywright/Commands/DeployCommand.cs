@@ -30,6 +30,7 @@ namespace LobotomyPlaywright.Commands
     {
         private static readonly string[] s_harmonyInteropDlls = { "0Harmony109.dll", "0Harmony12.dll", "12Harmony.dll" };
         private static readonly string[] s_modContentDirs = { "Info", "Assets", "Localize", "Data" };
+        private const string ThirdPartyModsRelativePath = "external/thirdparty-mods";
 
         private static readonly DeploymentTarget[] s_deploymentTargets =
         [
@@ -315,6 +316,13 @@ namespace LobotomyPlaywright.Commands
 
             var deployInteropDlls = profile?.InstallModLoader != false;
 
+            // Discover third-party mods if profile enables it
+            var thirdPartyMods = new List<(string ModName, string DllPath, string ModDir)>();
+            if (profile?.IncludeThirdPartyMods == true)
+            {
+                thirdPartyMods = DiscoverThirdPartyMods(repoRoot);
+            }
+
             if (dryRun)
             {
                 foreach (var target in targets)
@@ -330,6 +338,15 @@ namespace LobotomyPlaywright.Commands
                     {
                         Console.WriteLine($"  + Common DLL and content directories");
                     }
+                }
+
+                foreach (var (modName, dllPath, _) in thirdPartyMods)
+                {
+                    var destDir = GetDeployDestDir(gamePath, $"BaseMods/{modName}");
+                    Console.WriteLine();
+                    Console.WriteLine($"Would deploy third-party mod {Path.GetFileName(dllPath)} to:");
+                    Console.WriteLine($"  {Path.Combine(destDir, Path.GetFileName(dllPath))}");
+                    Console.WriteLine($"  + content directories (if present)");
                 }
 
                 if (deployInteropDlls)
@@ -370,6 +387,14 @@ namespace LobotomyPlaywright.Commands
                     }
                 }
 
+                // Deploy third-party mods
+                foreach (var (modName, dllPath, modDir) in thirdPartyMods)
+                {
+                    var deploySubdir = $"BaseMods/{modName}";
+                    deployedPaths[modName] = DeployDll(dllPath, gamePath, deploySubdir);
+                    DeployThirdPartyModContent(modDir, gamePath, deploySubdir);
+                }
+
                 Console.WriteLine();
                 Console.WriteLine("".PadRight(60, '='));
                 Console.WriteLine("Deployment Summary");
@@ -379,6 +404,13 @@ namespace LobotomyPlaywright.Commands
                 {
                     var path = deployedPaths[target.ProjectName];
                     Console.WriteLine($"{target.ProjectName}: {path}");
+                    Console.WriteLine($"Size: {_fileSystem.GetFileSize(path):N0} bytes");
+                }
+
+                foreach (var (modName, _, _) in thirdPartyMods)
+                {
+                    var path = deployedPaths[modName];
+                    Console.WriteLine($"[third-party] {modName}: {path}");
                     Console.WriteLine($"Size: {_fileSystem.GetFileSize(path):N0} bytes");
                 }
 
@@ -572,6 +604,58 @@ namespace LobotomyPlaywright.Commands
             }
 
             return Path.Combine(gamePath, "BepInEx", destSubdir);
+        }
+
+        private List<(string ModName, string DllPath, string ModDir)> DiscoverThirdPartyMods(string repoRoot)
+        {
+            var mods = new List<(string ModName, string DllPath, string ModDir)>();
+            var thirdPartyDir = Path.Combine(repoRoot, ThirdPartyModsRelativePath);
+
+            if (!_fileSystem.DirectoryExists(thirdPartyDir))
+            {
+                Console.WriteLine("WARNING: Third-party mods directory not found, skipping: " + thirdPartyDir);
+                return mods;
+            }
+
+            var modDirs = _fileSystem.GetDirectories(thirdPartyDir, "*");
+            foreach (var modDir in modDirs)
+            {
+                var modName = Path.GetFileName(modDir);
+                var dlls = _fileSystem.GetFiles(modDir, "*.dll");
+
+                if (dlls.Length == 0)
+                {
+                    Console.WriteLine($"WARNING: No DLL found in third-party mod folder '{modName}', skipping.");
+                    continue;
+                }
+
+                if (dlls.Length > 1)
+                {
+                    Console.WriteLine($"WARNING: Multiple DLLs found in third-party mod folder '{modName}', skipping.");
+                    continue;
+                }
+
+                mods.Add((modName, dlls[0], modDir));
+                Console.WriteLine($"Discovered third-party mod: {modName} ({Path.GetFileName(dlls[0])})");
+            }
+
+            return mods;
+        }
+
+        private void DeployThirdPartyModContent(string modDir, string gamePath, string destSubdir)
+        {
+            var destDir = GetDeployDestDir(gamePath, destSubdir);
+
+            foreach (var contentDir in s_modContentDirs)
+            {
+                var sourceContentDir = Path.Combine(modDir, contentDir);
+                if (_fileSystem.DirectoryExists(sourceContentDir))
+                {
+                    var destContentDir = Path.Combine(destDir, contentDir);
+                    _fileSystem.CopyDirectory(sourceContentDir, destContentDir, true);
+                    Console.WriteLine($"Deployed: {contentDir}/ -> {destContentDir}");
+                }
+            }
         }
 
         private string? FindRepositoryRoot()

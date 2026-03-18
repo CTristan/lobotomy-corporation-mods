@@ -28,7 +28,7 @@
     "InstallLmm": true,
     "InstallModLoader": false
   },
-  "all": {
+  "dev": {
     "DeployTargets": [
       "LobotomyCorporationMods.BadLuckProtectionForGifts",
       "LobotomyCorporationMods.BugFixes",
@@ -42,5 +42,21 @@
     ],
     "InstallLmm": true,
     "InstallModLoader": true
+  },
+  "all": {
+    "DeployTargets": [
+      "LobotomyCorporationMods.BadLuckProtectionForGifts",
+      "LobotomyCorporationMods.BugFixes",
+      "LobotomyCorporationMods.DebugPanel",
+      "LobotomyCorporationMods.FreeCustomization",
+      "LobotomyCorporationMods.GiftAlertIcon",
+      "LobotomyCorporationMods.NotifyWhenAgentReceivesGift",
+      "LobotomyCorporationMods.Playwright",
+      "LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking",
+      "RetargetHarmony"
+    ],
+    "InstallLmm": true,
+    "InstallModLoader": true,
+    "IncludeThirdPartyMods": true
   }
 }

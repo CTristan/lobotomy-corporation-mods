@@ -30,5 +30,10 @@ namespace LobotomyPlaywright.Interfaces.Configuration
         /// Maps project name to alternate deploy subdirectory (e.g., "plugins/LobotomyPlaywright" for BepInEx-only).
         /// </summary>
         public Dictionary<string, string>? DeployOverrides { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to include third-party mods from external/thirdparty-mods/.
+        /// </summary>
+        public bool IncludeThirdPartyMods { get; set; }
     }
 }

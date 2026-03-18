@@ -414,7 +414,7 @@ namespace LobotomyPlaywright.Tests.Commands
                     InstallLmm = true,
                     InstallModLoader = false
                 },
-                ["all"] = new DeploymentProfile
+                ["dev"] = new DeploymentProfile
                 {
                     DeployTargets = new Collection<string>(
                     [
@@ -426,6 +426,20 @@ namespace LobotomyPlaywright.Tests.Commands
                     ]),
                     InstallLmm = true,
                     InstallModLoader = true
+                },
+                ["all"] = new DeploymentProfile
+                {
+                    DeployTargets = new Collection<string>(
+                    [
+                        "LobotomyCorporationMods.BadLuckProtectionForGifts", "LobotomyCorporationMods.BugFixes",
+                        "LobotomyCorporationMods.DebugPanel", "LobotomyCorporationMods.FreeCustomization",
+                        "LobotomyCorporationMods.GiftAlertIcon", "LobotomyCorporationMods.NotifyWhenAgentReceivesGift",
+                        "LobotomyCorporationMods.Playwright", "LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking",
+                        "RetargetHarmony"
+                    ]),
+                    InstallLmm = true,
+                    InstallModLoader = true,
+                    IncludeThirdPartyMods = true
                 }
             };
             _ = _mockProfileLoader.Setup(p => p.Load()).Returns(profiles);
@@ -440,5 +454,164 @@ namespace LobotomyPlaywright.Tests.Commands
             _ = _mockProcessRunner.Setup(p => p.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string?, bool>>()))
                 .Returns(0);
         }
+
+        private void SetupThirdPartyMods(params (string ModName, string DllName)[] mods)
+        {
+            var thirdPartyDir = Path.Combine(_repoRoot, "external", "thirdparty-mods");
+            _ = _mockFileSystem.Setup(f => f.DirectoryExists(thirdPartyDir)).Returns(true);
+
+            var modDirs = new List<string>();
+            foreach (var (modName, dllName) in mods)
+            {
+                var modDir = Path.Combine(thirdPartyDir, modName);
+                modDirs.Add(modDir);
+                _ = _mockFileSystem.Setup(f => f.GetFiles(modDir, "*.dll"))
+                    .Returns([Path.Combine(modDir, dllName)]);
+            }
+
+            _ = _mockFileSystem.Setup(f => f.GetDirectories(thirdPartyDir, "*"))
+                .Returns(modDirs.ToArray());
+        }
+
+        [Fact]
+        public void Run_with_all_profile_deploys_third_party_mods()
+        {
+            // Arrange
+            SetupProfileLoader();
+            SetupSuccessfulBuildAndDeploy();
+            SetupThirdPartyMods(("SkinTone", "SkinTone.dll"), ("AnotherMod", "AnotherMod.dll"));
+
+            // Act
+            int result = _deployCommand.Run(["--profile", "all"]);
+
+            // Assert
+            _ = result.Should().Be(0);
+
+            // Verify third-party DLLs deployed to BaseMods
+            _mockFileSystem.Verify(f => f.CopyFile(
+                It.Is<string>(s => s.Contains("SkinTone.dll")),
+                It.Is<string>(s => s.Contains(Path.Combine("BaseMods", "SkinTone"))),
+                true), Times.Once);
+            _mockFileSystem.Verify(f => f.CopyFile(
+                It.Is<string>(s => s.Contains("AnotherMod.dll")),
+                It.Is<string>(s => s.Contains(Path.Combine("BaseMods", "AnotherMod"))),
+                true), Times.Once);
+        }
+
+        [Fact]
+        public void Run_with_dev_profile_does_not_deploy_third_party_mods()
+        {
+            // Arrange
+            SetupProfileLoader();
+            SetupSuccessfulBuildAndDeploy();
+            SetupThirdPartyMods(("SkinTone", "SkinTone.dll"));
+
+            // Act
+            int result = _deployCommand.Run(["--profile", "dev"]);
+
+            // Assert
+            _ = result.Should().Be(0);
+
+            // Third-party mod should NOT be deployed
+            _mockFileSystem.Verify(f => f.CopyFile(
+                It.Is<string>(s => s.Contains("SkinTone.dll")),
+                It.IsAny<string>(),
+                true), Times.Never);
+        }
+
+        [Fact]
+        public void Run_with_all_profile_skips_third_party_mod_with_no_dll()
+        {
+            // Arrange
+            SetupProfileLoader();
+            SetupSuccessfulBuildAndDeploy();
+
+            var thirdPartyDir = Path.Combine(_repoRoot, "external", "thirdparty-mods");
+            _ = _mockFileSystem.Setup(f => f.DirectoryExists(thirdPartyDir)).Returns(true);
+
+            var emptyModDir = Path.Combine(thirdPartyDir, "EmptyMod");
+            _ = _mockFileSystem.Setup(f => f.GetDirectories(thirdPartyDir, "*"))
+                .Returns([emptyModDir]);
+            _ = _mockFileSystem.Setup(f => f.GetFiles(emptyModDir, "*.dll"))
+                .Returns([]);
+
+            // Act
+            int result = _deployCommand.Run(["--profile", "all"]);
+
+            // Assert
+            _ = result.Should().Be(0);
+        }
+
+        [Fact]
+        public void Run_with_all_profile_skips_third_party_mod_with_multiple_dlls()
+        {
+            // Arrange
+            SetupProfileLoader();
+            SetupSuccessfulBuildAndDeploy();
+
+            var thirdPartyDir = Path.Combine(_repoRoot, "external", "thirdparty-mods");
+            _ = _mockFileSystem.Setup(f => f.DirectoryExists(thirdPartyDir)).Returns(true);
+
+            var ambiguousModDir = Path.Combine(thirdPartyDir, "AmbiguousMod");
+            _ = _mockFileSystem.Setup(f => f.GetDirectories(thirdPartyDir, "*"))
+                .Returns([ambiguousModDir]);
+            _ = _mockFileSystem.Setup(f => f.GetFiles(ambiguousModDir, "*.dll"))
+                .Returns([Path.Combine(ambiguousModDir, "Mod.dll"), Path.Combine(ambiguousModDir, "ModHelper.dll")]);
+
+            // Act
+            int result = _deployCommand.Run(["--profile", "all"]);
+
+            // Assert
+            _ = result.Should().Be(0);
+
+            // Neither DLL should be deployed
+            _mockFileSystem.Verify(f => f.CopyFile(
+                It.Is<string>(s => s.Contains("Mod.dll")),
+                It.Is<string>(s => s.Contains(Path.Combine("BaseMods", "AmbiguousMod"))),
+                true), Times.Never);
+        }
+
+        [Fact]
+        public void Run_with_all_profile_handles_missing_third_party_directory()
+        {
+            // Arrange
+            SetupProfileLoader();
+            SetupSuccessfulBuildAndDeploy();
+
+            // Third-party directory does NOT exist (default mock behavior returns false)
+
+            // Act
+            int result = _deployCommand.Run(["--profile", "all"]);
+
+            // Assert - should succeed, just no third-party mods deployed
+            _ = result.Should().Be(0);
+        }
+
+        [Fact]
+        public void Run_with_all_profile_deploys_third_party_mod_content_directories()
+        {
+            // Arrange
+            SetupProfileLoader();
+            SetupSuccessfulBuildAndDeploy();
+            SetupThirdPartyMods(("SkinTone", "SkinTone.dll"));
+
+            var skinToneDir = Path.Combine(_repoRoot, "external", "thirdparty-mods", "SkinTone");
+
+            // Info dir exists for this mod
+            _ = _mockFileSystem.Setup(f => f.DirectoryExists(Path.Combine(skinToneDir, "Info"))).Returns(true);
+
+            // Act
+            int result = _deployCommand.Run(["--profile", "all"]);
+
+            // Assert
+            _ = result.Should().Be(0);
+
+            // Verify Info directory was copied
+            _mockFileSystem.Verify(f => f.CopyDirectory(
+                Path.Combine(skinToneDir, "Info"),
+                It.Is<string>(s => s.Contains(Path.Combine("BaseMods", "SkinTone", "Info"))),
+                true), Times.Once);
+        }
     }
 }
+
