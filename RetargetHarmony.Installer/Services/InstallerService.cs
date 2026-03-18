@@ -79,10 +79,12 @@ namespace RetargetHarmony.Installer.Services
             var coreDir = Path.Combine(gamePath, BepInExFolder, CoreFolder);
             _ = Directory.CreateDirectory(coreDir);
 
-            string[] harmonyDlls = ["0Harmony109.dll", "0Harmony12.dll"];
+            string[] harmonyDlls = ["0Harmony109.dll", "0Harmony12.dll", "12Harmony.dll"];
             foreach (var dll in harmonyDlls)
             {
-                var sourceDll = Path.Combine(resourcesPath, dll);
+                // 12Harmony.dll is copied from 0Harmony12.dll (same library, different assembly name)
+                var sourceName = dll == "12Harmony.dll" ? "0Harmony12.dll" : dll;
+                var sourceDll = Path.Combine(resourcesPath, sourceName);
                 if (File.Exists(sourceDll))
                 {
                     var destDll = Path.Combine(coreDir, dll);

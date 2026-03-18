@@ -1143,5 +1143,82 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             clockIndex.Should().BeGreaterThan(-1);
             retargetIndex.Should().BeGreaterThan(clockIndex);
         }
+
+        [Fact]
+        public void FormatForOverlay_includes_gameplay_log_errors()
+        {
+            var gameplayLogErrorReport = new GameplayLogErrorReport(
+                [
+                    new("TestMod v1.0", "TestMod.dll", "Exception thrown", "", "Herror - TestMod v1.0 / TestMod.dllException thrown"),
+                ]);
+            var report = new DiagnosticReport([], [], [],
+                new PatchComparisonResult([], 0, 0),
+                new RetargetHarmonyStatus(false, false, false, "Not detected"),
+                new EnvironmentInfo(false, false, false),
+                new DllIntegrityReport([], false, string.Empty, false, string.Empty, -1, false, 0, [], "No findings"),
+                [], [], DateTime.UtcNow,
+                gameplayLogErrorReport: gameplayLogErrorReport);
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForOverlay(report);
+
+            var linesList = lines.ToList();
+            linesList.Should().Contain(l => l.Contains("Mod Load Errors (1)", StringComparison.Ordinal));
+            linesList.Should().Contain(l => l.Contains("TestMod v1.0", StringComparison.Ordinal));
+        }
+
+        [Fact]
+        public void FormatForLogFile_includes_gameplay_log_errors_section()
+        {
+            var gameplayLogErrorReport = new GameplayLogErrorReport(
+                [
+                    new("TestMod v1.0", "TestMod.dll", "Exception thrown", "  at Method()", "Herror - TestMod v1.0 / TestMod.dllException thrown"),
+                ]);
+            var report = new DiagnosticReport([], [], [],
+                new PatchComparisonResult([], 0, 0),
+                new RetargetHarmonyStatus(false, false, false, "Not detected"),
+                new EnvironmentInfo(false, false, false),
+                new DllIntegrityReport([], false, string.Empty, false, string.Empty, -1, false, 0, [], "No findings"),
+                [], [], DateTime.UtcNow,
+                gameplayLogErrorReport: gameplayLogErrorReport);
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
+
+            var linesList = lines.ToList();
+            linesList.Should().Contain(l => l.Contains("GAMEPLAY LOG ERRORS", StringComparison.Ordinal));
+            linesList.Should().Contain(l => l.Contains("TestMod v1.0", StringComparison.Ordinal));
+            linesList.Should().Contain(l => l.Contains("Exception thrown", StringComparison.Ordinal));
+            linesList.Should().Contain(l => l.Contains("at Method()", StringComparison.Ordinal));
+        }
+
+        [Fact]
+        public void FormatForLogFile_gameplay_log_errors_appears_between_error_logs_and_known_issues()
+        {
+            var report = CreateReport();
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
+
+            var linesList = lines.ToList();
+            var errorLogsIndex = linesList.FindIndex(l => l.Contains("ERROR LOGS", StringComparison.Ordinal));
+            var gameplayIndex = linesList.FindIndex(l => l.Contains("GAMEPLAY LOG ERRORS", StringComparison.Ordinal));
+            var knownIssuesIndex = linesList.FindIndex(l => l.Contains("KNOWN ISSUES", StringComparison.Ordinal));
+            errorLogsIndex.Should().BeGreaterThan(-1);
+            gameplayIndex.Should().BeGreaterThan(errorLogsIndex);
+            knownIssuesIndex.Should().BeGreaterThan(gameplayIndex);
+        }
+
+        [Fact]
+        public void FormatForLogFile_shows_no_gameplay_log_errors_message_when_empty()
+        {
+            var report = CreateReport();
+
+            var formatter = new ReportFormatter();
+            var lines = formatter.FormatForLogFile(report, CreateExternalLogs());
+
+            var linesList = lines.ToList();
+            linesList.Should().Contain(l => l.Contains("No gameplay log errors found", StringComparison.Ordinal));
+        }
     }
 }

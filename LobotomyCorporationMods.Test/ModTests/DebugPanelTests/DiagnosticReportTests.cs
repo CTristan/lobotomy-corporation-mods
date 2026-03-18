@@ -166,6 +166,8 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             report.DependencyReport.Issues.Should().BeEmpty();
             report.AggregatedIssues.Should().NotBeNull();
             report.AggregatedIssues.Should().BeEmpty();
+            report.GameplayLogErrorReport.Should().NotBeNull();
+            report.GameplayLogErrorReport.Entries.Should().BeEmpty();
         }
 
         [Fact]
@@ -188,6 +190,20 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             report.KnownIssuesReport.Should().BeSameAs(knownIssuesReport);
             report.DependencyReport.Should().BeSameAs(dependencyReport);
             report.AggregatedIssues.Should().BeSameAs(aggregatedIssues);
+        }
+
+        [Fact]
+        public void Constructor_stores_gameplay_log_error_report_when_explicitly_provided()
+        {
+            var gameplayLogErrorReport = new GameplayLogErrorReport([]);
+
+            var report = new DiagnosticReport([], [], [],
+                new PatchComparisonResult([], 0, 0),
+                new RetargetHarmonyStatus(false, false, false, ""), new EnvironmentInfo(false, false, false),
+                CreateDefaultDllIntegrityReport(), [], [], DateTime.UtcNow,
+                gameplayLogErrorReport: gameplayLogErrorReport);
+
+            report.GameplayLogErrorReport.Should().BeSameAs(gameplayLogErrorReport);
         }
     }
 }

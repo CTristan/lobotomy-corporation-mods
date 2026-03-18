@@ -137,5 +137,10 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
         {
             return new ExternalLogCollector(_fileSystemScanner);
         }
+
+        public IInfoCollector<GameplayLogErrorReport> CreateGameplayLogErrorCollector()
+        {
+            return new GameplayLogErrorCollector(_fileSystemScanner);
+        }
     }
 }

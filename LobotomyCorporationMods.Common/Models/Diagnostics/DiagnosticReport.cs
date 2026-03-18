@@ -27,7 +27,8 @@ namespace LobotomyCorporationMods.Common.Models.Diagnostics
             ErrorLogReport errorLogReport = null,
             KnownIssuesReport knownIssuesReport = null,
             DependencyReport dependencyReport = null,
-            IList<DiagnosticIssue> aggregatedIssues = null)
+            IList<DiagnosticIssue> aggregatedIssues = null,
+            GameplayLogErrorReport gameplayLogErrorReport = null)
         {
             ThrowHelper.ThrowIfNull(mods);
             Mods = mods;
@@ -53,6 +54,7 @@ namespace LobotomyCorporationMods.Common.Models.Diagnostics
             KnownIssuesReport = knownIssuesReport ?? new KnownIssuesReport(new List<KnownIssueMatch>(), string.Empty);
             DependencyReport = dependencyReport ?? new DependencyReport(new List<DiagnosticIssue>(), string.Empty, false);
             AggregatedIssues = aggregatedIssues ?? new List<DiagnosticIssue>();
+            GameplayLogErrorReport = gameplayLogErrorReport ?? new GameplayLogErrorReport(new List<GameplayLogErrorEntry>());
         }
 
         public IList<DetectedModInfo> Mods { get; private set; }
@@ -84,5 +86,7 @@ namespace LobotomyCorporationMods.Common.Models.Diagnostics
         public DependencyReport DependencyReport { get; private set; }
 
         public IList<DiagnosticIssue> AggregatedIssues { get; private set; }
+
+        public GameplayLogErrorReport GameplayLogErrorReport { get; private set; }
     }
 }

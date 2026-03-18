@@ -82,6 +82,7 @@ namespace RetargetHarmony.Installer.Test.Services
             result.IsSuccess.Should().BeTrue();
             File.Exists(Path.Combine(_gameDir, "BepInEx", "core", "0Harmony109.dll")).Should().BeTrue();
             File.Exists(Path.Combine(_gameDir, "BepInEx", "core", "0Harmony12.dll")).Should().BeTrue();
+            File.Exists(Path.Combine(_gameDir, "BepInEx", "core", "12Harmony.dll")).Should().BeTrue();
         }
 
         [Fact]

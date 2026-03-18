@@ -106,6 +106,7 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             var errorLogReport = CollectErrorLogReportSafe(warnings);
             var knownIssuesReport = CollectKnownIssuesSafe(mods, assemblies, warnings);
             var dependencyReport = CollectDependencyReportSafe(mods, assemblies, warnings);
+            var gameplayLogErrorReport = CollectGameplayLogErrorReportSafe(warnings);
 
             var report = new DiagnosticReport(
                 mods,
@@ -121,7 +122,8 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
                 filesystemValidation,
                 errorLogReport,
                 knownIssuesReport,
-                dependencyReport);
+                dependencyReport,
+                gameplayLogErrorReport: gameplayLogErrorReport);
 
             var aggregatedIssues = AggregateIssuesSafe(report, warnings);
 
@@ -140,7 +142,8 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
                 report.ErrorLogReport,
                 report.KnownIssuesReport,
                 report.DependencyReport,
-                aggregatedIssues);
+                aggregatedIssues,
+                report.GameplayLogErrorReport);
         }
 
         private RetargetHarmonyStatus CollectRetargetHarmonyStatus(IList<string> warnings)
@@ -250,6 +253,20 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
                 warnings.Add("ErrorLogCollector failed: " + ex.Message);
 
                 return new ErrorLogReport(new List<ErrorLogEntry>());
+            }
+        }
+
+        private GameplayLogErrorReport CollectGameplayLogErrorReportSafe(IList<string> warnings)
+        {
+            try
+            {
+                return _collectorFactory.CreateGameplayLogErrorCollector().Collect();
+            }
+            catch (Exception ex)
+            {
+                warnings.Add("GameplayLogErrorCollector failed: " + ex.Message);
+
+                return new GameplayLogErrorReport(new List<GameplayLogErrorEntry>());
             }
         }
 

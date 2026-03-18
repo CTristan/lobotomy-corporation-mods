@@ -93,12 +93,34 @@ namespace RetargetHarmony.Installer.ViewModels
         /// <summary>
         /// Gets a value indicating whether BepInEx is currently installed.
         /// </summary>
-        public bool IsBepInExInstalled { get; private set => SetAndNotify(ref field, value); }
+        public bool IsBepInExInstalled
+        {
+            get;
+            private set
+            {
+                SetAndNotify(ref field, value);
+                OnPropertyChanged(nameof(InstallationStatusText));
+            }
+        }
 
         /// <summary>
         /// Gets a value indicating whether RetargetHarmony is currently installed.
         /// </summary>
-        public bool IsRetargetHarmonyInstalled { get; private set => SetAndNotify(ref field, value); }
+        public bool IsRetargetHarmonyInstalled
+        {
+            get;
+            private set
+            {
+                SetAndNotify(ref field, value);
+                OnPropertyChanged(nameof(InstallationStatusText));
+            }
+        }
+
+        /// <summary>
+        /// Gets a formatted string showing the installation status of BepInEx and RetargetHarmony.
+        /// </summary>
+        public string InstallationStatusText =>
+            $"BepInEx: {IsBepInExInstalled}  |  RetargetHarmony: {IsRetargetHarmonyInstalled}";
 
         /// <summary>
         /// Gets a value indicating whether an operation is in progress.

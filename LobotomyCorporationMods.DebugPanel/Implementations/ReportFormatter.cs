@@ -58,6 +58,16 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
                 AddDiagnosticIssues(lines, report.FilesystemValidation.Issues);
             }
 
+            if (report.GameplayLogErrorReport.Entries.Count > 0)
+            {
+                lines.Add("Mod Load Errors (" + report.GameplayLogErrorReport.Entries.Count + "):");
+                foreach (var entry in report.GameplayLogErrorReport.Entries)
+                {
+                    var label = string.IsNullOrEmpty(entry.ModName) ? entry.RawLine : entry.ModName + " (" + entry.DllName + ")";
+                    lines.Add("  - " + label + ": " + entry.ErrorMessage);
+                }
+            }
+
             if (report.ErrorLogReport.Entries.Count > 0)
             {
                 lines.Add("Error Logs Found (" + report.ErrorLogReport.Entries.Count + "):");
@@ -162,6 +172,10 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
             lines.Add(string.Empty);
             lines.Add("========== ERROR LOGS ==========");
             AddErrorLogs(lines, report.ErrorLogReport);
+
+            lines.Add(string.Empty);
+            lines.Add("========== GAMEPLAY LOG ERRORS ==========");
+            AddGameplayLogErrors(lines, report.GameplayLogErrorReport);
 
             lines.Add(string.Empty);
             lines.Add("========== KNOWN ISSUES ==========");
@@ -540,6 +554,30 @@ namespace LobotomyCorporationMods.DebugPanel.Implementations
                 foreach (var line in contentLines)
                 {
                     lines.Add("    " + line);
+                }
+            }
+        }
+
+        private static void AddGameplayLogErrors(List<string> lines, GameplayLogErrorReport gameplayLogErrorReport)
+        {
+            if (gameplayLogErrorReport.Entries.Count == 0)
+            {
+                lines.Add("  - No gameplay log errors found");
+
+                return;
+            }
+
+            foreach (var entry in gameplayLogErrorReport.Entries)
+            {
+                var label = string.IsNullOrEmpty(entry.ModName) ? entry.RawLine : entry.ModName + " (" + entry.DllName + ")";
+                lines.Add("  [Error] " + label + ": " + entry.ErrorMessage);
+                if (!string.IsNullOrEmpty(entry.StackTrace))
+                {
+                    var stackLines = entry.StackTrace.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
+                    foreach (var stackLine in stackLines)
+                    {
+                        lines.Add("    " + stackLine);
+                    }
                 }
             }
         }

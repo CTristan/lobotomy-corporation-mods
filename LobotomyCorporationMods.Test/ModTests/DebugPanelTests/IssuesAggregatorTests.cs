@@ -162,8 +162,102 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             var result = aggregator.AggregateIssues(report);
 
             result.Should().HaveCount(1);
-            result[0].Severity.Should().Be(FindingSeverity.Warning);
+            result[0].Severity.Should().Be(FindingSeverity.Error);
             result[0].Description.Should().Contain("Herror.txt");
+            result[0].Description.Should().Contain("some error");
+        }
+
+        [Fact]
+        public void AggregateIssues_error_log_entries_include_known_file_origin_fix_suggestions()
+        {
+            var aggregator = new IssuesAggregator();
+            var errorLogReport = new ErrorLogReport(
+                [
+                    new("LMMerror.txt", "map load failed", "/path/LMMerror.txt"),
+                    new("LTDerror.txt", "locale error", "/path/LTDerror.txt"),
+                    new("Glerror.txt", "global error", "/path/Glerror.txt"),
+                    new("DPerror.txt", "deploy error", "/path/DPerror.txt"),
+                    new("DllError.txt", "dll error", "/path/DllError.txt"),
+                ]);
+            var report = new DiagnosticReport(
+                [],
+                [],
+                [],
+                new PatchComparisonResult([], 0, 0),
+                new RetargetHarmonyStatus(false, false, false, "Not detected"),
+                new EnvironmentInfo(false, false, false),
+                new DllIntegrityReport([], false, string.Empty, false, string.Empty, -1, false, 0, [], "No findings"),
+                [],
+                [],
+                DateTime.UtcNow,
+                errorLogReport: errorLogReport);
+
+            var result = aggregator.AggregateIssues(report);
+
+            result.Should().HaveCount(5);
+            result[0].FixSuggestion.Should().Contain("Map/graph loading error");
+            result[1].FixSuggestion.Should().Contain("Localization data loading error");
+            result[2].FixSuggestion.Should().Contain("Global game manager error");
+            result[3].FixSuggestion.Should().Contain("Deploy UI error");
+            result[4].FixSuggestion.Should().Contain("Check").And.NotContain("Map/graph");
+        }
+
+        [Fact]
+        public void AggregateIssues_converts_gameplay_log_errors()
+        {
+            var aggregator = new IssuesAggregator();
+            var gameplayLogErrorReport = new GameplayLogErrorReport(
+                [
+                    new("TestMod v1.0", "TestMod.dll", "Exception thrown", "", "Herror - TestMod v1.0 / TestMod.dllException thrown"),
+                ]);
+            var report = new DiagnosticReport(
+                [],
+                [],
+                [],
+                new PatchComparisonResult([], 0, 0),
+                new RetargetHarmonyStatus(false, false, false, "Not detected"),
+                new EnvironmentInfo(false, false, false),
+                new DllIntegrityReport([], false, string.Empty, false, string.Empty, -1, false, 0, [], "No findings"),
+                [],
+                [],
+                DateTime.UtcNow,
+                gameplayLogErrorReport: gameplayLogErrorReport);
+
+            var result = aggregator.AggregateIssues(report);
+
+            result.Should().HaveCount(1);
+            result[0].Severity.Should().Be(FindingSeverity.Error);
+            result[0].Category.Should().Be("Mod Load Error");
+            result[0].Description.Should().Contain("TestMod v1.0");
+            result[0].Description.Should().Contain("Exception thrown");
+            result[0].SourceTab.Should().Be("Mods");
+        }
+
+        [Fact]
+        public void AggregateIssues_gameplay_log_error_uses_raw_line_when_mod_name_empty()
+        {
+            var aggregator = new IssuesAggregator();
+            var gameplayLogErrorReport = new GameplayLogErrorReport(
+                [
+                    new("", "", "some raw error", "", "Herror - some raw error"),
+                ]);
+            var report = new DiagnosticReport(
+                [],
+                [],
+                [],
+                new PatchComparisonResult([], 0, 0),
+                new RetargetHarmonyStatus(false, false, false, "Not detected"),
+                new EnvironmentInfo(false, false, false),
+                new DllIntegrityReport([], false, string.Empty, false, string.Empty, -1, false, 0, [], "No findings"),
+                [],
+                [],
+                DateTime.UtcNow,
+                gameplayLogErrorReport: gameplayLogErrorReport);
+
+            var result = aggregator.AggregateIssues(report);
+
+            result.Should().HaveCount(1);
+            result[0].Description.Should().Contain("Herror - some raw error");
         }
 
         [Fact]

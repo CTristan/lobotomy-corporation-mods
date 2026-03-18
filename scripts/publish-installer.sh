@@ -86,18 +86,16 @@ validate_prerequisites() {
 }
 
 build_retarget_harmony() {
-    info "Building RetargetHarmony (Release)..."
-    dotnet build "$RETARGET_PROJECT" -c Release --verbosity quiet
+    info "Building RetargetHarmony..."
+    dotnet build "$RETARGET_PROJECT" --verbosity quiet
 
-    local dll="$REPO_ROOT/RetargetHarmony/bin/Release/net35/RetargetHarmony.dll"
+    local dll="$REPO_ROOT/RetargetHarmony/bin/net35/RetargetHarmony.dll"
     if [ ! -f "$dll" ]; then
         error "RetargetHarmony.dll not found at expected path: $dll"
         exit 1
     fi
 
-    info "Copying RetargetHarmony.dll to installer resources..."
-    cp "$dll" "$RESOURCES_DIR/RetargetHarmony.dll"
-    success "RetargetHarmony.dll staged"
+    success "RetargetHarmony.dll built"
 }
 
 publish_platform() {

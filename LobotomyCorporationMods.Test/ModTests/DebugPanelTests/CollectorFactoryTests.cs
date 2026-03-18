@@ -360,5 +360,15 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
 
             collector.Should().NotBeNull();
         }
+
+        [Fact]
+        public void CreateGameplayLogErrorCollector_returns_collector()
+        {
+            var factory = CreateFactory();
+
+            var collector = factory.CreateGameplayLogErrorCollector();
+
+            collector.Should().NotBeNull();
+        }
     }
 }

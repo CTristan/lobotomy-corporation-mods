@@ -32,6 +32,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         private readonly Mock<IInfoCollector<ErrorLogReport>> _mockErrorLogCollector;
         private readonly Mock<IInfoCollector<KnownIssuesReport>> _mockKnownIssuesChecker;
         private readonly Mock<IInfoCollector<DependencyReport>> _mockDependencyChecker;
+        private readonly Mock<IInfoCollector<GameplayLogErrorReport>> _mockGameplayLogErrorCollector;
         private readonly Mock<IHarmonyVersionClassifier> _mockClassifier;
 
         public DiagnosticReportBuilderTests()
@@ -50,6 +51,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             _mockErrorLogCollector = new Mock<IInfoCollector<ErrorLogReport>>();
             _mockKnownIssuesChecker = new Mock<IInfoCollector<KnownIssuesReport>>();
             _mockDependencyChecker = new Mock<IInfoCollector<DependencyReport>>();
+            _mockGameplayLogErrorCollector = new Mock<IInfoCollector<GameplayLogErrorReport>>();
 
             _mockFactory.Setup(f => f.CreateActivePatchCollector(It.IsAny<IList<string>>())).Returns(_mockPatchCollector.Object);
             _mockFactory.Setup(f => f.CreateBaseModCollector(It.IsAny<IList<string>>())).Returns(_mockBaseModCollector.Object);
@@ -62,6 +64,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             _mockFactory.Setup(f => f.CreateErrorLogCollector()).Returns(_mockErrorLogCollector.Object);
             _mockFactory.Setup(f => f.CreateKnownIssuesChecker(It.IsAny<IList<DetectedModInfo>>(), It.IsAny<IList<AssemblyInfo>>())).Returns(_mockKnownIssuesChecker.Object);
             _mockFactory.Setup(f => f.CreateDependencyChecker(It.IsAny<IList<DetectedModInfo>>(), It.IsAny<IList<AssemblyInfo>>())).Returns(_mockDependencyChecker.Object);
+            _mockFactory.Setup(f => f.CreateGameplayLogErrorCollector()).Returns(_mockGameplayLogErrorCollector.Object);
 
             _mockPatchCollector.Setup(c => c.Collect()).Returns([]);
             _mockBaseModCollector.Setup(c => c.Collect()).Returns([]);
@@ -75,6 +78,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             _mockErrorLogCollector.Setup(c => c.Collect()).Returns(new ErrorLogReport([]));
             _mockKnownIssuesChecker.Setup(c => c.Collect()).Returns(new KnownIssuesReport([], string.Empty));
             _mockDependencyChecker.Setup(c => c.Collect()).Returns(new DependencyReport([], string.Empty, false));
+            _mockGameplayLogErrorCollector.Setup(c => c.Collect()).Returns(new GameplayLogErrorReport([]));
             _mockClassifier.Setup(c => c.Classify(It.IsAny<IList<AssemblyName>>())).Returns(HarmonyVersion.Unknown);
         }
 
@@ -749,6 +753,34 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
 
             report.Warnings.Should().Contain(w => w.Contains("DependencyChecker failed") && w.Contains("dep error"));
             report.DependencyReport.Issues.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void BuildReport_collects_gameplay_log_error_report()
+        {
+            var gameplayLogErrorReport = new GameplayLogErrorReport(
+                [
+                    new("TestMod", "TestMod.dll", "Error", "", "Herror - TestMod / TestMod.dllError"),
+                ]);
+            _mockGameplayLogErrorCollector.Setup(c => c.Collect()).Returns(gameplayLogErrorReport);
+
+            var builder = CreateBuilder();
+            var report = builder.BuildReport();
+
+            report.GameplayLogErrorReport.Should().BeSameAs(gameplayLogErrorReport);
+            report.GameplayLogErrorReport.Entries.Should().HaveCount(1);
+        }
+
+        [Fact]
+        public void BuildReport_captures_gameplay_log_error_collector_failure_as_warning()
+        {
+            _mockGameplayLogErrorCollector.Setup(c => c.Collect()).Throws(new InvalidOperationException("log error"));
+
+            var builder = CreateBuilder();
+            var report = builder.BuildReport();
+
+            report.Warnings.Should().Contain(w => w.Contains("GameplayLogErrorCollector failed") && w.Contains("log error"));
+            report.GameplayLogErrorReport.Entries.Should().BeEmpty();
         }
     }
 }

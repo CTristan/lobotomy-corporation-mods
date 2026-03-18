@@ -34,5 +34,7 @@ namespace LobotomyCorporationMods.DebugPanel.Interfaces
         IInfoCollector<DependencyReport> CreateDependencyChecker(IList<DetectedModInfo> mods, IList<AssemblyInfo> assemblies);
 
         IInfoCollector<ExternalLogData> CreateExternalLogCollector();
+
+        IInfoCollector<GameplayLogErrorReport> CreateGameplayLogErrorCollector();
     }
 }

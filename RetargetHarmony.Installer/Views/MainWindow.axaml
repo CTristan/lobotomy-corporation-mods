@@ -1,8 +1,10 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:RetargetHarmony.Installer.ViewModels"
+        xmlns:iface="using:RetargetHarmony.Installer.Interfaces"
         x:Class="RetargetHarmony.Installer.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
+        x:CompileBindings="True"
         Title="RetargetHarmony Installer"
         Width="700"
         Height="650"
@@ -95,7 +97,7 @@
                        Foreground="#c0a0a0" />
             <ItemsControl ItemsSource="{Binding FlaggedMods}" Margin="8,4,0,0">
               <ItemsControl.ItemTemplate>
-                <DataTemplate>
+                <DataTemplate x:DataType="iface:FlaggedMod">
                   <StackPanel Orientation="Horizontal" Spacing="8">
                     <TextBlock Text="{Binding FileName}"
                                Foreground="#e0e0e0"
@@ -125,14 +127,8 @@
         </Grid>
 
         <StackPanel Spacing="2" IsVisible="{Binding IsPathValid}">
-          <TextBlock FontSize="12" Foreground="#808080" HorizontalAlignment="Center">
-            <TextBlock.Text>
-              <MultiBinding StringFormat="BepInEx: {0}  |  RetargetHarmony: {1}">
-                <Binding Path="IsBepInExInstalled" />
-                <Binding Path="IsRetargetHarmonyInstalled" />
-              </MultiBinding>
-            </TextBlock.Text>
-          </TextBlock>
+          <TextBlock Text="{Binding InstallationStatusText}"
+                     FontSize="12" Foreground="#808080" HorizontalAlignment="Center" />
         </StackPanel>
       </StackPanel>
     </Border>

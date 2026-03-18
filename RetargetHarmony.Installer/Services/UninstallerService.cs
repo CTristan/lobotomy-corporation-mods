@@ -96,7 +96,7 @@ namespace RetargetHarmony.Installer.Services
         private static void RemoveHarmonyInteropDlls(string gamePath, List<string> filesRemoved)
         {
             var coreDir = Path.Combine(gamePath, BepInExFolder, CoreFolder);
-            string[] harmonyDlls = ["0Harmony109.dll", "0Harmony12.dll"];
+            string[] harmonyDlls = ["0Harmony109.dll", "0Harmony12.dll", "12Harmony.dll"];
 
             foreach (var dll in harmonyDlls)
             {

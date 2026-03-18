@@ -4,6 +4,8 @@
     <OutputType>WinExe</OutputType>
     <Nullable>enable</Nullable>
     <ProjectGuid>{E5F6A7B8-1C2D-3E4F-5A6B-7C8D9E0F1A2B}</ProjectGuid>
+    <!-- IL2026: COM interop trim warning from runtime; IL2104: Mono.Cecil trim warnings (third-party) -->
+    <NoWarn>$(NoWarn);IL2026;IL2104</NoWarn>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
@@ -30,8 +32,7 @@
     <Content Include="..\RetargetHarmony\lib\0Harmony12.dll" Link="Resources\0Harmony12.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <!-- Staged by scripts/publish-installer.sh from RetargetHarmony Release build output -->
-    <Content Include="Resources\RetargetHarmony.dll" Condition="Exists('Resources\RetargetHarmony.dll')" Link="Resources\RetargetHarmony.dll">
+    <Content Include="..\RetargetHarmony\bin\net35\RetargetHarmony.dll" Link="Resources\RetargetHarmony.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

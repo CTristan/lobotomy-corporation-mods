@@ -59,12 +59,14 @@ namespace RetargetHarmony.Installer.Test.Services
             Directory.CreateDirectory(coreDir);
             File.WriteAllBytes(Path.Combine(coreDir, "0Harmony109.dll"), [0]);
             File.WriteAllBytes(Path.Combine(coreDir, "0Harmony12.dll"), [0]);
+            File.WriteAllBytes(Path.Combine(coreDir, "12Harmony.dll"), [0]);
 
             var result = _service.Uninstall(_gameDir, removeBaseMods: false);
 
             result.IsSuccess.Should().BeTrue();
             File.Exists(Path.Combine(coreDir, "0Harmony109.dll")).Should().BeFalse();
             File.Exists(Path.Combine(coreDir, "0Harmony12.dll")).Should().BeFalse();
+            File.Exists(Path.Combine(coreDir, "12Harmony.dll")).Should().BeFalse();
         }
 
         [Fact]
