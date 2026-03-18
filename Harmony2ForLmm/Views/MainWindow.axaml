@@ -1,0 +1,169 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Harmony2ForLmm.ViewModels"
+        xmlns:iface="using:Harmony2ForLmm.Interfaces"
+        x:Class="Harmony2ForLmm.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        x:CompileBindings="True"
+        Title="Harmony 2 for LMM"
+        Width="700"
+        Height="650"
+        MinWidth="600"
+        MinHeight="500"
+        WindowStartupLocation="CenterScreen">
+
+  <Design.DataContext>
+    <vm:MainWindowViewModel />
+  </Design.DataContext>
+
+  <DockPanel Margin="24">
+
+    <!-- Title -->
+    <StackPanel DockPanel.Dock="Top" Margin="0,0,0,16">
+      <TextBlock Text="Harmony 2 for LMM"
+                 FontSize="28"
+                 FontWeight="Bold"
+                 Foreground="#d4a017"
+                 HorizontalAlignment="Center" />
+      <TextBlock Text="BepInEx 5 + Harmony 2 Interop for Lobotomy Corporation"
+                 FontSize="13"
+                 Foreground="#808080"
+                 HorizontalAlignment="Center"
+                 Margin="0,4,0,0" />
+    </StackPanel>
+
+    <Separator DockPanel.Dock="Top" />
+
+    <!-- Game Path Section -->
+    <Border DockPanel.Dock="Top" Classes="panel" Margin="0,0,0,16">
+      <StackPanel Spacing="8">
+        <TextBlock Text="Game Directory" Classes="header" />
+
+        <DockPanel>
+          <Button DockPanel.Dock="Right"
+                  Content="Browse..."
+                  Classes="secondary"
+                  Margin="8,0,0,0"
+                  Click="BrowseButton_Click" />
+          <Button DockPanel.Dock="Right"
+                  Content="Auto-Detect"
+                  Classes="secondary"
+                  Margin="8,0,0,0"
+                  Command="{Binding AutoDetectCommand}" />
+          <TextBox Text="{Binding GamePath}"
+                   Watermark="Enter or browse for Lobotomy Corporation installation path..." />
+        </DockPanel>
+
+        <!-- Validation -->
+        <TextBlock Text="{Binding ValidationMessage}"
+                   Classes.valid="{Binding IsPathValid}"
+                   Classes.invalid="{Binding !IsPathValid}"
+                   FontSize="12" />
+
+        <!-- Installation status is shown in the actions panel below -->
+      </StackPanel>
+    </Border>
+
+    <!-- Status bar at bottom -->
+    <Border DockPanel.Dock="Bottom" Margin="0,16,0,0">
+      <TextBlock Text="{Binding StatusMessage}"
+                 Classes="status"
+                 TextWrapping="Wrap" />
+    </Border>
+
+    <!-- Result details -->
+    <TextBox DockPanel.Dock="Bottom"
+             Text="{Binding ResultDetails}"
+             Classes="log"
+             Height="150"
+             Margin="0,8,0,0"
+             IsVisible="{Binding ResultDetails, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+
+    <!-- Action Buttons -->
+    <Border Classes="panel">
+      <StackPanel Spacing="16">
+        <TextBlock Text="Actions" Classes="header" />
+
+        <!-- Version info -->
+        <TextBlock Text="{Binding VersionInfoText}"
+                   FontSize="12"
+                   Foreground="#808080"
+                   HorizontalAlignment="Center"
+                   IsVisible="{Binding VersionInfoText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+
+        <!-- Version warning (Newer state) -->
+        <Border Classes="warning"
+                IsVisible="{Binding ShowVersionWarning}">
+          <TextBlock Text="Warning: A newer version is currently installed. Proceeding will downgrade."
+                     TextWrapping="Wrap"
+                     FontWeight="Bold"
+                     Foreground="#d44017" />
+        </Border>
+
+        <!-- Missing files list (Corrupted state) -->
+        <Border Classes="warning"
+                IsVisible="{Binding MissingFiles.Count}">
+          <StackPanel Spacing="4">
+            <TextBlock Text="Installation is corrupted — missing files detected:"
+                       FontWeight="Bold"
+                       Foreground="#d44017" />
+            <ItemsControl ItemsSource="{Binding MissingFiles}" Margin="8,4,0,0">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="x:String">
+                  <TextBlock Text="{Binding}"
+                             Foreground="#c0a0a0"
+                             FontSize="12" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </Border>
+
+        <!-- Flagged mods warning -->
+        <Border Classes="warning"
+                IsVisible="{Binding FlaggedMods.Count}">
+          <StackPanel Spacing="4">
+            <TextBlock Text="Warning: Dependent mods detected"
+                       FontWeight="Bold"
+                       Foreground="#d44017" />
+            <TextBlock Text="The following BaseMods reference BepInEx or Harmony 2+ and will stop working if you uninstall:"
+                       TextWrapping="Wrap"
+                       FontSize="12"
+                       Foreground="#c0a0a0" />
+            <ItemsControl ItemsSource="{Binding FlaggedMods}" Margin="8,4,0,0">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="iface:FlaggedMod">
+                  <StackPanel Orientation="Horizontal" Spacing="8">
+                    <TextBlock Text="{Binding FileName}"
+                               Foreground="#e0e0e0"
+                               FontSize="12" />
+                    <TextBlock Text="{Binding ReferencedAssembly}"
+                               Foreground="#808080"
+                               FontSize="11" />
+                  </StackPanel>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </Border>
+
+        <!-- Primary action + Uninstall buttons -->
+        <Grid ColumnDefinitions="*,16,*">
+          <Button Grid.Column="0"
+                  Content="{Binding PrimaryActionLabel}"
+                  Classes="accent"
+                  Command="{Binding PrimaryActionCommand}"
+                  HorizontalAlignment="Stretch" />
+          <Button Grid.Column="2"
+                  Content="Uninstall"
+                  Classes="danger"
+                  Command="{Binding UninstallCommand}"
+                  IsVisible="{Binding ShowUninstallAction}"
+                  HorizontalAlignment="Stretch" />
+        </Grid>
+
+      </StackPanel>
+    </Border>
+
+  </DockPanel>
+</Window>

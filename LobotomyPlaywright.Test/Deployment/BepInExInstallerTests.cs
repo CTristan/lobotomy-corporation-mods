@@ -13,7 +13,7 @@ namespace LobotomyPlaywright.Tests.Deployment
         private readonly Mock<IFileSystem> _mockFileSystem;
         private readonly BepInExInstaller _bepInExInstaller;
         private readonly string _gamePath = "/test/game/path";
-        private readonly string _sourcePath = "/test/repo/RetargetHarmony.Installer/Resources/bepinex";
+        private readonly string _sourcePath = "/test/repo/Harmony2ForLmm/Resources/bepinex";
 
         public BepInExInstallerTests()
         {

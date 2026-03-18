@@ -1,9 +1,0 @@
-<Application xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="RetargetHarmony.Installer.App"
-             RequestedThemeVariant="Dark">
-  <Application.Styles>
-    <FluentTheme />
-    <StyleInclude Source="avares://RetargetHarmony.Installer/Themes/LobotomyTheme.axaml" />
-  </Application.Styles>
-</Application>

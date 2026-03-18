@@ -63,9 +63,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LobotomyPlaywright", "Lobot
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LobotomyPlaywright.Test", "LobotomyPlaywright.Test\LobotomyPlaywright.Test.csproj", "{B3C4D5E6-F7A8-9B0C-1D2E-3F4A5B6C7D8E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RetargetHarmony.Installer", "RetargetHarmony.Installer\RetargetHarmony.Installer.csproj", "{E5F6A7B8-1C2D-3E4F-5A6B-7C8D9E0F1A2B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Harmony2ForLmm", "Harmony2ForLmm\Harmony2ForLmm.csproj", "{E5F6A7B8-1C2D-3E4F-5A6B-7C8D9E0F1A2B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RetargetHarmony.Installer.Test", "RetargetHarmony.Installer.Test\RetargetHarmony.Installer.Test.csproj", "{F6A7B8C9-2D3E-4F5A-6B7C-8D9E0F1A2B3C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Harmony2ForLmm.Test", "Harmony2ForLmm.Test\Harmony2ForLmm.Test.csproj", "{F6A7B8C9-2D3E-4F5A-6B7C-8D9E0F1A2B3C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LobotomyCorporationMods.DebugPanel", "LobotomyCorporationMods.DebugPanel\LobotomyCorporationMods.DebugPanel.csproj", "{A1B2C3D4-E5F6-7A8B-9C0D-1E2F3A4B5C6E}"
 EndProject

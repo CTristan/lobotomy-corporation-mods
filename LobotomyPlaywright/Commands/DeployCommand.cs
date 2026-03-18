@@ -217,7 +217,7 @@ namespace LobotomyPlaywright.Commands
 
                         if (profile.InstallModLoader)
                         {
-                            var bepInExSourcePath = Path.Combine(repoRoot, "RetargetHarmony.Installer", "Resources", "bepinex");
+                            var bepInExSourcePath = Path.Combine(repoRoot, "Harmony2ForLmm", "Resources", "bepinex");
                             _bepInExInstaller.Install(gamePath, bepInExSourcePath);
                         }
                     }

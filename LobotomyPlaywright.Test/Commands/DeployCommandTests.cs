@@ -204,7 +204,7 @@ namespace LobotomyPlaywright.Tests.Commands
 
             // Assert
             _ = result.Should().Be(0);
-            _mockBepInExInstaller.Verify(i => i.Install(_gamePath, Path.Combine(_repoRoot, "RetargetHarmony.Installer", "Resources", "bepinex")), Times.Once);
+            _mockBepInExInstaller.Verify(i => i.Install(_gamePath, Path.Combine(_repoRoot, "Harmony2ForLmm", "Resources", "bepinex")), Times.Once);
             _mockLmmInstaller.Verify(i => i.Install(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         }
 

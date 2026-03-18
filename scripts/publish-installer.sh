@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: MIT
 #
-# Builds and publishes the RetargetHarmony Installer for distribution.
+# Builds and publishes the Harmony 2 for LMM installer for distribution.
 #
 # Usage:
 #   ./scripts/publish-installer.sh              # Publish all platforms
@@ -9,7 +9,7 @@
 #   ./scripts/publish-installer.sh --list       # List available platforms
 #
 # Prerequisites:
-#   - BepInEx 5 files must be in RetargetHarmony.Installer/Resources/bepinex/
+#   - BepInEx 5 files must be in Harmony2ForLmm/Resources/bepinex/
 #   - .NET SDK must be installed
 
 set -euo pipefail
@@ -24,10 +24,10 @@ NC='\033[0m' # No Color
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-INSTALLER_PROJECT="$REPO_ROOT/RetargetHarmony.Installer/RetargetHarmony.Installer.csproj"
+INSTALLER_PROJECT="$REPO_ROOT/Harmony2ForLmm/Harmony2ForLmm.csproj"
 RETARGET_PROJECT="$REPO_ROOT/RetargetHarmony/RetargetHarmony.csproj"
-RESOURCES_DIR="$REPO_ROOT/RetargetHarmony.Installer/Resources"
-PUBLISH_DIR="$REPO_ROOT/RetargetHarmony.Installer/bin/publish"
+RESOURCES_DIR="$REPO_ROOT/Harmony2ForLmm/Resources"
+PUBLISH_DIR="$REPO_ROOT/Harmony2ForLmm/bin/publish"
 
 ALL_PLATFORMS="win-x64 win-x86 linux-x64 osx-x64 osx-arm64"
 SELF_CONTAINED_PLATFORMS="win-x64 win-x86"
