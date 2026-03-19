@@ -332,8 +332,10 @@ PatchBaseMods = false
             var changed = false;
 
             // 1) Find all Harmony references (both old and potentially already retargeted)
+            // Skip 0Harmony references with Version.Major >= 2 — those are HarmonyX (Harmony 2.x)
+            // and should NOT be retargeted to the Harmony 1.x shim (0Harmony109).
             List<AssemblyNameReference> harmonyRefs = refs.Where(r =>
-                r.Name == "0Harmony" ||
+                (r.Name == "0Harmony" && r.Version.Major < 2) ||
                 r.Name == "0Harmony109" ||
                 r.Name == "12Harmony" ||
                 r.Name == "0Harmony12").ToList();

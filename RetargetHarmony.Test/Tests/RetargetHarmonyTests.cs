@@ -455,6 +455,32 @@ namespace RetargetHarmony.Test.Tests
         }
 
         [Fact]
+        public void OnAssemblyLoadFile_PassesThrough_WhenHarmony2xReference()
+        {
+            var tempDir = Path.Combine(Path.GetTempPath(), "RetargetHarmonyTest_Harmony2x_" + Guid.NewGuid().ToString("N"));
+            _ = Directory.CreateDirectory(tempDir);
+
+            try
+            {
+                BaseModsPathOverride = tempDir;
+
+                var dllPath = Path.Combine(tempDir, "TestMod.dll");
+                WriteSyntheticAssemblyToDiskWithVersion(dllPath, new Version(2, 9, 0, 0), "0Harmony");
+
+                Assembly? result = null;
+                var shouldRunOriginal = OnAssemblyLoadFile(ref result, dllPath);
+
+                _ = shouldRunOriginal.Should().BeTrue("prefix should pass through for Harmony 2.x references");
+                _ = result.Should().BeNull("prefix should not set result when passing through");
+            }
+            finally
+            {
+                BaseModsPathOverride = null;
+                Directory.Delete(tempDir, true);
+            }
+        }
+
+        [Fact]
         public void OnAssemblyLoadFile_PassesThrough_WhenAlreadyRetargeted()
         {
             var tempDir = Path.Combine(Path.GetTempPath(), "RetargetHarmonyTest_Already_" + Guid.NewGuid().ToString("N"));
@@ -498,6 +524,37 @@ namespace RetargetHarmony.Test.Tests
             {
                 PatchBaseModsOverride = false;
             }
+        }
+
+        [Fact]
+        public void RetargetHarmonyReferences_SkipsHarmony2x_WhenVersionMajorIsTwo()
+        {
+            using var assemblyDefinition = CreateSyntheticAssemblyWithVersion(new Version(2, 9, 0, 0), "0Harmony");
+
+            var changed = RetargetHarmonyReferences(assemblyDefinition);
+
+            _ = changed.Should().BeFalse("Harmony 2.x references should not be retargeted");
+            var refs = assemblyDefinition.MainModule.AssemblyReferences.Where(r => r.Name == "0Harmony").ToList();
+            _ = refs.Should().HaveCount(1, "the original 0Harmony reference should be preserved");
+            _ = refs[0].Version.Major.Should().Be(2, "the version should remain unchanged");
+        }
+
+        [Fact]
+        public void RetargetHarmonyReferences_RetargetsHarmony1x_ButSkipsHarmony2x()
+        {
+            using var assemblyDefinition = CreateSyntheticAssemblyWithVersion(new Version(1, 0, 0, 0), "mscorlib");
+            // Add a Harmony 1.x reference
+            assemblyDefinition.MainModule.AssemblyReferences.Add(new AssemblyNameReference("0Harmony", new Version(1, 0, 9, 1)));
+            // Add a Harmony 2.x reference (e.g., a BepInEx plugin using HarmonyX)
+            assemblyDefinition.MainModule.AssemblyReferences.Add(new AssemblyNameReference("0Harmony", new Version(2, 9, 0, 0)));
+
+            var changed = RetargetHarmonyReferences(assemblyDefinition);
+
+            _ = changed.Should().BeTrue("the Harmony 1.x reference should be retargeted");
+            var harmony109Refs = assemblyDefinition.MainModule.AssemblyReferences.Where(r => r.Name == "0Harmony109").ToList();
+            _ = harmony109Refs.Should().HaveCount(1, "Harmony 1.x should be retargeted to 0Harmony109");
+            var harmony2Refs = assemblyDefinition.MainModule.AssemblyReferences.Where(r => r.Name == "0Harmony" && r.Version.Major == 2).ToList();
+            _ = harmony2Refs.Should().HaveCount(1, "Harmony 2.x reference should be preserved");
         }
 
         [Fact]
@@ -559,12 +616,17 @@ namespace RetargetHarmony.Test.Tests
 
         private static AssemblyDefinition CreateSyntheticAssembly(params string[] referencedAssemblies)
         {
+            return CreateSyntheticAssemblyWithVersion(new Version(1, 0, 0, 0), referencedAssemblies);
+        }
+
+        private static AssemblyDefinition CreateSyntheticAssemblyWithVersion(Version version, params string[] referencedAssemblies)
+        {
             AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(GetManagedAssemblyPath("Assembly-CSharp.dll"));
             assembly.MainModule.AssemblyReferences.Clear();
 
             foreach (var refName in referencedAssemblies)
             {
-                AssemblyNameReference reference = new(refName, new Version(1, 0, 0, 0));
+                AssemblyNameReference reference = new(refName, version);
                 assembly.MainModule.AssemblyReferences.Add(reference);
             }
 
@@ -577,7 +639,12 @@ namespace RetargetHarmony.Test.Tests
         /// </summary>
         private static void WriteSyntheticAssemblyToDisk(string filePath, params string[] referencedAssemblies)
         {
-            using var assembly = CreateSyntheticAssembly(referencedAssemblies);
+            WriteSyntheticAssemblyToDiskWithVersion(filePath, new Version(1, 0, 0, 0), referencedAssemblies);
+        }
+
+        private static void WriteSyntheticAssemblyToDiskWithVersion(string filePath, Version version, params string[] referencedAssemblies)
+        {
+            using var assembly = CreateSyntheticAssemblyWithVersion(version, referencedAssemblies);
             // Clear all types to avoid resolution errors when writing
             assembly.MainModule.Types.Clear();
             assembly.Write(filePath);
