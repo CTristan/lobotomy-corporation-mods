@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <OutputType>WinExe</OutputType>
+    <AssemblyVersion>0.0.1.0</AssemblyVersion>
     <Nullable>enable</Nullable>
     <ProjectGuid>{E5F6A7B8-1C2D-3E4F-5A6B-7C8D9E0F1A2B}</ProjectGuid>
     <!-- IL2026: COM interop trim warning from runtime; IL2104: Mono.Cecil trim warnings (third-party) -->

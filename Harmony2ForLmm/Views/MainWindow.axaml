@@ -7,9 +7,9 @@
         x:CompileBindings="True"
         Title="{Binding WindowTitle}"
         Width="700"
-        Height="650"
+        Height="800"
         MinWidth="600"
-        MinHeight="500"
+        MinHeight="650"
         WindowStartupLocation="CenterScreen">
 
   <Design.DataContext>
@@ -44,6 +44,7 @@
                   Content="Browse..."
                   Classes="secondary"
                   Margin="8,0,0,0"
+                  IsEnabled="{Binding IsPathEditable}"
                   Click="BrowseButton_Click" />
           <Button DockPanel.Dock="Right"
                   Content="Auto-Detect"
@@ -51,6 +52,7 @@
                   Margin="8,0,0,0"
                   Command="{Binding AutoDetectCommand}" />
           <TextBox Text="{Binding GamePath}"
+                   IsEnabled="{Binding IsPathEditable}"
                    Watermark="Enter or browse for Lobotomy Corporation installation path..." />
         </DockPanel>
 
@@ -73,22 +75,37 @@
               Padding="20,8" />
     </Border>
 
-    <!-- Status bar -->
-    <Border DockPanel.Dock="Bottom" Margin="0,16,0,0">
+    <!-- Status bar (hidden when action completed — message moves to actions panel) -->
+    <Border DockPanel.Dock="Bottom"
+            Margin="0,16,0,0"
+            IsVisible="{Binding !IsActionCompleted}">
       <TextBlock Text="{Binding StatusMessage}"
                  Classes="status"
+                 Classes.invalid="{Binding IsLastActionFailed}"
                  TextWrapping="Wrap" />
     </Border>
 
-    <!-- Scrollable middle content (fills remaining space) -->
-    <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+    <!-- Action Buttons (scrollable when content is tall) -->
+    <ScrollViewer DockPanel.Dock="Top"
+                  HorizontalScrollBarVisibility="Disabled"
                   VerticalScrollBarVisibility="Auto">
-      <StackPanel Spacing="16">
+      <Border Classes="panel">
+        <StackPanel Spacing="16">
+          <TextBlock Text="Actions" Classes="header" />
 
-        <!-- Action Buttons -->
-        <Border Classes="panel">
-          <StackPanel Spacing="16">
-            <TextBlock Text="Actions" Classes="header" />
+          <!-- Completion confirmation: shown after action completes -->
+          <Border Classes="success"
+                  IsVisible="{Binding IsActionCompleted}">
+            <TextBlock Text="{Binding StatusMessage}"
+                       TextWrapping="Wrap"
+                       FontWeight="Bold"
+                       FontSize="16"
+                       Foreground="#17d440"
+                       HorizontalAlignment="Center" />
+          </Border>
+
+          <!-- Status details: hidden after successful action completion -->
+          <StackPanel Spacing="16" IsVisible="{Binding !IsActionCompleted}">
 
             <!-- Version info -->
             <TextBlock Text="{Binding VersionInfoText}"
@@ -157,52 +174,54 @@
             <ProgressBar IsIndeterminate="True"
                          IsVisible="{Binding IsWorking}" />
 
-            <!-- Action buttons: two rows of two -->
-            <StackPanel Spacing="8">
-              <Grid ColumnDefinitions="*,16,*">
-                <Button Grid.Column="0"
-                        Content="{Binding PrimaryActionLabel}"
-                        Classes="accent"
-                        Command="{Binding PrimaryActionCommand}"
-                        HorizontalAlignment="Stretch" />
-                <Button Grid.Column="2"
-                        Content="Uninstall"
-                        Classes="danger"
-                        Command="{Binding UninstallCommand}"
-                        IsVisible="{Binding ShowUninstallAction}"
-                        HorizontalAlignment="Stretch" />
-              </Grid>
-              <Grid ColumnDefinitions="*,16,*">
-                <Button Grid.Column="0"
-                        Content="User's Guide"
-                        Classes="secondary"
-                        Command="{Binding UserGuideCommand}"
-                        Padding="20,12"
-                        FontSize="16"
-                        HorizontalContentAlignment="Center"
-                        HorizontalAlignment="Stretch" />
-                <Button Grid.Column="2"
-                        Content="Modder's Guide"
-                        Classes="secondary"
-                        Command="{Binding ModderGuideCommand}"
-                        Padding="20,12"
-                        FontSize="16"
-                        HorizontalContentAlignment="Center"
-                        HorizontalAlignment="Stretch" />
-              </Grid>
-            </StackPanel>
-
           </StackPanel>
-        </Border>
 
-        <!-- Result details -->
-        <TextBox Text="{Binding ResultDetails}"
-                 Classes="log"
-                 Height="150"
-                 IsVisible="{Binding ResultDetails, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+          <!-- Action buttons: two rows of two -->
+          <StackPanel Spacing="8">
+            <Grid ColumnDefinitions="*,16,*">
+              <Button Grid.Column="0"
+                      Content="{Binding PrimaryActionLabel}"
+                      Classes="accent"
+                      Command="{Binding PrimaryActionCommand}"
+                      IsVisible="{Binding ShowPrimaryAction}"
+                      HorizontalAlignment="Stretch" />
+              <Button Grid.Column="2"
+                      Content="Uninstall"
+                      Classes="danger"
+                      Command="{Binding UninstallCommand}"
+                      IsVisible="{Binding ShowUninstallAction}"
+                      HorizontalAlignment="Stretch" />
+            </Grid>
+            <Grid ColumnDefinitions="*,16,*">
+              <Button Grid.Column="0"
+                      Content="User's Guide"
+                      Classes="secondary"
+                      Command="{Binding UserGuideCommand}"
+                      Padding="20,12"
+                      FontSize="16"
+                      HorizontalContentAlignment="Center"
+                      HorizontalAlignment="Stretch" />
+              <Button Grid.Column="2"
+                      Content="Modder's Guide"
+                      Classes="secondary"
+                      Command="{Binding ModderGuideCommand}"
+                      Padding="20,12"
+                      FontSize="16"
+                      HorizontalContentAlignment="Center"
+                      HorizontalAlignment="Stretch" />
+            </Grid>
+          </StackPanel>
 
-      </StackPanel>
+        </StackPanel>
+      </Border>
     </ScrollViewer>
+
+    <!-- Result details (fills remaining space) -->
+    <TextBox Text="{Binding ResultDetails}"
+             Classes="log"
+             MinHeight="100"
+             Margin="0,16,0,0"
+             IsVisible="{Binding ResultDetails, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
 
   </DockPanel>
 </Window>

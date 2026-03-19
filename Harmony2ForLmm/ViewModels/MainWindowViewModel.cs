@@ -22,6 +22,7 @@ namespace Harmony2ForLmm.ViewModels
         private readonly IBaseModsAnalyzer _baseModsAnalyzer;
         private readonly IInstallationStateDetector _stateDetector;
         private readonly string _docsPath;
+        private bool WasInstalledAtStartup { get; }
         private Action? _closeAction;
         private Action<string, string, string?>? _openGuideAction;
 
@@ -47,12 +48,13 @@ namespace Harmony2ForLmm.ViewModels
 
             PrimaryActionCommand = new RelayCommand(ExecuteInstall, () => IsPathValid && !IsWorking);
             UninstallCommand = new RelayCommand(ExecuteUninstall, () => IsPathValid && !IsWorking && CurrentState != InstallationState.Fresh);
-            AutoDetectCommand = new RelayCommand(ExecuteAutoDetect, () => !IsWorking);
+            AutoDetectCommand = new RelayCommand(ExecuteAutoDetect, () => !IsWorking && !IsActionCompleted);
             CloseCommand = new RelayCommand(() => _closeAction?.Invoke());
             UserGuideCommand = new RelayCommand(() => OpenGuide("User's Guide", "UsersGuide.md"));
             ModderGuideCommand = new RelayCommand(() => OpenGuide("Modder's Guide", "ModdersGuide.md"));
 
             ExecuteAutoDetect();
+            WasInstalledAtStartup = CurrentState != InstallationState.Fresh;
         }
 
         /// <summary>
@@ -133,10 +135,41 @@ namespace Harmony2ForLmm.ViewModels
             {
                 if (SetAndNotify(ref field, value))
                 {
+                    OnPropertyChanged(nameof(IsPathEditable));
                     NotifyAllCommands();
                 }
             }
         }
+
+        /// <summary>
+        /// Gets a value indicating whether an action has completed successfully.
+        /// When true, action buttons and path controls are disabled.
+        /// </summary>
+        public bool IsActionCompleted
+        {
+            get;
+            private set
+            {
+                if (SetAndNotify(ref field, value))
+                {
+                    OnPropertyChanged(nameof(ShowPrimaryAction));
+                    OnPropertyChanged(nameof(ShowUninstallAction));
+                    OnPropertyChanged(nameof(IsPathEditable));
+                    NotifyAllCommands();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether the last action failed.
+        /// Used to style the status message in red.
+        /// </summary>
+        public bool IsLastActionFailed { get; private set => SetAndNotify(ref field, value); }
+
+        /// <summary>
+        /// Gets a value indicating whether the path input controls should be editable.
+        /// </summary>
+        public bool IsPathEditable => !IsWorking && !IsActionCompleted;
 
         /// <summary>
         /// Gets the result details from the last operation.
@@ -161,6 +194,7 @@ namespace Harmony2ForLmm.ViewModels
                     field = value;
                     OnPropertyChanged();
                     OnPropertyChanged(nameof(PrimaryActionLabel));
+                    OnPropertyChanged(nameof(ShowPrimaryAction));
                     OnPropertyChanged(nameof(ShowUninstallAction));
                     OnPropertyChanged(nameof(ShowVersionWarning));
                     OnPropertyChanged(nameof(VersionInfoText));
@@ -200,12 +234,18 @@ namespace Harmony2ForLmm.ViewModels
         /// <summary>
         /// Gets a value indicating whether the uninstall button should be visible.
         /// </summary>
-        public bool ShowUninstallAction => CurrentState != InstallationState.Fresh;
+        public bool ShowUninstallAction => !IsActionCompleted && CurrentState != InstallationState.Fresh;
 
         /// <summary>
         /// Gets a value indicating whether the version warning banner should be visible.
         /// </summary>
         public bool ShowVersionWarning => CurrentState == InstallationState.Newer;
+
+        /// <summary>
+        /// Gets a value indicating whether the primary action button should be visible.
+        /// Hidden when current version matches and the app was not already installed at startup.
+        /// </summary>
+        public bool ShowPrimaryAction => !IsActionCompleted && (CurrentState != InstallationState.Current || WasInstalledAtStartup);
 
         /// <summary>
         /// Gets a formatted version info string.
@@ -333,6 +373,7 @@ namespace Harmony2ForLmm.ViewModels
         private void ExecuteInstall()
         {
             IsWorking = true;
+            IsLastActionFailed = false;
             StatusMessage = "Installing BepInEx 5 and RetargetHarmony...";
             ResultDetails = string.Empty;
 
@@ -345,17 +386,20 @@ namespace Harmony2ForLmm.ViewModels
                     StatusMessage = "Installation completed successfully.";
                     ResultDetails = FormatFileList("Files installed:", result.FilesWritten);
                     ValidatePath();
+                    IsActionCompleted = true;
                 }
                 else
                 {
                     StatusMessage = "Installation failed.";
                     ResultDetails = result.ErrorMessage ?? "Unknown error.";
+                    IsLastActionFailed = true;
                 }
             }
             catch (Exception ex)
             {
                 StatusMessage = "Installation failed with an unexpected error.";
                 ResultDetails = ex.Message;
+                IsLastActionFailed = true;
             }
             finally
             {
@@ -366,6 +410,7 @@ namespace Harmony2ForLmm.ViewModels
         private void ExecuteUninstall()
         {
             IsWorking = true;
+            IsLastActionFailed = false;
             StatusMessage = "Uninstalling BepInEx 5 and RetargetHarmony...";
             ResultDetails = string.Empty;
 
@@ -391,17 +436,20 @@ namespace Harmony2ForLmm.ViewModels
 
                     ResultDetails = sb.ToString();
                     ValidatePath();
+                    IsActionCompleted = true;
                 }
                 else
                 {
                     StatusMessage = "Uninstallation failed.";
                     ResultDetails = result.ErrorMessage ?? "Unknown error.";
+                    IsLastActionFailed = true;
                 }
             }
             catch (Exception ex)
             {
                 StatusMessage = "Uninstallation failed with an unexpected error.";
                 ResultDetails = ex.Message;
+                IsLastActionFailed = true;
             }
             finally
             {
