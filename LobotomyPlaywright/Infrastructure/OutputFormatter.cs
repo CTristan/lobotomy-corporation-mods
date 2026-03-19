@@ -303,6 +303,161 @@ namespace LobotomyPlaywright.Infrastructure
             """;
         }
 
+        /// <summary>
+        /// Formats a GameObject hierarchy tree for display.
+        /// </summary>
+        /// <param name="data">GameObject tree data dictionary.</param>
+        /// <param name="jsonOutput">Whether to output raw JSON.</param>
+        /// <returns>Formatted string.</returns>
+        public static string FormatGameObjectTree(Dictionary<string, object> data, bool jsonOutput)
+        {
+            ArgumentNullException.ThrowIfNull(data, nameof(data));
+            if (jsonOutput)
+            {
+                return JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
+            }
+
+            var roots = GetList<Dictionary<string, object>>(data, "roots");
+            var rootCount = GetValue(data, "rootCount", 0);
+
+            var result = new System.Text.StringBuilder();
+            _ = result.AppendLine($"GameObject Tree ({rootCount} roots):");
+            _ = result.AppendLine();
+
+            foreach (var root in roots)
+            {
+                FormatNodeTree(result, root, 0);
+            }
+
+            return result.ToString().TrimEnd();
+        }
+
+        /// <summary>
+        /// Formats a GameObject inspect result for display.
+        /// </summary>
+        /// <param name="data">GameObject inspect data dictionary.</param>
+        /// <param name="jsonOutput">Whether to output raw JSON.</param>
+        /// <returns>Formatted string.</returns>
+        public static string FormatGameObjectInspect(Dictionary<string, object> data, bool jsonOutput)
+        {
+            ArgumentNullException.ThrowIfNull(data, nameof(data));
+            if (jsonOutput)
+            {
+                return JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
+            }
+
+            var name = GetValue(data, "name", "Unknown");
+            var path = GetValue(data, "path", "");
+            var active = GetValue(data, "active", false);
+            var tag = GetValue(data, "tag", "Untagged");
+            var layer = GetValue(data, "layer", 0);
+            var components = GetList<Dictionary<string, object>>(data, "components");
+
+            var activeStr = active ? "Active" : "Inactive";
+            var result = new System.Text.StringBuilder();
+            _ = result.AppendLine($"GameObject: {name}");
+            _ = result.AppendLine($"  Path: {path}");
+            _ = result.AppendLine($"  Status: {activeStr}");
+            _ = result.AppendLine($"  Tag: {tag}");
+            _ = result.AppendLine($"  Layer: {layer}");
+            _ = result.AppendLine($"  Components ({components.Count}):");
+
+            foreach (var comp in components)
+            {
+                var typeName = GetValue(comp, "typeName", "Unknown");
+                var fields = GetList<Dictionary<string, object>>(comp, "fields");
+
+                if (fields.Count > 0)
+                {
+                    _ = result.AppendLine($"    {typeName}:");
+                    foreach (var field in fields)
+                    {
+                        var fieldName = GetValue(field, "name", "");
+                        var fieldType = GetValue(field, "type", "");
+                        var fieldValue = GetValue(field, "value", "");
+                        _ = result.AppendLine($"      {fieldName} ({fieldType}) = {fieldValue}");
+                    }
+                }
+                else
+                {
+                    _ = result.AppendLine($"    {typeName}");
+                }
+            }
+
+            return result.ToString().TrimEnd();
+        }
+
+        /// <summary>
+        /// Formats a GameObject search result for display.
+        /// </summary>
+        /// <param name="data">GameObject search result dictionary.</param>
+        /// <param name="jsonOutput">Whether to output raw JSON.</param>
+        /// <returns>Formatted string.</returns>
+        public static string FormatGameObjectSearch(Dictionary<string, object> data, bool jsonOutput)
+        {
+            ArgumentNullException.ThrowIfNull(data, nameof(data));
+            if (jsonOutput)
+            {
+                return JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
+            }
+
+            var query = GetValue(data, "query", "");
+            var resultCount = GetValue(data, "resultCount", 0);
+            var results = GetList<Dictionary<string, object>>(data, "results");
+
+            var result = new System.Text.StringBuilder();
+            _ = result.AppendLine($"Search: {query}");
+            _ = result.AppendLine($"Results: {resultCount}");
+            _ = result.AppendLine();
+
+            for (var i = 0; i < results.Count; i++)
+            {
+                var go = results[i];
+                var name = GetValue(go, "name", "Unknown");
+                var path = GetValue(go, "path", "");
+                var active = GetValue(go, "active", false);
+                var tag = GetValue(go, "tag", "Untagged");
+                var components = GetList<string>(go, "components");
+
+                var activeStr = active ? "+" : "-";
+                _ = result.AppendLine($"  {i + 1}. [{activeStr}] {name}");
+                _ = result.AppendLine($"     Path: {path}");
+
+                if (tag != "Untagged")
+                {
+                    _ = result.AppendLine($"     Tag: {tag}");
+                }
+
+                if (components.Count > 0)
+                {
+                    _ = result.AppendLine($"     Components: {string.Join(", ", components)}");
+                }
+            }
+
+            return result.ToString().TrimEnd();
+        }
+
+        private static void FormatNodeTree(System.Text.StringBuilder sb, Dictionary<string, object> node, int indent)
+        {
+            var pad = new string(' ', (indent * 2) + 2);
+            var name = GetValue(node, "name", "Unknown");
+            var active = GetValue(node, "active", false);
+            var tag = GetValue(node, "tag", "Untagged");
+            var components = GetList<string>(node, "components");
+            var children = GetList<Dictionary<string, object>>(node, "children");
+
+            var activeStr = active ? "+" : "-";
+            var tagStr = tag != "Untagged" ? $" [{tag}]" : "";
+            var compStr = components.Count > 0 ? $" ({components.Count} components)" : "";
+
+            _ = sb.AppendLine($"{pad}[{activeStr}] {name}{compStr}{tagStr}");
+
+            foreach (var child in children)
+            {
+                FormatNodeTree(sb, child, indent + 1);
+            }
+        }
+
         private static T GetValue<T>(Dictionary<string, object> dict, string key, T defaultValue)
         {
             if (dict.TryGetValue(key, out var value) && value is T typedValue)

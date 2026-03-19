@@ -174,8 +174,9 @@ namespace Hemocode.Playwright.Commands
 
         /// <summary>
         /// Start the day from the deployment screen (clicks "Begin Management").
-        /// Calls DeployUI.OnClickStartGame() which saves, starts management, and transitions to gameplay.
-        /// Falls back to GameManager.StartGame() if DeployUI is not available.
+        /// Replicates the essential logic of DeployUI.OnClickStartGame() and OnManagementStart()
+        /// while guarding against null UI references that can occur when called outside the
+        /// normal button-click context.
         /// </summary>
         public static Response HandleStartDay(Request request)
         {
@@ -184,6 +185,7 @@ namespace Hemocode.Playwright.Commands
                 throw new ArgumentNullException(nameof(request));
             }
 
+            var step = "init";
             try
             {
                 var deployUI = DeployUI.instance;
@@ -197,15 +199,48 @@ namespace Hemocode.Playwright.Commands
                     return Response.CreateError(request.Id, "Day has already started", "ALREADY_STARTED");
                 }
 
-                // Simulate the "Begin Management" button click.
-                // OnClickStartGame sends a Notice, hides the canvas, saves, and starts gameplay.
-                deployUI.OnClickStartGame();
+                var gameManager = GameManager.currentGameManager;
+                if (gameManager == null)
+                {
+                    return Response.CreateError(request.Id, "GameManager not available", "NOT_AVAILABLE");
+                }
+
+                step = "notice";
+                Notice.instance.Send(NoticeName.OnClickStartGame);
+
+                step = "canvas";
+                deployUI.canvas?.gameObject.SetActive(false);
+
+                step = "save";
+                var globalManager = GlobalGameManager.instance;
+                if (globalManager.gameMode != GameMode.TUTORIAL &&
+                    globalManager.gameMode != GameMode.UNLIMIT_MODE)
+                {
+                    globalManager.SaveData();
+                    globalManager.SaveGlobalData();
+                }
+
+                step = "sefiraList";
+                deployUI.sefiraList?.OnManageStart();
+
+                step = "camera";
+                CameraMover.instance?.SetSettingToStart();
+
+                step = "startGame";
+                gameManager.StartGame();
+
+                step = "boss";
+                SefiraBossUI.Instance?.OnStageStart();
+
+                step = "isGameStarted";
+                deployUI.IsGameStarted = true;
+
                 return Response.CreateSuccess(request.Id, new { result = "day_started" });
             }
             catch (Exception ex)
             {
                 PlaywrightCore.HandleFatalException(ex, "HandleStartDay");
-                return Response.CreateError(request.Id, $"Failed to start day: {ex.Message}", "COMMAND_ERROR");
+                return Response.CreateError(request.Id, $"Failed at step '{step}': {ex.Message}", "COMMAND_ERROR");
             }
         }
 

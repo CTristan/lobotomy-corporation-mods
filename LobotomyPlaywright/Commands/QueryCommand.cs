@@ -92,6 +92,7 @@ namespace LobotomyPlaywright.Commands
                 "game" or "status" => QueryGame(client, jsonOutput),
                 "departments" or "department" or "sefira" or "sefiras" => QueryDepartments(client, jsonOutput),
                 "ui" => QueryUi(client, jsonOutput, args),
+                "gameobjects" or "gameobject" or "go" => QueryGameObjects(client, jsonOutput, args),
                 "titlemenu" or "title" => QueryTitleMenu(client, jsonOutput),
                 _ => PrintUnknownTargetError(target)
             };
@@ -231,10 +232,122 @@ namespace LobotomyPlaywright.Commands
             return 0;
         }
 
+        private int QueryGameObjects(ITcpClient client, bool jsonOutput, string[] args)
+        {
+            // Handle --dump: read local file, no TCP needed
+            if (HasArg(args, "--dump"))
+            {
+                return ReadGameObjectDump(jsonOutput);
+            }
+
+            var goParams = new Dictionary<string, object>();
+
+            // Handle --inspect <path>
+            var inspectPath = GetArgValue(args, "--inspect");
+            if (inspectPath != null)
+            {
+                goParams["mode"] = "inspect";
+                goParams["path"] = inspectPath;
+
+                var detail = GetArgValue(args, "--detail") ?? "summary";
+                goParams["detail"] = detail;
+
+                var inspectData = client.Query("gameobjects", goParams);
+                Console.WriteLine(OutputFormatter.FormatGameObjectInspect(inspectData, jsonOutput));
+                return 0;
+            }
+
+            // Handle --search
+            if (HasArg(args, "--search"))
+            {
+                goParams["mode"] = "search";
+
+                var name = GetArgValue(args, "--name");
+                if (name != null)
+                {
+                    goParams["name"] = name;
+                }
+
+                if (HasArg(args, "--exact"))
+                {
+                    goParams["nameMatch"] = "exact";
+                }
+
+                var component = GetArgValue(args, "--component");
+                if (component != null)
+                {
+                    goParams["component"] = component;
+                }
+
+                var tag = GetArgValue(args, "--tag");
+                if (tag != null)
+                {
+                    goParams["tag"] = tag;
+                }
+
+                if (HasArg(args, "--active-only"))
+                {
+                    goParams["activeOnly"] = true;
+                }
+
+                var searchData = client.Query("gameobjects", goParams);
+                Console.WriteLine(OutputFormatter.FormatGameObjectSearch(searchData, jsonOutput));
+                return 0;
+            }
+
+            // Default: discover mode
+            goParams["mode"] = "discover";
+
+            var depthArg = GetArgValue(args, "--depth");
+            if (depthArg != null && int.TryParse(depthArg, out var depth))
+            {
+                goParams["depth"] = (double)depth;
+            }
+
+            var treeData = client.Query("gameobjects", goParams);
+            Console.WriteLine(OutputFormatter.FormatGameObjectTree(treeData, jsonOutput));
+            return 0;
+        }
+
+        private int ReadGameObjectDump(bool jsonOutput)
+        {
+            try
+            {
+                var config = _configManager.Load();
+                var dumpPath = Path.Combine(config.GamePath, ".lobotomy-playwright", "gameobject_dump.json");
+
+                if (!File.Exists(dumpPath))
+                {
+                    Console.Error.WriteLine($"Dump file not found: {dumpPath}");
+                    Console.Error.WriteLine("Run 'query gameobjects' first to generate a dump, or use --depth to discover.");
+                    return 1;
+                }
+
+                var content = File.ReadAllText(dumpPath);
+
+                if (jsonOutput)
+                {
+                    Console.WriteLine(content);
+                }
+                else
+                {
+                    Console.WriteLine($"GameObject dump from: {dumpPath}");
+                    Console.WriteLine(content);
+                }
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Failed to read dump: {ex.Message}");
+                return 1;
+            }
+        }
+
         private static int PrintUnknownTargetError(string target)
         {
             Console.Error.WriteLine($"Unknown target: {target}");
-            Console.Error.WriteLine("Valid targets: agents, creatures, game, departments, ui, titlemenu");
+            Console.Error.WriteLine("Valid targets: agents, creatures, game, departments, ui, gameobjects, titlemenu");
             return 1;
         }
 
@@ -255,6 +368,7 @@ namespace LobotomyPlaywright.Commands
             Console.WriteLine("  game                Query game state overview");
             Console.WriteLine("  departments         Query department status");
             Console.WriteLine("  ui                  Query UI accessibility tree (how the agent \"sees\" the game)");
+            Console.WriteLine("  gameobjects         Query GameObject hierarchy in the active scene");
             Console.WriteLine("  titlemenu           Query title menu state (save data, scene, language)");
             Console.WriteLine();
             Console.WriteLine("Options:");
@@ -266,6 +380,18 @@ namespace LobotomyPlaywright.Commands
             Console.WriteLine("  --depth summary     Show window states only (Tier 1)");
             Console.WriteLine("  --depth full        Show windows + child elements (default, Tier 1 + Tier 2)");
             Console.WriteLine("  --name <window>     Query only the specified window (e.g., AgentInfoWindow)");
+            Console.WriteLine();
+            Console.WriteLine("GameObject query options:");
+            Console.WriteLine("  --depth N           Traverse depth (default: 3, max: 10)");
+            Console.WriteLine("  --inspect <path>    Inspect a specific GameObject by hierarchy path");
+            Console.WriteLine("  --detail full       Show reflected fields (with --inspect)");
+            Console.WriteLine("  --search            Search mode");
+            Console.WriteLine("  --name <text>       Filter by name substring (with --search)");
+            Console.WriteLine("  --exact             Match name exactly (with --search)");
+            Console.WriteLine("  --component <type>  Filter by component type name (with --search)");
+            Console.WriteLine("  --tag <tag>         Filter by tag (with --search)");
+            Console.WriteLine("  --active-only       Only return active GameObjects (with --search)");
+            Console.WriteLine("  --dump              Read local dump file instead of querying live");
         }
 
         private static string? GetArgValue(string[] args, string argName)

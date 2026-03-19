@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using Hemocode.Playwright.JsonModels;
 
 #endregion
@@ -19,7 +20,7 @@ namespace Hemocode.Playwright.Queries
     {
         private static readonly HashSet<string> ValidTargets = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
-            "agents", "creatures", "game", "status", "sefira", "departments", "titlemenu", "title", "ui", "diagnostics"
+            "agents", "creatures", "game", "status", "sefira", "departments", "titlemenu", "title", "ui", "diagnostics", "gameobjects"
         };
 
         public static Response HandleQuery(Request request)
@@ -66,6 +67,13 @@ namespace Hemocode.Playwright.Queries
                 {
                     var uiParams = request.Params ?? new Dictionary<string, object>();
                     return HandleUiQuery(request.Id, uiParams);
+                }
+
+                // GameObject queries can be made at any time
+                if (target == "gameobjects")
+                {
+                    var goParams = request.Params ?? new Dictionary<string, object>();
+                    return HandleGameObjectsQuery(request.Id, goParams);
                 }
 
                 // All other queries require the game to be queryable
@@ -241,6 +249,103 @@ namespace Hemocode.Playwright.Queries
                     "QUERY_ERROR"
                 );
             }
+        }
+
+        private static Response HandleGameObjectsQuery(string requestId, Dictionary<string, object> parameters)
+        {
+            try
+            {
+                var mode = parameters.ContainsKey("mode")
+                    ? parameters["mode"].ToString().ToLowerInvariant()
+                    : "discover";
+
+                if (mode == "inspect")
+                {
+                    return HandleGameObjectInspect(requestId, parameters);
+                }
+
+                if (mode == "search")
+                {
+                    return HandleGameObjectSearch(requestId, parameters);
+                }
+
+                return HandleGameObjectDiscover(requestId, parameters);
+            }
+            catch (Exception ex)
+            {
+                return Response.CreateError(
+                    requestId,
+                    $"Failed to query game objects: {ex.Message}",
+                    "QUERY_ERROR"
+                );
+            }
+        }
+
+        private static Response HandleGameObjectInspect(string requestId, Dictionary<string, object> parameters)
+        {
+            var path = parameters.ContainsKey("path")
+                ? parameters["path"].ToString()
+                : null;
+
+            if (string.IsNullOrEmpty(path))
+            {
+                return Response.CreateError(requestId, "Missing 'path' parameter for inspect mode", "MISSING_PARAM");
+            }
+
+            var detail = parameters.ContainsKey("detail")
+                ? parameters["detail"].ToString()
+                : "summary";
+
+            var inspectData = GameObjectQueries.Inspect(path, detail);
+            if (inspectData == null)
+            {
+                return Response.CreateError(requestId, $"GameObject not found: {path}", "NOT_FOUND");
+            }
+
+            return Response.CreateSuccess(requestId, inspectData);
+        }
+
+        private static Response HandleGameObjectSearch(string requestId, Dictionary<string, object> parameters)
+        {
+            var name = parameters.ContainsKey("name")
+                ? parameters["name"].ToString()
+                : null;
+
+            var nameMatch = parameters.ContainsKey("nameMatch")
+                ? parameters["nameMatch"].ToString()
+                : "contains";
+
+            var component = parameters.ContainsKey("component")
+                ? parameters["component"].ToString()
+                : null;
+
+            var tag = parameters.ContainsKey("tag")
+                ? parameters["tag"].ToString()
+                : null;
+
+            bool? activeOnly = parameters.ContainsKey("activeOnly") &&
+                               parameters["activeOnly"] is bool activeOnlyVal
+                ? (bool?)activeOnlyVal
+                : null;
+
+            var searchResult = GameObjectQueries.Search(name, nameMatch, component, tag, activeOnly);
+            return Response.CreateSuccess(requestId, searchResult);
+        }
+
+        private static Response HandleGameObjectDiscover(string requestId, Dictionary<string, object> parameters)
+        {
+            var depth = parameters.ContainsKey("depth") && parameters["depth"] is double depthVal
+                ? (int)depthVal
+                : 3;
+
+            var dumpPath = parameters.ContainsKey("dump") && parameters["dump"] is bool dumpVal && dumpVal
+                ? Path.Combine(
+                    Path.Combine(Path.GetDirectoryName(UnityEngine.Application.dataPath), ".lobotomy-playwright"),
+                    "gameobject_dump.json")
+                : null;
+
+            var roots = GameObjectQueries.Discover(depth, dumpPath);
+            return Response.CreateSuccess(requestId, new { roots, rootCount = roots.Count });
         }
 
         private static Response HandleUiQuery(string requestId, Dictionary<string, object> parameters)

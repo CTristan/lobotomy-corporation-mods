@@ -178,5 +178,260 @@ namespace LobotomyPlaywright.Tests.Infrastructure
             _ = result.Should().Contain("Creatures: 2");
             _ = result.Should().Contain("Officers: 2");
         }
+        [Fact]
+        public void FormatGameObjectTree_WithNestedHierarchy_ReturnsFormattedTree()
+        {
+            // Arrange
+            Dictionary<string, object> data = new()
+            {
+                { "rootCount", 1 },
+                { "roots", new List<Dictionary<string, object>>
+                    {
+                        new()
+                        {
+                            { "name", "Canvas" },
+                            { "active", true },
+                            { "tag", "Untagged" },
+                            { "components", new List<string> { "Canvas", "CanvasScaler", "GraphicRaycaster" } },
+                            { "children", new List<Dictionary<string, object>>
+                                {
+                                    new()
+                                    {
+                                        { "name", "Panel" },
+                                        { "active", true },
+                                        { "tag", "Untagged" },
+                                        { "components", new List<string> { "RectTransform", "Image" } },
+                                        { "children", new List<Dictionary<string, object>>() }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            // Act
+            string result = OutputFormatter.FormatGameObjectTree(data, jsonOutput: false);
+
+            // Assert
+            _ = result.Should().Contain("GameObject Tree (1 roots):");
+            _ = result.Should().Contain("[+] Canvas (3 components)");
+            _ = result.Should().Contain("[+] Panel (2 components)");
+        }
+
+        [Fact]
+        public void FormatGameObjectTree_EmptyTree_ShowsZeroRoots()
+        {
+            // Arrange
+            Dictionary<string, object> data = new()
+            {
+                { "rootCount", 0 },
+                { "roots", new List<Dictionary<string, object>>() }
+            };
+
+            // Act
+            string result = OutputFormatter.FormatGameObjectTree(data, jsonOutput: false);
+
+            // Assert
+            _ = result.Should().Contain("GameObject Tree (0 roots):");
+        }
+
+        [Fact]
+        public void FormatGameObjectTree_JsonMode_ReturnsJson()
+        {
+            // Arrange
+            Dictionary<string, object> data = new()
+            {
+                { "rootCount", 0 },
+                { "roots", new List<Dictionary<string, object>>() }
+            };
+
+            // Act
+            string result = OutputFormatter.FormatGameObjectTree(data, jsonOutput: true);
+
+            // Assert
+            _ = result.Should().Contain("\"rootCount\"");
+        }
+
+        [Fact]
+        public void FormatGameObjectInspect_SummaryMode_ShowsComponentNames()
+        {
+            // Arrange
+            Dictionary<string, object> data = new()
+            {
+                { "name", "MainCamera" },
+                { "path", "MainCamera" },
+                { "active", true },
+                { "tag", "MainCamera" },
+                { "layer", 0 },
+                { "components", new List<Dictionary<string, object>>
+                    {
+                        new()
+                        {
+                            { "typeName", "UnityEngine.Camera" },
+                            { "fields", new List<Dictionary<string, object>>() }
+                        },
+                        new()
+                        {
+                            { "typeName", "UnityEngine.AudioListener" },
+                            { "fields", new List<Dictionary<string, object>>() }
+                        }
+                    }
+                }
+            };
+
+            // Act
+            string result = OutputFormatter.FormatGameObjectInspect(data, jsonOutput: false);
+
+            // Assert
+            _ = result.Should().Contain("GameObject: MainCamera");
+            _ = result.Should().Contain("Path: MainCamera");
+            _ = result.Should().Contain("Status: Active");
+            _ = result.Should().Contain("Tag: MainCamera");
+            _ = result.Should().Contain("Components (2):");
+            _ = result.Should().Contain("UnityEngine.Camera");
+            _ = result.Should().Contain("UnityEngine.AudioListener");
+        }
+
+        [Fact]
+        public void FormatGameObjectInspect_FullMode_ShowsFields()
+        {
+            // Arrange
+            Dictionary<string, object> data = new()
+            {
+                { "name", "Panel" },
+                { "path", "Canvas/Panel" },
+                { "active", true },
+                { "tag", "Untagged" },
+                { "layer", 5 },
+                { "components", new List<Dictionary<string, object>>
+                    {
+                        new()
+                        {
+                            { "typeName", "UnityEngine.UI.Image" },
+                            { "fields", new List<Dictionary<string, object>>
+                                {
+                                    new()
+                                    {
+                                        { "name", "m_Color" },
+                                        { "type", "Color" },
+                                        { "value", "RGBA(1.000, 1.000, 1.000, 1.000)" }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            // Act
+            string result = OutputFormatter.FormatGameObjectInspect(data, jsonOutput: false);
+
+            // Assert
+            _ = result.Should().Contain("UnityEngine.UI.Image:");
+            _ = result.Should().Contain("m_Color (Color) = RGBA(1.000, 1.000, 1.000, 1.000)");
+        }
+
+        [Fact]
+        public void FormatGameObjectInspect_JsonMode_ReturnsJson()
+        {
+            // Arrange
+            Dictionary<string, object> data = new()
+            {
+                { "name", "Panel" },
+                { "path", "Canvas/Panel" },
+                { "active", true },
+                { "tag", "Untagged" },
+                { "layer", 5 },
+                { "components", new List<Dictionary<string, object>>() }
+            };
+
+            // Act
+            string result = OutputFormatter.FormatGameObjectInspect(data, jsonOutput: true);
+
+            // Assert
+            _ = result.Should().Contain("\"name\"");
+            _ = result.Should().Contain("\"Panel\"");
+        }
+
+        [Fact]
+        public void FormatGameObjectSearch_WithResults_ShowsNumberedList()
+        {
+            // Arrange
+            Dictionary<string, object> data = new()
+            {
+                { "query", "name contains \"Button\"" },
+                { "resultCount", 2 },
+                { "results", new List<Dictionary<string, object>>
+                    {
+                        new()
+                        {
+                            { "name", "StartButton" },
+                            { "path", "Canvas/StartButton" },
+                            { "active", true },
+                            { "tag", "Untagged" },
+                            { "components", new List<string> { "Button", "Image", "Text" } }
+                        },
+                        new()
+                        {
+                            { "name", "QuitButton" },
+                            { "path", "Canvas/QuitButton" },
+                            { "active", false },
+                            { "tag", "UI" },
+                            { "components", new List<string> { "Button", "Image" } }
+                        }
+                    }
+                }
+            };
+
+            // Act
+            string result = OutputFormatter.FormatGameObjectSearch(data, jsonOutput: false);
+
+            // Assert
+            _ = result.Should().Contain("Search: name contains \"Button\"");
+            _ = result.Should().Contain("Results: 2");
+            _ = result.Should().Contain("1. [+] StartButton");
+            _ = result.Should().Contain("Path: Canvas/StartButton");
+            _ = result.Should().Contain("Components: Button, Image, Text");
+            _ = result.Should().Contain("2. [-] QuitButton");
+            _ = result.Should().Contain("Tag: UI");
+        }
+
+        [Fact]
+        public void FormatGameObjectSearch_ZeroResults_ShowsZeroCount()
+        {
+            // Arrange
+            Dictionary<string, object> data = new()
+            {
+                { "query", "name contains \"NonExistent\"" },
+                { "resultCount", 0 },
+                { "results", new List<Dictionary<string, object>>() }
+            };
+
+            // Act
+            string result = OutputFormatter.FormatGameObjectSearch(data, jsonOutput: false);
+
+            // Assert
+            _ = result.Should().Contain("Results: 0");
+        }
+
+        [Fact]
+        public void FormatGameObjectSearch_JsonMode_ReturnsJson()
+        {
+            // Arrange
+            Dictionary<string, object> data = new()
+            {
+                { "query", "all" },
+                { "resultCount", 0 },
+                { "results", new List<Dictionary<string, object>>() }
+            };
+
+            // Act
+            string result = OutputFormatter.FormatGameObjectSearch(data, jsonOutput: true);
+
+            // Assert
+            _ = result.Should().Contain("\"query\"");
+            _ = result.Should().Contain("\"resultCount\"");
+        }
     }
 }

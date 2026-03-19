@@ -70,11 +70,11 @@ This applies to both the C# plugin and the dotnet pi skill tool independently:
 
 **Unity UI vs IMGUI:**
 
-- Unity UI (uGUI) elements are fully queryable via `query ui` (Phase 1.75)
+- Unity UI (uGUI) elements are fully queryable via `query ui` (Phase 3)
 - IMGUI (`OnGUI()`) elements are NOT queryable via `query ui` — they create no
   GameObjects or Components, so `GetComponentsInChildren` cannot find them
 - IMGUI-using plugins can be introspected via reflection-based `query imgui`
-  (Phase 1.75.5)
+  (Phase 5)
 - Mods using IMGUI should expose state via public properties or
   reflection-friendly attributes for best introspection results
 - Each phase's tasks below include explicit testing tasks to make this concrete.
@@ -100,7 +100,7 @@ This applies to both the C# plugin and the dotnet pi skill tool independently:
 3. Verify ≥80% plugin coverage on query/routing/serialization logic.
 4. Document end-to-end setup and perform manual test with running game.
 
-### Phase 1.5 — Automated deployment & game launch
+### Phase 2 — Automated deployment & game launch
 
 - The pi agent can automatically build, deploy, launch, monitor, and stop the
   game — no human intervention required for the build→deploy→launch→verify
@@ -111,7 +111,7 @@ This applies to both the C# plugin and the dotnet pi skill tool independently:
 - **≥80% test coverage** on all deployment, launch, status, and stop logic
   in the dotnet tool commands.
 
-### Phase 1.75 — UI accessibility tree
+### Phase 3 — UI accessibility tree
 
 - The plugin exposes a structured `query ui` command returning open/closed
   window states and child elements (Text, Button, Toggle, Slider) — the agent's
@@ -119,7 +119,20 @@ This applies to both the C# plugin and the dotnet pi skill tool independently:
 - Screenshot base64 pipeline for supplementary visual debugging.
 - **≥80% test coverage** on UI query and screenshot code.
 
-### Phase 1.75.5 — IMGUI query support
+### Phase 4 — GameObject tree query
+
+- The plugin exposes a `query gameobjects` command with three modes:
+  - **Discovery**: depth-limited scene hierarchy traversal + full dump to
+    `<gamePath>/.lobotomy-playwright/gameobject_dump.json` (overwritten each call)
+  - **Targeted inspection**: query a specific GameObject by name/path with
+    summary (component names) or full (reflected fields/properties) detail
+  - **Search**: find GameObjects by name (exact/contains), component type, tag,
+    or active state
+- Complements `query ui` (curated UI windows) with general-purpose scene
+  exploration.
+- **≥80% test coverage** on GameObject query, inspection, and search code.
+
+### Phase 5 — IMGUI query support
 
 - The plugin exposes a `query imgui` command that uses reflection to inspect
   BepInEx plugins using `OnGUI()`, surfacing their internal state (field values,
@@ -127,14 +140,14 @@ This applies to both the C# plugin and the dotnet pi skill tool independently:
 - Complements `query ui` which only covers Unity UI (uGUI) components.
 - **≥80% test coverage** on IMGUI query and formatting code.
 
-### Phase 2 — Event streaming
+### Phase 6 — Event streaming
 
 - The plugin streams game events from the Notice system over TCP.
 - The pi skill can wait for specific events with configurable timeouts.
 - The agent can react to in-game happenings in real time.
 - **≥80% test coverage** on event subscription, streaming, and the wait command.
 
-### Phase 3 — Commands
+### Phase 7 — Commands
 
 - The plugin accepts commands to manipulate game state (debug commands) and
   simulate player actions.
@@ -143,21 +156,21 @@ This applies to both the C# plugin and the dotnet pi skill tool independently:
 - **≥80% test coverage** on command routing, each command handler, and the
   command tool.
 
-### Phase 3.5 — Input simulation
+### Phase 8 — Input simulation
 
 - The plugin accepts `send-key` commands to simulate keyboard input, enabling
   the agent to trigger hotkeys (e.g., HarmonyDebugPanel's F9) and interact with
   IMGUI elements indirectly.
 - **≥80% test coverage** on input simulation and CLI command code.
 
-### Phase 4 — Mod testing workflows
+### Phase 9 — Mod testing workflows
 
 - Higher-level automation: load a mod, start a day, assign work, verify patch
   results.
 - The agent can run reproducible mod test scenarios against a live game.
 - **≥80% test coverage** on workflow orchestration logic and scenario scripts.
 
-### Phase 5 — OCR & template matching
+### Phase 10 — OCR & template matching
 
 - The dotnet tool can extract text from game screenshots via OCR (Tesseract)
   and locate UI elements via template matching (NCC with ImageSharp).
@@ -167,7 +180,7 @@ This applies to both the C# plugin and the dotnet pi skill tool independently:
 - **≥80% test coverage** on OCR engine, template matcher, image loader, and
   CLI commands.
 
-### Phase 6 — Named vision regions
+### Phase 11 — Named vision regions
 
 - A `regions.json` config maps named regions to ROI coordinates and/or template
   image paths, so the agent can use `--region energy_bar` instead of raw
@@ -274,8 +287,8 @@ lobotomy-corporation-mods/
 │   │   ├── GameStateQueries.cs        # GameManager, energy, day, speed
 │   │   ├── SefiraQueries.cs           # Department state
 │   │   └── QueryRouter.cs            # Routes query requests to handlers
-│   ├── Commands/                      # (Phase 3)
-│   └── Events/                        # (Phase 2)
+│   ├── Commands/                      # (Phase 7)
+│   └── Events/                        # (Phase 6)
 ├── LobotomyPlaywright.Plugin.Test/     # xUnit tests for the plugin
 │   └── ...
 ├── LobotomyPlaywright/                 # Dotnet tool (net10.0)
@@ -288,7 +301,7 @@ lobotomy-corporation-mods/
 │   │   ├── StatusCommand.cs           # Game/TCP server status check
 │   │   ├── StopCommand.cs            # Graceful shutdown + force kill
 │   │   ├── QueryCommand.cs           # State query CLI
-│   │   └── WaitCommand.cs            # Event wait CLI (Phase 2)
+│   │   └── WaitCommand.cs            # Event wait CLI (Phase 6)
 │   ├── Infrastructure/                # Shared services
 │   │   ├── PlaywrightTcpClient.cs     # TCP client, JSON-line protocol
 │   │   ├── ConfigManager.cs           # config.json read/write
@@ -474,7 +487,7 @@ debugging tools and avoids race conditions or crashes.
 - [x] Dotnet tool coverage ≥80% (Coverlet report) - NOTE: Tool tests use mocks for dependencies (correct unit testing practice), so unit test coverage shows 0%. Integration tests would be needed for real coverage.
 - [ ] End-to-end query works from pi agent to live game and back - NOT TESTED
 
-### Phase 1.5 — Automated deployment & game launch
+### Phase 2 — Automated deployment & game launch
 
 #### Game path configuration
 
@@ -614,7 +627,7 @@ debugging tools and avoids race conditions or crashes.
 
 - [x] Add `.pi/skills/lobotomy-playwright/config.json` to `.gitignore`
 
-#### Phase 1.5: Tests (≥80% coverage gate)
+#### Phase 2: Tests (≥80% coverage gate)
 
 - [x] Dotnet tests for `FindGameCommand`
   - Test CrossOver bottle scanning with mocked filesystem
@@ -654,19 +667,19 @@ debugging tools and avoids race conditions or crashes.
   - Test shutdown command routing and response
   - Test unknown command error handling (if `CommandRouter` is updated)
 
-- [x] Verify ≥80% line coverage on all Phase 1.5 dotnet tool code (Coverlet)
+- [x] Verify ≥80% line coverage on all Phase 2 dotnet tool code (Coverlet)
 
-#### Phase 1.5 completion checklist
+#### Phase 2 completion checklist
 
 - [x] Config auto-detection works on macOS with CrossOver
 - [x] Deploy builds both projects and copies DLLs to correct BepInEx locations
 - [x] Launch starts game via `cxstart` and confirms TCP readiness
 - [x] Status correctly reports STOPPED / STARTING / READY / UNRESPONSIVE
 - [x] Stop gracefully shuts down game, with force-kill fallback
-- [x] Dotnet tool coverage ≥80% on all Phase 1.5 code (Coverlet report)
+- [x] Dotnet tool coverage ≥80% on all Phase 2 code (Coverlet report)
 - [x] Full redeploy cycle works: `stop → deploy → launch → status` shows READY
 
-### Phase 1.75 — UI accessibility tree
+### Phase 3 — UI accessibility tree
 
 The pi agent is a text-only LLM and cannot interpret screenshot images. This
 phase adds a structured `query ui` command — analogous to Playwright's
@@ -753,7 +766,7 @@ accessibility tree — so the agent can "see" the game's visual/UI state as text
   - Document that `query ui` is the primary way the agent "sees" the game
   - Screenshot remains supplementary for human debugging
 
-#### Phase 1.75: Tests (≥80% coverage gate)
+#### Phase 3: Tests (≥80% coverage gate)
 
 - [ ] Add routing tests in `QueryRouterTests.cs` for `"ui"` target
 - [ ] Create `UiQueriesTests.cs`
@@ -764,7 +777,7 @@ accessibility tree — so the agent can "see" the game's visual/UI state as text
   formatting is added
 - [ ] Verify existing `ScreenshotCommandTests.cs` work with now-populated base64
 
-#### Phase 1.75 completion checklist
+#### Phase 3 completion checklist
 
 - [x] `dotnet playwright query ui` returns structured UI state from running game
 - [x] `dotnet playwright query ui --json` returns valid JSON
@@ -772,11 +785,134 @@ accessibility tree — so the agent can "see" the game's visual/UI state as text
 - [x] Plugin coverage on UI query code (limited by Unity runtime requirements)
 - [x] Dotnet tool coverage on UI query formatting
 
-### Phase 1.75.5 — IMGUI query support
+### Phase 4 — GameObject tree query
+
+**Status:** Complete
+
+Phase 3's UI accessibility tree queries a curated list of known UI window
+singletons. This phase adds general-purpose GameObject tree exploration — the
+agent can discover all objects in the scene, inspect arbitrary GameObjects, and
+search by various criteria.
+
+#### Plugin: Data classes
+
+- [x] Create `Queries/GameObjectNodeData.cs`
+  - `[Serializable]` data class following `GameStateData.cs` / `UiNodeData.cs` pattern
+  - Fields: `name` (string), `path` (string), `active` (bool), `tag` (string),
+    `layer` (int), `components` (string[]), `childCount` (int),
+    `children` (List\<GameObjectNodeData\>)
+  - Children list is populated only up to the requested depth
+
+- [x] Create `Queries/GameObjectInspectData.cs`
+  - Fields: `name` (string), `path` (string), `active` (bool), `tag` (string),
+    `layer` (int), `components` (List\<ComponentData\>)
+  - `ComponentData`: `typeName` (string), `fields` (List\<ComponentFieldData\>)
+  - `ComponentFieldData`: `name` (string), `type` (string), `value` (string)
+  - Fields list is empty in summary mode, populated in full mode
+
+- [x] Create `Queries/GameObjectSearchResult.cs`
+  - Fields: `query` (string — description of search criteria), `resultCount` (int),
+    `results` (List\<GameObjectNodeData\>)
+  - Results are flat (no children populated) — just matching objects with path/components
+
+#### Plugin: Query implementation
+
+- [x] Create `Queries/GameObjectQueries.cs`
+  - `Discover(int depth, string dumpPath)` — traverse scene roots via
+    `SceneManager.GetActiveScene().GetRootGameObjects()`, build tree to requested
+    depth, write full dump to `dumpPath`, return depth-limited tree
+  - `Inspect(string path, string detail)` — find GameObject by path using
+    `GameObject.Find()` or `Transform.Find()` traversal, return summary or full
+    component detail
+  - `Search(string name, string nameMatch, string component, string tag, bool? activeOnly)`
+    — iterate all objects (via `Resources.FindObjectsOfTypeAll<GameObject>()` or
+    scene traversal), apply filters, return flat results (capped at 500)
+  - Helper: `BuildNode(Transform t, int currentDepth, int maxDepth)` — recursive
+    tree builder
+  - Helper: `ReflectComponents(GameObject go, string detail)` — component
+    inspection via reflection
+  - Helper: `GetGameObjectPath(Transform t)` — build slash-delimited path from root
+  - Full dump: create `<gamePath>/.lobotomy-playwright/` directory if needed,
+    write JSON, overwrite existing file
+  - All operations queued for main thread (existing pattern)
+
+- [x] Update `Queries/QueryRouter.cs`
+  - Add `"gameobjects"` to known query targets
+  - Route to `GameObjectQueries` with `mode`, `depth`, `path`, `detail`, `name`,
+    `nameMatch`, `component`, `tag`, `activeOnly` params
+
+#### Pi skill: CLI support
+
+- [x] Update `Commands/QueryCommand.cs` to handle `query gameobjects` subcommands:
+  - `dotnet playwright query gameobjects` — discovery mode, default depth 3
+  - `dotnet playwright query gameobjects --depth 5` — discovery with custom depth
+  - `dotnet playwright query gameobjects --inspect "Canvas/AgentInfoWindow"` —
+    targeted inspection (summary)
+  - `dotnet playwright query gameobjects --inspect "..." --detail full` — full
+    reflection
+  - `dotnet playwright query gameobjects --search --name "Agent"` — search by
+    name (contains)
+  - `dotnet playwright query gameobjects --search --name "Agent" --exact` — exact
+    name match
+  - `dotnet playwright query gameobjects --search --component "Button"` — search
+    by component type
+  - `dotnet playwright query gameobjects --search --tag "Player"` — search by tag
+  - `dotnet playwright query gameobjects --search --active-only` — filter to
+    active objects
+  - Search flags can be combined
+
+- [x] Add `dotnet playwright query gameobjects --dump` to read and display the
+  full dump file
+  - Derives dump path from `config.json`'s `gamePath` +
+    `/.lobotomy-playwright/gameobject_dump.json`
+  - Reads the file locally (no TCP needed)
+
+- [x] Add output formatting in `Infrastructure/OutputFormatter.cs`
+  - `FormatGameObjectTree` — indented tree view for discovery mode
+  - `FormatGameObjectInspect` — component/field detail view
+  - `FormatGameObjectSearch` — flat results list with paths
+
+- [x] Update `SKILL.md` with `query gameobjects` documentation
+
+#### Phase 4: Tests (≥80% coverage gate)
+
+- [ ] Create `GameObjectNodeDataTests.cs` — data class construction and field
+  assignment (skipped: plugin tests require Unity runtime)
+- [ ] Create `GameObjectQueriesTests.cs` (skipped: plugin tests require Unity runtime)
+  - Test `BuildNode` with mocked Transform hierarchy
+  - Test `GetGameObjectPath` (pure function)
+  - Test `ReflectComponents` with test components
+  - Test search filtering logic (name match, component filter, tag filter,
+    active filter)
+  - Test depth limiting (nodes beyond max depth have empty children)
+  - Test dump file write (mocked filesystem)
+  - Mark Unity-dependent tests with `[Trait("Category", "RequiresUnity")]`
+- [ ] Add routing tests in `QueryRouterTests.cs` for `"gameobjects"` target with
+  all three modes (skipped: plugin tests require Unity runtime)
+- [x] Add dotnet tool tests for `query gameobjects` command argument parsing and
+  request construction
+- [x] Add dotnet tool tests for `--dump` file reading (mocked filesystem)
+- [x] Add dotnet tool tests for output formatting: tree view, inspect view,
+  search results
+- [x] Add dotnet tool tests for error cases: GameObject not found, dump file not
+  found, invalid args
+
+#### Phase 4 completion checklist
+
+- [ ] `dotnet playwright query gameobjects` returns scene hierarchy tree (requires manual verification)
+- [ ] `dotnet playwright query gameobjects --inspect "Canvas"` returns component list (requires manual verification)
+- [ ] `dotnet playwright query gameobjects --search --component "Text"` finds all
+  Text objects (requires manual verification)
+- [ ] `dotnet playwright query gameobjects --dump` reads full dump file
+- [ ] Full dump file created at `<gamePath>/.lobotomy-playwright/gameobject_dump.json`
+- [ ] Plugin coverage ≥80% on GameObject query code
+- [ ] Dotnet tool coverage ≥80% on GameObject formatting code
+
+### Phase 5 — IMGUI query support
 
 **Status:** Not started
 
-LobotomyPlaywright's Phase 1.75 UI accessibility tree targets Unity UI (uGUI)
+LobotomyPlaywright's Phase 3 UI accessibility tree targets Unity UI (uGUI)
 components — persistent GameObjects with `Button`, `Text`, `Toggle`, `Slider`
 Components queryable via `GetComponentsInChildren`. However, some plugins
 (notably HarmonyDebugPanel) use Unity's **IMGUI** (Immediate Mode GUI) system,
@@ -789,7 +925,7 @@ which is architecturally different and invisible to uGUI queries.
 | Rendering | Method calls every frame (`GUILayout.Button()`) | Persistent GameObjects with Components |
 | State | Script variables (private fields) | Component properties (`button.interactable`) |
 | Discoverability | Cannot use `GameObject.Find()` or `GetComponentsInChildren` | Fully queryable via component traversal |
-| LobotomyPlaywright | NOT supported by `query ui` | Supported by `query ui` (Phase 1.75) |
+| LobotomyPlaywright | NOT supported by `query ui` | Supported by `query ui` (Phase 3) |
 
 **Affected components:**
 
@@ -851,7 +987,7 @@ elements themselves cannot be enumerated.
   - Usage examples
   - Note that IMGUI introspection shows plugin state, not rendered UI elements
 
-#### Phase 1.75.5: Tests (≥80% coverage gate)
+#### Phase 5: Tests (≥80% coverage gate)
 
 - [ ] Create `ImguiQueriesTests.cs` in plugin test project
   - Test plugin detection with mocked BepInEx chainloader
@@ -860,9 +996,9 @@ elements themselves cannot be enumerated.
   - Test depth parameter (summary vs full)
 - [ ] Add routing tests in `QueryRouterTests.cs` for `"imgui"` target
 - [ ] Add dotnet tool tests for `query imgui` output formatting
-- [ ] Verify ≥80% line coverage on all Phase 1.75.5 code
+- [ ] Verify ≥80% line coverage on all Phase 5 code
 
-#### Phase 1.75.5 completion checklist
+#### Phase 5 completion checklist
 
 - [ ] `dotnet playwright query imgui` returns list of IMGUI-using plugins with
   state
@@ -872,7 +1008,7 @@ elements themselves cannot be enumerated.
 - [ ] Dotnet tool coverage ≥80% on IMGUI formatting code
 - [ ] SKILL.md documents IMGUI limitations and `query imgui` usage
 
-### Phase 2 — Event streaming
+### Phase 6 — Event streaming
 
 - [ ] Implement `Events/NoticeSubscriber.cs` in the plugin
   - Subscribe to the game's `Notice` system for requested events
@@ -892,7 +1028,7 @@ elements themselves cannot be enumerated.
 
 - [ ] Add `lobcorp_wait` tool documentation to `SKILL.md`
 
-#### Phase 2: Tests (≥80% coverage gate)
+#### Phase 6: Tests (≥80% coverage gate)
 
 - [ ] Plugin tests for event system
   - Test NoticeSubscriber: subscribe, unsubscribe, duplicate subscribe
@@ -906,15 +1042,15 @@ elements themselves cannot be enumerated.
   - Test timeout behavior (event not received within timeout)
   - Test output formatting of received events
 
-- [ ] Verify ≥80% line coverage on all new Phase 2 code (plugin + dotnet tool)
+- [ ] Verify ≥80% line coverage on all new Phase 6 code (plugin + dotnet tool)
 
-#### Phase 2 completion checklist
+#### Phase 6 completion checklist
 
 - [x] Plugin coverage including event code (limited by Unity runtime)
 - [x] Dotnet tool coverage including wait command (unit tests use mocks)
 - [ ] Agent can wait for a real game event (e.g., pause, then `wait event OnStageStart`, then unpause manually) - NOT TESTED
 
-### Phase 3 — Commands
+### Phase 7 — Commands
 
 - [ ] Implement `Commands/` in the plugin
   - `CommandRouter.cs` — Route command requests to handlers
@@ -945,7 +1081,7 @@ elements themselves cannot be enumerated.
   - `dotnet playwright command fill-energy`
 - [ ] Add `lobcorp_command` tool documentation to `SKILL.md`
 
-#### Phase 3: Tests (≥80% coverage gate)
+#### Phase 7: Tests (≥80% coverage gate)
 
 - [ ] Plugin tests for command system
   - Test CommandRouter: valid commands, unknown commands, error responses
@@ -962,16 +1098,16 @@ elements themselves cannot be enumerated.
   - Test success/error response display
   - Test invalid argument handling
 
-- [ ] Verify ≥80% line coverage on all new Phase 3 code (plugin + dotnet tool)
+- [ ] Verify ≥80% line coverage on all new Phase 7 code (plugin + dotnet tool)
 
-#### Phase 3 completion checklist
+#### Phase 7 completion checklist
 
 - [ ] Plugin coverage ≥80% including command code (Coverlet report)
 - [ ] Dotnet tool coverage ≥80% including command tool (Coverlet report)
 - [ ] Agent can issue a command and observe its effect via a follow-up query
   (e.g., `command pause` → `query game` shows paused state)
 
-### Phase 3.5 — Input simulation
+### Phase 8 — Input simulation
 
 **Status:** Not started
 
@@ -1004,7 +1140,7 @@ useful for testing HarmonyDebugPanel's F9 hotkey and similar debug shortcuts.
   - Document available key names (map to Unity `KeyCode` enum)
   - Usage examples for triggering HarmonyDebugPanel hotkeys
 
-#### Phase 3.5: Tests (≥80% coverage gate)
+#### Phase 8: Tests (≥80% coverage gate)
 
 - [ ] Plugin tests for `InputHandler`
   - Test key name to `KeyCode` mapping (valid keys, invalid keys)
@@ -1014,9 +1150,9 @@ useful for testing HarmonyDebugPanel's F9 hotkey and similar debug shortcuts.
 - [ ] Dotnet tool tests for `send-key` subcommand
   - Test argument parsing (`--key`, `--modifiers`)
   - Test success/error response display
-- [ ] Verify ≥80% line coverage on all Phase 3.5 code
+- [ ] Verify ≥80% line coverage on all Phase 8 code
 
-#### Phase 3.5 completion checklist
+#### Phase 8 completion checklist
 
 - [ ] `dotnet playwright command send-key --key F9` triggers F9 in the game
 - [ ] HarmonyDebugPanel's GenerateLog can be triggered via `send-key`
@@ -1024,9 +1160,9 @@ useful for testing HarmonyDebugPanel's F9 hotkey and similar debug shortcuts.
 - [ ] Dotnet tool coverage ≥80% on send-key command code
 - [ ] SKILL.md documents input simulation usage
 
-### Phase 4 — Mod testing workflows
+### Phase 9 — Mod testing workflows
 
-- [x] Screenshot file capture implemented (metadata only — base64 fix in Phase 1.75)
+- [x] Screenshot file capture implemented (metadata only — base64 fix in Phase 3)
 - [ ] Design higher-level workflow tools
   - `ScenarioCommand` — Run a scripted sequence of commands and assertions
   - Example: "Start day → assign Agent 3 to Instinct work on Scorched Girl →
@@ -1040,7 +1176,7 @@ useful for testing HarmonyDebugPanel's F9 hotkey and similar debug shortcuts.
 - [x] Implement screenshot/visual state capture (partially complete)
   - Screenshot captures PNG files for human inspection
   - **Note:** The pi agent is text-only and cannot interpret images. The primary
-    way the agent "sees" the game is via `query ui` (Phase 1.75), which returns
+    way the agent "sees" the game is via `query ui` (Phase 3), which returns
     a structured text representation of UI state (open panels, text content,
     buttons, interactable elements, mod-added UI).
   - **Implementation status:**
@@ -1052,11 +1188,11 @@ useful for testing HarmonyDebugPanel's F9 hotkey and similar debug shortcuts.
     - Updated `PlaywrightTcpClient` to handle JSON data responses (not just dictionaries)
     - Added `ScreenshotCommandTests.cs` with 10 test cases
     - Updated `SKILL.md` with screenshot command documentation
-    - **Status:** File-path capture works. Base64 encoding pipeline incomplete — plugin returns metadata only, never sends base64 data. Fix tracked in Phase 1.75.
+    - **Status:** File-path capture works. Base64 encoding pipeline incomplete — plugin returns metadata only, never sends base64 data. Fix tracked in Phase 3.
     - **Note:** Unity's `ScreenCapture` is asynchronous; file is written shortly after response is sent
     - **Launch command fix:** Fixed false negative when game starts slowly (removed aggressive process death check)
 
-#### Phase 4: Tests (≥80% coverage gate)
+#### Phase 9: Tests (≥80% coverage gate)
 
 - [ ] Tests for scenario orchestration logic
   - Test scenario step sequencing (command → wait → query → assert)
@@ -1069,15 +1205,15 @@ useful for testing HarmonyDebugPanel's F9 hotkey and similar debug shortcuts.
     abnormalities with instant-kill mechanics
   - FreeCustomization: verify customization cost is zero
 
-- [ ] Verify ≥80% line coverage on all new Phase 4 code (plugin + dotnet tool)
+- [ ] Verify ≥80% line coverage on all new Phase 9 code (plugin + dotnet tool)
 
-#### Phase 4 completion checklist
+#### Phase 9 completion checklist
 
 - [ ] Plugin coverage ≥80% overall (Coverlet report)
 - [ ] Dotnet tool coverage ≥80% overall (Coverlet report)
 - [ ] At least one full mod test scenario runs end-to-end against a live game
 
-### Phase 5 — OCR & template matching
+### Phase 10 — OCR & template matching
 
 **Status:** Not started
 
@@ -1107,7 +1243,7 @@ Claude decides what to do based on OCR/match results.
 - `dotnet playwright match` — capture screenshot → optional ROI crop → NCC
   template matching → return locations + confidence as JSON
 
-#### Phase 5a: Image loading foundation
+#### Phase 10a: Image loading foundation
 
 - [ ] Add `SixLabors.ImageSharp` to `LobotomyPlaywright.csproj`
 - [ ] Create `Vision/RoiSpec.cs` — ROI data model (`X`, `Y`, `Width`, `Height`)
@@ -1117,7 +1253,7 @@ Claude decides what to do based on OCR/match results.
   grayscale/threshold preprocessing
 - [ ] Write `LobotomyPlaywright.Test/Vision/ImageLoaderTests.cs`
 
-#### Phase 5b: OCR command
+#### Phase 10b: OCR command
 
 - [ ] Add `Tesseract` NuGet package to `LobotomyPlaywright.csproj`
 - [ ] Create `Vision/OcrResult.cs` — data models:
@@ -1140,7 +1276,7 @@ Claude decides what to do based on OCR/match results.
 - [ ] Write `LobotomyPlaywright.Test/Vision/TesseractOcrEngineTests.cs`
   (skip if `eng.traineddata` not found)
 
-#### Phase 5c: Template matching command
+#### Phase 10c: Template matching command
 
 - [ ] Create `Vision/MatchResult.cs` — data models:
   - `MatchLocation`: `X`, `Y`, `Width`, `Height`, `Confidence`, `CenterX`,
@@ -1163,7 +1299,7 @@ Claude decides what to do based on OCR/match results.
 - [ ] Write `LobotomyPlaywright.Test/Vision/ImageSharpTemplateMatcherTests.cs`
   (synthetic test images)
 
-#### Phase 5: Files
+#### Phase 10: Files
 
 **New files:**
 
@@ -1189,7 +1325,7 @@ Claude decides what to do based on OCR/match results.
 | `LobotomyPlaywright/Program.cs` | Add `"ocr"` + `"match"` cases, update `PrintUsage()` |
 | `LobotomyPlaywright/Infrastructure/OutputFormatter.cs` | Add `FormatOcrResult` + `FormatMatchResult` |
 
-#### Phase 5: Tests (≥80% coverage gate)
+#### Phase 10: Tests (≥80% coverage gate)
 
 - [ ] `ImageLoaderTests.cs` — load from file, load from base64, ROI crop,
   grayscale/threshold preprocessing, invalid inputs
@@ -1204,7 +1340,7 @@ Claude decides what to do based on OCR/match results.
 - [ ] `OutputFormatterTests.cs` — extend with `FormatOcrResult` and
   `FormatMatchResult` text/JSON modes
 
-#### Phase 5 completion checklist
+#### Phase 10 completion checklist
 
 - [ ] Dotnet tool coverage ≥80% overall (Coverlet report)
 - [ ] `dotnet playwright ocr --input <screenshot.png>` returns recognized text
@@ -1213,7 +1349,7 @@ Claude decides what to do based on OCR/match results.
 - [ ] End-to-end: launch game → `dotnet playwright ocr` captures live screenshot
   and returns text
 
-### Phase 6 — Named vision regions
+### Phase 11 — Named vision regions
 
 **Status:** Not started
 
@@ -1245,14 +1381,14 @@ template image paths. This lets the agent use `--region energy_bar` instead of
 - [ ] Write region config tests
 - [ ] Create sample `regions.json` template
 
-#### Phase 6: Tests (≥80% coverage gate)
+#### Phase 11: Tests (≥80% coverage gate)
 
 - [ ] `RegionsConfigTests.cs` — load valid config, missing file, invalid JSON,
   region lookup by name, region with ROI only, template only, both
 - [ ] `OcrCommandTests.cs` — extend with `--region` resolution tests
 - [ ] `MatchCommandTests.cs` — extend with `--region` resolution tests
 
-#### Phase 6 completion checklist
+#### Phase 11 completion checklist
 
 - [ ] Dotnet tool coverage ≥80% overall (Coverlet report)
 - [ ] `--region <name>` resolves to correct ROI/template in both commands
@@ -1297,7 +1433,7 @@ these when building queries or commands.
 
 | File | What it provides |
 |------|-----------------|
-| `ConsoleCommand.cs` | Debug command string constants (useful for Phase 3) |
+| `ConsoleCommand.cs` | Debug command string constants (useful for Phase 7) |
 | `ConsoleScript.cs` | Command execution logic |
 
 ### Other useful references
