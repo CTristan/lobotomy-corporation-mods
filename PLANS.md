@@ -11,6 +11,7 @@ Tracks all planning documents in the repository. Plans are generated via the `/p
 | Draft | Unified XML Localization | [`PLAN-Localization.md`](PLAN-Localization.md) | 0/16 (0%) | Localization system for tooling projects |
 | Draft | ConfigurationManager | [`PLAN-ConfigurationManager.md`](PLAN-ConfigurationManager.md) | 0/27 (0%) | Shared config API in Common + BepInEx-free ConfigurationManager fork as git submodule |
 | Draft | AutoFixture + AutoMoq | [`PLAN-AutoFixture.md`](PLAN-AutoFixture.md) | 0/23 (0%) | Adopt AutoFixture + AutoMoq to reduce test boilerplate and enable anonymous test data |
+| Completed | Modder's Guide Examples | [`PLAN-ModdersGuideExamples.md`](PLAN-ModdersGuideExamples.md) | 8/8 phases | Real game code examples for each H2/BepInEx feature in the Modder's Guide |
 
 ## Status Definitions
 

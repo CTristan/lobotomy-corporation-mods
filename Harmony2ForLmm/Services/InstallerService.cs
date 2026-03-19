@@ -27,6 +27,7 @@ namespace Harmony2ForLmm.Services
                 InstallBepInEx(gamePath, filesWritten);
                 InstallRetargetHarmony(gamePath, filesWritten);
                 InstallHarmonyInteropDlls(gamePath, filesWritten);
+                InstallDocumentation(gamePath, filesWritten);
 
                 manifestService.WriteManifest(gamePath, filesWritten);
 
@@ -80,6 +81,25 @@ namespace Harmony2ForLmm.Services
                     File.Copy(sourceDll, destDll, overwrite: true);
                     filesWritten.Add(destDll);
                 }
+            }
+        }
+
+        private void InstallDocumentation(string gamePath, List<string> filesWritten)
+        {
+            var docsResourcePath = Path.Combine(resourcesPath, "docs");
+            if (!Directory.Exists(docsResourcePath))
+            {
+                return;
+            }
+
+            var docsDir = Path.Combine(gamePath, IManifestService.ManifestDirectory, "docs");
+            _ = Directory.CreateDirectory(docsDir);
+
+            foreach (var file in Directory.GetFiles(docsResourcePath, "*.md"))
+            {
+                var destFile = Path.Combine(docsDir, Path.GetFileName(file));
+                File.Copy(file, destFile, overwrite: true);
+                filesWritten.Add(destFile);
             }
         }
 

@@ -14,6 +14,7 @@
     <PackageReference Include="Avalonia.Desktop" />
     <PackageReference Include="Avalonia.Themes.Fluent" />
     <PackageReference Include="Avalonia.Fonts.Inter" />
+    <PackageReference Include="LiveMarkdown.Avalonia" />
     <PackageReference Include="Mono.Cecil" />
   </ItemGroup>
   <ItemGroup>
@@ -22,6 +23,11 @@
     <None Remove="Resources\bepinex\**\*.md" />
     <None Remove="Resources\bepinex\**\changelog*" />
     <Content Include="Resources\bepinex\**\*" Exclude="Resources\bepinex\**\.DS_Store;Resources\bepinex\**\*.md;Resources\bepinex\**\changelog*;Resources\bepinex\**\.gitignore">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\docs\*.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

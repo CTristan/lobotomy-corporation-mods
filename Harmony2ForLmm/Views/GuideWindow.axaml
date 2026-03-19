@@ -1,0 +1,29 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:md="clr-namespace:LiveMarkdown.Avalonia;assembly=LiveMarkdown.Avalonia"
+        x:Class="Harmony2ForLmm.Views.GuideWindow"
+        Width="800"
+        Height="700"
+        MinWidth="600"
+        MinHeight="400"
+        WindowStartupLocation="CenterOwner">
+
+  <DockPanel Margin="24">
+
+    <!-- Close button at bottom (docked first so it's always visible) -->
+    <Border DockPanel.Dock="Bottom" Margin="0,16,0,0">
+      <Button Content="Close"
+              Classes="secondary"
+              HorizontalAlignment="Right"
+              Padding="20,8"
+              Click="CloseButton_Click" />
+    </Border>
+
+    <!-- Scrollable markdown content fills remaining space -->
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                  VerticalScrollBarVisibility="Auto">
+      <md:MarkdownRenderer x:Name="MarkdownViewer" />
+    </ScrollViewer>
+
+  </DockPanel>
+</Window>

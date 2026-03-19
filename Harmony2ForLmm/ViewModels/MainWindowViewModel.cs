@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Windows.Input;
 using Harmony2ForLmm.Interfaces;
@@ -20,7 +21,9 @@ namespace Harmony2ForLmm.ViewModels
         private readonly IUninstallerService _uninstallerService;
         private readonly IBaseModsAnalyzer _baseModsAnalyzer;
         private readonly IInstallationStateDetector _stateDetector;
+        private readonly string _docsPath;
         private Action? _closeAction;
+        private Action<string, string>? _openGuideAction;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
@@ -40,10 +43,14 @@ namespace Harmony2ForLmm.ViewModels
             _baseModsAnalyzer = baseModsAnalyzer;
             _stateDetector = stateDetector;
 
+            _docsPath = Path.Combine(AppContext.BaseDirectory, "Resources", "docs");
+
             PrimaryActionCommand = new RelayCommand(ExecuteInstall, () => IsPathValid && !IsWorking);
             UninstallCommand = new RelayCommand(ExecuteUninstall, () => IsPathValid && !IsWorking && CurrentState != InstallationState.Fresh);
             AutoDetectCommand = new RelayCommand(ExecuteAutoDetect, () => !IsWorking);
             CloseCommand = new RelayCommand(() => _closeAction?.Invoke());
+            UserGuideCommand = new RelayCommand(() => OpenGuide("User's Guide", "UsersGuide.md"));
+            ModderGuideCommand = new RelayCommand(() => OpenGuide("Modder's Guide", "ModdersGuide.md"));
 
             ExecuteAutoDetect();
         }
@@ -59,10 +66,13 @@ namespace Harmony2ForLmm.ViewModels
             _uninstallerService = null!;
             _baseModsAnalyzer = null!;
             _stateDetector = null!;
+            _docsPath = string.Empty;
             PrimaryActionCommand = new RelayCommand(() => { });
             UninstallCommand = new RelayCommand(() => { });
             AutoDetectCommand = new RelayCommand(() => { });
             CloseCommand = new RelayCommand(() => { });
+            UserGuideCommand = new RelayCommand(() => { });
+            ModderGuideCommand = new RelayCommand(() => { });
         }
 
         /// <summary>
@@ -220,11 +230,40 @@ namespace Harmony2ForLmm.ViewModels
         public ICommand CloseCommand { get; }
 
         /// <summary>
+        /// Gets the command to open the User's Guide.
+        /// </summary>
+        public ICommand UserGuideCommand { get; }
+
+        /// <summary>
+        /// Gets the command to open the Modder's Guide.
+        /// </summary>
+        public ICommand ModderGuideCommand { get; }
+
+        /// <summary>
         /// Sets the action to invoke when the close command is executed.
         /// </summary>
         public void SetCloseAction(Action closeAction)
         {
             _closeAction = closeAction;
+        }
+
+        /// <summary>
+        /// Sets the action to invoke when a guide window should be opened.
+        /// </summary>
+        /// <param name="openGuideAction">Action accepting (title, markdownContent).</param>
+        public void SetOpenGuideAction(Action<string, string> openGuideAction)
+        {
+            _openGuideAction = openGuideAction;
+        }
+
+        private void OpenGuide(string title, string fileName)
+        {
+            var filePath = Path.Combine(_docsPath, fileName);
+            if (File.Exists(filePath))
+            {
+                var content = File.ReadAllText(filePath);
+                _openGuideAction?.Invoke(title, content);
+            }
         }
 
         private void NotifyAllCommands()

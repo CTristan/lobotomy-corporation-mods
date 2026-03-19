@@ -157,26 +157,40 @@
             <ProgressBar IsIndeterminate="True"
                          IsVisible="{Binding IsWorking}" />
 
-            <!-- Primary action + Uninstall + User's Guide buttons -->
-            <Grid ColumnDefinitions="*,16,*,16,*">
-              <Button Grid.Column="0"
-                      Content="{Binding PrimaryActionLabel}"
-                      Classes="accent"
-                      Command="{Binding PrimaryActionCommand}"
-                      HorizontalAlignment="Stretch" />
-              <Button Grid.Column="2"
-                      Content="Uninstall"
-                      Classes="danger"
-                      Command="{Binding UninstallCommand}"
-                      IsVisible="{Binding ShowUninstallAction}"
-                      HorizontalAlignment="Stretch" />
-              <Button Grid.Column="4"
-                      Content="User's Guide"
-                      Classes="secondary"
-                      IsEnabled="False"
-                      HorizontalAlignment="Stretch"
-                      ToolTip.Tip="Coming soon" />
-            </Grid>
+            <!-- Action buttons: two rows of two -->
+            <StackPanel Spacing="8">
+              <Grid ColumnDefinitions="*,16,*">
+                <Button Grid.Column="0"
+                        Content="{Binding PrimaryActionLabel}"
+                        Classes="accent"
+                        Command="{Binding PrimaryActionCommand}"
+                        HorizontalAlignment="Stretch" />
+                <Button Grid.Column="2"
+                        Content="Uninstall"
+                        Classes="danger"
+                        Command="{Binding UninstallCommand}"
+                        IsVisible="{Binding ShowUninstallAction}"
+                        HorizontalAlignment="Stretch" />
+              </Grid>
+              <Grid ColumnDefinitions="*,16,*">
+                <Button Grid.Column="0"
+                        Content="User's Guide"
+                        Classes="secondary"
+                        Command="{Binding UserGuideCommand}"
+                        Padding="20,12"
+                        FontSize="16"
+                        HorizontalContentAlignment="Center"
+                        HorizontalAlignment="Stretch" />
+                <Button Grid.Column="2"
+                        Content="Modder's Guide"
+                        Classes="secondary"
+                        Command="{Binding ModderGuideCommand}"
+                        Padding="20,12"
+                        FontSize="16"
+                        HorizontalContentAlignment="Center"
+                        HorizontalAlignment="Stretch" />
+              </Grid>
+            </StackPanel>
 
           </StackPanel>
         </Border>
