@@ -8,7 +8,7 @@ using HarmonyLib;
 
 #endregion
 
-namespace DemoMod.Plugin.Patches
+namespace DemoMod.Mod.Patches
 {
     /// <summary>
     /// Demonstrates: CodeMatcher pattern matching for transpilers (§CodeMatcher)
@@ -27,6 +27,7 @@ namespace DemoMod.Plugin.Patches
             var getMaxRate = AccessTools.Method(
                 typeof(Plugin), nameof(Plugin.GetMaxSuccessRate));
 
+            // Guide: §CodeMatcher — fluent API to find and replace IL patterns
             var result = new CodeMatcher(instructions)
                 .MatchForward(false,
                     new CodeMatch(OpCodes.Ldc_R4, 0.95f))

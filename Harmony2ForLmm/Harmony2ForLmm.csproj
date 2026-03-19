@@ -10,6 +10,26 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <DefaultItemExcludes>$(DefaultItemExcludes);DemoMod\**</DefaultItemExcludes>
   </PropertyGroup>
+  <!-- Zip DemoMod source for distribution (excludes build artifacts).
+       ZipDirectory doesn't support excludes, so we copy source files to a staging
+       directory first and zip that. -->
+  <Target Name="ZipDemoMod" BeforeTargets="Build"
+          Inputs="DemoMod\**\*.cs;DemoMod\**\*.csproj;DemoMod\**\*.md"
+          Outputs="Resources\DemoMod.zip">
+    <ItemGroup>
+      <DemoModFiles Include="DemoMod\**\*"
+                    Exclude="DemoMod\**\obj\**;DemoMod\**\bin\**;DemoMod\**\.DS_Store" />
+    </ItemGroup>
+    <RemoveDir Directories="$(IntermediateOutputPath)DemoModStaging" />
+    <Copy SourceFiles="@(DemoModFiles)"
+          DestinationFiles="@(DemoModFiles->'$(IntermediateOutputPath)DemoModStaging\DemoMod\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <MakeDir Directories="Resources" Condition="!Exists('Resources')" />
+    <Delete Files="Resources\DemoMod.zip" Condition="Exists('Resources\DemoMod.zip')" />
+    <ZipDirectory SourceDirectory="$(IntermediateOutputPath)DemoModStaging"
+                  DestinationFile="Resources\DemoMod.zip"
+                  Overwrite="true" />
+    <RemoveDir Directories="$(IntermediateOutputPath)DemoModStaging" />
+  </Target>
   <ItemGroup>
     <PackageReference Include="Avalonia" />
     <PackageReference Include="Avalonia.Desktop" />
@@ -24,6 +44,12 @@
     <None Remove="Resources\bepinex\**\*.md" />
     <None Remove="Resources\bepinex\**\changelog*" />
     <Content Include="Resources\bepinex\**\*" Exclude="Resources\bepinex\**\.DS_Store;Resources\bepinex\**\*.md;Resources\bepinex\**\changelog*;Resources\bepinex\**\.gitignore">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <!-- TODO: Add "Extract Sample Project" button to installer UI that extracts DemoMod.zip -->
+    <Content Include="Resources\DemoMod.zip" Condition="Exists('Resources\DemoMod.zip')">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

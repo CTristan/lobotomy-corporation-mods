@@ -7,7 +7,7 @@ using HarmonyLib;
 
 #endregion
 
-namespace DemoMod.Plugin.Patches
+namespace DemoMod.Mod.Patches
 {
     /// <summary>
     /// Demonstrates: Dependency declarations (§Dependency declarations).

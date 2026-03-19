@@ -5,7 +5,7 @@
         x:Class="Harmony2ForLmm.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         x:CompileBindings="True"
-        Title="Harmony 2 for LMM"
+        Title="{Binding WindowTitle}"
         Width="700"
         Height="650"
         MinWidth="600"
@@ -20,7 +20,7 @@
 
     <!-- Title -->
     <StackPanel DockPanel.Dock="Top" Margin="0,0,0,16">
-      <TextBlock Text="Harmony 2 for LMM"
+      <TextBlock Text="{Binding WindowTitle}"
                  FontSize="28"
                  FontWeight="Bold"
                  Foreground="#d4a017"

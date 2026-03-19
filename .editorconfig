@@ -261,8 +261,10 @@ dotnet_diagnostic.RCS1005.severity = none
 # WHY: DemoMod is a showcase/verification mod. GetMaxSuccessRate() must be a method (not property)
 # because it is called via IL OpCodes.Call in a Harmony transpiler. Harmony instances are
 # intentionally long-lived (plugin lifetime) and should not be disposed.
-[{DemoMod.Plugin,**/DemoMod.Plugin}/{*.cs,**/*.cs}]
+[{DemoMod.Mod,**/DemoMod.Mod}/{*.cs,**/*.cs}]
 dotnet_diagnostic.CA1024.severity = none
+# WHY: "Mod" conflicts with VB.NET keyword (CA1716), but DemoMod is a showcase project not consumed as a library.
+dotnet_diagnostic.CA1716.severity = none
 dotnet_diagnostic.CA2000.severity = none
 [{DemoMod.Patcher,**/DemoMod.Patcher}/{*.cs,**/*.cs}]
 dotnet_diagnostic.RCS1005.severity = none

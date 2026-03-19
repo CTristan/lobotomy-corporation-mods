@@ -7,7 +7,7 @@ using HarmonyLib;
 
 #endregion
 
-namespace DemoMod.Plugin.Patches
+namespace DemoMod.Mod.Patches
 {
     /// <summary>
     /// Demonstrates: Reverse patches (§Reverse Patch).
@@ -16,11 +16,12 @@ namespace DemoMod.Plugin.Patches
     [HarmonyPatch(typeof(UseSkill))]
     public static class XpFormulaReversePatch
     {
+        // Guide: §Reverse Patch — creates a callable copy of a private method
         [HarmonyReversePatch]
         [HarmonyPatch("CalculateLevelExp")]
         public static float CalculateLevelExp(UseSkill instance, RwbpType rwbpType)
         {
-            // Stub — replaced at runtime with the original method's code
+            // Guide: §Reverse Patch — stub body is replaced at runtime with original method's IL
             throw new NotImplementedException();
         }
     }

@@ -73,7 +73,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LobotomyCorporationMods.Pla
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DemoMod", "DemoMod", "{C846D928-95EB-C630-E1B1-26376DD35737}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoMod.Plugin", "Harmony2ForLmm\DemoMod\DemoMod.Plugin\DemoMod.Plugin.csproj", "{DE41CA8E-6729-4221-95C8-11190B381899}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoMod.Mod", "Harmony2ForLmm\DemoMod\DemoMod.Mod\DemoMod.Mod.csproj", "{DE41CA8E-6729-4221-95C8-11190B381899}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoMod.Patcher", "Harmony2ForLmm\DemoMod\DemoMod.Patcher\DemoMod.Patcher.csproj", "{CF0CF0A0-555F-49FD-B0D4-FEE398A20BD5}"
 EndProject

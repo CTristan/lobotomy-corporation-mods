@@ -8,7 +8,7 @@ using HarmonyLib;
 
 #endregion
 
-namespace DemoMod.Plugin.Patches
+namespace DemoMod.Mod.Patches
 {
     /// <summary>
     /// Verifies: Preloader patcher (§Preloader patchers).
@@ -32,6 +32,7 @@ namespace DemoMod.Plugin.Patches
 
             try
             {
+                // Guide: §Preloader patchers — verify the field injected by DemoMod.Patcher
                 var field = typeof(CreatureModel).GetField(
                     "customDifficultyLevel",
                     BindingFlags.Public | BindingFlags.Instance);

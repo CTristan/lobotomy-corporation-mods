@@ -23,7 +23,7 @@ namespace Harmony2ForLmm.ViewModels
         private readonly IInstallationStateDetector _stateDetector;
         private readonly string _docsPath;
         private Action? _closeAction;
-        private Action<string, string>? _openGuideAction;
+        private Action<string, string, string?>? _openGuideAction;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
@@ -91,6 +91,12 @@ namespace Harmony2ForLmm.ViewModels
                 }
             }
         } = string.Empty;
+
+        /// <summary>
+        /// Gets the window title including the version number.
+        /// </summary>
+        public static string WindowTitle { get; } =
+            $"Harmony 2 for LMM v{typeof(MainWindowViewModel).Assembly.GetName().Version?.ToString(3) ?? "0.0.0"}";
 
         /// <summary>
         /// Gets the current status message.
@@ -251,7 +257,7 @@ namespace Harmony2ForLmm.ViewModels
         /// Sets the action to invoke when a guide window should be opened.
         /// </summary>
         /// <param name="openGuideAction">Action accepting (title, markdownContent).</param>
-        public void SetOpenGuideAction(Action<string, string> openGuideAction)
+        public void SetOpenGuideAction(Action<string, string, string?> openGuideAction)
         {
             _openGuideAction = openGuideAction;
         }
@@ -259,11 +265,15 @@ namespace Harmony2ForLmm.ViewModels
         private void OpenGuide(string title, string fileName)
         {
             var filePath = Path.Combine(_docsPath, fileName);
-            if (File.Exists(filePath))
+            if (!File.Exists(filePath))
             {
-                var content = File.ReadAllText(filePath);
-                _openGuideAction?.Invoke(title, content);
+                return;
             }
+
+            var content = File.ReadAllText(filePath);
+            var zipPath = Path.Combine(AppContext.BaseDirectory, "Resources", "DemoMod.zip");
+            var sampleZip = File.Exists(zipPath) ? zipPath : null;
+            _openGuideAction?.Invoke(title, content, sampleZip);
         }
 
         private void NotifyAllCommands()

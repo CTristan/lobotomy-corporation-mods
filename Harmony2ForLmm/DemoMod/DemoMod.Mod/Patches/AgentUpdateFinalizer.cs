@@ -7,7 +7,7 @@ using HarmonyLib;
 
 #endregion
 
-namespace DemoMod.Plugin.Patches
+namespace DemoMod.Mod.Patches
 {
     /// <summary>
     /// Demonstrates: Finalizer patches (§Finalizer).
@@ -19,6 +19,7 @@ namespace DemoMod.Plugin.Patches
     {
         private static bool s_loggedOnce;
 
+        // Guide: §Finalizer — [HarmonyFinalizer] runs after the method even if it threw
         [HarmonyFinalizer]
         public static Exception Finalizer(Exception __exception)
         {
@@ -34,7 +35,8 @@ namespace DemoMod.Plugin.Patches
                 Plugin.Log.LogError($"[DemoMod:Finalizer] AgentManager.OnFixedUpdate threw: {__exception}");
             }
 
-            return null; // Suppress the exception so other agents still update
+            // Guide: §Finalizer — returning null suppresses the exception
+            return null;
         }
     }
 }

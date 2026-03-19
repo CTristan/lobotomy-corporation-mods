@@ -10,14 +10,29 @@
 
   <DockPanel Margin="24">
 
-    <!-- Close button at bottom (docked first so it's always visible) -->
-    <Border DockPanel.Dock="Bottom" Margin="0,16,0,0">
+    <!-- Bottom buttons (docked first so they're always visible) -->
+    <StackPanel DockPanel.Dock="Bottom"
+                Orientation="Horizontal"
+                HorizontalAlignment="Right"
+                Spacing="8"
+                Margin="0,16,0,0">
+      <Button x:Name="SampleProjectButton"
+              Content="View Sample Project"
+              Classes="secondary"
+              Padding="20,8"
+              IsVisible="False"
+              Click="SampleProjectButton_Click" />
+      <Button x:Name="OpenFolderButton"
+              Content="Open in File Manager"
+              Classes="secondary"
+              Padding="20,8"
+              IsVisible="False"
+              Click="OpenFolderButton_Click" />
       <Button Content="Close"
               Classes="secondary"
-              HorizontalAlignment="Right"
               Padding="20,8"
               Click="CloseButton_Click" />
-    </Border>
+    </StackPanel>
 
     <!-- Scrollable markdown content fills remaining space -->
     <ScrollViewer HorizontalScrollBarVisibility="Disabled"

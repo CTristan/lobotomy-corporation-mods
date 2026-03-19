@@ -22,11 +22,15 @@ regardless of which Harmony version it targets.
 |---------|-------------|---------|
 | **Finalizer patches** | Run code after a method even if it threw — log, suppress, or replace exceptions without replacing the original method | [Finalizer](#finalizer) |
 | **Reverse patches** | Call private game methods directly — type-safe, no reflection, stays in sync with other mods' patches | [Reverse Patch](#reverse-patch) |
+| **Patch priority & ordering** | Guarantee execution order across mods with `[HarmonyPriority]`, `[HarmonyBefore]`, and `[HarmonyAfter]` | [Priority & Ordering](#patch-priority--ordering) |
 | **CodeMatcher** | Find and modify IL patterns with a fluent API — built-in error reporting when patterns break after game updates | [CodeMatcher](#codematcher--pattern-matching-for-transpilers) |
+| **Manual patching** | Apply and remove patches at runtime — conditional patches, config toggles, dynamically resolved methods | [Manual Patching](#manual-patching) |
 | **BepInEx logging** | Every log line tagged with your mod's name + severity level — no more anonymous `Debug.LogError` noise | [Logging](#logging) |
 | **Built-in config system** | Expose game constants as player-editable settings in auto-generated `.cfg` files — no rebuild needed | [Configuration](#configuration) |
+| **Config validation** | Constrain config values with `AcceptableValueRange` / `AcceptableValueList` — auto-generates sliders and dropdowns | [Config Validation](#config-validation) |
 | **Dependency declarations** | Control mod load order with hard/soft dependencies — detect optional mods and adapt at runtime | [Dependencies](#dependency-declarations) |
 | **Preloader patchers** | Modify assemblies before the game loads them — add fields, change constants, inject types via Mono.Cecil | [Preloader patchers](#preloader-patchers) |
+| **MonoBehaviour lifecycle** | `Update()`, `OnGUI()`, `OnDestroy()` — per-frame logic and debug overlays without patching game methods | [MonoBehaviour Lifecycle](#monobehaviour-lifecycle) |
 
 ---
 
@@ -115,6 +119,60 @@ The `[BepInPlugin]` attribute takes three arguments:
 > plugin class has access to the full Unity lifecycle — `Update()`, `OnDestroy()`, `OnGUI()`,
 > and so on. If your mod needs per-frame logic (input handling, overlay rendering), you can
 > implement those methods directly in your plugin class.
+
+### MonoBehaviour Lifecycle
+
+Because `BaseUnityPlugin` inherits `MonoBehaviour`, your plugin class can implement any
+Unity lifecycle method. This is a significant advantage over LMM's `Basemod_Add_On`,
+which had no built-in way to hook into the per-frame update loop or render custom UI.
+
+**Common lifecycle methods for mods:**
+
+| Method | When it runs | Use case |
+|--------|-------------|----------|
+| `Update()` | Every frame | Input handling (hotkeys, toggles) |
+| `OnGUI()` | Multiple times per frame (once per UI event) | Debug overlays, IMGUI rendering |
+| `OnDestroy()` | When the plugin is unloaded | Cleanup (remove event handlers, close files) |
+| `OnEnable()` / `OnDisable()` | When the component toggles | Pause/resume mod behavior |
+
+**Example — debug overlay with hotkey toggle:**
+
+```csharp
+[BepInPlugin("com.yourname.mymod", "My Mod", "1.0.0")]
+public class Plugin : BaseUnityPlugin
+{
+    private bool _showOverlay;
+
+    private void Update()
+    {
+        // Check for hotkey press — runs once per frame, lightweight
+        if (Input.GetKeyDown(KeyCode.F9))
+        {
+            _showOverlay = !_showOverlay;
+            Logger.LogInfo($"Debug overlay toggled {(_showOverlay ? "ON" : "OFF")}");
+        }
+    }
+
+    private void OnGUI()
+    {
+        if (!_showOverlay) return;
+
+        // IMGUI rendering — keep it trivial, no allocations
+        GUI.Box(new Rect(10, 10, 300, 100), "My Mod Debug");
+        GUI.Label(new Rect(20, 30, 280, 20), $"Some value: {_someConfig.Value}");
+    }
+}
+```
+
+> **Performance warning:** `Update()` runs every frame and `OnGUI()` runs multiple times
+> per frame. Keep both methods as lightweight as possible — no heavy computation, no
+> allocations, no LINQ. A mod that does too much work in `Update()` will noticeably
+> drop the game's FPS.
+
+> **LMM comparison:** `Basemod_Add_On` provided no equivalent to `Update()` or `OnGUI()`.
+> Mods that needed per-frame logic had to patch a game method that runs every frame
+> (like `AgentManager.OnFixedUpdate`) and run their code inside the patch — fragile,
+> hard to maintain, and prone to conflicts with other mods patching the same method.
 
 ---
 
@@ -284,6 +342,69 @@ type safety, no per-call reflection overhead, and stays in sync with the game co
 if other mods patch it. Use `HarmonyReversePatchType.Original` if you need the unpatched
 version specifically.
 
+### Patch Priority & Ordering
+
+When multiple mods patch the same method, execution order matters. Harmony 1 offered
+basic priority, but Harmony 2 adds mod-level ordering that lets you guarantee your
+postfix runs before or after a specific other mod's postfix — even if you don't control
+that mod's code.
+
+**Priority constants** — lower numbers run first:
+
+| Constant | Value | Meaning |
+|----------|-------|---------|
+| `Priority.First` | 0 | Runs before everything else |
+| `Priority.VeryHigh` | 100 | |
+| `Priority.High` | 200 | |
+| `Priority.Normal` | 400 | Default if unspecified |
+| `Priority.Low` | 600 | |
+| `Priority.VeryLow` | 800 | |
+| `Priority.Last` | 1000 | Runs after everything else |
+
+**Real example — buff application before status logging:**
+
+A "creature buff" mod applies stat buffs in a postfix on `CreatureManager.OnFixedUpdate()`.
+A "status logger" mod reads creature state in its own postfix on the same method. The
+logger must see post-buff values, so it declares ordering constraints:
+
+```csharp
+// Buff mod — runs first (High priority)
+[HarmonyPatch(typeof(CreatureManager), "OnFixedUpdate")]
+[HarmonyPriority(Priority.High)]
+[HarmonyBefore("com.example.statuslogger")]
+public static class CreatureBuffPostfix
+{
+    [HarmonyPostfix]
+    public static void Postfix()
+    {
+        // Apply buffs to creatures — runs before the status logger
+    }
+}
+
+// Status logger — runs second (Low priority, after buff mod)
+[HarmonyPatch(typeof(CreatureManager), "OnFixedUpdate")]
+[HarmonyPriority(Priority.Low)]
+[HarmonyAfter("com.example.creaturebuff")]
+public static class CreatureStatusLoggerPostfix
+{
+    [HarmonyPostfix]
+    public static void Postfix()
+    {
+        // Read creature state — guaranteed to see post-buff values
+    }
+}
+```
+
+`[HarmonyBefore]` and `[HarmonyAfter]` take the Harmony ID (GUID) of the other mod.
+Combined with `[HarmonyPriority]`, they give you complete control over patch ordering
+across mods. Use this when your patch reads state that another patch writes — or
+vice versa.
+
+> **Harmony 1 limitation:** Harmony 1.x supported `[HarmonyPriority]` but not
+> `[HarmonyBefore]`/`[HarmonyAfter]`. If two mods both used `Priority.Normal`, their
+> execution order was undefined. Harmony 2's ordering attributes eliminate this
+> ambiguity.
+
 ---
 
 ## Integration with LMM
@@ -384,6 +505,51 @@ To make this configurable instead of hardcoded to `1.0f`, see the
 - Use dnSpy or ILSpy to read the original IL — do not guess at the instruction sequence.
 - If the game updates and your transpiler silently breaks, add a validation pass that
   checks whether the expected instruction pattern exists before modifying anything.
+
+### Manual Patching
+
+`harmony.PatchAll()` discovers and applies every `[HarmonyPatch]` in your assembly at
+startup. This is the right approach for most mods. But sometimes you need finer control:
+
+- **Conditional patches** — only patch if a config option is enabled
+- **Runtime toggling** — apply or remove a patch while the game is running
+- **Dynamically resolved methods** — the target method isn't known at compile time
+
+For these cases, use the manual `harmony.Patch()` and `harmony.Unpatch()` API:
+
+```csharp
+// Use a separate Harmony instance so you can unpatch independently
+var energyHarmony = new Harmony("com.example.mymod.energytweak");
+
+// Apply a prefix manually
+var target = AccessTools.Method(typeof(EnergyModel), "AddEnergy", new[] { typeof(float) });
+var prefix = new HarmonyMethod(typeof(MyPatchClass), nameof(MyPatchClass.Prefix));
+energyHarmony.Patch(target, prefix: prefix);
+
+// Later, remove just this prefix (other mods' patches on AddEnergy are unaffected)
+energyHarmony.Unpatch(target, HarmonyPatchType.Prefix, energyHarmony.Id);
+```
+
+**Real example — energy multiplier toggled by config:**
+
+A mod exposes a config toggle that applies or removes an energy multiplier patch at
+runtime. When the user flips the toggle in the `.cfg` file, the `SettingChanged` event
+fires and the patch is applied or removed without restarting the game:
+
+```csharp
+_enableEnergyMultiplier.SettingChanged += (sender, args) =>
+{
+    if (_enableEnergyMultiplier.Value)
+        EnergyMultiplierManualPatch.ApplyPatch();
+    else
+        EnergyMultiplierManualPatch.RemovePatch();
+};
+```
+
+> **Tip:** Use a separate Harmony ID for manual patches (e.g.,
+> `"com.example.mymod.energytweak"` vs `"com.example.mymod"`). This prevents
+> `harmony.UnpatchAll()` from accidentally removing your attribute-based patches
+> when you only want to remove the manual ones.
 
 ---
 
@@ -491,6 +657,40 @@ _damageMultiplier.SettingChanged += (sender, args) =>
     Logger.LogInfo($"Damage multiplier changed to {_damageMultiplier.Value}");
 };
 ```
+
+#### Config Validation
+
+`Config.Bind()` accepts a `ConfigDescription` parameter with an `AcceptableValueBase`
+that constrains the allowed range. This prevents invalid values from reaching your mod
+code and generates appropriate UI controls (sliders, dropdowns) in BepInEx
+ConfigurationManager:
+
+```csharp
+// AcceptableValueRange — generates a slider in ConfigurationManager
+_damageMultiplier = Config.Bind(
+    "General",
+    "DamageMultiplier",
+    1,
+    new ConfigDescription(
+        "Multiplier applied to all damage",
+        new AcceptableValueRange<int>(1, 10)));
+
+// AcceptableValueList — generates a dropdown in ConfigurationManager
+_difficulty = Config.Bind(
+    "General",
+    "Difficulty",
+    "Normal",
+    new ConfigDescription(
+        "Game difficulty preset",
+        new AcceptableValueList<string>("Easy", "Normal", "Hard")));
+```
+
+If a `.cfg` file contains an out-of-range value (e.g., `DamageMultiplier = 99`), BepInEx
+clamps it to the nearest valid value on load. The clamping is silent — check your startup
+logs to confirm values are what you expect.
+
+> **LMM comparison:** LMM mods had no built-in config validation. Modders had to write
+> their own range-checking code and error messages. BepInEx handles this automatically.
 
 **Real example — making the work success cap configurable (Config + CodeMatcher):**
 

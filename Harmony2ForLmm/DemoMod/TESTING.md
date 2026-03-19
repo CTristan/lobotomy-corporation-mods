@@ -18,7 +18,7 @@ dotnet playwright deploy --profile demo
 ```
 
 This deploys:
-- `DemoMod.Plugin.dll` → `BaseMods/DemoMod.Plugin/` (BepInEx plugin with all patches)
+- `DemoMod.Mod.dll` → `BaseMods/DemoMod.Mod/` (BepInEx plugin with all patches)
 - `DemoMod.Patcher.dll` → `BepInEx/patchers/DemoMod.Patcher/` (preloader patcher)
 - `RetargetHarmony.dll` → `BepInEx/patchers/RetargetHarmony/` (required for Harmony 2 under LMM)
 - `Hemocode.Playwright.dll` → `BaseMods/Hemocode.Playwright/` (TCP query/command bridge)
@@ -66,6 +66,7 @@ dotnet playwright read-log --filter "DemoMod"
 | `[DemoMod:Config]` | `MaxSuccessRate = 0.95` | Config system reads defaults |
 | `[DemoMod:Transpiler]` | `Patching ProcessWorkTick — replacing 0.95f cap` | CodeMatcher found the IL pattern |
 | `[DemoMod:Transpiler]` | `ProcessWorkTick patched successfully` | CodeMatcher completed without error |
+| `[DemoMod:ConfigValidation]` | `DamageMultiplier range: 1–10, MaxSuccessRate range: 0.0–1.0, EnergyMultiplier range: 0.5–5.0` | Config validation ranges applied |
 | `[DemoMod:EntryPoint]` | `All patches applied successfully` | BepInEx plugin loaded, Harmony.PatchAll() succeeded |
 | `[DemoMod:Dependencies]` | `Custom Creatures not present — using standard XP formula` | Soft dependency detection works |
 
@@ -88,6 +89,44 @@ dotnet playwright read-log --filter "Finalizer"
 | `[DemoMod:Finalizer]` | `AgentManager.OnFixedUpdate finalizer is active` | Finalizer patch registered and running |
 
 This confirms the `[HarmonyFinalizer]` attribute works and the patch fires on every `AgentManager.OnFixedUpdate` call (logs once to avoid spam).
+
+Also check for the priority ordering demo:
+
+```bash
+dotnet playwright read-log --filter "Priority"
+```
+
+**Expected:**
+
+| Tag | Expected message | Feature verified |
+|-----|-----------------|------------------|
+| `[DemoMod:Priority]` | `CreatureBuffPostfix is active (Priority.High, runs first)` | High-priority postfix registered and running |
+| `[DemoMod:Priority]` | `CreatureStatusLoggerPostfix is active (Priority.Low, runs second)` | Low-priority postfix runs after high-priority |
+
+The buff postfix should appear before the status logger postfix, confirming `[HarmonyPriority]` + `[HarmonyBefore]`/`[HarmonyAfter]` ordering works.
+
+### Phase 2.5: Manual patch verification (config toggle)
+
+Check whether the energy multiplier manual patch is active:
+
+```bash
+dotnet playwright read-log --filter "ManualPatch"
+```
+
+**Expected (if `EnableEnergyMultiplier = true` in config):**
+
+| Tag | Expected message | Feature verified |
+|-----|-----------------|------------------|
+| `[DemoMod:ManualPatch]` | `Energy multiplier patch applied` | Manual `harmony.Patch()` call succeeded |
+
+**Expected (if `EnableEnergyMultiplier = false` — the default):**
+
+No `[DemoMod:ManualPatch]` messages at startup. To test the toggle:
+
+1. Edit `BepInEx/config/com.example.demomod.cfg` and set `EnableEnergyMultiplier = true`
+2. The `SettingChanged` event fires and the patch is applied
+3. Check logs for `Energy multiplier patch applied`
+4. Set it back to `false` and check for `Energy multiplier patch removed`
 
 ### Phase 3: Creature initialization verification
 
@@ -155,6 +194,33 @@ The XP multiplier values will vary based on the agent's stats and creature's ris
 
 Note: `GetMaxSuccessRate` logs at Debug level, which may be filtered out depending on BepInEx log level config. If not visible, check `BepInEx/config/BepInEx.cfg` and set `[Logging.Console]` / `[Logging.Disk]` LogLevel to include `Debug`.
 
+### Phase 5: MonoBehaviour lifecycle verification (keyboard input)
+
+Test the debug overlay toggle:
+
+1. While the game is running, press **F9**
+2. A debug overlay should appear in the top-left corner showing current config values and patch status
+
+```bash
+dotnet playwright read-log --filter "Lifecycle"
+```
+
+**Expected:**
+
+| Tag | Expected message | Feature verified |
+|-----|-----------------|------------------|
+| `[DemoMod:Lifecycle]` | `Debug overlay toggled ON` | `Update()` hotkey detection works |
+
+3. Press **F9** again to close the overlay
+
+**Expected:**
+
+| Tag | Expected message | Feature verified |
+|-----|-----------------|------------------|
+| `[DemoMod:Lifecycle]` | `Debug overlay toggled OFF` | Toggle state management works |
+
+The overlay displays: DamageMultiplier value, MaxSuccessRate value, EnergyMultiplier value, and whether the energy patch is active/inactive. This confirms `OnGUI()` rendering and MonoBehaviour lifecycle integration.
+
 ## Full verification checklist
 
 Run this after all phases to get a complete picture:
@@ -163,12 +229,16 @@ Run this after all phases to get a complete picture:
 dotnet playwright read-log --filter "DemoMod"
 ```
 
-All 6 features should have at least one `[DemoMod:*]` tagged log line:
+All 11 features should have at least one `[DemoMod:*]` tagged log line:
 
 - [ ] `[DemoMod:EntryPoint]` — BepInEx plugin loaded
 - [ ] `[DemoMod:Config]` — Config values read from .cfg file
+- [ ] `[DemoMod:ConfigValidation]` — Config validation ranges logged at startup
+- [ ] `[DemoMod:Lifecycle]` — F9 toggles debug overlay, Update()/OnGUI() working
 - [ ] `[DemoMod:Finalizer]` — Finalizer is active on AgentManager.OnFixedUpdate
+- [ ] `[DemoMod:Priority]` — Priority ordering confirmed (High before Low)
 - [ ] `[DemoMod:Transpiler]` — CodeMatcher patched ProcessWorkTick successfully
+- [ ] `[DemoMod:ManualPatch]` — Energy multiplier patch applied/removed via config toggle
 - [ ] `[DemoMod:ReversePatch]` — CalculateLevelExp called via reverse patch with real values
 - [ ] `[DemoMod:Dependencies]` — Soft dependency detected/not-detected, postfix active
 - [ ] `[DemoMod:Preloader]` — Field injected and read/write test PASS
@@ -233,7 +303,7 @@ dotnet playwright deploy --profile vanilla
 **No `[DemoMod:*]` log lines at all:**
 - Check `dotnet playwright read-log --tail 50` for BepInEx startup errors
 - Look for `TypeLoadException` or `FileNotFoundException` mentioning DemoMod
-- Verify DLLs exist: check `BaseMods/DemoMod.Plugin/DemoMod.Plugin.dll` and `BepInEx/patchers/DemoMod.Patcher/DemoMod.Patcher.dll` in the game directory
+- Verify DLLs exist: check `BaseMods/DemoMod.Mod/DemoMod.Mod.dll` and `BepInEx/patchers/DemoMod.Patcher/DemoMod.Patcher.dll` in the game directory
 
 **`[DemoMod:EntryPoint]` appears but no patch messages:**
 - `PatchAll()` may have thrown — look for Harmony errors: `dotnet playwright read-log --filter "Error"`

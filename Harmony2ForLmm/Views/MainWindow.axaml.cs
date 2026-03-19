@@ -23,9 +23,11 @@ namespace Harmony2ForLmm.Views
                 if (DataContext is MainWindowViewModel viewModel)
                 {
                     viewModel.SetCloseAction(Close);
-                    viewModel.SetOpenGuideAction((title, content) =>
+                    viewModel.SetOpenGuideAction((title, content, zipPath) =>
                     {
-                        var guideWindow = new GuideWindow(title, content);
+                        var guideWindow = zipPath != null
+                            ? new GuideWindow(title, content, zipPath)
+                            : new GuideWindow(title, content);
                         _ = guideWindow.ShowDialog(this);
                     });
                 }

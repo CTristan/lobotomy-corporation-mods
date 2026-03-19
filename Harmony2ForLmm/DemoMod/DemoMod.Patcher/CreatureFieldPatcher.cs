@@ -47,7 +47,7 @@ namespace DemoMod.Patcher
                     return;
                 }
 
-                // Add a public int field for custom difficulty
+                // Guide: §Preloader patchers — use Mono.Cecil to add a field before the CLR loads the type
                 var intRef = assembly.MainModule.ImportReference(typeof(int));
                 var field = new FieldDefinition(
                     "customDifficultyLevel",
