@@ -119,4 +119,13 @@ namespace Hemocode.Playwright.JsonModels
     {
         public long creatureId;
     }
+
+    /// <summary>
+    /// Data class for load-save command parameters.
+    /// </summary>
+    [Serializable]
+    public sealed class LoadSaveParams
+    {
+        public string saveType; // lastday or checkpoint
+    }
 }

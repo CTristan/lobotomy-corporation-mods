@@ -639,6 +639,111 @@ namespace LobotomyPlaywright.Test.Commands
         }
 
         [Fact]
+        public void Run_ContinueCommand_SendsCorrectRequest()
+        {
+            // Arrange
+            CommandCommand command = new(_configManager, _tcpClientFactory);
+            _ = _mockTcpClient.Setup(c => c.Connect(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<double>()));
+            _ = _mockTcpClient.Setup(c => c.SendCommandWithData("continue", It.IsAny<Dictionary<string, object>?>()))
+                .Returns(new Dictionary<string, object> { { "result", "continue_started" } });
+
+            // Act
+            int result = command.Run(["continue"]);
+
+            // Assert
+            _ = result.Should().Be(0);
+            _mockTcpClient.Verify(c => c.SendCommandWithData("continue", It.IsAny<Dictionary<string, object>?>()), Times.Once);
+        }
+
+        [Fact]
+        public void Run_NewGameCommand_SendsCorrectRequest()
+        {
+            // Arrange
+            CommandCommand command = new(_configManager, _tcpClientFactory);
+            _ = _mockTcpClient.Setup(c => c.Connect(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<double>()));
+            _ = _mockTcpClient.Setup(c => c.SendCommandWithData("new-game", It.IsAny<Dictionary<string, object>?>()))
+                .Returns(new Dictionary<string, object> { { "result", "new_game_started" } });
+
+            // Act
+            int result = command.Run(["new-game"]);
+
+            // Assert
+            _ = result.Should().Be(0);
+            _mockTcpClient.Verify(c => c.SendCommandWithData("new-game", It.IsAny<Dictionary<string, object>?>()), Times.Once);
+        }
+
+        [Fact]
+        public void Run_LoadSaveCommand_WithType_SendsCorrectRequest()
+        {
+            // Arrange
+            CommandCommand command = new(_configManager, _tcpClientFactory);
+            _ = _mockTcpClient.Setup(c => c.Connect(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<double>()));
+            _ = _mockTcpClient.Setup(c => c.SendCommandWithData("load-save", It.IsAny<Dictionary<string, object>?>()))
+                .Returns(new Dictionary<string, object> { { "result", "save_loaded" }, { "saveType", "lastday" } });
+
+            // Act
+            int result = command.Run(["load-save", "--type", "lastday"]);
+
+            // Assert
+            _ = result.Should().Be(0);
+            _mockTcpClient.Verify(c => c.SendCommandWithData(
+                "load-save",
+                It.Is<Dictionary<string, object>>(d => d["saveType"].ToString() == "lastday")),
+                Times.Once);
+        }
+
+        [Fact]
+        public void Run_LoadSaveCommand_WithCheckpointType_SendsCorrectRequest()
+        {
+            // Arrange
+            CommandCommand command = new(_configManager, _tcpClientFactory);
+            _ = _mockTcpClient.Setup(c => c.Connect(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<double>()));
+            _ = _mockTcpClient.Setup(c => c.SendCommandWithData("load-save", It.IsAny<Dictionary<string, object>?>()))
+                .Returns(new Dictionary<string, object> { { "result", "save_loaded" }, { "saveType", "checkpoint" } });
+
+            // Act
+            int result = command.Run(["load-save", "--type", "checkpoint"]);
+
+            // Assert
+            _ = result.Should().Be(0);
+            _mockTcpClient.Verify(c => c.SendCommandWithData(
+                "load-save",
+                It.Is<Dictionary<string, object>>(d => d["saveType"].ToString() == "checkpoint")),
+                Times.Once);
+        }
+
+        [Fact]
+        public void Run_LoadSaveCommand_WithoutType_ReturnsErrorWithoutConnecting()
+        {
+            // Arrange
+            CommandCommand command = new(_configManager, _tcpClientFactory);
+
+            // Act
+            int result = command.Run(["load-save"]);
+
+            // Assert
+            _ = result.Should().Be(1);
+            _mockTcpClient.Verify(c => c.Connect(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<double>()), Times.Never);
+        }
+
+        [Fact]
+        public void Run_StartDayCommand_SendsCorrectRequest()
+        {
+            // Arrange
+            CommandCommand command = new(_configManager, _tcpClientFactory);
+            _ = _mockTcpClient.Setup(c => c.Connect(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<double>()));
+            _ = _mockTcpClient.Setup(c => c.SendCommandWithData("start-day", It.IsAny<Dictionary<string, object>?>()))
+                .Returns(new Dictionary<string, object> { { "result", "day_started" } });
+
+            // Act
+            int result = command.Run(["start-day"]);
+
+            // Assert
+            _ = result.Should().Be(0);
+            _mockTcpClient.Verify(c => c.SendCommandWithData("start-day", It.IsAny<Dictionary<string, object>?>()), Times.Once);
+        }
+
+        [Fact]
         public void Run_WithInvalidPort_ReturnsErrorWithoutConnecting()
         {
             // Arrange

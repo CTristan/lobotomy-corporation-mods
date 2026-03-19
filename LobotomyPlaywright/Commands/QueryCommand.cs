@@ -92,6 +92,7 @@ namespace LobotomyPlaywright.Commands
                 "game" or "status" => QueryGame(client, jsonOutput),
                 "departments" or "department" or "sefira" or "sefiras" => QueryDepartments(client, jsonOutput),
                 "ui" => QueryUi(client, jsonOutput, args),
+                "titlemenu" or "title" => QueryTitleMenu(client, jsonOutput),
                 _ => PrintUnknownTargetError(target)
             };
         }
@@ -214,10 +215,26 @@ namespace LobotomyPlaywright.Commands
             return 0;
         }
 
+        private static int QueryTitleMenu(ITcpClient client, bool jsonOutput)
+        {
+            var titleData = client.Query("titlemenu");
+
+            if (jsonOutput)
+            {
+                Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(titleData, new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
+            }
+            else
+            {
+                Console.WriteLine(OutputFormatter.FormatTitleMenu(titleData, jsonOutput));
+            }
+
+            return 0;
+        }
+
         private static int PrintUnknownTargetError(string target)
         {
             Console.Error.WriteLine($"Unknown target: {target}");
-            Console.Error.WriteLine("Valid targets: agents, creatures, game, departments, ui");
+            Console.Error.WriteLine("Valid targets: agents, creatures, game, departments, ui, titlemenu");
             return 1;
         }
 
@@ -238,6 +255,7 @@ namespace LobotomyPlaywright.Commands
             Console.WriteLine("  game                Query game state overview");
             Console.WriteLine("  departments         Query department status");
             Console.WriteLine("  ui                  Query UI accessibility tree (how the agent \"sees\" the game)");
+            Console.WriteLine("  titlemenu           Query title menu state (save data, scene, language)");
             Console.WriteLine();
             Console.WriteLine("Options:");
             Console.WriteLine("  --host HOST         Connect to specific host (default: localhost)");

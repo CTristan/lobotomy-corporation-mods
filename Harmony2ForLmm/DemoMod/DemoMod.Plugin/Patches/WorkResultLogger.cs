@@ -39,7 +39,7 @@ namespace DemoMod.Plugin.Patches
             }
 
             var harmony = new Harmony("com.example.xpoverhaul");
-            harmony.PatchAll();
+            harmony.PatchAll(typeof(WorkResultLogger));
         }
     }
 

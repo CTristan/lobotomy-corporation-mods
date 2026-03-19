@@ -3,6 +3,7 @@
 #region
 
 using System;
+using System.Collections.Generic;
 
 #endregion
 
@@ -16,9 +17,12 @@ namespace Hemocode.Playwright.JsonModels
     {
         public string currentScene;
         public bool hasSaveData;
+        public bool hasCheckpointData;
         public bool hasUnlimitData;
         public int lastDay;
+        public int checkpointDay;
         public string currentLanguage;
         public string buildVersion;
+        public List<string> availableSaveTypes;
     }
 }

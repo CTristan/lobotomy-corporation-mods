@@ -3,6 +3,7 @@
 #region
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Hemocode.Playwright.JsonModels;
 using UnityEngine.SceneManagement;
@@ -24,14 +25,31 @@ namespace Hemocode.Playwright.Queries
                 var globalGameManager = GlobalGameManager.instance ?? throw new InvalidOperationException("GlobalGameManager.instance is null. Game may not be initialized.");
                 var sceneName = SceneManager.GetActiveScene().name;
 
+                var hasSaveData = globalGameManager.ExistSaveData();
+                var checkpointDay = hasSaveData ? globalGameManager.LoadCheckPointDay() : 0;
+                var hasCheckpointData = checkpointDay > 0;
+
+                var availableSaveTypes = new List<string>();
+                if (hasSaveData)
+                {
+                    availableSaveTypes.Add("lastday");
+                    if (hasCheckpointData)
+                    {
+                        availableSaveTypes.Add("checkpoint");
+                    }
+                }
+
                 return new TitleMenuData
                 {
                     currentScene = sceneName,
-                    hasSaveData = globalGameManager.ExistSaveData(),
+                    hasSaveData = hasSaveData,
+                    hasCheckpointData = hasCheckpointData,
                     hasUnlimitData = globalGameManager.ExistUnlimitData(),
                     lastDay = globalGameManager.PreLoadData(),
+                    checkpointDay = checkpointDay,
                     currentLanguage = globalGameManager.GetCurrentLanguage(),
-                    buildVersion = globalGameManager.BuildVer
+                    buildVersion = globalGameManager.BuildVer,
+                    availableSaveTypes = availableSaveTypes
                 };
             }
             catch (Exception ex)

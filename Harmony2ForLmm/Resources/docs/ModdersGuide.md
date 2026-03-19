@@ -35,8 +35,8 @@ regardless of which Harmony version it targets.
 ### Requirements
 
 - **.NET Framework 3.5** — the game runs on Unity 2017.4 (Mono)
-- **BepInEx 5.4.23.5** — reference `BepInEx.Core` NuGet package for plugin APIs
-- **HarmonyX** — reference `0Harmony.dll` from BepInEx for Harmony 2 APIs
+- **BepInEx 5.4** — use the `BepInEx.Core` NuGet package for plugin APIs
+- **HarmonyX** — use the `HarmonyX` NuGet package for Harmony 2 APIs
 
 > **Build note:** To compile against .NET Framework 3.5 on any platform, add the
 > `Microsoft.NETFramework.ReferenceAssemblies.net35` NuGet package to your project.
@@ -60,6 +60,11 @@ MyMod/
     <TargetFramework>net35</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <!-- BepInEx and Harmony via NuGet — ExcludeAssets="runtime" prevents copying DLLs -->
+    <PackageReference Include="BepInEx.Core" Version="5.4.21" ExcludeAssets="runtime" />
+    <PackageReference Include="HarmonyX" Version="2.7.0" ExcludeAssets="runtime" />
+
+    <!-- Game DLLs — referenced directly, not copied to output -->
     <Reference Include="Assembly-CSharp">
       <HintPath>path/to/game/LobotomyCorp_Data/Managed/Assembly-CSharp.dll</HintPath>
       <Private>false</Private>
@@ -68,20 +73,17 @@ MyMod/
       <HintPath>path/to/game/LobotomyCorp_Data/Managed/UnityEngine.dll</HintPath>
       <Private>false</Private>
     </Reference>
-    <Reference Include="0Harmony">
-      <HintPath>path/to/game/BepInEx/core/0Harmony.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="BepInEx">
-      <HintPath>path/to/game/BepInEx/core/BepInEx.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
   </ItemGroup>
 </Project>
 ```
 
-Set `<Private>false</Private>` on game and BepInEx references so they are not copied
-to your output — the game already has them.
+Use `ExcludeAssets="runtime"` on NuGet package references and `<Private>false</Private>` on
+game DLL references so they are not copied to your output — the game already has them.
+
+> **How RetargetHarmony handles this:** RetargetHarmony rewrites Harmony 1.x assembly
+> references (version < 2.0) to point to the `0Harmony109` compatibility shim. Harmony 2.x
+> references (from NuGet packages like `HarmonyX` or `BepInEx.Core`) are left untouched,
+> so your mod resolves against the real HarmonyX runtime in `BepInEx/core/`.
 
 ---
 

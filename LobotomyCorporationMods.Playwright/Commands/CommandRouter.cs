@@ -88,6 +88,19 @@ namespace Hemocode.Playwright.Commands
                 case "suppress":
                     return PlayerActionCommands.HandleSuppress(request);
 
+                // Title menu commands
+                case "continue":
+                    return TitleMenuCommands.HandleContinue(request);
+
+                case "new-game":
+                    return TitleMenuCommands.HandleNewGame(request);
+
+                case "load-save":
+                    return TitleMenuCommands.HandleLoadSave(request);
+
+                case "start-day":
+                    return TitleMenuCommands.HandleStartDay(request);
+
                 default:
                     return Response.CreateError(
                         request.Id,

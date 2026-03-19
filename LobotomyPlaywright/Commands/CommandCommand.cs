@@ -66,6 +66,10 @@ namespace LobotomyPlaywright.Commands
                 "deploy-agent" => "deploy-agent",
                 "recall-agent" => "recall-agent",
                 "suppress" => "suppress",
+                "continue" => "continue",
+                "new-game" => "new-game",
+                "load-save" => "load-save",
+                "start-day" => "start-day",
                 "help" or "--help" or "-h" => "help",
                 _ => command
             };
@@ -179,6 +183,14 @@ namespace LobotomyPlaywright.Commands
 
                 case "fill-energy":
                     return [];
+
+                case "continue":
+                case "new-game":
+                case "start-day":
+                    return [];
+
+                case "load-save":
+                    return BuildLoadSaveParams(args);
 
                 default:
                     Console.Error.WriteLine($"ERROR: Unknown command: {command}");
@@ -506,6 +518,22 @@ namespace LobotomyPlaywright.Commands
             return parameters;
         }
 
+        private Dictionary<string, object>? BuildLoadSaveParams(string[] args)
+        {
+            var parameters = new Dictionary<string, object>();
+            var saveType = GetArgValue(args, "--type");
+
+            if (string.IsNullOrEmpty(saveType))
+            {
+                Console.Error.WriteLine("ERROR: --type is required for load-save (lastday or checkpoint)");
+                return null;
+            }
+
+            parameters["saveType"] = saveType.ToLowerInvariant();
+
+            return parameters;
+        }
+
         private Dictionary<string, object>? BuildSuppressParams(string[] args)
         {
             var parameters = new Dictionary<string, object>();
@@ -587,6 +615,12 @@ namespace LobotomyPlaywright.Commands
         private static void PrintUsage()
         {
             Console.WriteLine("Usage: dotnet playwright command <action> [options]");
+            Console.WriteLine();
+            Console.WriteLine("Title Menu Commands:");
+            Console.WriteLine("  continue                    Continue from last save");
+            Console.WriteLine("  new-game                    Start a new game (overwrites existing save)");
+            Console.WriteLine("  load-save --type <type>     Load a specific save (lastday or checkpoint)");
+            Console.WriteLine("  start-day                   Begin management (from deployment screen)");
             Console.WriteLine();
             Console.WriteLine("Debug Commands (state manipulation):");
             Console.WriteLine("  set-agent-stats --agent <id> [--hp <value>] [--mental <value>]");

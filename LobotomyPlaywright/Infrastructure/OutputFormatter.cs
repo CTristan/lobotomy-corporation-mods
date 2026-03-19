@@ -270,6 +270,39 @@ namespace LobotomyPlaywright.Infrastructure
             return result.ToString().TrimEnd();
         }
 
+        /// <summary>
+        /// Formats title menu data for display.
+        /// </summary>
+        public static string FormatTitleMenu(Dictionary<string, object> data, bool jsonOutput)
+        {
+            ArgumentNullException.ThrowIfNull(data, nameof(data));
+            if (jsonOutput)
+            {
+                return JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
+            }
+
+            var scene = GetValue(data, "currentScene", "Unknown");
+            var hasSaveData = GetValue(data, "hasSaveData", false);
+            var hasCheckpointData = GetValue(data, "hasCheckpointData", false);
+            var hasUnlimitData = GetValue(data, "hasUnlimitData", false);
+            var lastDay = GetValue(data, "lastDay", 0);
+            var checkpointDay = GetValue(data, "checkpointDay", 0);
+            var language = GetValue(data, "currentLanguage", "Unknown");
+            var buildVersion = GetValue(data, "buildVersion", "Unknown");
+
+            return $$"""
+            Title Menu:
+              Scene: {{scene}}
+              Has Save Data: {{hasSaveData}}
+              Has Checkpoint Data: {{hasCheckpointData}}
+              Has Unlimit Data: {{hasUnlimitData}}
+              Last Day: {{lastDay}}
+              Checkpoint Day: {{checkpointDay}}
+              Language: {{language}}
+              Build Version: {{buildVersion}}
+            """;
+        }
+
         private static T GetValue<T>(Dictionary<string, object> dict, string key, T defaultValue)
         {
             if (dict.TryGetValue(key, out var value) && value is T typedValue)

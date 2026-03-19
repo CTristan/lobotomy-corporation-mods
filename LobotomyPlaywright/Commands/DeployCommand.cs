@@ -43,7 +43,7 @@ namespace LobotomyPlaywright.Commands
             new("LobotomyCorporationMods.GiftAlertIcon", "Hemocode.GiftAlertIcon", "BaseMods/Hemocode.GiftAlertIcon", true),
             new("LobotomyCorporationMods.NotifyWhenAgentReceivesGift", "Hemocode.NotifyWhenAgentReceivesGift", "BaseMods/Hemocode.NotifyWhenAgentReceivesGift", true),
             new("LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking", "Hemocode.WarnWhenAgentWillDieFromWorking", "BaseMods/Hemocode.WarnWhenAgentWillDieFromWorking", true),
-            new("DemoMod.Plugin", "DemoMod.Plugin", "BaseMods/DemoMod.Plugin", true, "Harmony2ForLmm/DemoMod/DemoMod.Plugin/DemoMod.Plugin.csproj"),
+            new("DemoMod.Plugin", "DemoMod", "BaseMods/DemoMod", true, "Harmony2ForLmm/DemoMod/DemoMod.Plugin/DemoMod.Plugin.csproj"),
             new("DemoMod.Patcher", "DemoMod.Patcher", "patchers/DemoMod.Patcher", false, "Harmony2ForLmm/DemoMod/DemoMod.Patcher/DemoMod.Patcher.csproj"),
         ];
 
