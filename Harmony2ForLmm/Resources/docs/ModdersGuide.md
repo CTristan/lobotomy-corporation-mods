@@ -153,9 +153,9 @@ public void OnFixedUpdate()
 ```csharp
 // H1: must replace the whole method with Prefix returning false
 [HarmonyPrefix]
-public static bool Prefix(AgentManager __instance)
+public static bool Prefix(List<AgentModel> ___agentList)
 {
-    foreach (AgentModel agent in __instance.agentList)
+    foreach (AgentModel agent in ___agentList)
     {
         try
         {
@@ -615,7 +615,7 @@ check at startup tells you which code path to take.
 Your patches can then branch on the flag:
 
 ```csharp
-[HarmonyPatch(typeof(UseSkill), nameof(UseSkill.FinishWorkSuccessfully))]
+[HarmonyPatch(typeof(UseSkill), "FinishWorkSuccessfully")]
 public static class UseSkillPatchFinishWorkSuccessfully
 {
     public static void Postfix(UseSkill __instance)
@@ -662,7 +662,7 @@ external dictionary keyed by instance ID:
 private static readonly Dictionary<long, int> CustomDifficulty = new Dictionary<long, int>();
 
 [HarmonyPostfix]
-[HarmonyPatch(typeof(CreatureModel), "Init")]
+[HarmonyPatch(typeof(CreatureModel), "OnGameInit")]
 public static void Postfix(CreatureModel __instance)
 {
     CustomDifficulty[__instance.metadataId] = CalculateDifficulty(__instance);
@@ -670,7 +670,7 @@ public static void Postfix(CreatureModel __instance)
 
 // Must also patch creature removal to avoid memory leaks:
 [HarmonyPostfix]
-[HarmonyPatch(typeof(CreatureManager), "RemoveCreature")]
+[HarmonyPatch(typeof(CreatureManager), "RemoveCreatureInSefira")]
 public static void RemovePostfix(CreatureModel creature)
 {
     CustomDifficulty.Remove(creature.metadataId);
@@ -735,7 +735,7 @@ Now your Harmony patches can read and write the field directly:
 ```csharp
 // With Preloader: the field exists on CreatureModel at runtime
 [HarmonyPostfix]
-[HarmonyPatch(typeof(CreatureModel), "Init")]
+[HarmonyPatch(typeof(CreatureModel), "OnGameInit")]
 public static void Postfix(CreatureModel __instance)
 {
     // Direct field access — no dictionary, no cleanup needed

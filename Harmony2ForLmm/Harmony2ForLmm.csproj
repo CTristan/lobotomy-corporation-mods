@@ -8,6 +8,7 @@
     <NoWarn>$(NoWarn);IL2026;IL2104</NoWarn>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <DefaultItemExcludes>$(DefaultItemExcludes);DemoMod\**</DefaultItemExcludes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia" />

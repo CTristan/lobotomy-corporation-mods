@@ -43,6 +43,17 @@
     "InstallLmm": true,
     "InstallModLoader": true
   },
+  "demo": {
+    "DeployTargets": [
+      "LobotomyCorporationMods.DebugPanel",
+      "LobotomyCorporationMods.Playwright",
+      "RetargetHarmony",
+      "DemoMod.Plugin",
+      "DemoMod.Patcher"
+    ],
+    "InstallLmm": true,
+    "InstallModLoader": true
+  },
   "all": {
     "DeployTargets": [
       "LobotomyCorporationMods.BadLuckProtectionForGifts",

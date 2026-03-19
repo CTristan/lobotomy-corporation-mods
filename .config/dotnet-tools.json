@@ -16,17 +16,17 @@
       ],
       "rollForward": false
     },
-    "lobotomycorporationmods.playwright": {
-      "version": "1.0.0",
-      "commands": [
-        "playwright"
-      ],
-      "rollForward": false
-    },
     "lobotomycorporationmods.ci": {
       "version": "1.0.0",
       "commands": [
         "ci"
+      ],
+      "rollForward": false
+    },
+    "lobotomycorporationmods.playwright": {
+      "version": "1.0.0",
+      "commands": [
+        "playwright"
       ],
       "rollForward": false
     }

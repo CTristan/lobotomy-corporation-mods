@@ -258,6 +258,15 @@ dotnet_diagnostic.CA1031.severity = none
 # WHY: net35 target does not support using declarations (C# 8+), so nested using statements are required.
 dotnet_diagnostic.RCS1005.severity = none
 
+# WHY: DemoMod is a showcase/verification mod. GetMaxSuccessRate() must be a method (not property)
+# because it is called via IL OpCodes.Call in a Harmony transpiler. Harmony instances are
+# intentionally long-lived (plugin lifetime) and should not be disposed.
+[{DemoMod.Plugin,**/DemoMod.Plugin}/{*.cs,**/*.cs}]
+dotnet_diagnostic.CA1024.severity = none
+dotnet_diagnostic.CA2000.severity = none
+[{DemoMod.Patcher,**/DemoMod.Patcher}/{*.cs,**/*.cs}]
+dotnet_diagnostic.RCS1005.severity = none
+
 # WHY: Harmony2ForLmm is a UI installer app. Command handlers are top-level UI entry points where
 # crashing is worse than catching broadly — errors are displayed in the status bar.
 [{Harmony2ForLmm,**/Harmony2ForLmm}/{*.cs,**/*.cs}]

@@ -43,6 +43,8 @@ namespace LobotomyPlaywright.Commands
             new("LobotomyCorporationMods.GiftAlertIcon", "Hemocode.GiftAlertIcon", "BaseMods/Hemocode.GiftAlertIcon", true),
             new("LobotomyCorporationMods.NotifyWhenAgentReceivesGift", "Hemocode.NotifyWhenAgentReceivesGift", "BaseMods/Hemocode.NotifyWhenAgentReceivesGift", true),
             new("LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking", "Hemocode.WarnWhenAgentWillDieFromWorking", "BaseMods/Hemocode.WarnWhenAgentWillDieFromWorking", true),
+            new("DemoMod.Plugin", "DemoMod.Plugin", "BaseMods/DemoMod.Plugin", true, "Harmony2ForLmm/DemoMod/DemoMod.Plugin/DemoMod.Plugin.csproj"),
+            new("DemoMod.Patcher", "DemoMod.Patcher", "patchers/DemoMod.Patcher", false, "Harmony2ForLmm/DemoMod/DemoMod.Patcher/DemoMod.Patcher.csproj"),
         ];
 
         private readonly IConfigManager _configManager = configManager;
@@ -251,7 +253,9 @@ namespace LobotomyPlaywright.Commands
             var projectPaths = new Dictionary<string, string>();
             foreach (var target in targets)
             {
-                var projectPath = Path.Combine(repoRoot, target.ProjectName, $"{target.ProjectName}.csproj");
+                var projectPath = target.ProjectPath != null
+                    ? Path.Combine(repoRoot, target.ProjectPath)
+                    : Path.Combine(repoRoot, target.ProjectName, $"{target.ProjectName}.csproj");
                 if (!_fileSystem.FileExists(projectPath))
                 {
                     Console.Error.WriteLine($"ERROR: Project not found: {projectPath}");
@@ -707,7 +711,7 @@ namespace LobotomyPlaywright.Commands
             return false;
         }
 
-        private record DeploymentTarget(string ProjectName, string AssemblyName, string DeploySubdir, bool IsMod);
+        private record DeploymentTarget(string ProjectName, string AssemblyName, string DeploySubdir, bool IsMod, string? ProjectPath = null);
 
         internal sealed class BuildFailedException : Exception
         {

@@ -82,8 +82,8 @@ namespace LobotomyPlaywright.Tests.Commands
             _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("Hemocode.NotifyWhenAgentReceivesGift.dll")), It.IsAny<string>(), true), Times.Once);
             _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("Hemocode.WarnWhenAgentWillDieFromWorking.dll")), It.IsAny<string>(), true), Times.Once);
 
-            // Verify Common DLL deployed for each mod (8 mods)
-            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("Hemocode.Common")), It.IsAny<string>(), true), Times.Exactly(8));
+            // Verify Common DLL deployed for each mod (9 mods)
+            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("Hemocode.Common")), It.IsAny<string>(), true), Times.Exactly(9));
 
             // Verify interop DLLs
             _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("0Harmony109.dll")), It.IsAny<string>(), true), Times.Once);
@@ -127,8 +127,8 @@ namespace LobotomyPlaywright.Tests.Commands
             // Assert
             _ = result.Should().Be(0);
 
-            // Verify CopyDirectory called for content dirs (Info, Assets, Localize, Data exist for all 8 mods since DirectoryExists returns true)
-            _mockFileSystem.Verify(f => f.CopyDirectory(It.IsAny<string>(), It.IsAny<string>(), true), Times.Exactly(32));
+            // Verify CopyDirectory called for content dirs (Info, Assets, Localize, Data exist for all 9 mods since DirectoryExists returns true)
+            _mockFileSystem.Verify(f => f.CopyDirectory(It.IsAny<string>(), It.IsAny<string>(), true), Times.Exactly(36));
         }
 
         [Fact]
