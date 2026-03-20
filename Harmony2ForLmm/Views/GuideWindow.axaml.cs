@@ -7,6 +7,7 @@ using System.IO.Compression;
 using System.Runtime.InteropServices;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Threading;
 using LiveMarkdown.Avalonia;
 
 namespace Harmony2ForLmm.Views
@@ -16,8 +17,9 @@ namespace Harmony2ForLmm.Views
     /// </summary>
     public sealed partial class GuideWindow : Window
     {
-        private readonly string? _zipPath;
+        private readonly Func<Stream?>? _openZipStream;
         private readonly string? _extractedPath;
+        private string? _pendingMarkdown;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GuideWindow"/> class.
@@ -25,6 +27,7 @@ namespace Harmony2ForLmm.Views
         public GuideWindow()
         {
             InitializeComponent();
+            Opened += OnOpened;
         }
 
         /// <summary>
@@ -36,7 +39,7 @@ namespace Harmony2ForLmm.Views
             : this()
         {
             Title = title;
-            SetMarkdownContent(markdownContent);
+            _pendingMarkdown = markdownContent;
         }
 
         /// <summary>
@@ -45,38 +48,57 @@ namespace Harmony2ForLmm.Views
         /// </summary>
         /// <param name="title">The window title.</param>
         /// <param name="markdownContent">The markdown content to display.</param>
-        /// <param name="zipPath">Path to the sample project zip.</param>
-        public GuideWindow(string title, string markdownContent, string zipPath)
+        /// <param name="openZipStream">Function that opens a stream to the sample project zip.</param>
+        public GuideWindow(string title, string markdownContent, Func<Stream?> openZipStream)
             : this(title, markdownContent)
         {
-            _zipPath = zipPath;
+            _openZipStream = openZipStream;
             SampleProjectButton.IsVisible = true;
         }
 
-        private GuideWindow(string title, string markdownContent, string? zipPath, string extractedPath)
+        private GuideWindow(string title, string markdownContent, Func<Stream?>? openZipStream, string extractedPath)
             : this(title, markdownContent)
         {
-            _zipPath = zipPath;
+            _openZipStream = openZipStream;
             _extractedPath = extractedPath;
             OpenFolderButton.IsVisible = true;
         }
 
-        private void SetMarkdownContent(string markdownContent)
+        private void OnOpened(object? sender, EventArgs e)
         {
-            var builder = new ObservableStringBuilder();
-            _ = builder.Append(markdownContent);
-            MarkdownViewer.MarkdownBuilder = builder;
+            if (_pendingMarkdown == null)
+            {
+                return;
+            }
+
+            var content = _pendingMarkdown;
+            _pendingMarkdown = null;
+
+            _ = Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                var builder = new ObservableStringBuilder();
+                _ = builder.Append(content);
+                MarkdownViewer.MarkdownBuilder = builder;
+                LoadingPanel.IsVisible = false;
+                ContentScrollViewer.IsVisible = true;
+            }, DispatcherPriority.Background);
         }
 
         private void SampleProjectButton_Click(object? sender, RoutedEventArgs e)
         {
-            if (_zipPath == null || !File.Exists(_zipPath))
+            if (_openZipStream == null)
+            {
+                return;
+            }
+
+            using var stream = _openZipStream();
+            if (stream == null)
             {
                 return;
             }
 
             string? readme = null;
-            using (var archive = ZipFile.OpenRead(_zipPath))
+            using (var archive = new ZipArchive(stream, ZipArchiveMode.Read))
             {
                 foreach (var entry in archive.Entries)
                 {
@@ -95,7 +117,7 @@ namespace Harmony2ForLmm.Views
                 return;
             }
 
-            var extractedPath = ExtractZipToTemp(_zipPath);
+            var extractedPath = ExtractZipToTemp(_openZipStream);
             if (extractedPath == null)
             {
                 return;
@@ -124,12 +146,44 @@ namespace Harmony2ForLmm.Views
             Close();
         }
 
-        private static string? ExtractZipToTemp(string zipPath)
+        private static string? ExtractZipToTemp(Func<Stream?> openZipStream)
         {
             try
             {
+                using var stream = openZipStream();
+                if (stream == null)
+                {
+                    return null;
+                }
+
                 var tempDir = Path.Combine(Path.GetTempPath(), "DemoMod-" + Guid.NewGuid().ToString("N")[..8]);
-                ZipFile.ExtractToDirectory(zipPath, tempDir);
+                var fullTempDir = Path.GetFullPath(tempDir + Path.DirectorySeparatorChar);
+                using var archive = new ZipArchive(stream, ZipArchiveMode.Read);
+                foreach (var entry in archive.Entries)
+                {
+                    if (string.IsNullOrEmpty(entry.Name))
+                    {
+                        continue;
+                    }
+
+                    var destPath = Path.GetFullPath(Path.Combine(tempDir, entry.FullName));
+
+                    // Ensure the entry doesn't escape the target directory (zip slip protection)
+                    if (!destPath.StartsWith(fullTempDir, StringComparison.Ordinal))
+                    {
+                        continue;
+                    }
+
+                    var destDir = Path.GetDirectoryName(destPath);
+                    if (destDir != null)
+                    {
+                        _ = Directory.CreateDirectory(destDir);
+                    }
+
+                    using var entryStream = entry.Open();
+                    using var fileStream = new FileStream(destPath, FileMode.Create, FileAccess.Write);
+                    entryStream.CopyTo(fileStream);
+                }
 
                 return tempDir;
             }

@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 using AwesomeAssertions;
-using Hemocode.Common.Models.Diagnostics;
+using DebugPanel.Common.Models.Diagnostics;
 using Xunit;
 
 #endregion

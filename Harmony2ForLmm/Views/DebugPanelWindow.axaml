@@ -1,0 +1,56 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:md="clr-namespace:LiveMarkdown.Avalonia;assembly=LiveMarkdown.Avalonia"
+        x:Class="Harmony2ForLmm.Views.DebugPanelWindow"
+        Width="700"
+        Height="600"
+        MinWidth="500"
+        MinHeight="400"
+        WindowStartupLocation="CenterOwner"
+        Title="DebugPanel">
+
+  <DockPanel Margin="24">
+
+    <!-- Bottom buttons -->
+    <StackPanel DockPanel.Dock="Bottom"
+                Orientation="Horizontal"
+                HorizontalAlignment="Right"
+                Spacing="8"
+                Margin="0,16,0,0">
+      <TextBlock x:Name="StatusText"
+                 VerticalAlignment="Center"
+                 FontSize="13"
+                 Margin="0,0,16,0" />
+      <Button x:Name="InstallButton"
+              Classes="accent"
+              Padding="20,8"
+              Click="InstallButton_Click" />
+      <Button Content="Close"
+              Classes="secondary"
+              Padding="20,8"
+              Click="CloseButton_Click" />
+    </StackPanel>
+
+    <!-- Loading indicator (visible until markdown finishes rendering) -->
+    <StackPanel x:Name="LoadingPanel"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"
+                Spacing="12">
+      <ProgressBar IsIndeterminate="True"
+                   Width="200" />
+      <TextBlock Text="Loading..."
+                 HorizontalAlignment="Center"
+                 Foreground="{DynamicResource SystemBaseMediumColor}"
+                 FontSize="14" />
+    </StackPanel>
+
+    <!-- Scrollable markdown content fills remaining space -->
+    <ScrollViewer x:Name="ContentScrollViewer"
+                  HorizontalScrollBarVisibility="Disabled"
+                  VerticalScrollBarVisibility="Auto"
+                  IsVisible="False">
+      <md:MarkdownRenderer x:Name="MarkdownViewer" />
+    </ScrollViewer>
+
+  </DockPanel>
+</Window>

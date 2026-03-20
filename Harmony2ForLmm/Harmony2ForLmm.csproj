@@ -31,6 +31,50 @@
                   Overwrite="true" />
     <RemoveDir Directories="$(IntermediateOutputPath)DemoModStaging" />
   </Target>
+  <!-- Zip BepInEx distribution for embedding (excludes junk files).
+       Same staging approach as ZipDemoMod. -->
+  <Target Name="ZipBepInEx" BeforeTargets="BeforeBuild" DependsOnTargets="ZipDemoMod"
+          Inputs="Resources/bepinex/**/*"
+          Outputs="$(IntermediateOutputPath)bepinex.zip">
+    <ItemGroup>
+      <BepInExFiles Include="Resources/bepinex/**/*"
+                    Exclude="Resources/bepinex/**/.DS_Store;Resources/bepinex/**/*.md;Resources/bepinex/**/changelog*;Resources/bepinex/**/.gitignore" />
+    </ItemGroup>
+    <RemoveDir Directories="$(IntermediateOutputPath)BepInExStaging" />
+    <Copy SourceFiles="@(BepInExFiles)"
+          DestinationFiles="@(BepInExFiles->'$(IntermediateOutputPath)BepInExStaging/%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Delete Files="$(IntermediateOutputPath)bepinex.zip" Condition="Exists('$(IntermediateOutputPath)bepinex.zip')" />
+    <ZipDirectory SourceDirectory="$(IntermediateOutputPath)BepInExStaging"
+                  DestinationFile="$(IntermediateOutputPath)bepinex.zip"
+                  Overwrite="true" />
+    <RemoveDir Directories="$(IntermediateOutputPath)BepInExStaging" />
+    <ItemGroup>
+      <EmbeddedResource Include="$(IntermediateOutputPath)bepinex.zip" LogicalName="Resources.bepinex.zip" />
+    </ItemGroup>
+  </Target>
+  <!-- Zip DebugPanel output for embedding.
+       Stages DLL + Info/ + Data/ from DebugPanel build output, zips to intermediate. -->
+  <Target Name="ZipDebugPanel" BeforeTargets="BeforeBuild"
+          Condition="Exists('../DebugPanel/bin/net35/DebugPanel.dll')"
+          Inputs="../DebugPanel/bin/net35/DebugPanel.dll;../DebugPanel/bin/net35/Info/**/*;../DebugPanel/bin/net35/Data/**/*"
+          Outputs="$(IntermediateOutputPath)debugpanel.zip">
+    <ItemGroup>
+      <DebugPanelFiles Include="../DebugPanel/bin/net35/DebugPanel.dll" />
+      <DebugPanelFiles Include="../DebugPanel/bin/net35/Info/**/*" />
+      <DebugPanelFiles Include="../DebugPanel/bin/net35/Data/**/*" />
+    </ItemGroup>
+    <RemoveDir Directories="$(IntermediateOutputPath)DebugPanelStaging" />
+    <Copy SourceFiles="@(DebugPanelFiles)"
+          DestinationFiles="@(DebugPanelFiles->'$(IntermediateOutputPath)DebugPanelStaging/%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Delete Files="$(IntermediateOutputPath)debugpanel.zip" Condition="Exists('$(IntermediateOutputPath)debugpanel.zip')" />
+    <ZipDirectory SourceDirectory="$(IntermediateOutputPath)DebugPanelStaging"
+                  DestinationFile="$(IntermediateOutputPath)debugpanel.zip"
+                  Overwrite="true" />
+    <RemoveDir Directories="$(IntermediateOutputPath)DebugPanelStaging" />
+    <ItemGroup>
+      <EmbeddedResource Include="$(IntermediateOutputPath)debugpanel.zip" LogicalName="Resources.debugpanel.zip" />
+    </ItemGroup>
+  </Target>
   <ItemGroup>
     <PackageReference Include="Avalonia" />
     <PackageReference Include="Avalonia.Desktop" />
@@ -40,34 +84,16 @@
     <PackageReference Include="Mono.Cecil" />
   </ItemGroup>
   <ItemGroup>
-    <!-- Exclude junk from BepInEx resources before the copy glob picks them up -->
-    <None Remove="Resources\bepinex\**\.DS_Store" />
-    <None Remove="Resources\bepinex\**\*.md" />
-    <None Remove="Resources\bepinex\**\changelog*" />
-    <Content Include="Resources\bepinex\**\*" Exclude="Resources\bepinex\**\.DS_Store;Resources\bepinex\**\*.md;Resources\bepinex\**\changelog*;Resources\bepinex\**\.gitignore">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <!-- Build DebugPanel first for ZipDebugPanel target, but don't reference its output assembly -->
+    <ProjectReference Include="../DebugPanel/DebugPanel.csproj" ReferenceOutputAssembly="false" />
   </ItemGroup>
   <ItemGroup>
-    <!-- TODO: Add "Extract Sample Project" button to installer UI that extracts DemoMod.zip -->
-    <Content Include="Resources\DemoMod.zip" Condition="Exists('Resources\DemoMod.zip')">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Resources\docs\*.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="..\RetargetHarmony\lib\0Harmony109.dll" Link="Resources\0Harmony109.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\RetargetHarmony\lib\0Harmony12.dll" Link="Resources\0Harmony12.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\RetargetHarmony\bin\net35\RetargetHarmony.dll" Link="Resources\RetargetHarmony.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <EmbeddedResource Include="Resources/DemoMod.zip" LogicalName="Resources.DemoMod.zip" Condition="Exists('Resources/DemoMod.zip')" />
+    <EmbeddedResource Include="Resources/docs/UsersGuide.md" LogicalName="Resources.docs.UsersGuide.md" />
+    <EmbeddedResource Include="Resources/docs/ModdersGuide.md" LogicalName="Resources.docs.ModdersGuide.md" />
+    <EmbeddedResource Include="Resources/docs/DebugPanel.md" LogicalName="Resources.docs.DebugPanel.md" />
+    <EmbeddedResource Include="../RetargetHarmony/lib/0Harmony109.dll" LogicalName="Resources.0Harmony109.dll" />
+    <EmbeddedResource Include="../RetargetHarmony/lib/0Harmony12.dll" LogicalName="Resources.0Harmony12.dll" />
+    <EmbeddedResource Include="../RetargetHarmony/bin/net35/RetargetHarmony.dll" LogicalName="Resources.RetargetHarmony.dll" />
   </ItemGroup>
 </Project>

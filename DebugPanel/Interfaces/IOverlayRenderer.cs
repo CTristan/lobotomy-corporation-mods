@@ -1,0 +1,17 @@
+// SPDX-License-Identifier: MIT
+
+#region
+
+using System;
+using DebugPanel.JsonModels;
+using DebugPanel.Common.Models.Diagnostics;
+
+#endregion
+
+namespace DebugPanel.Interfaces
+{
+    public interface IOverlayRenderer
+    {
+        void Draw(DiagnosticReport report, DebugPanelConfig config, Action refreshAction, Action generateLogAction);
+    }
+}

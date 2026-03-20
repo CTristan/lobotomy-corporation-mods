@@ -277,5 +277,5 @@ dotnet_diagnostic.CA1031.severity = none
 # WHY: DebugPanel uses reflection to inspect Harmony internals, AppDomain assemblies, and BepInEx APIs
 # at runtime. General exception catching is intentional — reflection can throw any exception type
 # and must degrade gracefully rather than crashing.
-[{LobotomyCorporationMods.DebugPanel,**/LobotomyCorporationMods.DebugPanel}/{*.cs,**/*.cs}]
+[{DebugPanel,**/DebugPanel}/{*.cs,**/*.cs}]
 dotnet_diagnostic.CA1031.severity = none

@@ -43,7 +43,7 @@
         <ProjectReference Include="..\LobotomyCorporationMods.FreeCustomization\LobotomyCorporationMods.FreeCustomization.csproj"/>
         <ProjectReference Include="..\LobotomyCorporationMods.GiftAlertIcon\LobotomyCorporationMods.GiftAlertIcon.csproj"/>
         <ProjectReference Include="..\LobotomyCorporationMods.NotifyWhenAgentReceivesGift\LobotomyCorporationMods.NotifyWhenAgentReceivesGift.csproj"/>
-        <ProjectReference Include="..\LobotomyCorporationMods.DebugPanel\LobotomyCorporationMods.DebugPanel.csproj"/>
+        <ProjectReference Include="..\DebugPanel\DebugPanel.csproj"/>
         <ProjectReference Include="..\LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking\LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.csproj"/>
     </ItemGroup>
     <ItemGroup>

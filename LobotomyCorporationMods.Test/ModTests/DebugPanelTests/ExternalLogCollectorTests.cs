@@ -5,9 +5,9 @@
 using System;
 using System.IO;
 using AwesomeAssertions;
-using Hemocode.Common.Models.Diagnostics;
-using Hemocode.DebugPanel.Implementations;
-using Hemocode.DebugPanel.Interfaces;
+using DebugPanel.Common.Models.Diagnostics;
+using DebugPanel.Implementations;
+using DebugPanel.Interfaces;
 using Moq;
 using Xunit;
 

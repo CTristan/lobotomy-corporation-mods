@@ -67,7 +67,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Harmony2ForLmm", "Harmony2F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Harmony2ForLmm.Test", "Harmony2ForLmm.Test\Harmony2ForLmm.Test.csproj", "{F6A7B8C9-2D3E-4F5A-6B7C-8D9E0F1A2B3C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LobotomyCorporationMods.DebugPanel", "LobotomyCorporationMods.DebugPanel\LobotomyCorporationMods.DebugPanel.csproj", "{A1B2C3D4-E5F6-7A8B-9C0D-1E2F3A4B5C6E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebugPanel", "DebugPanel\DebugPanel.csproj", "{A1B2C3D4-E5F6-7A8B-9C0D-1E2F3A4B5C6E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LobotomyCorporationMods.Playwright", "LobotomyCorporationMods.Playwright\LobotomyCorporationMods.Playwright.csproj", "{B1C2D3E4-F5A6-7B8C-9D0E-1F2A3B4C5D6F}"
 EndProject

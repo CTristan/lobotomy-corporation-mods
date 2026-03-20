@@ -2,8 +2,9 @@
 
 #region
 
-using Hemocode.DebugPanel;
-using LobotomyCorporationMods.Test.Extensions;
+using DebugPanel;
+using DebugPanel.Common.Interfaces;
+using Moq;
 
 #endregion
 
@@ -14,7 +15,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         protected DebugPanelModTests()
         {
             _ = new Harmony_Patch();
-            var mockLogger = TestExtensions.GetMockLogger();
+            var mockLogger = new Mock<ILogger>();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
         }
     }

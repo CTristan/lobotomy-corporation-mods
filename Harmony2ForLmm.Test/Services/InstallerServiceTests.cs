@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using AwesomeAssertions;
 using Harmony2ForLmm.Interfaces;
@@ -15,90 +16,72 @@ namespace Harmony2ForLmm.Test.Services
     /// </summary>
     public sealed class InstallerServiceTests : IDisposable
     {
-        private readonly string _tempDir;
-        private readonly string _resourcesDir;
         private readonly string _gameDir;
+        private readonly Mock<IResourceProvider> _mockResourceProvider;
         private readonly Mock<IManifestService> _mockManifest;
         private readonly InstallerService _service;
 
         public InstallerServiceTests()
         {
-            _tempDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-            Directory.CreateDirectory(_tempDir);
-
-            _resourcesDir = Path.Combine(_tempDir, "resources");
-            Directory.CreateDirectory(_resourcesDir);
-
-            _gameDir = Path.Combine(_tempDir, "game");
+            _gameDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             Directory.CreateDirectory(_gameDir);
 
+            _mockResourceProvider = new Mock<IResourceProvider>();
             _mockManifest = new Mock<IManifestService>();
-            _service = new InstallerService(_resourcesDir, _mockManifest.Object);
+            _service = new InstallerService(_mockResourceProvider.Object, _mockManifest.Object);
         }
 
         public void Dispose()
         {
-            if (Directory.Exists(_tempDir))
+            if (Directory.Exists(_gameDir))
             {
-                Directory.Delete(_tempDir, recursive: true);
+                Directory.Delete(_gameDir, recursive: true);
             }
         }
 
         [Fact]
-        public void Install_copies_harmony_interop_dlls_to_BepInEx_core()
+        public void Install_extracts_BepInEx_distribution_files()
         {
-            File.WriteAllBytes(Path.Combine(_resourcesDir, "0Harmony109.dll"), [1, 2, 3]);
-            File.WriteAllBytes(Path.Combine(_resourcesDir, "0Harmony12.dll"), [4, 5, 6]);
-
             var result = _service.Install(_gameDir);
 
             result.IsSuccess.Should().BeTrue();
-            File.Exists(Path.Combine(_gameDir, "BepInEx", "core", "0Harmony109.dll")).Should().BeTrue();
-            File.Exists(Path.Combine(_gameDir, "BepInEx", "core", "0Harmony12.dll")).Should().BeTrue();
-            File.Exists(Path.Combine(_gameDir, "BepInEx", "core", "12Harmony.dll")).Should().BeTrue();
+            _mockResourceProvider.Verify(r => r.ExtractBepInExTo(_gameDir, It.IsAny<ICollection<string>>()), Times.Once);
         }
 
         [Fact]
         public void Install_copies_RetargetHarmony_dll_to_patchers()
         {
-            File.WriteAllBytes(Path.Combine(_resourcesDir, "RetargetHarmony.dll"), [7, 8, 9]);
-
             var result = _service.Install(_gameDir);
 
             result.IsSuccess.Should().BeTrue();
-            File.Exists(Path.Combine(_gameDir, "BepInEx", "patchers", "RetargetHarmony", "RetargetHarmony.dll")).Should().BeTrue();
+            var expectedPath = Path.Combine(_gameDir, "BepInEx", "patchers", "RetargetHarmony", "RetargetHarmony.dll");
+            _mockResourceProvider.Verify(r => r.CopyDllTo("RetargetHarmony.dll", expectedPath, It.IsAny<ICollection<string>>()), Times.Once);
         }
 
         [Fact]
-        public void Install_copies_BepInEx_distribution_files()
+        public void Install_copies_harmony_interop_dlls_to_BepInEx_core()
         {
-            var bepinexResources = Path.Combine(_resourcesDir, "bepinex");
-            Directory.CreateDirectory(bepinexResources);
-            File.WriteAllBytes(Path.Combine(bepinexResources, "winhttp.dll"), [0]);
-            File.WriteAllBytes(Path.Combine(bepinexResources, "doorstop_config.ini"), [0]);
-
-            var bepinexCore = Path.Combine(bepinexResources, "BepInEx", "core");
-            Directory.CreateDirectory(bepinexCore);
-            File.WriteAllBytes(Path.Combine(bepinexCore, "BepInEx.dll"), [0]);
-
             var result = _service.Install(_gameDir);
 
             result.IsSuccess.Should().BeTrue();
-            File.Exists(Path.Combine(_gameDir, "winhttp.dll")).Should().BeTrue();
-            File.Exists(Path.Combine(_gameDir, "doorstop_config.ini")).Should().BeTrue();
-            File.Exists(Path.Combine(_gameDir, "BepInEx", "core", "BepInEx.dll")).Should().BeTrue();
+            var coreDir = Path.Combine(_gameDir, "BepInEx", "core");
+            _mockResourceProvider.Verify(r => r.CopyDllTo("0Harmony109.dll", Path.Combine(coreDir, "0Harmony109.dll"), It.IsAny<ICollection<string>>()), Times.Once);
+            _mockResourceProvider.Verify(r => r.CopyDllTo("0Harmony12.dll", Path.Combine(coreDir, "0Harmony12.dll"), It.IsAny<ICollection<string>>()), Times.Once);
+            _mockResourceProvider.Verify(r => r.CopyDllTo("0Harmony12.dll", Path.Combine(coreDir, "12Harmony.dll"), It.IsAny<ICollection<string>>()), Times.Once);
         }
 
         [Fact]
-        public void Install_returns_list_of_written_files()
+        public void Install_installs_documentation_files()
         {
-            File.WriteAllBytes(Path.Combine(_resourcesDir, "0Harmony109.dll"), [0]);
-            File.WriteAllBytes(Path.Combine(_resourcesDir, "RetargetHarmony.dll"), [0]);
+            _mockResourceProvider.Setup(r => r.ReadDocumentText("UsersGuide.md")).Returns("# User Guide");
+            _mockResourceProvider.Setup(r => r.ReadDocumentText("ModdersGuide.md")).Returns("# Modder Guide");
 
             var result = _service.Install(_gameDir);
 
             result.IsSuccess.Should().BeTrue();
-            result.FilesWritten.Should().HaveCountGreaterThan(0);
+            var docsDir = Path.Combine(_gameDir, IManifestService.ManifestDirectory, "docs");
+            File.Exists(Path.Combine(docsDir, "UsersGuide.md")).Should().BeTrue();
+            File.Exists(Path.Combine(docsDir, "ModdersGuide.md")).Should().BeTrue();
         }
 
         [Fact]
@@ -107,17 +90,14 @@ namespace Harmony2ForLmm.Test.Services
             var result = _service.Install(_gameDir);
 
             result.IsSuccess.Should().BeTrue();
-            result.FilesWritten.Should().BeEmpty();
         }
 
         [Fact]
         public void Install_writes_manifest_on_success()
         {
-            File.WriteAllBytes(Path.Combine(_resourcesDir, "RetargetHarmony.dll"), [0]);
-
             _service.Install(_gameDir);
 
-            _mockManifest.Verify(m => m.WriteManifest(_gameDir, It.IsAny<System.Collections.Generic.IReadOnlyList<string>>()), Times.Once);
+            _mockManifest.Verify(m => m.WriteManifest(_gameDir, It.IsAny<IReadOnlyList<string>>()), Times.Once);
         }
     }
 }

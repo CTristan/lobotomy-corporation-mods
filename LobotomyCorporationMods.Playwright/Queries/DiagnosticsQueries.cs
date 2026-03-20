@@ -21,7 +21,7 @@ namespace Hemocode.Playwright.Queries
             {
                 return Response.CreateError(
                     requestId,
-                    "DebugPanel mod is not loaded. Install LobotomyCorporationMods.DebugPanel to use diagnostics queries.",
+                    "DebugPanel mod is not loaded. Install DebugPanel to use diagnostics queries.",
                     "DIAGNOSTICS_NOT_AVAILABLE"
                 );
             }

@@ -76,7 +76,7 @@ namespace LobotomyPlaywright.Tests.Commands
             // Verify mod DLL deployments
             _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("Hemocode.BadLuckProtectionForGifts.dll")), It.IsAny<string>(), true), Times.Once);
             _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("Hemocode.BugFixes.dll")), It.IsAny<string>(), true), Times.Once);
-            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("Hemocode.DebugPanel.dll")), It.IsAny<string>(), true), Times.Once);
+            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("DebugPanel.dll")), It.IsAny<string>(), true), Times.Once);
             _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("Hemocode.FreeCustomization.dll")), It.IsAny<string>(), true), Times.Once);
             _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("Hemocode.GiftAlertIcon.dll")), It.IsAny<string>(), true), Times.Once);
             _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("Hemocode.NotifyWhenAgentReceivesGift.dll")), It.IsAny<string>(), true), Times.Once);
@@ -407,7 +407,7 @@ namespace LobotomyPlaywright.Tests.Commands
                     DeployTargets = new Collection<string>(
                     [
                         "LobotomyCorporationMods.BadLuckProtectionForGifts", "LobotomyCorporationMods.BugFixes",
-                        "LobotomyCorporationMods.DebugPanel", "LobotomyCorporationMods.FreeCustomization",
+                        "DebugPanel", "LobotomyCorporationMods.FreeCustomization",
                         "LobotomyCorporationMods.GiftAlertIcon", "LobotomyCorporationMods.NotifyWhenAgentReceivesGift",
                         "LobotomyCorporationMods.Playwright", "LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking"
                     ]),
@@ -419,7 +419,7 @@ namespace LobotomyPlaywright.Tests.Commands
                     DeployTargets = new Collection<string>(
                     [
                         "LobotomyCorporationMods.BadLuckProtectionForGifts", "LobotomyCorporationMods.BugFixes",
-                        "LobotomyCorporationMods.DebugPanel", "LobotomyCorporationMods.FreeCustomization",
+                        "DebugPanel", "LobotomyCorporationMods.FreeCustomization",
                         "LobotomyCorporationMods.GiftAlertIcon", "LobotomyCorporationMods.NotifyWhenAgentReceivesGift",
                         "LobotomyCorporationMods.Playwright", "LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking",
                         "RetargetHarmony"
@@ -432,7 +432,7 @@ namespace LobotomyPlaywright.Tests.Commands
                     DeployTargets = new Collection<string>(
                     [
                         "LobotomyCorporationMods.BadLuckProtectionForGifts", "LobotomyCorporationMods.BugFixes",
-                        "LobotomyCorporationMods.DebugPanel", "LobotomyCorporationMods.FreeCustomization",
+                        "DebugPanel", "LobotomyCorporationMods.FreeCustomization",
                         "LobotomyCorporationMods.GiftAlertIcon", "LobotomyCorporationMods.NotifyWhenAgentReceivesGift",
                         "LobotomyCorporationMods.Playwright", "LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking",
                         "RetargetHarmony"

@@ -23,12 +23,41 @@ namespace Harmony2ForLmm.Views
                 if (DataContext is MainWindowViewModel viewModel)
                 {
                     viewModel.SetCloseAction(Close);
-                    viewModel.SetOpenGuideAction((title, content, zipPath) =>
+                    viewModel.SetOpenGuideAction((title, content, openDemoModZip) =>
                     {
-                        var guideWindow = zipPath != null
-                            ? new GuideWindow(title, content, zipPath)
+                        var guideWindow = openDemoModZip != null
+                            ? new GuideWindow(title, content, openDemoModZip)
                             : new GuideWindow(title, content);
                         _ = guideWindow.ShowDialog(this);
+                    });
+                    viewModel.SetOpenGuidesAction(() =>
+                    {
+                        var guidesWindow = new GuidesWindow(
+                            () => viewModel.OpenGuide("User's Guide", "UsersGuide.md"),
+                            () => viewModel.OpenGuide("Modder's Guide", "ModdersGuide.md"));
+                        _ = guidesWindow.ShowDialog(this);
+                    });
+                    viewModel.SetOpenTroubleshootingAction(() =>
+                    {
+                        var troubleshootingWindow = new TroubleshootingWindow(
+                            () =>
+                            {
+                                var content = viewModel.IsDebugPanelInstalled();
+                                var markdownContent = "DebugPanel";
+                                var docContent = viewModel.ReadDebugPanelDoc();
+                                if (docContent != null)
+                                {
+                                    markdownContent = docContent;
+                                }
+
+                                var debugPanelWindow = new DebugPanelWindow(
+                                    markdownContent,
+                                    content,
+                                    viewModel.InstallDebugPanel);
+                                _ = debugPanelWindow.ShowDialog(this);
+                            },
+                            () => viewModel.OpenGuide("User's Guide", "UsersGuide.md"));
+                        _ = troubleshootingWindow.ShowDialog(this);
                     });
                 }
             };

@@ -4,9 +4,11 @@
 
 using System;
 using AwesomeAssertions;
-using Hemocode.DebugPanel;
-using Hemocode.DebugPanel.Patches;
+using DebugPanel;
+using DebugPanel.Common.Interfaces;
+using DebugPanel.Patches;
 using LobotomyCorporationMods.Test.Extensions;
+using Moq;
 using Xunit;
 
 #endregion
@@ -40,7 +42,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         [Fact]
         public void Class_IntroPlayer_Method_Awake_logs_exceptions()
         {
-            var mockLogger = TestExtensions.GetMockLogger();
+            var mockLogger = new Mock<ILogger>();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
 
             static void Action()
@@ -48,7 +50,8 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
                 IntroPlayerPatchAwake.PostfixWithLogging(null!, null!);
             }
 
-            mockLogger.VerifyArgumentNullException(Action);
+            _ = ((Action)Action).Should().Throw<ArgumentNullException>();
+            mockLogger.Verify(logger => logger.WriteException(It.IsAny<ArgumentNullException>()), Times.Once());
         }
     }
 }

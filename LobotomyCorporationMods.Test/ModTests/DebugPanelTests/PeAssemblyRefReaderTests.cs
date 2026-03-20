@@ -6,7 +6,7 @@ using System;
 using System.IO;
 using System.Linq;
 using AwesomeAssertions;
-using Hemocode.DebugPanel.Implementations;
+using DebugPanel.Implementations;
 using Xunit;
 
 #endregion

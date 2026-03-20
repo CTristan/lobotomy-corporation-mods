@@ -34,9 +34,24 @@
               Click="CloseButton_Click" />
     </StackPanel>
 
+    <!-- Loading indicator (visible until markdown finishes rendering) -->
+    <StackPanel x:Name="LoadingPanel"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"
+                Spacing="12">
+      <ProgressBar IsIndeterminate="True"
+                   Width="200" />
+      <TextBlock Text="Loading..."
+                 HorizontalAlignment="Center"
+                 Foreground="{DynamicResource SystemBaseMediumColor}"
+                 FontSize="14" />
+    </StackPanel>
+
     <!-- Scrollable markdown content fills remaining space -->
-    <ScrollViewer HorizontalScrollBarVisibility="Disabled"
-                  VerticalScrollBarVisibility="Auto">
+    <ScrollViewer x:Name="ContentScrollViewer"
+                  HorizontalScrollBarVisibility="Disabled"
+                  VerticalScrollBarVisibility="Auto"
+                  IsVisible="False">
       <md:MarkdownRenderer x:Name="MarkdownViewer" />
     </ScrollViewer>
 

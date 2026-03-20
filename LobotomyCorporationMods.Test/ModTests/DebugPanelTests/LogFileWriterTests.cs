@@ -5,10 +5,10 @@
 using System;
 using System.Collections.Generic;
 using AwesomeAssertions;
-using Hemocode.Common.Interfaces;
-using Hemocode.DebugPanel.Implementations;
-using Hemocode.DebugPanel.Interfaces;
-using Hemocode.Common.Models.Diagnostics;
+using DebugPanel.Common.Interfaces;
+using DebugPanel.Implementations;
+using DebugPanel.Interfaces;
+using DebugPanel.Common.Models.Diagnostics;
 using Moq;
 using Xunit;
 

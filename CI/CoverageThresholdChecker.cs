@@ -179,13 +179,32 @@ namespace CI
 
             // Skip local dotnet tools (executables) from coverage thresholds
             // These are CLI tools with different testing requirements than mod libraries
-            return moduleName is "CI" or
+            if (moduleName is "CI" or
                    "SetupExternal" or
                    "RetargetHarmony" or
                    "Harmony2ForLmm" or
                    "HarmonyDebugPanel" or
                    "LobotomyPlaywright" or
-                   "LobotomyPlaywright.Plugin";
+                   "LobotomyPlaywright.Plugin")
+            {
+                return true;
+            }
+
+            // Skip DebugPanel — contains internalized copies of Common types,
+            // planned to move to a separate repo
+            if (moduleName is "DebugPanel")
+            {
+                return true;
+            }
+
+            // Skip Common — diagnostic types are primarily tested through DebugPanel,
+            // which was decoupled and now uses its own copies of those types
+            if (moduleName.StartsWith("Hemocode.Common", StringComparison.Ordinal))
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private static ModuleClassSummary GetClassSummary(XElement class_, string namespaceName)

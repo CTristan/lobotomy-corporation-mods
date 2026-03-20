@@ -4,7 +4,7 @@
 
 using System.Runtime.CompilerServices;
 using AwesomeAssertions;
-using Hemocode.DebugPanel.Patches;
+using DebugPanel.Patches;
 using Xunit;
 
 #endregion

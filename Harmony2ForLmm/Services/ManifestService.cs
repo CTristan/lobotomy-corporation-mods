@@ -14,11 +14,6 @@ namespace Harmony2ForLmm.Services
     /// </summary>
     public sealed class ManifestService(string bundleVersion) : IManifestService
     {
-        private static readonly JsonSerializerOptions s_jsonOptions = new()
-        {
-            WriteIndented = true,
-        };
-
         /// <inheritdoc />
         public InstallationManifest? ReadManifest(string gamePath)
         {
@@ -31,7 +26,7 @@ namespace Harmony2ForLmm.Services
             try
             {
                 var json = File.ReadAllText(manifestPath);
-                return JsonSerializer.Deserialize<InstallationManifest>(json);
+                return JsonSerializer.Deserialize(json, ManifestJsonContext.Default.InstallationManifest);
             }
             catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException)
             {
@@ -62,7 +57,7 @@ namespace Harmony2ForLmm.Services
                 Files = relativePaths,
             };
 
-            var json = JsonSerializer.Serialize(manifest, s_jsonOptions);
+            var json = JsonSerializer.Serialize(manifest, ManifestJsonContext.Default.InstallationManifest);
             File.WriteAllText(GetManifestPath(gamePath), json);
         }
 

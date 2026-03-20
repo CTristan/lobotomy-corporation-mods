@@ -38,7 +38,7 @@ namespace LobotomyPlaywright.Commands
             new("RetargetHarmony", "RetargetHarmony", "patchers/RetargetHarmony", false),
             new("LobotomyCorporationMods.BadLuckProtectionForGifts", "Hemocode.BadLuckProtectionForGifts", "BaseMods/Hemocode.BadLuckProtectionForGifts", true),
             new("LobotomyCorporationMods.BugFixes", "Hemocode.BugFixes", "BaseMods/Hemocode.BugFixes", true),
-            new("LobotomyCorporationMods.DebugPanel", "Hemocode.DebugPanel", "BaseMods/Hemocode.DebugPanel", true),
+            new("DebugPanel", "DebugPanel", "BaseMods/DebugPanel", true),
             new("LobotomyCorporationMods.FreeCustomization", "Hemocode.FreeCustomization", "BaseMods/Hemocode.FreeCustomization", true),
             new("LobotomyCorporationMods.GiftAlertIcon", "Hemocode.GiftAlertIcon", "BaseMods/Hemocode.GiftAlertIcon", true),
             new("LobotomyCorporationMods.NotifyWhenAgentReceivesGift", "Hemocode.NotifyWhenAgentReceivesGift", "BaseMods/Hemocode.NotifyWhenAgentReceivesGift", true),

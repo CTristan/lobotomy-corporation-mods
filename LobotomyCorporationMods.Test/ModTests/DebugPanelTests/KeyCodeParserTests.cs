@@ -3,7 +3,7 @@
 #region
 
 using AwesomeAssertions;
-using Hemocode.DebugPanel.Implementations;
+using DebugPanel.Implementations;
 using UnityEngine;
 using Xunit;
 

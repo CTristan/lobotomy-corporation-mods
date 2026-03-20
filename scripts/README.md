@@ -60,6 +60,38 @@ This follows the same workflow as `tool-reinstall.sh` but for the SetupExternal 
 
 - After modifying `SetupExternal/` project code → run `./scripts/setup-reinstall.sh`
 
+## publish-installer.sh
+
+Builds and publishes the Harmony 2 for LMM installer for distribution.
+
+```bash
+./scripts/publish-installer.sh              # Publish all platforms
+./scripts/publish-installer.sh win-x64      # Publish specific platform
+./scripts/publish-installer.sh --list       # List available platforms
+```
+
+### What it does
+
+1. Validates prerequisites (BepInEx files in `Harmony2ForLmm/Resources/bepinex/`, Harmony DLLs in `RetargetHarmony/lib/`)
+2. Builds `RetargetHarmony.dll` from source
+3. Publishes the installer for each requested platform
+4. Output goes to `Harmony2ForLmm/bin/publish/<platform>/`
+
+### Platforms
+
+| Platform | Mode |
+|----------|------|
+| `win-x64` | Self-contained, single file, trimmed |
+| `win-x86` | Self-contained, single file, trimmed |
+| `linux-x64` | Framework-dependent |
+| `osx-x64` | Framework-dependent |
+| `osx-arm64` | Framework-dependent |
+
+### Prerequisites
+
+- BepInEx 5.4.23.5 (win_x64) distribution files must be in `Harmony2ForLmm/Resources/bepinex/`
+- `0Harmony109.dll` must be in `RetargetHarmony/lib/`
+
 ## Usage Example
 
 ```bash

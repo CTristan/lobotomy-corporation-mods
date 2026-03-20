@@ -21,10 +21,12 @@ namespace Harmony2ForLmm.ViewModels
         private readonly IUninstallerService _uninstallerService;
         private readonly IBaseModsAnalyzer _baseModsAnalyzer;
         private readonly IInstallationStateDetector _stateDetector;
-        private readonly string _docsPath;
+        private readonly IResourceProvider _resourceProvider;
         private bool WasInstalledAtStartup { get; }
         private Action? _closeAction;
-        private Action<string, string, string?>? _openGuideAction;
+        private Action<string, string, Func<Stream?>?>? _openGuideAction;
+        private Action? _openGuidesAction;
+        private Action? _openTroubleshootingAction;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
@@ -35,7 +37,8 @@ namespace Harmony2ForLmm.ViewModels
             IInstallerService installerService,
             IUninstallerService uninstallerService,
             IBaseModsAnalyzer baseModsAnalyzer,
-            IInstallationStateDetector stateDetector)
+            IInstallationStateDetector stateDetector,
+            IResourceProvider resourceProvider)
         {
             _gamePathFinder = gamePathFinder;
             _validator = validator;
@@ -43,15 +46,14 @@ namespace Harmony2ForLmm.ViewModels
             _uninstallerService = uninstallerService;
             _baseModsAnalyzer = baseModsAnalyzer;
             _stateDetector = stateDetector;
-
-            _docsPath = Path.Combine(AppContext.BaseDirectory, "Resources", "docs");
+            _resourceProvider = resourceProvider;
 
             PrimaryActionCommand = new RelayCommand(ExecuteInstall, () => IsPathValid && !IsWorking);
             UninstallCommand = new RelayCommand(ExecuteUninstall, () => IsPathValid && !IsWorking && CurrentState != InstallationState.Fresh);
             AutoDetectCommand = new RelayCommand(ExecuteAutoDetect, () => !IsWorking && !IsActionCompleted);
             CloseCommand = new RelayCommand(() => _closeAction?.Invoke());
-            UserGuideCommand = new RelayCommand(() => OpenGuide("User's Guide", "UsersGuide.md"));
-            ModderGuideCommand = new RelayCommand(() => OpenGuide("Modder's Guide", "ModdersGuide.md"));
+            GuidesCommand = new RelayCommand(() => _openGuidesAction?.Invoke());
+            TroubleshootingCommand = new RelayCommand(() => _openTroubleshootingAction?.Invoke());
 
             ExecuteAutoDetect();
             WasInstalledAtStartup = CurrentState != InstallationState.Fresh;
@@ -68,13 +70,13 @@ namespace Harmony2ForLmm.ViewModels
             _uninstallerService = null!;
             _baseModsAnalyzer = null!;
             _stateDetector = null!;
-            _docsPath = string.Empty;
+            _resourceProvider = null!;
             PrimaryActionCommand = new RelayCommand(() => { });
             UninstallCommand = new RelayCommand(() => { });
             AutoDetectCommand = new RelayCommand(() => { });
             CloseCommand = new RelayCommand(() => { });
-            UserGuideCommand = new RelayCommand(() => { });
-            ModderGuideCommand = new RelayCommand(() => { });
+            GuidesCommand = new RelayCommand(() => { });
+            TroubleshootingCommand = new RelayCommand(() => { });
         }
 
         /// <summary>
@@ -276,14 +278,14 @@ namespace Harmony2ForLmm.ViewModels
         public ICommand CloseCommand { get; }
 
         /// <summary>
-        /// Gets the command to open the User's Guide.
+        /// Gets the command to open the Guides window.
         /// </summary>
-        public ICommand UserGuideCommand { get; }
+        public ICommand GuidesCommand { get; }
 
         /// <summary>
-        /// Gets the command to open the Modder's Guide.
+        /// Gets the command to open the Troubleshooting window.
         /// </summary>
-        public ICommand ModderGuideCommand { get; }
+        public ICommand TroubleshootingCommand { get; }
 
         /// <summary>
         /// Sets the action to invoke when the close command is executed.
@@ -296,24 +298,89 @@ namespace Harmony2ForLmm.ViewModels
         /// <summary>
         /// Sets the action to invoke when a guide window should be opened.
         /// </summary>
-        /// <param name="openGuideAction">Action accepting (title, markdownContent).</param>
-        public void SetOpenGuideAction(Action<string, string, string?> openGuideAction)
+        /// <param name="openGuideAction">Action accepting (title, markdownContent, openDemoModZip).</param>
+        public void SetOpenGuideAction(Action<string, string, Func<Stream?>?> openGuideAction)
         {
             _openGuideAction = openGuideAction;
         }
 
-        private void OpenGuide(string title, string fileName)
+        /// <summary>
+        /// Sets the action to invoke when the Guides window should be opened.
+        /// </summary>
+        public void SetOpenGuidesAction(Action openGuidesAction)
         {
-            var filePath = Path.Combine(_docsPath, fileName);
-            if (!File.Exists(filePath))
+            _openGuidesAction = openGuidesAction;
+        }
+
+        /// <summary>
+        /// Sets the action to invoke when the Troubleshooting window should be opened.
+        /// </summary>
+        public void SetOpenTroubleshootingAction(Action openTroubleshootingAction)
+        {
+            _openTroubleshootingAction = openTroubleshootingAction;
+        }
+
+        /// <summary>
+        /// Installs DebugPanel to the game's BaseMods directory.
+        /// </summary>
+        /// <returns>Empty string on success, error message on failure.</returns>
+        public string InstallDebugPanel()
+        {
+            try
+            {
+                var baseModsPath = Path.Combine(GamePath, "LobotomyCorp_Data", "BaseMods");
+                var filesWritten = new List<string>();
+                _resourceProvider.ExtractDebugPanelTo(baseModsPath, filesWritten);
+
+                return string.Empty;
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        /// <summary>
+        /// Checks whether DebugPanel is already installed.
+        /// </summary>
+        public bool IsDebugPanelInstalled()
+        {
+            var dllPath = Path.Combine(GamePath, "LobotomyCorp_Data", "BaseMods", "DebugPanel", "DebugPanel.dll");
+
+            return File.Exists(dllPath);
+        }
+
+        /// <summary>
+        /// Reads the DebugPanel documentation markdown content.
+        /// </summary>
+        /// <returns>The markdown content, or null if not found.</returns>
+        public string? ReadDebugPanelDoc()
+        {
+            return _resourceProvider.ReadDocumentText("DebugPanel.md");
+        }
+
+        /// <summary>
+        /// Opens a guide document in a new window.
+        /// </summary>
+        public void OpenGuide(string title, string fileName)
+        {
+            var content = _resourceProvider.ReadDocumentText(fileName);
+            if (content == null)
             {
                 return;
             }
 
-            var content = File.ReadAllText(filePath);
-            var zipPath = Path.Combine(AppContext.BaseDirectory, "Resources", "DemoMod.zip");
-            var sampleZip = File.Exists(zipPath) ? zipPath : null;
-            _openGuideAction?.Invoke(title, content, sampleZip);
+            // Check if the DemoMod resource exists by probing and disposing the stream
+            Func<Stream?>? openDemoModZip = null;
+            using (var probe = _resourceProvider.OpenDemoModZip())
+            {
+                if (probe != null)
+                {
+                    openDemoModZip = _resourceProvider.OpenDemoModZip;
+                }
+            }
+
+            _openGuideAction?.Invoke(title, content, openDemoModZip);
         }
 
         private void NotifyAllCommands()

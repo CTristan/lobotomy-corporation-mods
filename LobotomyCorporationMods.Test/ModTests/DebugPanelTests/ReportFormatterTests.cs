@@ -6,9 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using AwesomeAssertions;
-using Hemocode.DebugPanel.Implementations;
-using Hemocode.Common.Enums.Diagnostics;
-using Hemocode.Common.Models.Diagnostics;
+using DebugPanel.Implementations;
+using DebugPanel.Common.Enums.Diagnostics;
+using DebugPanel.Common.Models.Diagnostics;
 using Xunit;
 
 #endregion

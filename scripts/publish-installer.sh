@@ -30,7 +30,6 @@ RESOURCES_DIR="$REPO_ROOT/Harmony2ForLmm/Resources"
 PUBLISH_DIR="$REPO_ROOT/Harmony2ForLmm/bin/publish"
 
 ALL_PLATFORMS="win-x64 win-x86 linux-x64 osx-x64 osx-arm64"
-SELF_CONTAINED_PLATFORMS="win-x64 win-x86"
 
 info() { echo -e "${BLUE}[INFO]${NC} $1"; }
 success() { echo -e "${GREEN}[OK]${NC} $1"; }
@@ -46,26 +45,12 @@ is_valid_platform() {
     return 1
 }
 
-is_self_contained() {
-    local target="$1"
-    for p in $SELF_CONTAINED_PLATFORMS; do
-        if [ "$p" = "$target" ]; then
-            return 0
-        fi
-    done
-    return 1
-}
-
 show_help() {
     echo "Usage: $(basename "$0") [PLATFORM...|--list|--help]"
     echo ""
     echo "Platforms:"
     for platform in $ALL_PLATFORMS; do
-        if is_self_contained "$platform"; then
-            echo "  $platform (self-contained, single file, trimmed)"
-        else
-            echo "  $platform (framework-dependent)"
-        fi
+        echo "  $platform (self-contained, single file, trimmed)"
     done
     echo ""
     echo "If no platform is specified, all platforms are published."
@@ -103,24 +88,15 @@ publish_platform() {
 
     info "Publishing for $platform..."
 
-    if is_self_contained "$platform"; then
-        dotnet publish "$INSTALLER_PROJECT" \
-            -c Release \
-            -r "$platform" \
-            -o "$PUBLISH_DIR/$platform" \
-            --self-contained true \
-            -p:PublishSingleFile=true \
-            -p:PublishTrimmed=true \
-            -p:IncludeNativeLibrariesForSelfExtract=true \
-            --verbosity quiet
-    else
-        dotnet publish "$INSTALLER_PROJECT" \
-            -c Release \
-            -r "$platform" \
-            -o "$PUBLISH_DIR/$platform" \
-            --self-contained false \
-            --verbosity quiet
-    fi
+    dotnet publish "$INSTALLER_PROJECT" \
+        -c Release \
+        -r "$platform" \
+        -o "$PUBLISH_DIR/$platform" \
+        --self-contained true \
+        -p:PublishSingleFile=true \
+        -p:PublishTrimmed=true \
+        -p:IncludeNativeLibrariesForSelfExtract=true \
+        --verbosity quiet
 
     success "Published $platform -> $PUBLISH_DIR/$platform/"
 }

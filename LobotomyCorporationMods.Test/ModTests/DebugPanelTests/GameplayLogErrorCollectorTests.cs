@@ -4,8 +4,8 @@
 
 using System;
 using AwesomeAssertions;
-using Hemocode.DebugPanel.Implementations;
-using Hemocode.DebugPanel.Interfaces;
+using DebugPanel.Implementations;
+using DebugPanel.Interfaces;
 using Moq;
 using Xunit;
 

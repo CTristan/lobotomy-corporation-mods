@@ -194,17 +194,17 @@
             </Grid>
             <Grid ColumnDefinitions="*,16,*">
               <Button Grid.Column="0"
-                      Content="User's Guide"
+                      Content="Guides"
                       Classes="secondary"
-                      Command="{Binding UserGuideCommand}"
+                      Command="{Binding GuidesCommand}"
                       Padding="20,12"
                       FontSize="16"
                       HorizontalContentAlignment="Center"
                       HorizontalAlignment="Stretch" />
               <Button Grid.Column="2"
-                      Content="Modder's Guide"
+                      Content="Troubleshooting"
                       Classes="secondary"
-                      Command="{Binding ModderGuideCommand}"
+                      Command="{Binding TroubleshootingCommand}"
                       Padding="20,12"
                       FontSize="16"
                       HorizontalContentAlignment="Center"

@@ -10,7 +10,7 @@ namespace Harmony2ForLmm.Services
     /// <summary>
     /// Installs BepInEx 5 and RetargetHarmony into a Lobotomy Corporation game directory.
     /// </summary>
-    public sealed class InstallerService(string resourcesPath, IManifestService manifestService) : IInstallerService
+    public sealed class InstallerService(IResourceProvider resourceProvider, IManifestService manifestService) : IInstallerService
     {
         private const string BepInExFolder = "BepInEx";
         private const string PatchersFolder = "patchers";
@@ -41,13 +41,7 @@ namespace Harmony2ForLmm.Services
 
         private void InstallBepInEx(string gamePath, List<string> filesWritten)
         {
-            var bepInExResourcePath = Path.Combine(resourcesPath, "bepinex");
-            if (!Directory.Exists(bepInExResourcePath))
-            {
-                return;
-            }
-
-            CopyDirectoryRecursive(bepInExResourcePath, gamePath, filesWritten);
+            resourceProvider.ExtractBepInExTo(gamePath, filesWritten);
         }
 
         private void InstallRetargetHarmony(string gamePath, List<string> filesWritten)
@@ -55,13 +49,8 @@ namespace Harmony2ForLmm.Services
             var patcherDir = Path.Combine(gamePath, BepInExFolder, PatchersFolder, RetargetHarmonyFolder);
             _ = Directory.CreateDirectory(patcherDir);
 
-            var sourceDll = Path.Combine(resourcesPath, "RetargetHarmony.dll");
-            if (File.Exists(sourceDll))
-            {
-                var destDll = Path.Combine(patcherDir, "RetargetHarmony.dll");
-                File.Copy(sourceDll, destDll, overwrite: true);
-                filesWritten.Add(destDll);
-            }
+            var destDll = Path.Combine(patcherDir, "RetargetHarmony.dll");
+            resourceProvider.CopyDllTo("RetargetHarmony.dll", destDll, filesWritten);
         }
 
         private void InstallHarmonyInteropDlls(string gamePath, List<string> filesWritten)
@@ -74,50 +63,32 @@ namespace Harmony2ForLmm.Services
             {
                 // 12Harmony.dll is copied from 0Harmony12.dll (same library, different assembly name)
                 var sourceName = dll == "12Harmony.dll" ? "0Harmony12.dll" : dll;
-                var sourceDll = Path.Combine(resourcesPath, sourceName);
-                if (File.Exists(sourceDll))
-                {
-                    var destDll = Path.Combine(coreDir, dll);
-                    File.Copy(sourceDll, destDll, overwrite: true);
-                    filesWritten.Add(destDll);
-                }
+                var destDll = Path.Combine(coreDir, dll);
+                resourceProvider.CopyDllTo(sourceName, destDll, filesWritten);
             }
         }
 
         private void InstallDocumentation(string gamePath, List<string> filesWritten)
         {
-            var docsResourcePath = Path.Combine(resourcesPath, "docs");
-            if (!Directory.Exists(docsResourcePath))
-            {
-                return;
-            }
-
+            string[] docFiles = ["UsersGuide.md", "ModdersGuide.md"];
             var docsDir = Path.Combine(gamePath, IManifestService.ManifestDirectory, "docs");
-            _ = Directory.CreateDirectory(docsDir);
 
-            foreach (var file in Directory.GetFiles(docsResourcePath, "*.md"))
+            var anyDocExists = false;
+            foreach (var fileName in docFiles)
             {
-                var destFile = Path.Combine(docsDir, Path.GetFileName(file));
-                File.Copy(file, destFile, overwrite: true);
-                filesWritten.Add(destFile);
-            }
-        }
+                var content = resourceProvider.ReadDocumentText(fileName);
+                if (content != null)
+                {
+                    if (!anyDocExists)
+                    {
+                        _ = Directory.CreateDirectory(docsDir);
+                        anyDocExists = true;
+                    }
 
-        private static void CopyDirectoryRecursive(string sourceDir, string destDir, List<string> filesWritten)
-        {
-            _ = Directory.CreateDirectory(destDir);
-
-            foreach (var file in Directory.GetFiles(sourceDir))
-            {
-                var destFile = Path.Combine(destDir, Path.GetFileName(file));
-                File.Copy(file, destFile, overwrite: true);
-                filesWritten.Add(destFile);
-            }
-
-            foreach (var subDir in Directory.GetDirectories(sourceDir))
-            {
-                var destSubDir = Path.Combine(destDir, Path.GetFileName(subDir));
-                CopyDirectoryRecursive(subDir, destSubDir, filesWritten);
+                    var destFile = Path.Combine(docsDir, fileName);
+                    File.WriteAllText(destFile, content);
+                    filesWritten.Add(destFile);
+                }
             }
         }
     }

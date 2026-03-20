@@ -4,8 +4,8 @@
 
 using System;
 using AwesomeAssertions;
-using Hemocode.Common.Enums.Diagnostics;
-using Hemocode.Common.Models.Diagnostics;
+using DebugPanel.Common.Enums.Diagnostics;
+using DebugPanel.Common.Models.Diagnostics;
 using Xunit;
 
 #endregion

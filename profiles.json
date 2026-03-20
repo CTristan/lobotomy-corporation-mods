@@ -18,7 +18,7 @@
     "DeployTargets": [
       "LobotomyCorporationMods.BadLuckProtectionForGifts",
       "LobotomyCorporationMods.BugFixes",
-      "LobotomyCorporationMods.DebugPanel",
+      "DebugPanel",
       "LobotomyCorporationMods.FreeCustomization",
       "LobotomyCorporationMods.GiftAlertIcon",
       "LobotomyCorporationMods.NotifyWhenAgentReceivesGift",
@@ -32,7 +32,7 @@
     "DeployTargets": [
       "LobotomyCorporationMods.BadLuckProtectionForGifts",
       "LobotomyCorporationMods.BugFixes",
-      "LobotomyCorporationMods.DebugPanel",
+      "DebugPanel",
       "LobotomyCorporationMods.FreeCustomization",
       "LobotomyCorporationMods.GiftAlertIcon",
       "LobotomyCorporationMods.NotifyWhenAgentReceivesGift",
@@ -45,7 +45,7 @@
   },
   "demo": {
     "DeployTargets": [
-      "LobotomyCorporationMods.DebugPanel",
+      "DebugPanel",
       "LobotomyCorporationMods.Playwright",
       "RetargetHarmony",
       "DemoMod.Plugin",
@@ -58,7 +58,7 @@
     "DeployTargets": [
       "LobotomyCorporationMods.BadLuckProtectionForGifts",
       "LobotomyCorporationMods.BugFixes",
-      "LobotomyCorporationMods.DebugPanel",
+      "DebugPanel",
       "LobotomyCorporationMods.FreeCustomization",
       "LobotomyCorporationMods.GiftAlertIcon",
       "LobotomyCorporationMods.NotifyWhenAgentReceivesGift",

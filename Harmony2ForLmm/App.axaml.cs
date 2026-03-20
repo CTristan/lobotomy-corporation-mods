@@ -25,15 +25,12 @@ namespace Harmony2ForLmm
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                var resourcesPath = System.IO.Path.Combine(
-                    System.AppContext.BaseDirectory,
-                    "Resources");
-
                 var bundleVersion = typeof(App).Assembly.GetName().Version?.ToString(3) ?? "0.0.0";
                 var manifestService = new ManifestService(bundleVersion);
+                var resourceProvider = new EmbeddedResourceProvider();
                 var gamePathFinder = new GamePathFinder();
                 var validator = new GameDirectoryValidator();
-                var installer = new InstallerService(resourcesPath, manifestService);
+                var installer = new InstallerService(resourceProvider, manifestService);
                 var baseModsAnalyzer = new BaseModsAnalyzer();
                 var uninstaller = new UninstallerService(baseModsAnalyzer, manifestService);
                 var stateDetector = new InstallationStateDetector(manifestService, bundleVersion);
@@ -44,7 +41,8 @@ namespace Harmony2ForLmm
                     installer,
                     uninstaller,
                     baseModsAnalyzer,
-                    stateDetector);
+                    stateDetector,
+                    resourceProvider);
 
                 desktop.MainWindow = new MainWindow
                 {
