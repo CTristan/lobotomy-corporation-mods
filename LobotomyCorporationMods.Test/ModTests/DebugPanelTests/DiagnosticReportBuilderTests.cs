@@ -5,11 +5,13 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using AutoFixture;
+using AutoFixture.AutoMoq;
 using AwesomeAssertions;
-using DebugPanel.Implementations;
-using DebugPanel.Interfaces;
 using DebugPanel.Common.Enums.Diagnostics;
 using DebugPanel.Common.Models.Diagnostics;
+using DebugPanel.Implementations;
+using DebugPanel.Interfaces;
 using Moq;
 using Xunit;
 
@@ -19,8 +21,10 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
 {
     public sealed class DiagnosticReportBuilderTests
     {
+        private readonly IFixture _fixture;
         private readonly Mock<ICollectorFactory> _mockFactory;
         private readonly Mock<IEnvironmentDetector> _mockDetector;
+        private readonly Mock<IHarmonyVersionClassifier> _mockClassifier;
         private readonly Mock<IActivePatchCollector> _mockPatchCollector;
         private readonly Mock<IInfoCollector<IList<DetectedModInfo>>> _mockBaseModCollector;
         private readonly Mock<IInfoCollector<IList<DetectedModInfo>>> _mockBepInExPluginCollector;
@@ -33,13 +37,13 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         private readonly Mock<IInfoCollector<KnownIssuesReport>> _mockKnownIssuesChecker;
         private readonly Mock<IInfoCollector<DependencyReport>> _mockDependencyChecker;
         private readonly Mock<IInfoCollector<GameplayLogErrorReport>> _mockGameplayLogErrorCollector;
-        private readonly Mock<IHarmonyVersionClassifier> _mockClassifier;
 
         public DiagnosticReportBuilderTests()
         {
-            _mockFactory = new Mock<ICollectorFactory>();
-            _mockDetector = new Mock<IEnvironmentDetector>();
-            _mockClassifier = new Mock<IHarmonyVersionClassifier>();
+            _fixture = new Fixture().Customize(new AutoMoqCustomization());
+            _mockFactory = _fixture.Freeze<Mock<ICollectorFactory>>();
+            _mockDetector = _fixture.Freeze<Mock<IEnvironmentDetector>>();
+            _mockClassifier = _fixture.Freeze<Mock<IHarmonyVersionClassifier>>();
             _mockPatchCollector = new Mock<IActivePatchCollector>();
             _mockBaseModCollector = new Mock<IInfoCollector<IList<DetectedModInfo>>>();
             _mockBepInExPluginCollector = new Mock<IInfoCollector<IList<DetectedModInfo>>>();
@@ -536,6 +540,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             result.Should().HaveCount(1);
             result[0].Version.Should().BeEmpty();
         }
+
         [Fact]
         public void SynthesizePatchesFromExpected_throws_when_null()
         {
@@ -588,6 +593,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             report.Patches.Should().Contain(p => p.TargetType == "GameClass" && p.PatchAssemblyName == "TestMod");
             report.Patches.Should().Contain(p => p.TargetType == "OtherClass" && p.PatchAssemblyName == "OtherMod");
         }
+
         [Fact]
         public void SynthesizeModsFromExpectedPatches_classifies_each_mod_individually()
         {

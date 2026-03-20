@@ -170,11 +170,12 @@ All JsonUtility data classes **must** live in a `JsonModels/` folder (`.editorco
 
 ## Test Conventions
 
-- **Framework**: xUnit + AwesomeAssertions (never raw `Assert`) + Moq
+- **Framework**: xUnit + AwesomeAssertions (never raw `Assert`) + Moq + AutoFixture.AutoMoq + AutoFixture.Xunit3
 - **Organization**: Test files must be in subfolders, never in the test project root. Mod tests in `ModTests/{ModName}Tests/`, patch tests in `PatchTests/`. Each mod has a `{ModName}ModTests` base class.
 - **Naming**: Descriptive sentences with underscores (e.g., `A_gift_that_has_not_been_worked_on_yet_displays_the_base_value`)
 - **Unity objects**: Use `UnityTestExtensions` factory methods — never `new` Unity types directly
 - **Mocking**: `TestExtensions.GetMockLogger()`, verify via `mockLogger.VerifyArgumentNullException(Action)`
+- **AutoFixture**: For test classes with 3+ mock dependencies, use `IFixture` with `AutoMoqCustomization` and `Freeze<Mock<T>>()` to reduce boilerplate. `[LobotomyAutoData]` and `[LobotomyInlineAutoData]` attributes auto-inject mocks and Unity types via `UnityCustomization`. Use fixture for "don't care" dependencies; keep manual mocks for duplicate interface types and tests that verify specific mock interactions.
 - **Coverage**: 100% patch coverage enforced via Codecov. Test extension methods, not `[ExcludeFromCodeCoverage]` entry points.
 - **Every patch must have**: (1) registration test via `ValidateHarmonyPatch`, (2) exception logging test, (3) business logic tests calling the extension method directly
 

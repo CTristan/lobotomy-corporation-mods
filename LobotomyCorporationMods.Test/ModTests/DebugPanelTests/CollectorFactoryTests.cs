@@ -4,6 +4,8 @@
 
 using System;
 using System.Collections.Generic;
+using AutoFixture;
+using AutoFixture.AutoMoq;
 using AwesomeAssertions;
 using DebugPanel.Implementations;
 using DebugPanel.Interfaces;
@@ -16,40 +18,28 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
 {
     public sealed class CollectorFactoryTests
     {
+        private readonly IFixture _fixture;
         private readonly Mock<IEnvironmentDetector> _mockDetector;
         private readonly Mock<IPatchInspectionSource> _mockHarmony1Source;
         private readonly Mock<IPatchInspectionSource> _mockHarmony2Source;
-        private readonly Mock<IAssemblyInspectionSource> _mockAssemblySource;
-        private readonly Mock<IPluginInfoSource> _mockPluginSource;
-        private readonly Mock<IHarmonyVersionClassifier> _mockClassifier;
         private readonly Mock<IDllFileInspector> _mockBasicDllInspector;
         private readonly Mock<IDllFileInspector> _mockCecilDllInspector;
-        private readonly Mock<IShimArtifactSource> _mockShimArtifactSource;
-        private readonly Mock<ILoadedAssemblyReferenceSource> _mockLoadedAssemblySource;
-        private readonly Mock<IFileSystemScanner> _mockFileSystemScanner;
-        private readonly Mock<IKnownIssuesDatabase> _mockKnownIssuesDatabase;
 
         public CollectorFactoryTests()
         {
-            _mockDetector = new Mock<IEnvironmentDetector>();
+            _fixture = new Fixture().Customize(new AutoMoqCustomization());
+            _mockDetector = _fixture.Freeze<Mock<IEnvironmentDetector>>();
             _mockHarmony1Source = new Mock<IPatchInspectionSource>();
             _mockHarmony2Source = new Mock<IPatchInspectionSource>();
-            _mockAssemblySource = new Mock<IAssemblyInspectionSource>();
-            _mockPluginSource = new Mock<IPluginInfoSource>();
-            _mockClassifier = new Mock<IHarmonyVersionClassifier>();
             _mockBasicDllInspector = new Mock<IDllFileInspector>();
             _mockCecilDllInspector = new Mock<IDllFileInspector>();
-            _mockShimArtifactSource = new Mock<IShimArtifactSource>();
-            _mockLoadedAssemblySource = new Mock<ILoadedAssemblyReferenceSource>();
-            _mockFileSystemScanner = new Mock<IFileSystemScanner>();
-            _mockKnownIssuesDatabase = new Mock<IKnownIssuesDatabase>();
 
             _mockHarmony1Source.Setup(s => s.GetPatches()).Returns([]);
             _mockHarmony2Source.Setup(s => s.GetPatches()).Returns([]);
-            _mockAssemblySource.Setup(s => s.GetAssemblies()).Returns([]);
-            _mockPluginSource.Setup(s => s.GetPlugins()).Returns([]);
-            _mockShimArtifactSource.Setup(s => s.GetBackupFileNames()).Returns([]);
-            _mockLoadedAssemblySource.Setup(s => s.GetBaseModAssemblies()).Returns([]);
+            _fixture.Freeze<Mock<IAssemblyInspectionSource>>().Setup(s => s.GetAssemblies()).Returns([]);
+            _fixture.Freeze<Mock<IPluginInfoSource>>().Setup(s => s.GetPlugins()).Returns([]);
+            _fixture.Freeze<Mock<IShimArtifactSource>>().Setup(s => s.GetBackupFileNames()).Returns([]);
+            _fixture.Freeze<Mock<ILoadedAssemblyReferenceSource>>().Setup(s => s.GetBaseModAssemblies()).Returns([]);
         }
 
         private CollectorFactory CreateFactory()
@@ -58,21 +48,21 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
                 _mockDetector.Object,
                 _mockHarmony1Source.Object,
                 _mockHarmony2Source.Object,
-                _mockAssemblySource.Object,
-                _mockPluginSource.Object,
-                _mockClassifier.Object,
+                _fixture.Create<Mock<IAssemblyInspectionSource>>().Object,
+                _fixture.Create<Mock<IPluginInfoSource>>().Object,
+                _fixture.Create<Mock<IHarmonyVersionClassifier>>().Object,
                 _mockBasicDllInspector.Object,
                 _mockCecilDllInspector.Object,
-                _mockShimArtifactSource.Object,
-                _mockLoadedAssemblySource.Object,
-                _mockFileSystemScanner.Object,
-                _mockKnownIssuesDatabase.Object);
+                _fixture.Create<Mock<IShimArtifactSource>>().Object,
+                _fixture.Create<Mock<ILoadedAssemblyReferenceSource>>().Object,
+                _fixture.Create<Mock<IFileSystemScanner>>().Object,
+                _fixture.Create<Mock<IKnownIssuesDatabase>>().Object);
         }
 
         [Fact]
         public void Constructor_throws_when_environmentDetector_is_null()
         {
-            Action act = () => _ = new CollectorFactory(null, _mockHarmony1Source.Object, _mockHarmony2Source.Object, _mockAssemblySource.Object, _mockPluginSource.Object, _mockClassifier.Object, _mockBasicDllInspector.Object, _mockCecilDllInspector.Object, _mockShimArtifactSource.Object, _mockLoadedAssemblySource.Object, _mockFileSystemScanner.Object, _mockKnownIssuesDatabase.Object);
+            Action act = () => _ = new CollectorFactory(null, _mockHarmony1Source.Object, _mockHarmony2Source.Object, _fixture.Create<Mock<IAssemblyInspectionSource>>().Object, _fixture.Create<Mock<IPluginInfoSource>>().Object, _fixture.Create<Mock<IHarmonyVersionClassifier>>().Object, _mockBasicDllInspector.Object, _mockCecilDllInspector.Object, _fixture.Create<Mock<IShimArtifactSource>>().Object, _fixture.Create<Mock<ILoadedAssemblyReferenceSource>>().Object, _fixture.Create<Mock<IFileSystemScanner>>().Object, _fixture.Create<Mock<IKnownIssuesDatabase>>().Object);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("environmentDetector");
         }
@@ -80,7 +70,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         [Fact]
         public void Constructor_throws_when_harmony1Source_is_null()
         {
-            Action act = () => _ = new CollectorFactory(_mockDetector.Object, null, _mockHarmony2Source.Object, _mockAssemblySource.Object, _mockPluginSource.Object, _mockClassifier.Object, _mockBasicDllInspector.Object, _mockCecilDllInspector.Object, _mockShimArtifactSource.Object, _mockLoadedAssemblySource.Object, _mockFileSystemScanner.Object, _mockKnownIssuesDatabase.Object);
+            Action act = () => _ = new CollectorFactory(_mockDetector.Object, null, _mockHarmony2Source.Object, _fixture.Create<Mock<IAssemblyInspectionSource>>().Object, _fixture.Create<Mock<IPluginInfoSource>>().Object, _fixture.Create<Mock<IHarmonyVersionClassifier>>().Object, _mockBasicDllInspector.Object, _mockCecilDllInspector.Object, _fixture.Create<Mock<IShimArtifactSource>>().Object, _fixture.Create<Mock<ILoadedAssemblyReferenceSource>>().Object, _fixture.Create<Mock<IFileSystemScanner>>().Object, _fixture.Create<Mock<IKnownIssuesDatabase>>().Object);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("harmony1Source");
         }
@@ -88,7 +78,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         [Fact]
         public void Constructor_throws_when_harmony2Source_is_null()
         {
-            Action act = () => _ = new CollectorFactory(_mockDetector.Object, _mockHarmony1Source.Object, null, _mockAssemblySource.Object, _mockPluginSource.Object, _mockClassifier.Object, _mockBasicDllInspector.Object, _mockCecilDllInspector.Object, _mockShimArtifactSource.Object, _mockLoadedAssemblySource.Object, _mockFileSystemScanner.Object, _mockKnownIssuesDatabase.Object);
+            Action act = () => _ = new CollectorFactory(_mockDetector.Object, _mockHarmony1Source.Object, null, _fixture.Create<Mock<IAssemblyInspectionSource>>().Object, _fixture.Create<Mock<IPluginInfoSource>>().Object, _fixture.Create<Mock<IHarmonyVersionClassifier>>().Object, _mockBasicDllInspector.Object, _mockCecilDllInspector.Object, _fixture.Create<Mock<IShimArtifactSource>>().Object, _fixture.Create<Mock<ILoadedAssemblyReferenceSource>>().Object, _fixture.Create<Mock<IFileSystemScanner>>().Object, _fixture.Create<Mock<IKnownIssuesDatabase>>().Object);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("harmony2Source");
         }
@@ -96,7 +86,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         [Fact]
         public void Constructor_throws_when_assemblySource_is_null()
         {
-            Action act = () => _ = new CollectorFactory(_mockDetector.Object, _mockHarmony1Source.Object, _mockHarmony2Source.Object, null, _mockPluginSource.Object, _mockClassifier.Object, _mockBasicDllInspector.Object, _mockCecilDllInspector.Object, _mockShimArtifactSource.Object, _mockLoadedAssemblySource.Object, _mockFileSystemScanner.Object, _mockKnownIssuesDatabase.Object);
+            Action act = () => _ = new CollectorFactory(_mockDetector.Object, _mockHarmony1Source.Object, _mockHarmony2Source.Object, null, _fixture.Create<Mock<IPluginInfoSource>>().Object, _fixture.Create<Mock<IHarmonyVersionClassifier>>().Object, _mockBasicDllInspector.Object, _mockCecilDllInspector.Object, _fixture.Create<Mock<IShimArtifactSource>>().Object, _fixture.Create<Mock<ILoadedAssemblyReferenceSource>>().Object, _fixture.Create<Mock<IFileSystemScanner>>().Object, _fixture.Create<Mock<IKnownIssuesDatabase>>().Object);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("assemblySource");
         }
@@ -104,7 +94,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         [Fact]
         public void Constructor_throws_when_pluginInfoSource_is_null()
         {
-            Action act = () => _ = new CollectorFactory(_mockDetector.Object, _mockHarmony1Source.Object, _mockHarmony2Source.Object, _mockAssemblySource.Object, null, _mockClassifier.Object, _mockBasicDllInspector.Object, _mockCecilDllInspector.Object, _mockShimArtifactSource.Object, _mockLoadedAssemblySource.Object, _mockFileSystemScanner.Object, _mockKnownIssuesDatabase.Object);
+            Action act = () => _ = new CollectorFactory(_mockDetector.Object, _mockHarmony1Source.Object, _mockHarmony2Source.Object, _fixture.Create<Mock<IAssemblyInspectionSource>>().Object, null, _fixture.Create<Mock<IHarmonyVersionClassifier>>().Object, _mockBasicDllInspector.Object, _mockCecilDllInspector.Object, _fixture.Create<Mock<IShimArtifactSource>>().Object, _fixture.Create<Mock<ILoadedAssemblyReferenceSource>>().Object, _fixture.Create<Mock<IFileSystemScanner>>().Object, _fixture.Create<Mock<IKnownIssuesDatabase>>().Object);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("pluginInfoSource");
         }
@@ -112,7 +102,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         [Fact]
         public void Constructor_throws_when_classifier_is_null()
         {
-            Action act = () => _ = new CollectorFactory(_mockDetector.Object, _mockHarmony1Source.Object, _mockHarmony2Source.Object, _mockAssemblySource.Object, _mockPluginSource.Object, null, _mockBasicDllInspector.Object, _mockCecilDllInspector.Object, _mockShimArtifactSource.Object, _mockLoadedAssemblySource.Object, _mockFileSystemScanner.Object, _mockKnownIssuesDatabase.Object);
+            Action act = () => _ = new CollectorFactory(_mockDetector.Object, _mockHarmony1Source.Object, _mockHarmony2Source.Object, _fixture.Create<Mock<IAssemblyInspectionSource>>().Object, _fixture.Create<Mock<IPluginInfoSource>>().Object, null, _mockBasicDllInspector.Object, _mockCecilDllInspector.Object, _fixture.Create<Mock<IShimArtifactSource>>().Object, _fixture.Create<Mock<ILoadedAssemblyReferenceSource>>().Object, _fixture.Create<Mock<IFileSystemScanner>>().Object, _fixture.Create<Mock<IKnownIssuesDatabase>>().Object);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("classifier");
         }
@@ -230,7 +220,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         [Fact]
         public void Constructor_throws_when_basicDllInspector_is_null()
         {
-            Action act = () => _ = new CollectorFactory(_mockDetector.Object, _mockHarmony1Source.Object, _mockHarmony2Source.Object, _mockAssemblySource.Object, _mockPluginSource.Object, _mockClassifier.Object, null, _mockCecilDllInspector.Object, _mockShimArtifactSource.Object, _mockLoadedAssemblySource.Object, _mockFileSystemScanner.Object, _mockKnownIssuesDatabase.Object);
+            Action act = () => _ = new CollectorFactory(_mockDetector.Object, _mockHarmony1Source.Object, _mockHarmony2Source.Object, _fixture.Create<Mock<IAssemblyInspectionSource>>().Object, _fixture.Create<Mock<IPluginInfoSource>>().Object, _fixture.Create<Mock<IHarmonyVersionClassifier>>().Object, null, _mockCecilDllInspector.Object, _fixture.Create<Mock<IShimArtifactSource>>().Object, _fixture.Create<Mock<ILoadedAssemblyReferenceSource>>().Object, _fixture.Create<Mock<IFileSystemScanner>>().Object, _fixture.Create<Mock<IKnownIssuesDatabase>>().Object);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("basicDllInspector");
         }
@@ -238,7 +228,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         [Fact]
         public void Constructor_throws_when_cecilDllInspector_is_null()
         {
-            Action act = () => _ = new CollectorFactory(_mockDetector.Object, _mockHarmony1Source.Object, _mockHarmony2Source.Object, _mockAssemblySource.Object, _mockPluginSource.Object, _mockClassifier.Object, _mockBasicDllInspector.Object, null, _mockShimArtifactSource.Object, _mockLoadedAssemblySource.Object, _mockFileSystemScanner.Object, _mockKnownIssuesDatabase.Object);
+            Action act = () => _ = new CollectorFactory(_mockDetector.Object, _mockHarmony1Source.Object, _mockHarmony2Source.Object, _fixture.Create<Mock<IAssemblyInspectionSource>>().Object, _fixture.Create<Mock<IPluginInfoSource>>().Object, _fixture.Create<Mock<IHarmonyVersionClassifier>>().Object, _mockBasicDllInspector.Object, null, _fixture.Create<Mock<IShimArtifactSource>>().Object, _fixture.Create<Mock<ILoadedAssemblyReferenceSource>>().Object, _fixture.Create<Mock<IFileSystemScanner>>().Object, _fixture.Create<Mock<IKnownIssuesDatabase>>().Object);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("cecilDllInspector");
         }
@@ -246,7 +236,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         [Fact]
         public void Constructor_throws_when_shimArtifactSource_is_null()
         {
-            Action act = () => _ = new CollectorFactory(_mockDetector.Object, _mockHarmony1Source.Object, _mockHarmony2Source.Object, _mockAssemblySource.Object, _mockPluginSource.Object, _mockClassifier.Object, _mockBasicDllInspector.Object, _mockCecilDllInspector.Object, null, _mockLoadedAssemblySource.Object, _mockFileSystemScanner.Object, _mockKnownIssuesDatabase.Object);
+            Action act = () => _ = new CollectorFactory(_mockDetector.Object, _mockHarmony1Source.Object, _mockHarmony2Source.Object, _fixture.Create<Mock<IAssemblyInspectionSource>>().Object, _fixture.Create<Mock<IPluginInfoSource>>().Object, _fixture.Create<Mock<IHarmonyVersionClassifier>>().Object, _mockBasicDllInspector.Object, _mockCecilDllInspector.Object, null, _fixture.Create<Mock<ILoadedAssemblyReferenceSource>>().Object, _fixture.Create<Mock<IFileSystemScanner>>().Object, _fixture.Create<Mock<IKnownIssuesDatabase>>().Object);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("shimArtifactSource");
         }
@@ -254,7 +244,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         [Fact]
         public void Constructor_throws_when_loadedAssemblySource_is_null()
         {
-            Action act = () => _ = new CollectorFactory(_mockDetector.Object, _mockHarmony1Source.Object, _mockHarmony2Source.Object, _mockAssemblySource.Object, _mockPluginSource.Object, _mockClassifier.Object, _mockBasicDllInspector.Object, _mockCecilDllInspector.Object, _mockShimArtifactSource.Object, null, _mockFileSystemScanner.Object, _mockKnownIssuesDatabase.Object);
+            Action act = () => _ = new CollectorFactory(_mockDetector.Object, _mockHarmony1Source.Object, _mockHarmony2Source.Object, _fixture.Create<Mock<IAssemblyInspectionSource>>().Object, _fixture.Create<Mock<IPluginInfoSource>>().Object, _fixture.Create<Mock<IHarmonyVersionClassifier>>().Object, _mockBasicDllInspector.Object, _mockCecilDllInspector.Object, _fixture.Create<Mock<IShimArtifactSource>>().Object, null, _fixture.Create<Mock<IFileSystemScanner>>().Object, _fixture.Create<Mock<IKnownIssuesDatabase>>().Object);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("loadedAssemblySource");
         }
@@ -298,7 +288,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         [Fact]
         public void Constructor_throws_when_fileSystemScanner_is_null()
         {
-            Action act = () => _ = new CollectorFactory(_mockDetector.Object, _mockHarmony1Source.Object, _mockHarmony2Source.Object, _mockAssemblySource.Object, _mockPluginSource.Object, _mockClassifier.Object, _mockBasicDllInspector.Object, _mockCecilDllInspector.Object, _mockShimArtifactSource.Object, _mockLoadedAssemblySource.Object, null, _mockKnownIssuesDatabase.Object);
+            Action act = () => _ = new CollectorFactory(_mockDetector.Object, _mockHarmony1Source.Object, _mockHarmony2Source.Object, _fixture.Create<Mock<IAssemblyInspectionSource>>().Object, _fixture.Create<Mock<IPluginInfoSource>>().Object, _fixture.Create<Mock<IHarmonyVersionClassifier>>().Object, _mockBasicDllInspector.Object, _mockCecilDllInspector.Object, _fixture.Create<Mock<IShimArtifactSource>>().Object, _fixture.Create<Mock<ILoadedAssemblyReferenceSource>>().Object, null, _fixture.Create<Mock<IKnownIssuesDatabase>>().Object);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("fileSystemScanner");
         }
@@ -326,7 +316,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         [Fact]
         public void Constructor_throws_when_knownIssuesDatabase_is_null()
         {
-            Action act = () => _ = new CollectorFactory(_mockDetector.Object, _mockHarmony1Source.Object, _mockHarmony2Source.Object, _mockAssemblySource.Object, _mockPluginSource.Object, _mockClassifier.Object, _mockBasicDllInspector.Object, _mockCecilDllInspector.Object, _mockShimArtifactSource.Object, _mockLoadedAssemblySource.Object, _mockFileSystemScanner.Object, null);
+            Action act = () => _ = new CollectorFactory(_mockDetector.Object, _mockHarmony1Source.Object, _mockHarmony2Source.Object, _fixture.Create<Mock<IAssemblyInspectionSource>>().Object, _fixture.Create<Mock<IPluginInfoSource>>().Object, _fixture.Create<Mock<IHarmonyVersionClassifier>>().Object, _mockBasicDllInspector.Object, _mockCecilDllInspector.Object, _fixture.Create<Mock<IShimArtifactSource>>().Object, _fixture.Create<Mock<ILoadedAssemblyReferenceSource>>().Object, _fixture.Create<Mock<IFileSystemScanner>>().Object, null);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("knownIssuesDatabase");
         }

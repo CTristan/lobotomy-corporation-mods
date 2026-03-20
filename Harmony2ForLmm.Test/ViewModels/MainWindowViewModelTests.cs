@@ -97,6 +97,46 @@ namespace Harmony2ForLmm.Test.ViewModels
         }
 
         [Fact]
+        public void Successful_install_upgrades_DebugPanel_when_detected()
+        {
+            var tempDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            var debugPanelDir = Path.Combine(tempDir, "LobotomyCorp_Data", "BaseMods", "DebugPanel");
+            Directory.CreateDirectory(debugPanelDir);
+            try
+            {
+                _mockInstaller.Setup(i => i.Install(It.IsAny<string>()))
+                    .Returns(InstallResult.Success(["file.dll"]));
+                var vm = CreateViewModelWithValidPath();
+                vm.GamePath = tempDir;
+
+                vm.PrimaryActionCommand.Execute(null);
+
+                _mockResourceProvider.Verify(
+                    r => r.ExtractDebugPanelTo(It.IsAny<string>(), It.IsAny<ICollection<string>>()),
+                    Times.Once());
+            }
+            finally
+            {
+                Directory.Delete(tempDir, recursive: true);
+            }
+        }
+
+        [Fact]
+        public void Successful_install_does_not_upgrade_DebugPanel_when_not_detected()
+        {
+            _mockInstaller.Setup(i => i.Install(It.IsAny<string>()))
+                .Returns(InstallResult.Success(["file.dll"]));
+            var vm = CreateViewModelWithValidPath();
+            vm.GamePath = "/valid/path";
+
+            vm.PrimaryActionCommand.Execute(null);
+
+            _mockResourceProvider.Verify(
+                r => r.ExtractDebugPanelTo(It.IsAny<string>(), It.IsAny<ICollection<string>>()),
+                Times.Never());
+        }
+
+        [Fact]
         public void Successful_uninstall_sets_IsActionCompleted_to_true()
         {
             _mockStateDetector.Setup(d => d.Detect(It.IsAny<string>()))

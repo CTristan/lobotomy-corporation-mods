@@ -544,7 +544,15 @@ namespace Harmony2ForLmm.ViewModels
 
                 if (result.IsSuccess)
                 {
-                    StatusMessage = "Installation completed successfully.";
+                    var debugPanelUpgraded = false;
+                    if (IsDebugPanelDetected)
+                    {
+                        var debugPanelError = InstallDebugPanel();
+                        debugPanelUpgraded = string.IsNullOrEmpty(debugPanelError);
+                    }
+
+                    var statusSuffix = debugPanelUpgraded ? " DebugPanel also upgraded." : string.Empty;
+                    StatusMessage = "Installation completed successfully." + statusSuffix;
                     ResultDetails = FormatFileList("Files installed:", result.FilesWritten);
                     ValidatePath();
                     IsActionCompleted = true;
