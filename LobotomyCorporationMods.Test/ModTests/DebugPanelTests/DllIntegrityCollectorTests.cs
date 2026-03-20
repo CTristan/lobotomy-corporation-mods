@@ -4,10 +4,13 @@
 
 using System;
 using System.Collections.Generic;
+using AutoFixture;
+using AutoFixture.AutoMoq;
 using AwesomeAssertions;
 using DebugPanel.Implementations;
 using DebugPanel.Interfaces;
 using DebugPanel.Common.Enums.Diagnostics;
+using LobotomyCorporationMods.Test.Attributes;
 using Moq;
 using Xunit;
 
@@ -23,9 +26,10 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
 
         public DllIntegrityCollectorTests()
         {
-            _mockInspector = new Mock<IDllFileInspector>();
-            _mockShimSource = new Mock<IShimArtifactSource>();
-            _mockAssemblySource = new Mock<ILoadedAssemblyReferenceSource>();
+            var fixture = new Fixture().Customize(new AutoMoqCustomization());
+            _mockInspector = fixture.Freeze<Mock<IDllFileInspector>>();
+            _mockShimSource = fixture.Freeze<Mock<IShimArtifactSource>>();
+            _mockAssemblySource = fixture.Freeze<Mock<ILoadedAssemblyReferenceSource>>();
 
             _mockShimSource.Setup(s => s.BackupDirectoryExists).Returns(false);
             _mockShimSource.Setup(s => s.BackupDirectoryPath).Returns(string.Empty);
@@ -41,26 +45,32 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             return new DllIntegrityCollector(_mockInspector.Object, _mockShimSource.Object, _mockAssemblySource.Object);
         }
 
-        [Fact]
-        public void Constructor_throws_when_dllFileInspector_is_null()
+        [Theory, LobotomyAutoData]
+        public void Constructor_throws_when_dllFileInspector_is_null(
+            Mock<IShimArtifactSource> mockShimSource,
+            Mock<ILoadedAssemblyReferenceSource> mockAssemblySource)
         {
-            Action act = () => _ = new DllIntegrityCollector(null, _mockShimSource.Object, _mockAssemblySource.Object);
+            Action act = () => _ = new DllIntegrityCollector(null, mockShimSource.Object, mockAssemblySource.Object);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("dllFileInspector");
         }
 
-        [Fact]
-        public void Constructor_throws_when_shimArtifactSource_is_null()
+        [Theory, LobotomyAutoData]
+        public void Constructor_throws_when_shimArtifactSource_is_null(
+            Mock<IDllFileInspector> mockInspector,
+            Mock<ILoadedAssemblyReferenceSource> mockAssemblySource)
         {
-            Action act = () => _ = new DllIntegrityCollector(_mockInspector.Object, null, _mockAssemblySource.Object);
+            Action act = () => _ = new DllIntegrityCollector(mockInspector.Object, null, mockAssemblySource.Object);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("shimArtifactSource");
         }
 
-        [Fact]
-        public void Constructor_throws_when_loadedAssemblySource_is_null()
+        [Theory, LobotomyAutoData]
+        public void Constructor_throws_when_loadedAssemblySource_is_null(
+            Mock<IDllFileInspector> mockInspector,
+            Mock<IShimArtifactSource> mockShimSource)
         {
-            Action act = () => _ = new DllIntegrityCollector(_mockInspector.Object, _mockShimSource.Object, null);
+            Action act = () => _ = new DllIntegrityCollector(mockInspector.Object, mockShimSource.Object, null);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("loadedAssemblySource");
         }

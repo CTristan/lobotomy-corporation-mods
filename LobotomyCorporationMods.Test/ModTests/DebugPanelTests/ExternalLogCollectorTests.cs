@@ -4,6 +4,8 @@
 
 using System;
 using System.IO;
+using AutoFixture;
+using AutoFixture.AutoMoq;
 using AwesomeAssertions;
 using DebugPanel.Common.Models.Diagnostics;
 using DebugPanel.Implementations;
@@ -23,7 +25,8 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
 
         public ExternalLogCollectorTests()
         {
-            _mockScanner = new Mock<IFileSystemScanner>();
+            var fixture = new Fixture().Customize(new AutoMoqCustomization());
+            _mockScanner = fixture.Freeze<Mock<IFileSystemScanner>>();
             _mockScanner.Setup(s => s.GetGameRootPath()).Returns("/game");
             _mockScanner.Setup(s => s.GetUserProfilePath()).Returns("/home/user");
             _mockScanner.Setup(s => s.GetBaseModsPath()).Returns("/game/LobotomyCorp_Data/BaseMods");

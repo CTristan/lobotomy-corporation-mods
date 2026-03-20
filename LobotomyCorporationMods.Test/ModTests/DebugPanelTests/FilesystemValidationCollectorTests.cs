@@ -3,6 +3,8 @@
 #region
 
 using System;
+using AutoFixture;
+using AutoFixture.AutoMoq;
 using AwesomeAssertions;
 using DebugPanel.Common.Enums.Diagnostics;
 using DebugPanel.Implementations;
@@ -20,7 +22,8 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
 
         public FilesystemValidationCollectorTests()
         {
-            _mockScanner = new Mock<IFileSystemScanner>();
+            var fixture = new Fixture().Customize(new AutoMoqCustomization());
+            _mockScanner = fixture.Freeze<Mock<IFileSystemScanner>>();
             _mockScanner.Setup(s => s.GetBaseModsPath()).Returns("/game/LobotomyCorp_Data/BaseMods");
             _mockScanner.Setup(s => s.GetSaveDataPath()).Returns("/short/path");
             _mockScanner.Setup(s => s.DirectoryExists(It.IsAny<string>())).Returns(true);

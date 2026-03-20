@@ -4,11 +4,14 @@
 
 using System;
 using System.Collections.Generic;
+using AutoFixture;
+using AutoFixture.AutoMoq;
 using AwesomeAssertions;
 using DebugPanel.Common.Interfaces;
 using DebugPanel.Implementations;
 using DebugPanel.Interfaces;
 using DebugPanel.Common.Models.Diagnostics;
+using LobotomyCorporationMods.Test.Attributes;
 using Moq;
 using Xunit;
 
@@ -20,39 +23,53 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
 {
     public sealed class LogFileWriterTests
     {
+        private readonly Mock<IFileManager> _mockFileManager;
+        private readonly Mock<IReportFormatter> _mockFormatter;
+        private readonly Mock<IInfoCollector<ExternalLogData>> _mockCollector;
+
+        public LogFileWriterTests()
+        {
+            var fixture = new Fixture().Customize(new AutoMoqCustomization());
+            _mockFileManager = fixture.Freeze<Mock<IFileManager>>();
+            _mockFormatter = fixture.Freeze<Mock<IReportFormatter>>();
+            _mockCollector = fixture.Freeze<Mock<IInfoCollector<ExternalLogData>>>();
+        }
+
+        private LogFileWriter CreateWriter()
+        {
+            return new LogFileWriter(_mockFileManager.Object, _mockFormatter.Object, _mockCollector.Object);
+        }
+
         private static ExternalLogData CreateExternalLogs()
         {
             return new ExternalLogData(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
         }
 
-        [Fact]
-        public void Constructor_throws_when_fileManager_is_null()
+        [Theory, LobotomyAutoData]
+        public void Constructor_throws_when_fileManager_is_null(
+            Mock<IReportFormatter> mockFormatter,
+            Mock<IInfoCollector<ExternalLogData>> mockCollector)
         {
-            var mockFormatter = new Mock<IReportFormatter>();
-            var mockCollector = new Mock<IInfoCollector<ExternalLogData>>();
-
             Action act = () => _ = new LogFileWriter(null!, mockFormatter.Object, mockCollector.Object);
 
             _ = act.Should().Throw<ArgumentNullException>().WithParameterName("fileManager");
         }
 
-        [Fact]
-        public void Constructor_throws_when_reportFormatter_is_null()
+        [Theory, LobotomyAutoData]
+        public void Constructor_throws_when_reportFormatter_is_null(
+            Mock<IFileManager> mockFileManager,
+            Mock<IInfoCollector<ExternalLogData>> mockCollector)
         {
-            var mockFileManager = new Mock<IFileManager>();
-            var mockCollector = new Mock<IInfoCollector<ExternalLogData>>();
-
             Action act = () => _ = new LogFileWriter(mockFileManager.Object, null!, mockCollector.Object);
 
             _ = act.Should().Throw<ArgumentNullException>().WithParameterName("reportFormatter");
         }
 
-        [Fact]
-        public void Constructor_throws_when_externalLogCollector_is_null()
+        [Theory, LobotomyAutoData]
+        public void Constructor_throws_when_externalLogCollector_is_null(
+            Mock<IFileManager> mockFileManager,
+            Mock<IReportFormatter> mockFormatter)
         {
-            var mockFileManager = new Mock<IFileManager>();
-            var mockFormatter = new Mock<IReportFormatter>();
-
             Action act = () => _ = new LogFileWriter(mockFileManager.Object, mockFormatter.Object, null!);
 
             _ = act.Should().Throw<ArgumentNullException>().WithParameterName("externalLogCollector");
@@ -61,10 +78,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         [Fact]
         public void WriteReport_throws_when_report_is_null()
         {
-            var mockFileManager = new Mock<IFileManager>();
-            var mockFormatter = new Mock<IReportFormatter>();
-            var mockCollector = new Mock<IInfoCollector<ExternalLogData>>();
-            var writer = new LogFileWriter(mockFileManager.Object, mockFormatter.Object, mockCollector.Object);
+            var writer = CreateWriter();
 
             Action act = () => writer.WriteReport(null!);
 
@@ -74,41 +88,35 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         [Fact]
         public void WriteReport_calls_FormatForLogFile_and_WriteAllText()
         {
-            var mockFileManager = new Mock<IFileManager>();
-            var mockFormatter = new Mock<IReportFormatter>();
-            var mockCollector = new Mock<IInfoCollector<ExternalLogData>>();
             var report = CreateReport();
             var externalLogs = CreateExternalLogs();
-            mockCollector.Setup(s => s.Collect()).Returns(externalLogs);
+            _mockCollector.Setup(s => s.Collect()).Returns(externalLogs);
             IList<string> formattedLines = ["line1", "line2", "line3"];
-            mockFormatter.Setup(f => f.FormatForLogFile(report, externalLogs)).Returns(formattedLines);
-            mockFileManager.Setup(f => f.GetFile(It.IsAny<string>())).Returns<string>(n => "/fake/" + n);
+            _mockFormatter.Setup(f => f.FormatForLogFile(report, externalLogs)).Returns(formattedLines);
+            _mockFileManager.Setup(f => f.GetFile(It.IsAny<string>())).Returns<string>(n => "/fake/" + n);
 
-            var writer = new LogFileWriter(mockFileManager.Object, mockFormatter.Object, mockCollector.Object);
+            var writer = CreateWriter();
             writer.WriteReport(report);
 
-            mockFormatter.Verify(f => f.FormatForLogFile(report, externalLogs), Times.Once());
-            mockFileManager.Verify(f => f.GetFile(It.IsAny<string>()), Times.Once());
-            mockFileManager.Verify(f => f.EnsureDirectoryExists(It.IsAny<string>()), Times.Once());
-            mockFileManager.Verify(f => f.WriteAllText(It.IsAny<string>(), It.IsAny<string>()), Times.Once());
+            _mockFormatter.Verify(f => f.FormatForLogFile(report, externalLogs), Times.Once());
+            _mockFileManager.Verify(f => f.GetFile(It.IsAny<string>()), Times.Once());
+            _mockFileManager.Verify(f => f.EnsureDirectoryExists(It.IsAny<string>()), Times.Once());
+            _mockFileManager.Verify(f => f.WriteAllText(It.IsAny<string>(), It.IsAny<string>()), Times.Once());
         }
 
         [Fact]
         public void WriteReport_generates_filename_with_DebugPanel_prefix()
         {
-            var mockFileManager = new Mock<IFileManager>();
-            var mockFormatter = new Mock<IReportFormatter>();
-            var mockCollector = new Mock<IInfoCollector<ExternalLogData>>();
             var report = CreateReport();
             var externalLogs = CreateExternalLogs();
-            mockCollector.Setup(s => s.Collect()).Returns(externalLogs);
-            mockFormatter.Setup(f => f.FormatForLogFile(report, externalLogs)).Returns(["test"]);
+            _mockCollector.Setup(s => s.Collect()).Returns(externalLogs);
+            _mockFormatter.Setup(f => f.FormatForLogFile(report, externalLogs)).Returns(["test"]);
             string? capturedFileName = null;
-            mockFileManager.Setup(f => f.GetFile(It.IsAny<string>()))
+            _mockFileManager.Setup(f => f.GetFile(It.IsAny<string>()))
                 .Callback<string>(name => capturedFileName = name)
                 .Returns<string>(n => "/fake/" + n);
 
-            var writer = new LogFileWriter(mockFileManager.Object, mockFormatter.Object, mockCollector.Object);
+            var writer = CreateWriter();
             writer.WriteReport(report);
 
             _ = capturedFileName.Should().StartWith("Logs/DebugPanel_");
@@ -118,19 +126,16 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         [Fact]
         public void WriteReport_joins_lines_with_newline()
         {
-            var mockFileManager = new Mock<IFileManager>();
-            var mockFormatter = new Mock<IReportFormatter>();
-            var mockCollector = new Mock<IInfoCollector<ExternalLogData>>();
             var report = CreateReport();
             var externalLogs = CreateExternalLogs();
-            mockCollector.Setup(s => s.Collect()).Returns(externalLogs);
-            mockFormatter.Setup(f => f.FormatForLogFile(report, externalLogs)).Returns(["line1", "line2"]);
-            mockFileManager.Setup(f => f.GetFile(It.IsAny<string>())).Returns<string>(n => "/fake/" + n);
+            _mockCollector.Setup(s => s.Collect()).Returns(externalLogs);
+            _mockFormatter.Setup(f => f.FormatForLogFile(report, externalLogs)).Returns(["line1", "line2"]);
+            _mockFileManager.Setup(f => f.GetFile(It.IsAny<string>())).Returns<string>(n => "/fake/" + n);
             string? capturedContent = null;
-            mockFileManager.Setup(f => f.WriteAllText(It.IsAny<string>(), It.IsAny<string>()))
+            _mockFileManager.Setup(f => f.WriteAllText(It.IsAny<string>(), It.IsAny<string>()))
                 .Callback<string, string>((_, content) => capturedContent = content);
 
-            var writer = new LogFileWriter(mockFileManager.Object, mockFormatter.Object, mockCollector.Object);
+            var writer = CreateWriter();
             writer.WriteReport(report);
 
             _ = capturedContent.Should().Contain("line1");
@@ -141,16 +146,13 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
         [Fact]
         public void WriteReport_returns_full_file_path()
         {
-            var mockFileManager = new Mock<IFileManager>();
-            var mockFormatter = new Mock<IReportFormatter>();
-            var mockCollector = new Mock<IInfoCollector<ExternalLogData>>();
             var report = CreateReport();
             var externalLogs = CreateExternalLogs();
-            mockCollector.Setup(s => s.Collect()).Returns(externalLogs);
-            mockFormatter.Setup(f => f.FormatForLogFile(report, externalLogs)).Returns(["test"]);
-            mockFileManager.Setup(f => f.GetFile(It.IsAny<string>())).Returns<string>(n => "/mods/" + n);
+            _mockCollector.Setup(s => s.Collect()).Returns(externalLogs);
+            _mockFormatter.Setup(f => f.FormatForLogFile(report, externalLogs)).Returns(["test"]);
+            _mockFileManager.Setup(f => f.GetFile(It.IsAny<string>())).Returns<string>(n => "/mods/" + n);
 
-            var writer = new LogFileWriter(mockFileManager.Object, mockFormatter.Object, mockCollector.Object);
+            var writer = CreateWriter();
             var result = writer.WriteReport(report);
 
             _ = result.Should().StartWith("/mods/Logs/DebugPanel_");

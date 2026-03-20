@@ -8,6 +8,7 @@ using AwesomeAssertions;
 using DebugPanel.Implementations;
 using DebugPanel.Interfaces;
 using DebugPanel.Common.Enums.Diagnostics;
+using LobotomyCorporationMods.Test.Attributes;
 using Moq;
 using Xunit;
 
@@ -41,42 +42,42 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
                 "Fallback");
         }
 
-        [Fact]
-        public void Constructor_throws_when_primarySource_is_null()
+        [Theory, LobotomyAutoData]
+        public void Constructor_throws_when_primarySource_is_null(string primaryLabel, string fallbackLabel)
         {
-            Action act = () => _ = new FallbackPatchInspectionSource(null, _mockFallback.Object, _diagnosticLog, "Primary", "Fallback");
+            Action act = () => _ = new FallbackPatchInspectionSource(null, _mockFallback.Object, _diagnosticLog, primaryLabel, fallbackLabel);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("primarySource");
         }
 
-        [Fact]
-        public void Constructor_throws_when_fallbackSource_is_null()
+        [Theory, LobotomyAutoData]
+        public void Constructor_throws_when_fallbackSource_is_null(string primaryLabel, string fallbackLabel)
         {
-            Action act = () => _ = new FallbackPatchInspectionSource(_mockPrimary.Object, null, _diagnosticLog, "Primary", "Fallback");
+            Action act = () => _ = new FallbackPatchInspectionSource(_mockPrimary.Object, null, _diagnosticLog, primaryLabel, fallbackLabel);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("fallbackSource");
         }
 
-        [Fact]
-        public void Constructor_throws_when_diagnosticLog_is_null()
+        [Theory, LobotomyAutoData]
+        public void Constructor_throws_when_diagnosticLog_is_null(string primaryLabel, string fallbackLabel)
         {
-            Action act = () => _ = new FallbackPatchInspectionSource(_mockPrimary.Object, _mockFallback.Object, null, "Primary", "Fallback");
+            Action act = () => _ = new FallbackPatchInspectionSource(_mockPrimary.Object, _mockFallback.Object, null, primaryLabel, fallbackLabel);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("diagnosticLog");
         }
 
-        [Fact]
-        public void Constructor_throws_when_primaryLabel_is_null()
+        [Theory, LobotomyAutoData]
+        public void Constructor_throws_when_primaryLabel_is_null(string fallbackLabel)
         {
-            Action act = () => _ = new FallbackPatchInspectionSource(_mockPrimary.Object, _mockFallback.Object, _diagnosticLog, null, "Fallback");
+            Action act = () => _ = new FallbackPatchInspectionSource(_mockPrimary.Object, _mockFallback.Object, _diagnosticLog, null, fallbackLabel);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("primaryLabel");
         }
 
-        [Fact]
-        public void Constructor_throws_when_fallbackLabel_is_null()
+        [Theory, LobotomyAutoData]
+        public void Constructor_throws_when_fallbackLabel_is_null(string primaryLabel)
         {
-            Action act = () => _ = new FallbackPatchInspectionSource(_mockPrimary.Object, _mockFallback.Object, _diagnosticLog, "Primary", null);
+            Action act = () => _ = new FallbackPatchInspectionSource(_mockPrimary.Object, _mockFallback.Object, _diagnosticLog, primaryLabel, null);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("fallbackLabel");
         }

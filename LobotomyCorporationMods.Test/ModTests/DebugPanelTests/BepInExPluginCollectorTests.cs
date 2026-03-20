@@ -5,10 +5,13 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using AutoFixture;
+using AutoFixture.AutoMoq;
 using AwesomeAssertions;
 using DebugPanel.Implementations;
 using DebugPanel.Interfaces;
 using DebugPanel.Common.Enums.Diagnostics;
+using LobotomyCorporationMods.Test.Attributes;
 using Moq;
 using Xunit;
 
@@ -23,8 +26,9 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
 
         public BepInExPluginCollectorTests()
         {
-            _mockSource = new Mock<IPluginInfoSource>();
-            _mockClassifier = new Mock<IHarmonyVersionClassifier>();
+            var fixture = new Fixture().Customize(new AutoMoqCustomization());
+            _mockSource = fixture.Freeze<Mock<IPluginInfoSource>>();
+            _mockClassifier = fixture.Freeze<Mock<IHarmonyVersionClassifier>>();
             _mockSource.Setup(s => s.GetPlugins()).Returns([]);
         }
 
@@ -35,18 +39,18 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
             return new BepInExPluginInspectionInfo(pluginId, name, version, assembly);
         }
 
-        [Fact]
-        public void Constructor_throws_when_pluginInfoSource_is_null()
+        [Theory, LobotomyAutoData]
+        public void Constructor_throws_when_pluginInfoSource_is_null(Mock<IHarmonyVersionClassifier> mockClassifier)
         {
-            Action act = () => _ = new BepInExPluginCollector(null, _mockClassifier.Object);
+            Action act = () => _ = new BepInExPluginCollector(null, mockClassifier.Object);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("pluginInfoSource");
         }
 
-        [Fact]
-        public void Constructor_throws_when_harmonyVersionClassifier_is_null()
+        [Theory, LobotomyAutoData]
+        public void Constructor_throws_when_harmonyVersionClassifier_is_null(Mock<IPluginInfoSource> mockSource)
         {
-            Action act = () => _ = new BepInExPluginCollector(_mockSource.Object, null);
+            Action act = () => _ = new BepInExPluginCollector(mockSource.Object, null);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("harmonyVersionClassifier");
         }

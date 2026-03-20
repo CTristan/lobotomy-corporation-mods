@@ -3,6 +3,8 @@
 #region
 
 using System;
+using AutoFixture;
+using AutoFixture.AutoMoq;
 using AwesomeAssertions;
 using DebugPanel.Implementations;
 using DebugPanel.Interfaces;
@@ -20,7 +22,8 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
 
         public ActivePatchCollectorTests()
         {
-            _mockSource = new Mock<IPatchInspectionSource>();
+            var fixture = new Fixture().Customize(new AutoMoqCustomization());
+            _mockSource = fixture.Freeze<Mock<IPatchInspectionSource>>();
             _mockSource.Setup(s => s.GetPatches()).Returns([]);
         }
 

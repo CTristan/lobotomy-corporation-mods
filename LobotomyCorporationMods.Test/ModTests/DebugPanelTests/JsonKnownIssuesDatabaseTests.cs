@@ -3,10 +3,13 @@
 #region
 
 using System;
+using AutoFixture;
+using AutoFixture.AutoMoq;
 using AwesomeAssertions;
 using DebugPanel.Implementations;
 using DebugPanel.Interfaces;
 using DebugPanel.JsonModels;
+using LobotomyCorporationMods.Test.Attributes;
 using Moq;
 using Xunit;
 
@@ -21,23 +24,24 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
 
         public JsonKnownIssuesDatabaseTests()
         {
-            _mockScanner = new Mock<IFileSystemScanner>();
-            _mockParser = new Mock<IJsonParser>();
+            var fixture = new Fixture().Customize(new AutoMoqCustomization());
+            _mockScanner = fixture.Freeze<Mock<IFileSystemScanner>>();
+            _mockParser = fixture.Freeze<Mock<IJsonParser>>();
             _mockScanner.Setup(s => s.GetExternalDataPath()).Returns("/game/ExternalData");
         }
 
-        [Fact]
-        public void Constructor_throws_when_scanner_is_null()
+        [Theory, LobotomyAutoData]
+        public void Constructor_throws_when_scanner_is_null(Mock<IJsonParser> mockParser)
         {
-            Action act = () => _ = new JsonKnownIssuesDatabase(null, _mockParser.Object);
+            Action act = () => _ = new JsonKnownIssuesDatabase(null, mockParser.Object);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("scanner");
         }
 
-        [Fact]
-        public void Constructor_throws_when_jsonParser_is_null()
+        [Theory, LobotomyAutoData]
+        public void Constructor_throws_when_jsonParser_is_null(Mock<IFileSystemScanner> mockScanner)
         {
-            Action act = () => _ = new JsonKnownIssuesDatabase(_mockScanner.Object, null);
+            Action act = () => _ = new JsonKnownIssuesDatabase(mockScanner.Object, null);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("jsonParser");
         }

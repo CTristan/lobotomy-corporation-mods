@@ -4,12 +4,15 @@
 
 using System;
 using System.Collections.Generic;
+using AutoFixture;
+using AutoFixture.AutoMoq;
 using AwesomeAssertions;
 using DebugPanel.Common.Enums.Diagnostics;
 using DebugPanel.Common.Models.Diagnostics;
 using DebugPanel.Implementations;
 using DebugPanel.Interfaces;
 using DebugPanel.JsonModels;
+using LobotomyCorporationMods.Test.Attributes;
 using Moq;
 using Xunit;
 
@@ -24,42 +27,43 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
 
         public KnownIssuesCheckerTests()
         {
-            _mockDatabase = new Mock<IKnownIssuesDatabase>();
-            _mockScanner = new Mock<IFileSystemScanner>();
+            var fixture = new Fixture().Customize(new AutoMoqCustomization());
+            _mockDatabase = fixture.Freeze<Mock<IKnownIssuesDatabase>>();
+            _mockScanner = fixture.Freeze<Mock<IFileSystemScanner>>();
             _mockDatabase.Setup(d => d.GetKnownIssues()).Returns([]);
             _mockDatabase.Setup(d => d.DatabaseVersion).Returns("1.0");
             _mockScanner.Setup(s => s.GetBaseModsPath()).Returns("/basemods");
             _mockScanner.Setup(s => s.FileExists(It.IsAny<string>())).Returns(false);
         }
 
-        [Fact]
-        public void Constructor_throws_when_database_is_null()
+        [Theory, LobotomyAutoData]
+        public void Constructor_throws_when_database_is_null(Mock<IFileSystemScanner> mockScanner)
         {
-            Action act = () => _ = new KnownIssuesChecker(null, [], [], _mockScanner.Object);
+            Action act = () => _ = new KnownIssuesChecker(null, [], [], mockScanner.Object);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("database");
         }
 
-        [Fact]
-        public void Constructor_throws_when_detectedMods_is_null()
+        [Theory, LobotomyAutoData]
+        public void Constructor_throws_when_detectedMods_is_null(Mock<IKnownIssuesDatabase> mockDatabase, Mock<IFileSystemScanner> mockScanner)
         {
-            Action act = () => _ = new KnownIssuesChecker(_mockDatabase.Object, null, [], _mockScanner.Object);
+            Action act = () => _ = new KnownIssuesChecker(mockDatabase.Object, null, [], mockScanner.Object);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("detectedMods");
         }
 
-        [Fact]
-        public void Constructor_throws_when_loadedAssemblies_is_null()
+        [Theory, LobotomyAutoData]
+        public void Constructor_throws_when_loadedAssemblies_is_null(Mock<IKnownIssuesDatabase> mockDatabase, Mock<IFileSystemScanner> mockScanner)
         {
-            Action act = () => _ = new KnownIssuesChecker(_mockDatabase.Object, [], null, _mockScanner.Object);
+            Action act = () => _ = new KnownIssuesChecker(mockDatabase.Object, [], null, mockScanner.Object);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("loadedAssemblies");
         }
 
-        [Fact]
-        public void Constructor_throws_when_scanner_is_null()
+        [Theory, LobotomyAutoData]
+        public void Constructor_throws_when_scanner_is_null(Mock<IKnownIssuesDatabase> mockDatabase)
         {
-            Action act = () => _ = new KnownIssuesChecker(_mockDatabase.Object, [], [], null);
+            Action act = () => _ = new KnownIssuesChecker(mockDatabase.Object, [], [], null);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("scanner");
         }

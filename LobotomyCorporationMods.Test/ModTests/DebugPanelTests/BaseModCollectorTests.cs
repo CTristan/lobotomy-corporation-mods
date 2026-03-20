@@ -5,10 +5,13 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using AutoFixture;
+using AutoFixture.AutoMoq;
 using AwesomeAssertions;
 using DebugPanel.Implementations;
 using DebugPanel.Interfaces;
 using DebugPanel.Common.Enums.Diagnostics;
+using LobotomyCorporationMods.Test.Attributes;
 using Moq;
 using Xunit;
 
@@ -23,8 +26,9 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
 
         public BaseModCollectorTests()
         {
-            _mockSource = new Mock<IPatchInspectionSource>();
-            _mockClassifier = new Mock<IHarmonyVersionClassifier>();
+            var fixture = new Fixture().Customize(new AutoMoqCustomization());
+            _mockSource = fixture.Freeze<Mock<IPatchInspectionSource>>();
+            _mockClassifier = fixture.Freeze<Mock<IHarmonyVersionClassifier>>();
             _mockSource.Setup(s => s.GetPatches()).Returns([]);
         }
 
@@ -36,18 +40,18 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
                 references ?? []);
         }
 
-        [Fact]
-        public void Constructor_throws_when_patchInspectionSource_is_null()
+        [Theory, LobotomyAutoData]
+        public void Constructor_throws_when_patchInspectionSource_is_null(Mock<IHarmonyVersionClassifier> mockClassifier)
         {
-            Action act = () => _ = new BaseModCollector(null, _mockClassifier.Object);
+            Action act = () => _ = new BaseModCollector(null, mockClassifier.Object);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("patchInspectionSource");
         }
 
-        [Fact]
-        public void Constructor_throws_when_harmonyVersionClassifier_is_null()
+        [Theory, LobotomyAutoData]
+        public void Constructor_throws_when_harmonyVersionClassifier_is_null(Mock<IPatchInspectionSource> mockSource)
         {
-            Action act = () => _ = new BaseModCollector(_mockSource.Object, null);
+            Action act = () => _ = new BaseModCollector(mockSource.Object, null);
 
             act.Should().Throw<ArgumentNullException>().WithParameterName("harmonyVersionClassifier");
         }

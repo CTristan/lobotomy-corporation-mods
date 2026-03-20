@@ -3,6 +3,8 @@
 #region
 
 using System;
+using AutoFixture;
+using AutoFixture.AutoMoq;
 using AwesomeAssertions;
 using DebugPanel.Implementations;
 using DebugPanel.Interfaces;
@@ -19,7 +21,8 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
 
         public ErrorLogCollectorTests()
         {
-            _mockScanner = new Mock<IFileSystemScanner>();
+            var fixture = new Fixture().Customize(new AutoMoqCustomization());
+            _mockScanner = fixture.Freeze<Mock<IFileSystemScanner>>();
             _mockScanner.Setup(s => s.GetBaseModsPath()).Returns("/game/LobotomyCorp_Data/BaseMods");
             _mockScanner.Setup(s => s.FileExists(It.IsAny<string>())).Returns(false);
         }

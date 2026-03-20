@@ -4,6 +4,8 @@
 
 using System;
 using System.Collections.Generic;
+using AutoFixture;
+using AutoFixture.AutoMoq;
 using AwesomeAssertions;
 using DebugPanel.Common.Enums.Diagnostics;
 using DebugPanel.Common.Models.Diagnostics;
@@ -22,7 +24,8 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
 
         public DependencyCheckerTests()
         {
-            _mockScanner = new Mock<IFileSystemScanner>();
+            var fixture = new Fixture().Customize(new AutoMoqCustomization());
+            _mockScanner = fixture.Freeze<Mock<IFileSystemScanner>>();
             _mockScanner.Setup(s => s.GetBaseModsPath()).Returns("/basemods");
             _mockScanner.Setup(s => s.FileExists(It.IsAny<string>())).Returns(false);
         }

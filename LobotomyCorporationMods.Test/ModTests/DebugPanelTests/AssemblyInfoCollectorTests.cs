@@ -5,6 +5,8 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using AutoFixture;
+using AutoFixture.AutoMoq;
 using AwesomeAssertions;
 using DebugPanel.Implementations;
 using DebugPanel.Interfaces;
@@ -21,7 +23,8 @@ namespace LobotomyCorporationMods.Test.ModTests.DebugPanelTests
 
         public AssemblyInfoCollectorTests()
         {
-            _mockSource = new Mock<IAssemblyInspectionSource>();
+            var fixture = new Fixture().Customize(new AutoMoqCustomization());
+            _mockSource = fixture.Freeze<Mock<IAssemblyInspectionSource>>();
             _mockSource.Setup(s => s.GetAssemblies()).Returns([]);
         }
 
