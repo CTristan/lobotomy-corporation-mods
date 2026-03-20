@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 
 using System;
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Threading;
 using LiveMarkdown.Avalonia;
 
 namespace Harmony2ForLmm.Views
@@ -39,7 +39,7 @@ namespace Harmony2ForLmm.Views
             InstallButton.Content = isInstalled ? "Reinstall" : "Install";
         }
 
-        private void OnOpened(object? sender, EventArgs e)
+        private async void OnOpened(object? sender, EventArgs e)
         {
             if (_pendingMarkdown == null)
             {
@@ -49,14 +49,13 @@ namespace Harmony2ForLmm.Views
             var content = _pendingMarkdown;
             _pendingMarkdown = null;
 
-            _ = Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                var builder = new ObservableStringBuilder();
-                _ = builder.Append(content);
-                MarkdownViewer.MarkdownBuilder = builder;
-                LoadingPanel.IsVisible = false;
-                ContentScrollViewer.IsVisible = true;
-            }, DispatcherPriority.Background);
+            await Task.Delay(100).ConfigureAwait(true);
+
+            var builder = new ObservableStringBuilder();
+            _ = builder.Append(content);
+            MarkdownViewer.MarkdownBuilder = builder;
+            LoadingPanel.IsVisible = false;
+            ContentScrollViewer.IsVisible = true;
         }
 
         private void InstallButton_Click(object? sender, RoutedEventArgs e)

@@ -73,19 +73,17 @@ Builds and publishes the Harmony 2 for LMM installer for distribution.
 ### What it does
 
 1. Validates prerequisites (BepInEx files in `Harmony2ForLmm/Resources/bepinex/`, Harmony DLLs in `RetargetHarmony/lib/`)
-2. Builds `RetargetHarmony.dll` from source
+2. Builds `RetargetHarmony.dll` and `DebugPanel.dll` from source
 3. Publishes the installer for each requested platform
-4. Output goes to `Harmony2ForLmm/bin/publish/<platform>/`
+4. Output goes to `publish/<platform>/`
 
 ### Platforms
 
 | Platform | Mode |
 |----------|------|
 | `win-x64` | Self-contained, single file, trimmed |
-| `win-x86` | Self-contained, single file, trimmed |
-| `linux-x64` | Framework-dependent |
-| `osx-x64` | Framework-dependent |
-| `osx-arm64` | Framework-dependent |
+| `linux-x64` | Self-contained, single file, trimmed |
+| `osx-arm64` | Self-contained, single file, trimmed |
 
 ### Prerequisites
 

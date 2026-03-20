@@ -26,14 +26,22 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 INSTALLER_PROJECT="$REPO_ROOT/Harmony2ForLmm/Harmony2ForLmm.csproj"
 RETARGET_PROJECT="$REPO_ROOT/RetargetHarmony/RetargetHarmony.csproj"
+DEBUGPANEL_PROJECT="$REPO_ROOT/DebugPanel/DebugPanel.csproj"
 RESOURCES_DIR="$REPO_ROOT/Harmony2ForLmm/Resources"
-PUBLISH_DIR="$REPO_ROOT/Harmony2ForLmm/bin/publish"
+PUBLISH_DIR="$REPO_ROOT/publish"
 
-ALL_PLATFORMS="win-x64 win-x86 linux-x64 osx-x64 osx-arm64"
+ALL_PLATFORMS="win-x64 linux-x64 osx-arm64"
 
 info() { echo -e "${BLUE}[INFO]${NC} $1"; }
 success() { echo -e "${GREEN}[OK]${NC} $1"; }
 error() { echo -e "${RED}[ERROR]${NC} $1"; }
+
+get_version() {
+    local version
+    version=$(grep '<AssemblyVersion>' "$INSTALLER_PROJECT" | sed 's/.*<AssemblyVersion>\(.*\)<\/AssemblyVersion>.*/\1/')
+    # Strip 4th segment (build number) to get 3-part version
+    echo "$version" | sed 's/\.[0-9]*$//'
+}
 
 is_valid_platform() {
     local target="$1"
@@ -83,6 +91,19 @@ build_retarget_harmony() {
     success "RetargetHarmony.dll built"
 }
 
+build_debug_panel() {
+    info "Building DebugPanel..."
+    dotnet build "$DEBUGPANEL_PROJECT" --verbosity quiet
+
+    local dll="$REPO_ROOT/DebugPanel/bin/net35/DebugPanel.dll"
+    if [ ! -f "$dll" ]; then
+        error "DebugPanel.dll not found at expected path: $dll"
+        exit 1
+    fi
+
+    success "DebugPanel.dll built"
+}
+
 publish_platform() {
     local platform="$1"
 
@@ -97,6 +118,17 @@ publish_platform() {
         -p:PublishTrimmed=true \
         -p:IncludeNativeLibrariesForSelfExtract=true \
         --verbosity quiet
+
+    # Rename output executable to include version
+    local ext=""
+    if [[ "$platform" == win-* ]]; then
+        ext=".exe"
+    fi
+    local src="$PUBLISH_DIR/$platform/Harmony2ForLmm${ext}"
+    local dst="$PUBLISH_DIR/$platform/Harmony2ForLmm-${VERSION}${ext}"
+    if [ -f "$src" ]; then
+        mv "$src" "$dst"
+    fi
 
     success "Published $platform -> $PUBLISH_DIR/$platform/"
 }
@@ -156,8 +188,13 @@ if [ -d "$PUBLISH_DIR" ]; then
     rm -rf "$PUBLISH_DIR"
 fi
 
-# Build RetargetHarmony and stage its DLL
+# Extract version for output filenames
+VERSION=$(get_version)
+info "Version: $VERSION"
+
+# Build dependencies for embedding
 build_retarget_harmony
+build_debug_panel
 
 # Publish each platform
 for platform in "${PLATFORMS_TO_PUBLISH[@]}"; do

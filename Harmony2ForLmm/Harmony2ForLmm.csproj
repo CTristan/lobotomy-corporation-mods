@@ -83,10 +83,8 @@
     <PackageReference Include="LiveMarkdown.Avalonia" />
     <PackageReference Include="Mono.Cecil" />
   </ItemGroup>
-  <ItemGroup>
-    <!-- Build DebugPanel first for ZipDebugPanel target, but don't reference its output assembly -->
-    <ProjectReference Include="../DebugPanel/DebugPanel.csproj" ReferenceOutputAssembly="false" />
-  </ItemGroup>
+  <!-- DebugPanel is built separately (by CI or publish script) before the installer.
+       The ZipDebugPanel target picks up its output from ../DebugPanel/bin/net35/ when available. -->
   <ItemGroup>
     <EmbeddedResource Include="Resources/DemoMod.zip" LogicalName="Resources.DemoMod.zip" Condition="Exists('Resources/DemoMod.zip')" />
     <EmbeddedResource Include="Resources/docs/UsersGuide.md" LogicalName="Resources.docs.UsersGuide.md" />

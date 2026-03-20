@@ -18,7 +18,7 @@ When installed, DebugPanel adds an in-game overlay (toggled with a hotkey) that 
 
 1. Click **Install** to copy DebugPanel to your game's `BaseMods/DebugPanel/` folder
 2. Launch Lobotomy Corporation
-3. Press the configured hotkey (default: **F12**) to toggle the diagnostic overlay
+3. Press the configured hotkey (default: **F9**) to toggle the diagnostic overlay
 4. Use the overlay tabs to inspect different categories of diagnostic data
 
 ## When to use it
