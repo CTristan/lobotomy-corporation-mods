@@ -4,10 +4,10 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Threading;
 using LiveMarkdown.Avalonia;
 
 namespace Harmony2ForLmm.Views.Pages
@@ -20,6 +20,7 @@ namespace Harmony2ForLmm.Views.Pages
         private readonly Func<Stream?>? _openZipStream;
         private readonly Action<UserControl, string, double, double>? _navigateAction;
         private readonly string? _extractedPath;
+        private string? _docFilePath;
         private string? _pendingMarkdown;
         private bool _loaded;
 
@@ -46,12 +47,19 @@ namespace Harmony2ForLmm.Views.Pages
         public GuideContentPage(
             string markdownContent,
             Func<Stream?> openZipStream,
-            Action<UserControl, string, double, double> navigateAction)
+            Action<UserControl, string, double, double> navigateAction,
+            string? docFilePath = null)
             : this(markdownContent)
         {
+            _docFilePath = docFilePath;
             _openZipStream = openZipStream;
             _navigateAction = navigateAction;
             SampleProjectButton.IsVisible = true;
+
+            if (_docFilePath != null)
+            {
+                OpenDocButton.IsVisible = true;
+            }
         }
 
         /// <summary>
@@ -62,6 +70,21 @@ namespace Harmony2ForLmm.Views.Pages
         {
             _extractedPath = extractedPath;
             OpenFolderButton.IsVisible = true;
+        }
+
+        /// <summary>
+        /// Creates a <see cref="GuideContentPage"/> with markdown content and an on-disk document path.
+        /// </summary>
+        public static GuideContentPage WithDocPath(string markdownContent, string? docFilePath)
+        {
+            var page = new GuideContentPage(markdownContent) { _docFilePath = docFilePath };
+
+            if (docFilePath != null)
+            {
+                page.OpenDocButton.IsVisible = true;
+            }
+
+            return page;
         }
 
         /// <inheritdoc />
@@ -76,11 +99,14 @@ namespace Harmony2ForLmm.Views.Pages
             var content = _pendingMarkdown;
             _pendingMarkdown = null;
 
-            await Task.Delay(100).ConfigureAwait(true);
-
             var builder = new ObservableStringBuilder();
             _ = builder.Append(content);
             MarkdownViewer.MarkdownBuilder = builder;
+
+            // Wait for the render pass to complete before swapping visibility,
+            // so the content is painted before the loading indicator disappears.
+            await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Render);
+
             LoadingPanel.IsVisible = false;
             ContentScrollViewer.IsVisible = true;
         }
@@ -132,6 +158,25 @@ namespace Harmony2ForLmm.Views.Pages
             _navigateAction(samplePage, "Sample Project — DemoMod", 800, 700);
         }
 
+        private void OpenDocButton_Click(object? sender, RoutedEventArgs e)
+        {
+            if (_docFilePath == null)
+            {
+                return;
+            }
+
+            if (File.Exists(_docFilePath))
+            {
+                DocStatusMessage.IsVisible = false;
+                OpenWithDefaultApp(_docFilePath);
+            }
+            else
+            {
+                DocStatusMessage.Text = "Document not found — install first to copy docs to disk.";
+                DocStatusMessage.IsVisible = true;
+            }
+        }
+
         private void OpenFolderButton_Click(object? sender, RoutedEventArgs e)
         {
             if (_extractedPath == null || !Directory.Exists(_extractedPath))
@@ -139,7 +184,7 @@ namespace Harmony2ForLmm.Views.Pages
                 return;
             }
 
-            OpenFolder(_extractedPath);
+            OpenWithDefaultApp(_extractedPath);
         }
 
         private static string? ExtractZipToTemp(Func<Stream?> openZipStream)
@@ -189,26 +234,15 @@ namespace Harmony2ForLmm.Views.Pages
             }
         }
 
-        private static void OpenFolder(string path)
+        private static void OpenWithDefaultApp(string path)
         {
             try
             {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    _ = Process.Start(new ProcessStartInfo("explorer.exe", path) { UseShellExecute = true });
-                }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                {
-                    _ = Process.Start(new ProcessStartInfo("open", path) { UseShellExecute = true });
-                }
-                else
-                {
-                    _ = Process.Start(new ProcessStartInfo("xdg-open", path) { UseShellExecute = true });
-                }
+                _ = Process.Start(new ProcessStartInfo(path) { UseShellExecute = true });
             }
             catch
             {
-                // Best-effort — silently ignore if the file manager can't be opened
+                // Best-effort — silently ignore if the default app can't be opened
             }
         }
     }

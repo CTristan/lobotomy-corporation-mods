@@ -156,6 +156,60 @@ namespace Harmony2ForLmm.Test.Services
         }
 
         [Fact]
+        public void Uninstall_with_removeDebugPanel_removes_DebugPanel_directory()
+        {
+            var debugPanelDir = Path.Combine(_gameDir, "LobotomyCorp_Data", "BaseMods", "DebugPanel");
+            Directory.CreateDirectory(debugPanelDir);
+            File.WriteAllBytes(Path.Combine(debugPanelDir, "DebugPanel.dll"), [0]);
+
+            var result = _service.Uninstall(_gameDir, removeBaseMods: false, removeDebugPanel: true);
+
+            result.IsSuccess.Should().BeTrue();
+            Directory.Exists(debugPanelDir).Should().BeFalse();
+            result.DirectoriesRemoved.Should().Contain(d => d.Contains("DebugPanel"));
+        }
+
+        [Fact]
+        public void Uninstall_with_removeDebugPanel_removes_all_directory_variants()
+        {
+            var baseModsDir = Path.Combine(_gameDir, "LobotomyCorp_Data", "BaseMods");
+            var dir1 = Path.Combine(baseModsDir, "DebugPanel");
+            var dir2 = Path.Combine(baseModsDir, "LobotomyCorporationMods.DebugPanel");
+            var dir3 = Path.Combine(baseModsDir, "Hemocode.DebugPanel");
+            Directory.CreateDirectory(dir1);
+            Directory.CreateDirectory(dir2);
+            Directory.CreateDirectory(dir3);
+
+            var result = _service.Uninstall(_gameDir, removeBaseMods: false, removeDebugPanel: true);
+
+            result.IsSuccess.Should().BeTrue();
+            Directory.Exists(dir1).Should().BeFalse();
+            Directory.Exists(dir2).Should().BeFalse();
+            Directory.Exists(dir3).Should().BeFalse();
+        }
+
+        [Fact]
+        public void Uninstall_with_removeDebugPanel_succeeds_when_no_directories_exist()
+        {
+            var result = _service.Uninstall(_gameDir, removeBaseMods: false, removeDebugPanel: true);
+
+            result.IsSuccess.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Uninstall_without_removeDebugPanel_does_not_remove_DebugPanel()
+        {
+            var debugPanelDir = Path.Combine(_gameDir, "LobotomyCorp_Data", "BaseMods", "DebugPanel");
+            Directory.CreateDirectory(debugPanelDir);
+            File.WriteAllBytes(Path.Combine(debugPanelDir, "DebugPanel.dll"), [0]);
+
+            var result = _service.Uninstall(_gameDir, removeBaseMods: false, removeDebugPanel: false);
+
+            result.IsSuccess.Should().BeTrue();
+            Directory.Exists(debugPanelDir).Should().BeTrue();
+        }
+
+        [Fact]
         public void Uninstall_returns_list_of_removed_files_and_directories()
         {
             var patcherDir = Path.Combine(_gameDir, "BepInEx", "patchers", "RetargetHarmony");

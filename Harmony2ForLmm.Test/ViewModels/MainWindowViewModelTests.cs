@@ -101,7 +101,7 @@ namespace Harmony2ForLmm.Test.ViewModels
         {
             _mockStateDetector.Setup(d => d.Detect(It.IsAny<string>()))
                 .Returns(InstallationStateResult.WithState(InstallationState.Current, "1.0.0", "1.0.0"));
-            _mockUninstaller.Setup(u => u.Uninstall(It.IsAny<string>(), It.IsAny<bool>()))
+            _mockUninstaller.Setup(u => u.Uninstall(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>()))
                 .Returns(UninstallResult.Success(["file.dll"], []));
             var vm = CreateViewModelWithValidPath();
             vm.GamePath = "/valid/path";
@@ -116,7 +116,7 @@ namespace Harmony2ForLmm.Test.ViewModels
         {
             _mockStateDetector.Setup(d => d.Detect(It.IsAny<string>()))
                 .Returns(InstallationStateResult.WithState(InstallationState.Current, "1.0.0", "1.0.0"));
-            _mockUninstaller.Setup(u => u.Uninstall(It.IsAny<string>(), It.IsAny<bool>()))
+            _mockUninstaller.Setup(u => u.Uninstall(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>()))
                 .Returns(UninstallResult.Failure("Something went wrong"));
             var vm = CreateViewModelWithValidPath();
             vm.GamePath = "/valid/path";
@@ -144,7 +144,7 @@ namespace Harmony2ForLmm.Test.ViewModels
         {
             _mockStateDetector.Setup(d => d.Detect(It.IsAny<string>()))
                 .Returns(InstallationStateResult.WithState(InstallationState.Current, "1.0.0", "1.0.0"));
-            _mockUninstaller.Setup(u => u.Uninstall(It.IsAny<string>(), It.IsAny<bool>()))
+            _mockUninstaller.Setup(u => u.Uninstall(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>()))
                 .Returns(UninstallResult.Success(["file.dll"], []));
             var vm = CreateViewModelWithValidPath();
             vm.GamePath = "/valid/path";
@@ -227,7 +227,7 @@ namespace Harmony2ForLmm.Test.ViewModels
         {
             _mockStateDetector.Setup(d => d.Detect(It.IsAny<string>()))
                 .Returns(InstallationStateResult.WithState(InstallationState.Current, "1.0.0", "1.0.0"));
-            _mockUninstaller.Setup(u => u.Uninstall(It.IsAny<string>(), It.IsAny<bool>()))
+            _mockUninstaller.Setup(u => u.Uninstall(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>()))
                 .Returns(UninstallResult.Failure("Something went wrong"));
             var vm = CreateViewModelWithValidPath();
             vm.GamePath = "/valid/path";
@@ -335,6 +335,231 @@ namespace Harmony2ForLmm.Test.ViewModels
         }
 
         [Fact]
+        public void IsDebugPanelDetected_is_true_when_DebugPanel_directory_exists()
+        {
+            var tempDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            var debugPanelDir = Path.Combine(tempDir, "LobotomyCorp_Data", "BaseMods", "DebugPanel");
+            Directory.CreateDirectory(debugPanelDir);
+            try
+            {
+                var vm = CreateViewModelWithValidPath();
+                vm.GamePath = tempDir;
+
+                vm.IsDebugPanelDetected.Should().BeTrue();
+            }
+            finally
+            {
+                Directory.Delete(tempDir, recursive: true);
+            }
+        }
+
+        [Fact]
+        public void IsDebugPanelDetected_is_true_when_legacy_directory_exists()
+        {
+            var tempDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            var legacyDir = Path.Combine(tempDir, "LobotomyCorp_Data", "BaseMods", "Hemocode.DebugPanel");
+            Directory.CreateDirectory(legacyDir);
+            try
+            {
+                var vm = CreateViewModelWithValidPath();
+                vm.GamePath = tempDir;
+
+                vm.IsDebugPanelDetected.Should().BeTrue();
+            }
+            finally
+            {
+                Directory.Delete(tempDir, recursive: true);
+            }
+        }
+
+        [Fact]
+        public void IsDebugPanelDetected_is_false_when_no_directories_exist()
+        {
+            var vm = CreateViewModelWithValidPath();
+            vm.GamePath = "/nonexistent/path";
+
+            vm.IsDebugPanelDetected.Should().BeFalse();
+        }
+
+        [Fact]
+        public void RemoveDebugPanel_defaults_to_true()
+        {
+            var vm = CreateViewModel();
+
+            vm.RemoveDebugPanel.Should().BeTrue();
+        }
+
+        [Fact]
+        public void ShowDebugPanelCheckbox_is_false_when_state_is_Fresh()
+        {
+            var tempDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            var debugPanelDir = Path.Combine(tempDir, "LobotomyCorp_Data", "BaseMods", "DebugPanel");
+            Directory.CreateDirectory(debugPanelDir);
+            try
+            {
+                // Fresh state means nothing is installed yet — checkbox should be hidden
+                var vm = CreateViewModelWithValidPath();
+                vm.GamePath = tempDir;
+
+                vm.IsDebugPanelDetected.Should().BeTrue();
+                vm.ShowDebugPanelCheckbox.Should().BeFalse();
+            }
+            finally
+            {
+                Directory.Delete(tempDir, recursive: true);
+            }
+        }
+
+        [Fact]
+        public void ShowDebugPanelCheckbox_is_true_when_detected_and_not_Fresh()
+        {
+            var tempDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            var debugPanelDir = Path.Combine(tempDir, "LobotomyCorp_Data", "BaseMods", "DebugPanel");
+            Directory.CreateDirectory(debugPanelDir);
+            try
+            {
+                var vm = CreateViewModelWithValidPath();
+
+                // Override state detector after VM creation so setting GamePath triggers non-Fresh state
+                _mockStateDetector.Setup(d => d.Detect(It.IsAny<string>()))
+                    .Returns(InstallationStateResult.WithState(InstallationState.Current, "1.0.0", "1.0.0"));
+                vm.GamePath = tempDir;
+
+                vm.ShowDebugPanelCheckbox.Should().BeTrue();
+            }
+            finally
+            {
+                Directory.Delete(tempDir, recursive: true);
+            }
+        }
+
+        [Fact]
+        public void UninstallDebugPanel_removes_all_directory_variants()
+        {
+            var tempDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            var baseModsDir = Path.Combine(tempDir, "LobotomyCorp_Data", "BaseMods");
+            var dir1 = Path.Combine(baseModsDir, "DebugPanel");
+            var dir2 = Path.Combine(baseModsDir, "LobotomyCorporationMods.DebugPanel");
+            var dir3 = Path.Combine(baseModsDir, "Hemocode.DebugPanel");
+            Directory.CreateDirectory(dir1);
+            Directory.CreateDirectory(dir2);
+            Directory.CreateDirectory(dir3);
+            try
+            {
+                var vm = CreateViewModelWithValidPath();
+                vm.GamePath = tempDir;
+
+                var result = vm.UninstallDebugPanel();
+
+                result.Should().BeEmpty();
+                Directory.Exists(dir1).Should().BeFalse();
+                Directory.Exists(dir2).Should().BeFalse();
+                Directory.Exists(dir3).Should().BeFalse();
+            }
+            finally
+            {
+                if (Directory.Exists(tempDir))
+                {
+                    Directory.Delete(tempDir, recursive: true);
+                }
+            }
+        }
+
+        [Fact]
+        public void UninstallDebugPanel_returns_empty_when_no_directories_exist()
+        {
+            var vm = CreateViewModelWithValidPath();
+            vm.GamePath = "/nonexistent/path";
+
+            var result = vm.UninstallDebugPanel();
+
+            result.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void UninstallDebugPanel_updates_IsDebugPanelDetected()
+        {
+            var tempDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            var debugPanelDir = Path.Combine(tempDir, "LobotomyCorp_Data", "BaseMods", "DebugPanel");
+            Directory.CreateDirectory(debugPanelDir);
+            try
+            {
+                var vm = CreateViewModelWithValidPath();
+                vm.GamePath = tempDir;
+                vm.IsDebugPanelDetected.Should().BeTrue();
+
+                vm.UninstallDebugPanel();
+
+                vm.IsDebugPanelDetected.Should().BeFalse();
+            }
+            finally
+            {
+                if (Directory.Exists(tempDir))
+                {
+                    Directory.Delete(tempDir, recursive: true);
+                }
+            }
+        }
+
+        [Fact]
+        public void Uninstall_passes_removeDebugPanel_to_service()
+        {
+            _mockStateDetector.Setup(d => d.Detect(It.IsAny<string>()))
+                .Returns(InstallationStateResult.WithState(InstallationState.Current, "1.0.0", "1.0.0"));
+            _mockUninstaller.Setup(u => u.Uninstall(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>()))
+                .Returns(UninstallResult.Success([], []));
+            var tempDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            var debugPanelDir = Path.Combine(tempDir, "LobotomyCorp_Data", "BaseMods", "DebugPanel");
+            Directory.CreateDirectory(debugPanelDir);
+            try
+            {
+                var vm = CreateViewModelWithValidPath();
+                vm.GamePath = tempDir;
+                vm.RemoveDebugPanel = true;
+
+                vm.UninstallCommand.Execute(null);
+
+                _mockUninstaller.Verify(u => u.Uninstall(tempDir, false, true), Times.Once);
+            }
+            finally
+            {
+                if (Directory.Exists(tempDir))
+                {
+                    Directory.Delete(tempDir, recursive: true);
+                }
+            }
+        }
+
+        [Fact]
+        public void Uninstall_does_not_pass_removeDebugPanel_when_unchecked()
+        {
+            _mockStateDetector.Setup(d => d.Detect(It.IsAny<string>()))
+                .Returns(InstallationStateResult.WithState(InstallationState.Current, "1.0.0", "1.0.0"));
+            _mockUninstaller.Setup(u => u.Uninstall(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>()))
+                .Returns(UninstallResult.Success([], []));
+            var tempDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            var debugPanelDir = Path.Combine(tempDir, "LobotomyCorp_Data", "BaseMods", "DebugPanel");
+            Directory.CreateDirectory(debugPanelDir);
+            try
+            {
+                var vm = CreateViewModelWithValidPath();
+                vm.GamePath = tempDir;
+                vm.RemoveDebugPanel = false;
+
+                vm.UninstallCommand.Execute(null);
+
+                _mockUninstaller.Verify(u => u.Uninstall(tempDir, false, false), Times.Once);
+            }
+            finally
+            {
+                if (Directory.Exists(tempDir))
+                {
+                    Directory.Delete(tempDir, recursive: true);
+                }
+            }
+        }
+
+        [Fact]
         public void OpenGuide_invokes_open_guide_action_with_content()
         {
             _mockResourceProvider.Setup(r => r.ReadDocumentText("UsersGuide.md"))
@@ -342,7 +567,7 @@ namespace Harmony2ForLmm.Test.ViewModels
             var vm = CreateViewModel();
             string? capturedTitle = null;
             string? capturedContent = null;
-            vm.SetOpenGuideAction((title, content, _) =>
+            vm.SetOpenGuideAction((title, content, _, _) =>
             {
                 capturedTitle = title;
                 capturedContent = content;
@@ -351,7 +576,24 @@ namespace Harmony2ForLmm.Test.ViewModels
             vm.OpenGuide("User's Guide", "UsersGuide.md");
 
             capturedTitle.Should().Be("User's Guide");
-            capturedContent.Should().Be("# User Guide Content");
+            capturedContent.Should().StartWith("> **Note:**");
+            capturedContent.Should().Contain("# User Guide Content");
+        }
+
+        [Fact]
+        public void OpenGuide_passes_doc_file_path_when_game_path_is_set()
+        {
+            _mockResourceProvider.Setup(r => r.ReadDocumentText("UsersGuide.md"))
+                .Returns("# Content");
+            var vm = CreateViewModelWithValidPath();
+            vm.GamePath = "/game";
+            string? capturedDocPath = null;
+            vm.SetOpenGuideAction((_, _, _, docPath) => capturedDocPath = docPath);
+
+            vm.OpenGuide("Guide", "UsersGuide.md");
+
+            capturedDocPath.Should().Contain(".harmony2forlmm");
+            capturedDocPath.Should().Contain("UsersGuide.md");
         }
 
         [Fact]
@@ -361,7 +603,7 @@ namespace Harmony2ForLmm.Test.ViewModels
                 .Returns((string?)null);
             var vm = CreateViewModel();
             var invoked = false;
-            vm.SetOpenGuideAction((_, _, _) => invoked = true);
+            vm.SetOpenGuideAction((_, _, _, _) => invoked = true);
 
             vm.OpenGuide("Missing", "Missing.md");
 

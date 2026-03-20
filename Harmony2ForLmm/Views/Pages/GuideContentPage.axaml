@@ -11,6 +11,17 @@
                 HorizontalAlignment="Right"
                 Spacing="8"
                 Margin="0,16,0,0">
+      <TextBlock x:Name="DocStatusMessage"
+                 VerticalAlignment="Center"
+                 Foreground="{DynamicResource SystemBaseMediumColor}"
+                 FontSize="13"
+                 IsVisible="False" />
+      <Button x:Name="OpenDocButton"
+              Content="Open Document"
+              Classes="secondary"
+              Padding="20,8"
+              IsVisible="False"
+              Click="OpenDocButton_Click" />
       <Button x:Name="SampleProjectButton"
               Content="View Sample Project"
               Classes="secondary"

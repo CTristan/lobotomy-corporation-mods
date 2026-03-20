@@ -170,6 +170,13 @@
               </StackPanel>
             </Border>
 
+            <!-- DebugPanel removal checkbox -->
+            <CheckBox Content="Also remove DebugPanel"
+                      IsChecked="{Binding RemoveDebugPanel}"
+                      IsVisible="{Binding ShowDebugPanelCheckbox}"
+                      Foreground="#c0a0a0"
+                      FontSize="13" />
+
             <!-- Progress indicator -->
             <ProgressBar IsIndeterminate="True"
                          IsVisible="{Binding IsWorking}" />

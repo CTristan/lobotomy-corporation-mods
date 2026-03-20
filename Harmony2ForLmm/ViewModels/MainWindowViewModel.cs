@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows.Input;
 using Harmony2ForLmm.Interfaces;
 using Harmony2ForLmm.Models;
+using Harmony2ForLmm.Services;
 
 namespace Harmony2ForLmm.ViewModels
 {
@@ -155,6 +156,7 @@ namespace Harmony2ForLmm.ViewModels
                 {
                     OnPropertyChanged(nameof(ShowPrimaryAction));
                     OnPropertyChanged(nameof(ShowUninstallAction));
+                    OnPropertyChanged(nameof(ShowDebugPanelCheckbox));
                     OnPropertyChanged(nameof(IsPathEditable));
                     NotifyAllCommands();
                 }
@@ -197,6 +199,7 @@ namespace Harmony2ForLmm.ViewModels
                     OnPropertyChanged(nameof(PrimaryActionLabel));
                     OnPropertyChanged(nameof(ShowPrimaryAction));
                     OnPropertyChanged(nameof(ShowUninstallAction));
+                    OnPropertyChanged(nameof(ShowDebugPanelCheckbox));
                     OnPropertyChanged(nameof(ShowVersionWarning));
                     OnPropertyChanged(nameof(VersionInfoText));
                     NotifyAllCommands();
@@ -220,6 +223,26 @@ namespace Harmony2ForLmm.ViewModels
         public IReadOnlyList<string> MissingFiles { get; private set => SetAndNotify(ref field, value); } = [];
 
         /// <summary>
+        /// Gets a value indicating whether any DebugPanel directory variant is detected.
+        /// </summary>
+        public bool IsDebugPanelDetected
+        {
+            get;
+            private set
+            {
+                if (SetAndNotify(ref field, value))
+                {
+                    OnPropertyChanged(nameof(ShowDebugPanelCheckbox));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether DebugPanel should be removed during uninstall.
+        /// </summary>
+        public bool RemoveDebugPanel { get; set => SetAndNotify(ref field, value); } = true;
+
+        /// <summary>
         /// Gets the primary action button label based on current state.
         /// </summary>
         public string PrimaryActionLabel => CurrentState switch
@@ -236,6 +259,12 @@ namespace Harmony2ForLmm.ViewModels
         /// Gets a value indicating whether the uninstall button should be visible.
         /// </summary>
         public bool ShowUninstallAction => !IsActionCompleted && CurrentState != InstallationState.Fresh;
+
+        /// <summary>
+        /// Gets a value indicating whether the DebugPanel removal checkbox should be visible.
+        /// Only shown when DebugPanel is detected and the uninstall action is available.
+        /// </summary>
+        public bool ShowDebugPanelCheckbox => IsDebugPanelDetected && ShowUninstallAction;
 
         /// <summary>
         /// Gets a value indicating whether the version warning banner should be visible.
@@ -297,13 +326,13 @@ namespace Harmony2ForLmm.ViewModels
         /// <summary>
         /// Gets the current open guide action, or null if not set.
         /// </summary>
-        public Action<string, string, Func<Stream?>?>? OpenGuideAction { get; private set; }
+        public Action<string, string, Func<Stream?>?, string?>? OpenGuideAction { get; private set; }
 
         /// <summary>
         /// Sets the action to invoke when a guide window should be opened.
         /// </summary>
-        /// <param name="openGuideAction">Action accepting (title, markdownContent, openDemoModZip).</param>
-        public void SetOpenGuideAction(Action<string, string, Func<Stream?>?> openGuideAction)
+        /// <param name="openGuideAction">Action accepting (title, markdownContent, openDemoModZip, docFilePath).</param>
+        public void SetOpenGuideAction(Action<string, string, Func<Stream?>?, string?> openGuideAction)
         {
             OpenGuideAction = openGuideAction;
         }
@@ -332,9 +361,44 @@ namespace Harmony2ForLmm.ViewModels
         {
             try
             {
+                // Remove legacy directory variants before installing
+                var cleanupError = UninstallDebugPanel();
+                if (!string.IsNullOrEmpty(cleanupError))
+                {
+                    return cleanupError;
+                }
+
                 var baseModsPath = Path.Combine(GamePath, "LobotomyCorp_Data", "BaseMods");
                 var filesWritten = new List<string>();
                 _resourceProvider.ExtractDebugPanelTo(baseModsPath, filesWritten);
+
+                return string.Empty;
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        /// <summary>
+        /// Uninstalls DebugPanel by removing all known directory variants.
+        /// </summary>
+        /// <returns>Empty string on success, error message on failure.</returns>
+        public string UninstallDebugPanel()
+        {
+            try
+            {
+                var baseModsPath = Path.Combine(GamePath, "LobotomyCorp_Data", "BaseMods");
+                foreach (var dirName in UninstallerService.DebugPanelDirectoryNames)
+                {
+                    var dirPath = Path.Combine(baseModsPath, dirName);
+                    if (Directory.Exists(dirPath))
+                    {
+                        Directory.Delete(dirPath, recursive: true);
+                    }
+                }
+
+                IsDebugPanelDetected = DetectDebugPanel();
 
                 return string.Empty;
             }
@@ -384,7 +448,17 @@ namespace Harmony2ForLmm.ViewModels
                 }
             }
 
-            OpenGuideAction?.Invoke(title, content, openDemoModZip);
+            // Compute the on-disk doc path and prepend an availability note
+            string? docFilePath = null;
+            if (!string.IsNullOrEmpty(GamePath))
+            {
+                docFilePath = Path.Combine(GamePath, IManifestService.ManifestDirectory, "docs", fileName);
+            }
+
+            var note = $"> **Note:** After installation, this document is also available at `.harmony2forlmm/docs/{fileName}` in your game directory.\n\n";
+            content = note + content;
+
+            OpenGuideAction?.Invoke(title, content, openDemoModZip, docFilePath);
         }
 
         private void NotifyAllCommands()
@@ -403,17 +477,33 @@ namespace Harmony2ForLmm.ViewModels
             {
                 ValidationMessage = "Valid Lobotomy Corporation installation detected.";
                 FlaggedMods = _baseModsAnalyzer.Analyze(GamePath);
+                IsDebugPanelDetected = DetectDebugPanel();
                 DetectState();
             }
             else
             {
                 ValidationMessage = result.ErrorMessage ?? "Invalid path.";
                 FlaggedMods = [];
+                IsDebugPanelDetected = false;
                 CurrentState = InstallationState.Fresh;
                 InstalledVersion = string.Empty;
                 InstallerVersion = string.Empty;
                 MissingFiles = [];
             }
+        }
+
+        private bool DetectDebugPanel()
+        {
+            var baseModsPath = Path.Combine(GamePath, "LobotomyCorp_Data", "BaseMods");
+            foreach (var dirName in UninstallerService.DebugPanelDirectoryNames)
+            {
+                if (Directory.Exists(Path.Combine(baseModsPath, dirName)))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private void DetectState()
@@ -488,7 +578,7 @@ namespace Harmony2ForLmm.ViewModels
             try
             {
                 var removeFlaggedMods = FlaggedMods.Count > 0;
-                var result = _uninstallerService.Uninstall(GamePath, removeFlaggedMods);
+                var result = _uninstallerService.Uninstall(GamePath, removeFlaggedMods, RemoveDebugPanel && IsDebugPanelDetected);
 
                 if (result.IsSuccess)
                 {

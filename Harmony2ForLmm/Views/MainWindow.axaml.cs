@@ -67,7 +67,7 @@ namespace Harmony2ForLmm.Views
                             markdownContent = docContent;
                         }
 
-                        var debugPage = new DebugPanelContentPage(markdownContent, isInstalled, viewModel.InstallDebugPanel);
+                        var debugPage = new DebugPanelContentPage(markdownContent, isInstalled, viewModel.InstallDebugPanel, viewModel.UninstallDebugPanel);
                         secondaryViewModel.NavigateTo(debugPage, "DebugPanel", 700, 600);
                     },
                     () => viewModel.OpenGuide("User's Guide", "UsersGuide.md"));
@@ -80,11 +80,11 @@ namespace Harmony2ForLmm.Views
             await secondaryWindow.ShowDialog(this).ConfigureAwait(true);
 
             // Restore the original guide action when the secondary window closes
-            viewModel.SetOpenGuideAction(originalGuideAction ?? ((_, _, _) => { }));
+            viewModel.SetOpenGuideAction(originalGuideAction ?? ((_, _, _, _) => { }));
             _activeSecondaryViewModel = null;
         }
 
-        private void NavigateToGuideInSecondary(string title, string content, System.Func<Stream?>? openDemoModZip)
+        private void NavigateToGuideInSecondary(string title, string content, System.Func<Stream?>? openDemoModZip, string? docFilePath)
         {
             if (_activeSecondaryViewModel == null)
             {
@@ -94,20 +94,20 @@ namespace Harmony2ForLmm.Views
             GuideContentPage guidePage;
             if (openDemoModZip != null)
             {
-                guidePage = new GuideContentPage(content, openDemoModZip, _activeSecondaryViewModel.NavigateTo);
+                guidePage = new GuideContentPage(content, openDemoModZip, _activeSecondaryViewModel.NavigateTo, docFilePath);
             }
             else
             {
-                guidePage = new GuideContentPage(content);
+                guidePage = GuideContentPage.WithDocPath(content, docFilePath);
             }
 
             _activeSecondaryViewModel.NavigateTo(guidePage, title, 800, 700);
         }
 
-        private void NavigateToGuide(string title, string content, System.Func<Stream?>? openDemoModZip)
+        private void NavigateToGuide(string title, string content, System.Func<Stream?>? openDemoModZip, string? docFilePath)
         {
             // Fallback when no secondary window is active — should not normally be reached
-            NavigateToGuideInSecondary(title, content, openDemoModZip);
+            NavigateToGuideInSecondary(title, content, openDemoModZip, docFilePath);
         }
 
         private async void BrowseButton_Click(object? sender, RoutedEventArgs e)

@@ -16,8 +16,11 @@ namespace Harmony2ForLmm.Interfaces
         /// <param name="removeBaseMods">
         /// If true, also removes BaseMods flagged as depending on BepInEx/Harmony 2.
         /// </param>
+        /// <param name="removeDebugPanel">
+        /// If true, also removes DebugPanel directories from BaseMods.
+        /// </param>
         /// <returns>The result of the uninstall operation.</returns>
-        UninstallResult Uninstall(string gamePath, bool removeBaseMods);
+        UninstallResult Uninstall(string gamePath, bool removeBaseMods, bool removeDebugPanel = false);
     }
 
     /// <summary>

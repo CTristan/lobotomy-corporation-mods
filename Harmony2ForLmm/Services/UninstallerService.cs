@@ -17,8 +17,21 @@ namespace Harmony2ForLmm.Services
         private const string CoreFolder = "core";
         private const string RetargetHarmonyFolder = "RetargetHarmony";
 
+        /// <summary>
+        /// Known DebugPanel directory names under BaseMods.
+        /// </summary>
+        internal static readonly string[] DebugPanelDirectoryNames =
+        [
+            "DebugPanel",
+            "LobotomyCorporationMods.DebugPanel",
+            "Hemocode.DebugPanel",
+            "HarmonyDebugPanel",
+            "LobotomyCorporationMods.HarmonyDebugPanel",
+            "Hemocode.HarmonyDebugPanel",
+        ];
+
         /// <inheritdoc />
-        public UninstallResult Uninstall(string gamePath, bool removeBaseMods)
+        public UninstallResult Uninstall(string gamePath, bool removeBaseMods, bool removeDebugPanel = false)
         {
             try
             {
@@ -28,6 +41,11 @@ namespace Harmony2ForLmm.Services
                 if (removeBaseMods)
                 {
                     RemoveFlaggedBaseMods(gamePath, filesRemoved);
+                }
+
+                if (removeDebugPanel)
+                {
+                    RemoveDebugPanel(gamePath, directoriesRemoved);
                 }
 
                 RestoreShimmedBaseMods(gamePath, filesRemoved);
@@ -77,6 +95,20 @@ namespace Harmony2ForLmm.Services
             }
 
             Directory.Delete(backupDir, recursive: true);
+        }
+
+        private static void RemoveDebugPanel(string gamePath, List<string> directoriesRemoved)
+        {
+            var baseModsDir = Path.Combine(gamePath, "LobotomyCorp_Data", "BaseMods");
+            foreach (var dirName in DebugPanelDirectoryNames)
+            {
+                var dirPath = Path.Combine(baseModsDir, dirName);
+                if (Directory.Exists(dirPath))
+                {
+                    Directory.Delete(dirPath, recursive: true);
+                    directoriesRemoved.Add(dirPath);
+                }
+            }
         }
 
         private static void RemoveRetargetHarmony(string gamePath, List<string> filesRemoved, List<string> directoriesRemoved)
