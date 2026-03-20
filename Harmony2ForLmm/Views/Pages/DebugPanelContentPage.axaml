@@ -1,17 +1,11 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:md="clr-namespace:LiveMarkdown.Avalonia;assembly=LiveMarkdown.Avalonia"
-        x:Class="Harmony2ForLmm.Views.DebugPanelWindow"
-        Width="700"
-        Height="600"
-        MinWidth="500"
-        MinHeight="400"
-        WindowStartupLocation="CenterOwner"
-        Title="DebugPanel">
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:md="clr-namespace:LiveMarkdown.Avalonia;assembly=LiveMarkdown.Avalonia"
+             x:Class="Harmony2ForLmm.Views.Pages.DebugPanelContentPage">
 
-  <DockPanel Margin="24">
+  <DockPanel>
 
-    <!-- Bottom buttons -->
+    <!-- Install button and status -->
     <StackPanel DockPanel.Dock="Bottom"
                 Orientation="Horizontal"
                 HorizontalAlignment="Right"
@@ -25,10 +19,6 @@
               Classes="accent"
               Padding="20,8"
               Click="InstallButton_Click" />
-      <Button Content="Close"
-              Classes="secondary"
-              Padding="20,8"
-              Click="CloseButton_Click" />
     </StackPanel>
 
     <!-- Loading / content area fills remaining space -->
@@ -57,4 +47,4 @@
     </Grid>
 
   </DockPanel>
-</Window>
+</UserControl>

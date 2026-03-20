@@ -4,20 +4,20 @@ using System;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 
-namespace Harmony2ForLmm.Views
+namespace Harmony2ForLmm.Views.Pages
 {
     /// <summary>
-    /// Window with buttons for opening User's Guide and Modder's Guide.
+    /// Menu page with buttons for opening User's Guide and Modder's Guide.
     /// </summary>
-    public sealed partial class GuidesWindow : Window
+    public sealed partial class GuidesMenuPage : UserControl
     {
         private readonly Action _openUsersGuide;
         private readonly Action _openModdersGuide;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GuidesWindow"/> class.
+        /// Initializes a new instance of the <see cref="GuidesMenuPage"/> class.
         /// </summary>
-        public GuidesWindow()
+        public GuidesMenuPage()
         {
             _openUsersGuide = () => { };
             _openModdersGuide = () => { };
@@ -25,11 +25,9 @@ namespace Harmony2ForLmm.Views
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GuidesWindow"/> class.
+        /// Initializes a new instance of the <see cref="GuidesMenuPage"/> class.
         /// </summary>
-        /// <param name="openUsersGuide">Action to open the User's Guide.</param>
-        /// <param name="openModdersGuide">Action to open the Modder's Guide.</param>
-        public GuidesWindow(Action openUsersGuide, Action openModdersGuide)
+        public GuidesMenuPage(Action openUsersGuide, Action openModdersGuide)
         {
             _openUsersGuide = openUsersGuide;
             _openModdersGuide = openModdersGuide;
@@ -44,11 +42,6 @@ namespace Harmony2ForLmm.Views
         private void ModdersGuideButton_Click(object? sender, RoutedEventArgs e)
         {
             _openModdersGuide();
-        }
-
-        private void CloseButton_Click(object? sender, RoutedEventArgs e)
-        {
-            Close();
         }
     }
 }

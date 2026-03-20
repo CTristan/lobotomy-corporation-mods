@@ -1,16 +1,11 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:md="clr-namespace:LiveMarkdown.Avalonia;assembly=LiveMarkdown.Avalonia"
-        x:Class="Harmony2ForLmm.Views.GuideWindow"
-        Width="800"
-        Height="700"
-        MinWidth="600"
-        MinHeight="400"
-        WindowStartupLocation="CenterOwner">
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:md="clr-namespace:LiveMarkdown.Avalonia;assembly=LiveMarkdown.Avalonia"
+             x:Class="Harmony2ForLmm.Views.Pages.GuideContentPage">
 
-  <DockPanel Margin="24">
+  <DockPanel>
 
-    <!-- Bottom buttons (docked first so they're always visible) -->
+    <!-- Optional action buttons above content -->
     <StackPanel DockPanel.Dock="Bottom"
                 Orientation="Horizontal"
                 HorizontalAlignment="Right"
@@ -28,10 +23,6 @@
               Padding="20,8"
               IsVisible="False"
               Click="OpenFolderButton_Click" />
-      <Button Content="Close"
-              Classes="secondary"
-              Padding="20,8"
-              Click="CloseButton_Click" />
     </StackPanel>
 
     <!-- Loading / content area fills remaining space -->
@@ -60,4 +51,4 @@
     </Grid>
 
   </DockPanel>
-</Window>
+</UserControl>

@@ -4,20 +4,20 @@ using System;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 
-namespace Harmony2ForLmm.Views
+namespace Harmony2ForLmm.Views.Pages
 {
     /// <summary>
-    /// Window with buttons for DebugPanel and User's Guide troubleshooting tools.
+    /// Menu page with buttons for DebugPanel and User's Guide troubleshooting tools.
     /// </summary>
-    public sealed partial class TroubleshootingWindow : Window
+    public sealed partial class TroubleshootingMenuPage : UserControl
     {
         private readonly Action _openDebugPanel;
         private readonly Action _openUsersGuide;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TroubleshootingWindow"/> class.
+        /// Initializes a new instance of the <see cref="TroubleshootingMenuPage"/> class.
         /// </summary>
-        public TroubleshootingWindow()
+        public TroubleshootingMenuPage()
         {
             _openDebugPanel = () => { };
             _openUsersGuide = () => { };
@@ -25,11 +25,9 @@ namespace Harmony2ForLmm.Views
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TroubleshootingWindow"/> class.
+        /// Initializes a new instance of the <see cref="TroubleshootingMenuPage"/> class.
         /// </summary>
-        /// <param name="openDebugPanel">Action to open the DebugPanel window.</param>
-        /// <param name="openUsersGuide">Action to open the User's Guide.</param>
-        public TroubleshootingWindow(Action openDebugPanel, Action openUsersGuide)
+        public TroubleshootingMenuPage(Action openDebugPanel, Action openUsersGuide)
         {
             _openDebugPanel = openDebugPanel;
             _openUsersGuide = openUsersGuide;
@@ -44,11 +42,6 @@ namespace Harmony2ForLmm.Views
         private void UsersGuideButton_Click(object? sender, RoutedEventArgs e)
         {
             _openUsersGuide();
-        }
-
-        private void CloseButton_Click(object? sender, RoutedEventArgs e)
-        {
-            Close();
         }
     }
 }

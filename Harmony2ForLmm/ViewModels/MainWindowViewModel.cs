@@ -24,7 +24,6 @@ namespace Harmony2ForLmm.ViewModels
         private readonly IResourceProvider _resourceProvider;
         private bool WasInstalledAtStartup { get; }
         private Action? _closeAction;
-        private Action<string, string, Func<Stream?>?>? _openGuideAction;
         private Action? _openGuidesAction;
         private Action? _openTroubleshootingAction;
 
@@ -296,12 +295,17 @@ namespace Harmony2ForLmm.ViewModels
         }
 
         /// <summary>
+        /// Gets the current open guide action, or null if not set.
+        /// </summary>
+        public Action<string, string, Func<Stream?>?>? OpenGuideAction { get; private set; }
+
+        /// <summary>
         /// Sets the action to invoke when a guide window should be opened.
         /// </summary>
         /// <param name="openGuideAction">Action accepting (title, markdownContent, openDemoModZip).</param>
         public void SetOpenGuideAction(Action<string, string, Func<Stream?>?> openGuideAction)
         {
-            _openGuideAction = openGuideAction;
+            OpenGuideAction = openGuideAction;
         }
 
         /// <summary>
@@ -380,7 +384,7 @@ namespace Harmony2ForLmm.ViewModels
                 }
             }
 
-            _openGuideAction?.Invoke(title, content, openDemoModZip);
+            OpenGuideAction?.Invoke(title, content, openDemoModZip);
         }
 
         private void NotifyAllCommands()

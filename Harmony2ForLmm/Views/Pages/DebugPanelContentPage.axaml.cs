@@ -6,32 +6,29 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using LiveMarkdown.Avalonia;
 
-namespace Harmony2ForLmm.Views
+namespace Harmony2ForLmm.Views.Pages
 {
     /// <summary>
-    /// Window displaying DebugPanel information and install/reinstall button.
+    /// Page displaying DebugPanel information and install/reinstall button.
     /// </summary>
-    public sealed partial class DebugPanelWindow : Window
+    public sealed partial class DebugPanelContentPage : UserControl, IAsyncLoadablePage
     {
         private readonly Func<string>? _installAction;
         private string? _pendingMarkdown;
+        private bool _loaded;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DebugPanelWindow"/> class.
+        /// Initializes a new instance of the <see cref="DebugPanelContentPage"/> class.
         /// </summary>
-        public DebugPanelWindow()
+        public DebugPanelContentPage()
         {
             InitializeComponent();
-            Opened += OnOpened;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DebugPanelWindow"/> class.
+        /// Initializes a new instance of the <see cref="DebugPanelContentPage"/> class.
         /// </summary>
-        /// <param name="markdownContent">The markdown content to display.</param>
-        /// <param name="isInstalled">Whether DebugPanel is already installed.</param>
-        /// <param name="installAction">Function that installs DebugPanel. Returns empty string on success, error message on failure.</param>
-        public DebugPanelWindow(string markdownContent, bool isInstalled, Func<string> installAction)
+        public DebugPanelContentPage(string markdownContent, bool isInstalled, Func<string> installAction)
             : this()
         {
             _pendingMarkdown = markdownContent;
@@ -39,13 +36,15 @@ namespace Harmony2ForLmm.Views
             InstallButton.Content = isInstalled ? "Reinstall" : "Install";
         }
 
-        private async void OnOpened(object? sender, EventArgs e)
+        /// <inheritdoc />
+        public async Task LoadContentAsync()
         {
-            if (_pendingMarkdown == null)
+            if (_loaded || _pendingMarkdown == null)
             {
                 return;
             }
 
+            _loaded = true;
             var content = _pendingMarkdown;
             _pendingMarkdown = null;
 
@@ -77,11 +76,6 @@ namespace Harmony2ForLmm.Views
                 StatusText.Text = error;
                 StatusText.Foreground = Avalonia.Media.Brushes.OrangeRed;
             }
-        }
-
-        private void CloseButton_Click(object? sender, RoutedEventArgs e)
-        {
-            Close();
         }
     }
 }

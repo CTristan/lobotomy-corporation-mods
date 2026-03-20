@@ -10,67 +10,69 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using LiveMarkdown.Avalonia;
 
-namespace Harmony2ForLmm.Views
+namespace Harmony2ForLmm.Views.Pages
 {
     /// <summary>
-    /// Window for displaying markdown guide content.
+    /// Page for displaying markdown guide content with optional sample project support.
     /// </summary>
-    public sealed partial class GuideWindow : Window
+    public sealed partial class GuideContentPage : UserControl, IAsyncLoadablePage
     {
         private readonly Func<Stream?>? _openZipStream;
+        private readonly Action<UserControl, string, double, double>? _navigateAction;
         private readonly string? _extractedPath;
         private string? _pendingMarkdown;
+        private bool _loaded;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GuideWindow"/> class.
+        /// Initializes a new instance of the <see cref="GuideContentPage"/> class.
         /// </summary>
-        public GuideWindow()
+        public GuideContentPage()
         {
             InitializeComponent();
-            Opened += OnOpened;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GuideWindow"/> class with content.
+        /// Initializes a new instance of the <see cref="GuideContentPage"/> class with markdown content.
         /// </summary>
-        /// <param name="title">The window title.</param>
-        /// <param name="markdownContent">The markdown content to display.</param>
-        public GuideWindow(string title, string markdownContent)
+        public GuideContentPage(string markdownContent)
             : this()
         {
-            Title = title;
             _pendingMarkdown = markdownContent;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GuideWindow"/> class with content
-        /// and an associated sample project zip. Shows "View Sample Project" button.
+        /// Initializes a new instance of the <see cref="GuideContentPage"/> class with sample project support.
         /// </summary>
-        /// <param name="title">The window title.</param>
-        /// <param name="markdownContent">The markdown content to display.</param>
-        /// <param name="openZipStream">Function that opens a stream to the sample project zip.</param>
-        public GuideWindow(string title, string markdownContent, Func<Stream?> openZipStream)
-            : this(title, markdownContent)
+        public GuideContentPage(
+            string markdownContent,
+            Func<Stream?> openZipStream,
+            Action<UserControl, string, double, double> navigateAction)
+            : this(markdownContent)
         {
             _openZipStream = openZipStream;
+            _navigateAction = navigateAction;
             SampleProjectButton.IsVisible = true;
         }
 
-        private GuideWindow(string title, string markdownContent, Func<Stream?>? openZipStream, string extractedPath)
-            : this(title, markdownContent)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GuideContentPage"/> class for an extracted sample project.
+        /// </summary>
+        public GuideContentPage(string markdownContent, string extractedPath)
+            : this(markdownContent)
         {
-            _openZipStream = openZipStream;
             _extractedPath = extractedPath;
             OpenFolderButton.IsVisible = true;
         }
 
-        private async void OnOpened(object? sender, EventArgs e)
+        /// <inheritdoc />
+        public async Task LoadContentAsync()
         {
-            if (_pendingMarkdown == null)
+            if (_loaded || _pendingMarkdown == null)
             {
                 return;
             }
 
+            _loaded = true;
             var content = _pendingMarkdown;
             _pendingMarkdown = null;
 
@@ -85,7 +87,7 @@ namespace Harmony2ForLmm.Views
 
         private void SampleProjectButton_Click(object? sender, RoutedEventArgs e)
         {
-            if (_openZipStream == null)
+            if (_openZipStream == null || _navigateAction == null)
             {
                 return;
             }
@@ -126,8 +128,8 @@ namespace Harmony2ForLmm.Views
             var demoModPath = Path.Combine(extractedPath, "DemoMod");
             var openPath = Directory.Exists(demoModPath) ? demoModPath : extractedPath;
 
-            var sampleWindow = new GuideWindow("Sample Project — DemoMod", readme, null, openPath);
-            _ = sampleWindow.ShowDialog(this);
+            var samplePage = new GuideContentPage(readme, openPath);
+            _navigateAction(samplePage, "Sample Project — DemoMod", 800, 700);
         }
 
         private void OpenFolderButton_Click(object? sender, RoutedEventArgs e)
@@ -138,11 +140,6 @@ namespace Harmony2ForLmm.Views
             }
 
             OpenFolder(_extractedPath);
-        }
-
-        private void CloseButton_Click(object? sender, RoutedEventArgs e)
-        {
-            Close();
         }
 
         private static string? ExtractZipToTemp(Func<Stream?> openZipStream)
