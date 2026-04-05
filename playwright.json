@@ -1,0 +1,145 @@
+{
+  "deployTargets": [
+    {
+      "projectName": "LobotomyCorporationMods.Playwright",
+      "assemblyName": "Hemocode.Playwright",
+      "deploySubdir": "BaseMods/Hemocode.Playwright",
+      "isMod": true
+    },
+    {
+      "projectName": "RetargetHarmony",
+      "assemblyName": "RetargetHarmony",
+      "deploySubdir": "patchers/RetargetHarmony",
+      "isMod": false
+    },
+    {
+      "projectName": "LobotomyCorporationMods.BadLuckProtectionForGifts",
+      "assemblyName": "Hemocode.BadLuckProtectionForGifts",
+      "deploySubdir": "BaseMods/Hemocode.BadLuckProtectionForGifts",
+      "isMod": true
+    },
+    {
+      "projectName": "LobotomyCorporationMods.BugFixes",
+      "assemblyName": "Hemocode.BugFixes",
+      "deploySubdir": "BaseMods/Hemocode.BugFixes",
+      "isMod": true
+    },
+    {
+      "projectName": "DebugPanel",
+      "assemblyName": "DebugPanel",
+      "deploySubdir": "BaseMods/DebugPanel",
+      "isMod": true
+    },
+    {
+      "projectName": "LobotomyCorporationMods.FreeCustomization",
+      "assemblyName": "Hemocode.FreeCustomization",
+      "deploySubdir": "BaseMods/Hemocode.FreeCustomization",
+      "isMod": true
+    },
+    {
+      "projectName": "LobotomyCorporationMods.GiftAlertIcon",
+      "assemblyName": "Hemocode.GiftAlertIcon",
+      "deploySubdir": "BaseMods/Hemocode.GiftAlertIcon",
+      "isMod": true
+    },
+    {
+      "projectName": "LobotomyCorporationMods.NotifyWhenAgentReceivesGift",
+      "assemblyName": "Hemocode.NotifyWhenAgentReceivesGift",
+      "deploySubdir": "BaseMods/Hemocode.NotifyWhenAgentReceivesGift",
+      "isMod": true
+    },
+    {
+      "projectName": "LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking",
+      "assemblyName": "Hemocode.WarnWhenAgentWillDieFromWorking",
+      "deploySubdir": "BaseMods/Hemocode.WarnWhenAgentWillDieFromWorking",
+      "isMod": true
+    },
+    {
+      "projectName": "DemoMod.Mod",
+      "assemblyName": "DemoMod",
+      "deploySubdir": "BaseMods/DemoMod",
+      "isMod": true,
+      "projectPath": "Harmony2ForLmm/DemoMod/DemoMod.Mod/DemoMod.Mod.csproj"
+    },
+    {
+      "projectName": "DemoMod.Patcher",
+      "assemblyName": "DemoMod.Patcher",
+      "deploySubdir": "patchers/DemoMod.Patcher",
+      "isMod": false,
+      "projectPath": "Harmony2ForLmm/DemoMod/DemoMod.Patcher/DemoMod.Patcher.csproj"
+    }
+  ],
+  "profiles": {
+    "vanilla": {
+      "DeployTargets": [],
+      "InstallLmm": false,
+      "InstallModLoader": false
+    },
+    "lmm": {
+      "DeployTargets": [],
+      "InstallLmm": true,
+      "InstallModLoader": false
+    },
+    "bepinex": {
+      "DeployTargets": [],
+      "InstallLmm": false,
+      "InstallModLoader": true
+    },
+    "mods": {
+      "DeployTargets": [
+        "LobotomyCorporationMods.BadLuckProtectionForGifts",
+        "LobotomyCorporationMods.BugFixes",
+        "LobotomyCorporationMods.FreeCustomization",
+        "LobotomyCorporationMods.GiftAlertIcon",
+        "LobotomyCorporationMods.NotifyWhenAgentReceivesGift",
+        "LobotomyCorporationMods.Playwright",
+        "LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking"
+      ],
+      "InstallLmm": true,
+      "InstallModLoader": false,
+      "IncludeThirdPartyMods": true
+    },
+    "dev": {
+      "DeployTargets": [
+        "LobotomyCorporationMods.BadLuckProtectionForGifts",
+        "LobotomyCorporationMods.BugFixes",
+        "LobotomyCorporationMods.FreeCustomization",
+        "LobotomyCorporationMods.GiftAlertIcon",
+        "LobotomyCorporationMods.NotifyWhenAgentReceivesGift",
+        "LobotomyCorporationMods.Playwright",
+        "LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking"
+      ],
+      "InstallLmm": true,
+      "InstallModLoader": true
+    },
+    "demo": {
+      "DeployTargets": [
+        "LobotomyCorporationMods.Playwright"
+      ],
+      "InstallLmm": true,
+      "InstallModLoader": true
+    },
+    "all": {
+      "DeployTargets": [
+        "LobotomyCorporationMods.BadLuckProtectionForGifts",
+        "LobotomyCorporationMods.BugFixes",
+        "LobotomyCorporationMods.FreeCustomization",
+        "LobotomyCorporationMods.GiftAlertIcon",
+        "LobotomyCorporationMods.NotifyWhenAgentReceivesGift",
+        "LobotomyCorporationMods.Playwright",
+        "LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking"
+      ],
+      "InstallLmm": true,
+      "InstallModLoader": true,
+      "IncludeThirdPartyMods": true
+    }
+  },
+  "thirdPartyModsPath": "external/thirdparty-mods",
+  "bepInExSourcePath": "Harmony2ForLmm/Resources/bepinex",
+  "harmonyInteropDlls": [
+    "0Harmony109.dll",
+    "0Harmony12.dll",
+    "12Harmony.dll"
+  ],
+  "harmonyInteropSourcePath": "RetargetHarmony/lib"
+}

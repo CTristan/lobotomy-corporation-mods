@@ -37,7 +37,22 @@ namespace LobotomyPlaywright.Implementations.Configuration
         public static string GetDefaultConfigPath()
         {
             var repoRoot = FindRepositoryRoot() ?? throw new InvalidOperationException("Could not find repository root. Are you in a git repository?");
-            return Path.Combine(repoRoot, ".pi", "skills", "lobotomy-playwright", "config.json");
+
+            // Prefer .playwright/config.json, fall back to legacy .pi path
+            var newPath = Path.Combine(repoRoot, ".playwright", "config.json");
+            if (File.Exists(newPath))
+            {
+                return newPath;
+            }
+
+            var legacyPath = Path.Combine(repoRoot, ".pi", "skills", "lobotomy-playwright", "config.json");
+            if (File.Exists(legacyPath))
+            {
+                return legacyPath;
+            }
+
+            // Return new path as default (will surface a clear error if missing)
+            return newPath;
         }
 
         private static string? FindRepositoryRoot()
@@ -48,11 +63,6 @@ namespace LobotomyPlaywright.Implementations.Configuration
             while (dir != null)
             {
                 if (Directory.Exists(Path.Combine(dir.FullName, ".git")))
-                {
-                    return dir.FullName;
-                }
-
-                if (File.Exists(Path.Combine(dir.FullName, "LobotomyCorporationMods.sln")))
                 {
                     return dir.FullName;
                 }

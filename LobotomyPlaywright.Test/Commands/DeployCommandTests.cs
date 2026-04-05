@@ -22,7 +22,7 @@ namespace LobotomyPlaywright.Tests.Commands
         private readonly Mock<IGameRestorer> _mockGameRestorer;
         private readonly Mock<ILmmInstaller> _mockLmmInstaller;
         private readonly Mock<IBepInExInstaller> _mockBepInExInstaller;
-        private readonly Mock<IProfileLoader> _mockProfileLoader;
+        private readonly Mock<IPlaywrightConfigLoader> _mockPlaywrightConfigLoader;
         private readonly DeployCommand _deployCommand;
         private readonly string _gamePath = "/test/game/path";
         private readonly string _repoRoot = "/test/repo/root";
@@ -35,8 +35,8 @@ namespace LobotomyPlaywright.Tests.Commands
             _mockGameRestorer = new Mock<IGameRestorer>();
             _mockLmmInstaller = new Mock<ILmmInstaller>();
             _mockBepInExInstaller = new Mock<IBepInExInstaller>();
-            _mockProfileLoader = new Mock<IProfileLoader>();
-            _deployCommand = new DeployCommand(_mockConfigManager.Object, _mockFileSystem.Object, _mockProcessRunner.Object, _mockGameRestorer.Object, _mockLmmInstaller.Object, _mockBepInExInstaller.Object, _mockProfileLoader.Object);
+            _mockPlaywrightConfigLoader = new Mock<IPlaywrightConfigLoader>();
+            _deployCommand = new DeployCommand(_mockConfigManager.Object, _mockFileSystem.Object, _mockProcessRunner.Object, _mockGameRestorer.Object, _mockLmmInstaller.Object, _mockBepInExInstaller.Object, _mockPlaywrightConfigLoader.Object);
 
             // Setup default config
             Config config = new()
@@ -46,9 +46,12 @@ namespace LobotomyPlaywright.Tests.Commands
             _ = _mockConfigManager.Setup(c => c.Load()).Returns(config);
             _ = _mockFileSystem.Setup(f => f.DirectoryExists(_gamePath)).Returns(true);
             _ = _mockFileSystem.Setup(f => f.GetCurrentDirectory()).Returns(_repoRoot);
-            _ = _mockFileSystem.Setup(f => f.FileExists(Path.Combine(_repoRoot, "LobotomyCorporationMods.sln"))).Returns(true);
+            _ = _mockFileSystem.Setup(f => f.DirectoryExists(Path.Combine(_repoRoot, ".git"))).Returns(true);
             _ = _mockFileSystem.Setup(f => f.GetFileSize(It.IsAny<string>())).Returns(100);
             _ = _mockFileSystem.Setup(f => f.GetFiles(It.IsAny<string>(), It.IsAny<string>())).Returns([]);
+
+            // Setup default playwright config with all targets
+            _ = _mockPlaywrightConfigLoader.Setup(p => p.Load()).Returns(CreateDefaultPlaywrightConfig());
         }
 
         [Fact]
@@ -57,8 +60,8 @@ namespace LobotomyPlaywright.Tests.Commands
             // Arrange
             _ = _mockFileSystem.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
             _ = _mockFileSystem.Setup(f => f.FileExists(It.IsAny<string>())).Returns(true);
-            _ = _mockFileSystem.Setup(f => f.GetFiles(It.IsAny<string>(), "Hemocode.Common.*.dll"))
-                .Returns(["Hemocode.Common.6.0.2.dll"]);
+            _ = _mockFileSystem.Setup(f => f.GetFiles(It.IsAny<string>(), "LobotomyCorporation.Mods.Common.*.dll"))
+                .Returns(["LobotomyCorporation.Mods.Common.6.0.2.dll"]);
 
             _ = _mockProcessRunner.Setup(p => p.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string?, bool>>()))
                 .Returns(0);
@@ -83,7 +86,7 @@ namespace LobotomyPlaywright.Tests.Commands
             _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("Hemocode.WarnWhenAgentWillDieFromWorking.dll")), It.IsAny<string>(), true), Times.Once);
 
             // Verify Common DLL deployed for each mod (9 mods)
-            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("Hemocode.Common")), It.IsAny<string>(), true), Times.Exactly(9));
+            _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("LobotomyCorporation.Mods.Common")), It.IsAny<string>(), true), Times.Exactly(9));
 
             // Verify interop DLLs
             _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("0Harmony109.dll")), It.IsAny<string>(), true), Times.Once);
@@ -95,7 +98,6 @@ namespace LobotomyPlaywright.Tests.Commands
         public void Run_BuildPhase_HandlesBuildFailures()
         {
             // Arrange
-            _ = _mockFileSystem.Setup(f => f.FileExists(It.Is<string>(s => s.EndsWith("LobotomyCorporationMods.sln")))).Returns(true);
             _ = _mockFileSystem.Setup(f => f.FileExists(It.IsAny<string>())).Returns(true);
             _ = _mockFileSystem.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
 
@@ -115,8 +117,8 @@ namespace LobotomyPlaywright.Tests.Commands
             // Arrange
             _ = _mockFileSystem.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
             _ = _mockFileSystem.Setup(f => f.FileExists(It.IsAny<string>())).Returns(true);
-            _ = _mockFileSystem.Setup(f => f.GetFiles(It.IsAny<string>(), "Hemocode.Common.*.dll"))
-                .Returns(["Hemocode.Common.6.0.2.dll"]);
+            _ = _mockFileSystem.Setup(f => f.GetFiles(It.IsAny<string>(), "LobotomyCorporation.Mods.Common.*.dll"))
+                .Returns(["LobotomyCorporation.Mods.Common.6.0.2.dll"]);
 
             _ = _mockProcessRunner.Setup(p => p.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string?, bool>>()))
                 .Returns(0);
@@ -135,7 +137,7 @@ namespace LobotomyPlaywright.Tests.Commands
         public void Run_with_profile_restores_game_before_deploying()
         {
             // Arrange
-            SetupProfileLoader();
+            SetupPlaywrightConfigWithProfiles();
             SetupSuccessfulBuildAndDeploy();
 
             // Act
@@ -150,7 +152,7 @@ namespace LobotomyPlaywright.Tests.Commands
         public void Run_with_full_flag_uses_full_restore()
         {
             // Arrange
-            SetupProfileLoader();
+            SetupPlaywrightConfigWithProfiles();
             SetupSuccessfulBuildAndDeploy();
 
             // Act
@@ -165,7 +167,7 @@ namespace LobotomyPlaywright.Tests.Commands
         public void Run_with_vanilla_profile_deploys_nothing_after_clean()
         {
             // Arrange
-            SetupProfileLoader();
+            SetupPlaywrightConfigWithProfiles();
 
             // Act
             int result = _deployCommand.Run(["--profile", "vanilla"]);
@@ -182,7 +184,7 @@ namespace LobotomyPlaywright.Tests.Commands
         public void Run_with_lmm_profile_installs_lmm_but_not_mod_loader()
         {
             // Arrange
-            SetupProfileLoader();
+            SetupPlaywrightConfigWithProfiles();
 
             // Act
             int result = _deployCommand.Run(["--profile", "lmm"]);
@@ -197,7 +199,7 @@ namespace LobotomyPlaywright.Tests.Commands
         public void Run_with_bepinex_profile_installs_mod_loader_but_not_lmm()
         {
             // Arrange
-            SetupProfileLoader();
+            SetupPlaywrightConfigWithProfiles();
 
             // Act
             int result = _deployCommand.Run(["--profile", "bepinex"]);
@@ -212,7 +214,7 @@ namespace LobotomyPlaywright.Tests.Commands
         public void Run_with_mods_profile_deploys_all_mods_but_not_retarget()
         {
             // Arrange
-            SetupProfileLoader();
+            SetupPlaywrightConfigWithProfiles();
             SetupSuccessfulBuildAndDeploy();
 
             // Act
@@ -235,7 +237,7 @@ namespace LobotomyPlaywright.Tests.Commands
         public void Run_with_unknown_profile_returns_error()
         {
             // Arrange
-            SetupProfileLoader();
+            SetupPlaywrightConfigWithProfiles();
 
             // Act
             int result = _deployCommand.Run(["--profile", "nonexistent"]);
@@ -248,20 +250,18 @@ namespace LobotomyPlaywright.Tests.Commands
         public void Run_with_deploy_overrides_routes_plugin_to_bepinex_plugins()
         {
             // Arrange
-            var profiles = new Dictionary<string, DeploymentProfile>
+            var playwrightConfig = CreateDefaultPlaywrightConfig();
+            playwrightConfig.Profiles["bepinex-playwright"] = new DeploymentProfile
             {
-                ["bepinex-playwright"] = new DeploymentProfile
+                DeployTargets = new Collection<string>(["LobotomyCorporationMods.Playwright", "RetargetHarmony"]),
+                InstallLmm = false,
+                InstallModLoader = true,
+                DeployOverrides = new Dictionary<string, string>
                 {
-                    DeployTargets = new Collection<string>(["LobotomyCorporationMods.Playwright", "RetargetHarmony"]),
-                    InstallLmm = false,
-                    InstallModLoader = true,
-                    DeployOverrides = new Dictionary<string, string>
-                    {
-                        ["LobotomyCorporationMods.Playwright"] = "plugins/Hemocode.Playwright"
-                    }
+                    ["LobotomyCorporationMods.Playwright"] = "plugins/Hemocode.Playwright"
                 }
             };
-            _ = _mockProfileLoader.Setup(p => p.Load()).Returns(profiles);
+            _ = _mockPlaywrightConfigLoader.Setup(p => p.Load()).Returns(playwrightConfig);
             SetupSuccessfulBuildAndDeploy();
 
             // Act
@@ -287,7 +287,7 @@ namespace LobotomyPlaywright.Tests.Commands
         public void Run_without_deploy_overrides_uses_default_paths()
         {
             // Arrange
-            SetupProfileLoader();
+            SetupPlaywrightConfigWithProfiles();
             SetupSuccessfulBuildAndDeploy();
 
             // Act
@@ -304,10 +304,10 @@ namespace LobotomyPlaywright.Tests.Commands
         }
 
         [Fact]
-        public void Run_with_profile_but_profiles_file_missing_returns_error()
+        public void Run_with_profile_but_playwright_config_missing_returns_error()
         {
             // Arrange
-            _ = _mockProfileLoader.Setup(p => p.Load()).Throws(new FileNotFoundException("Profiles file not found"));
+            _ = _mockPlaywrightConfigLoader.Setup(p => p.Load()).Throws(new FileNotFoundException("Playwright config file not found"));
 
             // Act
             int result = _deployCommand.Run(["--profile", "vanilla"]);
@@ -319,12 +319,10 @@ namespace LobotomyPlaywright.Tests.Commands
         [Fact]
         public void Run_with_profile_creates_snapshot_directory_when_missing()
         {
-            // Arrange - use raw profile loader without SetupProfileLoader (which sets vanilla path to exist)
-            var profiles = new Dictionary<string, DeploymentProfile>
-            {
-                ["vanilla"] = new DeploymentProfile { DeployTargets = [], InstallLmm = false, InstallModLoader = false }
-            };
-            _ = _mockProfileLoader.Setup(p => p.Load()).Returns(profiles);
+            // Arrange - use playwright config without SetupPlaywrightConfigWithProfiles (which sets vanilla path to exist)
+            var playwrightConfig = CreateDefaultPlaywrightConfig();
+            playwrightConfig.Profiles["vanilla"] = new DeploymentProfile { DeployTargets = [], InstallLmm = false, InstallModLoader = false };
+            _ = _mockPlaywrightConfigLoader.Setup(p => p.Load()).Returns(playwrightConfig);
 
             // Vanilla path does NOT exist (default mock behavior)
             var vanillaManagedPath = Path.Combine(_repoRoot, "external", "snapshots", "LobotomyCorp_vanilla", "LobotomyCorp_Data", "Managed");
@@ -345,11 +343,9 @@ namespace LobotomyPlaywright.Tests.Commands
             var vanillaPath = Path.Combine(_repoRoot, "external", "snapshots", "LobotomyCorp_vanilla");
             _ = _mockFileSystem.Setup(f => f.DirectoryExists(vanillaPath)).Returns(true);
 
-            var profiles = new Dictionary<string, DeploymentProfile>
-            {
-                ["lmm"] = new DeploymentProfile { DeployTargets = [], InstallLmm = true, InstallModLoader = false }
-            };
-            _ = _mockProfileLoader.Setup(p => p.Load()).Returns(profiles);
+            var playwrightConfig = CreateDefaultPlaywrightConfig();
+            playwrightConfig.Profiles["lmm"] = new DeploymentProfile { DeployTargets = [], InstallLmm = true, InstallModLoader = false };
+            _ = _mockPlaywrightConfigLoader.Setup(p => p.Load()).Returns(playwrightConfig);
 
             // LMM path does NOT exist (default mock behavior)
             var lmmPath = Path.Combine(_repoRoot, "external", "snapshots", "LobotomyModManager");
@@ -369,8 +365,8 @@ namespace LobotomyPlaywright.Tests.Commands
             // Arrange
             _ = _mockFileSystem.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
             _ = _mockFileSystem.Setup(f => f.FileExists(It.IsAny<string>())).Returns(true);
-            _ = _mockFileSystem.Setup(f => f.GetFiles(It.IsAny<string>(), "Hemocode.Common.*.dll"))
-                .Returns(["Hemocode.Common.6.0.2.dll"]);
+            _ = _mockFileSystem.Setup(f => f.GetFiles(It.IsAny<string>(), "LobotomyCorporation.Mods.Common.*.dll"))
+                .Returns(["LobotomyCorporation.Mods.Common.6.0.2.dll"]);
             _ = _mockProcessRunner.Setup(p => p.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string?, bool>>()))
                 .Returns(0);
 
@@ -387,7 +383,173 @@ namespace LobotomyPlaywright.Tests.Commands
             _mockFileSystem.Verify(f => f.CopyFile(It.Is<string>(s => s.Contains("Hemocode.BadLuckProtectionForGifts.dll")), It.IsAny<string>(), true), Times.Once);
         }
 
-        private void SetupProfileLoader()
+        [Fact]
+        public void Run_with_all_profile_deploys_third_party_mods()
+        {
+            // Arrange
+            SetupPlaywrightConfigWithProfiles();
+            SetupSuccessfulBuildAndDeploy();
+            SetupThirdPartyMods(("SkinTone", "SkinTone.dll"), ("AnotherMod", "AnotherMod.dll"));
+
+            // Act
+            int result = _deployCommand.Run(["--profile", "all"]);
+
+            // Assert
+            _ = result.Should().Be(0);
+
+            // Verify third-party DLLs deployed to BaseMods
+            _mockFileSystem.Verify(f => f.CopyFile(
+                It.Is<string>(s => s.Contains("SkinTone.dll")),
+                It.Is<string>(s => s.Contains(Path.Combine("BaseMods", "SkinTone"))),
+                true), Times.Once);
+            _mockFileSystem.Verify(f => f.CopyFile(
+                It.Is<string>(s => s.Contains("AnotherMod.dll")),
+                It.Is<string>(s => s.Contains(Path.Combine("BaseMods", "AnotherMod"))),
+                true), Times.Once);
+        }
+
+        [Fact]
+        public void Run_with_dev_profile_does_not_deploy_third_party_mods()
+        {
+            // Arrange
+            SetupPlaywrightConfigWithProfiles();
+            SetupSuccessfulBuildAndDeploy();
+            SetupThirdPartyMods(("SkinTone", "SkinTone.dll"));
+
+            // Act
+            int result = _deployCommand.Run(["--profile", "dev"]);
+
+            // Assert
+            _ = result.Should().Be(0);
+
+            // Third-party mod should NOT be deployed
+            _mockFileSystem.Verify(f => f.CopyFile(
+                It.Is<string>(s => s.Contains("SkinTone.dll")),
+                It.IsAny<string>(),
+                true), Times.Never);
+        }
+
+        [Fact]
+        public void Run_with_all_profile_skips_third_party_mod_with_no_dll()
+        {
+            // Arrange
+            SetupPlaywrightConfigWithProfiles();
+            SetupSuccessfulBuildAndDeploy();
+
+            var thirdPartyDir = Path.Combine(_repoRoot, "external", "thirdparty-mods");
+            _ = _mockFileSystem.Setup(f => f.DirectoryExists(thirdPartyDir)).Returns(true);
+
+            var emptyModDir = Path.Combine(thirdPartyDir, "EmptyMod");
+            _ = _mockFileSystem.Setup(f => f.GetDirectories(thirdPartyDir, "*"))
+                .Returns([emptyModDir]);
+            _ = _mockFileSystem.Setup(f => f.GetFiles(emptyModDir, "*.dll"))
+                .Returns([]);
+
+            // Act
+            int result = _deployCommand.Run(["--profile", "all"]);
+
+            // Assert
+            _ = result.Should().Be(0);
+        }
+
+        [Fact]
+        public void Run_with_all_profile_skips_third_party_mod_with_multiple_dlls()
+        {
+            // Arrange
+            SetupPlaywrightConfigWithProfiles();
+            SetupSuccessfulBuildAndDeploy();
+
+            var thirdPartyDir = Path.Combine(_repoRoot, "external", "thirdparty-mods");
+            _ = _mockFileSystem.Setup(f => f.DirectoryExists(thirdPartyDir)).Returns(true);
+
+            var ambiguousModDir = Path.Combine(thirdPartyDir, "AmbiguousMod");
+            _ = _mockFileSystem.Setup(f => f.GetDirectories(thirdPartyDir, "*"))
+                .Returns([ambiguousModDir]);
+            _ = _mockFileSystem.Setup(f => f.GetFiles(ambiguousModDir, "*.dll"))
+                .Returns([Path.Combine(ambiguousModDir, "Mod.dll"), Path.Combine(ambiguousModDir, "ModHelper.dll")]);
+
+            // Act
+            int result = _deployCommand.Run(["--profile", "all"]);
+
+            // Assert
+            _ = result.Should().Be(0);
+
+            // Neither DLL should be deployed
+            _mockFileSystem.Verify(f => f.CopyFile(
+                It.Is<string>(s => s.Contains("Mod.dll")),
+                It.Is<string>(s => s.Contains(Path.Combine("BaseMods", "AmbiguousMod"))),
+                true), Times.Never);
+        }
+
+        [Fact]
+        public void Run_with_all_profile_handles_missing_third_party_directory()
+        {
+            // Arrange
+            SetupPlaywrightConfigWithProfiles();
+            SetupSuccessfulBuildAndDeploy();
+
+            // Third-party directory does NOT exist (default mock behavior returns false)
+
+            // Act
+            int result = _deployCommand.Run(["--profile", "all"]);
+
+            // Assert - should succeed, just no third-party mods deployed
+            _ = result.Should().Be(0);
+        }
+
+        [Fact]
+        public void Run_with_all_profile_deploys_third_party_mod_content_directories()
+        {
+            // Arrange
+            SetupPlaywrightConfigWithProfiles();
+            SetupSuccessfulBuildAndDeploy();
+            SetupThirdPartyMods(("SkinTone", "SkinTone.dll"));
+
+            var skinToneDir = Path.Combine(_repoRoot, "external", "thirdparty-mods", "SkinTone");
+
+            // Info dir exists for this mod
+            _ = _mockFileSystem.Setup(f => f.DirectoryExists(Path.Combine(skinToneDir, "Info"))).Returns(true);
+
+            // Act
+            int result = _deployCommand.Run(["--profile", "all"]);
+
+            // Assert
+            _ = result.Should().Be(0);
+
+            // Verify Info directory was copied
+            _mockFileSystem.Verify(f => f.CopyDirectory(
+                Path.Combine(skinToneDir, "Info"),
+                It.Is<string>(s => s.Contains(Path.Combine("BaseMods", "SkinTone", "Info"))),
+                true), Times.Once);
+        }
+
+        private static PlaywrightConfig CreateDefaultPlaywrightConfig()
+        {
+            return new PlaywrightConfig
+            {
+                DeployTargets =
+                [
+                    new DeployTargetConfig { ProjectName = "LobotomyCorporationMods.Playwright", AssemblyName = "Hemocode.Playwright", DeploySubdir = "BaseMods/Hemocode.Playwright", IsMod = true },
+                    new DeployTargetConfig { ProjectName = "RetargetHarmony", AssemblyName = "RetargetHarmony", DeploySubdir = "patchers/RetargetHarmony", IsMod = false },
+                    new DeployTargetConfig { ProjectName = "LobotomyCorporationMods.BadLuckProtectionForGifts", AssemblyName = "Hemocode.BadLuckProtectionForGifts", DeploySubdir = "BaseMods/Hemocode.BadLuckProtectionForGifts", IsMod = true },
+                    new DeployTargetConfig { ProjectName = "LobotomyCorporationMods.BugFixes", AssemblyName = "Hemocode.BugFixes", DeploySubdir = "BaseMods/Hemocode.BugFixes", IsMod = true },
+                    new DeployTargetConfig { ProjectName = "DebugPanel", AssemblyName = "DebugPanel", DeploySubdir = "BaseMods/DebugPanel", IsMod = true },
+                    new DeployTargetConfig { ProjectName = "LobotomyCorporationMods.FreeCustomization", AssemblyName = "Hemocode.FreeCustomization", DeploySubdir = "BaseMods/Hemocode.FreeCustomization", IsMod = true },
+                    new DeployTargetConfig { ProjectName = "LobotomyCorporationMods.GiftAlertIcon", AssemblyName = "Hemocode.GiftAlertIcon", DeploySubdir = "BaseMods/Hemocode.GiftAlertIcon", IsMod = true },
+                    new DeployTargetConfig { ProjectName = "LobotomyCorporationMods.NotifyWhenAgentReceivesGift", AssemblyName = "Hemocode.NotifyWhenAgentReceivesGift", DeploySubdir = "BaseMods/Hemocode.NotifyWhenAgentReceivesGift", IsMod = true },
+                    new DeployTargetConfig { ProjectName = "LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking", AssemblyName = "Hemocode.WarnWhenAgentWillDieFromWorking", DeploySubdir = "BaseMods/Hemocode.WarnWhenAgentWillDieFromWorking", IsMod = true },
+                    new DeployTargetConfig { ProjectName = "DemoMod.Mod", AssemblyName = "DemoMod", DeploySubdir = "BaseMods/DemoMod", IsMod = true, ProjectPath = "Harmony2ForLmm/DemoMod/DemoMod.Mod/DemoMod.Mod.csproj" },
+                    new DeployTargetConfig { ProjectName = "DemoMod.Patcher", AssemblyName = "DemoMod.Patcher", DeploySubdir = "patchers/DemoMod.Patcher", IsMod = false, ProjectPath = "Harmony2ForLmm/DemoMod/DemoMod.Patcher/DemoMod.Patcher.csproj" }
+                ],
+                Profiles = [],
+                ThirdPartyModsPath = "external/thirdparty-mods",
+                BepInExSourcePath = "Harmony2ForLmm/Resources/bepinex",
+                HarmonyInteropDlls = ["0Harmony109.dll", "0Harmony12.dll", "12Harmony.dll"],
+                HarmonyInteropSourcePath = "RetargetHarmony/lib"
+            };
+        }
+
+        private void SetupPlaywrightConfigWithProfiles()
         {
             // Vanilla snapshot must exist for profile-based deployment
             var vanillaPath = Path.Combine(_repoRoot, "external", "snapshots", "LobotomyCorp_vanilla");
@@ -397,7 +559,8 @@ namespace LobotomyPlaywright.Tests.Commands
             var lmmPath = Path.Combine(_repoRoot, "external", "snapshots", "LobotomyModManager");
             _ = _mockFileSystem.Setup(f => f.DirectoryExists(lmmPath)).Returns(true);
 
-            var profiles = new Dictionary<string, DeploymentProfile>
+            var playwrightConfig = CreateDefaultPlaywrightConfig();
+            playwrightConfig.Profiles = new Dictionary<string, DeploymentProfile>
             {
                 ["vanilla"] = new DeploymentProfile { DeployTargets = [], InstallLmm = false, InstallModLoader = false },
                 ["lmm"] = new DeploymentProfile { DeployTargets = [], InstallLmm = true, InstallModLoader = false },
@@ -442,15 +605,16 @@ namespace LobotomyPlaywright.Tests.Commands
                     IncludeThirdPartyMods = true
                 }
             };
-            _ = _mockProfileLoader.Setup(p => p.Load()).Returns(profiles);
+
+            _ = _mockPlaywrightConfigLoader.Setup(p => p.Load()).Returns(playwrightConfig);
         }
 
         private void SetupSuccessfulBuildAndDeploy()
         {
             _ = _mockFileSystem.Setup(f => f.DirectoryExists(It.IsAny<string>())).Returns(true);
             _ = _mockFileSystem.Setup(f => f.FileExists(It.IsAny<string>())).Returns(true);
-            _ = _mockFileSystem.Setup(f => f.GetFiles(It.IsAny<string>(), "Hemocode.Common.*.dll"))
-                .Returns(["Hemocode.Common.6.0.2.dll"]);
+            _ = _mockFileSystem.Setup(f => f.GetFiles(It.IsAny<string>(), "LobotomyCorporation.Mods.Common.*.dll"))
+                .Returns(["LobotomyCorporation.Mods.Common.6.0.2.dll"]);
             _ = _mockProcessRunner.Setup(p => p.Run(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Func<string?, bool>>()))
                 .Returns(0);
         }
@@ -472,146 +636,5 @@ namespace LobotomyPlaywright.Tests.Commands
             _ = _mockFileSystem.Setup(f => f.GetDirectories(thirdPartyDir, "*"))
                 .Returns(modDirs.ToArray());
         }
-
-        [Fact]
-        public void Run_with_all_profile_deploys_third_party_mods()
-        {
-            // Arrange
-            SetupProfileLoader();
-            SetupSuccessfulBuildAndDeploy();
-            SetupThirdPartyMods(("SkinTone", "SkinTone.dll"), ("AnotherMod", "AnotherMod.dll"));
-
-            // Act
-            int result = _deployCommand.Run(["--profile", "all"]);
-
-            // Assert
-            _ = result.Should().Be(0);
-
-            // Verify third-party DLLs deployed to BaseMods
-            _mockFileSystem.Verify(f => f.CopyFile(
-                It.Is<string>(s => s.Contains("SkinTone.dll")),
-                It.Is<string>(s => s.Contains(Path.Combine("BaseMods", "SkinTone"))),
-                true), Times.Once);
-            _mockFileSystem.Verify(f => f.CopyFile(
-                It.Is<string>(s => s.Contains("AnotherMod.dll")),
-                It.Is<string>(s => s.Contains(Path.Combine("BaseMods", "AnotherMod"))),
-                true), Times.Once);
-        }
-
-        [Fact]
-        public void Run_with_dev_profile_does_not_deploy_third_party_mods()
-        {
-            // Arrange
-            SetupProfileLoader();
-            SetupSuccessfulBuildAndDeploy();
-            SetupThirdPartyMods(("SkinTone", "SkinTone.dll"));
-
-            // Act
-            int result = _deployCommand.Run(["--profile", "dev"]);
-
-            // Assert
-            _ = result.Should().Be(0);
-
-            // Third-party mod should NOT be deployed
-            _mockFileSystem.Verify(f => f.CopyFile(
-                It.Is<string>(s => s.Contains("SkinTone.dll")),
-                It.IsAny<string>(),
-                true), Times.Never);
-        }
-
-        [Fact]
-        public void Run_with_all_profile_skips_third_party_mod_with_no_dll()
-        {
-            // Arrange
-            SetupProfileLoader();
-            SetupSuccessfulBuildAndDeploy();
-
-            var thirdPartyDir = Path.Combine(_repoRoot, "external", "thirdparty-mods");
-            _ = _mockFileSystem.Setup(f => f.DirectoryExists(thirdPartyDir)).Returns(true);
-
-            var emptyModDir = Path.Combine(thirdPartyDir, "EmptyMod");
-            _ = _mockFileSystem.Setup(f => f.GetDirectories(thirdPartyDir, "*"))
-                .Returns([emptyModDir]);
-            _ = _mockFileSystem.Setup(f => f.GetFiles(emptyModDir, "*.dll"))
-                .Returns([]);
-
-            // Act
-            int result = _deployCommand.Run(["--profile", "all"]);
-
-            // Assert
-            _ = result.Should().Be(0);
-        }
-
-        [Fact]
-        public void Run_with_all_profile_skips_third_party_mod_with_multiple_dlls()
-        {
-            // Arrange
-            SetupProfileLoader();
-            SetupSuccessfulBuildAndDeploy();
-
-            var thirdPartyDir = Path.Combine(_repoRoot, "external", "thirdparty-mods");
-            _ = _mockFileSystem.Setup(f => f.DirectoryExists(thirdPartyDir)).Returns(true);
-
-            var ambiguousModDir = Path.Combine(thirdPartyDir, "AmbiguousMod");
-            _ = _mockFileSystem.Setup(f => f.GetDirectories(thirdPartyDir, "*"))
-                .Returns([ambiguousModDir]);
-            _ = _mockFileSystem.Setup(f => f.GetFiles(ambiguousModDir, "*.dll"))
-                .Returns([Path.Combine(ambiguousModDir, "Mod.dll"), Path.Combine(ambiguousModDir, "ModHelper.dll")]);
-
-            // Act
-            int result = _deployCommand.Run(["--profile", "all"]);
-
-            // Assert
-            _ = result.Should().Be(0);
-
-            // Neither DLL should be deployed
-            _mockFileSystem.Verify(f => f.CopyFile(
-                It.Is<string>(s => s.Contains("Mod.dll")),
-                It.Is<string>(s => s.Contains(Path.Combine("BaseMods", "AmbiguousMod"))),
-                true), Times.Never);
-        }
-
-        [Fact]
-        public void Run_with_all_profile_handles_missing_third_party_directory()
-        {
-            // Arrange
-            SetupProfileLoader();
-            SetupSuccessfulBuildAndDeploy();
-
-            // Third-party directory does NOT exist (default mock behavior returns false)
-
-            // Act
-            int result = _deployCommand.Run(["--profile", "all"]);
-
-            // Assert - should succeed, just no third-party mods deployed
-            _ = result.Should().Be(0);
-        }
-
-        [Fact]
-        public void Run_with_all_profile_deploys_third_party_mod_content_directories()
-        {
-            // Arrange
-            SetupProfileLoader();
-            SetupSuccessfulBuildAndDeploy();
-            SetupThirdPartyMods(("SkinTone", "SkinTone.dll"));
-
-            var skinToneDir = Path.Combine(_repoRoot, "external", "thirdparty-mods", "SkinTone");
-
-            // Info dir exists for this mod
-            _ = _mockFileSystem.Setup(f => f.DirectoryExists(Path.Combine(skinToneDir, "Info"))).Returns(true);
-
-            // Act
-            int result = _deployCommand.Run(["--profile", "all"]);
-
-            // Assert
-            _ = result.Should().Be(0);
-
-            // Verify Info directory was copied
-            _mockFileSystem.Verify(f => f.CopyDirectory(
-                Path.Combine(skinToneDir, "Info"),
-                It.Is<string>(s => s.Contains(Path.Combine("BaseMods", "SkinTone", "Info"))),
-                true), Times.Once);
-        }
     }
 }
-

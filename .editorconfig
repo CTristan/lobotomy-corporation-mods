@@ -201,20 +201,12 @@ dotnet_diagnostic.CA1515.severity = none
 # WHY: xUnit test methods use underscores in names (descriptive naming convention)
 dotnet_diagnostic.CA1707.severity = none
 
-# WHY: Assertion libraries (AwesomeAssertions) and test setup (Directory.CreateDirectory) return values that are intentionally unused
 dotnet_diagnostic.IDE0058.severity = none
 
 # WHY: All Harmony_Patch classes share these conventions
 [{Harmony_Patch.cs,**/Harmony_Patch.cs}]
 # WHY: Harmony_Patch class names contain underscores (Basemod convention)
 dotnet_diagnostic.CA1707.severity = none
-
-# WHY: HarmonyDebugPanel must never crash the game. Plugin lifecycle methods (Awake, Update, OnGUI)
-# and diagnostic collectors use reflection to inspect loaded assemblies at runtime. Any exception
-# type can occur and must be caught. Caught exceptions are collected and displayed in the panel's
-# Warnings section.
-[{HarmonyDebugPanel,**/HarmonyDebugPanel}/{*.cs,**/*.cs}]
-dotnet_diagnostic.CA1031.severity = none
 
 # WHY: These are required for JsonUtility serialization
 [{JsonModels,**/JsonModels}/{*.cs,**/*.cs}]
@@ -227,55 +219,8 @@ dotnet_diagnostic.CA1051.severity = none
 # WHY: JsonUtility data classes require public lowercase fields and case-differing PascalCase accessors — Unity's serializer only works with public fields
 dotnet_diagnostic.CA1708.severity = none
 
-# WHY: LobotomyPlaywright CLI is a testing tool. Command handlers catch Exception to log errors,
-# attempt to send a shutdown command to the game via TCP, and return proper exit codes. General
-# exception catching is intentional for TCP communication where exception types are unpredictable.
-[{LobotomyPlaywright,**/LobotomyPlaywright}/{*.cs,**/*.cs}]
-dotnet_diagnostic.CA1031.severity = none
-
-# WHY: LobotomyPlaywright.Plugin is an automated testing tool. Any caught exception logs the error
-# and immediately shuts down the game to make failures loud and obvious. General exception catching
-# is intentional — the plugin uses reflection to access game internals where exception types are
-# unpredictable.
-[{LobotomyPlaywright.Plugin,**/LobotomyPlaywright.Plugin}/{*.cs,**/*.cs}]
-dotnet_diagnostic.CA1031.severity = none
-
 # WHY: Harmony patches use __ prefixed parameters (__instance, __result) that violate naming rules
 [{Patches,**/Patches}/{*.cs,**/*.cs}]
 dotnet_diagnostic.IDE1006.severity = none
 dotnet_diagnostic.CA1707.severity = none
 
-# WHY: LobotomyCorporationMods.Playwright is an automated testing tool that uses reflection to
-# access game internals where exception types are unpredictable. General exception catching is
-# intentional — the plugin logs errors and shuts down the game to make failures loud and obvious.
-[{LobotomyCorporationMods.Playwright,**/LobotomyCorporationMods.Playwright}/{*.cs,**/*.cs}]
-dotnet_diagnostic.CA1031.severity = none
-
-# WHY: RetargetHarmony is a BepInEx preloader patcher — an unhandled exception here prevents
-# ALL mods from loading. General exception catching is intentional to ensure patcher resilience.
-[{RetargetHarmony,**/RetargetHarmony}/{*.cs,**/*.cs}]
-dotnet_diagnostic.CA1031.severity = none
-# WHY: net35 target does not support using declarations (C# 8+), so nested using statements are required.
-dotnet_diagnostic.RCS1005.severity = none
-
-# WHY: DemoMod is a showcase/verification mod. GetMaxSuccessRate() must be a method (not property)
-# because it is called via IL OpCodes.Call in a Harmony transpiler. Harmony instances are
-# intentionally long-lived (plugin lifetime) and should not be disposed.
-[{DemoMod.Mod,**/DemoMod.Mod}/{*.cs,**/*.cs}]
-dotnet_diagnostic.CA1024.severity = none
-# WHY: "Mod" conflicts with VB.NET keyword (CA1716), but DemoMod is a showcase project not consumed as a library.
-dotnet_diagnostic.CA1716.severity = none
-dotnet_diagnostic.CA2000.severity = none
-[{DemoMod.Patcher,**/DemoMod.Patcher}/{*.cs,**/*.cs}]
-dotnet_diagnostic.RCS1005.severity = none
-
-# WHY: Harmony2ForLmm is a UI installer app. Command handlers are top-level UI entry points where
-# crashing is worse than catching broadly — errors are displayed in the status bar.
-[{Harmony2ForLmm,**/Harmony2ForLmm}/{*.cs,**/*.cs}]
-dotnet_diagnostic.CA1031.severity = none
-
-# WHY: DebugPanel uses reflection to inspect Harmony internals, AppDomain assemblies, and BepInEx APIs
-# at runtime. General exception catching is intentional — reflection can throw any exception type
-# and must degrade gracefully rather than crashing.
-[{DebugPanel,**/DebugPanel}/{*.cs,**/*.cs}]
-dotnet_diagnostic.CA1031.severity = none

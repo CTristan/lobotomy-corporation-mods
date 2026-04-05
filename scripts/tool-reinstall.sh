@@ -17,13 +17,12 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # List of local tools in this repo
-LOCAL_TOOLS="ci playwright"
+LOCAL_TOOLS="ci"
 
 # Function to get project directory for a tool
 get_project_dir() {
     case "$1" in
         ci) echo "CI" ;;
-        playwright) echo "LobotomyPlaywright" ;;
         *) echo "" ;;
     esac
 }

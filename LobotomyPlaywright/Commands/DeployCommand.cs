@@ -25,27 +25,10 @@ namespace LobotomyPlaywright.Commands
     /// <param name="gameRestorer">The game restorer.</param>
     /// <param name="lmmInstaller">The LMM installer.</param>
     /// <param name="bepInExInstaller">The BepInEx installer.</param>
-    /// <param name="profileLoader">The profile loader.</param>
-    public class DeployCommand(IConfigManager configManager, IFileSystem fileSystem, IProcessRunner processRunner, IGameRestorer gameRestorer, ILmmInstaller lmmInstaller, IBepInExInstaller bepInExInstaller, IProfileLoader profileLoader)
+    /// <param name="playwrightConfigLoader">The playwright config loader.</param>
+    public class DeployCommand(IConfigManager configManager, IFileSystem fileSystem, IProcessRunner processRunner, IGameRestorer gameRestorer, ILmmInstaller lmmInstaller, IBepInExInstaller bepInExInstaller, IPlaywrightConfigLoader playwrightConfigLoader)
     {
-        private static readonly string[] s_harmonyInteropDlls = { "0Harmony109.dll", "0Harmony12.dll", "12Harmony.dll" };
         private static readonly string[] s_modContentDirs = { "Info", "Assets", "Localize", "Data" };
-        private const string ThirdPartyModsRelativePath = "external/thirdparty-mods";
-
-        private static readonly DeploymentTarget[] s_deploymentTargets =
-        [
-            new("LobotomyCorporationMods.Playwright", "Hemocode.Playwright", "BaseMods/Hemocode.Playwright", true),
-            new("RetargetHarmony", "RetargetHarmony", "patchers/RetargetHarmony", false),
-            new("LobotomyCorporationMods.BadLuckProtectionForGifts", "Hemocode.BadLuckProtectionForGifts", "BaseMods/Hemocode.BadLuckProtectionForGifts", true),
-            new("LobotomyCorporationMods.BugFixes", "Hemocode.BugFixes", "BaseMods/Hemocode.BugFixes", true),
-            new("DebugPanel", "DebugPanel", "BaseMods/DebugPanel", true),
-            new("LobotomyCorporationMods.FreeCustomization", "Hemocode.FreeCustomization", "BaseMods/Hemocode.FreeCustomization", true),
-            new("LobotomyCorporationMods.GiftAlertIcon", "Hemocode.GiftAlertIcon", "BaseMods/Hemocode.GiftAlertIcon", true),
-            new("LobotomyCorporationMods.NotifyWhenAgentReceivesGift", "Hemocode.NotifyWhenAgentReceivesGift", "BaseMods/Hemocode.NotifyWhenAgentReceivesGift", true),
-            new("LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking", "Hemocode.WarnWhenAgentWillDieFromWorking", "BaseMods/Hemocode.WarnWhenAgentWillDieFromWorking", true),
-            new("DemoMod.Mod", "DemoMod", "BaseMods/DemoMod", true, "Harmony2ForLmm/DemoMod/DemoMod.Mod/DemoMod.Mod.csproj"),
-            new("DemoMod.Patcher", "DemoMod.Patcher", "patchers/DemoMod.Patcher", false, "Harmony2ForLmm/DemoMod/DemoMod.Patcher/DemoMod.Patcher.csproj"),
-        ];
 
         private readonly IConfigManager _configManager = configManager;
         private readonly IFileSystem _fileSystem = fileSystem;
@@ -53,13 +36,13 @@ namespace LobotomyPlaywright.Commands
         private readonly IGameRestorer _gameRestorer = gameRestorer;
         private readonly ILmmInstaller _lmmInstaller = lmmInstaller;
         private readonly IBepInExInstaller _bepInExInstaller = bepInExInstaller;
-        private readonly IProfileLoader _profileLoader = profileLoader;
+        private readonly IPlaywrightConfigLoader _playwrightConfigLoader = playwrightConfigLoader;
 
         /// <summary>
         /// Initializes a new instance of DeployCommand class with default implementations.
         /// </summary>
         public DeployCommand()
-            : this(new ConfigManager(new FileSystem()), new FileSystem(), new ProcessRunner(), new GameRestorer(new FileSystem()), new LmmInstaller(new FileSystem()), new BepInExInstaller(new FileSystem()), new ProfileLoader(new FileSystem(), Path.GetFullPath("profiles.json")))
+            : this(new ConfigManager(new FileSystem()), new FileSystem(), new ProcessRunner(), new GameRestorer(new FileSystem()), new LmmInstaller(new FileSystem()), new BepInExInstaller(new FileSystem()), new PlaywrightConfigLoader(new FileSystem(), Path.GetFullPath("playwright.json")))
         {
         }
 
@@ -102,29 +85,34 @@ namespace LobotomyPlaywright.Commands
             // Repository root
             var repoRoot = FindRepositoryRoot() ?? throw new InvalidOperationException("Could not find repository root");
 
+            // Load playwright config (deploy targets, profiles, paths)
+            PlaywrightConfig playwrightConfig;
+            try
+            {
+                playwrightConfig = _playwrightConfigLoader.Load();
+            }
+            catch (Exception ex) when (ex is FileNotFoundException or InvalidOperationException)
+            {
+                Console.Error.WriteLine($"ERROR: {ex.Message}");
+                return 1;
+            }
+
+            var allTargets = playwrightConfig.DeployTargets
+                .Select(t => new DeploymentTarget(t.ProjectName, t.AssemblyName, t.DeploySubdir, t.IsMod, t.ProjectPath))
+                .ToArray();
+
             // Resolve profile if specified
             DeploymentProfile? profile = null;
-            var targets = s_deploymentTargets;
+            var targets = allTargets;
 
             if (profileName is not null)
             {
-                Dictionary<string, DeploymentProfile> profiles;
-                try
-                {
-                    profiles = _profileLoader.Load();
-                }
-                catch (Exception ex) when (ex is FileNotFoundException or InvalidOperationException)
-                {
-                    Console.Error.WriteLine($"ERROR: {ex.Message}");
-                    return 1;
-                }
-
-                if (!profiles.TryGetValue(profileName, out profile))
+                if (!playwrightConfig.Profiles.TryGetValue(profileName, out profile))
                 {
                     Console.Error.WriteLine($"ERROR: Unknown profile '{profileName}'");
-                    if (profiles.Count > 0)
+                    if (playwrightConfig.Profiles.Count > 0)
                     {
-                        Console.Error.WriteLine($"Available profiles: {string.Join(", ", profiles.Keys)}");
+                        Console.Error.WriteLine($"Available profiles: {string.Join(", ", playwrightConfig.Profiles.Keys)}");
                     }
 
                     return 1;
@@ -219,7 +207,9 @@ namespace LobotomyPlaywright.Commands
 
                         if (profile.InstallModLoader)
                         {
-                            var bepInExSourcePath = Path.Combine(repoRoot, "Harmony2ForLmm", "Resources", "bepinex");
+                            var bepInExSourcePath = playwrightConfig.BepInExSourcePath is not null
+                                ? Path.Combine(repoRoot, playwrightConfig.BepInExSourcePath)
+                                : Path.Combine(repoRoot, "BepInEx");
                             _bepInExInstaller.Install(gamePath, bepInExSourcePath);
                         }
                     }
@@ -232,7 +222,7 @@ namespace LobotomyPlaywright.Commands
                 }
 
                 // Filter deployment targets to profile
-                targets = s_deploymentTargets
+                targets = allTargets
                     .Where(t => profile.DeployTargets.Contains(t.ProjectName))
                     .ToArray();
             }
@@ -318,13 +308,14 @@ namespace LobotomyPlaywright.Commands
             Console.WriteLine("Deploying DLLs");
             Console.WriteLine("".PadRight(60, '='));
 
-            var deployInteropDlls = profile?.InstallModLoader != false;
+            var deployInteropDlls = profile?.InstallModLoader != false
+                && playwrightConfig.HarmonyInteropDlls is { Count: > 0 };
 
             // Discover third-party mods if profile enables it
             var thirdPartyMods = new List<(string ModName, string DllPath, string ModDir)>();
             if (profile?.IncludeThirdPartyMods == true)
             {
-                thirdPartyMods = DiscoverThirdPartyMods(repoRoot);
+                thirdPartyMods = DiscoverThirdPartyMods(repoRoot, playwrightConfig.ThirdPartyModsPath);
             }
 
             if (dryRun)
@@ -355,7 +346,7 @@ namespace LobotomyPlaywright.Commands
 
                 if (deployInteropDlls)
                 {
-                    foreach (var dllName in s_harmonyInteropDlls)
+                    foreach (var dllName in playwrightConfig.HarmonyInteropDlls!)
                     {
                         Console.WriteLine();
                         Console.WriteLine($"Would deploy {dllName} to:");
@@ -384,10 +375,14 @@ namespace LobotomyPlaywright.Commands
 
                 if (deployInteropDlls)
                 {
-                    foreach (var dllName in s_harmonyInteropDlls)
+                    var interopSourcePath = playwrightConfig.HarmonyInteropSourcePath is not null
+                        ? Path.Combine(repoRoot, playwrightConfig.HarmonyInteropSourcePath)
+                        : repoRoot;
+
+                    foreach (var dllName in playwrightConfig.HarmonyInteropDlls!)
                     {
                         Console.WriteLine($"DEBUG: Deploying interop DLL: {dllName}");
-                        DeployInteropDll(repoRoot, dllName, gamePath);
+                        DeployInteropDll(interopSourcePath, dllName, gamePath);
                     }
                 }
 
@@ -536,7 +531,7 @@ namespace LobotomyPlaywright.Commands
             var destDir = GetDeployDestDir(gamePath, destSubdir);
 
             // Deploy Common DLL
-            var commonDlls = _fileSystem.GetFiles(sourceDir, "Hemocode.Common.*.dll");
+            var commonDlls = _fileSystem.GetFiles(sourceDir, "LobotomyCorporation.Mods.Common.*.dll");
             foreach (var commonDll in commonDlls)
             {
                 var destCommonDll = Path.Combine(destDir, Path.GetFileName(commonDll));
@@ -557,25 +552,18 @@ namespace LobotomyPlaywright.Commands
             }
         }
 
-        private void DeployInteropDll(string repoRoot, string dllName, string gamePath)
+        private void DeployInteropDll(string interopSourcePath, string dllName, string gamePath)
         {
             // Special case: 12Harmony.dll is needed for mods that reference Harmony 1.2 by that name
             // Copy from 0Harmony12.dll since they're the same library
-            string sourceDll;
-            if (dllName == "12Harmony.dll")
-            {
-                sourceDll = Path.Combine(repoRoot, "RetargetHarmony", "lib", "0Harmony12.dll");
-            }
-            else
-            {
-                sourceDll = Path.Combine(repoRoot, "RetargetHarmony", "lib", dllName);
-            }
+            var sourceFileName = dllName == "12Harmony.dll" ? "0Harmony12.dll" : dllName;
+            var sourceDll = Path.Combine(interopSourcePath, sourceFileName);
 
             if (!_fileSystem.FileExists(sourceDll))
             {
                 throw new FileNotFoundException(
                     $"Harmony interop DLL not found: {sourceDll}\n" +
-                    $"Expected vendored DLLs from BepInEx/HarmonyInteropDlls in RetargetHarmony/lib/");
+                    $"Expected vendored DLLs in {interopSourcePath}");
             }
 
             var destPath = DeployDll(sourceDll, gamePath, "core");
@@ -610,10 +598,10 @@ namespace LobotomyPlaywright.Commands
             return Path.Combine(gamePath, "BepInEx", destSubdir);
         }
 
-        private List<(string ModName, string DllPath, string ModDir)> DiscoverThirdPartyMods(string repoRoot)
+        private List<(string ModName, string DllPath, string ModDir)> DiscoverThirdPartyMods(string repoRoot, string? thirdPartyModsRelativePath)
         {
             var mods = new List<(string ModName, string DllPath, string ModDir)>();
-            var thirdPartyDir = Path.Combine(repoRoot, ThirdPartyModsRelativePath);
+            var thirdPartyDir = Path.Combine(repoRoot, thirdPartyModsRelativePath ?? "external/thirdparty-mods");
 
             if (!_fileSystem.DirectoryExists(thirdPartyDir))
             {
@@ -674,11 +662,6 @@ namespace LobotomyPlaywright.Commands
                     return dir;
                 }
 
-                if (_fileSystem.FileExists(Path.Combine(dir, "LobotomyCorporationMods.sln")))
-                {
-                    return dir;
-                }
-
                 dir = Path.GetDirectoryName(dir);
             }
 
@@ -711,7 +694,7 @@ namespace LobotomyPlaywright.Commands
             return false;
         }
 
-        private record DeploymentTarget(string ProjectName, string AssemblyName, string DeploySubdir, bool IsMod, string? ProjectPath = null);
+        internal record DeploymentTarget(string ProjectName, string AssemblyName, string DeploySubdir, bool IsMod, string? ProjectPath = null);
 
         internal sealed class BuildFailedException : Exception
         {
