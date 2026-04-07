@@ -148,12 +148,11 @@ packaged as NuGet packages. Use the helper scripts in `scripts/` to rebuild and
 update these tools automatically with proper cache clearing:
 
 ```sh
-# Reinstall all local tools (CI, Playwright) - use this after updating any tool
+# Reinstall all local tools (CI) - use this after updating any tool
 ./scripts/tool-reinstall.sh
 
 # Reinstall a specific tool
 ./scripts/tool-reinstall.sh ci
-./scripts/tool-reinstall.sh playwright
 
 # Reinstall the setup tool
 ./scripts/setup-reinstall.sh

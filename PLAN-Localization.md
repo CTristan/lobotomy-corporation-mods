@@ -4,7 +4,7 @@
 
 The mod projects use `Localize/{lang}/text_{lang}.xml` files for localization, loaded by the game's `LocalizeTextDataModel` with a `DefaultLocalizedValues` fallback in Common. Contributors already know this format.
 
-The non-mod tooling projects (LobotomyPlaywright, SetupExternal, CI) currently use hardcoded English string literals. The goal is to bring the same `Localize/{lang}/text_{lang}.xml` convention to these projects so that:
+The non-mod tooling projects (SetupExternal, CI) currently use hardcoded English string literals. The goal is to bring the same `Localize/{lang}/text_{lang}.xml` convention to these projects so that:
 
 1. Community contributors can translate tools using the same workflow they already know from mods
 2. Users can drop translation files next to the executable without rebuilding
@@ -24,11 +24,10 @@ The non-mod tooling projects (LobotomyPlaywright, SetupExternal, CI) currently u
 
 | Project | Priority | Reason |
 |---------|----------|--------|
-| LobotomyPlaywright | High | ~473 user-facing strings, full CLI |
 | SetupExternal | Medium | ~73 strings, setup feedback |
 | CI | Low/Skip | ~20 strings, developer-only |
 
-Start with LobotomyPlaywright as the pilot, then apply the pattern to SetupExternal if it works well.
+Start with SetupExternal as the pilot. LobotomyPlaywright has been extracted to a standalone repo (`~/projects/lobotomy-playwright`).
 
 ## Approach
 
@@ -82,15 +81,7 @@ Check in order:
 - [ ] Add `ToolCommon.Test/` with unit tests (mock filesystem via interface or temp files)
 - [ ] Add both projects to `LobotomyCorporationMods.sln`
 
-### Phase 2: Pilot with LobotomyPlaywright
-- [ ] Create `LobotomyPlaywright/Localize/en/text_en.xml` with all current hardcoded strings
-- [ ] Create `LobotomyPlaywright/Constants/LocalizationIds.cs` with string key constants
-- [ ] Add `ILocalizer` as a dependency in the command classes (inject via constructor or service provider)
-- [ ] Replace hardcoded strings with `_localizer.GetString(LocalizationIds.Key)` calls
-- [ ] Update `.csproj` to copy `Localize/` to output directory
-- [ ] Update existing tests to use mock `ILocalizer`
-
-### Phase 3: SetupExternal (apply same pattern)
+### Phase 2: Pilot with SetupExternal
 - [ ] Create `SetupExternal/Localize/en/text_en.xml`
 - [ ] Create `SetupExternal/Constants/LocalizationIds.cs`
 - [ ] Replace hardcoded strings with localizer calls
@@ -98,10 +89,7 @@ Check in order:
 
 ## Key files to modify
 
-- `LobotomyPlaywright/LobotomyPlaywright.csproj` — add ToolCommon reference, copy Localize/ to output
-- `LobotomyPlaywright/Program.cs` — initialize localizer
-- `LobotomyPlaywright/Commands/*.cs` — replace hardcoded strings (~13 command files)
-- `SetupExternal/SetupExternal.csproj` — same pattern
+- `SetupExternal/SetupExternal.csproj` — add ToolCommon reference, copy Localize/ to output
 - `SetupExternal/Program.cs`, `FileSyncer.cs`, `Decompiler.cs` — replace strings
 
 ## Existing patterns to reuse
@@ -122,6 +110,6 @@ Check in order:
 ## Risks & Considerations
 
 - **String interpolation**: Many current strings use `$"..."` or `string.Format`. The localizer's `GetString(key, args)` must handle format arguments. Need to audit strings for complex interpolation that may not translate cleanly (e.g., different word order in other languages).
-- **Multi-line formatted output**: LobotomyPlaywright has padded banners and tables. These may need to stay as code-constructed output rather than single localized strings.
+- **Multi-line formatted output**: Some tools have padded banners and tables. These may need to stay as code-constructed output rather than single localized strings.
 - **Scope creep**: ~473 strings is a large migration. Consider doing it incrementally — start with command help text and user-facing messages, leave internal debug/log messages as hardcoded.
 - **Testing overhead**: Each replaced string needs test updates. Using `ILocalizer` mock keeps this manageable.

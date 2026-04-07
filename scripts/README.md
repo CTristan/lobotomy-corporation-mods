@@ -4,13 +4,12 @@ This directory contains helper scripts to streamline common development workflow
 
 ## tool-reinstall.sh
 
-Reinstalls **all** local dotnet tools (ci, playwright) with proper cache clearing.
+Reinstalls local dotnet tools with proper cache clearing.
 
 ```bash
 ./scripts/tool-reinstall.sh              # Reinstall all local tools (default)
 ./scripts/tool-reinstall.sh all         # Reinstall all local tools
 ./scripts/tool-reinstall.sh ci          # Reinstall ci only
-./scripts/tool-reinstall.sh playwright  # Reinstall playwright only
 ```
 
 ### What it does
@@ -40,8 +39,6 @@ Without clearing the NuGet cache, `dotnet tool install --local` will reinstall t
 **Use this script whenever you update local tools:**
 
 - After modifying `CI/` project code → run `./scripts/tool-reinstall.sh`
-- After modifying `LobotomyPlaywright/` project code → run `./scripts/tool-reinstall.sh`
-- After modifying both → run `./scripts/tool-reinstall.sh` (no arguments, reinstalls all)
 
 ## setup-reinstall.sh
 
@@ -60,42 +57,9 @@ This follows the same workflow as `tool-reinstall.sh` but for the SetupExternal 
 
 - After modifying `SetupExternal/` project code → run `./scripts/setup-reinstall.sh`
 
-## publish-installer.sh
-
-Builds and publishes the Harmony 2 for LMM installer for distribution.
-
-```bash
-./scripts/publish-installer.sh              # Publish all platforms
-./scripts/publish-installer.sh win-x64      # Publish specific platform
-./scripts/publish-installer.sh --list       # List available platforms
-```
-
-### What it does
-
-1. Validates prerequisites (BepInEx files in `Harmony2ForLmm/Resources/bepinex/`, Harmony DLLs in `RetargetHarmony/lib/`)
-2. Builds `RetargetHarmony.dll` and `DebugPanel.dll` from source
-3. Publishes the installer for each requested platform
-4. Output goes to `publish/<platform>/`
-
-### Platforms
-
-| Platform | Mode |
-|----------|------|
-| `win-x64` | Self-contained, single file, trimmed |
-| `linux-x64` | Self-contained, single file, trimmed |
-| `osx-arm64` | Self-contained, single file, trimmed |
-
-### Prerequisites
-
-- BepInEx 5.4.23.5 (win_x64) distribution files must be in `Harmony2ForLmm/Resources/bepinex/`
-- `0Harmony109.dll` must be in `RetargetHarmony/lib/`
-
 ## Usage Example
 
 ```bash
-# After making changes to LobotomyPlaywright or its plugins:
-./scripts/tool-reinstall.sh
-
 # After making changes to CI:
 ./scripts/tool-reinstall.sh
 
@@ -104,7 +68,5 @@ Builds and publishes the Harmony 2 for LMM installer for distribution.
 
 # Now the tools are ready to use with the latest changes:
 dotnet ci
-dotnet playwright deploy
-dotnet playwright launch
 dotnet setup
 ```

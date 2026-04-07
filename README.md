@@ -12,15 +12,6 @@ Requires either [Lobotomy Mod Manager](https://www.nexusmods.com/site/mods/765)
 or [Basemod](https://www.nexusmods.com/lobotomycorporation/mods/2) (included in
 LMM).
 
-## BepInEx Tools
-
-This repository also includes BepInEx diagnostics/infrastructure components:
-
-- [RetargetHarmony](RetargetHarmony/README.md) — BepInEx preloader patcher for
-  Harmony 1 + Harmony 2 coexistence.
-- [HarmonyDebugPanel](HarmonyDebugPanel/README.md) — BepInEx plugin with
-  startup diagnostics and in-game Harmony overlay.
-
 ## Nexus Mods pages
 
 - [Bad Luck Protection for Gifts](https://www.nexusmods.com/lobotomycorporation/mods/476)

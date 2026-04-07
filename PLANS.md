@@ -6,7 +6,6 @@ Tracks all planning documents in the repository. Plans are generated via the `/p
 
 | Status | Plan | File | Progress | Summary |
 |--------|------|------|----------|---------|
-| Active | LobotomyPlaywright | [`PLAN-LobotomyPlaywright.md`](PLAN-LobotomyPlaywright.md) | 74/194 (38%) | Agent-driven game observability and control bridge |
 | Draft | RetargetHarmony Improvements | [`PLAN-RetargetHarmonyRefactor.md`](PLAN-RetargetHarmonyRefactor.md) | 0/17 (0%) | Config dedup, dead code cleanup, test coverage |
 | Draft | Unified XML Localization | [`PLAN-Localization.md`](PLAN-Localization.md) | 0/16 (0%) | Localization system for tooling projects |
 | Draft | ConfigurationManager | [`PLAN-ConfigurationManager.md`](PLAN-ConfigurationManager.md) | 0/27 (0%) | Shared config API in Common + BepInEx-free ConfigurationManager fork as git submodule |

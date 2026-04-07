@@ -1,3 +1,7 @@
+# Instructions
+
+This file provides guidance when working with code in this repository.
+
 # Project Guidelines
 
 ## Architecture
@@ -21,12 +25,6 @@ Game DLLs: `external/LobotomyCorp_Data/Managed/` (not committed — `dotnet setu
 
 Each mod has: `Harmony_Patch.cs` (sealed singleton extending `HarmonyPatchBase`), `Patches/` (one file per patched method), optional `Interfaces/`, `Implementations/`, and `Info/` (metadata XML).
 
-### BepInEx patcher (RetargetHarmony)
-
-`RetargetHarmony` is a BepInEx **preloader patcher** using Mono.Cecil types:
-- `TypeLoader.AssemblyResolve` uses delegate `AssemblyDefinition handler(object sender, AssemblyNameReference reference)` — do NOT change to `System.Reflection.ResolveEventArgs` / `Assembly`
-- `Patch(AssemblyDefinition asm)` receives Mono.Cecil objects for IL modification
-
 ### Key conventions
 
 - Common's `AssemblyName` embeds its version (`LobotomyCorporationMods.Common.$(AssemblyVersion)`) to prevent Basemod DLL conflicts
@@ -49,6 +47,8 @@ Each patch file has a static class named `{OriginalClass}Patch{MethodName}` with
 1. **Testable business logic** — public extension method on the game type (e.g., `PatchAfterGetProb`)
 2. **Harmony entry point** (`Postfix`/`Prefix`) — `[EntryPoint]` + `[ExcludeFromCodeCoverage]`, delegates to the extension method inside try/catch logging via `Harmony_Patch.Instance.Logger.WriteException(ex)`
 
+**Prefer Postfix** patches over Prefix. Prefix modifies game state before the method runs, which can break other mods. Only use Prefix when Postfix won't work, and add a comment explaining why.
+
 See existing patch files for the full template.
 
 ## Build and Test
@@ -57,11 +57,11 @@ See existing patch files for the full template.
 
 | Script | Purpose |
 |--------|---------|
-| `tool-reinstall.sh [name|all]` | Clean-build, repack, cache-clear, and reinstall local dotnet tools. No arguments reinstalls all (ci, playwright). |
+| `tool-reinstall.sh [name|all]` | Clean-build, repack, cache-clear, and reinstall local dotnet tools. No arguments reinstalls all (ci). |
 | `setup-reinstall.sh [name]` | Same workflow for SetupExternal tool (default: `setup`) |
 | `rename-assembly.csx` | Mono.Cecil script to rename a DLL's assembly name |
 
-**Always run `./scripts/tool-reinstall.sh` after updating any local tool (CI or Playwright).**
+**Always run `./scripts/tool-reinstall.sh` after updating any local tool (CI).**
 
 ```sh
 dotnet tool restore && dotnet setup    # Initial setup
@@ -69,7 +69,19 @@ dotnet build LobotomyCorporationMods.sln
 dotnet test /p:CollectCoverage=true /p:CoverletOutput="./coverage.opencover.xml" /p:CoverletOutputFormat=opencover LobotomyCorporationMods.sln
 dotnet ci                              # Auto-fix format + test
 dotnet ci --check                      # Verify mode (no auto-fix)
+dotnet ci --setup-hooks                # Install pre-commit git hook
 ```
+
+### Running a single test
+
+```sh
+dotnet test --filter "FullyQualifiedName~ClassName.MethodName" LobotomyCorporationMods.sln
+dotnet test --filter "FullyQualifiedName~BadLuckProtection" LobotomyCorporationMods.sln  # all tests in a mod
+```
+
+## Git Workflow
+
+The main integration branch is `develop` (not `main`). PRs target `develop`. CI runs on push/PR to `develop`.
 
 ## Planning
 

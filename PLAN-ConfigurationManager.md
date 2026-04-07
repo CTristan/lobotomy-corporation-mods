@@ -157,8 +157,8 @@ Back in the main repo.
   - Add `submodules: true` to the checkout step
   - Fork builds as part of the solution
 
-- [ ] Add deployment target in `LobotomyPlaywright/Commands/DeployCommand.cs`
-  - New entry in `s_deploymentTargets`: `"LobotomyCorporationMods.ConfigurationManager"` → `"BaseMods/LobotomyCorporationMods.ConfigurationManager"`
+- [ ] Add deployment target in `playwright.json`
+  - New entry in `deployTargets`: `"LobotomyCorporationMods.ConfigurationManager"` → `"BaseMods/LobotomyCorporationMods.ConfigurationManager"`
 
 ### Phase 4: Example Mod Integration
 
@@ -182,7 +182,7 @@ Back in the main repo.
 | `BadLuckProtectionForGifts/Harmony_Patch.cs` | Example mod to integrate first |
 | `external/BepInEx.ConfigurationManager-master/ConfigurationManager.Shared/` | Source material for fork |
 | `.github/workflows/ci.yml` | CI pipeline needing submodule support |
-| `LobotomyPlaywright/Commands/DeployCommand.cs` | Deployment targets list |
+| `playwright.json` | Deployment targets list |
 
 ## BepInEx Replacement Map (Fork)
 

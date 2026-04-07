@@ -3,9 +3,9 @@
 #
 # Helper script to clean NuGet cache and reinstall local dotnet tool(s)
 # Usage: ./scripts/tool-reinstall.sh [tool-name|all]
-#   tool-name: Name of the tool (without package ID, e.g., "playwright" for lobotomycorporationmods.playwright)
+#   tool-name: Name of the tool (e.g., "ci" for lobotomycorporationmods.ci)
 #              If not specified, reinstalls all local tools
-#   all:       Reinstall all local tools (ci, playwright)
+#   all:       Reinstall all local tools (ci)
 
 set -euo pipefail
 
