@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using AwesomeAssertions;
 using Customizing;
 using JetBrains.Annotations;
-using Hemocode.Common.Interfaces.Adapters;
+using LobotomyCorporation.Mods.Common.Interfaces.Adapters;
 using Hemocode.FreeCustomization.Patches;
 using LobotomyCorporationMods.Test.Extensions;
 using Moq;

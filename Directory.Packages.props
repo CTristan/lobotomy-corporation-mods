@@ -6,17 +6,9 @@
   <ItemGroup>
     <PackageVersion Include="AutoFixture.AutoMoq" Version="4.18.1" />
     <PackageVersion Include="AutoFixture.Xunit3" Version="4.19.0" />
-    <PackageVersion Include="Avalonia" Version="11.3.12" />
-    <PackageVersion Include="Avalonia.Desktop" Version="11.3.12" />
-    <PackageVersion Include="Avalonia.Themes.Fluent" Version="11.3.12" />
-    <PackageVersion Include="Avalonia.Fonts.Inter" Version="11.3.12" />
     <PackageVersion Include="AwesomeAssertions" Version="9.4.0" />
-    <PackageVersion Include="BepInEx.Analyzers" Version="1.0.8" />
-    <PackageVersion Include="LiveMarkdown.Avalonia" Version="1.9.1" />
-    <PackageVersion Include="BepInEx.BaseLib" Version="5.4.21" />
-    <PackageVersion Include="BepInEx.Core" Version="5.4.21" />
-    <PackageVersion Include="HarmonyX" Version="2.7.0" />
-    <PackageVersion Include="BepInEx.PluginInfoProps" Version="2.1.0" />
+    <PackageVersion Include="LobotomyCorporation.Mods.Common" Version="6.1.0" />
+
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
     <PackageVersion Include="Mono.Cecil" Version="0.11.6" />
     <PackageVersion Include="Moq" Version="4.20.72" />

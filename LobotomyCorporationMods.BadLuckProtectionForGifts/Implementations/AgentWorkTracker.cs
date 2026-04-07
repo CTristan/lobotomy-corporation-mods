@@ -9,8 +9,8 @@ using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
 using Hemocode.BadLuckProtectionForGifts.Interfaces;
-using Hemocode.Common.Extensions;
-using Hemocode.Common.Interfaces;
+using LobotomyCorporation.Mods.Common.Extensions;
+using LobotomyCorporation.Mods.Common.Interfaces;
 
 #endregion
 

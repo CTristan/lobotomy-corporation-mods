@@ -2,7 +2,7 @@
 
 #region
 
-using Hemocode.Common.Enums;
+using LobotomyCorporation.Mods.Common.Enums;
 using Hemocode.WarnWhenAgentWillDieFromWorking.Interfaces;
 
 #endregion

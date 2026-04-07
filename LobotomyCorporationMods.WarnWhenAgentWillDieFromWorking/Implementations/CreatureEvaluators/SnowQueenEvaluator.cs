@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-using Hemocode.Common.Enums;
+using LobotomyCorporation.Mods.Common.Enums;
 using Hemocode.WarnWhenAgentWillDieFromWorking.Interfaces;
 
 namespace Hemocode.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators

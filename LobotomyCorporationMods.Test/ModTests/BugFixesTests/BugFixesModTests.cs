@@ -4,7 +4,7 @@
 
 using JetBrains.Annotations;
 using Hemocode.BugFixes;
-using Hemocode.Common.Interfaces;
+using LobotomyCorporation.Mods.Common.Interfaces;
 using Moq;
 
 #endregion

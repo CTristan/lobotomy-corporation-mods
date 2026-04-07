@@ -4,7 +4,7 @@
 
 using Hemocode.BadLuckProtectionForGifts.Implementations;
 using Hemocode.BadLuckProtectionForGifts.Interfaces;
-using Hemocode.Common.Implementations;
+using LobotomyCorporation.Mods.Common.Implementations;
 
 #endregion
 

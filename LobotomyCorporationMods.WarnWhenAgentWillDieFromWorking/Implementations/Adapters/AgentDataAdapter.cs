@@ -5,10 +5,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
-using Hemocode.Common.Attributes;
-using Hemocode.Common.Constants;
-using Hemocode.Common.Enums;
-using Hemocode.Common.Implementations;
+using LobotomyCorporation.Mods.Common.Attributes;
+using LobotomyCorporation.Mods.Common.Constants;
+using LobotomyCorporation.Mods.Common.Enums;
+using LobotomyCorporation.Mods.Common.Implementations;
 using Hemocode.WarnWhenAgentWillDieFromWorking.Interfaces;
 
 #endregion

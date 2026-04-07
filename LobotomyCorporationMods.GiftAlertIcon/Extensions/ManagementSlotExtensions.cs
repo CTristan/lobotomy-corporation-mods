@@ -5,10 +5,10 @@
 using System.Text;
 using CommandWindow;
 using JetBrains.Annotations;
-using Hemocode.Common.Extensions;
-using Hemocode.Common.Implementations.Facades;
-using Hemocode.Common.Interfaces;
-using Hemocode.Common.ParameterObjects;
+using LobotomyCorporation.Mods.Common.Extensions;
+using LobotomyCorporation.Mods.Common.Implementations.Facades;
+using LobotomyCorporation.Mods.Common.Interfaces;
+using LobotomyCorporation.Mods.Common.ParameterObjects;
 using Hemocode.GiftAlertIcon.Constants;
 using UnityEngine;
 

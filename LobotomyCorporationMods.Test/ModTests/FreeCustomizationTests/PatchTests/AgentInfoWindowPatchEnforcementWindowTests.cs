@@ -3,8 +3,8 @@
 #region
 
 using Customizing;
-using Hemocode.Common.Interfaces.Adapters;
-using Hemocode.Common.Interfaces.Adapters.BaseClasses;
+using LobotomyCorporation.Mods.Common.Interfaces.Adapters;
+using LobotomyCorporation.Mods.Common.Interfaces.Adapters.BaseClasses;
 using Hemocode.FreeCustomization.Patches;
 using Moq;
 using Xunit;

@@ -3,7 +3,7 @@
 #region
 
 using JetBrains.Annotations;
-using Hemocode.Common.Interfaces.Adapters;
+using LobotomyCorporation.Mods.Common.Interfaces.Adapters;
 using Hemocode.WarnWhenAgentWillDieFromWorking.Interfaces;
 
 #endregion

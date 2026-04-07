@@ -7,11 +7,11 @@ using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
 using JetBrains.Annotations;
-using Hemocode.Common.Attributes;
-using Hemocode.Common.Constants;
-using Hemocode.Common.Implementations;
-using Hemocode.Common.Implementations.Facades;
-using Hemocode.Common.Interfaces.Adapters;
+using LobotomyCorporation.Mods.Common.Attributes;
+using LobotomyCorporation.Mods.Common.Constants;
+using LobotomyCorporation.Mods.Common.Implementations;
+using LobotomyCorporation.Mods.Common.Implementations.Facades;
+using LobotomyCorporation.Mods.Common.Interfaces.Adapters;
 
 #endregion
 

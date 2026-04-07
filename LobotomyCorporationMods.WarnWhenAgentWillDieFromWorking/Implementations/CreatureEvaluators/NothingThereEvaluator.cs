@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-using Hemocode.Common.Extensions;
+using LobotomyCorporation.Mods.Common.Extensions;
 using Hemocode.WarnWhenAgentWillDieFromWorking.Interfaces;
 
 namespace Hemocode.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators

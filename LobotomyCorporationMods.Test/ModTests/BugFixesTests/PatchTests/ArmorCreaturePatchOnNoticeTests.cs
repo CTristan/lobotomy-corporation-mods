@@ -5,7 +5,7 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using Hemocode.BugFixes.Patches;
-using Hemocode.Common.Interfaces.Adapters;
+using LobotomyCorporation.Mods.Common.Interfaces.Adapters;
 using Moq;
 using Xunit;
 

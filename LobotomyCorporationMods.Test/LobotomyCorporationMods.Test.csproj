@@ -9,6 +9,8 @@
         <OutputType>Library</OutputType>
         <Nullable>enable</Nullable>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <!-- NU1701: Common NuGet package targets net35; compatible with net10.0 via .NET Framework fallback -->
+        <NoWarn>$(NoWarn);NU1701</NoWarn>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="AutoFixture.AutoMoq" />
@@ -44,7 +46,7 @@
         <ProjectReference Include="..\LobotomyCorporationMods.FreeCustomization\LobotomyCorporationMods.FreeCustomization.csproj"/>
         <ProjectReference Include="..\LobotomyCorporationMods.GiftAlertIcon\LobotomyCorporationMods.GiftAlertIcon.csproj"/>
         <ProjectReference Include="..\LobotomyCorporationMods.NotifyWhenAgentReceivesGift\LobotomyCorporationMods.NotifyWhenAgentReceivesGift.csproj"/>
-        <ProjectReference Include="..\DebugPanel\DebugPanel.csproj"/>
+
         <ProjectReference Include="..\LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking\LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.csproj"/>
     </ItemGroup>
     <ItemGroup>

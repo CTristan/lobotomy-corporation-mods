@@ -5,9 +5,9 @@
 using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using Hemocode.Common.Enums;
-using Hemocode.Common.Extensions;
-using Hemocode.Common.Interfaces.Adapters;
+using LobotomyCorporation.Mods.Common.Enums;
+using LobotomyCorporation.Mods.Common.Extensions;
+using LobotomyCorporation.Mods.Common.Interfaces.Adapters;
 using Hemocode.WarnWhenAgentWillDieFromWorking.Implementations;
 using Hemocode.WarnWhenAgentWillDieFromWorking.Implementations.Adapters;
 using Hemocode.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators;

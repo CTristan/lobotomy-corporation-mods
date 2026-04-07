@@ -6,12 +6,12 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Harmony;
-using Hemocode.Common.Attributes;
-using Hemocode.Common.Constants;
-using Hemocode.Common.Extensions;
-using Hemocode.Common.Implementations;
-using Hemocode.Common.Implementations.Facades;
-using Hemocode.Common.Interfaces.Adapters.BaseClasses;
+using LobotomyCorporation.Mods.Common.Attributes;
+using LobotomyCorporation.Mods.Common.Constants;
+using LobotomyCorporation.Mods.Common.Extensions;
+using LobotomyCorporation.Mods.Common.Implementations;
+using LobotomyCorporation.Mods.Common.Implementations.Facades;
+using LobotomyCorporation.Mods.Common.Interfaces.Adapters.BaseClasses;
 using Hemocode.NotifyWhenAgentReceivesGift.Constants;
 
 #endregion

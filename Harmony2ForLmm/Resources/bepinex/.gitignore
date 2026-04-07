@@ -1,5 +1,0 @@
-# macOS artifacts
-.DS_Store
-
-# BepInEx distribution extras not needed for the installer
-changelog.txt

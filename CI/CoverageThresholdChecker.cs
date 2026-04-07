@@ -183,9 +183,7 @@ namespace CI
                    "SetupExternal" or
                    "RetargetHarmony" or
                    "Harmony2ForLmm" or
-                   "HarmonyDebugPanel" or
-                   "LobotomyPlaywright" or
-                   "LobotomyPlaywright.Plugin")
+                   "HarmonyDebugPanel")
             {
                 return true;
             }
@@ -199,7 +197,7 @@ namespace CI
 
             // Skip Common — diagnostic types are primarily tested through DebugPanel,
             // which was decoupled and now uses its own copies of those types
-            if (moduleName.StartsWith("Hemocode.Common", StringComparison.Ordinal))
+            if (moduleName.StartsWith("LobotomyCorporation.Mods.Common", StringComparison.Ordinal))
             {
                 return true;
             }

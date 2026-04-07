@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-using Hemocode.Common.Interfaces.Adapters;
+using LobotomyCorporation.Mods.Common.Interfaces.Adapters;
 
 namespace Hemocode.WarnWhenAgentWillDieFromWorking.Interfaces
 {

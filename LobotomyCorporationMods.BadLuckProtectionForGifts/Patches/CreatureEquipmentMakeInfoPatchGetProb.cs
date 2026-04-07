@@ -5,10 +5,10 @@ using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using JetBrains.Annotations;
 using Hemocode.BadLuckProtectionForGifts.Interfaces;
-using Hemocode.Common.Attributes;
-using Hemocode.Common.Constants;
-using Hemocode.Common.Implementations;
-using Hemocode.Common.Implementations.Facades;
+using LobotomyCorporation.Mods.Common.Attributes;
+using LobotomyCorporation.Mods.Common.Constants;
+using LobotomyCorporation.Mods.Common.Implementations;
+using LobotomyCorporation.Mods.Common.Implementations.Facades;
 
 namespace Hemocode.BadLuckProtectionForGifts.Patches
 {

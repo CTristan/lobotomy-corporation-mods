@@ -2,8 +2,8 @@
 
 using CommandWindow;
 using JetBrains.Annotations;
-using Hemocode.Common.Extensions;
-using Hemocode.Common.Implementations.Facades;
+using LobotomyCorporation.Mods.Common.Extensions;
+using LobotomyCorporation.Mods.Common.Implementations.Facades;
 
 namespace Hemocode.WarnWhenAgentWillDieFromWorking.Extensions
 {

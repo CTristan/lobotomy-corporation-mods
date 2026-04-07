@@ -4,7 +4,7 @@
 
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using Hemocode.Common.Interfaces.Adapters.BaseClasses;
+using LobotomyCorporation.Mods.Common.Interfaces.Adapters.BaseClasses;
 using LobotomyCorporationMods.Test.Extensions;
 using LobotomyCorporationMods.Test.Parameters;
 using Hemocode.WarnWhenAgentWillDieFromWorking;

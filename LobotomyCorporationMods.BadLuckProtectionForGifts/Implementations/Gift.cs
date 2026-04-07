@@ -5,7 +5,7 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using Hemocode.BadLuckProtectionForGifts.Interfaces;
-using Hemocode.Common.Extensions;
+using LobotomyCorporation.Mods.Common.Extensions;
 
 #endregion
 

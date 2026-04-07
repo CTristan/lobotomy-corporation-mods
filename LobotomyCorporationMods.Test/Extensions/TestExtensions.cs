@@ -9,13 +9,13 @@ using System.Linq;
 using System.Reflection;
 using AwesomeAssertions;
 using JetBrains.Annotations;
-using Hemocode.Common.Enums;
-using Hemocode.Common.Extensions;
-using Hemocode.Common.Interfaces;
+using LobotomyCorporation.Mods.Common.Enums;
+using LobotomyCorporation.Mods.Common.Extensions;
+using LobotomyCorporation.Mods.Common.Interfaces;
 using LobotomyCorporationMods.Test.Parameters;
 using Moq;
 using UnityEngine;
-using ILogger = Hemocode.Common.Interfaces.ILogger;
+using ILogger = LobotomyCorporation.Mods.Common.Interfaces.ILogger;
 
 #endregion
 
