@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using Customizing;
 using FluentAssertions;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
+using LobotomyCorporation.Mods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.FreeCustomization.Patches;
 using LobotomyCorporationMods.Test.Extensions;
 using Moq;

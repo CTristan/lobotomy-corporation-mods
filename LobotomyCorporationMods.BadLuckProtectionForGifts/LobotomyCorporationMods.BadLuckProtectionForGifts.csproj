@@ -43,7 +43,9 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LobotomyCorporationMods.Common\LobotomyCorporationMods.Common.csproj"/>
+    <PackageReference Include="LobotomyCorporation.Mods.Common" Version="6.2.0"/>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\LobCorp.ConfigurationManager\LobCorp.ConfigurationManager\LobCorp.ConfigurationManager.csproj">
       <Private>false</Private>
     </ProjectReference>

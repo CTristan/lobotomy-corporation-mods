@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
+using LobotomyCorporation.Mods.Common.Interfaces.Adapters.BaseClasses;
 using LobotomyCorporationMods.Test.Extensions;
 using LobotomyCorporationMods.Test.Parameters;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking;

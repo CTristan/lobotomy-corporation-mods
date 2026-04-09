@@ -6,8 +6,8 @@ using System;
 using System.Collections.Generic;
 using CommandWindow;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Enums;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
+using LobotomyCorporation.Mods.Common.Enums;
+using LobotomyCorporation.Mods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
 

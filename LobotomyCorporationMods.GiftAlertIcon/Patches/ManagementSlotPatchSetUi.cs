@@ -7,13 +7,13 @@ using System.Diagnostics.CodeAnalysis;
 using CommandWindow;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Implementations.Facades;
-using LobotomyCorporationMods.Common.Interfaces;
-using LobotomyCorporationMods.Common.ParameterObjects;
+using LobotomyCorporation.Mods.Common.Attributes;
+using LobotomyCorporation.Mods.Common.Constants;
+using LobotomyCorporation.Mods.Common.Extensions;
+using LobotomyCorporation.Mods.Common.Implementations;
+using LobotomyCorporation.Mods.Common.Implementations.Facades;
+using LobotomyCorporation.Mods.Common.Interfaces;
+using LobotomyCorporation.Mods.Common.ParameterObjects;
 using LobotomyCorporationMods.GiftAlertIcon.Extensions;
 
 #endregion
@@ -31,7 +31,7 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Patches
             [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null
         )
         {
-            Guard.Against.Null(instance, nameof(instance));
+            ThrowHelper.ThrowIfNull(instance, nameof(instance));
             fileManager = fileManager.EnsureNotNullWithMethod(
                 () => Harmony_Patch.Instance.FileManager
             );
@@ -68,8 +68,8 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Patches
         {
             try
             {
-                Guard.Against.Null(__instance, nameof(__instance));
-                Guard.Against.Null(agent, nameof(agent));
+                ThrowHelper.ThrowIfNull(__instance, nameof(__instance));
+                ThrowHelper.ThrowIfNull(agent, nameof(agent));
 
                 const string ImagePath = "Assets/gift.png";
 

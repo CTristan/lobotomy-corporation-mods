@@ -4,8 +4,8 @@
 
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using LobotomyCorporation.Mods.Common.Extensions;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
-using LobotomyCorporationMods.Common.Extensions;
 
 #endregion
 

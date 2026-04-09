@@ -5,10 +5,10 @@
 using System.Text;
 using CommandWindow;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations.Facades;
-using LobotomyCorporationMods.Common.Interfaces;
-using LobotomyCorporationMods.Common.ParameterObjects;
+using LobotomyCorporation.Mods.Common.Extensions;
+using LobotomyCorporation.Mods.Common.Implementations.Facades;
+using LobotomyCorporation.Mods.Common.Interfaces;
+using LobotomyCorporation.Mods.Common.ParameterObjects;
 using LobotomyCorporationMods.GiftAlertIcon.Constants;
 using UnityEngine;
 

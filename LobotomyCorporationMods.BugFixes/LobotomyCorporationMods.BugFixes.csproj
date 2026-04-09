@@ -43,7 +43,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LobotomyCorporationMods.Common\LobotomyCorporationMods.Common.csproj"/>
+    <PackageReference Include="LobotomyCorporation.Mods.Common" Version="6.2.0"/>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Info\en\Info.xml">

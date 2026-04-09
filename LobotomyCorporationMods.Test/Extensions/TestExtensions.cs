@@ -10,13 +10,13 @@ using System.Reflection;
 using FluentAssertions;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Enums;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Interfaces;
+using LobotomyCorporation.Mods.Common.Enums;
+using LobotomyCorporation.Mods.Common.Extensions;
+using LobotomyCorporation.Mods.Common.Interfaces;
 using LobotomyCorporationMods.Test.Parameters;
 using Moq;
 using UnityEngine;
-using ILogger = LobotomyCorporationMods.Common.Interfaces.ILogger;
+using ILogger = LobotomyCorporation.Mods.Common.Interfaces.ILogger;
 
 #endregion
 

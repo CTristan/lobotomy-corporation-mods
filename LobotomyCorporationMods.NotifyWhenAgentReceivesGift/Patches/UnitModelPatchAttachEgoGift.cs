@@ -6,12 +6,12 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Harmony;
-using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Implementations.Facades;
-using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
+using LobotomyCorporation.Mods.Common.Attributes;
+using LobotomyCorporation.Mods.Common.Constants;
+using LobotomyCorporation.Mods.Common.Extensions;
+using LobotomyCorporation.Mods.Common.Implementations;
+using LobotomyCorporation.Mods.Common.Implementations.Facades;
+using LobotomyCorporation.Mods.Common.Interfaces.Adapters.BaseClasses;
 using LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Constants;
 
 #endregion
@@ -27,8 +27,8 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches
             INoticeTestAdapter noticeTestAdapter = null
         )
         {
-            Guard.Against.Null(instance, nameof(instance));
-            Guard.Against.Null(gift, nameof(gift));
+            ThrowHelper.ThrowIfNull(instance, nameof(instance));
+            ThrowHelper.ThrowIfNull(gift, nameof(gift));
 
             // Some gifts are in special slots that don't show up in an agent's gift window and are used for abnormality effects.
             // For example, Snow Queen's icicle

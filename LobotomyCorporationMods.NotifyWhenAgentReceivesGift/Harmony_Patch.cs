@@ -2,7 +2,7 @@
 
 #region
 
-using LobotomyCorporationMods.Common.Implementations;
+using LobotomyCorporation.Mods.Common.Implementations;
 
 #endregion
 

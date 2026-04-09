@@ -4,9 +4,9 @@
 
 using System;
 using System.Security;
+using LobotomyCorporation.Mods.Common.Implementations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
-using LobotomyCorporationMods.Common.Implementations;
 
 #endregion
 

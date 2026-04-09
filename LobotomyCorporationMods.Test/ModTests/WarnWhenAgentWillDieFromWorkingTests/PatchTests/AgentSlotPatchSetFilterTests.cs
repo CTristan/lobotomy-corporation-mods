@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using CommandWindow;
 using FluentAssertions;
-using LobotomyCorporationMods.Common.Enums;
+using LobotomyCorporation.Mods.Common.Enums;
 using LobotomyCorporationMods.Test.Extensions;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches;
 using Xunit;

@@ -2,8 +2,8 @@
 
 using CommandWindow;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations.Facades;
+using LobotomyCorporation.Mods.Common.Extensions;
+using LobotomyCorporation.Mods.Common.Implementations.Facades;
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
 {

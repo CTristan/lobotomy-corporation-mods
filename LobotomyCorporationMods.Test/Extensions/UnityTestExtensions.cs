@@ -8,7 +8,7 @@ using System.Runtime.Serialization;
 using CommandWindow;
 using Customizing;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
+using LobotomyCorporation.Mods.Common.Extensions;
 using LobotomyCorporationMods.Test.Parameters;
 using UnityEngine;
 using UnityEngine.UI;

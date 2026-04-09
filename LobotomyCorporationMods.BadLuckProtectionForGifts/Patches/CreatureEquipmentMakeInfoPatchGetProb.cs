@@ -4,12 +4,12 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using JetBrains.Annotations;
+using LobotomyCorporation.Mods.Common.Attributes;
+using LobotomyCorporation.Mods.Common.Constants;
+using LobotomyCorporation.Mods.Common.Extensions;
+using LobotomyCorporation.Mods.Common.Implementations;
+using LobotomyCorporation.Mods.Common.Implementations.Facades;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
-using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Implementations.Facades;
 
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
 {
@@ -29,9 +29,9 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             [NotNull] IBadLuckProtectionConfig config
         )
         {
-            Guard.Against.Null(instance, nameof(instance));
-            Guard.Against.Null(agentWorkTracker, nameof(agentWorkTracker));
-            Guard.Against.Null(config, nameof(config));
+            ThrowHelper.ThrowIfNull(instance, nameof(instance));
+            ThrowHelper.ThrowIfNull(agentWorkTracker, nameof(agentWorkTracker));
+            ThrowHelper.ThrowIfNull(config, nameof(config));
 
             var giftName = instance.GetAbnormalityGiftName();
             probability = ModifyProbabilityIfGiftNameIsValid(
@@ -90,7 +90,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
         {
             try
             {
-                Guard.Against.Null(__instance, nameof(__instance));
+                ThrowHelper.ThrowIfNull(__instance, nameof(__instance));
 
                 __result = PatchAfterGetProb(
                     __instance,

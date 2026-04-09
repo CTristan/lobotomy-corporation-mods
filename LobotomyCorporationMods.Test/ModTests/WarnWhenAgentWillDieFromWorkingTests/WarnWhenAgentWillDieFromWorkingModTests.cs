@@ -8,11 +8,11 @@ using System.Linq;
 using CommandWindow;
 using FluentAssertions;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Enums;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
-using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
+using LobotomyCorporation.Mods.Common.Enums;
+using LobotomyCorporation.Mods.Common.Extensions;
+using LobotomyCorporation.Mods.Common.Implementations;
+using LobotomyCorporation.Mods.Common.Interfaces.Adapters;
+using LobotomyCorporation.Mods.Common.Interfaces.Adapters.BaseClasses;
 using LobotomyCorporationMods.Test.Extensions;
 using LobotomyCorporationMods.Test.Parameters;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking;
@@ -60,8 +60,8 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
             [NotNull] ITextTestAdapter workFilterTextTest
         )
         {
-            Guard.Against.Null(workFilterFill, nameof(workFilterFill));
-            Guard.Against.Null(workFilterTextTest, nameof(workFilterTextTest));
+            ThrowHelper.ThrowIfNull(workFilterFill, nameof(workFilterFill));
+            ThrowHelper.ThrowIfNull(workFilterTextTest, nameof(workFilterTextTest));
             var agentWillDie =
                 workFilterFill.Color == DeadAgentColor
                 && workFilterTextTest.Text == DeadAgentString;
@@ -121,7 +121,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
             bool isDisguised = false
         )
         {
-            Guard.Against.Null(agentSlot, nameof(agentSlot));
+            ThrowHelper.ThrowIfNull(agentSlot, nameof(agentSlot));
             agentSlot.CurrentAgent.primaryStat.hp = fortitude;
 
             var creature = (CreatureModel)CommandWindow.CommandWindow.CurrentWindow.CurrentTarget;

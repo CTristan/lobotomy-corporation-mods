@@ -7,12 +7,12 @@ using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Implementations.Facades;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
+using LobotomyCorporation.Mods.Common.Attributes;
+using LobotomyCorporation.Mods.Common.Constants;
+using LobotomyCorporation.Mods.Common.Extensions;
+using LobotomyCorporation.Mods.Common.Implementations;
+using LobotomyCorporation.Mods.Common.Implementations.Facades;
+using LobotomyCorporation.Mods.Common.Interfaces.Adapters;
 
 #endregion
 
@@ -28,9 +28,9 @@ namespace LobotomyCorporationMods.BugFixes.Patches
             [CanBeNull] ICustomizingWindowTestAdapter customizingWindowTestAdapter = null
         )
         {
-            Guard.Against.Null(instance, nameof(instance));
-            Guard.Against.Null(agent, nameof(agent));
-            Guard.Against.Null(data, nameof(data));
+            ThrowHelper.ThrowIfNull(instance, nameof(instance));
+            ThrowHelper.ThrowIfNull(agent, nameof(agent));
+            ThrowHelper.ThrowIfNull(data, nameof(data));
 
             // This is our custom fixed update
             instance.UpdateAgentStats(agent, data, customizingWindowTestAdapter);

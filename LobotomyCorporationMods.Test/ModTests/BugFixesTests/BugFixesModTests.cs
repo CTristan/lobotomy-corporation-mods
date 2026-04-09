@@ -4,8 +4,8 @@
 
 using System;
 using JetBrains.Annotations;
+using LobotomyCorporation.Mods.Common.Interfaces;
 using LobotomyCorporationMods.BugFixes;
-using LobotomyCorporationMods.Common.Interfaces;
 using LobotomyCorporationMods.Test.Extensions;
 using Moq;
 

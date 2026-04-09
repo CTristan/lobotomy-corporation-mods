@@ -7,10 +7,10 @@ using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
+using LobotomyCorporation.Mods.Common.Attributes;
+using LobotomyCorporation.Mods.Common.Constants;
+using LobotomyCorporation.Mods.Common.Extensions;
+using LobotomyCorporation.Mods.Common.Implementations;
 
 #endregion
 
@@ -44,7 +44,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
 
         public static void PatchAfterOpenAppearanceWindow([NotNull] this CustomizingWindow instance)
         {
-            Guard.Against.Null(instance, nameof(instance));
+            ThrowHelper.ThrowIfNull(instance, nameof(instance));
 
             instance.CurrentData.isCustomAppearance = false;
         }

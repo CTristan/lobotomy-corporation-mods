@@ -2,8 +2,8 @@
 
 #region
 
-using LobotomyCorporationMods.Common.Enums;
-using LobotomyCorporationMods.Common.Implementations.Facades;
+using LobotomyCorporation.Mods.Common.Enums;
+using LobotomyCorporation.Mods.Common.Implementations.Facades;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
 
 #endregion

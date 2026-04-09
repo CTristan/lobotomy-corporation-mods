@@ -3,8 +3,8 @@
 #region
 
 using Customizing;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
-using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
+using LobotomyCorporation.Mods.Common.Interfaces.Adapters;
+using LobotomyCorporation.Mods.Common.Interfaces.Adapters.BaseClasses;
 using LobotomyCorporationMods.FreeCustomization.Patches;
 using Moq;
 using Xunit;

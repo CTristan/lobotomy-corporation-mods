@@ -6,12 +6,12 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Implementations.Facades;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
+using LobotomyCorporation.Mods.Common.Attributes;
+using LobotomyCorporation.Mods.Common.Constants;
+using LobotomyCorporation.Mods.Common.Extensions;
+using LobotomyCorporation.Mods.Common.Implementations;
+using LobotomyCorporation.Mods.Common.Implementations.Facades;
+using LobotomyCorporation.Mods.Common.Interfaces.Adapters;
 
 #endregion
 
@@ -27,9 +27,9 @@ namespace LobotomyCorporationMods.BugFixes.Patches
             [NotNull] params object[] noticeParameters
         )
         {
-            Guard.Against.Null(instance, nameof(instance));
-            Guard.Against.Null(noticeName, nameof(noticeName));
-            Guard.Against.Null(noticeParameters, nameof(noticeParameters));
+            ThrowHelper.ThrowIfNull(instance, nameof(instance));
+            ThrowHelper.ThrowIfNull(noticeName, nameof(noticeName));
+            ThrowHelper.ThrowIfNull(noticeParameters, nameof(noticeParameters));
 
             if (!noticeName.Equals(NoticeName.OnChangeGift, StringComparison.Ordinal))
             {

@@ -4,8 +4,8 @@
 
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using LobotomyCorporation.Mods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.BugFixes.Patches;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using Moq;
 using Xunit;
 
