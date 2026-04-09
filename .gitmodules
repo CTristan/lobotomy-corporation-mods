@@ -1,0 +1,3 @@
+[submodule "LobCorp.ConfigurationManager"]
+	path = LobCorp.ConfigurationManager
+	url = https://github.com/CTristan/LobCorp.ConfigurationManager.git
