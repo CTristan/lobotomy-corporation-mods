@@ -24,6 +24,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         private readonly List<IGift> _gifts = new List<IGift>();
         private readonly Dictionary<string, long> _mostRecentAgentIdByGift =
             new Dictionary<string, long>();
+        private readonly Dictionary<string, RiskLevel> _riskLevelByGift =
+            new Dictionary<string, RiskLevel>();
         private readonly string _trackerFile = string.Empty;
 
         public AgentWorkTracker([CanBeNull] IFileManager fileManager, string dataFileName)
@@ -51,6 +53,34 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
             return agent.GetWorkCount();
         }
 
+        [CanBeNull]
+        public RiskLevel? GetRiskLevelByGift([NotNull] string giftName)
+        {
+            if (_riskLevelByGift.TryGetValue(giftName, out var riskLevel))
+            {
+                return riskLevel;
+            }
+
+            return null;
+        }
+
+        public void SetRiskLevelForGift([NotNull] string giftName, RiskLevel riskLevel)
+        {
+            _riskLevelByGift[giftName] = riskLevel;
+        }
+
+        public void ResetAgentWorkCountForGift([NotNull] string giftName, long agentId)
+        {
+            var gift = _gifts.Find(g => g.GetName().Equals(giftName, StringComparison.Ordinal));
+            if (gift.IsNull())
+            {
+                return;
+            }
+
+            var agent = gift.GetOrAddAgent(agentId);
+            agent.ResetWorkCount();
+        }
+
         public void IncrementAgentWorkCount([NotNull] string giftName, long agentId)
         {
             IncrementAgentWorkCount(giftName, agentId, 1f);
@@ -76,6 +106,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         {
             _gifts.Clear();
             _mostRecentAgentIdByGift.Clear();
+            _riskLevelByGift.Clear();
             Save();
         }
 
@@ -110,12 +141,31 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
             // Clear any existing data so that we aren't duplicating work progress
             _gifts.Clear();
             _mostRecentAgentIdByGift.Clear();
+            _riskLevelByGift.Clear();
 
             var gifts = trackerData.Split('|');
             foreach (var gift in gifts)
             {
                 var giftData = gift.Split('^');
-                var giftName = giftData[0];
+                var giftToken = giftData[0];
+
+                // New format: giftName#riskLevel, Old format: giftName
+                var hashIndex = giftToken.IndexOf('#');
+                string giftName;
+                if (hashIndex >= 0)
+                {
+                    giftName = giftToken.Substring(0, hashIndex);
+                    var riskLevelValue = int.Parse(
+                        giftToken.Substring(hashIndex + 1),
+                        CultureInfo.InvariantCulture
+                    );
+                    _riskLevelByGift[giftName] = (RiskLevel)riskLevelValue;
+                }
+                else
+                {
+                    giftName = giftToken;
+                }
+
                 for (var i = 1; i < giftData.Length; i++)
                 {
                     var agentData = giftData[i].Split(';');
@@ -147,7 +197,14 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
                 }
 
                 var agentData = GetGiftAgentData(gift);
-                var giftData = $"{gift.GetName()}{agentData}";
+                var giftNameToken = gift.GetName();
+                if (_riskLevelByGift.TryGetValue(giftNameToken, out var riskLevel))
+                {
+                    giftNameToken =
+                        $"{giftNameToken}#{((int)riskLevel).ToString(CultureInfo.InvariantCulture)}";
+                }
+
+                var giftData = $"{giftNameToken}{agentData}";
 
                 builder.Append(giftData);
             }

@@ -37,10 +37,20 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
             return creatureEquipmentMakeInfo.GetAbnormalityGiftInfo()?.Name;
         }
 
+        public static int? GetAbnormalityGiftId([NotNull] this UseSkill useSkill)
+        {
+            return useSkill.GetAbnormalityGiftInfo()?.id;
+        }
+
         [CanBeNull]
         public static string GetAbnormalityGiftName([NotNull] this UseSkill useSkill)
         {
             return useSkill.GetAbnormalityGiftInfo()?.Name;
+        }
+
+        public static RiskLevel GetAbnormalityRiskLevel([NotNull] this UseSkill useSkill)
+        {
+            return UseSkillExtensions.GetAbnormalityRiskLevel(useSkill);
         }
 
         [CanBeNull]

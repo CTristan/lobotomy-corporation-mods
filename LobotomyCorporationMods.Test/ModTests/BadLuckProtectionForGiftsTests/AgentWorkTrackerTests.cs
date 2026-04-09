@@ -218,6 +218,90 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
             );
         }
 
+        [Fact]
+        public void Setting_risk_level_for_gift_stores_and_retrieves_correctly()
+        {
+            const string DataFileName = nameof(
+                Setting_risk_level_for_gift_stores_and_retrieves_correctly
+            );
+            var agentWorkTracker = CreateAgentWorkTracker(DataFileName);
+
+            agentWorkTracker.SetRiskLevelForGift(DefaultGiftName, RiskLevel.WAW);
+            var result = agentWorkTracker.GetRiskLevelByGift(DefaultGiftName);
+
+            result.Should().Be(RiskLevel.WAW);
+        }
+
+        [Fact]
+        public void Getting_risk_level_for_unknown_gift_returns_null()
+        {
+            const string DataFileName = nameof(Getting_risk_level_for_unknown_gift_returns_null);
+            var agentWorkTracker = CreateAgentWorkTracker(DataFileName);
+
+            var result = agentWorkTracker.GetRiskLevelByGift("UnknownGift");
+
+            result.Should().BeNull();
+        }
+
+        [Fact]
+        public void Risk_level_persists_through_save_and_load_cycle()
+        {
+            const string DataFileName = nameof(Risk_level_persists_through_save_and_load_cycle);
+            var agentWorkTracker = CreateAgentWorkTracker(DataFileName);
+            agentWorkTracker.IncrementAgentWorkCount(DefaultGiftName, 1L);
+            agentWorkTracker.SetRiskLevelForGift(DefaultGiftName, RiskLevel.ALEPH);
+            agentWorkTracker.Save();
+
+            agentWorkTracker.Load();
+            var result = agentWorkTracker.GetRiskLevelByGift(DefaultGiftName);
+
+            result.Should().Be(RiskLevel.ALEPH);
+        }
+
+        [Fact]
+        public void Loading_old_format_without_risk_level_returns_null_risk_level()
+        {
+            const string DataFileName = nameof(
+                Loading_old_format_without_risk_level_returns_null_risk_level
+            );
+            const string OldFormatData = DefaultGiftName + "^1;5";
+            var agentWorkTracker = CreateAgentWorkTracker(DataFileName, OldFormatData);
+
+            var result = agentWorkTracker.GetRiskLevelByGift(DefaultGiftName);
+
+            result.Should().BeNull();
+        }
+
+        [Fact]
+        public void Resetting_agent_work_count_for_gift_sets_count_to_zero()
+        {
+            const string DataFileName = nameof(
+                Resetting_agent_work_count_for_gift_sets_count_to_zero
+            );
+            var agentWorkTracker = CreateAgentWorkTracker(DataFileName);
+            agentWorkTracker.IncrementAgentWorkCount(DefaultGiftName, 1L, 10f);
+
+            agentWorkTracker.ResetAgentWorkCountForGift(DefaultGiftName, 1L);
+
+            agentWorkTracker.GetLastAgentWorkCountByGift(DefaultGiftName).Should().Be(0f);
+        }
+
+        [Fact]
+        public void Resetting_agent_work_count_only_affects_specified_agent()
+        {
+            const string DataFileName = nameof(
+                Resetting_agent_work_count_only_affects_specified_agent
+            );
+            var agentWorkTracker = CreateAgentWorkTracker(DataFileName);
+            agentWorkTracker.IncrementAgentWorkCount(DefaultGiftName, 1L, 10f);
+            agentWorkTracker.IncrementAgentWorkCount(DefaultGiftName, 2L, 5f);
+
+            agentWorkTracker.ResetAgentWorkCountForGift(DefaultGiftName, 1L);
+
+            // Last agent is 2L, so GetLastAgentWorkCountByGift returns agent 2's count
+            agentWorkTracker.GetLastAgentWorkCountByGift(DefaultGiftName).Should().Be(5f);
+        }
+
         #region Helper Methods
 
         /// <summary>Populates the Harmony Patch with an agent work tracker pointed to our specified test data file.</summary>

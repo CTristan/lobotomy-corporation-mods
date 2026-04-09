@@ -44,6 +44,9 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LobotomyCorporationMods.Common\LobotomyCorporationMods.Common.csproj"/>
+    <ProjectReference Include="..\LobCorp.ConfigurationManager\LobCorp.ConfigurationManager\LobCorp.ConfigurationManager.csproj">
+      <Private>false</Private>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Info\en\Info.xml">

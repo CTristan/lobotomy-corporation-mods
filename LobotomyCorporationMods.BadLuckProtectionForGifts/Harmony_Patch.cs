@@ -2,6 +2,8 @@
 
 #region
 
+using System;
+using System.Security;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.Common.Implementations;
@@ -26,10 +28,31 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
             )
         {
             AgentWorkTracker = new AgentWorkTracker(FileManager, "BadLuckProtectionForGifts.dat");
+            Config = InitializeConfig();
         }
 
         // ReSharper disable once NullableWarningSuppressionIsUsed
         // We load the tracker later on when needed, so this should never be actually null
         internal IAgentWorkTracker AgentWorkTracker { get; }
+
+        internal IBadLuckProtectionConfig Config { get; }
+
+        private static IBadLuckProtectionConfig InitializeConfig()
+        {
+            try
+            {
+                return new BadLuckProtectionConfig();
+            }
+            catch (TypeLoadException)
+            {
+                // ConfigurationManager DLL is not installed
+                return new DefaultBadLuckProtectionConfig();
+            }
+            catch (SecurityException)
+            {
+                // Unity runtime is unavailable (e.g. in tests)
+                return new DefaultBadLuckProtectionConfig();
+            }
+        }
     }
 }

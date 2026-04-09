@@ -22,11 +22,13 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
     {
         public static void PatchAfterFinishWorkSuccessfully(
             [NotNull] this UseSkill instance,
-            [NotNull] IAgentWorkTracker agentWorkTracker
+            [NotNull] IAgentWorkTracker agentWorkTracker,
+            [NotNull] IBadLuckProtectionConfig config
         )
         {
             Guard.Against.Null(instance, nameof(instance));
             Guard.Against.Null(agentWorkTracker, nameof(agentWorkTracker));
+            Guard.Against.Null(config, nameof(config));
 
             var giftName = instance.GetAbnormalityGiftName();
 
@@ -36,10 +38,33 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
                 return;
             }
 
-            var agentId = instance.GetAgentId();
-            var numberOfSuccesses = instance.successCount;
+            var riskLevel = instance.GetAbnormalityRiskLevel();
+            agentWorkTracker.SetRiskLevelForGift(giftName, riskLevel);
 
-            agentWorkTracker.IncrementAgentWorkCount(giftName, agentId, numberOfSuccesses);
+            var agentId = instance.GetAgentId();
+
+            float incrementValue;
+            if (config.NormalizedBonusEnabled)
+            {
+                var maxCubeCount = instance.maxCubeCount;
+                incrementValue =
+                    maxCubeCount > 0 ? (float)instance.successCount / maxCubeCount : 0f;
+            }
+            else
+            {
+                incrementValue = instance.successCount;
+            }
+
+            agentWorkTracker.IncrementAgentWorkCount(giftName, agentId, incrementValue);
+
+            if (config.ResetOnGiftReceived)
+            {
+                var giftId = instance.GetAbnormalityGiftId();
+                if (giftId.HasValue && instance.agent.HasGift(giftId))
+                {
+                    agentWorkTracker.ResetAgentWorkCountForGift(giftName, agentId);
+                }
+            }
         }
 
         /// <summary>Runs after an agent finishes working with an abnormality to increment their work count.</summary>
@@ -52,7 +77,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             try
             {
                 __instance.PatchAfterFinishWorkSuccessfully(
-                    Harmony_Patch.Instance.AgentWorkTracker
+                    Harmony_Patch.Instance.AgentWorkTracker,
+                    Harmony_Patch.Instance.Config
                 );
             }
             catch (Exception ex)

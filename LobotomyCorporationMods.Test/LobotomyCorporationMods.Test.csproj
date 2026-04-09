@@ -15,6 +15,7 @@
     <OutputPath>bin\</OutputPath>
     <OutputType>Library</OutputType>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Exclude>[ConfigurationManager]*</Exclude>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugType>full</DebugType>

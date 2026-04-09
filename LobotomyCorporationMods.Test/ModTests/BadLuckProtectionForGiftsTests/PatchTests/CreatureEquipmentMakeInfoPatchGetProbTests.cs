@@ -24,11 +24,15 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
         {
             // Arrange
             var sut = UnityTestExtensions.CreateCreatureEquipmentMakeInfo();
-
             var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
+            var mockConfig = CreateMockConfig();
 
             // Act
-            var actual = sut.PatchAfterGetProb(expected, mockAgentWorkTracker.Object);
+            var actual = sut.PatchAfterGetProb(
+                expected,
+                mockAgentWorkTracker.Object,
+                mockConfig.Object
+            );
 
             // Assert
             Assert.Equal(expected, actual);
@@ -43,10 +47,10 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
 
             sut.equipTypeInfo = null;
             var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
+            var mockConfig = CreateMockConfig();
 
             // Act
-            var actual = 0f;
-            actual = sut.PatchAfterGetProb(actual, mockAgentWorkTracker.Object);
+            var actual = sut.PatchAfterGetProb(0f, mockAgentWorkTracker.Object, mockConfig.Object);
 
             // Assert
             actual.Should().Be(Expected);
@@ -62,14 +66,14 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
             const int TimesWorked = 101;
 
             var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
+            var mockConfig = CreateMockConfig();
 
             mockAgentWorkTracker
                 .Setup(tracker => tracker.GetLastAgentWorkCountByGift(GiftName))
                 .Returns(TimesWorked);
 
             // Act
-            var actual = 0f;
-            actual = sut.PatchAfterGetProb(actual, mockAgentWorkTracker.Object);
+            var actual = sut.PatchAfterGetProb(0f, mockAgentWorkTracker.Object, mockConfig.Object);
 
             // Assert
             // We should only get back 100% even with the 101% bonus
@@ -90,16 +94,142 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
             var expected = numberOfSuccesses / 100f;
 
             var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
+            var mockConfig = CreateMockConfig();
             mockAgentWorkTracker
                 .Setup(tracker => tracker.GetLastAgentWorkCountByGift(GiftName))
                 .Returns(numberOfSuccesses);
 
             // Act
-            var actual = 0f;
-            actual = sut.PatchAfterGetProb(actual, mockAgentWorkTracker.Object);
+            var actual = sut.PatchAfterGetProb(0f, mockAgentWorkTracker.Object, mockConfig.Object);
 
             // Assert
             actual.Should().Be(expected);
+        }
+
+        [Theory]
+        [InlineData(RiskLevel.ZAYIN, 2.0f)]
+        [InlineData(RiskLevel.ALEPH, 0.5f)]
+        [InlineData(RiskLevel.WAW, 3.0f)]
+        public void Different_risk_levels_use_different_bonus_percentages(
+            RiskLevel riskLevel,
+            float bonusPercentage
+        )
+        {
+            // Arrange
+            var sut = GetCreatureEquipmentMakeInfo(GiftName);
+            const float WorkCount = 10f;
+            var expected = WorkCount * bonusPercentage / 100f;
+
+            var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
+            mockAgentWorkTracker
+                .Setup(tracker => tracker.GetLastAgentWorkCountByGift(GiftName))
+                .Returns(WorkCount);
+            mockAgentWorkTracker
+                .Setup(tracker => tracker.GetRiskLevelByGift(GiftName))
+                .Returns(riskLevel);
+
+            var mockConfig = new Mock<IBadLuckProtectionConfig>();
+            mockConfig
+                .Setup(c => c.GetBonusPercentageForRiskLevel(riskLevel))
+                .Returns(bonusPercentage);
+
+            // Act
+            var actual = sut.PatchAfterGetProb(0f, mockAgentWorkTracker.Object, mockConfig.Object);
+
+            // Assert
+            actual.Should().Be(expected);
+        }
+
+        [Fact]
+        public void Unknown_risk_level_defaults_to_one_percent()
+        {
+            // Arrange
+            var sut = GetCreatureEquipmentMakeInfo(GiftName);
+            const float WorkCount = 10f;
+            const float Expected = WorkCount / 100f;
+
+            var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
+            mockAgentWorkTracker
+                .Setup(tracker => tracker.GetLastAgentWorkCountByGift(GiftName))
+                .Returns(WorkCount);
+            mockAgentWorkTracker
+                .Setup(tracker => tracker.GetRiskLevelByGift(GiftName))
+                .Returns((RiskLevel?)null);
+
+            var mockConfig = CreateMockConfig();
+
+            // Act
+            var actual = sut.PatchAfterGetProb(0f, mockAgentWorkTracker.Object, mockConfig.Object);
+
+            // Assert
+            actual.Should().Be(Expected);
+        }
+
+        [Fact]
+        public void Zero_bonus_percentage_produces_no_bonus()
+        {
+            // Arrange
+            var sut = GetCreatureEquipmentMakeInfo(GiftName);
+            const float WorkCount = 50f;
+
+            var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
+            mockAgentWorkTracker
+                .Setup(tracker => tracker.GetLastAgentWorkCountByGift(GiftName))
+                .Returns(WorkCount);
+            mockAgentWorkTracker
+                .Setup(tracker => tracker.GetRiskLevelByGift(GiftName))
+                .Returns(RiskLevel.ZAYIN);
+
+            var mockConfig = new Mock<IBadLuckProtectionConfig>();
+            mockConfig.Setup(c => c.GetBonusPercentageForRiskLevel(RiskLevel.ZAYIN)).Returns(0f);
+
+            // Act
+            var actual = sut.PatchAfterGetProb(0f, mockAgentWorkTracker.Object, mockConfig.Object);
+
+            // Assert
+            actual.Should().Be(0f);
+        }
+
+        [Fact]
+        public void Normalized_mode_applies_risk_level_percentage_to_normalized_work_count()
+        {
+            // Arrange - normalized work count of 3.5 with 2x ALEPH multiplier
+            var sut = GetCreatureEquipmentMakeInfo(GiftName);
+            const float WorkCount = 3.5f;
+            const float AlephMultiplier = 2.0f;
+            const float Expected = WorkCount * AlephMultiplier / 100f;
+
+            var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
+            mockAgentWorkTracker
+                .Setup(tracker => tracker.GetLastAgentWorkCountByGift(GiftName))
+                .Returns(WorkCount);
+            mockAgentWorkTracker
+                .Setup(tracker => tracker.GetRiskLevelByGift(GiftName))
+                .Returns(RiskLevel.ALEPH);
+
+            var mockConfig = new Mock<IBadLuckProtectionConfig>();
+            mockConfig.Setup(c => c.NormalizedBonusEnabled).Returns(true);
+            mockConfig
+                .Setup(c => c.GetBonusPercentageForRiskLevel(RiskLevel.ALEPH))
+                .Returns(AlephMultiplier);
+
+            // Act
+            var actual = sut.PatchAfterGetProb(0f, mockAgentWorkTracker.Object, mockConfig.Object);
+
+            // Assert - 3.5 * 2.0 / 100 = 0.07
+            actual.Should().Be(Expected);
+        }
+
+        private static Mock<IBadLuckProtectionConfig> CreateMockConfig(
+            bool normalizedBonusEnabled = false
+        )
+        {
+            var mock = new Mock<IBadLuckProtectionConfig>();
+            mock.Setup(c => c.ResetOnGiftReceived).Returns(false);
+            mock.Setup(c => c.NormalizedBonusEnabled).Returns(normalizedBonusEnabled);
+            mock.Setup(c => c.GetBonusPercentageForRiskLevel(It.IsAny<RiskLevel>())).Returns(1.0f);
+
+            return mock;
         }
     }
 }

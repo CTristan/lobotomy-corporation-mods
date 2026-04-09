@@ -43,6 +43,19 @@ namespace LobotomyCorporationMods.Common.Extensions
             return useSkill.GetAbnormalityGift()?.equipTypeInfo;
         }
 
+        internal static RiskLevel GetAbnormalityRiskLevel([NotNull] this UseSkill useSkill)
+        {
+            try
+            {
+                return useSkill.GetAbnormalityInfo().GetRiskLevel();
+            }
+            catch (System.Security.SecurityException)
+            {
+                // GetRiskLevel calls Debug.LogError which requires Unity runtime
+                return RiskLevel.ZAYIN;
+            }
+        }
+
         internal static AgentModel GetAgent([NotNull] this UseSkill useSkill)
         {
             Guard.Against.Null(useSkill, nameof(useSkill));
