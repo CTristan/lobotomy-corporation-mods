@@ -12,11 +12,12 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    internal sealed class ManagementSlotTestAdapter : ComponentTestAdapter<ManagementSlot>, IManagementSlotTestAdapter
+    internal sealed class ManagementSlotTestAdapter
+        : ComponentTestAdapter<ManagementSlot>,
+            IManagementSlotTestAdapter
     {
-        internal ManagementSlotTestAdapter([NotNull] ManagementSlot gameObject) : base(gameObject)
-        {
-        }
+        internal ManagementSlotTestAdapter([NotNull] ManagementSlot gameObject)
+            : base(gameObject) { }
 
         [NotNull]
         public string Name => _gameObject.name;

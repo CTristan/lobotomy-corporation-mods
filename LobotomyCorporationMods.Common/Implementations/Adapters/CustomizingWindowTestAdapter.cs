@@ -16,20 +16,19 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    internal sealed class CustomizingWindowTestAdapter : ComponentTestAdapter<CustomizingWindow>, ICustomizingWindowTestAdapter
+    internal sealed class CustomizingWindowTestAdapter
+        : ComponentTestAdapter<CustomizingWindow>,
+            ICustomizingWindowTestAdapter
     {
-        internal CustomizingWindowTestAdapter([NotNull] CustomizingWindow customizingWindow) : base(customizingWindow)
-        {
-        }
+        internal CustomizingWindowTestAdapter([NotNull] CustomizingWindow customizingWindow)
+            : base(customizingWindow) { }
 
         public void OpenAppearanceWindow()
         {
             _gameObject.OpenAppearanceWindow();
         }
 
-        public int SetRandomStatValue(int original,
-            int currentLevel,
-            int bonusLevel)
+        public int SetRandomStatValue(int original, int currentLevel, int bonusLevel)
         {
             return _gameObject.SetRandomStatValue(original, currentLevel, bonusLevel);
         }

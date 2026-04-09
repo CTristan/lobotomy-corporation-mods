@@ -5,7 +5,5 @@ using System;
 namespace LobotomyCorporationMods.Common.Attributes
 {
     [AttributeUsage(AttributeTargets.Parameter)]
-    public sealed class ValidatedNotNullAttribute : Attribute
-    {
-    }
+    public sealed class ValidatedNotNullAttribute : Attribute { }
 }

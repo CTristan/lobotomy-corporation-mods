@@ -21,9 +21,11 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
     [HarmonyPatch(typeof(CustomizingWindow), nameof(CustomizingWindow.Confirm))]
     public static class CustomizingWindowPatchConfirm
     {
-        public static void PatchBeforeConfirm([NotNull] this CustomizingWindow instance,
+        public static void PatchBeforeConfirm(
+            [NotNull] this CustomizingWindow instance,
             [CanBeNull] IAgentLayerTestAdapter agentLayerTestAdapter = null,
-            [CanBeNull] IWorkerSpriteManagerTestAdapter workerSpriteManagerTestAdapter = null)
+            [CanBeNull] IWorkerSpriteManagerTestAdapter workerSpriteManagerTestAdapter = null
+        )
         {
             Guard.Against.Null(instance, nameof(instance));
 

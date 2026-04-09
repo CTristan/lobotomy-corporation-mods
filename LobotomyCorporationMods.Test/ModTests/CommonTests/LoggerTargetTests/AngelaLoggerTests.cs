@@ -18,7 +18,10 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests.LoggerTargetTests
 
             sut.WriteToLoggerTarget(ExpectedMessage);
 
-            mockAngelaConversationUiTestAdapter.Verify(adapter => adapter.AddMessage(ExpectedMessage), Times.Once);
+            mockAngelaConversationUiTestAdapter.Verify(
+                adapter => adapter.AddMessage(ExpectedMessage),
+                Times.Once
+            );
         }
 
         [Fact]
@@ -30,7 +33,10 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests.LoggerTargetTests
 
             sut.WriteToLoggerTarget(ExpectedMessage);
 
-            mockAngelaConversationUiTestAdapter.Verify(adapter => adapter.AddMessage(ExpectedMessage), Times.Never);
+            mockAngelaConversationUiTestAdapter.Verify(
+                adapter => adapter.AddMessage(ExpectedMessage),
+                Times.Never
+            );
         }
     }
 }

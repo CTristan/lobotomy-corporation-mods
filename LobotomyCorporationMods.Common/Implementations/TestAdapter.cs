@@ -18,14 +18,13 @@ namespace LobotomyCorporationMods.Common.Implementations
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
     internal class TestAdapter<T> : ITestAdapter<T>
     {
-        private const string UninitializedGameObjectErrorMessage = "Please load the game object into the adapter before trying to use it.";
+        private const string UninitializedGameObjectErrorMessage =
+            "Please load the game object into the adapter before trying to use it.";
 
         protected T _gameObject;
 
         // ReSharper disable once UnusedMember.Global
-        protected TestAdapter()
-        {
-        }
+        protected TestAdapter() { }
 
         protected TestAdapter([NotNull] T gameObject)
         {
@@ -44,8 +43,7 @@ namespace LobotomyCorporationMods.Common.Implementations
 
                 return _gameObject;
             }
-            set =>
-                _gameObject = value;
+            set => _gameObject = value;
         }
     }
 }

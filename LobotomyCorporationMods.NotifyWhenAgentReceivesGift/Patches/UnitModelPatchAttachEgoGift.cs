@@ -21,9 +21,11 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches
     [HarmonyPatch(typeof(UnitModel), nameof(UnitModel.AttachEGOgift))]
     public static class UnitModelPatchAttachEgoGift
     {
-        public static void PatchBeforeAttachEgoGift(this UnitModel instance,
+        public static void PatchBeforeAttachEgoGift(
+            this UnitModel instance,
             EquipmentModel gift,
-            INoticeTestAdapter noticeTestAdapter = null)
+            INoticeTestAdapter noticeTestAdapter = null
+        )
         {
             Guard.Against.Null(instance, nameof(instance));
             Guard.Against.Null(gift, nameof(gift));
@@ -53,7 +55,12 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches
             var giftColorCode = LocalizationIds.GiftColorCode.GetLocalized();
             var agentColoredName = $"<color={agentColorCode}>{instance.GetUnitName()}</color>";
             var giftColoredName = $"<color={giftColorCode}>{gift.metaInfo.Name}</color>";
-            var message = string.Format(CultureInfo.InvariantCulture, notificationMessage, agentColoredName, giftColoredName);
+            var message = string.Format(
+                CultureInfo.InvariantCulture,
+                notificationMessage,
+                agentColoredName,
+                giftColoredName
+            );
             instance.SendMessage(message, noticeTestAdapter);
         }
 
@@ -61,8 +68,7 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches
         // ReSharper disable InconsistentNaming
         [EntryPoint]
         [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-        public static void Prefix(UnitModel __instance,
-            EGOgiftModel gift)
+        public static void Prefix(UnitModel __instance, EGOgiftModel gift)
         {
             try
             {

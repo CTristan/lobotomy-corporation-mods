@@ -8,11 +8,15 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
 {
     public static class MessagesFacade
     {
-        public static void SendMessage(this UnitModel unitModel,
+        public static void SendMessage(
+            this UnitModel unitModel,
             string message,
-            INoticeTestAdapter noticeTestAdapter = null)
+            INoticeTestAdapter noticeTestAdapter = null
+        )
         {
-            noticeTestAdapter = noticeTestAdapter.EnsureNotNullWithMethod(() => new NoticeTestAdapter(Notice.instance));
+            noticeTestAdapter = noticeTestAdapter.EnsureNotNullWithMethod(
+                () => new NoticeTestAdapter(Notice.instance)
+            );
 
             noticeTestAdapter.Send(NoticeName.AddSystemLog, message);
         }

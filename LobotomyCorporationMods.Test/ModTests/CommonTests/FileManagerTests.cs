@@ -41,7 +41,9 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         [Theory]
         [InlineData("NonExistentFile.txt")]
         [InlineData("DoesNotExist")]
-        public void Reading_a_nonexistent_file_with_flag_not_set_does_not_create_the_file([NotNull] string fileName)
+        public void Reading_a_nonexistent_file_with_flag_not_set_does_not_create_the_file(
+            [NotNull] string fileName
+        )
         {
             var fileManager = new FileManager(DefaultModFileName, GetDirectories());
             var fileWithPath = fileManager.GetFile(fileName);
@@ -55,7 +57,9 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         [Theory]
         [InlineData("NowIExist.txt")]
         [InlineData("CreateThenDeleteMe")]
-        public void Reading_a_nonexistent_file_with_flag_set_creates_the_file([NotNull] string fileName)
+        public void Reading_a_nonexistent_file_with_flag_set_creates_the_file(
+            [NotNull] string fileName
+        )
         {
             var fileManager = new FileManager(DefaultModFileName, GetDirectories());
             var fileWithPath = fileManager.GetFile(fileName);
@@ -94,10 +98,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         {
             var currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
-            return new List<DirectoryInfo>
-            {
-                new DirectoryInfo(currentDirectory),
-            };
+            return new List<DirectoryInfo> { new DirectoryInfo(currentDirectory) };
         }
 
         private static void DeleteFileIfExists(string fileWithPath)

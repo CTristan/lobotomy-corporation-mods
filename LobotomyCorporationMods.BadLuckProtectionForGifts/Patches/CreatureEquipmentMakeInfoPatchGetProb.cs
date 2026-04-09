@@ -21,15 +21,21 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
         /// <param name="probability">The original probability value.</param>
         /// <param name="agentWorkTracker">The agent work tracker.</param>
         /// <returns>The modified probability value.</returns>
-        public static float PatchAfterGetProb([NotNull] this CreatureEquipmentMakeInfo instance,
+        public static float PatchAfterGetProb(
+            [NotNull] this CreatureEquipmentMakeInfo instance,
             float probability,
-            [NotNull] IAgentWorkTracker agentWorkTracker)
+            [NotNull] IAgentWorkTracker agentWorkTracker
+        )
         {
             Guard.Against.Null(instance, nameof(instance));
             Guard.Against.Null(agentWorkTracker, nameof(agentWorkTracker));
 
             var giftName = instance.GetAbnormalityGiftName();
-            probability = ModifyProbabilityIfGiftNameIsValid(probability, agentWorkTracker, giftName);
+            probability = ModifyProbabilityIfGiftNameIsValid(
+                probability,
+                agentWorkTracker,
+                giftName
+            );
 
             return ValidateProbability(probability);
         }
@@ -39,9 +45,11 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
         /// <param name="agentWorkTracker">The agent work tracker.</param>
         /// <param name="giftName">The name of the gift.</param>
         /// <returns>The modified probability value.</returns>
-        private static float ModifyProbabilityIfGiftNameIsValid(float probability,
+        private static float ModifyProbabilityIfGiftNameIsValid(
+            float probability,
             IAgentWorkTracker agentWorkTracker,
-            [CanBeNull] string giftName)
+            [CanBeNull] string giftName
+        )
         {
             if (string.IsNullOrEmpty(giftName))
             {
@@ -68,14 +76,20 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
         // ReSharper disable InconsistentNaming
         [EntryPoint]
         [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-        public static void Postfix([NotNull] CreatureEquipmentMakeInfo __instance,
-            ref float __result)
+        public static void Postfix(
+            [NotNull] CreatureEquipmentMakeInfo __instance,
+            ref float __result
+        )
         {
             try
             {
                 Guard.Against.Null(__instance, nameof(__instance));
 
-                __result = PatchAfterGetProb(__instance, __result, Harmony_Patch.Instance.AgentWorkTracker);
+                __result = PatchAfterGetProb(
+                    __instance,
+                    __result,
+                    Harmony_Patch.Instance.AgentWorkTracker
+                );
             }
             catch (Exception ex)
             {

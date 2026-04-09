@@ -20,10 +20,12 @@ namespace LobotomyCorporationMods.BugFixes.Patches
     [HarmonyPatch(typeof(ArmorCreature), nameof(ArmorCreature.OnNotice))]
     public static class ArmorCreaturePatchOnNotice
     {
-        public static void PatchAfterOnNotice([NotNull] this ArmorCreature instance,
+        public static void PatchAfterOnNotice(
+            [NotNull] this ArmorCreature instance,
             [NotNull] string noticeName,
             [CanBeNull] IArmorCreatureTestAdapter armorCreatureTestAdapter = null,
-            [NotNull] params object[] noticeParameters)
+            [NotNull] params object[] noticeParameters
+        )
         {
             Guard.Against.Null(instance, nameof(instance));
             Guard.Against.Null(noticeName, nameof(noticeName));
@@ -77,9 +79,11 @@ namespace LobotomyCorporationMods.BugFixes.Patches
         [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
         // ReSharper disable once InconsistentNaming
         // ReSharper disable once UnusedMethodReturnValue.Global
-        public static void Postfix([NotNull] ArmorCreature __instance,
+        public static void Postfix(
+            [NotNull] ArmorCreature __instance,
             [NotNull] string notice,
-            [NotNull] params object[] param)
+            [NotNull] params object[] param
+        )
         {
             try
             {

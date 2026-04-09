@@ -39,6 +39,7 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
                 throw;
             }
         }
+
         // ReSharper enable InconsistentNaming
 
         public static void PatchAfterOpenAppearanceWindow([NotNull] this CustomizingWindow instance)

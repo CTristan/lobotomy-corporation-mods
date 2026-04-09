@@ -20,8 +20,10 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
     [HarmonyPatch(typeof(UseSkill), PrivateMethods.UseSkill.FinishWorkSuccessfully)]
     public static class UseSkillPatchFinishWorkSuccessfully
     {
-        public static void PatchAfterFinishWorkSuccessfully([NotNull] this UseSkill instance,
-            [NotNull] IAgentWorkTracker agentWorkTracker)
+        public static void PatchAfterFinishWorkSuccessfully(
+            [NotNull] this UseSkill instance,
+            [NotNull] IAgentWorkTracker agentWorkTracker
+        )
         {
             Guard.Against.Null(instance, nameof(instance));
             Guard.Against.Null(agentWorkTracker, nameof(agentWorkTracker));
@@ -49,7 +51,9 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
         {
             try
             {
-                __instance.PatchAfterFinishWorkSuccessfully(Harmony_Patch.Instance.AgentWorkTracker);
+                __instance.PatchAfterFinishWorkSuccessfully(
+                    Harmony_Patch.Instance.AgentWorkTracker
+                );
             }
             catch (Exception ex)
             {

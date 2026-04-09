@@ -15,18 +15,30 @@ namespace LobotomyCorporationMods.Common.Extensions
     internal static class ManagementSlotExtensions
     {
         [NotNull]
-        internal static IGameObjectTestAdapter CreateImageObjectTestAdapter([NotNull] this ManagementSlot managementSlot,
+        internal static IGameObjectTestAdapter CreateImageObjectTestAdapter(
+            [NotNull] this ManagementSlot managementSlot,
             [NotNull] ImageParameters imageParameters,
-            [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null)
+            [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null
+        )
         {
-            testAdapterParameters = testAdapterParameters.EnsureNotNullWithMethod(() => new OptionalTestAdapterParameters());
-            testAdapterParameters.ManagementSlotTestAdapter = testAdapterParameters.ManagementSlotTestAdapter.EnsureNotNullWithMethod(() => new ManagementSlotTestAdapter(managementSlot));
+            testAdapterParameters = testAdapterParameters.EnsureNotNullWithMethod(
+                () => new OptionalTestAdapterParameters()
+            );
+            testAdapterParameters.ManagementSlotTestAdapter =
+                testAdapterParameters.ManagementSlotTestAdapter.EnsureNotNullWithMethod(
+                    () => new ManagementSlotTestAdapter(managementSlot)
+                );
 
-            return testAdapterParameters.ManagementSlotTestAdapter.CreateImageObjectTestAdapter(imageParameters, testAdapterParameters);
+            return testAdapterParameters.ManagementSlotTestAdapter.CreateImageObjectTestAdapter(
+                imageParameters,
+                testAdapterParameters
+            );
         }
 
         [CanBeNull]
-        internal static CreatureEquipmentMakeInfo GetAbnormalityGift(this ManagementSlot managementSlot)
+        internal static CreatureEquipmentMakeInfo GetAbnormalityGift(
+            this ManagementSlot managementSlot
+        )
         {
             var commandWindow = CommandWindow.CommandWindow.CurrentWindow;
 

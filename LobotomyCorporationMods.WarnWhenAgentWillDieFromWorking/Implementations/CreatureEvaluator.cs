@@ -12,9 +12,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 {
     internal abstract class CreatureEvaluator : ICreatureEvaluator
     {
-        protected CreatureEvaluator(AgentModel agent,
-            CreatureModel creature,
-            RwbpType skillType)
+        protected CreatureEvaluator(AgentModel agent, CreatureModel creature, RwbpType skillType)
         {
             Agent = agent;
             Creature = creature;
@@ -43,9 +41,11 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
         {
             return
                 // Crumbling Armor's gift
-                WillDieFromCrumblingArmorGift() ||
+                WillDieFromCrumblingArmorGift()
+                ||
                 // Fairy Festival's effect
-                WillDieFromFairyFestivalEffect() ||
+                WillDieFromFairyFestivalEffect()
+                ||
                 // Laetitia's effect
                 WillDieFromLaetitiaEffect();
         }
@@ -57,7 +57,8 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 
         private bool WillDieFromFairyFestivalEffect()
         {
-            return Agent.HasFairyFestivalEffect() && Creature.metadataId != (long)CreatureIds.FairyFestival;
+            return Agent.HasFairyFestivalEffect()
+                && Creature.metadataId != (long)CreatureIds.FairyFestival;
         }
 
         private bool WillDieFromLaetitiaEffect()

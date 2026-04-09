@@ -6,12 +6,9 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces
     {
         float GetLastAgentWorkCountByGift(string giftName);
 
-        void IncrementAgentWorkCount(string giftName,
-            long agentId);
+        void IncrementAgentWorkCount(string giftName, long agentId);
 
-        void IncrementAgentWorkCount(string giftName,
-            long agentId,
-            float numberOfTimes);
+        void IncrementAgentWorkCount(string giftName, long agentId, float numberOfTimes);
 
         void Load();
         void Reset();

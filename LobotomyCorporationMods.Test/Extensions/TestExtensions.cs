@@ -26,10 +26,12 @@ namespace LobotomyCorporationMods.Test.Extensions
     internal static class TestExtensions
     {
         [NotNull]
-        internal static AgentModel GetAgentWithGift(EquipmentIds giftId = EquipmentIds.None,
+        internal static AgentModel GetAgentWithGift(
+            EquipmentIds giftId = EquipmentIds.None,
             EGOgiftAttachRegion attachPosition = EGOgiftAttachRegion.HEAD,
             EGOgiftAttachType attachType = 0,
-            IEnumerable<UnitBuf> unitBuffs = null)
+            IEnumerable<UnitBuf> unitBuffs = null
+        )
         {
             unitBuffs = unitBuffs.EnsureNotNullWithMethod(() => new List<UnitBuf>());
 
@@ -49,12 +51,14 @@ namespace LobotomyCorporationMods.Test.Extensions
         }
 
         [NotNull]
-        internal static CreatureModel GetCreatureWithGift(CreatureIds creatureId = CreatureIds.OneSin,
+        internal static CreatureModel GetCreatureWithGift(
+            CreatureIds creatureId = CreatureIds.OneSin,
             EquipmentIds giftId = EquipmentIds.None,
             EGOgiftAttachRegion attachPosition = EGOgiftAttachRegion.HEAD,
             EGOgiftAttachType giftAttachType = 0,
             int qliphothCounter = 0,
-            bool maxObservation = true)
+            bool maxObservation = true
+        )
         {
             var equipmentTypeInfo = UnityTestExtensions.CreateEquipmentTypeInfo();
             equipmentTypeInfo.id = (int)giftId;
@@ -62,13 +66,17 @@ namespace LobotomyCorporationMods.Test.Extensions
             equipmentTypeInfo.attachPos = attachPosition.ToString();
             equipmentTypeInfo.attachType = giftAttachType;
 
-            var creatureEquipmentMakeInfo = UnityTestExtensions.CreateCreatureEquipmentMakeInfo(equipmentTypeInfo);
-            var creatureTypeInfo = UnityTestExtensions.CreateCreatureTypeInfo(new List<CreatureEquipmentMakeInfo>
-            {
-                creatureEquipmentMakeInfo,
-            });
+            var creatureEquipmentMakeInfo = UnityTestExtensions.CreateCreatureEquipmentMakeInfo(
+                equipmentTypeInfo
+            );
+            var creatureTypeInfo = UnityTestExtensions.CreateCreatureTypeInfo(
+                new List<CreatureEquipmentMakeInfo> { creatureEquipmentMakeInfo }
+            );
 
-            var creature = UnityTestExtensions.CreateCreatureModel(metaInfo: creatureTypeInfo, qliphothCounter: qliphothCounter);
+            var creature = UnityTestExtensions.CreateCreatureModel(
+                metaInfo: creatureTypeInfo,
+                qliphothCounter: qliphothCounter
+            );
             creature.instanceId = (long)creatureId;
             creature.metadataId = (long)creatureId;
 
@@ -79,12 +87,9 @@ namespace LobotomyCorporationMods.Test.Extensions
 
             // Need to initialize the CreatureLayer with our new creature
             var creatureUnit = UnityTestExtensions.CreateCreatureUnit();
-            _ = UnityTestExtensions.CreateCreatureLayer(new Dictionary<long, CreatureUnit>
-            {
-                {
-                    (long)creatureId, creatureUnit
-                },
-            });
+            _ = UnityTestExtensions.CreateCreatureLayer(
+                new Dictionary<long, CreatureUnit> { { (long)creatureId, creatureUnit } }
+            );
 
             return creature;
         }
@@ -93,21 +98,29 @@ namespace LobotomyCorporationMods.Test.Extensions
         internal static Mock<IFileManager> GetMockFileManager()
         {
             var mockFileManager = new Mock<IFileManager>();
-            _ = mockFileManager.Setup(fm => fm.GetFile(It.IsAny<string>())).Returns((string fileName) => fileName.InCurrentDirectory());
-            _ = mockFileManager.Setup(fm => fm.ReadAllText(It.IsAny<string>(), It.IsAny<bool>())).Returns((string fileName,
-                bool _) => File.ReadAllText(fileName.InCurrentDirectory()));
+            _ = mockFileManager
+                .Setup(fm => fm.GetFile(It.IsAny<string>()))
+                .Returns((string fileName) => fileName.InCurrentDirectory());
+            _ = mockFileManager
+                .Setup(fm => fm.ReadAllText(It.IsAny<string>(), It.IsAny<bool>()))
+                .Returns(
+                    (string fileName, bool _) => File.ReadAllText(fileName.InCurrentDirectory())
+                );
 
-            _ = mockFileManager.Setup(fm => fm.WriteAllText(It.IsAny<string>(), It.IsAny<string>())).Callback<string, string>((path,
-                contents) =>
-            {
-                var directory = Path.GetDirectoryName(path);
-                if (directory.IsNotNull() && !Directory.Exists(directory))
-                {
-                    Directory.CreateDirectory(directory);
-                }
+            _ = mockFileManager
+                .Setup(fm => fm.WriteAllText(It.IsAny<string>(), It.IsAny<string>()))
+                .Callback<string, string>(
+                    (path, contents) =>
+                    {
+                        var directory = Path.GetDirectoryName(path);
+                        if (directory.IsNotNull() && !Directory.Exists(directory))
+                        {
+                            Directory.CreateDirectory(directory);
+                        }
 
-                File.WriteAllText(path, contents);
-            });
+                        File.WriteAllText(path, contents);
+                    }
+                );
 
             return mockFileManager;
         }
@@ -127,11 +140,15 @@ namespace LobotomyCorporationMods.Test.Extensions
         }
 
         [NotNull]
-        internal static CommandWindow.CommandWindow InitializeCommandWindowWithAbnormality([CanBeNull] UnitModel currentTarget = null,
+        internal static CommandWindow.CommandWindow InitializeCommandWindowWithAbnormality(
+            [CanBeNull] UnitModel currentTarget = null,
             RwbpType rwbpType = (RwbpType)1,
-            [NotNull] string textValue = "")
+            [NotNull] string textValue = ""
+        )
         {
-            currentTarget = currentTarget.EnsureNotNullWithMethod(() => UnityTestExtensions.CreateCreatureModel());
+            currentTarget = currentTarget.EnsureNotNullWithMethod(
+                () => UnityTestExtensions.CreateCreatureModel()
+            );
 
             var deadAgentColor = Color.red;
 
@@ -139,7 +156,11 @@ namespace LobotomyCorporationMods.Test.Extensions
             InitializeLocalizeTextDataModel(textValue);
             InitializeSkillTypeList(rwbpType);
 
-            var commandWindow = UnityTestExtensions.CreateCommandWindow(currentTarget, CommandType.Management, (long)rwbpType);
+            var commandWindow = UnityTestExtensions.CreateCommandWindow(
+                currentTarget,
+                CommandType.Management,
+                (long)rwbpType
+            );
             commandWindow.DeadColor = deadAgentColor;
             CommandWindow.CommandWindow.CurrentWindow.DeadColor = deadAgentColor;
 
@@ -148,25 +169,14 @@ namespace LobotomyCorporationMods.Test.Extensions
 
         private static void InitializeLocalizeTextDataModel([NotNull] string value)
         {
-            var list = new Dictionary<string, string>
-            {
-                {
-                    value, value
-                },
-            };
+            var list = new Dictionary<string, string> { { value, value } };
 
             _ = UnityTestExtensions.CreateLocalizeTextDataModel(list);
         }
 
         private static void InitializeSkillTypeList(RwbpType rwbpType)
         {
-            SkillTypeInfo[] skillTypeInfos =
-            {
-                new SkillTypeInfo
-                {
-                    id = (long)rwbpType,
-                },
-            };
+            SkillTypeInfo[] skillTypeInfos = { new SkillTypeInfo { id = (long)rwbpType } };
 
             _ = UnityTestExtensions.CreateSkillTypeList(skillTypeInfos);
         }
@@ -175,61 +185,56 @@ namespace LobotomyCorporationMods.Test.Extensions
         {
             var observeRegions = new List<ObserveInfoData>
             {
-                new ObserveInfoData
-                {
-                    regionName = "stat",
-                },
-                new ObserveInfoData
-                {
-                    regionName = "defense",
-                },
-                new ObserveInfoData
-                {
-                    regionName = "work_r",
-                },
-                new ObserveInfoData
-                {
-                    regionName = "work_w",
-                },
-                new ObserveInfoData
-                {
-                    regionName = "work_b",
-                },
-                new ObserveInfoData
-                {
-                    regionName = "work_p",
-                },
+                new ObserveInfoData { regionName = "stat" },
+                new ObserveInfoData { regionName = "defense" },
+                new ObserveInfoData { regionName = "work_r" },
+                new ObserveInfoData { regionName = "work_w" },
+                new ObserveInfoData { regionName = "work_b" },
+                new ObserveInfoData { regionName = "work_p" },
             };
 
             creature.observeInfo.InitObserveRegion(observeRegions);
             creature.observeInfo.ObserveAll();
         }
 
-        internal static void ValidateHarmonyPatch([NotNull] this MemberInfo patchClass,
+        internal static void ValidateHarmonyPatch(
+            [NotNull] this MemberInfo patchClass,
             Type originalClass,
-            string methodName)
+            string methodName
+        )
         {
-            var attribute = Attribute.GetCustomAttribute(patchClass, typeof(HarmonyPatch)) as HarmonyPatch;
+            var attribute =
+                Attribute.GetCustomAttribute(patchClass, typeof(HarmonyPatch)) as HarmonyPatch;
 
             attribute.Should().NotBeNull();
             attribute?.info.originalType.Should().Be(originalClass);
             attribute?.info.methodName.Should().Be(methodName);
         }
 
-        internal static void VerifyArgumentNullException([NotNull] this Mock<ILogger> mockLogger,
+        internal static void VerifyArgumentNullException(
+            [NotNull] this Mock<ILogger> mockLogger,
             Action action,
-            Times? numberOfTimes = null)
+            Times? numberOfTimes = null
+        )
         {
             action.Should().Throw<ArgumentNullException>();
-            mockLogger.Verify(logger => logger.WriteException(It.IsAny<ArgumentNullException>()), numberOfTimes ?? Times.Once());
+            mockLogger.Verify(
+                logger => logger.WriteException(It.IsAny<ArgumentNullException>()),
+                numberOfTimes ?? Times.Once()
+            );
         }
 
-        internal static void VerifyNullReferenceException([NotNull] this Mock<ILogger> mockLogger,
+        internal static void VerifyNullReferenceException(
+            [NotNull] this Mock<ILogger> mockLogger,
             Action action,
-            Times? numberOfTimes = null)
+            Times? numberOfTimes = null
+        )
         {
             action.Should().Throw<NullReferenceException>();
-            mockLogger.Verify(logger => logger.WriteException(It.IsAny<NullReferenceException>()), numberOfTimes ?? Times.Once());
+            mockLogger.Verify(
+                logger => logger.WriteException(It.IsAny<NullReferenceException>()),
+                numberOfTimes ?? Times.Once()
+            );
         }
     }
 }

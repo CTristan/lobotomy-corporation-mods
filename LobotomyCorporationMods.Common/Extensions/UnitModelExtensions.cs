@@ -29,16 +29,17 @@ namespace LobotomyCorporationMods.Common.Extensions
             return giftList;
         }
 
-        internal static EGOgiftModel FindGiftAtPosition([NotNull] this UnitModel unitModel,
-            string position)
+        internal static EGOgiftModel FindGiftAtPosition(
+            [NotNull] this UnitModel unitModel,
+            string position
+        )
         {
             var equippedGifts = unitModel.GetEquippedGifts();
 
             return equippedGifts.Find(g => g.metaInfo.attachPos == position);
         }
 
-        internal static bool IsGiftLocked([NotNull] this UnitModel unitModel,
-            int giftId)
+        internal static bool IsGiftLocked([NotNull] this UnitModel unitModel, int giftId)
         {
             var matchingGiftLockState = unitModel.GetMatchingGiftLockState(giftId);
 
@@ -46,8 +47,10 @@ namespace LobotomyCorporationMods.Common.Extensions
         }
 
         [NotNull]
-        private static UnitEGOgiftSpace.GiftLockState GetMatchingGiftLockState([NotNull] this UnitModel unitModel,
-            int giftId)
+        private static UnitEGOgiftSpace.GiftLockState GetMatchingGiftLockState(
+            [NotNull] this UnitModel unitModel,
+            int giftId
+        )
         {
             var lockStateDictionary = unitModel.Equipment.gifts.lockState;
             var lockState = lockStateDictionary.Values.FirstOrDefault(v => v.id == giftId);

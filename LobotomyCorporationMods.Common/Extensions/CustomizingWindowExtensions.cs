@@ -20,7 +20,10 @@ namespace LobotomyCorporationMods.Common.Extensions
 
             foreach (var language in SupportedLanguage.GetSupprotedList())
             {
-                customizingWindow.CurrentAgent._agentName.metaInfo.nameDic.Add(language, customName);
+                customizingWindow.CurrentAgent._agentName.metaInfo.nameDic.Add(
+                    language,
+                    customName
+                );
                 customizingWindow.CurrentAgent._agentName.nameDic.Add(language, customName);
             }
         }
@@ -33,11 +36,15 @@ namespace LobotomyCorporationMods.Common.Extensions
                 customizingWindow.appearanceUI.copied = null;
             }
 
-            customizingWindow.CurrentAgent.SetAppearanceData(customizingWindow.CurrentData.appearance);
+            customizingWindow.CurrentAgent.SetAppearanceData(
+                customizingWindow.CurrentData.appearance
+            );
         }
 
-        internal static void UpdateAgentModel([NotNull] this CustomizingWindow customizingWindow,
-            [NotNull] IAgentLayerTestAdapter agentLayerTestAdapter)
+        internal static void UpdateAgentModel(
+            [NotNull] this CustomizingWindow customizingWindow,
+            [NotNull] IAgentLayerTestAdapter agentLayerTestAdapter
+        )
         {
             var agentModel = customizingWindow.CurrentAgent;
             agentLayerTestAdapter.RemoveAgent(agentModel);

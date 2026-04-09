@@ -15,12 +15,14 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    internal sealed class AgentInfoWindowUiComponentsTestAdapter : TestAdapter<AgentInfoWindow.UIComponent>, IAgentInfoWindowUiComponentsTestAdapter
-
+    internal sealed class AgentInfoWindowUiComponentsTestAdapter
+        : TestAdapter<AgentInfoWindow.UIComponent>,
+            IAgentInfoWindowUiComponentsTestAdapter
     {
-        internal AgentInfoWindowUiComponentsTestAdapter([NotNull] AgentInfoWindow.UIComponent gameObject) : base(gameObject)
-        {
-        }
+        internal AgentInfoWindowUiComponentsTestAdapter(
+            [NotNull] AgentInfoWindow.UIComponent gameObject
+        )
+            : base(gameObject) { }
 
         public void SetData(AgentData agentData)
         {

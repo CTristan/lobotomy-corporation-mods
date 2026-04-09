@@ -168,7 +168,11 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests
             mockLogger.VerifyArgumentNullException(action);
 
             // Verify other arguments throw an exception if null
-            action = () => CustomizingWindowPatchReviseOpenAction.Postfix(UnityTestExtensions.CreateCustomizingWindow(), null);
+            action = () =>
+                CustomizingWindowPatchReviseOpenAction.Postfix(
+                    UnityTestExtensions.CreateCustomizingWindow(),
+                    null
+                );
             mockLogger.VerifyArgumentNullException(action, Times.Exactly(NumberOfLogs));
         }
 

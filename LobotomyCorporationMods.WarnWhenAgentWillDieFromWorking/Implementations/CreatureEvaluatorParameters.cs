@@ -6,11 +6,13 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 {
     internal sealed class CreatureEvaluatorParameters
     {
-        internal CreatureEvaluatorParameters(AgentModel agent,
+        internal CreatureEvaluatorParameters(
+            AgentModel agent,
             CreatureModel creature,
             RwbpType skillType,
             IBeautyBeastAnimTestAdapter beautyBeastAnimTestAdapter,
-            IYggdrasilAnimTestAdapter yggdrasilAnimTestAdapter)
+            IYggdrasilAnimTestAdapter yggdrasilAnimTestAdapter
+        )
         {
             Agent = agent;
             Creature = creature;

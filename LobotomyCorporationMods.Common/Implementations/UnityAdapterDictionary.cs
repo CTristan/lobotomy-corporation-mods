@@ -21,24 +21,20 @@ namespace LobotomyCorporationMods.Common.Implementations
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
     [Serializable]
-    public class UnityAdapterDictionary<TKey, TValue, TOther> : Dictionary<TKey, TValue> where TValue : ITestAdapter<TOther>
+    public class UnityAdapterDictionary<TKey, TValue, TOther> : Dictionary<TKey, TValue>
+        where TValue : ITestAdapter<TOther>
     {
-        public UnityAdapterDictionary()
-        {
-        }
+        public UnityAdapterDictionary() { }
 
-        protected UnityAdapterDictionary(SerializationInfo info,
-            StreamingContext context) : base(info, context)
-        {
-        }
+        protected UnityAdapterDictionary(SerializationInfo info, StreamingContext context)
+            : base(info, context) { }
 
         public new bool ContainsKey([NotNull] TKey key)
         {
             return TryGetValue(key, out _);
         }
 
-        public new bool TryGetValue([NotNull] TKey key,
-            [CanBeNull] out TValue value)
+        public new bool TryGetValue([NotNull] TKey key, [CanBeNull] out TValue value)
         {
             var success = base.TryGetValue(key, out value);
 

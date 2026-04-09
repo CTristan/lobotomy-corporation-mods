@@ -11,7 +11,6 @@ namespace LobotomyCorporationMods.Common.Interfaces.Adapters
 {
     public interface IWorkerSpriteManagerTestAdapter : IComponentTestAdapter<WorkerSpriteManager>
     {
-        void SetAgentBasicData(WorkerSprite.WorkerSprite workerSprite,
-            Appearance appear);
+        void SetAgentBasicData(WorkerSprite.WorkerSprite workerSprite, Appearance appear);
     }
 }

@@ -13,11 +13,11 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    internal class ComponentTestAdapter<T> : TestAdapter<T>, IComponentTestAdapter<T> where T : Component
+    internal class ComponentTestAdapter<T> : TestAdapter<T>, IComponentTestAdapter<T>
+        where T : Component
     {
-        internal ComponentTestAdapter([NotNull] T gameObject) : base(gameObject)
-        {
-        }
+        internal ComponentTestAdapter([NotNull] T gameObject)
+            : base(gameObject) { }
 
         [NotNull]
         public ITransformTestAdapter Transform => new TransformTestAdapter(_gameObject.transform);
@@ -29,10 +29,8 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses
 
         public override T GameObject
         {
-            get =>
-                !_gameObject.IsUnityNull() ? _gameObject : null;
-            set =>
-                _gameObject = value;
+            get => !_gameObject.IsUnityNull() ? _gameObject : null;
+            set => _gameObject = value;
         }
     }
 }

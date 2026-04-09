@@ -36,9 +36,11 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests
             // Forcing null arguments to test exception logging.
             // ReSharper disable AssignNullToNotNullAttribute
             var times = 1;
-            Action action = () => ManagementSlotPatchSetUi.Postfix(null, UnityTestExtensions.CreateUnitModel());
+            Action action = () =>
+                ManagementSlotPatchSetUi.Postfix(null, UnityTestExtensions.CreateUnitModel());
             mockLogger.VerifyArgumentNullException(action, Times.Exactly(times++));
-            action = () => ManagementSlotPatchSetUi.Postfix(UnityTestExtensions.CreateManagementSlot(), null);
+            action = () =>
+                ManagementSlotPatchSetUi.Postfix(UnityTestExtensions.CreateManagementSlot(), null);
             mockLogger.VerifyArgumentNullException(action, Times.Exactly(times));
             // ReSharper enable AssignNullToNotNullAttribute
         }

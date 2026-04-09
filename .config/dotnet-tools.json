@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "openlobotomy.tooling": {
+      "version": "1.0.0",
+      "commands": [
+        "ci"
+      ],
+      "rollForward": false
+    }
+  }
+}

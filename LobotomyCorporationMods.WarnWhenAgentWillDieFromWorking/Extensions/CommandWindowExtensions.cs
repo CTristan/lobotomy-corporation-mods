@@ -30,20 +30,36 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
         ///     command window contains a creature, the evaluator will be retrieved from the evaluators dictionary using the creature's ID. If the command window does not contain a creature
         ///     or it.IsNull(), the evaluator will be set to null.
         /// </remarks>
-        internal static ICreatureEvaluator GetCreatureEvaluator([NotNull] this CommandWindow.CommandWindow commandWindow,
+        internal static ICreatureEvaluator GetCreatureEvaluator(
+            [NotNull] this CommandWindow.CommandWindow commandWindow,
             AgentModel agent,
-            Dictionary<CreatureIds, Func<CreatureEvaluatorParameters, ICreatureEvaluator>> evaluators,
+            Dictionary<
+                CreatureIds,
+                Func<CreatureEvaluatorParameters, ICreatureEvaluator>
+            > evaluators,
             IBeautyBeastAnimTestAdapter beautyBeastAnimTestAdapter,
-            IYggdrasilAnimTestAdapter yggdrasilAnimTestAdapter)
+            IYggdrasilAnimTestAdapter yggdrasilAnimTestAdapter
+        )
         {
             ICreatureEvaluator evaluator;
 
             if (commandWindow.TryGetCreature(out var creature) && !creature.IsNull())
             {
                 var skillType = commandWindow.CurrentSkill.rwbpType;
-                var evaluatorParameters = new CreatureEvaluatorParameters(agent, creature, skillType, beautyBeastAnimTestAdapter, yggdrasilAnimTestAdapter);
+                var evaluatorParameters = new CreatureEvaluatorParameters(
+                    agent,
+                    creature,
+                    skillType,
+                    beautyBeastAnimTestAdapter,
+                    yggdrasilAnimTestAdapter
+                );
 
-                evaluator = evaluators.TryGetValue((CreatureIds)creature.metadataId, out var factoryMethod) ? factoryMethod(evaluatorParameters) : new DefaultEvaluator(agent, creature, skillType);
+                evaluator = evaluators.TryGetValue(
+                    (CreatureIds)creature.metadataId,
+                    out var factoryMethod
+                )
+                    ? factoryMethod(evaluatorParameters)
+                    : new DefaultEvaluator(agent, creature, skillType);
             }
             else
             {
@@ -53,8 +69,10 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
             return evaluator;
         }
 
-        private static bool TryGetCreature([NotNull] this CommandWindow.CommandWindow commandWindow,
-            [CanBeNull] out CreatureModel creature)
+        private static bool TryGetCreature(
+            [NotNull] this CommandWindow.CommandWindow commandWindow,
+            [CanBeNull] out CreatureModel creature
+        )
         {
             creature = null;
 

@@ -6,11 +6,8 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 {
     internal sealed class SnowQueenEvaluator : CreatureEvaluator
     {
-        internal SnowQueenEvaluator(AgentModel agent,
-            CreatureModel creature,
-            RwbpType skillType) : base(agent, creature, skillType)
-        {
-        }
+        internal SnowQueenEvaluator(AgentModel agent, CreatureModel creature, RwbpType skillType)
+            : base(agent, creature, skillType) { }
 
         protected override bool WillAgentDieFromThisCreature()
         {

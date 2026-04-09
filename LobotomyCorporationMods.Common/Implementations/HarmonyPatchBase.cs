@@ -15,7 +15,8 @@ namespace LobotomyCorporationMods.Common.Implementations
 {
     public class HarmonyPatchBase
     {
-        private const string DuplicateErrorMessage = "Please create a separate static instance for your mod.";
+        private const string DuplicateErrorMessage =
+            "Please create a separate static instance for your mod.";
 
         /// <summary>Singleton ensures thread safety across Harmony patches. https://csharpindepth.com/Articles/Singleton</summary>
         protected static readonly HarmonyPatchBase Instance = new HarmonyPatchBase();
@@ -24,9 +25,7 @@ namespace LobotomyCorporationMods.Common.Implementations
         private static readonly HashSet<object> s_registeredTypes = new HashSet<object>();
 
         /// <summary>Validate that each mod is using their own Singleton instance. https://stackoverflow.com/a/2855324/1410257</summary>
-        protected HarmonyPatchBase(Type harmonyPatchType,
-            string modFileName,
-            bool isNotDuplicating)
+        protected HarmonyPatchBase(Type harmonyPatchType, string modFileName, bool isNotDuplicating)
         {
             if (!isNotDuplicating)
             {
@@ -37,9 +36,7 @@ namespace LobotomyCorporationMods.Common.Implementations
             ValidateThatStaticInstanceIsNotDuplicated();
         }
 
-        private HarmonyPatchBase()
-        {
-        }
+        private HarmonyPatchBase() { }
 
         // We load our properties when applying the patch, so they will be null in the constructor
         // ReSharper disable once NullableWarningSuppressionIsUsed
@@ -48,15 +45,13 @@ namespace LobotomyCorporationMods.Common.Implementations
         // ReSharper disable once NullableWarningSuppressionIsUsed
         public ILogger Logger { get; private set; }
 
-
         /// <summary>Entry point for testing.</summary>
         public void AddLoggerTarget(ILogger logger)
         {
             Logger = logger;
         }
 
-        protected void ApplyHarmonyPatch([NotNull] Type harmonyPatchType,
-            string modFileName)
+        protected void ApplyHarmonyPatch([NotNull] Type harmonyPatchType, string modFileName)
         {
             try
             {
@@ -73,10 +68,12 @@ namespace LobotomyCorporationMods.Common.Implementations
             }
         }
 
-        protected void SetUpPatchData(Type type,
+        protected void SetUpPatchData(
+            Type type,
             string modFileName,
             [CanBeNull] ICollection<DirectoryInfo> directories = null,
-            [CanBeNull] IAngelaConversationUiTestAdapter angelaConversationUiTestAdapter = null)
+            [CanBeNull] IAngelaConversationUiTestAdapter angelaConversationUiTestAdapter = null
+        )
         {
             if (!type.IsHarmonyPatch())
             {
@@ -98,14 +95,18 @@ namespace LobotomyCorporationMods.Common.Implementations
             ApplyHarmonyPatch(type, modFileName);
         }
 
-        private void HandleDirectories([CanBeNull] ICollection<DirectoryInfo> directories,
-            [NotNull] string modFileName)
+        private void HandleDirectories(
+            [CanBeNull] ICollection<DirectoryInfo> directories,
+            [NotNull] string modFileName
+        )
         {
             // Try to get Basemod directory list if we don't have one
             FileManager = new FileManager(modFileName, directories ?? Add_On.instance.DirList);
         }
 
-        private void InitializeLogger(IAngelaConversationUiTestAdapter angelaConversationUiTestAdapter)
+        private void InitializeLogger(
+            IAngelaConversationUiTestAdapter angelaConversationUiTestAdapter
+        )
         {
             var fileLoggerTarget = new FileLoggerTarget(FileManager, "log.txt");
             Logger = new Logger(fileLoggerTarget);
@@ -118,7 +119,10 @@ namespace LobotomyCorporationMods.Common.Implementations
 #endif
 
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            var angelaLoggerTarget = new AngelaLoggerTarget(logToAngela, angelaConversationUiTestAdapter);
+            var angelaLoggerTarget = new AngelaLoggerTarget(
+                logToAngela,
+                angelaConversationUiTestAdapter
+            );
             Logger.AddTarget(angelaLoggerTarget);
         }
 
@@ -133,15 +137,9 @@ namespace LobotomyCorporationMods.Common.Implementations
             }
 
             var xml = File.ReadAllText(defaultLocalizationFile);
-            var xmlDocument = new XmlDocument
-            {
-                XmlResolver = null,
-            };
+            var xmlDocument = new XmlDocument { XmlResolver = null };
 
-            var xmlSettings = new XmlReaderSettings
-            {
-                ProhibitDtd = true,
-            };
+            var xmlSettings = new XmlReaderSettings { ProhibitDtd = true };
 
             using (var xmlReader = XmlReader.Create(new StringReader(xml), xmlSettings))
             {
@@ -151,7 +149,10 @@ namespace LobotomyCorporationMods.Common.Implementations
             var dataLoader = new LocalizeTextDataLoader("en");
             foreach (var keyValuePair in dataLoader.LoadText(xmlDocument))
             {
-                DefaultLocalizedValues.AddOrOverwriteDefaultLocalizedValue(keyValuePair.Key, keyValuePair.Value);
+                DefaultLocalizedValues.AddOrOverwriteDefaultLocalizedValue(
+                    keyValuePair.Key,
+                    keyValuePair.Value
+                );
             }
         }
 

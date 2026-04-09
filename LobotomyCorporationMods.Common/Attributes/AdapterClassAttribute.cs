@@ -9,7 +9,5 @@ using System;
 namespace LobotomyCorporationMods.Common.Attributes
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public sealed class AdapterClassAttribute : Attribute
-    {
-    }
+    public sealed class AdapterClassAttribute : Attribute { }
 }

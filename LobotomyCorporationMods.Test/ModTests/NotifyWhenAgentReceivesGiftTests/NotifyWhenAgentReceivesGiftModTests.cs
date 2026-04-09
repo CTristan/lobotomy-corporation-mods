@@ -2,6 +2,7 @@
 
 #region
 
+using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
@@ -14,7 +15,7 @@ using Moq;
 
 namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
 {
-    public class NotifyWhenAgentReceivesGiftModTests
+    public class NotifyWhenAgentReceivesGiftModTests : IDisposable
     {
         protected const string ColorAgentString = "#66bfcd";
         protected const string ColorGiftString = "#84bd36";
@@ -33,11 +34,14 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
         }
 
-        protected Mock<INoticeTestAdapter> NoticeTestAdapter { get; } = new Mock<INoticeTestAdapter>();
+        protected Mock<INoticeTestAdapter> NoticeTestAdapter { get; } =
+            new Mock<INoticeTestAdapter>();
 
         [NotNull]
-        protected static AgentModel GetAgentWithLockedGift(string agentName,
-            EGOgiftAttachRegion attachRegion)
+        protected static AgentModel GetAgentWithLockedGift(
+            string agentName,
+            EGOgiftAttachRegion attachRegion
+        )
         {
             GetGift(DefaultGiftName);
             var agentModelCreationParameters = new AgentModelCreationParameters
@@ -46,7 +50,12 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
             };
 
             var unitModel = UnityTestExtensions.CreateAgentModel(agentModelCreationParameters);
-            var oldGift = GetGift(DefaultGiftName, DefaultEquipmentId + 1, DefaultGiftId + 1, attachRegion);
+            var oldGift = GetGift(
+                DefaultGiftName,
+                DefaultEquipmentId + 1,
+                DefaultGiftId + 1,
+                attachRegion
+            );
             unitModel.Equipment.gifts.addedGifts.Add(oldGift);
             var giftLockState = new UnitEGOgiftSpace.GiftLockState
             {
@@ -61,28 +70,22 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
 
         /// <summary>Returns a gift object that can be used for tests.</summary>
         [NotNull]
-        protected static EGOgiftModel GetGift([NotNull] string giftName,
+        protected static EGOgiftModel GetGift(
+            [NotNull] string giftName,
             long equipmentId = DefaultEquipmentId,
             int giftId = DefaultGiftId,
-            EGOgiftAttachRegion attachRegion = DefaultGiftAttachRegion)
+            EGOgiftAttachRegion attachRegion = DefaultGiftAttachRegion
+        )
         {
-            var textData = new Dictionary<string, string>
-            {
-                {
-                    giftName, giftName
-                },
-            };
+            var textData = new Dictionary<string, string> { { giftName, giftName } };
 
             InitializeTextData(textData);
 
-            var equipmentNameDictionary = new Dictionary<string, string>
-            {
-                {
-                    "name", giftName
-                },
-            };
+            var equipmentNameDictionary = new Dictionary<string, string> { { "name", giftName } };
 
-            var metaInfo = UnityTestExtensions.CreateEquipmentTypeInfo(localizeData: equipmentNameDictionary);
+            var metaInfo = UnityTestExtensions.CreateEquipmentTypeInfo(
+                localizeData: equipmentNameDictionary
+            );
             metaInfo.id = giftId;
             metaInfo.attachPos = attachRegion.ToString();
 
@@ -104,6 +107,20 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
             textData[LogMessageId] = NotificationLogMessage;
 
             UnityTestExtensions.CreateLocalizeTextDataModel(textData);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                UnityTestExtensions.ResetStaticFields();
+            }
         }
     }
 }

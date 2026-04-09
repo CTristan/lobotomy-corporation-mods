@@ -23,15 +23,21 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Patches
     [HarmonyPatch(typeof(ManagementSlot), nameof(ManagementSlot.SetUI))]
     public static class ManagementSlotPatchSetUi
     {
-        public static void PatchAfterSetUi([NotNull] this ManagementSlot instance,
+        public static void PatchAfterSetUi(
+            [NotNull] this ManagementSlot instance,
             [NotNull] UnitModel agent,
             [NotNull] string imagePath,
             [CanBeNull] IFileManager fileManager = null,
-            [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null)
+            [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null
+        )
         {
             Guard.Against.Null(instance, nameof(instance));
-            fileManager = fileManager.EnsureNotNullWithMethod(() => Harmony_Patch.Instance.FileManager);
-            testAdapterParameters = testAdapterParameters.EnsureNotNullWithMethod(() => new OptionalTestAdapterParameters());
+            fileManager = fileManager.EnsureNotNullWithMethod(
+                () => Harmony_Patch.Instance.FileManager
+            );
+            testAdapterParameters = testAdapterParameters.EnsureNotNullWithMethod(
+                () => new OptionalTestAdapterParameters()
+            );
 
             const float LocalPositionX = -12f;
             const float LocalPositionY = 28f;
@@ -58,8 +64,7 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Patches
         // ReSharper disable InconsistentNaming
         [EntryPoint]
         [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-        public static void Postfix([NotNull] ManagementSlot __instance,
-            [NotNull] UnitModel agent)
+        public static void Postfix([NotNull] ManagementSlot __instance, [NotNull] UnitModel agent)
         {
             try
             {

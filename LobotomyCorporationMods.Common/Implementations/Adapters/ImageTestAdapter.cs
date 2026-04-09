@@ -19,33 +19,33 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
     internal sealed class ImageTestAdapter : ComponentTestAdapter<Image>, IImageTestAdapter
     {
-        internal ImageTestAdapter([NotNull] Image gameObject) : base(gameObject)
-        {
-        }
+        internal ImageTestAdapter([NotNull] Image gameObject)
+            : base(gameObject) { }
 
         public Color Color
         {
-            get =>
-                _gameObject.color;
-            set =>
-                _gameObject.color = value;
+            get => _gameObject.color;
+            set => _gameObject.color = value;
         }
 
         public Sprite Sprite
         {
-            get =>
-                _gameObject.sprite;
-            set =>
-                _gameObject.sprite = value;
+            get => _gameObject.sprite;
+            set => _gameObject.sprite = value;
         }
 
         [NotNull]
         public ITooltipMouseOverTestAdapter AddTooltipMouseOverComponent()
         {
-            return new TooltipMouseOverTestAdapter(_gameObject.gameObject.AddComponent<TooltipMouseOver>());
+            return new TooltipMouseOverTestAdapter(
+                _gameObject.gameObject.AddComponent<TooltipMouseOver>()
+            );
         }
 
         [NotNull]
-        public ITooltipMouseOverTestAdapter TooltipMouseOverComponent => new TooltipMouseOverTestAdapter(_gameObject.gameObject.GetComponent<TooltipMouseOver>());
+        public ITooltipMouseOverTestAdapter TooltipMouseOverComponent =>
+            new TooltipMouseOverTestAdapter(
+                _gameObject.gameObject.GetComponent<TooltipMouseOver>()
+            );
     }
 }

@@ -20,9 +20,8 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
     internal sealed class GameObjectTestAdapter : TestAdapter<GameObject>, IGameObjectTestAdapter
     {
-        internal GameObjectTestAdapter([NotNull] GameObject gameObject) : base(gameObject)
-        {
-        }
+        internal GameObjectTestAdapter([NotNull] GameObject gameObject)
+            : base(gameObject) { }
 
         public bool ActiveSelf => _gameObject.activeSelf;
 
@@ -36,7 +35,8 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses
         }
 
         [NotNull]
-        public IImageTestAdapter ImageComponent => new ImageTestAdapter(_gameObject.GetComponent<Image>());
+        public IImageTestAdapter ImageComponent =>
+            new ImageTestAdapter(_gameObject.GetComponent<Image>());
 
         public void SetActive(bool value)
         {
@@ -45,10 +45,8 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses
 
         public override GameObject GameObject
         {
-            get =>
-                !_gameObject.IsUnityNull() ? _gameObject : null;
-            set =>
-                _gameObject = value;
+            get => !_gameObject.IsUnityNull() ? _gameObject : null;
+            set => _gameObject = value;
         }
     }
 }

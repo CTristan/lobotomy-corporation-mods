@@ -57,7 +57,9 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
 
         public static bool IsUncontrollable(this AgentState state)
         {
-            return state == AgentState.DEAD || state == AgentState.PANIC || state == AgentState.UNCONTROLLABLE;
+            return state == AgentState.DEAD
+                || state == AgentState.PANIC
+                || state == AgentState.UNCONTROLLABLE;
         }
     }
 }

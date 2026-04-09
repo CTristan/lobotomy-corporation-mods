@@ -12,11 +12,12 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    internal sealed class TransformTestAdapter : ComponentTestAdapter<Transform>, ITransformTestAdapter
+    internal sealed class TransformTestAdapter
+        : ComponentTestAdapter<Transform>,
+            ITransformTestAdapter
     {
-        internal TransformTestAdapter([NotNull] Transform gameObject) : base(gameObject)
-        {
-        }
+        internal TransformTestAdapter([NotNull] Transform gameObject)
+            : base(gameObject) { }
 
         [NotNull]
         public ITransformTestAdapter Parent => new TransformTestAdapter(_gameObject.parent);
@@ -29,18 +30,14 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 
         public Vector3 LocalPosition
         {
-            get =>
-                _gameObject.localPosition;
-            set =>
-                _gameObject.localPosition = value;
+            get => _gameObject.localPosition;
+            set => _gameObject.localPosition = value;
         }
 
         public Vector3 LocalScale
         {
-            get =>
-                _gameObject.localScale;
-            set =>
-                _gameObject.localScale = value;
+            get => _gameObject.localScale;
+            set => _gameObject.localScale = value;
         }
 
         public void SetParent([NotNull] ITransformTestAdapter parent)

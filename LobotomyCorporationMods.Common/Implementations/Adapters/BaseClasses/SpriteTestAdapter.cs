@@ -14,13 +14,10 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
     internal sealed class SpriteTestAdapter : TestAdapter<Sprite>, ISpriteTestAdapter
     {
-        internal SpriteTestAdapter([NotNull] Sprite gameObject) : base(gameObject)
-        {
-        }
+        internal SpriteTestAdapter([NotNull] Sprite gameObject)
+            : base(gameObject) { }
 
-        public Sprite Create(Texture2D texture,
-            Rect rect,
-            Vector2 pivot)
+        public Sprite Create(Texture2D texture, Rect rect, Vector2 pivot)
         {
             _gameObject = Sprite.Create(texture, rect, pivot);
 
@@ -29,10 +26,8 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters.BaseClasses
 
         public override Sprite GameObject
         {
-            get =>
-                !_gameObject.IsUnityNull() ? _gameObject : null;
-            set =>
-                _gameObject = value;
+            get => !_gameObject.IsUnityNull() ? _gameObject : null;
+            set => _gameObject = value;
         }
     }
 }

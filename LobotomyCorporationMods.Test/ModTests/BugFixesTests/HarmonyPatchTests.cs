@@ -82,9 +82,19 @@ namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests
             mockLogger.VerifyArgumentNullException(action);
 
             // Verify other arguments throw exception when null
-            action = () => CustomizingWindowPatchSetAgentStatBonus.Prefix(UnityTestExtensions.CreateCustomizingWindow(), null, UnityTestExtensions.CreateAgentData());
+            action = () =>
+                CustomizingWindowPatchSetAgentStatBonus.Prefix(
+                    UnityTestExtensions.CreateCustomizingWindow(),
+                    null,
+                    UnityTestExtensions.CreateAgentData()
+                );
             mockLogger.VerifyArgumentNullException(action, Times.Exactly(TwoLogs));
-            action = () => CustomizingWindowPatchSetAgentStatBonus.Prefix(UnityTestExtensions.CreateCustomizingWindow(), UnityTestExtensions.CreateAgentModel(), null);
+            action = () =>
+                CustomizingWindowPatchSetAgentStatBonus.Prefix(
+                    UnityTestExtensions.CreateCustomizingWindow(),
+                    UnityTestExtensions.CreateAgentModel(),
+                    null
+                );
             mockLogger.VerifyArgumentNullException(action, Times.Exactly(ThreeLogs));
         }
     }

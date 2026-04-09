@@ -33,8 +33,10 @@ namespace LobotomyCorporationMods.Common.Extensions
             };
         }
 
-        internal static void SetAppearanceData([NotNull] this WorkerModel workerModel,
-            [NotNull] Appearance appearance)
+        internal static void SetAppearanceData(
+            [NotNull] this WorkerModel workerModel,
+            [NotNull] Appearance appearance
+        )
         {
             workerModel.spriteData = appearance.spriteSet;
             workerModel.spriteData.BattleEyeBrow = appearance.Eye_Battle;

@@ -6,11 +6,8 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 {
     internal sealed class NothingThereEvaluator : CreatureEvaluator
     {
-        internal NothingThereEvaluator(AgentModel agent,
-            CreatureModel creature,
-            RwbpType skillType) : base(agent, creature, skillType)
-        {
-        }
+        internal NothingThereEvaluator(AgentModel agent, CreatureModel creature, RwbpType skillType)
+            : base(agent, creature, skillType) { }
 
         private bool IsDisguised()
         {

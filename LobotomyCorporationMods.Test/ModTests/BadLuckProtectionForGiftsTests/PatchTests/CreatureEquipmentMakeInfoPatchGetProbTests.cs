@@ -13,7 +13,8 @@ using Xunit;
 
 namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.PatchTests
 {
-    public sealed class CreatureEquipmentMakeInfoPatchGetProbTests : BadLuckProtectionForGiftsModTests
+    public sealed class CreatureEquipmentMakeInfoPatchGetProbTests
+        : BadLuckProtectionForGiftsModTests
     {
         [Theory]
         [InlineData(0F)]
@@ -62,7 +63,9 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
 
             var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
 
-            mockAgentWorkTracker.Setup(tracker => tracker.GetLastAgentWorkCountByGift(GiftName)).Returns(TimesWorked);
+            mockAgentWorkTracker
+                .Setup(tracker => tracker.GetLastAgentWorkCountByGift(GiftName))
+                .Returns(TimesWorked);
 
             // Act
             var actual = 0f;
@@ -78,14 +81,18 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
         [InlineData(1f)]
         [InlineData(2f)]
         [InlineData(3f)]
-        public void The_gift_probability_increases_by_one_percent_for_every_success_the_agent_has_while_working(float numberOfSuccesses)
+        public void The_gift_probability_increases_by_one_percent_for_every_success_the_agent_has_while_working(
+            float numberOfSuccesses
+        )
         {
             // Arrange
             var sut = GetCreatureEquipmentMakeInfo(GiftName);
             var expected = numberOfSuccesses / 100f;
 
             var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
-            mockAgentWorkTracker.Setup(tracker => tracker.GetLastAgentWorkCountByGift(GiftName)).Returns(numberOfSuccesses);
+            mockAgentWorkTracker
+                .Setup(tracker => tracker.GetLastAgentWorkCountByGift(GiftName))
+                .Returns(numberOfSuccesses);
 
             // Act
             var actual = 0f;

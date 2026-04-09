@@ -21,14 +21,22 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
     [HarmonyPatch(typeof(AgentInfoWindow), nameof(AgentInfoWindow.EnforcementWindow))]
     public static class AgentInfoWindowPatchEnforcementWindow
     {
-        public static void PatchAfterEnforcementWindow([NotNull] this AgentInfoWindow instance,
-            [CanBeNull] IAgentInfoWindowUiComponentsTestAdapter agentInfoWindowUiComponentsTestAdapter = null,
+        public static void PatchAfterEnforcementWindow(
+            [NotNull] this AgentInfoWindow instance,
+            [CanBeNull]
+                IAgentInfoWindowUiComponentsTestAdapter agentInfoWindowUiComponentsTestAdapter =
+                null,
             [CanBeNull] ICustomizingWindowTestAdapter customizingWindowTestAdapter = null,
-            [CanBeNull] IGameObjectTestAdapter gameObjectTestAdapter = null)
+            [CanBeNull] IGameObjectTestAdapter gameObjectTestAdapter = null
+        )
         {
             Guard.Against.Null(instance, nameof(instance));
 
-            instance.OpenAppearancePanel(agentInfoWindowUiComponentsTestAdapter, customizingWindowTestAdapter, gameObjectTestAdapter);
+            instance.OpenAppearancePanel(
+                agentInfoWindowUiComponentsTestAdapter,
+                customizingWindowTestAdapter,
+                gameObjectTestAdapter
+            );
         }
 
         /// <summary>Runs after opening the Strengthen Agent window to open the appearance window.</summary>

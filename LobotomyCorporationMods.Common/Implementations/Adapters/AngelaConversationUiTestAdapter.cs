@@ -15,11 +15,12 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    internal sealed class AngelaConversationUiTestAdapter : ComponentTestAdapter<AngelaConversationUI>, IAngelaConversationUiTestAdapter
+    internal sealed class AngelaConversationUiTestAdapter
+        : ComponentTestAdapter<AngelaConversationUI>,
+            IAngelaConversationUiTestAdapter
     {
-        internal AngelaConversationUiTestAdapter([NotNull] AngelaConversationUI gameObject) : base(gameObject)
-        {
-        }
+        internal AngelaConversationUiTestAdapter([NotNull] AngelaConversationUI gameObject)
+            : base(gameObject) { }
 
         public void AddMessage(string message)
         {

@@ -16,7 +16,9 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests.PatchTest
         [Theory]
         [InlineData("DefaultAgent")]
         [InlineData("TestAgent")]
-        public void Opening_the_strengthen_employee_window_gets_agent_appearance_data(string agentName)
+        public void Opening_the_strengthen_employee_window_gets_agent_appearance_data(
+            string agentName
+        )
         {
             var sut = InitializeCustomizingWindow();
             var agentModel = UnityTestExtensions.CreateAgentModel();

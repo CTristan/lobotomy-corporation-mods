@@ -15,11 +15,12 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    internal sealed class AgentLayerTestAdapter : ComponentTestAdapter<AgentLayer>, IAgentLayerTestAdapter
+    internal sealed class AgentLayerTestAdapter
+        : ComponentTestAdapter<AgentLayer>,
+            IAgentLayerTestAdapter
     {
-        internal AgentLayerTestAdapter([NotNull] AgentLayer gameObject) : base(gameObject)
-        {
-        }
+        internal AgentLayerTestAdapter([NotNull] AgentLayer gameObject)
+            : base(gameObject) { }
 
         public void AddAgent(AgentModel model)
         {

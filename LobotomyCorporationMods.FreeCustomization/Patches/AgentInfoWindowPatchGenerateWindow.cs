@@ -21,14 +21,22 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
     [HarmonyPatch(typeof(AgentInfoWindow), nameof(AgentInfoWindow.GenerateWindow))]
     public static class AgentInfoWindowPatchGenerateWindow
     {
-        public static void PatchAfterGenerateWindow([NotNull] this AgentInfoWindow instance,
-            [CanBeNull] IAgentInfoWindowUiComponentsTestAdapter agentInfoWindowUiComponentsTestAdapter = null,
+        public static void PatchAfterGenerateWindow(
+            [NotNull] this AgentInfoWindow instance,
+            [CanBeNull]
+                IAgentInfoWindowUiComponentsTestAdapter agentInfoWindowUiComponentsTestAdapter =
+                null,
             [CanBeNull] ICustomizingWindowTestAdapter customizingWindowTestAdapter = null,
-            [CanBeNull] IGameObjectTestAdapter gameObjectTestAdapter = null)
+            [CanBeNull] IGameObjectTestAdapter gameObjectTestAdapter = null
+        )
         {
             Guard.Against.Null(instance, nameof(instance));
 
-            instance.OpenAppearancePanel(agentInfoWindowUiComponentsTestAdapter, customizingWindowTestAdapter, gameObjectTestAdapter);
+            instance.OpenAppearancePanel(
+                agentInfoWindowUiComponentsTestAdapter,
+                customizingWindowTestAdapter,
+                gameObjectTestAdapter
+            );
         }
 
         /// <summary>Runs after opening the Agent window to automatically open the appearance window, since there's no reason to hide it behind a button.</summary>

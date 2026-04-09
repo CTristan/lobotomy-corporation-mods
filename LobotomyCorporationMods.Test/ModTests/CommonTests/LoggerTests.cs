@@ -22,7 +22,10 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
 
             logger.WriteException(new InvalidOperationException());
 
-            mockLoggerTarget.Verify(target => target.WriteToLoggerTarget(It.IsAny<string>()), Times.Once);
+            mockLoggerTarget.Verify(
+                target => target.WriteToLoggerTarget(It.IsAny<string>()),
+                Times.Once
+            );
         }
     }
 }

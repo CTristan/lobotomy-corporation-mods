@@ -13,12 +13,16 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
         /// <param name="currentGameManager">The current GameManager instance.</param>
         /// <param name="state">The AgentState to check.</param>
         /// <returns>True if the game stage is valid, false otherwise.</returns>
-        internal static bool IsValidGameStage([CanBeNull] this GameManager currentGameManager,
-            AgentState state)
+        internal static bool IsValidGameStage(
+            [CanBeNull] this GameManager currentGameManager,
+            AgentState state
+        )
         {
             var commandWindow = CommandWindow.CommandWindow.CurrentWindow;
 
-            return IsDayStarted(currentGameManager) && commandWindow.IsAbnormalityWorkWindow() && IsAgentControllable(state);
+            return IsDayStarted(currentGameManager)
+                && commandWindow.IsAbnormalityWorkWindow()
+                && IsAgentControllable(state);
         }
 
         /// <summary>Checks if the day has already started.</summary>

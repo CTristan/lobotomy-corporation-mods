@@ -4,7 +4,6 @@ namespace LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses
 {
     public interface INoticeTestAdapter : ITestAdapter<Notice>
     {
-        void Send(string notice,
-            params object[] param);
+        void Send(string notice, params object[] param);
     }
 }

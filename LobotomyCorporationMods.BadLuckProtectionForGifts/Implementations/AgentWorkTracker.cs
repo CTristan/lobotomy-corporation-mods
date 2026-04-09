@@ -22,11 +22,11 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         // We load the FileManager later when applying the patch, so this will be null in the constructor
         private readonly IFileManager _fileManager;
         private readonly List<IGift> _gifts = new List<IGift>();
-        private readonly Dictionary<string, long> _mostRecentAgentIdByGift = new Dictionary<string, long>();
+        private readonly Dictionary<string, long> _mostRecentAgentIdByGift =
+            new Dictionary<string, long>();
         private readonly string _trackerFile = string.Empty;
 
-        public AgentWorkTracker([CanBeNull] IFileManager fileManager,
-            string dataFileName)
+        public AgentWorkTracker([CanBeNull] IFileManager fileManager, string dataFileName)
         {
             if (fileManager.IsNull())
             {
@@ -51,15 +51,16 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
             return agent.GetWorkCount();
         }
 
-        public void IncrementAgentWorkCount([NotNull] string giftName,
-            long agentId)
+        public void IncrementAgentWorkCount([NotNull] string giftName, long agentId)
         {
             IncrementAgentWorkCount(giftName, agentId, 1f);
         }
 
-        public void IncrementAgentWorkCount([NotNull] string giftName,
+        public void IncrementAgentWorkCount(
+            [NotNull] string giftName,
             long agentId,
-            float numberOfTimes)
+            float numberOfTimes
+        )
         {
             var agent = GetAgent(giftName, agentId);
             agent.IncrementWorkCount(numberOfTimes);
@@ -83,8 +84,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
             _fileManager.WriteAllText(_trackerFile, ToString());
         }
 
-        private IAgent GetAgent(string giftName,
-            long agentId)
+        private IAgent GetAgent(string giftName, long agentId)
         {
             var gift = _gifts.Find(g => g.GetName().Equals(giftName, StringComparison.Ordinal));
             if (gift.IsNull())
@@ -119,7 +119,11 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
                 for (var i = 1; i < giftData.Length; i++)
                 {
                     var agentData = giftData[i].Split(';');
-                    IncrementAgentWorkCount(giftName, long.Parse(agentData[0], CultureInfo.InvariantCulture), float.Parse(agentData[1], CultureInfo.InvariantCulture));
+                    IncrementAgentWorkCount(
+                        giftName,
+                        long.Parse(agentData[0], CultureInfo.InvariantCulture),
+                        float.Parse(agentData[1], CultureInfo.InvariantCulture)
+                    );
                 }
             }
         }
@@ -156,7 +160,12 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         {
             var agentDataBuilder = new StringBuilder();
 
-            foreach (var agentData in gift.GetAgents().Select(agent => $"^{agent.GetId()};{agent.GetWorkCount().ToString(CultureInfo.InvariantCulture)}"))
+            foreach (
+                var agentData in gift.GetAgents()
+                    .Select(agent =>
+                        $"^{agent.GetId()};{agent.GetWorkCount().ToString(CultureInfo.InvariantCulture)}"
+                    )
+            )
             {
                 agentDataBuilder.Append(agentData);
             }

@@ -28,15 +28,20 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
     public static class AgentSlotPatchSetFilter
     {
         /// <summary>Dictionary that contains factory methods for creating ICreatureEvaluator objects based on CreatureIds.</summary>
-        private static readonly Dictionary<CreatureIds, Func<CreatureEvaluatorParameters, ICreatureEvaluator>> s_evaluatorFactoryDictionary = InitEvaluatorFactoryDictionary();
+        private static readonly Dictionary<
+            CreatureIds,
+            Func<CreatureEvaluatorParameters, ICreatureEvaluator>
+        > s_evaluatorFactoryDictionary = InitEvaluatorFactoryDictionary();
 
-        public static void PatchAfterSetFilter([NotNull] this AgentSlot instance,
+        public static void PatchAfterSetFilter(
+            [NotNull] this AgentSlot instance,
             AgentState state,
             [CanBeNull] GameManager currentGameManager,
             [CanBeNull] IBeautyBeastAnimTestAdapter beautyBeastAnimTestAdapter = null,
             [CanBeNull] IImageTestAdapter imageTestAdapter = null,
             [CanBeNull] ITextTestAdapter textTestAdapter = null,
-            [CanBeNull] IYggdrasilAnimTestAdapter yggdrasilAnimTestAdapter = null)
+            [CanBeNull] IYggdrasilAnimTestAdapter yggdrasilAnimTestAdapter = null
+        )
         {
             Guard.Against.Null(instance, nameof(instance));
 
@@ -45,7 +50,12 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
                 return;
             }
 
-            var agentWillDie = instance.CheckIfWorkWillKillAgent(CommandWindow.CommandWindow.CurrentWindow, s_evaluatorFactoryDictionary, beautyBeastAnimTestAdapter, yggdrasilAnimTestAdapter);
+            var agentWillDie = instance.CheckIfWorkWillKillAgent(
+                CommandWindow.CommandWindow.CurrentWindow,
+                s_evaluatorFactoryDictionary,
+                beautyBeastAnimTestAdapter,
+                yggdrasilAnimTestAdapter
+            );
 
             if (!agentWillDie)
             {
@@ -61,48 +71,121 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
         /// <summary>Stores our evaluators in a dictionary of factories so that we only need to create the dictionary once but can make evaluators from the factories as often as we need to.</summary>
         /// <returns></returns>
         [NotNull]
-        private static Dictionary<CreatureIds, Func<CreatureEvaluatorParameters, ICreatureEvaluator>> InitEvaluatorFactoryDictionary()
+        private static Dictionary<
+            CreatureIds,
+            Func<CreatureEvaluatorParameters, ICreatureEvaluator>
+        > InitEvaluatorFactoryDictionary()
         {
-            return new Dictionary<CreatureIds, Func<CreatureEvaluatorParameters, ICreatureEvaluator>>
+            return new Dictionary<
+                CreatureIds,
+                Func<CreatureEvaluatorParameters, ICreatureEvaluator>
+            >
             {
                 {
-                    CreatureIds.BeautyAndTheBeast, parameters => new BeautyAndTheBeastEvaluator(parameters.Agent, parameters.Creature, parameters.SkillType, parameters.BeautyBeastAnimTestAdapter)
+                    CreatureIds.BeautyAndTheBeast,
+                    parameters => new BeautyAndTheBeastEvaluator(
+                        parameters.Agent,
+                        parameters.Creature,
+                        parameters.SkillType,
+                        parameters.BeautyBeastAnimTestAdapter
+                    )
                 },
                 {
-                    CreatureIds.Bloodbath, parameters => new BloodbathEvaluator(parameters.Agent, parameters.Creature, parameters.SkillType)
+                    CreatureIds.Bloodbath,
+                    parameters => new BloodbathEvaluator(
+                        parameters.Agent,
+                        parameters.Creature,
+                        parameters.SkillType
+                    )
                 },
                 {
-                    CreatureIds.BlueStar, parameters => new BlueStarEvaluator(parameters.Agent, parameters.Creature, parameters.SkillType)
+                    CreatureIds.BlueStar,
+                    parameters => new BlueStarEvaluator(
+                        parameters.Agent,
+                        parameters.Creature,
+                        parameters.SkillType
+                    )
                 },
                 {
-                    CreatureIds.CrumblingArmor, parameters => new CrumblingArmorEvaluator(parameters.Agent, parameters.Creature, parameters.SkillType)
+                    CreatureIds.CrumblingArmor,
+                    parameters => new CrumblingArmorEvaluator(
+                        parameters.Agent,
+                        parameters.Creature,
+                        parameters.SkillType
+                    )
                 },
                 {
-                    CreatureIds.HappyTeddyBear, parameters => new HappyTeddyBearEvaluator(parameters.Agent, parameters.Creature, parameters.SkillType)
+                    CreatureIds.HappyTeddyBear,
+                    parameters => new HappyTeddyBearEvaluator(
+                        parameters.Agent,
+                        parameters.Creature,
+                        parameters.SkillType
+                    )
                 },
                 {
-                    CreatureIds.NothingThere, parameters => new NothingThereEvaluator(parameters.Agent, parameters.Creature, parameters.SkillType)
+                    CreatureIds.NothingThere,
+                    parameters => new NothingThereEvaluator(
+                        parameters.Agent,
+                        parameters.Creature,
+                        parameters.SkillType
+                    )
                 },
                 {
-                    CreatureIds.ParasiteTree, parameters => new ParasiteTreeEvaluator(parameters.Agent, parameters.Creature, parameters.SkillType, parameters.YggdrasilAnimTestAdapter)
+                    CreatureIds.ParasiteTree,
+                    parameters => new ParasiteTreeEvaluator(
+                        parameters.Agent,
+                        parameters.Creature,
+                        parameters.SkillType,
+                        parameters.YggdrasilAnimTestAdapter
+                    )
                 },
                 {
-                    CreatureIds.RedShoes, parameters => new RedShoesEvaluator(parameters.Agent, parameters.Creature, parameters.SkillType)
+                    CreatureIds.RedShoes,
+                    parameters => new RedShoesEvaluator(
+                        parameters.Agent,
+                        parameters.Creature,
+                        parameters.SkillType
+                    )
                 },
                 {
-                    CreatureIds.SingingMachine, parameters => new SingingMachineEvaluator(parameters.Agent, parameters.Creature, parameters.SkillType)
+                    CreatureIds.SingingMachine,
+                    parameters => new SingingMachineEvaluator(
+                        parameters.Agent,
+                        parameters.Creature,
+                        parameters.SkillType
+                    )
                 },
                 {
-                    CreatureIds.SnowQueen, parameters => new SnowQueenEvaluator(parameters.Agent, parameters.Creature, parameters.SkillType)
+                    CreatureIds.SnowQueen,
+                    parameters => new SnowQueenEvaluator(
+                        parameters.Agent,
+                        parameters.Creature,
+                        parameters.SkillType
+                    )
                 },
                 {
-                    CreatureIds.SpiderBud, parameters => new SpiderBudEvaluator(parameters.Agent, parameters.Creature, parameters.SkillType)
+                    CreatureIds.SpiderBud,
+                    parameters => new SpiderBudEvaluator(
+                        parameters.Agent,
+                        parameters.Creature,
+                        parameters.SkillType
+                    )
                 },
                 {
-                    CreatureIds.VoidDream, parameters => new VoidDreamEvaluator(parameters.Agent, parameters.Creature, parameters.SkillType)
+                    CreatureIds.VoidDream,
+                    parameters => new VoidDreamEvaluator(
+                        parameters.Agent,
+                        parameters.Creature,
+                        parameters.SkillType
+                    )
                 },
                 {
-                    CreatureIds.WarmHeartedWoodsman, parameters => new WarmHeartedWoodsmanEvaluator(parameters.Agent, parameters.Creature, parameters.SkillType)
+                    CreatureIds.WarmHeartedWoodsman,
+                    parameters => new WarmHeartedWoodsmanEvaluator(
+                        parameters.Agent,
+                        parameters.Creature,
+                        parameters.SkillType
+                    )
                 },
             };
         }
@@ -110,8 +193,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
         [EntryPoint]
         [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
         // ReSharper disable InconsistentNaming
-        public static void Postfix([NotNull] AgentSlot __instance,
-            AgentState state)
+        public static void Postfix([NotNull] AgentSlot __instance, AgentState state)
         {
             try
             {

@@ -13,8 +13,6 @@ namespace LobotomyCorporationMods.Common.Interfaces.Adapters
     {
         void OpenAppearanceWindow();
 
-        int SetRandomStatValue(int original,
-            int currentLevel,
-            int bonusLevel);
+        int SetRandomStatValue(int original, int currentLevel, int bonusLevel);
     }
 }

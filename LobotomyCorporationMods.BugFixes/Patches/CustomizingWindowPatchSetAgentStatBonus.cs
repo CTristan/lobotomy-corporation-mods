@@ -21,10 +21,12 @@ namespace LobotomyCorporationMods.BugFixes.Patches
     [HarmonyPatch(typeof(CustomizingWindow), nameof(CustomizingWindow.SetAgentStatBonus))]
     public static class CustomizingWindowPatchSetAgentStatBonus
     {
-        public static void PatchBeforeSetAgentStatBonus([NotNull] this CustomizingWindow instance,
+        public static void PatchBeforeSetAgentStatBonus(
+            [NotNull] this CustomizingWindow instance,
             [NotNull] AgentModel agent,
             [NotNull] AgentData data,
-            [CanBeNull] ICustomizingWindowTestAdapter customizingWindowTestAdapter = null)
+            [CanBeNull] ICustomizingWindowTestAdapter customizingWindowTestAdapter = null
+        )
         {
             Guard.Against.Null(instance, nameof(instance));
             Guard.Against.Null(agent, nameof(agent));
@@ -60,9 +62,11 @@ namespace LobotomyCorporationMods.BugFixes.Patches
         [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
         // ReSharper disable InconsistentNaming
         // ReSharper disable once UnusedMethodReturnValue.Global
-        public static bool Prefix([NotNull] CustomizingWindow __instance,
+        public static bool Prefix(
+            [NotNull] CustomizingWindow __instance,
             [NotNull] AgentModel agent,
-            [NotNull] AgentData data)
+            [NotNull] AgentData data
+        )
         {
             try
             {

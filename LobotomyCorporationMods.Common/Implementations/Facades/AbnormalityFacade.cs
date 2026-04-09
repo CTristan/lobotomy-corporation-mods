@@ -10,20 +10,28 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
 {
     public static class AbnormalityFacade
     {
-        public static int GetParasiteTreeNumberOfFlowers(this CreatureModel creatureModel,
-            [CanBeNull] IYggdrasilAnimTestAdapter yggdrasilAnimTestAdapter = null)
+        public static int GetParasiteTreeNumberOfFlowers(
+            this CreatureModel creatureModel,
+            [CanBeNull] IYggdrasilAnimTestAdapter yggdrasilAnimTestAdapter = null
+        )
         {
-            yggdrasilAnimTestAdapter = yggdrasilAnimTestAdapter.EnsureNotNullWithMethod(() => new YggdrasilAnimTestAdapter((YggdrasilAnim)creatureModel.GetAnimScript()));
+            yggdrasilAnimTestAdapter = yggdrasilAnimTestAdapter.EnsureNotNullWithMethod(
+                () => new YggdrasilAnimTestAdapter((YggdrasilAnim)creatureModel.GetAnimScript())
+            );
 
             return yggdrasilAnimTestAdapter.Flowers.Count(flower => flower.ActiveSelf);
         }
 
-        public static bool IsBeautyAndTheBeastWeakened(this CreatureModel creatureModel,
-            [CanBeNull] IBeautyBeastAnimTestAdapter beautyBeastAnimTestAdapter = null)
+        public static bool IsBeautyAndTheBeastWeakened(
+            this CreatureModel creatureModel,
+            [CanBeNull] IBeautyBeastAnimTestAdapter beautyBeastAnimTestAdapter = null
+        )
         {
             const int WeakenedState = 1;
 
-            beautyBeastAnimTestAdapter = beautyBeastAnimTestAdapter.EnsureNotNullWithMethod(() => new BeautyBeastAnimTestAdapter((BeautyBeastAnim)creatureModel.GetAnimScript()));
+            beautyBeastAnimTestAdapter = beautyBeastAnimTestAdapter.EnsureNotNullWithMethod(
+                () => new BeautyBeastAnimTestAdapter((BeautyBeastAnim)creatureModel.GetAnimScript())
+            );
             var animationState = beautyBeastAnimTestAdapter.State;
 
             return animationState == WeakenedState;
@@ -35,12 +43,16 @@ namespace LobotomyCorporationMods.Common.Implementations.Facades
         /// </summary>
         /// <param name="armorCreature">The instance of Crumbling Armor.</param>
         /// <param name="testAdapter">Optional test adapter to use. If not provided, a new instance will be created.</param>
-        public static void ReloadCrumblingArmorAgentList([NotNull] this ArmorCreature armorCreature,
-            IArmorCreatureTestAdapter testAdapter = null)
+        public static void ReloadCrumblingArmorAgentList(
+            [NotNull] this ArmorCreature armorCreature,
+            IArmorCreatureTestAdapter testAdapter = null
+        )
         {
             Guard.Against.Null(armorCreature, nameof(armorCreature));
 
-            testAdapter = testAdapter.EnsureNotNullWithMethod(() => new ArmorCreatureTestAdapter(armorCreature));
+            testAdapter = testAdapter.EnsureNotNullWithMethod(
+                () => new ArmorCreatureTestAdapter(armorCreature)
+            );
 
             testAdapter.ReloadSpecialAgentList();
         }

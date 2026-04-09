@@ -18,16 +18,13 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
     internal sealed class TextTestAdapter : ComponentTestAdapter<Text>, ITextTestAdapter
     {
-        internal TextTestAdapter([NotNull] Text gameObject) : base(gameObject)
-        {
-        }
+        internal TextTestAdapter([NotNull] Text gameObject)
+            : base(gameObject) { }
 
         public string Text
         {
-            get =>
-                _gameObject.text;
-            set =>
-                _gameObject.text = value;
+            get => _gameObject.text;
+            set => _gameObject.text = value;
         }
     }
 }

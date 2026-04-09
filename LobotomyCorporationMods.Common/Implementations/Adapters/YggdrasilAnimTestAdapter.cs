@@ -18,11 +18,12 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
 {
     [AdapterClass]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    internal sealed class YggdrasilAnimTestAdapter : ComponentTestAdapter<YggdrasilAnim>, IYggdrasilAnimTestAdapter
+    internal sealed class YggdrasilAnimTestAdapter
+        : ComponentTestAdapter<YggdrasilAnim>,
+            IYggdrasilAnimTestAdapter
     {
-        internal YggdrasilAnimTestAdapter([NotNull] YggdrasilAnim gameObject) : base(gameObject)
-        {
-        }
+        internal YggdrasilAnimTestAdapter([NotNull] YggdrasilAnim gameObject)
+            : base(gameObject) { }
 
         [NotNull]
         public IEnumerable<IGameObjectTestAdapter> Flowers
@@ -31,7 +32,9 @@ namespace LobotomyCorporationMods.Common.Implementations.Adapters
             {
                 var flowers = _gameObject.flowers;
 
-                return flowers.Select(flower => new GameObjectTestAdapter(flower)).Cast<IGameObjectTestAdapter>();
+                return flowers
+                    .Select(flower => new GameObjectTestAdapter(flower))
+                    .Cast<IGameObjectTestAdapter>();
             }
         }
     }

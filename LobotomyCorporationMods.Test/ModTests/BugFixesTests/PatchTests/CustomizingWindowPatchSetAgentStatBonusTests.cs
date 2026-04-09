@@ -45,10 +45,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests.PatchTests
             statBonus.mental = BuffStatBonus;
             statBonus.work = BuffStatBonus;
             var statBuff = UnityTestExtensions.CreateUnitStatBuf(statBonus);
-            var statBuffList = new List<UnitStatBuf>
-            {
-                statBuff,
-            };
+            var statBuffList = new List<UnitStatBuf> { statBuff };
 
             var agentModelCreationParameters = new AgentModelCreationParameters
             {
@@ -59,14 +56,21 @@ namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests.PatchTests
             var agent = UnityTestExtensions.CreateAgentModel(agentModelCreationParameters);
             var data = UnityTestExtensions.CreateAgentData();
 
-
             // Act
             customizingWindow.PatchBeforeSetAgentStatBonus(agent, data, mockTestAdapter.Object);
 
             // Assert
             // Even though our current stat level is way above 1 due to our buff, we should still only send as our original un-buffed level.
             const int ExpectedStatLevelSent = 1;
-            mockTestAdapter.Verify(adapter => adapter.SetRandomStatValue(It.IsAny<int>(), ExpectedStatLevelSent, It.IsAny<int>()), Times.Exactly(FourTimes));
+            mockTestAdapter.Verify(
+                adapter =>
+                    adapter.SetRandomStatValue(
+                        It.IsAny<int>(),
+                        ExpectedStatLevelSent,
+                        It.IsAny<int>()
+                    ),
+                Times.Exactly(FourTimes)
+            );
         }
     }
 }

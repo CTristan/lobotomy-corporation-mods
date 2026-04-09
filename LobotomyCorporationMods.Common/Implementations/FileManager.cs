@@ -21,29 +21,30 @@ namespace LobotomyCorporationMods.Common.Implementations
         private readonly object _fileLock = new object();
         private readonly Dictionary<string, string> _filesCache;
 
-        public FileManager([NotNull] string modFileName,
-            [NotNull] ICollection<DirectoryInfo> directories)
+        public FileManager(
+            [NotNull] string modFileName,
+            [NotNull] ICollection<DirectoryInfo> directories
+        )
         {
             Guard.Against.Null(directories, nameof(directories));
 
-            var directory = directories.FirstOrDefault(directoryInfo => File.Exists(Path.Combine(directoryInfo.FullName, modFileName)));
+            var directory = directories.FirstOrDefault(directoryInfo =>
+                File.Exists(Path.Combine(directoryInfo.FullName, modFileName))
+            );
 
             if (directory.IsNotNull())
             {
                 _dataPath = directory;
 
                 var modFilePath = Path.Combine(_dataPath.FullName, modFileName);
-                _filesCache = new Dictionary<string, string>
-                {
-                    {
-                        modFileName, modFilePath
-                    },
-                };
+                _filesCache = new Dictionary<string, string> { { modFileName, modFilePath } };
             }
             else
             {
                 var sb = new StringBuilder();
-                sb.AppendLine($"Data path was not found, unable to find {modFileName} in the following directories:");
+                sb.AppendLine(
+                    $"Data path was not found, unable to find {modFileName} in the following directories:"
+                );
                 foreach (var directoryInfo in directories)
                 {
                     sb.AppendLine(directoryInfo.ToString());
@@ -73,8 +74,7 @@ namespace LobotomyCorporationMods.Common.Implementations
         }
 
         [NotNull]
-        public string ReadAllText(string fileWithPath,
-            bool createIfNotExists)
+        public string ReadAllText(string fileWithPath, bool createIfNotExists)
         {
             if (!File.Exists(fileWithPath))
             {
@@ -92,8 +92,7 @@ namespace LobotomyCorporationMods.Common.Implementations
             }
         }
 
-        public void WriteAllText([NotNull] string fileWithPath,
-            string contents)
+        public void WriteAllText([NotNull] string fileWithPath, string contents)
         {
             lock (_fileLock)
             {

@@ -29,7 +29,12 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         {
             var mockLogger = new Mock<ILogger>();
 
-            Action action = () => _fakeHarmonyPatch.ApplyHarmonyPatch(typeof(HarmonyPatchBase), string.Empty, mockLogger.Object);
+            Action action = () =>
+                _fakeHarmonyPatch.ApplyHarmonyPatch(
+                    typeof(HarmonyPatchBase),
+                    string.Empty,
+                    mockLogger.Object
+                );
 
             action.Should().NotThrow();
         }
@@ -56,12 +61,7 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         {
             // Arrange
             var key = nameof(Initializing_localized_text_returns_correct_value) + expectedValue;
-            var dictionary = new Dictionary<string, string>
-            {
-                {
-                    key, expectedValue
-                },
-            };
+            var dictionary = new Dictionary<string, string> { { key, expectedValue } };
 
             LocalizeTextDataModel.instance.Init(dictionary);
 
@@ -152,10 +152,11 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
         {
             var currentDirectory = Directory.GetCurrentDirectory();
 
-            Action action = () => _fakeHarmonyPatch.TestInitializePatchData(new List<DirectoryInfo>
-            {
-                new DirectoryInfo(currentDirectory),
-            }, patchType);
+            Action action = () =>
+                _fakeHarmonyPatch.TestInitializePatchData(
+                    new List<DirectoryInfo> { new DirectoryInfo(currentDirectory) },
+                    patchType
+                );
 
             action.Should().NotThrow();
         }
@@ -168,13 +169,14 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
     {
         private const string FileNameThatExists = "FileNameThatExists.txt";
 
-        internal FakeHarmonyPatch(bool isNotDuplicating) : base(typeof(FakeHarmonyPatch), nameof(FakeHarmonyPatch), isNotDuplicating)
-        {
-        }
+        internal FakeHarmonyPatch(bool isNotDuplicating)
+            : base(typeof(FakeHarmonyPatch), nameof(FakeHarmonyPatch), isNotDuplicating) { }
 
-        internal void ApplyHarmonyPatch([NotNull] Type harmonyPatchType,
+        internal void ApplyHarmonyPatch(
+            [NotNull] Type harmonyPatchType,
             string modFileName,
-            ILogger logger)
+            ILogger logger
+        )
         {
             AddLoggerTarget(logger);
             Instance.AddLoggerTarget(logger);
@@ -182,8 +184,10 @@ namespace LobotomyCorporationMods.Test.ModTests.CommonTests
             ApplyHarmonyPatch(harmonyPatchType, modFileName);
         }
 
-        internal void TestInitializePatchData([NotNull] ICollection<DirectoryInfo> directoryList,
-            Type patchType = null)
+        internal void TestInitializePatchData(
+            [NotNull] ICollection<DirectoryInfo> directoryList,
+            Type patchType = null
+        )
         {
             patchType = patchType.EnsureNotNullWithMethod(() => typeof(FakeHarmonyPatch));
 

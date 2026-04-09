@@ -14,8 +14,10 @@ namespace LobotomyCorporationMods.Common.Implementations.LoggerTargets
         private IAngelaConversationUiTestAdapter _angelaConversationUiTestAdapter;
 
         /// <summary>Represents a logger target that writes log messages to Angela. If we don't want to log messages to Angela then just set the adapter to null.</summary>
-        public AngelaLoggerTarget(bool logToAngela,
-            [CanBeNull] IAngelaConversationUiTestAdapter angelaConversationUiTestAdapter = null)
+        public AngelaLoggerTarget(
+            bool logToAngela,
+            [CanBeNull] IAngelaConversationUiTestAdapter angelaConversationUiTestAdapter = null
+        )
         {
             _logToAngela = logToAngela;
             _angelaConversationUiTestAdapter = angelaConversationUiTestAdapter;
@@ -28,7 +30,10 @@ namespace LobotomyCorporationMods.Common.Implementations.LoggerTargets
                 return;
             }
 
-            _angelaConversationUiTestAdapter = _angelaConversationUiTestAdapter.EnsureNotNullWithMethod(() => new AngelaConversationUiTestAdapter(AngelaConversationUI.instance));
+            _angelaConversationUiTestAdapter =
+                _angelaConversationUiTestAdapter.EnsureNotNullWithMethod(
+                    () => new AngelaConversationUiTestAdapter(AngelaConversationUI.instance)
+                );
 
             Notice.instance.Send(NoticeName.AddSystemLog, message);
             _angelaConversationUiTestAdapter.AddMessage(message);

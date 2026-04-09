@@ -14,10 +14,13 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
     {
         private readonly IYggdrasilAnimTestAdapter _yggdrasilAnimTestAdapter;
 
-        internal ParasiteTreeEvaluator(AgentModel agent,
+        internal ParasiteTreeEvaluator(
+            AgentModel agent,
             CreatureModel creature,
             RwbpType skillType,
-            [CanBeNull] IYggdrasilAnimTestAdapter yggdrasilAnimTestAdapter = null) : base(agent, creature, skillType)
+            [CanBeNull] IYggdrasilAnimTestAdapter yggdrasilAnimTestAdapter = null
+        )
+            : base(agent, creature, skillType)
         {
             _yggdrasilAnimTestAdapter = yggdrasilAnimTestAdapter;
         }
@@ -26,8 +29,11 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
         {
             const int MaxNumberOfFlowers = 4;
 
-            var numberOfFlowers = Creature.GetParasiteTreeNumberOfFlowers(_yggdrasilAnimTestAdapter);
-            var agentWillDie = numberOfFlowers >= MaxNumberOfFlowers && !Agent.HasParasiteTreeEffect();
+            var numberOfFlowers = Creature.GetParasiteTreeNumberOfFlowers(
+                _yggdrasilAnimTestAdapter
+            );
+            var agentWillDie =
+                numberOfFlowers >= MaxNumberOfFlowers && !Agent.HasParasiteTreeEffect();
 
             return agentWillDie;
         }

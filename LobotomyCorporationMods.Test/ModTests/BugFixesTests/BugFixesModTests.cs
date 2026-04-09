@@ -2,16 +2,18 @@
 
 #region
 
+using System;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.BugFixes;
 using LobotomyCorporationMods.Common.Interfaces;
+using LobotomyCorporationMods.Test.Extensions;
 using Moq;
 
 #endregion
 
 namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests
 {
-    public class BugFixesModTests
+    public class BugFixesModTests : IDisposable
     {
         protected const int FourTimes = 4;
 
@@ -24,5 +26,19 @@ namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests
 
         [NotNull]
         protected static ArmorCreature ArmorCreature => new ArmorCreature();
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                UnityTestExtensions.ResetStaticFields();
+            }
+        }
     }
 }

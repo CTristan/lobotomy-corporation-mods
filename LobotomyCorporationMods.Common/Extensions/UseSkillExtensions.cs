@@ -15,15 +15,21 @@ namespace LobotomyCorporationMods.Common.Extensions
             return useSkill.targetCreature;
         }
 
-        private static List<CreatureEquipmentMakeInfo> GetAbnormalityEgo([NotNull] this UseSkill useSkill)
+        private static List<CreatureEquipmentMakeInfo> GetAbnormalityEgo(
+            [NotNull] this UseSkill useSkill
+        )
         {
             return useSkill.GetAbnormalityInfo().equipMakeInfos;
         }
 
         [CanBeNull]
-        private static CreatureEquipmentMakeInfo GetAbnormalityGift([NotNull] this UseSkill useSkill)
+        private static CreatureEquipmentMakeInfo GetAbnormalityGift(
+            [NotNull] this UseSkill useSkill
+        )
         {
-            return useSkill.GetAbnormalityEgo().Find(x => x.equipTypeInfo.type == EquipmentTypeInfo.EquipmentType.SPECIAL);
+            return useSkill
+                .GetAbnormalityEgo()
+                .Find(x => x.equipTypeInfo.type == EquipmentTypeInfo.EquipmentType.SPECIAL);
         }
 
         private static CreatureTypeInfo GetAbnormalityInfo([NotNull] this UseSkill useSkill)

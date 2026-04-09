@@ -11,14 +11,17 @@ using Xunit;
 
 namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.PatchTests
 {
-    public sealed class GameSceneControllerPatchOnStageStartTests : BadLuckProtectionForGiftsModTests
+    public sealed class GameSceneControllerPatchOnStageStartTests
+        : BadLuckProtectionForGiftsModTests
     {
         [Fact]
         public void Restarting_the_day_reloads_the_saved_data_and_overwrites_the_progress_made_that_day()
         {
             var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
 
-            GameSceneControllerPatchOnStageStart.PatchAfterOnStageStart(mockAgentWorkTracker.Object);
+            GameSceneControllerPatchOnStageStart.PatchAfterOnStageStart(
+                mockAgentWorkTracker.Object
+            );
 
             mockAgentWorkTracker.Verify(tracker => tracker.Load(), Times.Once);
         }

@@ -9,7 +9,5 @@ using System;
 namespace LobotomyCorporationMods.Common.Attributes
 {
     [AttributeUsage(AttributeTargets.Method)]
-    public sealed class EntryPointAttribute : Attribute
-    {
-    }
+    public sealed class EntryPointAttribute : Attribute { }
 }

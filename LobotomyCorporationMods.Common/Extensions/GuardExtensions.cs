@@ -10,10 +10,11 @@ namespace LobotomyCorporationMods.Common.Extensions
     public static class GuardExtensions
     {
         [NotNull]
-        public static T Null<T>([NotNull] [GuardClause] this Guard guardClause,
-            [NotNull] [ValidatedNotNull] [NoEnumeration]
-            T input,
-            [NotNull] [InvokerParameterName] string parameterName)
+        public static T Null<T>(
+            [NotNull] [GuardClause] this Guard guardClause,
+            [NotNull] [ValidatedNotNull] [NoEnumeration] T input,
+            [NotNull] [InvokerParameterName] string parameterName
+        )
         {
             if (input.IsNull())
             {
