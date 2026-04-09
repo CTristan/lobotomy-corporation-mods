@@ -6,6 +6,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces
 {
     public interface IAgentWorkTracker
     {
+        float GetAgentWorkCountByGift([NotNull] string giftName, long agentId);
+
         float GetLastAgentWorkCountByGift([NotNull] string giftName);
 
         long? GetMostRecentAgentIdByGift([NotNull] string giftName);

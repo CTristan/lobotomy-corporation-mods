@@ -330,6 +330,48 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
             agentWorkTracker.GetLastAgentWorkCountByGift(DefaultGiftName).Should().Be(5f);
         }
 
+        [Fact]
+        public void Getting_agent_work_count_by_gift_returns_specific_agent_work_count()
+        {
+            const string DataFileName = nameof(
+                Getting_agent_work_count_by_gift_returns_specific_agent_work_count
+            );
+            var agentWorkTracker = CreateAgentWorkTracker(DataFileName);
+            agentWorkTracker.IncrementAgentWorkCount(DefaultGiftName, 1L, 10f);
+            agentWorkTracker.IncrementAgentWorkCount(DefaultGiftName, 2L, 5f);
+
+            var result = agentWorkTracker.GetAgentWorkCountByGift(DefaultGiftName, 1L);
+
+            result.Should().Be(10f);
+        }
+
+        [Fact]
+        public void Getting_agent_work_count_by_gift_returns_zero_for_unknown_agent()
+        {
+            const string DataFileName = nameof(
+                Getting_agent_work_count_by_gift_returns_zero_for_unknown_agent
+            );
+            var agentWorkTracker = CreateAgentWorkTracker(DataFileName);
+            agentWorkTracker.IncrementAgentWorkCount(DefaultGiftName, 1L, 10f);
+
+            var result = agentWorkTracker.GetAgentWorkCountByGift(DefaultGiftName, 99L);
+
+            result.Should().Be(0f);
+        }
+
+        [Fact]
+        public void Getting_agent_work_count_by_gift_returns_zero_for_unknown_gift()
+        {
+            const string DataFileName = nameof(
+                Getting_agent_work_count_by_gift_returns_zero_for_unknown_gift
+            );
+            var agentWorkTracker = CreateAgentWorkTracker(DataFileName);
+
+            var result = agentWorkTracker.GetAgentWorkCountByGift("UnknownGift", 1L);
+
+            result.Should().Be(0f);
+        }
+
         #region Helper Methods
 
         /// <summary>Populates the Harmony Patch with an agent work tracker pointed to our specified test data file.</summary>

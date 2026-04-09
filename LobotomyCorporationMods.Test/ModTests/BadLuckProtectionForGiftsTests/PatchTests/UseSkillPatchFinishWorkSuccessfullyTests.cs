@@ -252,6 +252,17 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
             );
         }
 
+        [Fact]
+        public void PatchBeforeFinishWorkSuccessfully_returns_current_agent_id()
+        {
+            var useSkill = UnityTestExtensions.CreateUseSkill();
+            var expectedAgentId = useSkill.agent.instanceId;
+
+            var result = useSkill.PatchBeforeFinishWorkSuccessfully();
+
+            result.Should().Be(expectedAgentId);
+        }
+
         private static Mock<IBadLuckProtectionConfig> CreateMockConfig(
             bool resetOnGiftReceived = false,
             BonusCalculationMode bonusCalculationMode = BonusCalculationMode.PerPEBox

@@ -19,6 +19,13 @@ Run a single test:
 dotnet test --filter "FullyQualifiedName~ClassName.MethodName" LobotomyCorporationMods.slnx
 ```
 
+Additional tooling (requires `dotnet tool restore`):
+```bash
+dotnet ci          # Auto-fix formatting + run tests (local CI)
+dotnet ci --check  # Verify mode (no auto-fix, matches GitHub Actions)
+dotnet setup       # Copy game DLLs to external/, decompile Assembly-CSharp.dll
+```
+
 Game DLLs in `external/LobotomyCorp_Data/Managed/` are required but not committed. CI pulls them from a private repo.
 
 ## Target Frameworks
@@ -45,9 +52,14 @@ Each patch class has exactly two methods:
 
 Patches must be **Postfix** unless Prefix is unavoidable (requires a comment explaining why).
 
-### Common Project (`LobotomyCorporationMods.Common`)
+### Common Library
 
-Shared infrastructure: `HarmonyPatchBase`, `FileManager`, `Logger`, extension methods for game types, attributes (`EntryPoint`, `ExcludeFromCodeCoverage`), and test adapters for Unity components.
+Shared infrastructure is provided by the `LobotomyCorporation.Mods.Common` NuGet package (namespace: `LobotomyCorporation.Mods.Common`): `HarmonyPatchBase`, `FileManager`, `Logger`, extension methods for game types, attributes (`EntryPoint`, `ExcludeFromCodeCoverage`), and test adapters for Unity components. A local `LobotomyCorporationMods.Common` directory also exists for development.
+
+### Submodules
+
+- `LobCorp.ConfigurationManager` — Configuration manager mod (separate solution)
+- `open-lobotomy-tooling` — Shared tooling (CI tool, Common library source)
 
 ### Test Project (`LobotomyCorporationMods.Test`)
 

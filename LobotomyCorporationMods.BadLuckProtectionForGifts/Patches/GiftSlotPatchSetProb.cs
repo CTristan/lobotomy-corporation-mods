@@ -21,15 +21,17 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
     [HarmonyPatch(typeof(GiftSlot), nameof(GiftSlot.SetProb))]
     public static class GiftSlotPatchSetProb
     {
-        /// <summary>Formats the gift chance display text with the agent name.</summary>
-        /// <param name="prob">The probability value passed to SetProb.</param>
+        /// <summary>Formats the gift chance display text with the agent name, showing both base and boosted probabilities.</summary>
+        /// <param name="baseProb">The base probability without any mod bonus.</param>
+        /// <param name="boostedProb">The probability with the agent's accumulated bonus applied.</param>
         /// <param name="agentName">The name of the most recent agent, or null if unavailable.</param>
         /// <param name="giftTitle">The localized gift title text.</param>
         /// <param name="decimalPlaces">Number of decimal places to display.</param>
         /// <returns>The formatted display text, or null if the text should not be modified.</returns>
         [CanBeNull]
         public static string FormatGiftChanceText(
-            float prob,
+            float baseProb,
+            float boostedProb,
             [CanBeNull] string agentName,
             [NotNull] string giftTitle,
             int decimalPlaces
@@ -40,17 +42,20 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
                 return null;
             }
 
-            var percentValue = (prob * 100f).ToString(
-                "F" + decimalPlaces,
+            var format = "F" + decimalPlaces;
+            var boostedPercent = (boostedProb * 100f).ToString(
+                format,
                 CultureInfo.InvariantCulture
             );
+            var basePercent = (baseProb * 100f).ToString(format, CultureInfo.InvariantCulture);
 
             return string.Format(
                 CultureInfo.InvariantCulture,
-                "{0} ({1} Next Chance:{2}%)",
+                "{0} ({1} Next Chance:{2}%) (Base:{3}%)",
                 giftTitle,
                 agentName,
-                percentValue
+                boostedPercent,
+                basePercent
             );
         }
 
@@ -66,11 +71,21 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             {
                 ThrowHelper.ThrowIfNull(__instance, nameof(__instance));
 
-                var agentName = GetAgentName(__instance, Harmony_Patch.Instance.AgentWorkTracker);
+                var agentWorkTracker = Harmony_Patch.Instance.AgentWorkTracker;
+                var config = Harmony_Patch.Instance.Config;
+                var agentName = GetAgentName(__instance, agentWorkTracker);
+
+                var boostedProb = GetBoostedProbability(__instance, prob, agentWorkTracker, config);
 
                 var giftTitle = LocalizeTextDataModel.instance.GetText("Inventory_GiftTitle");
-                var decimalPlaces = Harmony_Patch.Instance.Config.GiftChanceDecimalPlaces;
-                var formattedText = FormatGiftChanceText(prob, agentName, giftTitle, decimalPlaces);
+                var decimalPlaces = config.GiftChanceDecimalPlaces;
+                var formattedText = FormatGiftChanceText(
+                    prob,
+                    boostedProb,
+                    agentName,
+                    giftTitle,
+                    decimalPlaces
+                );
 
                 if (formattedText.IsNotNull())
                 {
@@ -86,6 +101,43 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
         }
 
         // ReSharper enable InconsistentNaming
+
+        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
+        private static float GetBoostedProbability(
+            [NotNull] GiftSlot giftSlot,
+            float baseProb,
+            [NotNull] IAgentWorkTracker agentWorkTracker,
+            [NotNull] IBadLuckProtectionConfig config
+        )
+        {
+            var info = giftSlot.Info;
+            if (info.IsNull())
+            {
+                return baseProb;
+            }
+
+            var giftName = info.Name;
+            if (string.IsNullOrEmpty(giftName))
+            {
+                return baseProb;
+            }
+
+            var agentId = agentWorkTracker.GetMostRecentAgentIdByGift(giftName);
+            if (!agentId.HasValue)
+            {
+                return baseProb;
+            }
+
+            var workCount = agentWorkTracker.GetAgentWorkCountByGift(giftName, agentId.Value);
+            var riskLevel = agentWorkTracker.GetRiskLevelByGift(giftName);
+            var bonusPercentage = riskLevel.HasValue
+                ? config.GetBonusPercentageForRiskLevel(riskLevel.Value)
+                : 1.0f;
+
+            var boostedProb = baseProb + workCount * bonusPercentage / 100f;
+
+            return boostedProb > 1f ? 1f : boostedProb;
+        }
 
         [CanBeNull]
         [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]

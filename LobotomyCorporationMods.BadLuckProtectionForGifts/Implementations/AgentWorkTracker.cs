@@ -40,6 +40,19 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
             Load();
         }
 
+        public float GetAgentWorkCountByGift([NotNull] string giftName, long agentId)
+        {
+            var gift = _gifts.Find(g => g.GetName().Equals(giftName, StringComparison.Ordinal));
+            if (gift.IsNull())
+            {
+                return 0;
+            }
+
+            var agent = gift.GetAgents().Find(a => a.GetId() == agentId);
+
+            return agent.IsNull() ? 0 : agent.GetWorkCount();
+        }
+
         public float GetLastAgentWorkCountByGift([NotNull] string giftName)
         {
             // Make sure this gift has actually been worked on before doing lookups

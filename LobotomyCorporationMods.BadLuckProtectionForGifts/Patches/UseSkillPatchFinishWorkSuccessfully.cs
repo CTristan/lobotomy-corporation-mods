@@ -20,6 +20,15 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
     [HarmonyPatch(typeof(UseSkill), PrivateMethods.UseSkill.FinishWorkSuccessfully)]
     public static class UseSkillPatchFinishWorkSuccessfully
     {
+        /// <summary>Captures the current working agent's ID before FinishWorkSuccessfully runs,
+        /// so that GetProb can look up the correct agent's bonus during the gift probability check.</summary>
+        public static long PatchBeforeFinishWorkSuccessfully([NotNull] this UseSkill instance)
+        {
+            ThrowHelper.ThrowIfNull(instance, nameof(instance));
+
+            return instance.GetAgentId();
+        }
+
         public static void PatchAfterFinishWorkSuccessfully(
             [NotNull] this UseSkill instance,
             [NotNull] IAgentWorkTracker agentWorkTracker,
@@ -67,9 +76,30 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             }
         }
 
-        /// <summary>Runs after an agent finishes working with an abnormality to increment their work count.</summary>
+        /// <summary>Runs before FinishWorkSuccessfully to capture the current agent's ID.
+        /// Prefix is required because GetProb() is called inside the original method body,
+        /// and the GetProb patch needs to know which agent is currently working.</summary>
         /// <param name="__instance"></param>
         // ReSharper disable InconsistentNaming
+        [EntryPoint]
+        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
+        public static void Prefix([NotNull] UseSkill __instance)
+        {
+            try
+            {
+                Harmony_Patch.Instance.CurrentWorkingAgentId =
+                    __instance.PatchBeforeFinishWorkSuccessfully();
+            }
+            catch (Exception ex)
+            {
+                Harmony_Patch.Instance.Logger.WriteException(ex);
+
+                throw;
+            }
+        }
+
+        /// <summary>Runs after an agent finishes working with an abnormality to increment their work count.</summary>
+        /// <param name="__instance"></param>
         [EntryPoint]
         [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
         public static void Postfix([NotNull] UseSkill __instance)
@@ -86,6 +116,10 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
                 Harmony_Patch.Instance.Logger.WriteException(ex);
 
                 throw;
+            }
+            finally
+            {
+                Harmony_Patch.Instance.CurrentWorkingAgentId = null;
             }
         }
         // ReSharper enable InconsistentNaming

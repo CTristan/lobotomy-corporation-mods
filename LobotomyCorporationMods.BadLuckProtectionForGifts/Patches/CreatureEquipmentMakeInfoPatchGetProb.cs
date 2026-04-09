@@ -21,24 +21,33 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
         /// <param name="probability">The original probability value.</param>
         /// <param name="agentWorkTracker">The agent work tracker.</param>
         /// <param name="config">The configuration settings.</param>
+        /// <param name="currentAgentId">The current working agent's ID, or null if called from UI context.</param>
         /// <returns>The modified probability value.</returns>
         public static float PatchAfterGetProb(
             [NotNull] this CreatureEquipmentMakeInfo instance,
             float probability,
             [NotNull] IAgentWorkTracker agentWorkTracker,
-            [NotNull] IBadLuckProtectionConfig config
+            [NotNull] IBadLuckProtectionConfig config,
+            long? currentAgentId
         )
         {
             ThrowHelper.ThrowIfNull(instance, nameof(instance));
             ThrowHelper.ThrowIfNull(agentWorkTracker, nameof(agentWorkTracker));
             ThrowHelper.ThrowIfNull(config, nameof(config));
 
+            // No agent context means this is a UI display call, not a gift roll
+            if (!currentAgentId.HasValue)
+            {
+                return probability;
+            }
+
             var giftName = instance.GetAbnormalityGiftName();
             probability = ModifyProbabilityIfGiftNameIsValid(
                 probability,
                 agentWorkTracker,
                 config,
-                giftName
+                giftName,
+                currentAgentId.Value
             );
 
             return ValidateProbability(probability);
@@ -49,7 +58,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             float probability,
             IAgentWorkTracker agentWorkTracker,
             IBadLuckProtectionConfig config,
-            [CanBeNull] string giftName
+            [CanBeNull] string giftName,
+            long agentId
         )
         {
             if (string.IsNullOrEmpty(giftName))
@@ -57,7 +67,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
                 return probability;
             }
 
-            var workCount = agentWorkTracker.GetLastAgentWorkCountByGift(giftName);
+            var workCount = agentWorkTracker.GetAgentWorkCountByGift(giftName, agentId);
             var riskLevel = agentWorkTracker.GetRiskLevelByGift(giftName);
             var bonusPercentage = riskLevel.HasValue
                 ? config.GetBonusPercentageForRiskLevel(riskLevel.Value)
@@ -96,7 +106,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
                     __instance,
                     __result,
                     Harmony_Patch.Instance.AgentWorkTracker,
-                    Harmony_Patch.Instance.Config
+                    Harmony_Patch.Instance.Config,
+                    Harmony_Patch.Instance.CurrentWorkingAgentId
                 );
             }
             catch (Exception ex)

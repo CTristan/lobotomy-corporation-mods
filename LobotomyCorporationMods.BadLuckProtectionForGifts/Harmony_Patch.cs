@@ -35,6 +35,12 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         // We load the tracker later on when needed, so this should never be actually null
         internal IAgentWorkTracker AgentWorkTracker { get; }
 
+        /// <summary>
+        ///     Set by Prefix on FinishWorkSuccessfully, read by GetProb Postfix, cleared by
+        ///     FinishWorkSuccessfully Postfix. Unity is single-threaded so no race conditions.
+        /// </summary>
+        internal long? CurrentWorkingAgentId { get; set; }
+
         internal IBadLuckProtectionConfig Config { get; }
 
         private static IBadLuckProtectionConfig InitializeConfig()

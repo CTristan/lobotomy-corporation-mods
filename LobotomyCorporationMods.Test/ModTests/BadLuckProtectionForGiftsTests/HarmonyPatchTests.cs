@@ -155,7 +155,23 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
         }
 
         [Fact]
-        public void Class_UseSkill_Method_FinishWorkSuccessfully_logs_exceptions()
+        public void Class_UseSkill_Method_FinishWorkSuccessfully_Prefix_logs_exceptions()
+        {
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
+
+            void Action()
+            {
+                // ReSharper disable once AssignNullToNotNullAttribute
+                // Forcing null argument to test exception logging.
+                UseSkillPatchFinishWorkSuccessfully.Prefix(null);
+            }
+
+            mockLogger.VerifyArgumentNullException(Action);
+        }
+
+        [Fact]
+        public void Class_UseSkill_Method_FinishWorkSuccessfully_Postfix_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
