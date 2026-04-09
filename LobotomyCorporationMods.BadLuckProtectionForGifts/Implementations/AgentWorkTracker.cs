@@ -53,6 +53,13 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
             return agent.GetWorkCount();
         }
 
+        public long? GetMostRecentAgentIdByGift([NotNull] string giftName)
+        {
+            return _mostRecentAgentIdByGift.TryGetValue(giftName, out var agentId)
+                ? (long?)agentId
+                : null;
+        }
+
         [CanBeNull]
         public RiskLevel? GetRiskLevelByGift([NotNull] string giftName)
         {

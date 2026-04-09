@@ -11,6 +11,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
 
         public BonusCalculationMode BonusCalculationMode => BonusCalculationMode.Normalized;
 
+        public int GiftChanceDecimalPlaces => 2;
+
         public bool ResetOnGiftReceived => true;
 
         public float GetBonusPercentageForRiskLevel(RiskLevel riskLevel)

@@ -17,6 +17,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         private const float DefaultBonusPercentage = 1.0f;
 
         private readonly LmmConfigEntry<BonusCalculationMode> _bonusCalculationMode;
+        private readonly LmmConfigEntry<int> _giftChanceDecimalPlaces;
         private readonly LmmConfigEntry<bool> _resetOnGiftReceived;
         private readonly LmmConfigEntry<float> _zayinBonus;
         private readonly LmmConfigEntry<float> _tethBonus;
@@ -51,6 +52,17 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
                 )
             );
 
+            _giftChanceDecimalPlaces = configFile.Bind(
+                GeneralSection,
+                "GiftChanceDecimalPlaces",
+                2,
+                new LmmConfigDescription(
+                    "Number of decimal places shown in the gift chance display.",
+                    new AcceptableValueRange<int>(0, 3),
+                    new DisplayNameAttribute("Gift Chance Decimal Places")
+                )
+            );
+
             _zayinBonus = BindBonusPercentage(configFile, "ZayinBonusPercentage", "ZAYIN", 5);
             _tethBonus = BindBonusPercentage(configFile, "TethBonusPercentage", "TETH", 4);
             _heBonus = BindBonusPercentage(configFile, "HeBonusPercentage", "HE", 3);
@@ -59,6 +71,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         }
 
         public BonusCalculationMode BonusCalculationMode => _bonusCalculationMode.Value;
+
+        public int GiftChanceDecimalPlaces => _giftChanceDecimalPlaces.Value;
 
         public bool ResetOnGiftReceived => _resetOnGiftReceived.Value;
 
@@ -96,9 +110,9 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
                     "Extra gift chance (percent) added after each successful work session with "
                         + riskLevelName
                         + " abnormalities.",
-                    new AcceptableValueRange<float>(0.0f, 10.0f),
+                    new AcceptableValueRange<float>(0.0f, 100.0f),
                     new DisplayNameAttribute(riskLevelName + " Bonus Percentage"),
-                    new ConfigurationManagerAttributes { Order = order }
+                    new ConfigurationManagerAttributes { Order = order, UseIntegerSlider = true }
                 )
             );
         }

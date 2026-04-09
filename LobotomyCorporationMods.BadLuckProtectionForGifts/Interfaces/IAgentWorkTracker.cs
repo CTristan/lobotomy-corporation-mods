@@ -8,6 +8,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces
     {
         float GetLastAgentWorkCountByGift([NotNull] string giftName);
 
+        long? GetMostRecentAgentIdByGift([NotNull] string giftName);
+
         [CanBeNull]
         RiskLevel? GetRiskLevelByGift([NotNull] string giftName);
 

@@ -437,6 +437,26 @@ namespace LobotomyCorporationMods.Test.Extensions
             return GetPopulatedUninitializedObject(equipmentTypeInfo, fields, newValues);
         }
 
+        [NotNull]
+        internal static CreatureInfo.GiftSlot CreateGiftSlot(
+            EquipmentTypeInfo info = null,
+            Text title = null
+        )
+        {
+            title = title.EnsureNotNullWithMethod(CreateText);
+
+            CreateUninitializedObject<CreatureInfo.GiftSlot>(out var giftSlot);
+
+            var fields = GetUninitializedFieldsIncludingBaseType(giftSlot.GetType());
+            var newValues = new Dictionary<string, object>
+            {
+                { "_info", info },
+                { "Title", title },
+            };
+
+            return GetPopulatedUninitializedObject(giftSlot, fields, newValues);
+        }
+
         internal static FairyBuf CreateFairyBuf()
         {
             CreateUninitializedObject<FairyBuf>(out var fairyBuf);

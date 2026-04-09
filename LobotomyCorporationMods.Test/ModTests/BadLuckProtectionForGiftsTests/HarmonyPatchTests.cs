@@ -3,6 +3,7 @@
 #region
 
 using System;
+using CreatureInfo;
 using FluentAssertions;
 using LobotomyCorporationMods.BadLuckProtectionForGifts;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Patches;
@@ -49,6 +50,32 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
                 // ReSharper disable once AssignNullToNotNullAttribute
                 // Forcing null argument to test exception logging.
                 CreatureEquipmentMakeInfoPatchGetProb.Postfix(null, ref result);
+            }
+
+            mockLogger.VerifyArgumentNullException(Action);
+        }
+
+        [Fact]
+        public void Class_GiftSlot_Method_SetProb_is_patched_correctly()
+        {
+            var patch = typeof(GiftSlotPatchSetProb);
+            var originalClass = typeof(GiftSlot);
+            const string MethodName = nameof(GiftSlot.SetProb);
+
+            patch.ValidateHarmonyPatch(originalClass, MethodName);
+        }
+
+        [Fact]
+        public void Class_GiftSlot_Method_SetProb_logs_exceptions()
+        {
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
+
+            void Action()
+            {
+                // ReSharper disable once AssignNullToNotNullAttribute
+                // Forcing null argument to test exception logging.
+                GiftSlotPatchSetProb.Postfix(null, 0f);
             }
 
             mockLogger.VerifyArgumentNullException(Action);

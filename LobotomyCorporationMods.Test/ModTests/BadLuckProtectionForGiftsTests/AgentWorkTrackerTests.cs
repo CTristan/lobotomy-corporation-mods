@@ -287,6 +287,34 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
         }
 
         [Fact]
+        public void Getting_most_recent_agent_id_returns_id_of_last_agent_to_work_on_gift()
+        {
+            const string DataFileName = nameof(
+                Getting_most_recent_agent_id_returns_id_of_last_agent_to_work_on_gift
+            );
+            var agentWorkTracker = CreateAgentWorkTracker(DataFileName);
+            agentWorkTracker.IncrementAgentWorkCount(DefaultGiftName, 1L);
+            agentWorkTracker.IncrementAgentWorkCount(DefaultGiftName, 2L);
+
+            var result = agentWorkTracker.GetMostRecentAgentIdByGift(DefaultGiftName);
+
+            result.Should().Be(2L);
+        }
+
+        [Fact]
+        public void Getting_most_recent_agent_id_for_unknown_gift_returns_null()
+        {
+            const string DataFileName = nameof(
+                Getting_most_recent_agent_id_for_unknown_gift_returns_null
+            );
+            var agentWorkTracker = CreateAgentWorkTracker(DataFileName);
+
+            var result = agentWorkTracker.GetMostRecentAgentIdByGift("UnknownGift");
+
+            result.Should().BeNull();
+        }
+
+        [Fact]
         public void Resetting_agent_work_count_only_affects_specified_agent()
         {
             const string DataFileName = nameof(

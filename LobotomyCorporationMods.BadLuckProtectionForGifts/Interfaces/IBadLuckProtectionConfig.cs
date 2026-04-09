@@ -6,6 +6,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces
     {
         BonusCalculationMode BonusCalculationMode { get; }
 
+        int GiftChanceDecimalPlaces { get; }
+
         bool ResetOnGiftReceived { get; }
 
         float GetBonusPercentageForRiskLevel(RiskLevel riskLevel);
