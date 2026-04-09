@@ -69,3 +69,18 @@ Single test project covering all mods. Organized as `ModTests/{ModName}Tests/` w
 ## Documentation Checklist (when updating a mod)
 
 Update: `.csproj` version, `CHANGELOG.md`, `INTEGRATION_TESTING_CHECKLIST.md`, root `README.md`, mod `README.md`, and `Info/Info.xml`.
+
+## Audience & Language
+
+Many users and contributors are native Korean speakers who read English as a second language or through machine translation.
+
+### Audience Tiers
+
+- **Mod users** (players installing mods) — may have no development experience. User-facing text (README, CHANGELOG, Info.xml descriptions) should be simple and clear. Explain what the mod does and how to install it without assuming technical knowledge.
+- **Contributors/developers** — familiar with C#, Harmony, and modding concepts. Code comments and internal docs can use technical terminology.
+
+### Writing Style
+
+**User-facing text** (README, CHANGELOG, Info.xml, error messages): use short sentences with active voice and explicit subjects. Avoid idioms, slang, and culturally specific references. Define technical terms inline or use simpler words. Write in a style that survives machine translation — no ambiguous pronouns, no noun stacking.
+
+**Developer-facing text** (code comments, commit messages): technical terminology is fine, but prefer direct, concise phrasing over unnecessarily complex language.
