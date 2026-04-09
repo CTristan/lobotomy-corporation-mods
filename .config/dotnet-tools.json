@@ -8,6 +8,13 @@
         "ci"
       ],
       "rollForward": false
+    },
+    "openlobotomy.thesilentorchestrator": {
+      "version": "1.0.0",
+      "commands": [
+        "tso"
+      ],
+      "rollForward": false
     }
   }
 }

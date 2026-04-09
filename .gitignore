@@ -13,6 +13,7 @@ global.json
 *.userprefs
 *.sln.docstates
 .claude/
+.tso/
 .vs/
 .vscode/
 .run/
