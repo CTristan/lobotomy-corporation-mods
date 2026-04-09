@@ -4,7 +4,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces
 {
     public interface IBadLuckProtectionConfig
     {
-        bool NormalizedBonusEnabled { get; }
+        BonusCalculationMode BonusCalculationMode { get; }
 
         bool ResetOnGiftReceived { get; }
 

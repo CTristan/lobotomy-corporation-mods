@@ -3,6 +3,7 @@
 #region
 
 using FluentAssertions;
+using LobotomyCorporationMods.BadLuckProtectionForGifts;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Patches;
 using LobotomyCorporationMods.Test.Extensions;
@@ -158,7 +159,9 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
         public void Normalized_mode_increments_by_ratio_of_success_to_max_cubes()
         {
             var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
-            var mockConfig = CreateMockConfig(normalizedBonusEnabled: true);
+            var mockConfig = CreateMockConfig(
+                bonusCalculationMode: BonusCalculationMode.Normalized
+            );
             var useSkill = UnityTestExtensions.CreateUseSkill();
             var creatureEquipmentMakeInfo = GetCreatureEquipmentMakeInfo(GiftName);
             useSkill.targetCreature.metaInfo.equipMakeInfos.Add(creatureEquipmentMakeInfo);
@@ -181,7 +184,9 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
         public void Normalized_mode_perfect_work_increments_by_one()
         {
             var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
-            var mockConfig = CreateMockConfig(normalizedBonusEnabled: true);
+            var mockConfig = CreateMockConfig(
+                bonusCalculationMode: BonusCalculationMode.Normalized
+            );
             var useSkill = UnityTestExtensions.CreateUseSkill();
             var creatureEquipmentMakeInfo = GetCreatureEquipmentMakeInfo(GiftName);
             useSkill.targetCreature.metaInfo.equipMakeInfos.Add(creatureEquipmentMakeInfo);
@@ -204,7 +209,9 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
         public void Normalized_mode_zero_max_cubes_increments_by_zero()
         {
             var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
-            var mockConfig = CreateMockConfig(normalizedBonusEnabled: true);
+            var mockConfig = CreateMockConfig(
+                bonusCalculationMode: BonusCalculationMode.Normalized
+            );
             var useSkill = UnityTestExtensions.CreateUseSkill();
             var creatureEquipmentMakeInfo = GetCreatureEquipmentMakeInfo(GiftName);
             useSkill.targetCreature.metaInfo.equipMakeInfos.Add(creatureEquipmentMakeInfo);
@@ -223,10 +230,10 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
         }
 
         [Fact]
-        public void Normalized_mode_disabled_uses_raw_success_count()
+        public void PerPEBox_mode_uses_raw_success_count()
         {
             var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
-            var mockConfig = CreateMockConfig(normalizedBonusEnabled: false);
+            var mockConfig = CreateMockConfig(bonusCalculationMode: BonusCalculationMode.PerPEBox);
             var useSkill = UnityTestExtensions.CreateUseSkill();
             var creatureEquipmentMakeInfo = GetCreatureEquipmentMakeInfo(GiftName);
             useSkill.targetCreature.metaInfo.equipMakeInfos.Add(creatureEquipmentMakeInfo);
@@ -247,12 +254,12 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
 
         private static Mock<IBadLuckProtectionConfig> CreateMockConfig(
             bool resetOnGiftReceived = false,
-            bool normalizedBonusEnabled = false
+            BonusCalculationMode bonusCalculationMode = BonusCalculationMode.PerPEBox
         )
         {
             var mock = new Mock<IBadLuckProtectionConfig>();
             mock.Setup(c => c.ResetOnGiftReceived).Returns(resetOnGiftReceived);
-            mock.Setup(c => c.NormalizedBonusEnabled).Returns(normalizedBonusEnabled);
+            mock.Setup(c => c.BonusCalculationMode).Returns(bonusCalculationMode);
             mock.Setup(c => c.GetBonusPercentageForRiskLevel(It.IsAny<RiskLevel>())).Returns(1.0f);
 
             return mock;

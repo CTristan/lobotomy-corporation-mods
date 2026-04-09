@@ -3,6 +3,7 @@
 #region
 
 using FluentAssertions;
+using LobotomyCorporationMods.BadLuckProtectionForGifts;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Patches;
 using LobotomyCorporationMods.Test.Extensions;
@@ -208,7 +209,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
                 .Returns(RiskLevel.ALEPH);
 
             var mockConfig = new Mock<IBadLuckProtectionConfig>();
-            mockConfig.Setup(c => c.NormalizedBonusEnabled).Returns(true);
+            mockConfig.Setup(c => c.BonusCalculationMode).Returns(BonusCalculationMode.Normalized);
             mockConfig
                 .Setup(c => c.GetBonusPercentageForRiskLevel(RiskLevel.ALEPH))
                 .Returns(AlephMultiplier);
@@ -221,12 +222,12 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
         }
 
         private static Mock<IBadLuckProtectionConfig> CreateMockConfig(
-            bool normalizedBonusEnabled = false
+            BonusCalculationMode bonusCalculationMode = BonusCalculationMode.PerPEBox
         )
         {
             var mock = new Mock<IBadLuckProtectionConfig>();
             mock.Setup(c => c.ResetOnGiftReceived).Returns(false);
-            mock.Setup(c => c.NormalizedBonusEnabled).Returns(normalizedBonusEnabled);
+            mock.Setup(c => c.BonusCalculationMode).Returns(bonusCalculationMode);
             mock.Setup(c => c.GetBonusPercentageForRiskLevel(It.IsAny<RiskLevel>())).Returns(1.0f);
 
             return mock;

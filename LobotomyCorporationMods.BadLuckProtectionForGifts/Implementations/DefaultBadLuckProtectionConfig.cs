@@ -9,9 +9,9 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
     {
         private const float DefaultBonusPercentage = 1.0f;
 
-        public bool NormalizedBonusEnabled => true;
+        public BonusCalculationMode BonusCalculationMode => BonusCalculationMode.Normalized;
 
-        public bool ResetOnGiftReceived => false;
+        public bool ResetOnGiftReceived => true;
 
         public float GetBonusPercentageForRiskLevel(RiskLevel riskLevel)
         {

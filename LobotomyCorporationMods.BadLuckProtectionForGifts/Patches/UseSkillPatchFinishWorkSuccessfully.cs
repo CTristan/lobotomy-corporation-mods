@@ -44,7 +44,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             var agentId = instance.GetAgentId();
 
             float incrementValue;
-            if (config.NormalizedBonusEnabled)
+            if (config.BonusCalculationMode == BonusCalculationMode.Normalized)
             {
                 var maxCubeCount = instance.maxCubeCount;
                 incrementValue =

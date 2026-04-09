@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: MIT
 
+using System.ComponentModel;
+using ConfigurationManager;
 using ConfigurationManager.Config;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 
@@ -11,10 +13,10 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         private const string ModId = "BadLuckProtectionForGifts";
         private const string ModName = "Bad Luck Protection For Gifts";
         private const string GeneralSection = "General";
-        private const string BonusSection = "Bonus Percentages";
+        private const string BonusSection = "Gift Chance Bonus";
         private const float DefaultBonusPercentage = 1.0f;
 
-        private readonly LmmConfigEntry<bool> _normalizedBonusEnabled;
+        private readonly LmmConfigEntry<BonusCalculationMode> _bonusCalculationMode;
         private readonly LmmConfigEntry<bool> _resetOnGiftReceived;
         private readonly LmmConfigEntry<float> _zayinBonus;
         private readonly LmmConfigEntry<float> _tethBonus;
@@ -24,34 +26,39 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
 
         public BadLuckProtectionConfig()
         {
-            var configFile = LmmConfigRegistration.GetConfigFile(ModId, ModName);
+            var version = typeof(BadLuckProtectionConfig).Assembly.GetName().Version.ToString(3);
+            var configFile = LmmConfigRegistration.GetConfigFile(ModId, ModName, version);
 
-            _normalizedBonusEnabled = configFile.Bind(
+            _bonusCalculationMode = configFile.Bind(
                 GeneralSection,
-                "NormalizedBonusEnabled",
-                true,
+                "BonusCalculationMode",
+                BonusCalculationMode.Normalized,
                 new LmmConfigDescription(
-                    "Normalize gift chance increase across all abnormalities based on PE box ratio."
+                    "Normalized: All abnormalities gain bonus at the same rate. The bonus is based on how many PE boxes you filled out of the total.\nExample: filling 5 out of 10 PE boxes counts as 0.5.\n\nPer PE-Box: Abnormalities with more PE boxes gain bonus faster. Each filled PE box adds 1 to the bonus.\nExample: filling 7 PE boxes counts as 7.",
+                    null,
+                    new DisplayNameAttribute("Bonus Calculation Mode")
                 )
             );
 
             _resetOnGiftReceived = configFile.Bind(
                 GeneralSection,
                 "ResetOnGiftReceived",
-                false,
+                true,
                 new LmmConfigDescription(
-                    "Reset an agent's work count for a gift when they receive that gift."
+                    "When an agent receives a gift, reset their bonus for that gift to zero.",
+                    null,
+                    new DisplayNameAttribute("Reset On Gift Received")
                 )
             );
 
-            _zayinBonus = BindBonusPercentage(configFile, "ZayinBonusPercentage", "ZAYIN");
-            _tethBonus = BindBonusPercentage(configFile, "TethBonusPercentage", "TETH");
-            _heBonus = BindBonusPercentage(configFile, "HeBonusPercentage", "HE");
-            _wawBonus = BindBonusPercentage(configFile, "WawBonusPercentage", "WAW");
-            _alephBonus = BindBonusPercentage(configFile, "AlephBonusPercentage", "ALEPH");
+            _zayinBonus = BindBonusPercentage(configFile, "ZayinBonusPercentage", "ZAYIN", 5);
+            _tethBonus = BindBonusPercentage(configFile, "TethBonusPercentage", "TETH", 4);
+            _heBonus = BindBonusPercentage(configFile, "HeBonusPercentage", "HE", 3);
+            _wawBonus = BindBonusPercentage(configFile, "WawBonusPercentage", "WAW", 2);
+            _alephBonus = BindBonusPercentage(configFile, "AlephBonusPercentage", "ALEPH", 1);
         }
 
-        public bool NormalizedBonusEnabled => _normalizedBonusEnabled.Value;
+        public BonusCalculationMode BonusCalculationMode => _bonusCalculationMode.Value;
 
         public bool ResetOnGiftReceived => _resetOnGiftReceived.Value;
 
@@ -77,7 +84,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         private static LmmConfigEntry<float> BindBonusPercentage(
             LmmConfigFile configFile,
             string key,
-            string riskLevelName
+            string riskLevelName,
+            int order
         )
         {
             return configFile.Bind(
@@ -85,8 +93,12 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
                 key,
                 DefaultBonusPercentage,
                 new LmmConfigDescription(
-                    "Bonus percentage per successful work for " + riskLevelName + " abnormalities.",
-                    new AcceptableValueRange<float>(0.0f, 10.0f)
+                    "Extra gift chance (percent) added after each successful work session with "
+                        + riskLevelName
+                        + " abnormalities.",
+                    new AcceptableValueRange<float>(0.0f, 10.0f),
+                    new DisplayNameAttribute(riskLevelName + " Bonus Percentage"),
+                    new ConfigurationManagerAttributes { Order = order }
                 )
             );
         }
