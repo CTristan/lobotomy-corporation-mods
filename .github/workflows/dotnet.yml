@@ -31,13 +31,13 @@ jobs:
           dotnet-version: 10.x
 
       - name: Restore dependencies
-        run: dotnet restore LobotomyCorporationMods.sln
+        run: dotnet restore LobotomyCorporationMods.slnx
 
       - name: Build
-        run: dotnet build --no-restore LobotomyCorporationMods.sln
+        run: dotnet build --no-restore LobotomyCorporationMods.slnx
 
       - name: Test
-        run: dotnet test /p:CollectCoverage=true /p:CoverletOutput="./coverage.opencover.xml" /p:CoverletOutputFormat=opencover --no-build --verbosity normal LobotomyCorporationMods.sln
+        run: dotnet test /p:CollectCoverage=true /p:CoverletOutput="./coverage.opencover.xml" /p:CoverletOutputFormat=opencover --no-build --verbosity normal LobotomyCorporationMods.slnx
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3

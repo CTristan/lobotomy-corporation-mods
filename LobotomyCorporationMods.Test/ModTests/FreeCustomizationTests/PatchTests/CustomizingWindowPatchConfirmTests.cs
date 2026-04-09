@@ -3,8 +3,8 @@
 #region
 
 using System.Collections.Generic;
+using AwesomeAssertions;
 using Customizing;
-using FluentAssertions;
 using JetBrains.Annotations;
 using LobotomyCorporation.Mods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.FreeCustomization.Patches;

@@ -3,8 +3,8 @@
 #region
 
 using System;
+using AwesomeAssertions;
 using CommandWindow;
-using FluentAssertions;
 using JetBrains.Annotations;
 using LobotomyCorporation.Mods.Common.Enums;
 using LobotomyCorporation.Mods.Common.Interfaces;

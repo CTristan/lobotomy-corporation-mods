@@ -3,8 +3,8 @@
 #region
 
 using System;
+using AwesomeAssertions;
 using CreatureInfo;
-using FluentAssertions;
 using LobotomyCorporationMods.BadLuckProtectionForGifts;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Patches;
 using LobotomyCorporationMods.Test.Extensions;

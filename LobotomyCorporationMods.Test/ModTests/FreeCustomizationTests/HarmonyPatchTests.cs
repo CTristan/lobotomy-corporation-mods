@@ -3,8 +3,8 @@
 #region
 
 using System;
+using AwesomeAssertions;
 using Customizing;
-using FluentAssertions;
 using LobotomyCorporationMods.FreeCustomization;
 using LobotomyCorporationMods.FreeCustomization.Patches;
 using LobotomyCorporationMods.Test.Extensions;

@@ -9,14 +9,14 @@ Harmony mods for the Unity game Lobotomy Corporation. Each mod is an independent
 ## Build and Test Commands
 
 ```bash
-dotnet build LobotomyCorporationMods.sln
-dotnet test LobotomyCorporationMods.sln
-dotnet test /p:CollectCoverage=true /p:CoverletOutput="./coverage.opencover.xml" /p:CoverletOutputFormat=opencover LobotomyCorporationMods.sln
+dotnet build LobotomyCorporationMods.slnx
+dotnet test LobotomyCorporationMods.slnx
+dotnet test /p:CollectCoverage=true /p:CoverletOutput="./coverage.opencover.xml" /p:CoverletOutputFormat=opencover LobotomyCorporationMods.slnx
 ```
 
 Run a single test:
 ```bash
-dotnet test --filter "FullyQualifiedName~ClassName.MethodName" LobotomyCorporationMods.sln
+dotnet test --filter "FullyQualifiedName~ClassName.MethodName" LobotomyCorporationMods.slnx
 ```
 
 Game DLLs in `external/LobotomyCorp_Data/Managed/` are required but not committed. CI pulls them from a private repo.
@@ -56,7 +56,7 @@ Single test project covering all mods. Organized as `ModTests/{ModName}Tests/` w
 - `HarmonyPatchTests.cs` - Validates patch attributes and exception handling
 - `PatchTests/` - Tests for individual patch extension methods
 
-**Stack:** xUnit, FluentAssertions, Moq. Test names use descriptive sentences with underscores. 100% coverage target for business logic.
+**Stack:** xUnit, AwesomeAssertions, Moq. Test names use descriptive sentences with underscores. 100% coverage target for business logic.
 
 ## Coding Conventions
 

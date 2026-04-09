@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using FluentAssertions;
+using AwesomeAssertions;
 using Harmony;
 using JetBrains.Annotations;
 using LobotomyCorporation.Mods.Common.Enums;

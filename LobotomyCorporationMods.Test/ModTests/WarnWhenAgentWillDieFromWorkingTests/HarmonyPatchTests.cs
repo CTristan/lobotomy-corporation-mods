@@ -3,8 +3,8 @@
 #region
 
 using System;
+using AwesomeAssertions;
 using CommandWindow;
-using FluentAssertions;
 using LobotomyCorporationMods.Test.Extensions;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches;
