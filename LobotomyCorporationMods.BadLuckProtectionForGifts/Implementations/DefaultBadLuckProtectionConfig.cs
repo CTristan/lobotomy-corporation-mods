@@ -15,6 +15,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
 
         public bool ResetOnGiftReceived => true;
 
+        public bool ShowBaseChance => true;
+
         public float GetBonusPercentageForRiskLevel(RiskLevel riskLevel)
         {
             return DefaultBonusPercentage;

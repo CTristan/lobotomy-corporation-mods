@@ -28,5 +28,13 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
 
             config.BonusCalculationMode.Should().Be(BonusCalculationMode.Normalized);
         }
+
+        [Fact]
+        public void Show_base_chance_defaults_to_true()
+        {
+            var config = new DefaultBadLuckProtectionConfig();
+
+            config.ShowBaseChance.Should().BeTrue();
+        }
     }
 }

@@ -27,7 +27,8 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
                 BoostedProb,
                 AgentName,
                 GiftTitle,
-                2
+                2,
+                true
             );
 
             // Assert
@@ -35,10 +36,34 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
         }
 
         [Fact]
+        public void Gift_chance_display_hides_base_chance_when_show_base_chance_is_disabled()
+        {
+            // Act
+            var result = GiftSlotPatchSetProb.FormatGiftChanceText(
+                0.05f,
+                0.112f,
+                "BongBong",
+                "Gift",
+                2,
+                false
+            );
+
+            // Assert
+            result.Should().Be("Gift (BongBong Next Chance:11.20%)");
+        }
+
+        [Fact]
         public void Gift_chance_display_is_not_modified_when_no_agent_name_is_available()
         {
             // Act
-            var result = GiftSlotPatchSetProb.FormatGiftChanceText(0.1f, 0.1f, null, "Gift", 2);
+            var result = GiftSlotPatchSetProb.FormatGiftChanceText(
+                0.1f,
+                0.1f,
+                null,
+                "Gift",
+                2,
+                true
+            );
 
             // Assert
             result.Should().BeNull();
@@ -53,7 +78,8 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
                 0.1f,
                 string.Empty,
                 "Gift",
-                2
+                2,
+                true
             );
 
             // Assert
@@ -81,7 +107,8 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
                 boostedProb,
                 "BongBong",
                 "Gift",
-                decimalPlaces
+                decimalPlaces,
+                true
             );
 
             // Assert
@@ -100,7 +127,8 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
                 BaseProb,
                 "BongBong",
                 "Gift",
-                2
+                2,
+                true
             );
 
             // Assert - both values are the same

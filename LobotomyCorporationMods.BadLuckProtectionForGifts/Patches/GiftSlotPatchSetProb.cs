@@ -27,6 +27,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
         /// <param name="agentName">The name of the most recent agent, or null if unavailable.</param>
         /// <param name="giftTitle">The localized gift title text.</param>
         /// <param name="decimalPlaces">Number of decimal places to display.</param>
+        /// <param name="showBaseChance">Whether to include the base chance in the display text.</param>
         /// <returns>The formatted display text, or null if the text should not be modified.</returns>
         [CanBeNull]
         public static string FormatGiftChanceText(
@@ -34,7 +35,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             float boostedProb,
             [CanBeNull] string agentName,
             [NotNull] string giftTitle,
-            int decimalPlaces
+            int decimalPlaces,
+            bool showBaseChance
         )
         {
             if (string.IsNullOrEmpty(agentName))
@@ -47,6 +49,18 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
                 format,
                 CultureInfo.InvariantCulture
             );
+
+            if (!showBaseChance)
+            {
+                return string.Format(
+                    CultureInfo.InvariantCulture,
+                    "{0} ({1} Next Chance:{2}%)",
+                    giftTitle,
+                    agentName,
+                    boostedPercent
+                );
+            }
+
             var basePercent = (baseProb * 100f).ToString(format, CultureInfo.InvariantCulture);
 
             return string.Format(
@@ -79,12 +93,14 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
 
                 var giftTitle = LocalizeTextDataModel.instance.GetText("Inventory_GiftTitle");
                 var decimalPlaces = config.GiftChanceDecimalPlaces;
+                var showBaseChance = config.ShowBaseChance;
                 var formattedText = FormatGiftChanceText(
                     prob,
                     boostedProb,
                     agentName,
                     giftTitle,
-                    decimalPlaces
+                    decimalPlaces,
+                    showBaseChance
                 );
 
                 if (formattedText.IsNotNull())

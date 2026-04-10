@@ -10,6 +10,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces
 
         bool ResetOnGiftReceived { get; }
 
+        bool ShowBaseChance { get; }
+
         float GetBonusPercentageForRiskLevel(RiskLevel riskLevel);
     }
 }

@@ -19,6 +19,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         private readonly LmmConfigEntry<BonusCalculationMode> _bonusCalculationMode;
         private readonly LmmConfigEntry<int> _giftChanceDecimalPlaces;
         private readonly LmmConfigEntry<bool> _resetOnGiftReceived;
+        private readonly LmmConfigEntry<bool> _showBaseChance;
         private readonly LmmConfigEntry<float> _zayinBonus;
         private readonly LmmConfigEntry<float> _tethBonus;
         private readonly LmmConfigEntry<float> _heBonus;
@@ -63,6 +64,17 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
                 )
             );
 
+            _showBaseChance = configFile.Bind(
+                GeneralSection,
+                "ShowBaseChance",
+                true,
+                new LmmConfigDescription(
+                    "Show the base gift chance alongside the boosted chance in the UI.",
+                    null,
+                    new DisplayNameAttribute("Show Base Chance")
+                )
+            );
+
             _zayinBonus = BindBonusPercentage(configFile, "ZayinBonusPercentage", "ZAYIN", 5);
             _tethBonus = BindBonusPercentage(configFile, "TethBonusPercentage", "TETH", 4);
             _heBonus = BindBonusPercentage(configFile, "HeBonusPercentage", "HE", 3);
@@ -75,6 +87,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         public int GiftChanceDecimalPlaces => _giftChanceDecimalPlaces.Value;
 
         public bool ResetOnGiftReceived => _resetOnGiftReceived.Value;
+
+        public bool ShowBaseChance => _showBaseChance.Value;
 
         public float GetBonusPercentageForRiskLevel(RiskLevel riskLevel)
         {
