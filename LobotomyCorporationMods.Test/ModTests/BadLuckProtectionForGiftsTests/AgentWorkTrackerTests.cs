@@ -79,7 +79,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
             );
             var agentWorkTracker = CreateAgentWorkTracker(DataFileName);
             agentWorkTracker.IncrementAgentWorkCount(DefaultGiftName, 1L);
-            var expected = $"{DefaultGiftName}^{1L.ToString(CultureInfo.CurrentCulture)};1";
+            var expected = $"V1\n{DefaultGiftName}^{1L.ToString(CultureInfo.CurrentCulture)};1";
 
             var actual = agentWorkTracker.ToString();
 
@@ -113,7 +113,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
             );
             var expected = string.Format(
                 CultureInfo.CurrentCulture,
-                "{0}^{1};1^{2};1|{3}^{2};2",
+                "V1\n{0}^{1};1^{2};1|{3}^{2};2",
                 DefaultGiftName,
                 1L.ToString(CultureInfo.CurrentCulture),
                 SecondAgentId.ToString(CultureInfo.CurrentCulture),
@@ -370,6 +370,185 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
             var result = agentWorkTracker.GetAgentWorkCountByGift("UnknownGift", 1L);
 
             result.Should().Be(0f);
+        }
+
+        [Fact]
+        public void Loading_empty_string_results_in_empty_tracker()
+        {
+            const string DataFileName = nameof(Loading_empty_string_results_in_empty_tracker);
+            var agentWorkTracker = CreateAgentWorkTracker(DataFileName, "");
+
+            var result = agentWorkTracker.GetLastAgentWorkCountByGift(DefaultGiftName);
+
+            result.Should().Be(0f);
+        }
+
+        [Fact]
+        public void Loading_data_with_missing_semicolon_skips_malformed_agent_entry()
+        {
+            const string DataFileName = nameof(
+                Loading_data_with_missing_semicolon_skips_malformed_agent_entry
+            );
+            const string MalformedData = DefaultGiftName + "^1_INVALID";
+            var agentWorkTracker = CreateAgentWorkTracker(DataFileName, MalformedData);
+
+            var result = agentWorkTracker.GetLastAgentWorkCountByGift(DefaultGiftName);
+
+            result.Should().Be(0f);
+        }
+
+        [Fact]
+        public void Loading_data_with_non_numeric_agent_id_skips_malformed_agent_entry()
+        {
+            const string DataFileName = nameof(
+                Loading_data_with_non_numeric_agent_id_skips_malformed_agent_entry
+            );
+            const string MalformedData = DefaultGiftName + "^abc;1";
+            var agentWorkTracker = CreateAgentWorkTracker(DataFileName, MalformedData);
+
+            var result = agentWorkTracker.GetLastAgentWorkCountByGift(DefaultGiftName);
+
+            result.Should().Be(0f);
+        }
+
+        [Fact]
+        public void Loading_data_with_non_numeric_work_count_skips_malformed_agent_entry()
+        {
+            const string DataFileName = nameof(
+                Loading_data_with_non_numeric_work_count_skips_malformed_agent_entry
+            );
+            const string MalformedData = DefaultGiftName + "^1;xyz";
+            var agentWorkTracker = CreateAgentWorkTracker(DataFileName, MalformedData);
+
+            var result = agentWorkTracker.GetLastAgentWorkCountByGift(DefaultGiftName);
+
+            result.Should().Be(0f);
+        }
+
+        [Fact]
+        public void Loading_data_with_trailing_pipe_delimiter_does_not_throw()
+        {
+            const string DataFileName = nameof(
+                Loading_data_with_trailing_pipe_delimiter_does_not_throw
+            );
+            const string MalformedData = DefaultGiftName + "^1;1|";
+            var agentWorkTracker = CreateAgentWorkTracker(DataFileName, MalformedData);
+
+            var result = agentWorkTracker.GetLastAgentWorkCountByGift(DefaultGiftName);
+
+            result.Should().Be(1f);
+        }
+
+        [Fact]
+        public void Loading_data_with_trailing_caret_delimiter_does_not_throw()
+        {
+            const string DataFileName = nameof(
+                Loading_data_with_trailing_caret_delimiter_does_not_throw
+            );
+            const string MalformedData = DefaultGiftName + "^1;1^";
+            var agentWorkTracker = CreateAgentWorkTracker(DataFileName, MalformedData);
+
+            var result = agentWorkTracker.GetLastAgentWorkCountByGift(DefaultGiftName);
+
+            result.Should().Be(1f);
+        }
+
+        [Fact]
+        public void Loading_data_with_non_numeric_risk_level_skips_risk_level()
+        {
+            const string DataFileName = nameof(
+                Loading_data_with_non_numeric_risk_level_skips_risk_level
+            );
+            const string MalformedData = DefaultGiftName + "#abc^1;1";
+            var agentWorkTracker = CreateAgentWorkTracker(DataFileName, MalformedData);
+
+            agentWorkTracker.GetRiskLevelByGift(DefaultGiftName).Should().BeNull();
+            agentWorkTracker.GetLastAgentWorkCountByGift(DefaultGiftName).Should().Be(1f);
+        }
+
+        [Fact]
+        public void Loading_partially_valid_data_preserves_valid_entries()
+        {
+            const string DataFileName = nameof(
+                Loading_partially_valid_data_preserves_valid_entries
+            );
+            const string MixedData = DefaultGiftName + "^1;5^INVALID|Second^1;3";
+            var agentWorkTracker = CreateAgentWorkTracker(DataFileName, MixedData);
+
+            agentWorkTracker.GetAgentWorkCountByGift(DefaultGiftName, 1L).Should().Be(5f);
+            agentWorkTracker.GetLastAgentWorkCountByGift("Second").Should().Be(3f);
+        }
+
+        [Fact]
+        public void Saving_tracker_writes_v1_format_with_version_header()
+        {
+            const string DataFileName = nameof(Saving_tracker_writes_v1_format_with_version_header);
+            var agentWorkTracker = CreateAgentWorkTracker(DataFileName);
+            agentWorkTracker.IncrementAgentWorkCount(DefaultGiftName, 1L);
+
+            var result = agentWorkTracker.ToString();
+
+            result.Should().StartWith("V1\n");
+        }
+
+        [Fact]
+        public void Loading_v1_format_parses_data_correctly()
+        {
+            const string DataFileName = nameof(Loading_v1_format_parses_data_correctly);
+            const string V1Data = "V1\n" + DefaultGiftName + "^1;5";
+            var agentWorkTracker = CreateAgentWorkTracker(DataFileName, V1Data);
+
+            agentWorkTracker.GetAgentWorkCountByGift(DefaultGiftName, 1L).Should().Be(5f);
+        }
+
+        [Fact]
+        public void Loading_legacy_v0_format_without_version_header_still_works()
+        {
+            const string DataFileName = nameof(
+                Loading_legacy_v0_format_without_version_header_still_works
+            );
+            const string LegacyData = DefaultGiftName + "^1;5";
+            var agentWorkTracker = CreateAgentWorkTracker(DataFileName, LegacyData);
+
+            agentWorkTracker.GetAgentWorkCountByGift(DefaultGiftName, 1L).Should().Be(5f);
+        }
+
+        [Fact]
+        public void Loading_v1_format_with_risk_level_parses_correctly()
+        {
+            const string DataFileName = nameof(Loading_v1_format_with_risk_level_parses_correctly);
+            const string V1Data = "V1\n" + DefaultGiftName + "#3^1;5";
+            var agentWorkTracker = CreateAgentWorkTracker(DataFileName, V1Data);
+
+            agentWorkTracker.GetAgentWorkCountByGift(DefaultGiftName, 1L).Should().Be(5f);
+            agentWorkTracker.GetRiskLevelByGift(DefaultGiftName).Should().Be((RiskLevel)3);
+        }
+
+        [Fact]
+        public void Roundtrip_save_and_load_preserves_data_with_v1_format()
+        {
+            const string DataFileName = nameof(
+                Roundtrip_save_and_load_preserves_data_with_v1_format
+            );
+            var agentWorkTracker = CreateAgentWorkTracker(DataFileName);
+            agentWorkTracker.IncrementAgentWorkCount(DefaultGiftName, 1L, 7f);
+            agentWorkTracker.SetRiskLevelForGift(DefaultGiftName, RiskLevel.WAW);
+            agentWorkTracker.Save();
+
+            agentWorkTracker.Load();
+
+            agentWorkTracker.GetAgentWorkCountByGift(DefaultGiftName, 1L).Should().Be(7f);
+            agentWorkTracker.GetRiskLevelByGift(DefaultGiftName).Should().Be(RiskLevel.WAW);
+        }
+
+        [Fact]
+        public void Loading_unknown_version_header_handles_gracefully()
+        {
+            const string DataFileName = nameof(Loading_unknown_version_header_handles_gracefully);
+            const string FutureData = "V99\n" + DefaultGiftName + "^1;5";
+            var agentWorkTracker = CreateAgentWorkTracker(DataFileName, FutureData);
+
+            agentWorkTracker.GetLastAgentWorkCountByGift(DefaultGiftName).Should().Be(0f);
         }
 
         #region Helper Methods

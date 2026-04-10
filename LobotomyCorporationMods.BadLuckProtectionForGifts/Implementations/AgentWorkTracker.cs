@@ -21,7 +21,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         // ReSharper disable once NullableWarningSuppressionIsUsed
         // We load the FileManager later when applying the patch, so this will be null in the constructor
         private readonly IFileManager _fileManager;
-        private readonly List<IGift> _gifts = new List<IGift>();
+        private readonly Dictionary<string, IGift> _gifts = new Dictionary<string, IGift>();
         private readonly Dictionary<string, long> _mostRecentAgentIdByGift =
             new Dictionary<string, long>();
         private readonly Dictionary<string, RiskLevel> _riskLevelByGift =
@@ -42,13 +42,12 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
 
         public float GetAgentWorkCountByGift([NotNull] string giftName, long agentId)
         {
-            var gift = _gifts.Find(g => g.GetName().Equals(giftName, StringComparison.Ordinal));
-            if (gift.IsNull())
+            if (!_gifts.TryGetValue(giftName, out var gift))
             {
                 return 0;
             }
 
-            var agent = gift.GetAgents().Find(a => a.GetId() == agentId);
+            var agent = gift.GetAgents().FirstOrDefault(a => a.GetId() == agentId);
 
             return agent.IsNull() ? 0 : agent.GetWorkCount();
         }
@@ -91,8 +90,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
 
         public void ResetAgentWorkCountForGift([NotNull] string giftName, long agentId)
         {
-            var gift = _gifts.Find(g => g.GetName().Equals(giftName, StringComparison.Ordinal));
-            if (gift.IsNull())
+            if (!_gifts.TryGetValue(giftName, out var gift))
             {
                 return;
             }
@@ -137,8 +135,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
 
         private IAgent GetAgent(string giftName, long agentId)
         {
-            var gift = _gifts.Find(g => g.GetName().Equals(giftName, StringComparison.Ordinal));
-            if (gift.IsNull())
+            if (!_gifts.TryGetValue(giftName, out var gift))
             {
                 gift = CreateAndAddGift(giftName);
             }
@@ -150,10 +147,12 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         private Gift CreateAndAddGift(string giftName)
         {
             var gift = new Gift(giftName);
-            _gifts.Add(gift);
+            _gifts[giftName] = gift;
 
             return gift;
         }
+
+        private const string VersionPrefix = "V1";
 
         /// <summary>Loads the tracker data from our custom text file.</summary>
         private void LoadFromString([NotNull] string trackerData)
@@ -163,23 +162,63 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
             _mostRecentAgentIdByGift.Clear();
             _riskLevelByGift.Clear();
 
-            var gifts = trackerData.Split('|');
+            if (string.IsNullOrEmpty(trackerData))
+            {
+                return;
+            }
+
+            var newlineIndex = trackerData.IndexOf('\n');
+            if (newlineIndex >= 0)
+            {
+                var header = trackerData.Substring(0, newlineIndex);
+                if (header == VersionPrefix)
+                {
+                    ParseGiftData(trackerData.Substring(newlineIndex + 1));
+                }
+
+                // Unknown version — skip loading to avoid data corruption
+                return;
+            }
+
+            // Legacy V0 format: no version header
+            ParseGiftData(trackerData);
+        }
+
+        private void ParseGiftData([NotNull] string giftPayload)
+        {
+            if (string.IsNullOrEmpty(giftPayload))
+            {
+                return;
+            }
+
+            var gifts = giftPayload.Split('|');
             foreach (var gift in gifts)
             {
+                if (string.IsNullOrEmpty(gift))
+                {
+                    continue;
+                }
+
                 var giftData = gift.Split('^');
                 var giftToken = giftData[0];
 
-                // New format: giftName#riskLevel, Old format: giftName
+                // Format: giftName#riskLevel or giftName (legacy without risk level)
                 var hashIndex = giftToken.IndexOf('#');
                 string giftName;
                 if (hashIndex >= 0)
                 {
                     giftName = giftToken.Substring(0, hashIndex);
-                    var riskLevelValue = int.Parse(
-                        giftToken.Substring(hashIndex + 1),
-                        CultureInfo.InvariantCulture
-                    );
-                    _riskLevelByGift[giftName] = (RiskLevel)riskLevelValue;
+                    if (
+                        int.TryParse(
+                            giftToken.Substring(hashIndex + 1),
+                            NumberStyles.Integer,
+                            CultureInfo.InvariantCulture,
+                            out var riskLevelValue
+                        )
+                    )
+                    {
+                        _riskLevelByGift[giftName] = (RiskLevel)riskLevelValue;
+                    }
                 }
                 else
                 {
@@ -189,11 +228,36 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
                 for (var i = 1; i < giftData.Length; i++)
                 {
                     var agentData = giftData[i].Split(';');
-                    IncrementAgentWorkCount(
-                        giftName,
-                        long.Parse(agentData[0], CultureInfo.InvariantCulture),
-                        float.Parse(agentData[1], CultureInfo.InvariantCulture)
-                    );
+                    if (agentData.Length < 2)
+                    {
+                        continue;
+                    }
+
+                    if (
+                        !long.TryParse(
+                            agentData[0],
+                            NumberStyles.Integer,
+                            CultureInfo.InvariantCulture,
+                            out var agentId
+                        )
+                    )
+                    {
+                        continue;
+                    }
+
+                    if (
+                        !float.TryParse(
+                            agentData[1],
+                            NumberStyles.Float,
+                            CultureInfo.InvariantCulture,
+                            out var workCount
+                        )
+                    )
+                    {
+                        continue;
+                    }
+
+                    IncrementAgentWorkCount(giftName, agentId, workCount);
                 }
             }
         }
@@ -207,9 +271,15 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         public override string ToString()
         {
             var builder = new StringBuilder();
-            for (var i = 0; i < _gifts.Count; i++)
+            builder.Append(VersionPrefix);
+            builder.Append('\n');
+
+            var sortedGiftNames = new List<string>(_gifts.Keys);
+            sortedGiftNames.Sort(StringComparer.Ordinal);
+
+            for (var i = 0; i < sortedGiftNames.Count; i++)
             {
-                var gift = _gifts[i];
+                var gift = _gifts[sortedGiftNames[i]];
 
                 if (i > 0)
                 {
