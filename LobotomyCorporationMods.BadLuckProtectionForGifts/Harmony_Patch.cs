@@ -1,9 +1,7 @@
-﻿// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 
 #region
 
-using System;
-using System.Security;
 using LobotomyCorporation.Mods.Common.Implementations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
@@ -28,7 +26,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
             )
         {
             AgentWorkTracker = new AgentWorkTracker(FileManager, "BadLuckProtectionForGifts.dat");
-            Config = InitializeConfig();
+            Config = new BadLuckProtectionConfig();
         }
 
         // ReSharper disable once NullableWarningSuppressionIsUsed
@@ -42,23 +40,5 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
         internal long? CurrentWorkingAgentId { get; set; }
 
         internal IBadLuckProtectionConfig Config { get; }
-
-        private static IBadLuckProtectionConfig InitializeConfig()
-        {
-            try
-            {
-                return new BadLuckProtectionConfig();
-            }
-            catch (TypeLoadException)
-            {
-                // ConfigurationManager DLL is not installed
-                return new DefaultBadLuckProtectionConfig();
-            }
-            catch (SecurityException)
-            {
-                // Unity runtime is unavailable (e.g. in tests)
-                return new DefaultBadLuckProtectionConfig();
-            }
-        }
     }
 }

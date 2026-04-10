@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 
-using System.ComponentModel;
-using ConfigurationManager;
-using ConfigurationManager.Config;
+using LobotomyCorporation.Mods.Common.Constants;
+using LobotomyCorporation.Mods.Common.Implementations;
+using LobotomyCorporation.Mods.Common.Interfaces;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
 {
-    /// <summary>Configuration backed by ConfigurationManager for in-game settings UI.</summary>
+    /// <summary>Configuration backed by Common's configuration abstractions.</summary>
     public sealed class BadLuckProtectionConfig : IBadLuckProtectionConfig
     {
         private const string ModId = "BadLuckProtectionForGifts";
@@ -16,70 +16,68 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         private const string BonusSection = "Gift Chance Bonus";
         private const float DefaultBonusPercentage = 1.0f;
 
-        private readonly LmmConfigEntry<BonusCalculationMode> _bonusCalculationMode;
-        private readonly LmmConfigEntry<int> _giftChanceDecimalPlaces;
-        private readonly LmmConfigEntry<bool> _resetOnGiftReceived;
-        private readonly LmmConfigEntry<bool> _showBaseChance;
-        private readonly LmmConfigEntry<float> _zayinBonus;
-        private readonly LmmConfigEntry<float> _tethBonus;
-        private readonly LmmConfigEntry<float> _heBonus;
-        private readonly LmmConfigEntry<float> _wawBonus;
-        private readonly LmmConfigEntry<float> _alephBonus;
+        private readonly IConfigurationEntry<BonusCalculationMode> _bonusCalculationMode;
+        private readonly IConfigurationEntry<int> _giftChanceDecimalPlaces;
+        private readonly IConfigurationEntry<bool> _resetOnGiftReceived;
+        private readonly IConfigurationEntry<bool> _showBaseChance;
+        private readonly IConfigurationEntry<float> _zayinBonus;
+        private readonly IConfigurationEntry<float> _tethBonus;
+        private readonly IConfigurationEntry<float> _heBonus;
+        private readonly IConfigurationEntry<float> _wawBonus;
+        private readonly IConfigurationEntry<float> _alephBonus;
 
         public BadLuckProtectionConfig()
         {
             var version = typeof(BadLuckProtectionConfig).Assembly.GetName().Version.ToString(3);
-            var configFile = LmmConfigRegistration.GetConfigFile(ModId, ModName, version);
 
-            _bonusCalculationMode = configFile.Bind(
-                GeneralSection,
-                "BonusCalculationMode",
-                BonusCalculationMode.Normalized,
-                new LmmConfigDescription(
-                    "Normalized: All abnormalities gain bonus at the same rate. The bonus is based on how many PE boxes you filled out of the total.\nExample: filling 5 out of 10 PE boxes counts as 0.5.\n\nPer PE-Box: Abnormalities with more PE boxes gain bonus faster. Each filled PE box adds 1 to the bonus.\nExample: filling 7 PE boxes counts as 7.",
-                    null,
-                    new DisplayNameAttribute("Bonus Calculation Mode")
+            _bonusCalculationMode = ConfigurationEntryBuilder
+                .ForMod(ModId, ModName, version)
+                .InSection(GeneralSection)
+                .WithKey("BonusCalculationMode")
+                .WithDefault(BonusCalculationMode.Normalized)
+                .WithDisplayName("Bonus Calculation Mode")
+                .WithDescription(
+                    "Normalized: All abnormalities gain bonus at the same rate. The bonus is based on how many PE boxes you filled out of the total.\nExample: filling 5 out of 10 PE boxes counts as 0.5.\n\nPer PE-Box: Abnormalities with more PE boxes gain bonus faster. Each filled PE box adds 1 to the bonus.\nExample: filling 7 PE boxes counts as 7."
                 )
-            );
+                .Register<BonusCalculationMode>();
 
-            _resetOnGiftReceived = configFile.Bind(
-                GeneralSection,
-                "ResetOnGiftReceived",
-                true,
-                new LmmConfigDescription(
-                    "When an agent receives a gift, reset their bonus for that gift to zero.",
-                    null,
-                    new DisplayNameAttribute("Reset On Gift Received")
+            _resetOnGiftReceived = ConfigurationEntryBuilder
+                .ForMod(ModId, ModName, version)
+                .InSection(GeneralSection)
+                .WithKey("ResetOnGiftReceived")
+                .WithDefault(true)
+                .WithDisplayName("Reset On Gift Received")
+                .WithDescription(
+                    "When an agent receives a gift, reset their bonus for that gift to zero."
                 )
-            );
+                .Register<bool>();
 
-            _giftChanceDecimalPlaces = configFile.Bind(
-                GeneralSection,
-                "GiftChanceDecimalPlaces",
-                2,
-                new LmmConfigDescription(
-                    "Number of decimal places shown in the gift chance display.",
-                    new AcceptableValueRange<int>(0, 3),
-                    new DisplayNameAttribute("Gift Chance Decimal Places")
+            _giftChanceDecimalPlaces = ConfigurationEntryBuilder
+                .ForMod(ModId, ModName, version)
+                .InSection(GeneralSection)
+                .WithKey("GiftChanceDecimalPlaces")
+                .WithDefault(2)
+                .WithDisplayName("Gift Chance Decimal Places")
+                .WithDescription("Number of decimal places shown in the gift chance display.")
+                .WithRange(0, 3)
+                .Register<int>();
+
+            _showBaseChance = ConfigurationEntryBuilder
+                .ForMod(ModId, ModName, version)
+                .InSection(GeneralSection)
+                .WithKey("ShowBaseChance")
+                .WithDefault(true)
+                .WithDisplayName("Show Base Chance")
+                .WithDescription(
+                    "Show the base gift chance alongside the boosted chance in the UI."
                 )
-            );
+                .Register<bool>();
 
-            _showBaseChance = configFile.Bind(
-                GeneralSection,
-                "ShowBaseChance",
-                true,
-                new LmmConfigDescription(
-                    "Show the base gift chance alongside the boosted chance in the UI.",
-                    null,
-                    new DisplayNameAttribute("Show Base Chance")
-                )
-            );
-
-            _zayinBonus = BindBonusPercentage(configFile, "ZayinBonusPercentage", "ZAYIN", 5);
-            _tethBonus = BindBonusPercentage(configFile, "TethBonusPercentage", "TETH", 4);
-            _heBonus = BindBonusPercentage(configFile, "HeBonusPercentage", "HE", 3);
-            _wawBonus = BindBonusPercentage(configFile, "WawBonusPercentage", "WAW", 2);
-            _alephBonus = BindBonusPercentage(configFile, "AlephBonusPercentage", "ALEPH", 1);
+            _zayinBonus = BindBonusPercentage(version, "ZayinBonusPercentage", "ZAYIN", 5);
+            _tethBonus = BindBonusPercentage(version, "TethBonusPercentage", "TETH", 4);
+            _heBonus = BindBonusPercentage(version, "HeBonusPercentage", "HE", 3);
+            _wawBonus = BindBonusPercentage(version, "WawBonusPercentage", "WAW", 2);
+            _alephBonus = BindBonusPercentage(version, "AlephBonusPercentage", "ALEPH", 1);
         }
 
         public BonusCalculationMode BonusCalculationMode => _bonusCalculationMode.Value;
@@ -109,26 +107,28 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
             }
         }
 
-        private static LmmConfigEntry<float> BindBonusPercentage(
-            LmmConfigFile configFile,
+        private static IConfigurationEntry<float> BindBonusPercentage(
+            string version,
             string key,
             string riskLevelName,
             int order
         )
         {
-            return configFile.Bind(
-                BonusSection,
-                key,
-                DefaultBonusPercentage,
-                new LmmConfigDescription(
+            return ConfigurationEntryBuilder
+                .ForMod(ModId, ModName, version)
+                .InSection(BonusSection)
+                .WithKey(key)
+                .WithDefault(DefaultBonusPercentage)
+                .WithDisplayName(riskLevelName + " Bonus Percentage")
+                .WithDescription(
                     "Extra gift chance (percent) added after each successful work session with "
                         + riskLevelName
-                        + " abnormalities.",
-                    new AcceptableValueRange<float>(0.0f, 100.0f),
-                    new DisplayNameAttribute(riskLevelName + " Bonus Percentage"),
-                    new ConfigurationManagerAttributes { Order = order, UseIntegerSlider = true }
+                        + " abnormalities."
                 )
-            );
+                .WithRange(0.0f, 100.0f)
+                .WithHint(ConfigurationHints.UseIntegerSlider, true)
+                .WithOrder(order)
+                .Register<float>();
         }
     }
 }

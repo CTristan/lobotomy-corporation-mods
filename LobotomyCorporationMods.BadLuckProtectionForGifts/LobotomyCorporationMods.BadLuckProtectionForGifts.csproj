@@ -50,11 +50,6 @@
     <PackageReference Include="LobotomyCorporation.Mods.Common"/>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LobCorp.ConfigurationManager\LobCorp.ConfigurationManager\LobCorp.ConfigurationManager.csproj">
-      <Private>false</Private>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Info\en\Info.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
