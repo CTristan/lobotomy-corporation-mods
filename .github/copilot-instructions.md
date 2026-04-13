@@ -31,7 +31,7 @@ Game DLLs in `external/LobotomyCorp_Data/Managed/` are required but not committe
 ## Target Frameworks
 
 - **Mod projects:** `net35` (game uses old Unity/.NET 3.5)
-- **Test project:** `net481`
+- **Test project:** `net10.0`
 - **Tool projects (CI, SetupExternal):** `net10.0`
 
 `TreatWarningsAsErrors` is enabled on all projects.
