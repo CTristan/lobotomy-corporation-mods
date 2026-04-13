@@ -4,7 +4,7 @@
 
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using LobotomyCorporation.Mods.Common.Interfaces.Adapters;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.BugFixes.Patches;
 using Moq;
 using Xunit;
@@ -16,15 +16,13 @@ namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests.PatchTests
     public sealed class ArmorCreaturePatchOnNoticeTests : BugFixesModTests
     {
         private readonly object[] _defaultParams = new object[1];
-        private readonly Mock<IArmorCreatureTestAdapter> _mockArmorCreatureTestAdapter =
-            new Mock<IArmorCreatureTestAdapter>();
+        private readonly Mock<IArmorCreatureInternals> _mockArmorCreatureInternals =
+            new Mock<IArmorCreatureInternals>();
         private readonly string _onChangeGiftNotice = NoticeName.OnChangeGift;
 
         public ArmorCreaturePatchOnNoticeTests()
         {
-            _mockArmorCreatureTestAdapter
-                .Setup(a => a.SpecialAgentList)
-                .Returns(new List<object>());
+            _mockArmorCreatureInternals.Setup(a => a.SpecialAgentList).Returns(new List<object>());
         }
 
         [Fact]
@@ -33,7 +31,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests.PatchTests
             // Act
             ArmorCreature.PatchAfterOnNotice(
                 _onChangeGiftNotice,
-                _mockArmorCreatureTestAdapter.Object,
+                _mockArmorCreatureInternals.Object,
                 _defaultParams
             );
 
@@ -51,7 +49,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests.PatchTests
             // Act
             ArmorCreature.PatchAfterOnNotice(
                 notice,
-                _mockArmorCreatureTestAdapter.Object,
+                _mockArmorCreatureInternals.Object,
                 _defaultParams
             );
 
@@ -63,12 +61,12 @@ namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests.PatchTests
 
         private void VerifyListReset()
         {
-            _mockArmorCreatureTestAdapter.Verify(x => x.ReloadSpecialAgentList(), Times.Once);
+            _mockArmorCreatureInternals.Verify(x => x.ReloadSpecialAgentList(), Times.Once);
         }
 
         private void VerifyListNotReset()
         {
-            _mockArmorCreatureTestAdapter.Verify(x => x.ReloadSpecialAgentList(), Times.Never);
+            _mockArmorCreatureInternals.Verify(x => x.ReloadSpecialAgentList(), Times.Never);
         }
 
         #endregion

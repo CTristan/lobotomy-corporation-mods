@@ -5,10 +5,7 @@
 using System.Text;
 using CommandWindow;
 using JetBrains.Annotations;
-using LobotomyCorporation.Mods.Common.Extensions;
-using LobotomyCorporation.Mods.Common.Implementations.Facades;
-using LobotomyCorporation.Mods.Common.Interfaces;
-using LobotomyCorporation.Mods.Common.ParameterObjects;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.GiftAlertIcon.Constants;
 using UnityEngine;
 
@@ -23,12 +20,12 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Extensions
             UnitModel agent,
             [NotNull] ImageParameters imageParameters,
             [NotNull] IFileManager fileManager,
-            OptionalTestAdapterParameters testAdapterParameters
+            OptionalOverrides optionalOverrides
         )
         {
             if (!instance.AbnormalityHasGift())
             {
-                instance.HideImageObject(imageParameters, fileManager, testAdapterParameters);
+                instance.HideImageObject(imageParameters, fileManager, optionalOverrides);
 
                 return;
             }
@@ -43,12 +40,12 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Extensions
                     agent,
                     imageParameters,
                     fileManager,
-                    testAdapterParameters
+                    optionalOverrides
                 );
             }
             else
             {
-                instance.ShowAsNewGift(imageParameters, fileManager, testAdapterParameters);
+                instance.ShowAsNewGift(imageParameters, fileManager, optionalOverrides);
             }
         }
 
@@ -59,7 +56,7 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Extensions
             string tooltipLine1,
             string tooltipLine2,
             [NotNull] IFileManager fileManager,
-            [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null
+            [CanBeNull] OptionalOverrides optionalOverrides = null
         )
         {
             var tooltipMessage = new StringBuilder();
@@ -72,7 +69,7 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Extensions
                 fileManager,
                 color,
                 tooltipMessage.ToString(),
-                testAdapterParameters
+                optionalOverrides
             );
         }
 
@@ -80,7 +77,7 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Extensions
             [NotNull] this ManagementSlot managementSlot,
             [NotNull] ImageParameters imageParameters,
             [NotNull] IFileManager fileManager,
-            [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null
+            [CanBeNull] OptionalOverrides optionalOverrides = null
         )
         {
             var color = Color.green;
@@ -94,7 +91,7 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Extensions
                 tooltipLine1,
                 tooltipLine2,
                 fileManager,
-                testAdapterParameters
+                optionalOverrides
             );
         }
 
@@ -102,7 +99,7 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Extensions
             [NotNull] this ManagementSlot managementSlot,
             [NotNull] ImageParameters imageParameters,
             [NotNull] IFileManager fileManager,
-            [CanBeNull] OptionalTestAdapterParameters testAdapterParameters
+            [CanBeNull] OptionalOverrides optionalOverrides
         )
         {
             var color = Color.grey;
@@ -116,7 +113,7 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Extensions
                 tooltipLine1,
                 tooltipLine2,
                 fileManager,
-                testAdapterParameters
+                optionalOverrides
             );
         }
 
@@ -125,17 +122,17 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Extensions
             [NotNull] UnitModel agent,
             [NotNull] ImageParameters imageParameters,
             [NotNull] IFileManager fileManager,
-            OptionalTestAdapterParameters testAdapterParameters
+            OptionalOverrides optionalOverrides
         )
         {
             var giftId = instance.GetAbnormalityGiftId();
             if (agent.HasGift(giftId))
             {
-                instance.HideImageObject(imageParameters, fileManager, testAdapterParameters);
+                instance.HideImageObject(imageParameters, fileManager, optionalOverrides);
             }
             else
             {
-                instance.ShowAsReplacementGift(imageParameters, fileManager, testAdapterParameters);
+                instance.ShowAsReplacementGift(imageParameters, fileManager, optionalOverrides);
             }
         }
     }

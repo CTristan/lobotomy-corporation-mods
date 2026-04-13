@@ -1,6 +1,6 @@
 ﻿// SPDX-License-Identifier: MIT
 
-using LobotomyCorporation.Mods.Common.Interfaces.Adapters;
+using LobotomyCorporation.Mods.Common;
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations
 {
@@ -10,21 +10,21 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
             AgentModel agent,
             CreatureModel creature,
             RwbpType skillType,
-            IBeautyBeastAnimTestAdapter beautyBeastAnimTestAdapter,
-            IYggdrasilAnimTestAdapter yggdrasilAnimTestAdapter
+            IBeautyBeastAnimInternals beautyBeastAnimInternals,
+            IYggdrasilAnimInternals yggdrasilAnimInternals
         )
         {
             Agent = agent;
             Creature = creature;
             SkillType = skillType;
-            BeautyBeastAnimTestAdapter = beautyBeastAnimTestAdapter;
-            YggdrasilAnimTestAdapter = yggdrasilAnimTestAdapter;
+            BeautyBeastAnimInternals = beautyBeastAnimInternals;
+            YggdrasilAnimInternals = yggdrasilAnimInternals;
         }
 
         internal AgentModel Agent { get; private set; }
         internal CreatureModel Creature { get; private set; }
         internal RwbpType SkillType { get; private set; }
-        internal IBeautyBeastAnimTestAdapter BeautyBeastAnimTestAdapter { get; private set; }
-        internal IYggdrasilAnimTestAdapter YggdrasilAnimTestAdapter { get; private set; }
+        internal IBeautyBeastAnimInternals BeautyBeastAnimInternals { get; private set; }
+        internal IYggdrasilAnimInternals YggdrasilAnimInternals { get; private set; }
     }
 }

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using AwesomeAssertions;
 using Customizing;
 using JetBrains.Annotations;
-using LobotomyCorporation.Mods.Common.Interfaces.Adapters;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.FreeCustomization.Patches;
 using LobotomyCorporationMods.Test.Extensions;
 using Moq;
@@ -19,11 +19,11 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests.PatchTest
 {
     public sealed class CustomizingWindowPatchConfirmTests : FreeCustomizationModTests
     {
-        private readonly Mock<IAgentLayerTestAdapter> _mockAgentLayerTestAdapter =
-            new Mock<IAgentLayerTestAdapter>();
+        private readonly Mock<IAgentLayerInternals> _mockAgentLayerInternals =
+            new Mock<IAgentLayerInternals>();
 
-        private readonly Mock<IWorkerSpriteManagerTestAdapter> _mockWorkerSpriteManagerTestAdapter =
-            new Mock<IWorkerSpriteManagerTestAdapter>();
+        private readonly Mock<IWorkerSpriteManagerInternals> _mockWorkerSpriteManagerInternals =
+            new Mock<IWorkerSpriteManagerInternals>();
 
         [Fact]
         public void Changing_random_generated_agent_marks_them_as_custom()
@@ -35,8 +35,8 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests.PatchTest
 
             // Act
             sut.PatchBeforeConfirm(
-                _mockAgentLayerTestAdapter.Object,
-                _mockWorkerSpriteManagerTestAdapter.Object
+                _mockAgentLayerInternals.Object,
+                _mockWorkerSpriteManagerInternals.Object
             );
 
             // Assert
@@ -80,8 +80,8 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests.PatchTest
 
             // Act
             sut.PatchBeforeConfirm(
-                _mockAgentLayerTestAdapter.Object,
-                _mockWorkerSpriteManagerTestAdapter.Object
+                _mockAgentLayerInternals.Object,
+                _mockWorkerSpriteManagerInternals.Object
             );
 
             // Assert
@@ -123,8 +123,8 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests.PatchTest
 
             // Act
             sut.PatchBeforeConfirm(
-                _mockAgentLayerTestAdapter.Object,
-                _mockWorkerSpriteManagerTestAdapter.Object
+                _mockAgentLayerInternals.Object,
+                _mockWorkerSpriteManagerInternals.Object
             );
 
             // Assert
@@ -142,12 +142,12 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests.PatchTest
 
             // Act
             sut.PatchBeforeConfirm(
-                _mockAgentLayerTestAdapter.Object,
-                _mockWorkerSpriteManagerTestAdapter.Object
+                _mockAgentLayerInternals.Object,
+                _mockWorkerSpriteManagerInternals.Object
             );
 
             // Assert
-            _mockWorkerSpriteManagerTestAdapter.Verify(
+            _mockWorkerSpriteManagerInternals.Verify(
                 x =>
                     x.SetAgentBasicData(
                         It.IsAny<WorkerSprite.WorkerSprite>(),

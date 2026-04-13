@@ -6,18 +6,14 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporation.Mods.Common.Attributes;
-using LobotomyCorporation.Mods.Common.Constants;
-using LobotomyCorporation.Mods.Common.Extensions;
-using LobotomyCorporation.Mods.Common.Implementations;
-using LobotomyCorporation.Mods.Common.Implementations.Facades;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 
 #endregion
 
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
 {
-    [HarmonyPatch(typeof(UseSkill), PrivateMethods.UseSkill.FinishWorkSuccessfully)]
+    [HarmonyPatch(typeof(UseSkill), GameMethods.UseSkill.FinishWorkSuccessfully)]
     public static class UseSkillPatchFinishWorkSuccessfully
     {
         /// <summary>Captures the current working agent's ID before FinishWorkSuccessfully runs,

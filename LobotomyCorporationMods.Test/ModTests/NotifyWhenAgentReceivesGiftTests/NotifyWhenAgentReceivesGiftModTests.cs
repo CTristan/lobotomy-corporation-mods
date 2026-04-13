@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using LobotomyCorporation.Mods.Common.Interfaces.Adapters.BaseClasses;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.Test.Extensions;
 using LobotomyCorporationMods.Test.Parameters;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking;
@@ -31,11 +31,10 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
         {
             _ = new Harmony_Patch();
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
+            Harmony_Patch.Instance.SetLogger(mockLogger.Object);
         }
 
-        protected Mock<INoticeTestAdapter> NoticeTestAdapter { get; } =
-            new Mock<INoticeTestAdapter>();
+        protected Mock<INoticeInternals> NoticeInternals { get; } = new Mock<INoticeInternals>();
 
         [NotNull]
         protected static AgentModel GetAgentWithLockedGift(

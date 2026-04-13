@@ -5,9 +5,7 @@
 using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using LobotomyCorporation.Mods.Common.Enums;
-using LobotomyCorporation.Mods.Common.Extensions;
-using LobotomyCorporation.Mods.Common.Interfaces.Adapters;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
@@ -22,8 +20,8 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
         /// <param name="commandWindow">The command window from which to retrieve the creature evaluator.</param>
         /// <param name="agent">The agent model.</param>
         /// <param name="evaluators">The evaluators dictionary.</param>
-        /// <param name="beautyBeastAnimTestAdapter">The beautyBeastAnimAdapter.</param>
-        /// <param name="yggdrasilAnimTestAdapter">The yggdrasilAnimAdapter.</param>
+        /// <param name="beautyBeastAnimInternals">The beautyBeastAnimAdapter.</param>
+        /// <param name="yggdrasilAnimInternals">The yggdrasilAnimAdapter.</param>
         /// <returns>The creature evaluator for the given parameters.</returns>
         /// <remarks>
         ///     GetCreatureEvaluator retrieves the creature evaluator based on the command window, agent, evaluators, beautyBeastAnimAdapter, and yggdrasilAnimAdapter parameters. If the
@@ -37,8 +35,8 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
                 CreatureIds,
                 Func<CreatureEvaluatorParameters, ICreatureEvaluator>
             > evaluators,
-            IBeautyBeastAnimTestAdapter beautyBeastAnimTestAdapter,
-            IYggdrasilAnimTestAdapter yggdrasilAnimTestAdapter
+            IBeautyBeastAnimInternals beautyBeastAnimInternals,
+            IYggdrasilAnimInternals yggdrasilAnimInternals
         )
         {
             ICreatureEvaluator evaluator;
@@ -50,8 +48,8 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
                     agent,
                     creature,
                     skillType,
-                    beautyBeastAnimTestAdapter,
-                    yggdrasilAnimTestAdapter
+                    beautyBeastAnimInternals,
+                    yggdrasilAnimInternals
                 );
 
                 evaluator = evaluators.TryGetValue(

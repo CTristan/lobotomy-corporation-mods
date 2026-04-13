@@ -142,7 +142,7 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
 
             var unitModel = UnityTestExtensions.CreateAgentModel(agentModelCreationParameters);
             var noticeMessages = new List<string>();
-            NoticeTestAdapter
+            NoticeInternals
                 .Setup(adapter => adapter.Send(It.IsAny<string>(), It.IsAny<object[]>()))
                 .Callback(
                     (string _, object[] objectArray) =>
@@ -162,9 +162,9 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
             Times numberOfTimes
         )
         {
-            unitModel.PatchBeforeAttachEgoGift(gift, NoticeTestAdapter.Object);
+            unitModel.PatchBeforeAttachEgoGift(gift, NoticeInternals.Object);
 
-            NoticeTestAdapter.Verify(
+            NoticeInternals.Verify(
                 adapter => adapter.Send(It.IsAny<string>(), It.IsAny<object[]>()),
                 numberOfTimes
             );

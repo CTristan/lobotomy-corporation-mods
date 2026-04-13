@@ -43,7 +43,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests
         public void Class_ArmorCreature_Method_OnNotice_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
+            Harmony_Patch.Instance.SetLogger(mockLogger.Object);
             var armorCreature = new ArmorCreature();
 
             void Action()
@@ -70,7 +70,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests
         public void Class_CustomizingWindow_Method_SetAgentStatBonus_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
+            Harmony_Patch.Instance.SetLogger(mockLogger.Object);
             const int TwoLogs = 2;
             const int ThreeLogs = 3;
 

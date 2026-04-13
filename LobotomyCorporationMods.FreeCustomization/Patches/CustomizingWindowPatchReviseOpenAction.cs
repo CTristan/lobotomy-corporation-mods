@@ -7,17 +7,13 @@ using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporation.Mods.Common.Attributes;
-using LobotomyCorporation.Mods.Common.Constants;
-using LobotomyCorporation.Mods.Common.Extensions;
-using LobotomyCorporation.Mods.Common.Implementations;
-using LobotomyCorporation.Mods.Common.Implementations.Facades;
+using LobotomyCorporation.Mods.Common;
 
 #endregion
 
 namespace LobotomyCorporationMods.FreeCustomization.Patches
 {
-    [HarmonyPatch(typeof(CustomizingWindow), PrivateMethods.CustomizingWindow.ReviseOpenAction)]
+    [HarmonyPatch(typeof(CustomizingWindow), GameMethods.CustomizingWindow.ReviseOpenAction)]
     public static class CustomizingWindowPatchReviseOpenAction
     {
         public static void PatchAfterReviseOpenAction(

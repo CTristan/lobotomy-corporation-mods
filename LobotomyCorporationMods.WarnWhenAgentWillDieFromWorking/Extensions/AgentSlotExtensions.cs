@@ -6,8 +6,7 @@ using System;
 using System.Collections.Generic;
 using CommandWindow;
 using JetBrains.Annotations;
-using LobotomyCorporation.Mods.Common.Enums;
-using LobotomyCorporation.Mods.Common.Interfaces.Adapters;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Interfaces;
 
@@ -24,16 +23,16 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions
                 CreatureIds,
                 Func<CreatureEvaluatorParameters, ICreatureEvaluator>
             > evaluators,
-            IBeautyBeastAnimTestAdapter beautyBeastAnimTestAdapter,
-            IYggdrasilAnimTestAdapter yggdrasilAnimTestAdapter
+            IBeautyBeastAnimInternals beautyBeastAnimInternals,
+            IYggdrasilAnimInternals yggdrasilAnimInternals
         )
         {
             var agent = agentSlot.CurrentAgent;
             var evaluator = commandWindow.GetCreatureEvaluator(
                 agent,
                 evaluators,
-                beautyBeastAnimTestAdapter,
-                yggdrasilAnimTestAdapter
+                beautyBeastAnimInternals,
+                yggdrasilAnimInternals
             );
 
             return evaluator.WillAgentDie();

@@ -8,11 +8,7 @@ using System.Linq;
 using AwesomeAssertions;
 using CommandWindow;
 using JetBrains.Annotations;
-using LobotomyCorporation.Mods.Common.Enums;
-using LobotomyCorporation.Mods.Common.Extensions;
-using LobotomyCorporation.Mods.Common.Implementations;
-using LobotomyCorporation.Mods.Common.Interfaces.Adapters;
-using LobotomyCorporation.Mods.Common.Interfaces.Adapters.BaseClasses;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.Test.Extensions;
 using LobotomyCorporationMods.Test.Parameters;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking;
@@ -41,23 +37,21 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         {
             _ = new Harmony_Patch();
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
+            Harmony_Patch.Instance.SetLogger(mockLogger.Object);
         }
 
         private Color DeadAgentColor { get; } = Color.red;
         protected GameManager GameManager { get; } = UnityTestExtensions.CreateGameManager();
-        protected Mock<IImageTestAdapter> MockImageTestAdapter { get; } =
-            new Mock<IImageTestAdapter>();
-        protected Mock<ITextTestAdapter> MockTextTestAdapter { get; } =
-            new Mock<ITextTestAdapter>();
-        protected Mock<IYggdrasilAnimTestAdapter> MockYggdrasilAnimTestAdapter { get; } =
-            new Mock<IYggdrasilAnimTestAdapter>();
-        protected Mock<IBeautyBeastAnimTestAdapter> MockBeautyBeastAnimTestAdapter { get; } =
-            new Mock<IBeautyBeastAnimTestAdapter>();
+        protected Mock<IImageInternals> MockImageInternals { get; } = new Mock<IImageInternals>();
+        protected Mock<ITextInternals> MockTextInternals { get; } = new Mock<ITextInternals>();
+        protected Mock<IYggdrasilAnimInternals> MockYggdrasilAnimInternals { get; } =
+            new Mock<IYggdrasilAnimInternals>();
+        protected Mock<IBeautyBeastAnimInternals> MockBeautyBeastAnimInternals { get; } =
+            new Mock<IBeautyBeastAnimInternals>();
 
         protected bool AgentWillDie(
-            [NotNull] IImageTestAdapter workFilterFill,
-            [NotNull] ITextTestAdapter workFilterTextTest
+            [NotNull] IImageInternals workFilterFill,
+            [NotNull] ITextInternals workFilterTextTest
         )
         {
             ThrowHelper.ThrowIfNull(workFilterFill, nameof(workFilterFill));
@@ -75,7 +69,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
             IEnumerable<UnitBuf> unitBuffs = null
         )
         {
-            unitBuffs = unitBuffs.EnsureNotNullWithMethod(() => new List<UnitBuf>());
+            unitBuffs = unitBuffs.OrCreate(() => new List<UnitBuf>());
 
             var agentModelCreationParameters = new AgentModelCreationParameters
             {
@@ -99,7 +93,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
             int qliphothCounter = 0
         )
         {
-            buffList = buffList.EnsureNotNullWithMethod(() => new List<UnitBuf>());
+            buffList = buffList.OrCreate(() => new List<UnitBuf>());
 
             var creature = TestExtensions.GetCreatureWithGift(
                 creatureId,
@@ -133,16 +127,16 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
 
         protected void SetupParasiteTree(int numberOfFlowers)
         {
-            var mockFlower = new Mock<IGameObjectTestAdapter>();
+            var mockFlower = new Mock<IGameObjectInternals>();
             mockFlower.Setup(adapter => adapter.ActiveSelf).Returns(true);
 
-            var mockFlowers = new List<IGameObjectTestAdapter>();
+            var mockFlowers = new List<IGameObjectInternals>();
             for (var i = 0; i < numberOfFlowers; i++)
             {
                 mockFlowers.Add(mockFlower.Object);
             }
 
-            MockYggdrasilAnimTestAdapter.Setup(adapter => adapter.Flowers).Returns(mockFlowers);
+            MockYggdrasilAnimInternals.Setup(adapter => adapter.Flowers).Returns(mockFlowers);
         }
 
         protected void VerifyAgentWillDie([NotNull] AgentSlot agentSlot)
@@ -150,13 +144,13 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
             agentSlot.PatchAfterSetFilter(
                 IdleAgentState,
                 GameManager,
-                MockBeautyBeastAnimTestAdapter.Object,
-                MockImageTestAdapter.Object,
-                MockTextTestAdapter.Object,
-                MockYggdrasilAnimTestAdapter.Object
+                MockBeautyBeastAnimInternals.Object,
+                MockImageInternals.Object,
+                MockTextInternals.Object,
+                MockYggdrasilAnimInternals.Object
             );
 
-            AgentWillDie(MockImageTestAdapter.Object, MockTextTestAdapter.Object).Should().BeTrue();
+            AgentWillDie(MockImageInternals.Object, MockTextInternals.Object).Should().BeTrue();
         }
 
         protected void VerifyAgentWillNotDie([NotNull] AgentSlot agentSlot)
@@ -164,15 +158,13 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
             agentSlot.PatchAfterSetFilter(
                 IdleAgentState,
                 GameManager,
-                MockBeautyBeastAnimTestAdapter.Object,
-                MockImageTestAdapter.Object,
-                MockTextTestAdapter.Object,
-                MockYggdrasilAnimTestAdapter.Object
+                MockBeautyBeastAnimInternals.Object,
+                MockImageInternals.Object,
+                MockTextInternals.Object,
+                MockYggdrasilAnimInternals.Object
             );
 
-            AgentWillDie(MockImageTestAdapter.Object, MockTextTestAdapter.Object)
-                .Should()
-                .BeFalse();
+            AgentWillDie(MockImageInternals.Object, MockTextInternals.Object).Should().BeFalse();
         }
 
         public void Dispose()

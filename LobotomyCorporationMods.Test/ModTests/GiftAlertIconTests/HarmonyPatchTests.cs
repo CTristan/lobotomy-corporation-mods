@@ -31,7 +31,7 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests
         public void Class_ManagementSlot_Method_SetUi_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
+            Harmony_Patch.Instance.SetLogger(mockLogger.Object);
 
             // Forcing null arguments to test exception logging.
             // ReSharper disable AssignNullToNotNullAttribute

@@ -1,6 +1,6 @@
 ﻿// SPDX-License-Identifier: MIT
 
-using LobotomyCorporation.Mods.Common.Enums;
+using LobotomyCorporation.Mods.Common;
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators
 {

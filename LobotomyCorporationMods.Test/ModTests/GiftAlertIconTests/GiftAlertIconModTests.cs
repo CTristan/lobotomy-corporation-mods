@@ -12,7 +12,7 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests
         {
             _ = new Harmony_Patch();
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
+            Harmony_Patch.Instance.SetLogger(mockLogger.Object);
         }
 
         public void Dispose()

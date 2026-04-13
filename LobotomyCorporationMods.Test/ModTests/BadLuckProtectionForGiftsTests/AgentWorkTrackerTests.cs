@@ -7,8 +7,7 @@ using System.Globalization;
 using System.IO;
 using AwesomeAssertions;
 using JetBrains.Annotations;
-using LobotomyCorporation.Mods.Common.Extensions;
-using LobotomyCorporation.Mods.Common.Interfaces;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations;
 using LobotomyCorporationMods.Test.Extensions;
 using Moq;
@@ -561,9 +560,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
             IFileManager fileManager = null
         )
         {
-            fileManager = fileManager.EnsureNotNullWithMethod(
-                () => TestExtensions.GetMockFileManager().Object
-            );
+            fileManager = fileManager.OrCreate(() => TestExtensions.GetMockFileManager().Object);
             dataFileName = dataFileName.InCurrentDirectory();
             CreateTestTrackerFile(dataFileName, trackerData);
 

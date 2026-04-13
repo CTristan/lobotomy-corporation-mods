@@ -6,12 +6,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporation.Mods.Common.Attributes;
-using LobotomyCorporation.Mods.Common.Constants;
-using LobotomyCorporation.Mods.Common.Extensions;
-using LobotomyCorporation.Mods.Common.Implementations;
-using LobotomyCorporation.Mods.Common.Implementations.Facades;
-using LobotomyCorporation.Mods.Common.Interfaces.Adapters;
+using LobotomyCorporation.Mods.Common;
 
 #endregion
 
@@ -23,7 +18,7 @@ namespace LobotomyCorporationMods.BugFixes.Patches
         public static void PatchAfterOnNotice(
             [NotNull] this ArmorCreature instance,
             [NotNull] string noticeName,
-            [CanBeNull] IArmorCreatureTestAdapter armorCreatureTestAdapter = null,
+            [CanBeNull] IArmorCreatureInternals armorCreatureInternals = null,
             [NotNull] params object[] noticeParameters
         )
         {
@@ -36,7 +31,7 @@ namespace LobotomyCorporationMods.BugFixes.Patches
                 return;
             }
 
-            instance.ReloadCrumblingArmorAgentList(armorCreatureTestAdapter);
+            instance.ReloadCrumblingArmorAgentList(armorCreatureInternals);
         }
 
         /// <summary>Runs after the original OnNotice method to force Crumbling Armor to re-initialize it's internal list of agents.</summary>

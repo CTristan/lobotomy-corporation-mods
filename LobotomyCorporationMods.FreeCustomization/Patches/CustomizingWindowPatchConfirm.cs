@@ -7,12 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporation.Mods.Common.Attributes;
-using LobotomyCorporation.Mods.Common.Constants;
-using LobotomyCorporation.Mods.Common.Extensions;
-using LobotomyCorporation.Mods.Common.Implementations;
-using LobotomyCorporation.Mods.Common.Implementations.Facades;
-using LobotomyCorporation.Mods.Common.Interfaces.Adapters;
+using LobotomyCorporation.Mods.Common;
 
 #endregion
 
@@ -23,13 +18,13 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
     {
         public static void PatchBeforeConfirm(
             [NotNull] this CustomizingWindow instance,
-            [CanBeNull] IAgentLayerTestAdapter agentLayerTestAdapter = null,
-            [CanBeNull] IWorkerSpriteManagerTestAdapter workerSpriteManagerTestAdapter = null
+            [CanBeNull] IAgentLayerInternals agentLayerInternals = null,
+            [CanBeNull] IWorkerSpriteManagerInternals workerSpriteManagerInternals = null
         )
         {
             ThrowHelper.ThrowIfNull(instance, nameof(instance));
 
-            instance.SaveAppearanceData(agentLayerTestAdapter, workerSpriteManagerTestAdapter);
+            instance.SaveAppearanceData(agentLayerInternals, workerSpriteManagerInternals);
         }
 
         /// <summary>

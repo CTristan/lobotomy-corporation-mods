@@ -8,13 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 using CommandWindow;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporation.Mods.Common.Attributes;
-using LobotomyCorporation.Mods.Common.Constants;
-using LobotomyCorporation.Mods.Common.Enums;
-using LobotomyCorporation.Mods.Common.Extensions;
-using LobotomyCorporation.Mods.Common.Implementations;
-using LobotomyCorporation.Mods.Common.Implementations.Facades;
-using LobotomyCorporation.Mods.Common.Interfaces.Adapters;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Extensions;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators;
@@ -37,10 +31,10 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
             [NotNull] this AgentSlot instance,
             AgentState state,
             [CanBeNull] GameManager currentGameManager,
-            [CanBeNull] IBeautyBeastAnimTestAdapter beautyBeastAnimTestAdapter = null,
-            [CanBeNull] IImageTestAdapter imageTestAdapter = null,
-            [CanBeNull] ITextTestAdapter textTestAdapter = null,
-            [CanBeNull] IYggdrasilAnimTestAdapter yggdrasilAnimTestAdapter = null
+            [CanBeNull] IBeautyBeastAnimInternals beautyBeastAnimInternals = null,
+            [CanBeNull] IImageInternals imageInternals = null,
+            [CanBeNull] ITextInternals textInternals = null,
+            [CanBeNull] IYggdrasilAnimInternals yggdrasilAnimInternals = null
         )
         {
             ThrowHelper.ThrowIfNull(instance, nameof(instance));
@@ -53,8 +47,8 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
             var agentWillDie = instance.CheckIfWorkWillKillAgent(
                 CommandWindow.CommandWindow.CurrentWindow,
                 s_evaluatorFactoryDictionary,
-                beautyBeastAnimTestAdapter,
-                yggdrasilAnimTestAdapter
+                beautyBeastAnimInternals,
+                yggdrasilAnimInternals
             );
 
             if (!agentWillDie)
@@ -65,7 +59,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
             var commandWindow = CommandWindow.CommandWindow.CurrentWindow;
             var slotColor = commandWindow.DeadColor;
             var slotText = LocalizeTextDataModel.instance.GetText("AgentState_Dead");
-            instance.UpdateAgentSlot(slotColor, slotText, imageTestAdapter, textTestAdapter);
+            instance.UpdateAgentSlot(slotColor, slotText, imageInternals, textInternals);
         }
 
         /// <summary>Stores our evaluators in a dictionary of factories so that we only need to create the dictionary once but can make evaluators from the factories as often as we need to.</summary>
@@ -87,7 +81,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
                         parameters.Agent,
                         parameters.Creature,
                         parameters.SkillType,
-                        parameters.BeautyBeastAnimTestAdapter
+                        parameters.BeautyBeastAnimInternals
                     )
                 },
                 {
@@ -136,7 +130,7 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches
                         parameters.Agent,
                         parameters.Creature,
                         parameters.SkillType,
-                        parameters.YggdrasilAnimTestAdapter
+                        parameters.YggdrasilAnimInternals
                     )
                 },
                 {

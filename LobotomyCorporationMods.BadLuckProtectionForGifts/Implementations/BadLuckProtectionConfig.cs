@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-using LobotomyCorporation.Mods.Common.Constants;
-using LobotomyCorporation.Mods.Common.Implementations;
-using LobotomyCorporation.Mods.Common.Interfaces;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
@@ -16,68 +14,59 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         private const string BonusSection = "Gift Chance Bonus";
         private const float DefaultBonusPercentage = 1.0f;
 
-        private readonly IConfigurationEntry<BonusCalculationMode> _bonusCalculationMode;
-        private readonly IConfigurationEntry<int> _giftChanceDecimalPlaces;
-        private readonly IConfigurationEntry<bool> _resetOnGiftReceived;
-        private readonly IConfigurationEntry<bool> _showBaseChance;
-        private readonly IConfigurationEntry<float> _zayinBonus;
-        private readonly IConfigurationEntry<float> _tethBonus;
-        private readonly IConfigurationEntry<float> _heBonus;
-        private readonly IConfigurationEntry<float> _wawBonus;
-        private readonly IConfigurationEntry<float> _alephBonus;
+        private readonly IConfigEntry<BonusCalculationMode> _bonusCalculationMode;
+        private readonly IConfigEntry<int> _giftChanceDecimalPlaces;
+        private readonly IConfigEntry<bool> _resetOnGiftReceived;
+        private readonly IConfigEntry<bool> _showBaseChance;
+        private readonly IConfigEntry<float> _zayinBonus;
+        private readonly IConfigEntry<float> _tethBonus;
+        private readonly IConfigEntry<float> _heBonus;
+        private readonly IConfigEntry<float> _wawBonus;
+        private readonly IConfigEntry<float> _alephBonus;
 
         public BadLuckProtectionConfig()
         {
             var version = typeof(BadLuckProtectionConfig).Assembly.GetName().Version.ToString(3);
+            var config = new ModConfig(ModId, ModName, version);
 
-            _bonusCalculationMode = ConfigurationEntryBuilder
-                .ForMod(ModId, ModName, version)
-                .InSection(GeneralSection)
-                .WithKey("BonusCalculationMode")
-                .WithDefault(BonusCalculationMode.Normalized)
-                .WithDisplayName("Bonus Calculation Mode")
-                .WithDescription(
-                    "Normalized: All abnormalities gain bonus at the same rate. The bonus is based on how many PE boxes you filled out of the total.\nExample: filling 5 out of 10 PE boxes counts as 0.5.\n\nPer PE-Box: Abnormalities with more PE boxes gain bonus faster. Each filled PE box adds 1 to the bonus.\nExample: filling 7 PE boxes counts as 7."
-                )
-                .Register<BonusCalculationMode>();
+            _bonusCalculationMode = config.Bind(
+                GeneralSection,
+                "BonusCalculationMode",
+                BonusCalculationMode.Normalized,
+                "Normalized: All abnormalities gain bonus at the same rate. The bonus is based on how many PE boxes you filled out of the total.\nExample: filling 5 out of 10 PE boxes counts as 0.5.\n\nPer PE-Box: Abnormalities with more PE boxes gain bonus faster. Each filled PE box adds 1 to the bonus.\nExample: filling 7 PE boxes counts as 7.",
+                displayName: "Bonus Calculation Mode"
+            );
 
-            _resetOnGiftReceived = ConfigurationEntryBuilder
-                .ForMod(ModId, ModName, version)
-                .InSection(GeneralSection)
-                .WithKey("ResetOnGiftReceived")
-                .WithDefault(true)
-                .WithDisplayName("Reset On Gift Received")
-                .WithDescription(
-                    "When an agent receives a gift, reset their bonus for that gift to zero."
-                )
-                .Register<bool>();
+            _resetOnGiftReceived = config.Bind(
+                GeneralSection,
+                "ResetOnGiftReceived",
+                true,
+                "When an agent receives a gift, reset their bonus for that gift to zero.",
+                displayName: "Reset On Gift Received"
+            );
 
-            _giftChanceDecimalPlaces = ConfigurationEntryBuilder
-                .ForMod(ModId, ModName, version)
-                .InSection(GeneralSection)
-                .WithKey("GiftChanceDecimalPlaces")
-                .WithDefault(2)
-                .WithDisplayName("Gift Chance Decimal Places")
-                .WithDescription("Number of decimal places shown in the gift chance display.")
-                .WithRange(0, 3)
-                .Register<int>();
+            _giftChanceDecimalPlaces = config.Bind(
+                GeneralSection,
+                "GiftChanceDecimalPlaces",
+                2,
+                "Number of decimal places shown in the gift chance display.",
+                range: new AcceptableValueRange<int>(0, 3),
+                displayName: "Gift Chance Decimal Places"
+            );
 
-            _showBaseChance = ConfigurationEntryBuilder
-                .ForMod(ModId, ModName, version)
-                .InSection(GeneralSection)
-                .WithKey("ShowBaseChance")
-                .WithDefault(true)
-                .WithDisplayName("Show Base Chance")
-                .WithDescription(
-                    "Show the base gift chance alongside the boosted chance in the UI."
-                )
-                .Register<bool>();
+            _showBaseChance = config.Bind(
+                GeneralSection,
+                "ShowBaseChance",
+                true,
+                "Show the base gift chance alongside the boosted chance in the UI.",
+                displayName: "Show Base Chance"
+            );
 
-            _zayinBonus = BindBonusPercentage(version, "ZayinBonusPercentage", "ZAYIN", 5);
-            _tethBonus = BindBonusPercentage(version, "TethBonusPercentage", "TETH", 4);
-            _heBonus = BindBonusPercentage(version, "HeBonusPercentage", "HE", 3);
-            _wawBonus = BindBonusPercentage(version, "WawBonusPercentage", "WAW", 2);
-            _alephBonus = BindBonusPercentage(version, "AlephBonusPercentage", "ALEPH", 1);
+            _zayinBonus = BindBonusPercentage(config, "ZayinBonusPercentage", "ZAYIN");
+            _tethBonus = BindBonusPercentage(config, "TethBonusPercentage", "TETH");
+            _heBonus = BindBonusPercentage(config, "HeBonusPercentage", "HE");
+            _wawBonus = BindBonusPercentage(config, "WawBonusPercentage", "WAW");
+            _alephBonus = BindBonusPercentage(config, "AlephBonusPercentage", "ALEPH");
         }
 
         public BonusCalculationMode BonusCalculationMode => _bonusCalculationMode.Value;
@@ -107,28 +96,23 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
             }
         }
 
-        private static IConfigurationEntry<float> BindBonusPercentage(
-            string version,
+        private static IConfigEntry<float> BindBonusPercentage(
+            ModConfig config,
             string key,
-            string riskLevelName,
-            int order
+            string riskLevelName
         )
         {
-            return ConfigurationEntryBuilder
-                .ForMod(ModId, ModName, version)
-                .InSection(BonusSection)
-                .WithKey(key)
-                .WithDefault(DefaultBonusPercentage)
-                .WithDisplayName(riskLevelName + " Bonus Percentage")
-                .WithDescription(
-                    "Extra gift chance (percent) added after each successful work session with "
-                        + riskLevelName
-                        + " abnormalities."
-                )
-                .WithRange(0.0f, 100.0f)
-                .WithHint(ConfigurationHints.UseIntegerSlider, true)
-                .WithOrder(order)
-                .Register<float>();
+            return config.Bind(
+                BonusSection,
+                key,
+                DefaultBonusPercentage,
+                "Extra gift chance (percent) added after each successful work session with "
+                    + riskLevelName
+                    + " abnormalities.",
+                range: new AcceptableValueRange<float>(0.0f, 100.0f),
+                displayName: riskLevelName + " Bonus Percentage",
+                useSlider: true
+            );
         }
     }
 }

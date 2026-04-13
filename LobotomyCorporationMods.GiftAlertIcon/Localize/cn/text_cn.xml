@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <localize>
-    <text id="GiftAlertIcon_NewGiftTooltip1">能够获取新部位的饰品</text>
-    <text id="GiftAlertIcon_NewGiftTooltip2">派遣该员工可能获取当前空置部位的饰品</text>
-    <text id="GiftAlertIcon_ReplacementGiftTooltip1">该饰品将替换另一个饰品</text>
-    <text id="GiftAlertIcon_ReplacementGiftTooltip2">该员工已经持有这个部位的饰品</text>
+  <text id="GiftAlertIcon_NewGiftTooltip1">能够获取新部位的饰品</text>
+  <text id="GiftAlertIcon_NewGiftTooltip2">派遣该员工可能获取当前空置部位的饰品</text>
+  <text id="GiftAlertIcon_ReplacementGiftTooltip1">该饰品将替换另一个饰品</text>
+  <text id="GiftAlertIcon_ReplacementGiftTooltip2">该员工已经持有这个部位的饰品</text>
 </localize>

@@ -6,12 +6,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Harmony;
-using LobotomyCorporation.Mods.Common.Attributes;
-using LobotomyCorporation.Mods.Common.Constants;
-using LobotomyCorporation.Mods.Common.Extensions;
-using LobotomyCorporation.Mods.Common.Implementations;
-using LobotomyCorporation.Mods.Common.Implementations.Facades;
-using LobotomyCorporation.Mods.Common.Interfaces.Adapters.BaseClasses;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Constants;
 
 #endregion
@@ -24,7 +19,7 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches
         public static void PatchBeforeAttachEgoGift(
             this UnitModel instance,
             EquipmentModel gift,
-            INoticeTestAdapter noticeTestAdapter = null
+            INoticeInternals noticeInternals = null
         )
         {
             ThrowHelper.ThrowIfNull(instance, nameof(instance));
@@ -61,7 +56,7 @@ namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches
                 agentColoredName,
                 giftColoredName
             );
-            instance.SendMessage(message, noticeTestAdapter);
+            instance.SendMessage(message, noticeInternals);
         }
 
         /// <summary>Needs to run before the method because we need to check ahead of time if the agent already has the gift or has another gift in the same position that is locked.</summary>

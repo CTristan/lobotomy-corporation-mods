@@ -4,7 +4,7 @@
 
 using System;
 using JetBrains.Annotations;
-using LobotomyCorporation.Mods.Common.Interfaces;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.BugFixes;
 using LobotomyCorporationMods.Test.Extensions;
 using Moq;
@@ -21,7 +21,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests
         {
             _ = new Harmony_Patch();
             var logger = new Mock<ILogger>();
-            Harmony_Patch.Instance.AddLoggerTarget(logger.Object);
+            Harmony_Patch.Instance.SetLogger(logger.Object);
         }
 
         [NotNull]

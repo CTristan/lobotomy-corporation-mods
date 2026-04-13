@@ -7,12 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporation.Mods.Common.Attributes;
-using LobotomyCorporation.Mods.Common.Constants;
-using LobotomyCorporation.Mods.Common.Extensions;
-using LobotomyCorporation.Mods.Common.Implementations;
-using LobotomyCorporation.Mods.Common.Implementations.Facades;
-using LobotomyCorporation.Mods.Common.Interfaces.Adapters;
+using LobotomyCorporation.Mods.Common;
 
 #endregion
 
@@ -25,7 +20,7 @@ namespace LobotomyCorporationMods.BugFixes.Patches
             [NotNull] this CustomizingWindow instance,
             [NotNull] AgentModel agent,
             [NotNull] AgentData data,
-            [CanBeNull] ICustomizingWindowTestAdapter customizingWindowTestAdapter = null
+            [CanBeNull] ICustomizingWindowInternals customizingWindowInternals = null
         )
         {
             ThrowHelper.ThrowIfNull(instance, nameof(instance));
@@ -33,7 +28,7 @@ namespace LobotomyCorporationMods.BugFixes.Patches
             ThrowHelper.ThrowIfNull(data, nameof(data));
 
             // This is our custom fixed update
-            instance.UpdateAgentStats(agent, data, customizingWindowTestAdapter);
+            instance.UpdateAgentStats(agent, data, customizingWindowInternals);
         }
 
         /// <summary>Runs before SetAgentStatBonus to use the original stat levels instead of the modified stat levels.</summary>

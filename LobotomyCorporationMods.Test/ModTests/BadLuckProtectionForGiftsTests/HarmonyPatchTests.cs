@@ -42,7 +42,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
         public void Class_CreatureEquipmentMakeInfo_Method_GetProb_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
+            Harmony_Patch.Instance.SetLogger(mockLogger.Object);
             var result = 0f;
 
             void Action()
@@ -69,7 +69,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
         public void Class_GiftSlot_Method_SetProb_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
+            Harmony_Patch.Instance.SetLogger(mockLogger.Object);
 
             void Action()
             {
@@ -95,7 +95,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
         public void Class_GameSceneController_Method_OnClickNextDay_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
+            Harmony_Patch.Instance.SetLogger(mockLogger.Object);
 
             Action action = GameSceneControllerPatchOnClickNextDay.Postfix;
 
@@ -116,7 +116,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
         public void Class_GameSceneController_Method_OnStageStart_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
+            Harmony_Patch.Instance.SetLogger(mockLogger.Object);
 
             Action action = GameSceneControllerPatchOnStageStart.Postfix;
 
@@ -137,7 +137,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
         public void Class_NewTitleScript_Method_OnClickNewGame_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
+            Harmony_Patch.Instance.SetLogger(mockLogger.Object);
 
             Action action = NewTitleScriptPatchOnClickNewGame.Postfix;
 
@@ -149,7 +149,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
         {
             var patch = typeof(UseSkillPatchFinishWorkSuccessfully);
             var originalClass = typeof(UseSkill);
-            const string MethodName = PrivateMethods.UseSkill.FinishWorkSuccessfully;
+            const string MethodName = GameMethods.UseSkill.FinishWorkSuccessfully;
 
             patch.ValidateHarmonyPatch(originalClass, MethodName);
         }
@@ -158,7 +158,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
         public void Class_UseSkill_Method_FinishWorkSuccessfully_Prefix_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
+            Harmony_Patch.Instance.SetLogger(mockLogger.Object);
 
             void Action()
             {
@@ -174,7 +174,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
         public void Class_UseSkill_Method_FinishWorkSuccessfully_Postfix_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
+            Harmony_Patch.Instance.SetLogger(mockLogger.Object);
 
             void Action()
             {

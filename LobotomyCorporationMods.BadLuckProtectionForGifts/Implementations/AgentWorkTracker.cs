@@ -8,8 +8,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
-using LobotomyCorporation.Mods.Common.Extensions;
-using LobotomyCorporation.Mods.Common.Interfaces;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 
 #endregion

@@ -6,13 +6,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporation.Mods.Common.Attributes;
-using LobotomyCorporation.Mods.Common.Constants;
-using LobotomyCorporation.Mods.Common.Extensions;
-using LobotomyCorporation.Mods.Common.Implementations;
-using LobotomyCorporation.Mods.Common.Implementations.Facades;
-using LobotomyCorporation.Mods.Common.Interfaces.Adapters;
-using LobotomyCorporation.Mods.Common.Interfaces.Adapters.BaseClasses;
+using LobotomyCorporation.Mods.Common;
 
 #endregion
 
@@ -24,18 +18,19 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         public static void PatchAfterGenerateWindow(
             [NotNull] this AgentInfoWindow instance,
             [CanBeNull]
-                IAgentInfoWindowUiComponentsTestAdapter agentInfoWindowUiComponentsTestAdapter =
-                null,
-            [CanBeNull] ICustomizingWindowTestAdapter customizingWindowTestAdapter = null,
-            [CanBeNull] IGameObjectTestAdapter gameObjectTestAdapter = null
+                IAgentInfoWindowUiComponentsInternals agentInfoWindowUiComponentsInternals = null,
+            [CanBeNull] ICustomizingWindowInternals customizingWindowInternals = null,
+            [CanBeNull] IGameObjectInternals customizingBlockInternals = null,
+            [CanBeNull] IGameObjectInternals appearanceControlInternals = null
         )
         {
             ThrowHelper.ThrowIfNull(instance, nameof(instance));
 
             instance.OpenAppearancePanel(
-                agentInfoWindowUiComponentsTestAdapter,
-                customizingWindowTestAdapter,
-                gameObjectTestAdapter
+                agentInfoWindowUiComponentsInternals,
+                customizingWindowInternals,
+                customizingBlockInternals,
+                appearanceControlInternals
             );
         }
 

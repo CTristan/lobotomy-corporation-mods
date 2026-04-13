@@ -1,20 +1,20 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <info>
-    <name>Unofficial Bug Fixes v3.0.0</name>
-    <descs>
-        <desc>Fixes the following bugs:</desc>
-        <desc/>
-        <desc>* Wasted stat points: If a gift provides a large negative stat</desc>
-        <desc>bonus (e.g. Crumbling Armor -20 HP), then when upgrading that</desc>
-        <desc>stat it would not actually improve it.</desc>
-        <desc/>
-        <desc>* Crumbling Armor gift kills agents after being replaced - When</desc>
-        <desc>an agent that started the day with Crumbling Armor's gift later</desc>
-        <desc>replaced the gift, they would still die from Attachment work.</desc>
-        <desc/>
-        <desc>* Crumbling Armor gift doesn't kill agents after replacing a</desc>
-        <desc>different gift - When an agent with Crumbling Armor's gift</desc>
-        <desc>replaces a gift in another slot (like Hand or Face) then they</desc>
-        <desc>would not die from Attachment work.</desc>
-    </descs>
+  <name>Unofficial Bug Fixes v3.0.0</name>
+  <descs>
+    <desc>Fixes the following bugs:</desc>
+    <desc />
+    <desc>* Wasted stat points: If a gift provides a large negative stat</desc>
+    <desc>bonus (e.g. Crumbling Armor -20 HP), then when upgrading that</desc>
+    <desc>stat it would not actually improve it.</desc>
+    <desc />
+    <desc>* Crumbling Armor gift kills agents after being replaced - When</desc>
+    <desc>an agent that started the day with Crumbling Armor's gift later</desc>
+    <desc>replaced the gift, they would still die from Attachment work.</desc>
+    <desc />
+    <desc>* Crumbling Armor gift doesn't kill agents after replacing a</desc>
+    <desc>different gift - When an agent with Crumbling Armor's gift</desc>
+    <desc>replaces a gift in another slot (like Hand or Face) then they</desc>
+    <desc>would not die from Attachment work.</desc>
+  </descs>
 </info>

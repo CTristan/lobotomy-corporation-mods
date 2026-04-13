@@ -7,13 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using CommandWindow;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporation.Mods.Common.Attributes;
-using LobotomyCorporation.Mods.Common.Constants;
-using LobotomyCorporation.Mods.Common.Extensions;
-using LobotomyCorporation.Mods.Common.Implementations;
-using LobotomyCorporation.Mods.Common.Implementations.Facades;
-using LobotomyCorporation.Mods.Common.Interfaces;
-using LobotomyCorporation.Mods.Common.ParameterObjects;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.GiftAlertIcon.Extensions;
 
 #endregion
@@ -28,16 +22,12 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Patches
             [NotNull] UnitModel agent,
             [NotNull] string imagePath,
             [CanBeNull] IFileManager fileManager = null,
-            [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null
+            [CanBeNull] OptionalOverrides optionalOverrides = null
         )
         {
             ThrowHelper.ThrowIfNull(instance, nameof(instance));
-            fileManager = fileManager.EnsureNotNullWithMethod(
-                () => Harmony_Patch.Instance.FileManager
-            );
-            testAdapterParameters = testAdapterParameters.EnsureNotNullWithMethod(
-                () => new OptionalTestAdapterParameters()
-            );
+            fileManager = fileManager.OrCreate(() => Harmony_Patch.Instance.FileManager);
+            optionalOverrides = optionalOverrides.OrCreate(() => new OptionalOverrides());
 
             const float LocalPositionX = -12f;
             const float LocalPositionY = 28f;
@@ -45,7 +35,7 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Patches
             const float LocalScaleX = 0.2f;
             const float LocalScaleY = 0.2f;
 
-            var imageId = instance.GetSlotName(testAdapterParameters.ManagementSlotTestAdapter);
+            var imageId = instance.GetSlotName(optionalOverrides.ManagementSlotInternals);
             var imageProperties = new ImageParameters
             {
                 ImageId = imageId,
@@ -57,7 +47,7 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Patches
                 LocalScaleY = LocalScaleY,
             };
 
-            instance.UpdateGiftIcon(agent, imageProperties, fileManager, testAdapterParameters);
+            instance.UpdateGiftIcon(agent, imageProperties, fileManager, optionalOverrides);
         }
 
         /// <summary>Runs after initializing the management slot UI to add our own additional icon.</summary>

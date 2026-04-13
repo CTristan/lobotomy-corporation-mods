@@ -10,13 +10,12 @@ using System.Reflection;
 using AwesomeAssertions;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporation.Mods.Common.Enums;
-using LobotomyCorporation.Mods.Common.Extensions;
-using LobotomyCorporation.Mods.Common.Interfaces;
+using LobotomyCorporation.Mods.Abstractions;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.Test.Parameters;
 using Moq;
 using UnityEngine;
-using ILogger = LobotomyCorporation.Mods.Common.Interfaces.ILogger;
+using ILogger = LobotomyCorporation.Mods.Common.ILogger;
 
 #endregion
 
@@ -33,7 +32,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             IEnumerable<UnitBuf> unitBuffs = null
         )
         {
-            unitBuffs = unitBuffs.EnsureNotNullWithMethod(() => new List<UnitBuf>());
+            unitBuffs = unitBuffs.OrCreate(() => new List<UnitBuf>());
 
             var agentModelCreationParameters = new AgentModelCreationParameters
             {
@@ -98,6 +97,15 @@ namespace LobotomyCorporationMods.Test.Extensions
         internal static Mock<IFileManager> GetMockFileManager()
         {
             var mockFileManager = new Mock<IFileManager>();
+
+            var mockFile = new Mock<IFile>();
+            mockFile.Setup(f => f.Exists(It.IsAny<string>())).Returns(true);
+
+            var mockFileSystem = new Mock<IFileSystem>();
+            mockFileSystem.SetupGet(fs => fs.File).Returns(mockFile.Object);
+
+            mockFileManager.SetupGet(fm => fm.FileSystem).Returns(mockFileSystem.Object);
+
             _ = mockFileManager
                 .Setup(fm => fm.GetFile(It.IsAny<string>()))
                 .Returns((string fileName) => fileName.InCurrentDirectory());
@@ -146,9 +154,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             [NotNull] string textValue = ""
         )
         {
-            currentTarget = currentTarget.EnsureNotNullWithMethod(
-                () => UnityTestExtensions.CreateCreatureModel()
-            );
+            currentTarget = currentTarget.OrCreate(() => UnityTestExtensions.CreateCreatureModel());
 
             var deadAgentColor = Color.red;
 
