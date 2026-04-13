@@ -6,25 +6,23 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using JetBrains.Annotations;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
-using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Implementations.Facades;
 
 #endregion
 
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
 {
-    [HarmonyPatch(typeof(UseSkill), PrivateMethods.UseSkill.FinishWorkSuccessfully)]
+    [HarmonyPatch(typeof(UseSkill), GameMethods.UseSkill.FinishWorkSuccessfully)]
     public static class UseSkillPatchFinishWorkSuccessfully
     {
-        public static void PatchAfterFinishWorkSuccessfully([NotNull] this UseSkill instance,
-            [NotNull] IAgentWorkTracker agentWorkTracker)
+        public static void PatchAfterFinishWorkSuccessfully(
+            [NotNull] this UseSkill instance,
+            [NotNull] IAgentWorkTracker agentWorkTracker
+        )
         {
-            Guard.Against.Null(instance, nameof(instance));
-            Guard.Against.Null(agentWorkTracker, nameof(agentWorkTracker));
+            ThrowHelper.ThrowIfNull(instance, nameof(instance));
+            ThrowHelper.ThrowIfNull(agentWorkTracker, nameof(agentWorkTracker));
 
             var giftName = instance.GetAbnormalityGiftName();
 
@@ -49,7 +47,9 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
         {
             try
             {
-                __instance.PatchAfterFinishWorkSuccessfully(Harmony_Patch.Instance.AgentWorkTracker);
+                __instance.PatchAfterFinishWorkSuccessfully(
+                    Harmony_Patch.Instance.AgentWorkTracker
+                );
             }
             catch (Exception ex)
             {

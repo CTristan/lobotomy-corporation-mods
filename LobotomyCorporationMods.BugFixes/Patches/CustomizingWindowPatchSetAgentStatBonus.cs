@@ -7,12 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Implementations.Facades;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
+using LobotomyCorporation.Mods.Common;
 
 #endregion
 
@@ -21,17 +16,19 @@ namespace LobotomyCorporationMods.BugFixes.Patches
     [HarmonyPatch(typeof(CustomizingWindow), nameof(CustomizingWindow.SetAgentStatBonus))]
     public static class CustomizingWindowPatchSetAgentStatBonus
     {
-        public static void PatchBeforeSetAgentStatBonus([NotNull] this CustomizingWindow instance,
+        public static void PatchBeforeSetAgentStatBonus(
+            [NotNull] this CustomizingWindow instance,
             [NotNull] AgentModel agent,
             [NotNull] AgentData data,
-            [CanBeNull] ICustomizingWindowTestAdapter customizingWindowTestAdapter = null)
+            [CanBeNull] ICustomizingWindowInternals customizingWindowInternals = null
+        )
         {
-            Guard.Against.Null(instance, nameof(instance));
-            Guard.Against.Null(agent, nameof(agent));
-            Guard.Against.Null(data, nameof(data));
+            ThrowHelper.ThrowIfNull(instance, nameof(instance));
+            ThrowHelper.ThrowIfNull(agent, nameof(agent));
+            ThrowHelper.ThrowIfNull(data, nameof(data));
 
             // This is our custom fixed update
-            instance.UpdateAgentStats(agent, data, customizingWindowTestAdapter);
+            instance.UpdateAgentStats(agent, data, customizingWindowInternals);
         }
 
         /// <summary>Runs before SetAgentStatBonus to use the original stat levels instead of the modified stat levels.</summary>
@@ -60,9 +57,11 @@ namespace LobotomyCorporationMods.BugFixes.Patches
         [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
         // ReSharper disable InconsistentNaming
         // ReSharper disable once UnusedMethodReturnValue.Global
-        public static bool Prefix([NotNull] CustomizingWindow __instance,
+        public static bool Prefix(
+            [NotNull] CustomizingWindow __instance,
             [NotNull] AgentModel agent,
-            [NotNull] AgentData data)
+            [NotNull] AgentData data
+        )
         {
             try
             {

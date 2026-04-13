@@ -3,8 +3,8 @@
 #region
 
 using System.Collections.Generic;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.BugFixes.Patches;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
 using LobotomyCorporationMods.Test.Extensions;
 using LobotomyCorporationMods.Test.Parameters;
 using Moq;
@@ -27,7 +27,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests.PatchTests
             const int BaseStatValue = 1;
             const int BuffStatBonus = 100;
             var customizingWindow = UnityTestExtensions.CreateCustomizingWindow();
-            var mockTestAdapter = new Mock<ICustomizingWindowTestAdapter>();
+            var mockInternals = new Mock<ICustomizingWindowInternals>();
 
             // The base stat level is primary stat + title bonus
             // We'll ignore the title bonus
@@ -45,10 +45,7 @@ namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests.PatchTests
             statBonus.mental = BuffStatBonus;
             statBonus.work = BuffStatBonus;
             var statBuff = UnityTestExtensions.CreateUnitStatBuf(statBonus);
-            var statBuffList = new List<UnitStatBuf>
-            {
-                statBuff,
-            };
+            var statBuffList = new List<UnitStatBuf> { statBuff };
 
             var agentModelCreationParameters = new AgentModelCreationParameters
             {
@@ -59,14 +56,21 @@ namespace LobotomyCorporationMods.Test.ModTests.BugFixesTests.PatchTests
             var agent = UnityTestExtensions.CreateAgentModel(agentModelCreationParameters);
             var data = UnityTestExtensions.CreateAgentData();
 
-
             // Act
-            customizingWindow.PatchBeforeSetAgentStatBonus(agent, data, mockTestAdapter.Object);
+            customizingWindow.PatchBeforeSetAgentStatBonus(agent, data, mockInternals.Object);
 
             // Assert
             // Even though our current stat level is way above 1 due to our buff, we should still only send as our original un-buffed level.
             const int ExpectedStatLevelSent = 1;
-            mockTestAdapter.Verify(adapter => adapter.SetRandomStatValue(It.IsAny<int>(), ExpectedStatLevelSent, It.IsAny<int>()), Times.Exactly(FourTimes));
+            mockInternals.Verify(
+                adapter =>
+                    adapter.SetRandomStatValue(
+                        It.IsAny<int>(),
+                        ExpectedStatLevelSent,
+                        It.IsAny<int>()
+                    ),
+                Times.Exactly(FourTimes)
+            );
         }
     }
 }

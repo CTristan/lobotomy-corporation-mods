@@ -3,8 +3,7 @@
 #region
 
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Implementations.Facades;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
+using LobotomyCorporation.Mods.Common;
 
 #endregion
 
@@ -12,22 +11,26 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 {
     internal sealed class ParasiteTreeEvaluator : CreatureEvaluator
     {
-        private readonly IYggdrasilAnimTestAdapter _yggdrasilAnimTestAdapter;
+        private readonly IYggdrasilAnimInternals _yggdrasilAnimInternals;
 
-        internal ParasiteTreeEvaluator(AgentModel agent,
+        internal ParasiteTreeEvaluator(
+            AgentModel agent,
             CreatureModel creature,
             RwbpType skillType,
-            [CanBeNull] IYggdrasilAnimTestAdapter yggdrasilAnimTestAdapter = null) : base(agent, creature, skillType)
+            [CanBeNull] IYggdrasilAnimInternals yggdrasilAnimInternals = null
+        )
+            : base(agent, creature, skillType)
         {
-            _yggdrasilAnimTestAdapter = yggdrasilAnimTestAdapter;
+            _yggdrasilAnimInternals = yggdrasilAnimInternals;
         }
 
         protected override bool WillAgentDieFromThisCreature()
         {
             const int MaxNumberOfFlowers = 4;
 
-            var numberOfFlowers = Creature.GetParasiteTreeNumberOfFlowers(_yggdrasilAnimTestAdapter);
-            var agentWillDie = numberOfFlowers >= MaxNumberOfFlowers && !Agent.HasParasiteTreeEffect();
+            var numberOfFlowers = Creature.GetParasiteTreeNumberOfFlowers(_yggdrasilAnimInternals);
+            var agentWillDie =
+                numberOfFlowers >= MaxNumberOfFlowers && !Agent.HasParasiteTreeEffect();
 
             return agentWillDie;
         }

@@ -2,23 +2,20 @@
 
 #region
 
-using LobotomyCorporationMods.Common.Implementations;
+using LobotomyCorporation.Mods.Common;
 
 #endregion
 
 namespace LobotomyCorporationMods.NotifyWhenAgentReceivesGift
 {
     // ReSharper disable once InconsistentNaming
-    public sealed class Harmony_Patch : HarmonyPatchBase
+    public sealed class Harmony_Patch : HarmonyPatchBase<Harmony_Patch>
     {
-        public new static readonly Harmony_Patch Instance = new Harmony_Patch(true);
+        public static readonly Harmony_Patch Instance = new Harmony_Patch(true);
 
-        public Harmony_Patch() : this(false)
-        {
-        }
+        public Harmony_Patch() { }
 
-        private Harmony_Patch(bool initialize) : base(typeof(Harmony_Patch), "LobotomyCorporationMods.NotifyWhenAgentReceivesGift.dll", initialize)
-        {
-        }
+        private Harmony_Patch(bool initialize)
+            : base(initialize) { }
     }
 }

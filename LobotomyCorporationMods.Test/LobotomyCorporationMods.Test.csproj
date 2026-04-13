@@ -1,59 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyVersion>1.0.0</AssemblyVersion>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
     <ProjectGuid>{5186F30E-9617-4955-BE97-0E496DE2148B}</ProjectGuid>
-    <TargetFramework>net481</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <AnalysisLevel>latest-all</AnalysisLevel>
+    <NoWarn>$(NoWarn);NU1701;NU1702;SYSLIB0050;CA1515</NoWarn>
     <Deterministic>true</Deterministic>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <OutputPath>bin\</OutputPath>
-    <OutputType>Library</OutputType>
-    <RuntimeIdentifiers>win</RuntimeIdentifiers>
+    <OutputType>Exe</OutputType>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Exclude>[ConfigurationManager]*</Exclude>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugType>full</DebugType>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="coverlet.collector" Version="6.0.2">
+    <PackageReference Include="coverlet.collector">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="coverlet.msbuild" Version="6.0.2">
+    <PackageReference Include="coverlet.msbuild">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="FluentAssertions" Version="6.12.0"/>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0"/>
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net35" Version="1.0.3">
+    <PackageReference
+      Include="LobotomyCorporation.Mods.Common"
+      GeneratePathProperty="true"
+      ExcludeAssets="All"
+    />
+    <PackageReference Include="AwesomeAssertions" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Moq" />
+    <PackageReference Include="xunit.analyzers">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Moq" Version="4.20.70"/>
-    <PackageReference Include="xunit" Version="2.8.1"/>
-    <PackageReference Include="xunit.runner.console" Version="2.8.1">
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.v3.runner.console">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.1">
+    <PackageReference Include="xunit.runner.visualstudio">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LobotomyCorporationMods.BadLuckProtectionForGifts\LobotomyCorporationMods.BadLuckProtectionForGifts.csproj"/>
-    <ProjectReference Include="..\LobotomyCorporationMods.BugFixes\LobotomyCorporationMods.BugFixes.csproj"/>
-    <ProjectReference Include="..\LobotomyCorporationMods.FreeCustomization\LobotomyCorporationMods.FreeCustomization.csproj"/>
-    <ProjectReference Include="..\LobotomyCorporationMods.GiftAlertIcon\LobotomyCorporationMods.GiftAlertIcon.csproj"/>
-    <ProjectReference Include="..\LobotomyCorporationMods.NotifyWhenAgentReceivesGift\LobotomyCorporationMods.NotifyWhenAgentReceivesGift.csproj"/>
-    <ProjectReference Include="..\LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking\LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.csproj"/>
+    <ProjectReference Include="..\LobotomyCorporationMods.BadLuckProtectionForGifts\LobotomyCorporationMods.BadLuckProtectionForGifts.csproj" />
+    <ProjectReference Include="..\LobotomyCorporationMods.BugFixes\LobotomyCorporationMods.BugFixes.csproj" />
+    <ProjectReference Include="..\LobotomyCorporationMods.FreeCustomization\LobotomyCorporationMods.FreeCustomization.csproj" />
+    <ProjectReference Include="..\LobotomyCorporationMods.GiftAlertIcon\LobotomyCorporationMods.GiftAlertIcon.csproj" />
+    <ProjectReference Include="..\LobotomyCorporationMods.NotifyWhenAgentReceivesGift\LobotomyCorporationMods.NotifyWhenAgentReceivesGift.csproj" />
+    <ProjectReference Include="..\LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking\LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="LobotomyCorporation.Mods.Common">
+      <HintPath>$(PkgLobotomyCorporation_Mods_Common)\lib\net35\LobotomyCorporation.Mods.Common.$(LobotomyCorporationModsCommonVersion).dll</HintPath>
+    </Reference>
     <Reference Include="0Harmony">
       <HintPath>..\external\LobotomyCorp_Data\Managed\0Harmony.dll</HintPath>
     </Reference>
@@ -71,17 +80,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="TestResults\**"/>
+    <Compile Remove="TestResults\**" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Remove="TestResults\**"/>
+    <EmbeddedResource Remove="TestResults\**" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="TestResults\**"/>
-    <None Remove="coverage.opencover.net35.xml"/>
-    <None Remove="coverage.opencover.net48.xml"/>
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
-    <PackageReference Include="Microsoft.CodeCoverage" Version="17.5.0"/>
+    <None Remove="TestResults\**" />
+    <None Remove="coverage.opencover.net35.xml" />
+    <None Remove="coverage.opencover.net48.xml" />
   </ItemGroup>
 </Project>

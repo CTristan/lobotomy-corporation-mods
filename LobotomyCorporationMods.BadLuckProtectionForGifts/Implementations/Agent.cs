@@ -33,5 +33,10 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         {
             _workCount += numberOfTimes;
         }
+
+        public void ResetWorkCount()
+        {
+            _workCount = 0f;
+        }
     }
 }

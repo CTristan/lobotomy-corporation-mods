@@ -4,11 +4,12 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 {
     internal sealed class CrumblingArmorEvaluator : CreatureEvaluator
     {
-        internal CrumblingArmorEvaluator(AgentModel agent,
+        internal CrumblingArmorEvaluator(
+            AgentModel agent,
             CreatureModel creature,
-            RwbpType skillType) : base(agent, creature, skillType)
-        {
-        }
+            RwbpType skillType
+        )
+            : base(agent, creature, skillType) { }
 
         protected override bool WillAgentDieFromThisCreature()
         {

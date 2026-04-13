@@ -1,16 +1,17 @@
 // SPDX-License-Identifier: MIT
 
-using LobotomyCorporationMods.Common.Extensions;
+using LobotomyCorporation.Mods.Common;
 
 namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementations.CreatureEvaluators
 {
     internal sealed class HappyTeddyBearEvaluator : CreatureEvaluator
     {
-        internal HappyTeddyBearEvaluator(AgentModel agent,
+        internal HappyTeddyBearEvaluator(
+            AgentModel agent,
             CreatureModel creature,
-            RwbpType skillType) : base(agent, creature, skillType)
-        {
-        }
+            RwbpType skillType
+        )
+            : base(agent, creature, skillType) { }
 
         protected override bool WillAgentDieFromThisCreature()
         {

@@ -3,7 +3,7 @@
 #region
 
 using System;
-using FluentAssertions;
+using AwesomeAssertions;
 using LobotomyCorporationMods.NotifyWhenAgentReceivesGift;
 using LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches;
 using LobotomyCorporationMods.Test.Extensions;
@@ -20,12 +20,14 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
         public void Class_AgentSlot_Method_SetFilter_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
+            Harmony_Patch.Instance.SetLogger(mockLogger.Object);
             const int NumberOfLogs = 2;
 
-            Action action = () => UnitModelPatchAttachEgoGift.Prefix(null, UnityTestExtensions.CreateEgoGiftModel());
+            Action action = () =>
+                UnitModelPatchAttachEgoGift.Prefix(null, UnityTestExtensions.CreateEgoGiftModel());
             mockLogger.VerifyArgumentNullException(action);
-            action = () => UnitModelPatchAttachEgoGift.Prefix(UnityTestExtensions.CreateAgentModel(), null);
+            action = () =>
+                UnitModelPatchAttachEgoGift.Prefix(UnityTestExtensions.CreateAgentModel(), null);
             mockLogger.VerifyArgumentNullException(action, Times.Exactly(NumberOfLogs));
         }
 

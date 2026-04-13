@@ -4,11 +4,8 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 {
     internal sealed class VoidDreamEvaluator : CreatureEvaluator
     {
-        internal VoidDreamEvaluator(AgentModel agent,
-            CreatureModel creature,
-            RwbpType skillType) : base(agent, creature, skillType)
-        {
-        }
+        internal VoidDreamEvaluator(AgentModel agent, CreatureModel creature, RwbpType skillType)
+            : base(agent, creature, skillType) { }
 
         protected override bool WillAgentDieFromThisCreature()
         {

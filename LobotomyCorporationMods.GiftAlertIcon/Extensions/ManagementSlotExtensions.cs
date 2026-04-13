@@ -5,10 +5,7 @@
 using System.Text;
 using CommandWindow;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations.Facades;
-using LobotomyCorporationMods.Common.Interfaces;
-using LobotomyCorporationMods.Common.ParameterObjects;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.GiftAlertIcon.Constants;
 using UnityEngine;
 
@@ -18,15 +15,17 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Extensions
 {
     internal static class ManagementSlotExtensions
     {
-        internal static void UpdateGiftIcon([NotNull] this ManagementSlot instance,
+        internal static void UpdateGiftIcon(
+            [NotNull] this ManagementSlot instance,
             UnitModel agent,
             [NotNull] ImageParameters imageParameters,
             [NotNull] IFileManager fileManager,
-            OptionalTestAdapterParameters testAdapterParameters)
+            OptionalOverrides optionalOverrides
+        )
         {
             if (!instance.AbnormalityHasGift())
             {
-                instance.HideImageObject(imageParameters, fileManager, testAdapterParameters);
+                instance.HideImageObject(imageParameters, fileManager, optionalOverrides);
 
                 return;
             }
@@ -36,68 +35,104 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Extensions
             var giftsInSameSlot = agent.HasGiftInPosition(giftSlot, giftAttachType);
             if (giftsInSameSlot)
             {
-                ProcessGiftInSameSlot(instance, agent, imageParameters, fileManager, testAdapterParameters);
+                ProcessGiftInSameSlot(
+                    instance,
+                    agent,
+                    imageParameters,
+                    fileManager,
+                    optionalOverrides
+                );
             }
             else
             {
-                instance.ShowAsNewGift(imageParameters, fileManager, testAdapterParameters);
+                instance.ShowAsNewGift(imageParameters, fileManager, optionalOverrides);
             }
         }
 
-        private static void ShowAsGift([NotNull] this ManagementSlot managementSlot,
+        private static void ShowAsGift(
+            [NotNull] this ManagementSlot managementSlot,
             [NotNull] ImageParameters imageParameters,
             Color color,
             string tooltipLine1,
             string tooltipLine2,
             [NotNull] IFileManager fileManager,
-            [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null)
+            [CanBeNull] OptionalOverrides optionalOverrides = null
+        )
         {
             var tooltipMessage = new StringBuilder();
             tooltipMessage.AppendLine(tooltipLine1);
             tooltipMessage.AppendLine();
             tooltipMessage.AppendLine(tooltipLine2);
 
-            managementSlot.UpdateImage(imageParameters, fileManager, color, tooltipMessage.ToString(), testAdapterParameters);
+            managementSlot.UpdateImage(
+                imageParameters,
+                fileManager,
+                color,
+                tooltipMessage.ToString(),
+                optionalOverrides
+            );
         }
 
-        private static void ShowAsNewGift([NotNull] this ManagementSlot managementSlot,
+        private static void ShowAsNewGift(
+            [NotNull] this ManagementSlot managementSlot,
             [NotNull] ImageParameters imageParameters,
             [NotNull] IFileManager fileManager,
-            [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null)
+            [CanBeNull] OptionalOverrides optionalOverrides = null
+        )
         {
             var color = Color.green;
             var tooltipLine1 = LocalizationIds.NewGiftTooltip1.GetLocalized();
             var tooltipLine2 = LocalizationIds.NewGiftTooltip2.GetLocalized();
 
-            ShowAsGift(managementSlot, imageParameters, color, tooltipLine1, tooltipLine2, fileManager, testAdapterParameters);
+            ShowAsGift(
+                managementSlot,
+                imageParameters,
+                color,
+                tooltipLine1,
+                tooltipLine2,
+                fileManager,
+                optionalOverrides
+            );
         }
 
-        private static void ShowAsReplacementGift([NotNull] this ManagementSlot managementSlot,
+        private static void ShowAsReplacementGift(
+            [NotNull] this ManagementSlot managementSlot,
             [NotNull] ImageParameters imageParameters,
             [NotNull] IFileManager fileManager,
-            [CanBeNull] OptionalTestAdapterParameters testAdapterParameters)
+            [CanBeNull] OptionalOverrides optionalOverrides
+        )
         {
             var color = Color.grey;
             var tooltipLine1 = LocalizationIds.ReplacementGiftTooltip1.GetLocalized();
             var tooltipLine2 = LocalizationIds.ReplacementGiftTooltip2.GetLocalized();
 
-            ShowAsGift(managementSlot, imageParameters, color, tooltipLine1, tooltipLine2, fileManager, testAdapterParameters);
+            ShowAsGift(
+                managementSlot,
+                imageParameters,
+                color,
+                tooltipLine1,
+                tooltipLine2,
+                fileManager,
+                optionalOverrides
+            );
         }
 
-        private static void ProcessGiftInSameSlot([NotNull] this ManagementSlot instance,
+        private static void ProcessGiftInSameSlot(
+            [NotNull] this ManagementSlot instance,
             [NotNull] UnitModel agent,
             [NotNull] ImageParameters imageParameters,
             [NotNull] IFileManager fileManager,
-            OptionalTestAdapterParameters testAdapterParameters)
+            OptionalOverrides optionalOverrides
+        )
         {
             var giftId = instance.GetAbnormalityGiftId();
             if (agent.HasGift(giftId))
             {
-                instance.HideImageObject(imageParameters, fileManager, testAdapterParameters);
+                instance.HideImageObject(imageParameters, fileManager, optionalOverrides);
             }
             else
             {
-                instance.ShowAsReplacementGift(imageParameters, fileManager, testAdapterParameters);
+                instance.ShowAsReplacementGift(imageParameters, fileManager, optionalOverrides);
             }
         }
     }

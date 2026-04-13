@@ -1,0 +1,28 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="CHANGELOG.md" />
+    <File Path="CONTRIBUTING.md" />
+    <File Path="DOCUMENTATION_UPDATING_CHECKLIST.md" />
+    <File Path="INTEGRATION_TESTING_CHECKLIST.md" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/Solution Items/.github/" />
+  <Folder Name="/Solution Items/.github/ISSUE_TEMPLATE/">
+    <File Path=".github/ISSUE_TEMPLATE/bug_report.md" />
+    <File Path=".github/ISSUE_TEMPLATE/existing-mod-update-request.md" />
+    <File Path=".github/ISSUE_TEMPLATE/new-mod-request.md" />
+  </Folder>
+  <Folder Name="/Solution Items/.github/workflows/">
+    <File Path=".github/workflows/ci.yml" />
+  </Folder>
+  <Project Path="LobotomyCorporationMods.BadLuckProtectionForGifts/LobotomyCorporationMods.BadLuckProtectionForGifts.csproj" />
+  <Project Path="LobotomyCorporationMods.BugFixes/LobotomyCorporationMods.BugFixes.csproj" />
+  <Project Path="LobotomyCorporationMods.E2E/LobotomyCorporationMods.E2E.csproj" />
+  <Project Path="LobotomyCorporationMods.FreeCustomization/LobotomyCorporationMods.FreeCustomization.csproj" />
+  <Project Path="LobotomyCorporationMods.GiftAlertIcon/LobotomyCorporationMods.GiftAlertIcon.csproj" />
+  <Project Path="LobotomyCorporationMods.NotifyWhenAgentReceivesGift/LobotomyCorporationMods.NotifyWhenAgentReceivesGift.csproj" />
+  <Project Path="LobotomyCorporationMods.Test/LobotomyCorporationMods.Test.csproj" />
+  <Project Path="LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking/LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.csproj" />
+</Solution>

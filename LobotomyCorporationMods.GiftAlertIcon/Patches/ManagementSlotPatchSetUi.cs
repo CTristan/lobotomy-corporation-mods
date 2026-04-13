@@ -7,13 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using CommandWindow;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Implementations.Facades;
-using LobotomyCorporationMods.Common.Interfaces;
-using LobotomyCorporationMods.Common.ParameterObjects;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.GiftAlertIcon.Extensions;
 
 #endregion
@@ -23,15 +17,17 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Patches
     [HarmonyPatch(typeof(ManagementSlot), nameof(ManagementSlot.SetUI))]
     public static class ManagementSlotPatchSetUi
     {
-        public static void PatchAfterSetUi([NotNull] this ManagementSlot instance,
+        public static void PatchAfterSetUi(
+            [NotNull] this ManagementSlot instance,
             [NotNull] UnitModel agent,
             [NotNull] string imagePath,
             [CanBeNull] IFileManager fileManager = null,
-            [CanBeNull] OptionalTestAdapterParameters testAdapterParameters = null)
+            [CanBeNull] OptionalOverrides optionalOverrides = null
+        )
         {
-            Guard.Against.Null(instance, nameof(instance));
-            fileManager = fileManager.EnsureNotNullWithMethod(() => Harmony_Patch.Instance.FileManager);
-            testAdapterParameters = testAdapterParameters.EnsureNotNullWithMethod(() => new OptionalTestAdapterParameters());
+            ThrowHelper.ThrowIfNull(instance, nameof(instance));
+            fileManager = fileManager.OrCreate(() => Harmony_Patch.Instance.FileManager);
+            optionalOverrides = optionalOverrides.OrCreate(() => new OptionalOverrides());
 
             const float LocalPositionX = -12f;
             const float LocalPositionY = 28f;
@@ -39,7 +35,7 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Patches
             const float LocalScaleX = 0.2f;
             const float LocalScaleY = 0.2f;
 
-            var imageId = instance.GetSlotName(testAdapterParameters.ManagementSlotTestAdapter);
+            var imageId = instance.GetSlotName(optionalOverrides.ManagementSlotInternals);
             var imageProperties = new ImageParameters
             {
                 ImageId = imageId,
@@ -51,20 +47,19 @@ namespace LobotomyCorporationMods.GiftAlertIcon.Patches
                 LocalScaleY = LocalScaleY,
             };
 
-            instance.UpdateGiftIcon(agent, imageProperties, fileManager, testAdapterParameters);
+            instance.UpdateGiftIcon(agent, imageProperties, fileManager, optionalOverrides);
         }
 
         /// <summary>Runs after initializing the management slot UI to add our own additional icon.</summary>
         // ReSharper disable InconsistentNaming
         [EntryPoint]
         [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-        public static void Postfix([NotNull] ManagementSlot __instance,
-            [NotNull] UnitModel agent)
+        public static void Postfix([NotNull] ManagementSlot __instance, [NotNull] UnitModel agent)
         {
             try
             {
-                Guard.Against.Null(__instance, nameof(__instance));
-                Guard.Against.Null(agent, nameof(agent));
+                ThrowHelper.ThrowIfNull(__instance, nameof(__instance));
+                ThrowHelper.ThrowIfNull(agent, nameof(agent));
 
                 const string ImagePath = "Assets/gift.png";
 

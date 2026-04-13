@@ -1,0 +1,5 @@
+{
+  "lineThreshold": 80,
+  "branchThreshold": 80,
+  "methodThreshold": 80
+}

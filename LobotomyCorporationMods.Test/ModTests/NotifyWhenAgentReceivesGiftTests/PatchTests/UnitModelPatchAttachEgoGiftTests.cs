@@ -3,7 +3,7 @@
 #region
 
 using System.Collections.Generic;
-using FluentAssertions;
+using AwesomeAssertions;
 using JetBrains.Annotations;
 using LobotomyCorporationMods.NotifyWhenAgentReceivesGift.Patches;
 using LobotomyCorporationMods.Test.Extensions;
@@ -20,9 +20,11 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
         [Theory]
         [InlineData(DefaultAgentName, DefaultGiftName, DefaultGiftAttachRegion)]
         [InlineData("Eke", "Our Galaxy", EGOgiftAttachRegion.RIBBORN)]
-        public void Attempting_to_replace_a_locked_gift_does_not_cause_a_notification(string agentName,
+        public void Attempting_to_replace_a_locked_gift_does_not_cause_a_notification(
+            string agentName,
             [NotNull] string giftName,
-            EGOgiftAttachRegion attachRegion)
+            EGOgiftAttachRegion attachRegion
+        )
         {
             var unitModel = GetAgentWithLockedGift(agentName, attachRegion);
             var newGift = GetGift(giftName, attachRegion: attachRegion);
@@ -57,9 +59,11 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
         [Theory]
         [InlineData(DefaultAgentName, DefaultGiftName, EGOgiftAttachRegion.EYE)]
         [InlineData("Eke", "Our Galaxy", EGOgiftAttachRegion.RIBBORN)]
-        public void Locked_gift_in_another_position_does_not_prevent_notification(string agentName,
+        public void Locked_gift_in_another_position_does_not_prevent_notification(
+            string agentName,
             [NotNull] string giftName,
-            EGOgiftAttachRegion newGiftAttachRegion)
+            EGOgiftAttachRegion newGiftAttachRegion
+        )
         {
             var unitModel = GetAgentWithLockedGift(agentName, DefaultGiftAttachRegion);
             var newGift = GetGift(giftName, attachRegion: newGiftAttachRegion);
@@ -70,8 +74,10 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
         [Theory]
         [InlineData(DefaultAgentName, DefaultGiftName)]
         [InlineData("TestAgent", "TestGift")]
-        public void Receiving_a_duplicate_gift_does_not_cause_a_notification(string agentName,
-            [NotNull] string giftName)
+        public void Receiving_a_duplicate_gift_does_not_cause_a_notification(
+            string agentName,
+            [NotNull] string giftName
+        )
         {
             var gift = GetGift(giftName);
             var agentModelCreationParameters = new AgentModelCreationParameters
@@ -96,12 +102,37 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
         }
 
         [Theory]
-        [InlineData(DefaultAgentName, DefaultGiftName,
-            "<color=" + ColorAgentString + ">" + DefaultAgentName + "</color>" + TestNotificationLogMessage + "<color=" + ColorGiftString + ">" + DefaultGiftName + "</color>.")]
-        [InlineData("TestAgent", "TestGift", "<color=" + ColorAgentString + ">TestAgent</color>" + TestNotificationLogMessage + "<color=" + ColorGiftString + ">TestGift</color>.")]
-        public void Receiving_a_gift_causes_a_notification(string agentName,
+        [InlineData(
+            DefaultAgentName,
+            DefaultGiftName,
+            "<color="
+                + ColorAgentString
+                + ">"
+                + DefaultAgentName
+                + "</color>"
+                + TestNotificationLogMessage
+                + "<color="
+                + ColorGiftString
+                + ">"
+                + DefaultGiftName
+                + "</color>."
+        )]
+        [InlineData(
+            "TestAgent",
+            "TestGift",
+            "<color="
+                + ColorAgentString
+                + ">TestAgent</color>"
+                + TestNotificationLogMessage
+                + "<color="
+                + ColorGiftString
+                + ">TestGift</color>."
+        )]
+        public void Receiving_a_gift_causes_a_notification(
+            string agentName,
             [NotNull] string giftName,
-            string expectedMessage)
+            string expectedMessage
+        )
         {
             var gift = GetGift(giftName);
             var agentModelCreationParameters = new AgentModelCreationParameters
@@ -111,8 +142,12 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
 
             var unitModel = UnityTestExtensions.CreateAgentModel(agentModelCreationParameters);
             var noticeMessages = new List<string>();
-            NoticeTestAdapter.Setup(adapter => adapter.Send(It.IsAny<string>(), It.IsAny<object[]>())).Callback((string _,
-                object[] objectArray) => noticeMessages.Add(objectArray[0].ToString()));
+            NoticeInternals
+                .Setup(adapter => adapter.Send(It.IsAny<string>(), It.IsAny<object[]>()))
+                .Callback(
+                    (string _, object[] objectArray) =>
+                        noticeMessages.Add(objectArray[0].ToString())
+                );
 
             ExecutePatchAndVerifyNotification(unitModel, gift, Times.Once());
 
@@ -121,13 +156,18 @@ namespace LobotomyCorporationMods.Test.ModTests.NotifyWhenAgentReceivesGiftTests
 
         #region Helper Methods
 
-        private void ExecutePatchAndVerifyNotification(UnitModel unitModel,
+        private void ExecutePatchAndVerifyNotification(
+            UnitModel unitModel,
             EGOgiftModel gift,
-            Times numberOfTimes)
+            Times numberOfTimes
+        )
         {
-            unitModel.PatchBeforeAttachEgoGift(gift, NoticeTestAdapter.Object);
+            unitModel.PatchBeforeAttachEgoGift(gift, NoticeInternals.Object);
 
-            NoticeTestAdapter.Verify(adapter => adapter.Send(It.IsAny<string>(), It.IsAny<object[]>()), numberOfTimes);
+            NoticeInternals.Verify(
+                adapter => adapter.Send(It.IsAny<string>(), It.IsAny<object[]>()),
+                numberOfTimes
+            );
         }
 
         #endregion

@@ -40,8 +40,8 @@ Bugs fixed:
 
 #### Added
 
-- New bug fix for Crumbling Armor not killing agents that replaced a different
-  gift.
+- Added bug fix for Crumbling Armor not killing agents that replaced a
+  different gift.
 
 ### [2.1.0] - 2024-06-23
 
@@ -54,13 +54,13 @@ Bugs fixed:
 
 #### Added
 
-- New bug fix for Crumbling Armor killing agents when they no longer had
+- Added bug fix for Crumbling Armor killing agents when they no longer had
   Crumbling Armor's gift.
 
 ### [1.0.0] - 2023-01-18
 
 #### Added
 
-- Initial Release.
-  - Fixes a game bug that could cause LOB points to be wasted with certain
+- Initial release.
+  - Fixed a game bug that could cause LOB points to be wasted with certain
     gifts.

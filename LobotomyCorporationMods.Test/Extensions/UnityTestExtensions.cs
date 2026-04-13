@@ -8,7 +8,7 @@ using System.Runtime.Serialization;
 using CommandWindow;
 using Customizing;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.Test.Parameters;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,18 +18,25 @@ namespace LobotomyCorporationMods.Test.Extensions
 {
     internal static class UnityTestExtensions
     {
-        private const BindingFlags BindingFlagsInstance = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Static;
+        private const BindingFlags BindingFlagsInstance =
+            BindingFlags.Public
+            | BindingFlags.NonPublic
+            | BindingFlags.Instance
+            | BindingFlags.DeclaredOnly
+            | BindingFlags.Static;
 
         #region Unity Objects
 
         [NotNull]
-        internal static AgentData CreateAgentData(AgentName agentName = null,
+        internal static AgentData CreateAgentData(
+            AgentName agentName = null,
             Appearance appearance = null,
-            StatBonus statBonus = null)
+            StatBonus statBonus = null
+        )
         {
-            agentName = agentName.EnsureNotNullWithMethod(() => CreateAgentName());
-            appearance = appearance.EnsureNotNullWithMethod(() => CreateAppearance());
-            statBonus = statBonus.EnsureNotNullWithMethod(CreateStatBonus);
+            agentName = agentName.OrCreate(() => CreateAgentName());
+            appearance = appearance.OrCreate(() => CreateAppearance());
+            statBonus = statBonus.OrCreate(CreateStatBonus);
 
             return new AgentData
             {
@@ -40,28 +47,24 @@ namespace LobotomyCorporationMods.Test.Extensions
         }
 
         [NotNull]
-        internal static AgentInfoWindow CreateAgentInfoWindow(GameObject customizingBlock = null,
+        internal static AgentInfoWindow CreateAgentInfoWindow(
+            GameObject customizingBlock = null,
             CustomizingWindow customizingWindow = null,
-            AgentInfoWindow.UIComponent uiComponents = null)
+            AgentInfoWindow.UIComponent uiComponents = null
+        )
         {
-            customizingBlock = customizingBlock.EnsureNotNullWithMethod(CreateGameObject);
-            customizingWindow = customizingWindow.EnsureNotNullWithMethod(() => CreateCustomizingWindow());
-            uiComponents = uiComponents.EnsureNotNullWithMethod(CreateUiComponent);
+            customizingBlock = customizingBlock.OrCreate(CreateGameObject);
+            customizingWindow = customizingWindow.OrCreate(() => CreateCustomizingWindow());
+            uiComponents = uiComponents.OrCreate(CreateUiComponent);
 
             CreateUninitializedObject<AgentInfoWindow>(out var agentInfoWindow);
 
             var fields = GetUninitializedFieldsIncludingBaseType(agentInfoWindow.GetType());
             var newValues = new Dictionary<string, object>
             {
-                {
-                    "customizingBlock", customizingBlock
-                },
-                {
-                    "customizingWindow", customizingWindow
-                },
-                {
-                    "UIComponents", uiComponents
-                },
+                { "customizingBlock", customizingBlock },
+                { "customizingWindow", customizingWindow },
+                { "UIComponents", uiComponents },
             };
 
             agentInfoWindow = GetPopulatedUninitializedObject(agentInfoWindow, fields, newValues);
@@ -71,111 +74,88 @@ namespace LobotomyCorporationMods.Test.Extensions
         }
 
         [NotNull]
-        internal static AgentModel CreateAgentModel([CanBeNull] AgentModelCreationParameters parameters = null)
+        internal static AgentModel CreateAgentModel(
+            [CanBeNull] AgentModelCreationParameters parameters = null
+        )
         {
-            parameters = parameters.EnsureNotNullWithMethod(() => new AgentModelCreationParameters());
-            parameters.AgentName = parameters.AgentName.EnsureNotNullWithMethod(() => CreateAgentName());
-            parameters.BufList = parameters.BufList.EnsureNotNullWithMethod(() => new List<UnitBuf>());
-            parameters.Equipment = parameters.Equipment.EnsureNotNullWithMethod(CreateUnitEquipSpace);
-            parameters.PrimaryStat = parameters.PrimaryStat.EnsureNotNullWithMethod(CreateWorkerPrimaryStat);
-            parameters.SpriteData = parameters.SpriteData.EnsureNotNullWithMethod(CreateWorkerSprite);
-            parameters.StatBufList = parameters.StatBufList.EnsureNotNullWithMethod(() => new List<UnitStatBuf>());
+            parameters = parameters.OrCreate(() => new AgentModelCreationParameters());
+            parameters.AgentName = parameters.AgentName.OrCreate(() => CreateAgentName());
+            parameters.BufList = parameters.BufList.OrCreate(() => new List<UnitBuf>());
+            parameters.Equipment = parameters.Equipment.OrCreate(CreateUnitEquipSpace);
+            parameters.PrimaryStat = parameters.PrimaryStat.OrCreate(CreateWorkerPrimaryStat);
+            parameters.SpriteData = parameters.SpriteData.OrCreate(CreateWorkerSprite);
+            parameters.StatBufList = parameters.StatBufList.OrCreate(() => new List<UnitStatBuf>());
 
             CreateUninitializedObject<AgentModel>(out var agentModel);
             var fields = GetUninitializedFieldsIncludingBaseType(agentModel.GetType());
             var newValues = new Dictionary<string, object>
             {
-                {
-                    "_agentName", parameters.AgentName
-                },
-                {
-                    "_bufList", parameters.BufList
-                },
-                {
-                    "_equipment", parameters.Equipment
-                },
-                {
-                    "instanceId", parameters.InstanceId
-                },
-                {
-                    "name", parameters.Name
-                },
-                {
-                    "primaryStat", parameters.PrimaryStat
-                },
-                {
-                    "spriteData", parameters.SpriteData
-                },
-                {
-                    "_statBufList", parameters.StatBufList
-                },
+                { "_agentName", parameters.AgentName },
+                { "_bufList", parameters.BufList },
+                { "_equipment", parameters.Equipment },
+                { "instanceId", parameters.InstanceId },
+                { "name", parameters.Name },
+                { "primaryStat", parameters.PrimaryStat },
+                { "spriteData", parameters.SpriteData },
+                { "_statBufList", parameters.StatBufList },
             };
 
             return GetPopulatedUninitializedObject(agentModel, fields, newValues);
         }
 
         [NotNull]
-        internal static AgentName CreateAgentName(AgentNameTypeInfo metaInfo = null,
-            Dictionary<string, string> nameDic = null)
+        internal static AgentName CreateAgentName(
+            AgentNameTypeInfo metaInfo = null,
+            Dictionary<string, string> nameDic = null
+        )
         {
-            metaInfo = metaInfo.EnsureNotNullWithMethod(() => CreateAgentNameTypeInfo());
-            nameDic = nameDic.EnsureNotNullWithMethod(() => new Dictionary<string, string>());
+            metaInfo = metaInfo.OrCreate(() => CreateAgentNameTypeInfo());
+            nameDic = nameDic.OrCreate(() => new Dictionary<string, string>());
 
             CreateUninitializedObject<AgentName>(out var agentName);
 
             var fields = GetUninitializedFieldsIncludingBaseType(agentName.GetType());
             var newValues = new Dictionary<string, object>
             {
-                {
-                    "metaInfo", metaInfo
-                },
-                {
-                    "nameDic", nameDic
-                },
+                { "metaInfo", metaInfo },
+                { "nameDic", nameDic },
             };
 
             return GetPopulatedUninitializedObject(agentName, fields, newValues);
         }
 
         [NotNull]
-        private static AgentNameTypeInfo CreateAgentNameTypeInfo(Dictionary<string, string> nameDic = null)
+        private static AgentNameTypeInfo CreateAgentNameTypeInfo(
+            Dictionary<string, string> nameDic = null
+        )
         {
-            nameDic = nameDic.EnsureNotNullWithMethod(() => new Dictionary<string, string>());
+            nameDic = nameDic.OrCreate(() => new Dictionary<string, string>());
 
-            return new AgentNameTypeInfo
-            {
-                nameDic = nameDic,
-            };
+            return new AgentNameTypeInfo { nameDic = nameDic };
         }
 
         [NotNull]
-        internal static AgentSlot CreateAgentSlot(List<MaskableGraphic> coloredTargets = null,
+        internal static AgentSlot CreateAgentSlot(
+            List<MaskableGraphic> coloredTargets = null,
             AgentModel currentAgent = null,
             Image workFilterFill = null,
-            Text workFilterText = null)
+            Text workFilterText = null
+        )
         {
-            coloredTargets = coloredTargets.EnsureNotNullWithMethod(() => new List<MaskableGraphic>());
-            currentAgent = currentAgent.EnsureNotNullWithMethod(() => CreateAgentModel());
-            workFilterFill = workFilterFill.EnsureNotNullWithMethod(CreateImage);
-            workFilterText = workFilterText.EnsureNotNullWithMethod(CreateText);
+            coloredTargets = coloredTargets.OrCreate(() => new List<MaskableGraphic>());
+            currentAgent = currentAgent.OrCreate(() => CreateAgentModel());
+            workFilterFill = workFilterFill.OrCreate(CreateImage);
+            workFilterText = workFilterText.OrCreate(CreateText);
 
             CreateUninitializedObject<AgentSlot>(out var agentSlot);
 
             var fields = GetUninitializedFieldsIncludingBaseType(agentSlot.GetType());
             var newValues = new Dictionary<string, object>
             {
-                {
-                    "coloredTargets", coloredTargets
-                },
-                {
-                    "_currentAgent", currentAgent
-                },
-                {
-                    "WorkFilterFill", workFilterFill
-                },
-                {
-                    "WorkFilterText", workFilterText
-                },
+                { "coloredTargets", coloredTargets },
+                { "_currentAgent", currentAgent },
+                { "WorkFilterFill", workFilterFill },
+                { "WorkFilterText", workFilterText },
             };
 
             return GetPopulatedUninitializedObject(agentSlot, fields, newValues);
@@ -184,12 +164,9 @@ namespace LobotomyCorporationMods.Test.Extensions
         [NotNull]
         private static Appearance CreateAppearance(WorkerSprite.WorkerSprite spriteSet = null)
         {
-            spriteSet = spriteSet.EnsureNotNullWithMethod(CreateWorkerSprite);
+            spriteSet = spriteSet.OrCreate(CreateWorkerSprite);
 
-            return new Appearance
-            {
-                spriteSet = spriteSet,
-            };
+            return new Appearance { spriteSet = spriteSet };
         }
 
         internal static AppearanceUI CreateAppearanceUi()
@@ -200,26 +177,22 @@ namespace LobotomyCorporationMods.Test.Extensions
         }
 
         [NotNull]
-        internal static CommandWindow.CommandWindow CreateCommandWindow(UnitModel currentTarget = null,
+        internal static CommandWindow.CommandWindow CreateCommandWindow(
+            UnitModel currentTarget = null,
             CommandType currentWindowType = (CommandType)1,
-            long selectedWork = 0L)
+            long selectedWork = 0L
+        )
         {
-            currentTarget = currentTarget.EnsureNotNullWithMethod(() => CreateUnitModel());
+            currentTarget = currentTarget.OrCreate(() => CreateUnitModel());
 
             CreateUninitializedObject<CommandWindow.CommandWindow>(out var commandWindow);
 
             var fields = GetUninitializedFieldsIncludingBaseType(commandWindow.GetType());
             var newValues = new Dictionary<string, object>
             {
-                {
-                    "_currentTarget", currentTarget
-                },
-                {
-                    "_currentWindowType", currentWindowType
-                },
-                {
-                    "_selectedWork", selectedWork
-                },
+                { "_currentTarget", currentTarget },
+                { "_currentWindowType", currentWindowType },
+                { "_selectedWork", selectedWork },
             };
 
             commandWindow = GetPopulatedUninitializedObject(commandWindow, fields, newValues);
@@ -229,30 +202,26 @@ namespace LobotomyCorporationMods.Test.Extensions
         }
 
         [NotNull]
-        internal static CreatureEquipmentMakeInfo CreateCreatureEquipmentMakeInfo(EquipmentTypeInfo equipTypeInfo = null)
+        internal static CreatureEquipmentMakeInfo CreateCreatureEquipmentMakeInfo(
+            EquipmentTypeInfo equipTypeInfo = null
+        )
         {
-            equipTypeInfo = equipTypeInfo.EnsureNotNullWithMethod(() => CreateEquipmentTypeInfo());
+            equipTypeInfo = equipTypeInfo.OrCreate(() => CreateEquipmentTypeInfo());
 
-            return new CreatureEquipmentMakeInfo
-            {
-                equipTypeInfo = equipTypeInfo,
-            };
+            return new CreatureEquipmentMakeInfo { equipTypeInfo = equipTypeInfo };
         }
 
         [NotNull]
-        internal static CreatureLayer CreateCreatureLayer(Dictionary<long, CreatureUnit> creatureDic = null)
+        internal static CreatureLayer CreateCreatureLayer(
+            Dictionary<long, CreatureUnit> creatureDic = null
+        )
         {
-            creatureDic = creatureDic.EnsureNotNullWithMethod(() => new Dictionary<long, CreatureUnit>());
+            creatureDic = creatureDic.OrCreate(() => new Dictionary<long, CreatureUnit>());
 
             CreateUninitializedObject<CreatureLayer>(out var creatureLayer);
 
             var fields = GetUninitializedFieldsIncludingBaseType(creatureLayer.GetType());
-            var newValues = new Dictionary<string, object>
-            {
-                {
-                    "creatureDic", creatureDic
-                },
-            };
+            var newValues = new Dictionary<string, object> { { "creatureDic", creatureDic } };
 
             creatureLayer = GetPopulatedUninitializedObject(creatureLayer, fields, newValues);
             newValues.Add("<currentLayer>k__BackingField", creatureLayer);
@@ -263,34 +232,34 @@ namespace LobotomyCorporationMods.Test.Extensions
         }
 
         [NotNull]
-        internal static CreatureModel CreateCreatureModel(AgentModel agent = null,
+        internal static CreatureModel CreateCreatureModel(
+            AgentModel agent = null,
             CreatureTypeInfo metaInfo = null,
             CreatureObserveInfoModel observeInfo = null,
             int qliphothCounter = 1,
-            SkillTypeInfo skillTypeInfo = null)
+            SkillTypeInfo skillTypeInfo = null
+        )
         {
-            agent = agent.EnsureNotNullWithMethod(() => CreateAgentModel());
-            metaInfo = metaInfo.EnsureNotNullWithMethod(() => CreateCreatureTypeInfo());
-            observeInfo = observeInfo.EnsureNotNullWithMethod(() => CreateCreatureObserveInfoModel());
-            skillTypeInfo = skillTypeInfo.EnsureNotNullWithMethod(CreateSkillTypeInfo);
+            agent = agent.OrCreate(() => CreateAgentModel());
+            metaInfo = metaInfo.OrCreate(() => CreateCreatureTypeInfo());
+            observeInfo = observeInfo.OrCreate(() => CreateCreatureObserveInfoModel());
+            skillTypeInfo = skillTypeInfo.OrCreate(CreateSkillTypeInfo);
 
             CreateUninitializedObject<CreatureModel>(out var creatureModel);
 
             var fields = GetUninitializedFieldsIncludingBaseType(creatureModel.GetType());
             var newValues = new Dictionary<string, object>
             {
-                {
-                    "metaInfo", metaInfo
-                },
-                {
-                    "observeInfo", observeInfo
-                },
-                {
-                    "_qliphothCounter", qliphothCounter
-                },
+                { "metaInfo", metaInfo },
+                { "observeInfo", observeInfo },
+                { "_qliphothCounter", qliphothCounter },
             };
 
-            var newCreatureModel = GetPopulatedUninitializedObject(creatureModel, fields, newValues);
+            var newCreatureModel = GetPopulatedUninitializedObject(
+                creatureModel,
+                fields,
+                newValues
+            );
 
             // Needed to avoid a circular reference from currentSkill
             var currentSkill = CreateUseSkill(agent, skillTypeInfo, newCreatureModel);
@@ -300,37 +269,36 @@ namespace LobotomyCorporationMods.Test.Extensions
         }
 
         [NotNull]
-        private static CreatureObserveInfoModel CreateCreatureObserveInfoModel(CreatureTypeInfo metaInfo = null,
-            Dictionary<string, ObserveRegion> observeRegions = null)
+        private static CreatureObserveInfoModel CreateCreatureObserveInfoModel(
+            CreatureTypeInfo metaInfo = null,
+            Dictionary<string, ObserveRegion> observeRegions = null
+        )
         {
-            metaInfo = metaInfo.EnsureNotNullWithMethod(() => CreateCreatureTypeInfo());
-            observeRegions = observeRegions.EnsureNotNullWithMethod(() => new Dictionary<string, ObserveRegion>());
+            metaInfo = metaInfo.OrCreate(() => CreateCreatureTypeInfo());
+            observeRegions = observeRegions.OrCreate(() => new Dictionary<string, ObserveRegion>());
 
             CreateUninitializedObject<CreatureObserveInfoModel>(out var creatureObserveInfoModel);
 
-            var fields = GetUninitializedFieldsIncludingBaseType(creatureObserveInfoModel.GetType());
+            var fields = GetUninitializedFieldsIncludingBaseType(
+                creatureObserveInfoModel.GetType()
+            );
             var newValues = new Dictionary<string, object>
             {
-                {
-                    "_metaInfo", metaInfo
-                },
-                {
-                    "observeRegions", observeRegions
-                },
+                { "_metaInfo", metaInfo },
+                { "observeRegions", observeRegions },
             };
 
             return GetPopulatedUninitializedObject(creatureObserveInfoModel, fields, newValues);
         }
 
         [NotNull]
-        internal static CreatureTypeInfo CreateCreatureTypeInfo(List<CreatureEquipmentMakeInfo> equipMakeInfos = null)
+        internal static CreatureTypeInfo CreateCreatureTypeInfo(
+            List<CreatureEquipmentMakeInfo> equipMakeInfos = null
+        )
         {
-            equipMakeInfos = equipMakeInfos.EnsureNotNullWithMethod(() => new List<CreatureEquipmentMakeInfo>());
+            equipMakeInfos = equipMakeInfos.OrCreate(() => new List<CreatureEquipmentMakeInfo>());
 
-            return new CreatureTypeInfo
-            {
-                equipMakeInfos = equipMakeInfos,
-            };
+            return new CreatureTypeInfo { equipMakeInfos = equipMakeInfos };
         }
 
         internal static CreatureUnit CreateCreatureUnit()
@@ -341,40 +309,36 @@ namespace LobotomyCorporationMods.Test.Extensions
         }
 
         [NotNull]
-        internal static CustomizingWindow CreateCustomizingWindow(GameObject appearanceBlock = null,
+        internal static CustomizingWindow CreateCustomizingWindow(
+            GameObject appearanceBlock = null,
             AppearanceUI appearanceUi = null,
             AgentModel currentAgent = null,
             AgentData currentData = null,
-            CustomizingType currentWindowType = (CustomizingType)1)
+            CustomizingType currentWindowType = (CustomizingType)1
+        )
         {
-            appearanceBlock = appearanceBlock.EnsureNotNullWithMethod(CreateGameObject);
-            appearanceUi = appearanceUi.EnsureNotNullWithMethod(CreateAppearanceUi);
-            currentAgent = currentAgent.EnsureNotNullWithMethod(() => CreateAgentModel());
-            currentData = currentData.EnsureNotNullWithMethod(() => CreateAgentData());
+            appearanceBlock = appearanceBlock.OrCreate(CreateGameObject);
+            appearanceUi = appearanceUi.OrCreate(CreateAppearanceUi);
+            currentAgent = currentAgent.OrCreate(() => CreateAgentModel());
+            currentData = currentData.OrCreate(() => CreateAgentData());
 
             CreateUninitializedObject<CustomizingWindow>(out var customizingWindow);
 
             var fields = GetUninitializedFieldsIncludingBaseType(customizingWindow.GetType());
             var newValues = new Dictionary<string, object>
             {
-                {
-                    "appearanceBlock", appearanceBlock
-                },
-                {
-                    "appearanceUI", appearanceUi
-                },
-                {
-                    "_currentAgent", currentAgent
-                },
-                {
-                    "CurrentData", currentData
-                },
-                {
-                    "_currentWindowType", currentWindowType
-                },
+                { "appearanceBlock", appearanceBlock },
+                { "appearanceUI", appearanceUi },
+                { "_currentAgent", currentAgent },
+                { "CurrentData", currentData },
+                { "_currentWindowType", currentWindowType },
             };
 
-            customizingWindow = GetPopulatedUninitializedObject(customizingWindow, fields, newValues);
+            customizingWindow = GetPopulatedUninitializedObject(
+                customizingWindow,
+                fields,
+                newValues
+            );
             newValues.Add("_currentWindow", customizingWindow);
 
             return GetPopulatedUninitializedObject(customizingWindow, fields, newValues);
@@ -392,69 +356,77 @@ namespace LobotomyCorporationMods.Test.Extensions
         }
 
         [NotNull]
-        internal static EGOgiftModel CreateEgoGiftModel(EquipmentTypeInfo metaInfo = null,
-            EquipmentScriptBase script = null)
+        internal static EGOgiftModel CreateEgoGiftModel(
+            EquipmentTypeInfo metaInfo = null,
+            EquipmentScriptBase script = null
+        )
         {
-            metaInfo = metaInfo.EnsureNotNullWithMethod(() => CreateEquipmentTypeInfo());
-            script = script.EnsureNotNullWithMethod(() => CreateEquipmentScriptBase());
+            metaInfo = metaInfo.OrCreate(() => CreateEquipmentTypeInfo());
+            script = script.OrCreate(() => CreateEquipmentScriptBase());
 
-            return new EGOgiftModel
-            {
-                metaInfo = metaInfo,
-                script = script,
-            };
+            return new EGOgiftModel { metaInfo = metaInfo, script = script };
         }
 
         [NotNull]
         private static EquipmentModel CreateEquipmentModel(EquipmentTypeInfo metaInfo = null)
         {
-            metaInfo = metaInfo.EnsureNotNullWithMethod(() => CreateEquipmentTypeInfo());
+            metaInfo = metaInfo.OrCreate(() => CreateEquipmentTypeInfo());
 
-            return new EquipmentModel
-            {
-                metaInfo = metaInfo,
-            };
+            return new EquipmentModel { metaInfo = metaInfo };
         }
 
         [NotNull]
         private static EquipmentScriptBase CreateEquipmentScriptBase(EquipmentModel model = null)
         {
-            model = model.EnsureNotNullWithMethod(() => CreateEquipmentModel());
+            model = model.OrCreate(() => CreateEquipmentModel());
 
             CreateUninitializedObject<EquipmentScriptBase>(out var equipmentScriptBase);
 
             var fields = GetUninitializedFieldsIncludingBaseType(equipmentScriptBase.GetType());
-            var newValues = new Dictionary<string, object>
-            {
-                {
-                    "_model", model
-                },
-            };
+            var newValues = new Dictionary<string, object> { { "_model", model } };
 
             return GetPopulatedUninitializedObject(equipmentScriptBase, fields, newValues);
         }
 
         [NotNull]
-        internal static EquipmentTypeInfo CreateEquipmentTypeInfo(EGObonusInfo bonus = null,
-            Dictionary<string, string> localizeData = null)
+        internal static EquipmentTypeInfo CreateEquipmentTypeInfo(
+            EGObonusInfo bonus = null,
+            Dictionary<string, string> localizeData = null
+        )
         {
-            bonus = bonus.EnsureNotNullWithMethod(CreateEgoBonusInfo);
-            localizeData = localizeData.EnsureNotNullWithMethod(() => new Dictionary<string, string>());
+            bonus = bonus.OrCreate(CreateEgoBonusInfo);
+            localizeData = localizeData.OrCreate(() => new Dictionary<string, string>());
 
             CreateUninitializedObject<EquipmentTypeInfo>(out var equipmentTypeInfo);
 
             var fields = GetUninitializedFieldsIncludingBaseType(equipmentTypeInfo.GetType());
             var newValues = new Dictionary<string, object>
             {
-                {
-                    "bonus", bonus
-                },
-                {
-                    "localizeData", localizeData
-                },
+                { "bonus", bonus },
+                { "localizeData", localizeData },
             };
 
             return GetPopulatedUninitializedObject(equipmentTypeInfo, fields, newValues);
+        }
+
+        [NotNull]
+        internal static CreatureInfo.GiftSlot CreateGiftSlot(
+            EquipmentTypeInfo info = null,
+            Text title = null
+        )
+        {
+            title = title.OrCreate(CreateText);
+
+            CreateUninitializedObject<CreatureInfo.GiftSlot>(out var giftSlot);
+
+            var fields = GetUninitializedFieldsIncludingBaseType(giftSlot.GetType());
+            var newValues = new Dictionary<string, object>
+            {
+                { "_info", info },
+                { "Title", title },
+            };
+
+            return GetPopulatedUninitializedObject(giftSlot, fields, newValues);
         }
 
         internal static FairyBuf CreateFairyBuf()
@@ -476,7 +448,6 @@ namespace LobotomyCorporationMods.Test.Extensions
 
             return GetPopulatedUninitializedObject(gameManager, fields, newValues);
         }
-
 
         private static GameObject CreateGameObject()
         {
@@ -500,21 +471,22 @@ namespace LobotomyCorporationMods.Test.Extensions
         }
 
         [NotNull]
-        internal static LocalizeTextDataModel CreateLocalizeTextDataModel(Dictionary<string, string> list = null)
+        internal static LocalizeTextDataModel CreateLocalizeTextDataModel(
+            Dictionary<string, string> list = null
+        )
         {
-            list = list.EnsureNotNullWithMethod(() => new Dictionary<string, string>());
+            list = list.OrCreate(() => new Dictionary<string, string>());
 
             CreateUninitializedObject<LocalizeTextDataModel>(out var localizeTextDataModel);
 
             var fields = GetUninitializedFieldsIncludingBaseType(localizeTextDataModel.GetType());
-            var newValues = new Dictionary<string, object>
-            {
-                {
-                    "_list", list
-                },
-            };
+            var newValues = new Dictionary<string, object> { { "_list", list } };
 
-            localizeTextDataModel = GetPopulatedUninitializedObject(localizeTextDataModel, fields, newValues);
+            localizeTextDataModel = GetPopulatedUninitializedObject(
+                localizeTextDataModel,
+                fields,
+                newValues
+            );
             newValues.Add("_instance", localizeTextDataModel);
 
             return GetPopulatedUninitializedObject(localizeTextDataModel, fields, newValues);
@@ -540,7 +512,7 @@ namespace LobotomyCorporationMods.Test.Extensions
         [NotNull]
         internal static SkillTypeList CreateSkillTypeList(SkillTypeInfo[] skillTypeInfoList = null)
         {
-            skillTypeInfoList = skillTypeInfoList.EnsureNotNullWithMethod(Array.Empty<SkillTypeInfo>);
+            skillTypeInfoList = skillTypeInfoList.OrCreate(Array.Empty<SkillTypeInfo>);
 
             var skillType = SkillTypeList.instance;
             skillType.Init(skillTypeInfoList);
@@ -554,12 +526,7 @@ namespace LobotomyCorporationMods.Test.Extensions
             CreateUninitializedObject<Sprite>(out var sprite);
 
             var fields = GetUninitializedFieldsIncludingBaseType(sprite.GetType());
-            var newValues = new Dictionary<string, object>
-            {
-                {
-                    "name", name
-                },
-            };
+            var newValues = new Dictionary<string, object> { { "name", name } };
 
             return GetPopulatedUninitializedObject(sprite, fields, newValues);
         }
@@ -590,23 +557,21 @@ namespace LobotomyCorporationMods.Test.Extensions
         }
 
         [NotNull]
-        internal static UnitModel CreateUnitModel(List<UnitBuf> bufList = null,
-            List<UnitStatBuf> statBufList = null)
+        internal static UnitModel CreateUnitModel(
+            List<UnitBuf> bufList = null,
+            List<UnitStatBuf> statBufList = null
+        )
         {
-            bufList = bufList.EnsureNotNullWithMethod(() => new List<UnitBuf>());
-            statBufList = statBufList.EnsureNotNullWithMethod(() => new List<UnitStatBuf>());
+            bufList = bufList.OrCreate(() => new List<UnitBuf>());
+            statBufList = statBufList.OrCreate(() => new List<UnitStatBuf>());
 
             CreateUninitializedObject<UnitModel>(out var unitModel);
 
             var fields = GetUninitializedFieldsIncludingBaseType(unitModel.GetType());
             var newValues = new Dictionary<string, object>
             {
-                {
-                    "_bufList", bufList
-                },
-                {
-                    "_statBufList", statBufList
-                },
+                { "_bufList", bufList },
+                { "_statBufList", statBufList },
             };
 
             return GetPopulatedUninitializedObject(unitModel, fields, newValues);
@@ -615,29 +580,26 @@ namespace LobotomyCorporationMods.Test.Extensions
         [NotNull]
         internal static UnitStatBuf CreateUnitStatBuf(WorkerPrimaryStatBonus primaryStat = null)
         {
-            primaryStat = primaryStat.EnsureNotNullWithMethod(CreateWorkerPrimaryStatBonus);
+            primaryStat = primaryStat.OrCreate(CreateWorkerPrimaryStatBonus);
 
             CreateUninitializedObject<UnitStatBuf>(out var unitStatBuf);
 
             var fields = GetUninitializedFieldsIncludingBaseType(unitStatBuf.GetType());
-            var newValues = new Dictionary<string, object>
-            {
-                {
-                    "primaryStat", primaryStat
-                },
-            };
+            var newValues = new Dictionary<string, object> { { "primaryStat", primaryStat } };
 
             return GetPopulatedUninitializedObject(unitStatBuf, fields, newValues);
         }
 
         [NotNull]
-        internal static UseSkill CreateUseSkill(AgentModel agent = null,
+        internal static UseSkill CreateUseSkill(
+            AgentModel agent = null,
             SkillTypeInfo skillTypeInfo = null,
-            CreatureModel targetCreature = null)
+            CreatureModel targetCreature = null
+        )
         {
-            agent = agent.EnsureNotNullWithMethod(() => CreateAgentModel());
-            skillTypeInfo = skillTypeInfo.EnsureNotNullWithMethod(CreateSkillTypeInfo);
-            targetCreature = targetCreature.EnsureNotNullWithMethod(() => CreateCreatureModel());
+            agent = agent.OrCreate(() => CreateAgentModel());
+            skillTypeInfo = skillTypeInfo.OrCreate(CreateSkillTypeInfo);
+            targetCreature = targetCreature.OrCreate(() => CreateCreatureModel());
 
             // Needed to avoid circular reference
             if (targetCreature.currentSkill.IsNotNull())
@@ -682,21 +644,22 @@ namespace LobotomyCorporationMods.Test.Extensions
         }
 
         [NotNull]
-        internal static WorkerSpriteManager CreateWorkerSpriteManager(WorkerBasicSpriteController basicData = null)
+        internal static WorkerSpriteManager CreateWorkerSpriteManager(
+            WorkerBasicSpriteController basicData = null
+        )
         {
-            basicData = basicData.EnsureNotNullWithMethod(CreateWorkerBasicSpriteController);
+            basicData = basicData.OrCreate(CreateWorkerBasicSpriteController);
 
             CreateUninitializedObject<WorkerSpriteManager>(out var workerSpriteManager);
 
             var fields = GetUninitializedFieldsIncludingBaseType(workerSpriteManager.GetType());
-            var newValues = new Dictionary<string, object>
-            {
-                {
-                    "basicData", basicData
-                },
-            };
+            var newValues = new Dictionary<string, object> { { "basicData", basicData } };
 
-            workerSpriteManager = GetPopulatedUninitializedObject(workerSpriteManager, fields, newValues);
+            workerSpriteManager = GetPopulatedUninitializedObject(
+                workerSpriteManager,
+                fields,
+                newValues
+            );
             newValues.Add("_instance", workerSpriteManager);
 
             return GetPopulatedUninitializedObject(workerSpriteManager, fields, newValues);
@@ -707,6 +670,30 @@ namespace LobotomyCorporationMods.Test.Extensions
             CreateUninitializedObject<YggdrasilBlessBuf>(out var yggdrasilBlessBuf);
 
             return yggdrasilBlessBuf;
+        }
+
+        /// <summary>
+        ///     Resets all static fields that are set as side effects by Create* methods.
+        ///     Call this in test Dispose() to prevent cross-test pollution.
+        /// </summary>
+        internal static void ResetStaticFields()
+        {
+            AgentInfoWindow.currentWindow = null;
+            SetStaticField<CommandWindow.CommandWindow>("_currentWindow", null);
+            SetStaticField<CreatureLayer>("<currentLayer>k__BackingField", null);
+            SetStaticField<CustomizingWindow>("_currentWindow", null);
+            SetStaticField<GameManager>("_currentGameManager", null);
+            SetStaticField<LocalizeTextDataModel>("_instance", null);
+            SetStaticField<WorkerSpriteManager>("_instance", null);
+        }
+
+        private static void SetStaticField<T>(string fieldName, object value)
+        {
+            var field = typeof(T).GetField(
+                fieldName,
+                BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public
+            );
+            field?.SetValue(null, value);
         }
 
         #endregion
@@ -745,7 +732,9 @@ namespace LobotomyCorporationMods.Test.Extensions
 
         /// <summary>Returns the fields which are valid and can be used to populate an object.</summary>
         [NotNull]
-        private static List<MemberInfo> GetValidFields([NotNull] this IEnumerable<FieldInfo> typeFields)
+        private static List<MemberInfo> GetValidFields(
+            [NotNull] this IEnumerable<FieldInfo> typeFields
+        )
         {
             return typeFields.Where(FieldIsValidAndCanPopulateObject).Cast<MemberInfo>().ToList();
         }
@@ -773,14 +762,17 @@ namespace LobotomyCorporationMods.Test.Extensions
 
         /// <summary>Populate the fields of an uninitialized object with a provided list of objects.</summary>
         [NotNull]
-        private static TObject GetPopulatedUninitializedObject<TObject>([NotNull] TObject obj,
-            [NotNull] IReadOnlyList<MemberInfo> fields,
-            Dictionary<string, object> newValues) where TObject : class
+        private static TObject GetPopulatedUninitializedObject<TObject>(
+            [NotNull] TObject obj,
+            [NotNull] MemberInfo[] fields,
+            Dictionary<string, object> newValues
+        )
+            where TObject : class
         {
             CreateUninitializedObject<TObject>(out var newObj);
-            var values = FormatterServices.GetObjectData(obj, fields.ToArray());
+            var values = FormatterServices.GetObjectData(obj, fields);
 
-            for (var i = 0; i < fields.Count; i++)
+            for (var i = 0; i < fields.Length; i++)
             {
                 if (newValues.TryGetValue(fields[i].Name, out var value))
                 {
@@ -788,7 +780,7 @@ namespace LobotomyCorporationMods.Test.Extensions
                 }
             }
 
-            FormatterServices.PopulateObjectMembers(newObj, fields.ToArray(), values);
+            FormatterServices.PopulateObjectMembers(newObj, fields, values);
 
             return newObj;
         }

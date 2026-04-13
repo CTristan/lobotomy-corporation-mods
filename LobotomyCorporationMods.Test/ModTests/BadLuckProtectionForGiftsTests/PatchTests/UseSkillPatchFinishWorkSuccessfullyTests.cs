@@ -18,7 +18,9 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
         [InlineData(0)]
         [InlineData(1)]
         [InlineData(10)]
-        public void Working_on_an_abnormality_increases_the_number_of_successes_for_that_agent(int numberOfSuccesses)
+        public void Working_on_an_abnormality_increases_the_number_of_successes_for_that_agent(
+            int numberOfSuccesses
+        )
         {
             var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
             var useSkill = UnityTestExtensions.CreateUseSkill();
@@ -28,7 +30,11 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
 
             useSkill.PatchAfterFinishWorkSuccessfully(mockAgentWorkTracker.Object);
 
-            mockAgentWorkTracker.Verify(tracker => tracker.IncrementAgentWorkCount(GiftName, It.IsAny<long>(), numberOfSuccesses), Times.Once);
+            mockAgentWorkTracker.Verify(
+                tracker =>
+                    tracker.IncrementAgentWorkCount(GiftName, It.IsAny<long>(), numberOfSuccesses),
+                Times.Once
+            );
         }
 
         [Fact]
@@ -39,7 +45,11 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
 
             useSkill.PatchAfterFinishWorkSuccessfully(mockAgentWorkTracker.Object);
 
-            mockAgentWorkTracker.Verify(tracker => tracker.IncrementAgentWorkCount(GiftName, It.IsAny<long>(), It.IsAny<int>()), Times.Never);
+            mockAgentWorkTracker.Verify(
+                tracker =>
+                    tracker.IncrementAgentWorkCount(GiftName, It.IsAny<long>(), It.IsAny<int>()),
+                Times.Never
+            );
         }
     }
 }
