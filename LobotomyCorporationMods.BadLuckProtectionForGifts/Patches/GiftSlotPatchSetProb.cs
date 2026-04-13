@@ -9,6 +9,7 @@ using CreatureInfo;
 using Harmony;
 using JetBrains.Annotations;
 using LobotomyCorporation.Mods.Common;
+using LobotomyCorporationMods.BadLuckProtectionForGifts.Constants;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 
 #endregion
@@ -25,6 +26,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
         /// <param name="giftTitle">The localized gift title text.</param>
         /// <param name="decimalPlaces">Number of decimal places to display.</param>
         /// <param name="showBaseChance">Whether to include the base chance in the display text.</param>
+        /// <param name="chanceFormat">Localized format string for gift chance without base (expects {0}=title, {1}=agent, {2}=percent).</param>
+        /// <param name="chanceWithBaseFormat">Localized format string for gift chance with base (expects {0}=title, {1}=agent, {2}=percent, {3}=base).</param>
         /// <returns>The formatted display text, or null if the text should not be modified.</returns>
         [CanBeNull]
         public static string FormatGiftChanceText(
@@ -33,7 +36,9 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             [CanBeNull] string agentName,
             [NotNull] string giftTitle,
             int decimalPlaces,
-            bool showBaseChance
+            bool showBaseChance,
+            [NotNull] string chanceFormat,
+            [NotNull] string chanceWithBaseFormat
         )
         {
             if (string.IsNullOrEmpty(agentName))
@@ -51,7 +56,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             {
                 return string.Format(
                     CultureInfo.InvariantCulture,
-                    "{0} ({1} Next Chance:{2}%)",
+                    chanceFormat,
                     giftTitle,
                     agentName,
                     boostedPercent
@@ -62,7 +67,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
 
             return string.Format(
                 CultureInfo.InvariantCulture,
-                "{0} ({1} Next Chance:{2}%) (Base:{3}%)",
+                chanceWithBaseFormat,
                 giftTitle,
                 agentName,
                 boostedPercent,
@@ -91,13 +96,17 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
                 var giftTitle = LocalizeTextDataModel.instance.GetText("Inventory_GiftTitle");
                 var decimalPlaces = config.GiftChanceDecimalPlaces;
                 var showBaseChance = config.ShowBaseChance;
+                var chanceFormat = LocalizationIds.GiftChanceFormat.GetLocalized();
+                var chanceWithBaseFormat = LocalizationIds.GiftChanceWithBaseFormat.GetLocalized();
                 var formattedText = FormatGiftChanceText(
                     prob,
                     boostedProb,
                     agentName,
                     giftTitle,
                     decimalPlaces,
-                    showBaseChance
+                    showBaseChance,
+                    chanceFormat,
+                    chanceWithBaseFormat
                 );
 
                 if (formattedText.IsNotNull())

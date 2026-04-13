@@ -14,6 +14,34 @@ Note: this will contain spoilers.
 - [ ] Working, restarting, starting, then completing a day doesn't include work
   counts from before the restart.
 - [ ] Creating a new game empties the BadLuckProtectionForGifts.dat file.
+- [ ] The .dat file uses V1 format with agent-specific tracking data.
+
+### Configuration (requires ConfigurationManager)
+
+- [ ] Press F1 to open ConfigurationManager. All settings for Bad Luck
+  Protection For Gifts appear.
+- [ ] Change Bonus Calculation Mode to "Per PE-Box" and verify the bonus
+  increases by 1 per PE box instead of using the normalized ratio.
+- [ ] Change a risk-level bonus percentage (e.g., ZAYIN to 5%) and verify the
+  gift chance increases by 5% per work session for ZAYIN abnormalities.
+- [ ] Set Reset On Gift Received to false. Receive a gift and verify the
+  agent's bonus does not reset to zero.
+- [ ] Set Gift Chance Decimal Places to 0 and verify the display shows whole
+  numbers (e.g., "11%").
+- [ ] Set Show Base Chance to false and verify the base chance is hidden from
+  the display.
+
+### Per-Agent Tracking
+
+- [ ] Have two different agents work on the same abnormality. Verify that each
+  agent's gift chance reflects only their own work count.
+- [ ] Verify the display shows the agent's name (e.g., "BongBong Next
+  Chance:11.20%").
+
+### Without ConfigurationManager
+
+- [ ] Remove ConfigurationManager and verify the mod still loads and works with
+  default settings.
 
 ## Unofficial Bugfixes
 

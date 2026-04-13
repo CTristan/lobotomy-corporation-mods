@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: MIT
 
+using System.Collections.Generic;
+using System.Globalization;
 using LobotomyCorporation.Mods.Common;
+using LobotomyCorporationMods.BadLuckProtectionForGifts.Constants;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
 
 namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
@@ -29,44 +32,93 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
             var version = typeof(BadLuckProtectionConfig).Assembly.GetName().Version.ToString(3);
             var config = new ModConfig(ModId, ModName, version);
 
+            var generalSectionDisplayName = LocalizationIds.SectionGeneral.GetLocalized();
+
             _bonusCalculationMode = config.Bind(
                 GeneralSection,
                 "BonusCalculationMode",
                 BonusCalculationMode.Normalized,
-                "Normalized: All abnormalities gain bonus at the same rate. The bonus is based on how many PE boxes you filled out of the total.\nExample: filling 5 out of 10 PE boxes counts as 0.5.\n\nPer PE-Box: Abnormalities with more PE boxes gain bonus faster. Each filled PE box adds 1 to the bonus.\nExample: filling 7 PE boxes counts as 7.",
-                displayName: "Bonus Calculation Mode"
+                LocalizationIds.DescBonusCalculationMode.GetLocalized(),
+                displayName: LocalizationIds.DisplayBonusCalculationMode.GetLocalized(),
+                sectionDisplayName: generalSectionDisplayName,
+                valueDisplayNames: new Dictionary<string, string>
+                {
+                    {
+                        nameof(BonusCalculationMode.Normalized),
+                        LocalizationIds.EnumNormalized.GetLocalized()
+                    },
+                    {
+                        nameof(BonusCalculationMode.PerPEBox),
+                        LocalizationIds.EnumPerPEBox.GetLocalized()
+                    },
+                }
             );
 
             _resetOnGiftReceived = config.Bind(
                 GeneralSection,
                 "ResetOnGiftReceived",
                 true,
-                "When an agent receives a gift, reset their bonus for that gift to zero.",
-                displayName: "Reset On Gift Received"
+                LocalizationIds.DescResetOnGiftReceived.GetLocalized(),
+                displayName: LocalizationIds.DisplayResetOnGiftReceived.GetLocalized(),
+                sectionDisplayName: generalSectionDisplayName
             );
 
             _giftChanceDecimalPlaces = config.Bind(
                 GeneralSection,
                 "GiftChanceDecimalPlaces",
                 2,
-                "Number of decimal places shown in the gift chance display.",
+                LocalizationIds.DescGiftChanceDecimalPlaces.GetLocalized(),
                 range: new AcceptableValueRange<int>(0, 3),
-                displayName: "Gift Chance Decimal Places"
+                displayName: LocalizationIds.DisplayGiftChanceDecimalPlaces.GetLocalized(),
+                sectionDisplayName: generalSectionDisplayName
             );
 
             _showBaseChance = config.Bind(
                 GeneralSection,
                 "ShowBaseChance",
                 true,
-                "Show the base gift chance alongside the boosted chance in the UI.",
-                displayName: "Show Base Chance"
+                LocalizationIds.DescShowBaseChance.GetLocalized(),
+                displayName: LocalizationIds.DisplayShowBaseChance.GetLocalized(),
+                sectionDisplayName: generalSectionDisplayName
             );
 
-            _zayinBonus = BindBonusPercentage(config, "ZayinBonusPercentage", "ZAYIN");
-            _tethBonus = BindBonusPercentage(config, "TethBonusPercentage", "TETH");
-            _heBonus = BindBonusPercentage(config, "HeBonusPercentage", "HE");
-            _wawBonus = BindBonusPercentage(config, "WawBonusPercentage", "WAW");
-            _alephBonus = BindBonusPercentage(config, "AlephBonusPercentage", "ALEPH");
+            var bonusSectionDisplayName = LocalizationIds.SectionGiftChanceBonus.GetLocalized();
+
+            _zayinBonus = BindBonusPercentage(
+                config,
+                "ZayinBonusPercentage",
+                "ZAYIN",
+                LocalizationIds.DisplayZayinBonus,
+                bonusSectionDisplayName
+            );
+            _tethBonus = BindBonusPercentage(
+                config,
+                "TethBonusPercentage",
+                "TETH",
+                LocalizationIds.DisplayTethBonus,
+                bonusSectionDisplayName
+            );
+            _heBonus = BindBonusPercentage(
+                config,
+                "HeBonusPercentage",
+                "HE",
+                LocalizationIds.DisplayHeBonus,
+                bonusSectionDisplayName
+            );
+            _wawBonus = BindBonusPercentage(
+                config,
+                "WawBonusPercentage",
+                "WAW",
+                LocalizationIds.DisplayWawBonus,
+                bonusSectionDisplayName
+            );
+            _alephBonus = BindBonusPercentage(
+                config,
+                "AlephBonusPercentage",
+                "ALEPH",
+                LocalizationIds.DisplayAlephBonus,
+                bonusSectionDisplayName
+            );
         }
 
         public BonusCalculationMode BonusCalculationMode => _bonusCalculationMode.Value;
@@ -99,19 +151,26 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Implementations
         private static IConfigEntry<float> BindBonusPercentage(
             ModConfig config,
             string key,
-            string riskLevelName
+            string riskLevelName,
+            string displayNameId,
+            string sectionDisplayName
         )
         {
+            var description = string.Format(
+                CultureInfo.InvariantCulture,
+                LocalizationIds.DescBonusPercentage.GetLocalized(),
+                riskLevelName
+            );
+
             return config.Bind(
                 BonusSection,
                 key,
                 DefaultBonusPercentage,
-                "Extra gift chance (percent) added after each successful work session with "
-                    + riskLevelName
-                    + " abnormalities.",
+                description,
                 range: new AcceptableValueRange<float>(0.0f, 100.0f),
-                displayName: riskLevelName + " Bonus Percentage",
-                useSlider: true
+                displayName: displayNameId.GetLocalized(),
+                useSlider: true,
+                sectionDisplayName: sectionDisplayName
             );
         }
     }

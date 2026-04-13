@@ -28,22 +28,17 @@ LMM).
 
 ## Most Recent Change
 
-### [6.0.1] - 2024-07-15
+### [6.1.0] - 2026-04-12
 
 #### Added
 
-- Gift Alert Icon [1.0.1]
-  - Added Chinese localization thanks to 21474836(Lin).
-
-### [6.0.0] - 2024-07-14
-
-#### Added
-
-- New mod: Gift Alert Icon [1.0.0]
-  - Shows an icon when a new or replacement gift is available for an agent.
-- Notify When Agent Receives Gift [1.1.0]
-  - Added localization through external text files.
-  - Added Chinese localization thanks to 21474836(Lin).
+- Bad Luck Protection for Gifts [1.2.0]
+  - Added configuration support through ConfigurationManager (optional).
+  - Added agent name and base chance to the gift chance display.
+  - Added adjustable bonus percentage per risk level (ZAYIN, TETH, HE, WAW,
+    ALEPH).
+  - Fixed a bug where the last agent's work count leaked into other agents'
+    gift chance display.
 
 See the [full changelog](CHANGELOG.md) for all changes.
 
@@ -53,10 +48,10 @@ See the [full changelog](CHANGELOG.md) for all changes.
 
 ![Bad Luck Protection for Gifts example](https://raw.githubusercontent.com/ctristan/lobotomy-corporation-mods/assets/bad-luck-protection.png)
 
-A mod that provides increasing bad luck protection for agents that work on
-abnormalities to receive a gift from that abnormality. After an agent finishes
-their work, you can see the modified chance in the Abnormality Details screen at
-the E.G.O. Gift section next to Acquisition Probability.
+A mod that increases the gift chance for agents as they work on abnormalities.
+The bonus is tracked per agent and shown with the agent's name in the
+Abnormality Details screen. Settings can be customized in-game with
+ConfigurationManager (optional).
 
 [Mod Readme](LobotomyCorporationMods.BadLuckProtectionForGifts/README.md) for
 full details.

@@ -5,7 +5,7 @@
   ToolsVersion="4.0"
 >
   <PropertyGroup>
-    <AssemblyVersion>1.1.0</AssemblyVersion>
+    <AssemblyVersion>1.2.0</AssemblyVersion>
     <ProjectGuid>{19D3E31B-FA1A-4C4C-A747-CD060FA9937F}</ProjectGuid>
     <AnalysisLevel>latest-all</AnalysisLevel>
     <Deterministic>true</Deterministic>
@@ -54,10 +54,16 @@
     <PackageReference Include="LobotomyCorporation.Mods.Common" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Info\cn\Info.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Info\en\Info.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Info\GlobalInfo.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Localize\en\text_en.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -12,6 +12,9 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
 {
     public sealed class GiftSlotPatchSetProbTests
     {
+        private const string ChanceFormat = "{0} ({1} Next Chance:{2}%)";
+        private const string ChanceWithBaseFormat = "{0} ({1} Next Chance:{2}%) (Base:{3}%)";
+
         [Fact]
         public void Gift_chance_display_shows_agent_name_when_agent_has_worked_on_abnormality()
         {
@@ -28,7 +31,9 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
                 AgentName,
                 GiftTitle,
                 2,
-                true
+                true,
+                ChanceFormat,
+                ChanceWithBaseFormat
             );
 
             // Assert
@@ -45,7 +50,9 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
                 "BongBong",
                 "Gift",
                 2,
-                false
+                false,
+                ChanceFormat,
+                ChanceWithBaseFormat
             );
 
             // Assert
@@ -62,7 +69,9 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
                 null,
                 "Gift",
                 2,
-                true
+                true,
+                ChanceFormat,
+                ChanceWithBaseFormat
             );
 
             // Assert
@@ -79,7 +88,9 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
                 string.Empty,
                 "Gift",
                 2,
-                true
+                true,
+                ChanceFormat,
+                ChanceWithBaseFormat
             );
 
             // Assert
@@ -108,7 +119,9 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
                 "BongBong",
                 "Gift",
                 decimalPlaces,
-                true
+                true,
+                ChanceFormat,
+                ChanceWithBaseFormat
             );
 
             // Assert
@@ -128,7 +141,9 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
                 "BongBong",
                 "Gift",
                 2,
-                true
+                true,
+                ChanceFormat,
+                ChanceWithBaseFormat
             );
 
             // Assert - both values are the same
