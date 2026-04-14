@@ -3,14 +3,11 @@
 #region
 
 using System;
+using AwesomeAssertions;
 using CommandWindow;
-using FluentAssertions;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Enums;
-using LobotomyCorporationMods.Common.Interfaces;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
-using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
-using LobotomyCorporationMods.Common.ParameterObjects;
+using LobotomyCorporation.Mods.Abstractions;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.GiftAlertIcon.Patches;
 using LobotomyCorporationMods.Test.Extensions;
 using Moq;
@@ -38,14 +35,26 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
             _ = TestExtensions.InitializeCommandWindowWithAbnormality(creature);
             var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1);
             var fileManager = TestExtensions.GetMockFileManager();
-            var testAdapterParameters = SetupTestParameters(ImageName);
+            var mockImageInternals = GetMockImageInternals();
+            var optionalOverrides = CreateInternalsParameters(ImageName, mockImageInternals);
+
+            // Set up FindChild to return null on first call (create path),
+            // then return an existing image on subsequent calls (cached fast path).
+            var mockGameObjectInternals = new Mock<IGameObjectInternals>();
+            mockGameObjectInternals.Setup(x => x.ImageComponent).Returns(mockImageInternals.Object);
+            var parentTransform = optionalOverrides.ManagementSlotInternals.Transform.GetChild(0);
+            Mock.Get(parentTransform)
+                .SetupSequence(x => x.FindChild(It.IsAny<string>()))
+                .Returns((IGameObjectInternals)null)
+                .Returns((IGameObjectInternals)null)
+                .Returns(mockGameObjectInternals.Object);
 
             // Act
             // Run twice to see if the image gets created a second time
-            _sut.PatchAfterSetUi(agent, ImageName, fileManager.Object, testAdapterParameters);
-            _sut.PatchAfterSetUi(agent, ImageName, fileManager.Object, testAdapterParameters);
+            _sut.PatchAfterSetUi(agent, ImageName, fileManager.Object, optionalOverrides);
+            _sut.PatchAfterSetUi(agent, ImageName, fileManager.Object, optionalOverrides);
 
-            // Assert
+            // Assert — GetFile is only called on the first invocation (creation path)
             fileManager.Verify(x => x.GetFile(It.IsAny<string>()), Times.Once);
         }
 
@@ -57,16 +66,25 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
             var agent = TestExtensions.GetAgentWithGift();
             var tool = UnityTestExtensions.CreateUnitModel();
             _ = TestExtensions.InitializeCommandWindowWithAbnormality(tool);
-            var testAdapterParameters = SetupTestParameters(ImageName);
+            var optionalOverrides = SetupTestParameters(ImageName);
 
+            var mockFile = new Mock<IFile>();
+            mockFile.Setup(f => f.Exists(It.IsAny<string>())).Returns(false);
+            var mockFileSystem = new Mock<IFileSystem>();
+            mockFileSystem.SetupGet(fs => fs.File).Returns(mockFile.Object);
             var mockFileManager = new Mock<IFileManager>();
+            mockFileManager.SetupGet(fm => fm.FileSystem).Returns(mockFileSystem.Object);
             mockFileManager.Setup(x => x.GetFile(ImageName)).Returns(string.Empty);
 
             // Act
-            Action action = () => _sut.PatchAfterSetUi(agent, ImageName, mockFileManager.Object, testAdapterParameters);
+            Action action = () =>
+                _sut.PatchAfterSetUi(agent, ImageName, mockFileManager.Object, optionalOverrides);
 
             // Assert
-            action.Should().Throw<InvalidOperationException>().WithMessage("No image found with name " + ImageName);
+            action
+                .Should()
+                .Throw<InvalidOperationException>()
+                .WithMessage("No image found with name " + ImageName);
         }
 
         [Fact]
@@ -76,26 +94,33 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
             var creature = UnityTestExtensions.CreateCreatureModel();
             _ = TestExtensions.InitializeCommandWindowWithAbnormality(creature);
             var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1);
-            var mockImageTestAdapter = GetMockImageTestAdapter();
+            var mockImageInternals = GetMockImageInternals();
 
-            SetUpSlot(_sut, agent, nameof(Hides_image_when_abnormality_does_not_have_a_gift), mockImageTestAdapter);
+            SetUpSlot(
+                _sut,
+                agent,
+                nameof(Hides_image_when_abnormality_does_not_have_a_gift),
+                mockImageInternals
+            );
 
-            mockImageTestAdapter.Object.Color.Should().Be(_noGiftColor);
+            mockImageInternals.Object.Color.Should().Be(_noGiftColor);
         }
 
         [Fact]
         public void Hides_image_when_agent_already_has_the_gift()
         {
             // Arrange
-            var creature = TestExtensions.GetCreatureWithGift(giftId: EquipmentIds.CrumblingArmorGift1);
+            var creature = TestExtensions.GetCreatureWithGift(
+                giftId: EquipmentIds.CrumblingArmorGift1
+            );
             _ = TestExtensions.InitializeCommandWindowWithAbnormality(creature);
             var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1);
             const string ImageName = nameof(Hides_image_when_abnormality_does_not_have_a_gift);
-            var mockImageTestAdapter = GetMockImageTestAdapter();
+            var mockImageInternals = GetMockImageInternals();
 
-            SetUpSlot(_sut, agent, ImageName, mockImageTestAdapter);
+            SetUpSlot(_sut, agent, ImageName, mockImageInternals);
 
-            mockImageTestAdapter.Object.Color.Should().Be(_noGiftColor);
+            mockImageInternals.Object.Color.Should().Be(_noGiftColor);
         }
 
         [Fact]
@@ -105,35 +130,63 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
             var unitModel = UnityTestExtensions.CreateUnitModel();
             _ = UnityTestExtensions.CreateCommandWindow(unitModel);
             var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1);
-            var mockImageTestAdapter = GetMockImageTestAdapter();
+            var mockImageInternals = GetMockImageInternals();
 
-            SetUpSlot(_sut, agent, nameof(Hides_image_when_abnormality_is_a_tool), mockImageTestAdapter);
+            SetUpSlot(
+                _sut,
+                agent,
+                nameof(Hides_image_when_abnormality_is_a_tool),
+                mockImageInternals
+            );
 
-            mockImageTestAdapter.Object.Color.Should().Be(_noGiftColor);
+            mockImageInternals.Object.Color.Should().Be(_noGiftColor);
         }
 
         [Theory]
         [InlineData(EGOgiftAttachRegion.EYE, EGOgiftAttachRegion.MOUTH)]
         [InlineData(EGOgiftAttachRegion.LEFTHAND, EGOgiftAttachRegion.MASK)]
-        public void Shows_as_new_gift_when_gift_is_in_a_new_slot_and_same_attachment_type(EGOgiftAttachRegion firstGiftPosition,
-            EGOgiftAttachRegion newGiftPosition)
+        public void Shows_as_new_gift_when_gift_is_in_a_new_slot_and_same_attachment_type(
+            EGOgiftAttachRegion firstGiftPosition,
+            EGOgiftAttachRegion newGiftPosition
+        )
         {
             // Act & Assert
-            var resultColor = SetupAndReturnImageColor(nameof(Shows_as_new_gift_when_gift_is_in_a_new_slot_and_same_attachment_type), firstGiftPosition, newGiftPosition);
+            var resultColor = SetupAndReturnImageColor(
+                nameof(Shows_as_new_gift_when_gift_is_in_a_new_slot_and_same_attachment_type),
+                firstGiftPosition,
+                newGiftPosition
+            );
             resultColor.Should().Be(_newGiftColor);
         }
 
         [Theory]
-        [InlineData(EGOgiftAttachRegion.EYE, EGOgiftAttachRegion.MOUTH, EGOgiftAttachType.ADD, EGOgiftAttachType.REPLACE)]
-        [InlineData(EGOgiftAttachRegion.LEFTHAND, EGOgiftAttachRegion.MASK, EGOgiftAttachType.SPECIAL_ADD, EGOgiftAttachType.REPLACE)]
-        public void Shows_as_new_gift_when_gift_is_in_a_new_slot_and_different_attachment_type(EGOgiftAttachRegion firstGiftPosition,
+        [InlineData(
+            EGOgiftAttachRegion.EYE,
+            EGOgiftAttachRegion.MOUTH,
+            EGOgiftAttachType.ADD,
+            EGOgiftAttachType.REPLACE
+        )]
+        [InlineData(
+            EGOgiftAttachRegion.LEFTHAND,
+            EGOgiftAttachRegion.MASK,
+            EGOgiftAttachType.SPECIAL_ADD,
+            EGOgiftAttachType.REPLACE
+        )]
+        public void Shows_as_new_gift_when_gift_is_in_a_new_slot_and_different_attachment_type(
+            EGOgiftAttachRegion firstGiftPosition,
             EGOgiftAttachRegion newGiftPosition,
             EGOgiftAttachType firstGiftAttachmentType,
-            EGOgiftAttachType newGiftAttachmentType)
+            EGOgiftAttachType newGiftAttachmentType
+        )
         {
             // Act & Assert
-            var resultColor = SetupAndReturnImageColor(nameof(Shows_as_new_gift_when_gift_is_in_a_new_slot_and_different_attachment_type), firstGiftPosition, newGiftPosition, firstGiftAttachmentType,
-                newGiftAttachmentType);
+            var resultColor = SetupAndReturnImageColor(
+                nameof(Shows_as_new_gift_when_gift_is_in_a_new_slot_and_different_attachment_type),
+                firstGiftPosition,
+                newGiftPosition,
+                firstGiftAttachmentType,
+                newGiftAttachmentType
+            );
 
             resultColor.Should().Be(_newGiftColor);
         }
@@ -141,12 +194,21 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
         [Theory]
         [InlineData(EGOgiftAttachRegion.EYE, EGOgiftAttachType.ADD)]
         [InlineData(EGOgiftAttachRegion.LEFTHAND, EGOgiftAttachType.SPECIAL_ADD)]
-        public void Shows_as_replacement_gift_when_gift_is_in_an_existing_slot_and_has_same_attachment_type(EGOgiftAttachRegion giftPosition,
-            EGOgiftAttachType giftAttachmentType)
+        public void Shows_as_replacement_gift_when_gift_is_in_an_existing_slot_and_has_same_attachment_type(
+            EGOgiftAttachRegion giftPosition,
+            EGOgiftAttachType giftAttachmentType
+        )
         {
             // Act & Assert
-            var resultColor = SetupAndReturnImageColor(nameof(Shows_as_replacement_gift_when_gift_is_in_an_existing_slot_and_has_same_attachment_type), giftPosition, giftPosition, giftAttachmentType,
-                giftAttachmentType);
+            var resultColor = SetupAndReturnImageColor(
+                nameof(
+                    Shows_as_replacement_gift_when_gift_is_in_an_existing_slot_and_has_same_attachment_type
+                ),
+                giftPosition,
+                giftPosition,
+                giftAttachmentType,
+                giftAttachmentType
+            );
 
             resultColor.Should().Be(_replacementGiftColor);
         }
@@ -154,102 +216,140 @@ namespace LobotomyCorporationMods.Test.ModTests.GiftAlertIconTests.PatchTests
         [Theory]
         [InlineData(EGOgiftAttachType.ADD, EGOgiftAttachType.SPECIAL_ADD)]
         [InlineData(EGOgiftAttachType.REPLACE, EGOgiftAttachType.ADD)]
-        public void Shows_as_new_gift_when_gift_is_in_existing_slot_but_has_different_attachment_type(EGOgiftAttachType firstGiftAttachmentType,
-            EGOgiftAttachType newGiftAttachmentType)
+        public void Shows_as_new_gift_when_gift_is_in_existing_slot_but_has_different_attachment_type(
+            EGOgiftAttachType firstGiftAttachmentType,
+            EGOgiftAttachType newGiftAttachmentType
+        )
         {
             // Act & Assert
-            var resultColor = SetupAndReturnImageColor(nameof(Shows_as_new_gift_when_gift_is_in_existing_slot_but_has_different_attachment_type), firstGiftAttachmentType: firstGiftAttachmentType,
-                newGiftAttachmentType: newGiftAttachmentType);
+            var resultColor = SetupAndReturnImageColor(
+                nameof(
+                    Shows_as_new_gift_when_gift_is_in_existing_slot_but_has_different_attachment_type
+                ),
+                firstGiftAttachmentType: firstGiftAttachmentType,
+                newGiftAttachmentType: newGiftAttachmentType
+            );
 
             resultColor.Should().Be(_newGiftColor);
         }
 
         #region Helper Methods
 
-        private static void SetUpSlot(ManagementSlot sut,
+        private static void SetUpSlot(
+            ManagementSlot sut,
             AgentModel agent,
             string imageName,
-            [NotNull] Mock<IImageTestAdapter> mockImageTestAdapter)
+            [NotNull] Mock<IImageInternals> mockImageInternals
+        )
         {
-            var testAdapterParameters = CreateTestAdapterParameters(imageName, mockImageTestAdapter);
+            var optionalOverrides = CreateInternalsParameters(imageName, mockImageInternals);
             var fileManager = TestExtensions.GetMockFileManager();
 
             // Act
-            Action action = () => sut.PatchAfterSetUi(agent, imageName, fileManager.Object, testAdapterParameters);
+            Action action = () =>
+                sut.PatchAfterSetUi(agent, imageName, fileManager.Object, optionalOverrides);
 
             // Assert
             action.Should().NotThrow();
         }
 
         [NotNull]
-        private static OptionalTestAdapterParameters SetupTestParameters(string imageName)
+        private static OptionalOverrides SetupTestParameters(string imageName)
         {
-            var mockImageTestAdapter = GetMockImageTestAdapter();
+            var mockImageInternals = GetMockImageInternals();
 
-            return CreateTestAdapterParameters(imageName, mockImageTestAdapter);
+            return CreateInternalsParameters(imageName, mockImageInternals);
         }
 
         [NotNull]
-        private static OptionalTestAdapterParameters CreateTestAdapterParameters(string imageName,
-            [NotNull] Mock<IImageTestAdapter> mockImageTestAdapter)
+        private static OptionalOverrides CreateInternalsParameters(
+            string imageName,
+            [NotNull] Mock<IImageInternals> mockImageInternals
+        )
         {
-            var testAdapterParameters = new OptionalTestAdapterParameters();
+            var optionalOverrides = new OptionalOverrides();
 
-            var mockTexture2dTestAdapter = new Mock<ITexture2dTestAdapter>();
-            testAdapterParameters.Texture2DTestAdapter = mockTexture2dTestAdapter.Object;
+            var mockTexture2dInternals = new Mock<ITexture2dInternals>();
+            optionalOverrides.Texture2DInternals = mockTexture2dInternals.Object;
 
-            var mockSpriteTestAdapter = new Mock<ISpriteTestAdapter>();
-            testAdapterParameters.SpriteTestAdapter = mockSpriteTestAdapter.Object;
+            var mockSpriteInternals = new Mock<ISpriteInternals>();
+            optionalOverrides.SpriteInternals = mockSpriteInternals.Object;
 
-            mockImageTestAdapter.SetupGet(x => x.GameObject).Returns(new Mock<Image>().Object);
-            testAdapterParameters.ImageTestAdapter = mockImageTestAdapter.Object;
+            mockImageInternals.SetupGet(x => x.GameObject).Returns(new Mock<Image>().Object);
+            optionalOverrides.ImageInternals = mockImageInternals.Object;
 
-            var mockGameObjectAdapter = new Mock<IGameObjectTestAdapter>();
-            mockGameObjectAdapter.SetupGet(x => x.Transform).Returns(mockImageTestAdapter.Object.Transform);
-            mockGameObjectAdapter.Setup(x => x.AddImageComponent()).Returns(mockImageTestAdapter.Object);
-            mockGameObjectAdapter.Setup(x => x.ImageComponent).Returns(mockImageTestAdapter.Object);
-            testAdapterParameters.GameObjectTestAdapter = mockGameObjectAdapter.Object;
+            var mockGameObjectAdapter = new Mock<IGameObjectInternals>();
+            mockGameObjectAdapter
+                .SetupGet(x => x.Transform)
+                .Returns(mockImageInternals.Object.Transform);
+            mockGameObjectAdapter
+                .Setup(x => x.AddImageComponent())
+                .Returns(mockImageInternals.Object);
+            mockGameObjectAdapter.Setup(x => x.ImageComponent).Returns(mockImageInternals.Object);
+            optionalOverrides.GameObjectInternals = mockGameObjectAdapter.Object;
 
-            var mockManagementSlotTestAdapter = new Mock<IManagementSlotTestAdapter>();
-            mockManagementSlotTestAdapter.Setup(x => x.Name).Returns(imageName);
-            mockManagementSlotTestAdapter.Setup(x => x.Transform.GetChild(It.IsAny<int>())).Returns(mockImageTestAdapter.Object.Transform);
-            testAdapterParameters.ManagementSlotTestAdapter = mockManagementSlotTestAdapter.Object;
+            var mockManagementSlotInternals = new Mock<IManagementSlotInternals>();
+            mockManagementSlotInternals.Setup(x => x.Name).Returns(imageName);
+            mockManagementSlotInternals
+                .Setup(x => x.Transform.GetChild(It.IsAny<int>()))
+                .Returns(mockImageInternals.Object.Transform);
+            optionalOverrides.ManagementSlotInternals = mockManagementSlotInternals.Object;
 
-            return testAdapterParameters;
+            return optionalOverrides;
         }
 
         [NotNull]
-        private static Mock<IImageTestAdapter> GetMockImageTestAdapter()
+        private static Mock<IImageInternals> GetMockImageInternals()
         {
-            var mockTransformTestAdapter = new Mock<ITransformTestAdapter>();
-            mockTransformTestAdapter.SetupGet(x => x.Parent).Returns(mockTransformTestAdapter.Object);
+            var mockTransformInternals = new Mock<ITransformInternals>();
+            mockTransformInternals.SetupGet(x => x.Parent).Returns(mockTransformInternals.Object);
 
-            var mockTooltipMouseOverTestAdapter = new Mock<ITooltipMouseOverTestAdapter>();
-            mockTooltipMouseOverTestAdapter.SetupGet(x => x.Transform).Returns(mockTransformTestAdapter.Object);
+            var mockTooltipMouseOverInternals = new Mock<ITooltipMouseOverInternals>();
+            mockTooltipMouseOverInternals
+                .SetupGet(x => x.Transform)
+                .Returns(mockTransformInternals.Object);
 
-            var mockImageTestAdapter = new Mock<IImageTestAdapter>();
-            mockImageTestAdapter.SetupAllProperties();
-            mockImageTestAdapter.Setup(x => x.AddTooltipMouseOverComponent()).Returns(mockTooltipMouseOverTestAdapter.Object);
-            mockImageTestAdapter.Setup(x => x.TooltipMouseOverComponent).Returns(mockTooltipMouseOverTestAdapter.Object);
-            mockImageTestAdapter.SetupGet(x => x.Transform).Returns(mockTransformTestAdapter.Object);
+            var mockImageInternals = new Mock<IImageInternals>();
+            mockImageInternals.SetupAllProperties();
+            mockImageInternals
+                .Setup(x => x.AddTooltipMouseOverComponent())
+                .Returns(mockTooltipMouseOverInternals.Object);
+            mockImageInternals
+                .Setup(x => x.TooltipMouseOverComponent)
+                .Returns(mockTooltipMouseOverInternals.Object);
+            mockImageInternals.SetupGet(x => x.Transform).Returns(mockTransformInternals.Object);
 
-            return mockImageTestAdapter;
+            return mockImageInternals;
         }
 
-        private Color SetupAndReturnImageColor(string functionName,
+        private Color SetupAndReturnImageColor(
+            string functionName,
             EGOgiftAttachRegion firstGiftPosition = 0,
             EGOgiftAttachRegion newGiftPosition = 0,
             EGOgiftAttachType firstGiftAttachmentType = 0,
-            EGOgiftAttachType newGiftAttachmentType = 0)
+            EGOgiftAttachType newGiftAttachmentType = 0
+        )
         {
-            var creature = TestExtensions.GetCreatureWithGift(attachPosition: firstGiftPosition, giftAttachType: firstGiftAttachmentType);
+            var creature = TestExtensions.GetCreatureWithGift(
+                attachPosition: firstGiftPosition,
+                giftAttachType: firstGiftAttachmentType
+            );
             _ = TestExtensions.InitializeCommandWindowWithAbnormality(creature);
-            var imageName = functionName + firstGiftPosition + newGiftPosition + firstGiftAttachmentType + newGiftAttachmentType;
-            var agent = TestExtensions.GetAgentWithGift(EquipmentIds.CrumblingArmorGift1, newGiftPosition, newGiftAttachmentType);
-            var mockImageTestAdapter = GetMockImageTestAdapter();
-            SetUpSlot(_sut, agent, imageName, mockImageTestAdapter);
+            var imageName =
+                functionName
+                + firstGiftPosition
+                + newGiftPosition
+                + firstGiftAttachmentType
+                + newGiftAttachmentType;
+            var agent = TestExtensions.GetAgentWithGift(
+                EquipmentIds.CrumblingArmorGift1,
+                newGiftPosition,
+                newGiftAttachmentType
+            );
+            var mockImageInternals = GetMockImageInternals();
+            SetUpSlot(_sut, agent, imageName, mockImageInternals);
 
-            return mockImageTestAdapter.Object.Color;
+            return mockImageInternals.Object.Color;
         }
 
         #endregion

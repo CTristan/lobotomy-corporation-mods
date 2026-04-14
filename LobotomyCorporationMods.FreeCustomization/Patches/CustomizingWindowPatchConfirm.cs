@@ -7,12 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Implementations.Facades;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
+using LobotomyCorporation.Mods.Common;
 
 #endregion
 
@@ -21,13 +16,15 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
     [HarmonyPatch(typeof(CustomizingWindow), nameof(CustomizingWindow.Confirm))]
     public static class CustomizingWindowPatchConfirm
     {
-        public static void PatchBeforeConfirm([NotNull] this CustomizingWindow instance,
-            [CanBeNull] IAgentLayerTestAdapter agentLayerTestAdapter = null,
-            [CanBeNull] IWorkerSpriteManagerTestAdapter workerSpriteManagerTestAdapter = null)
+        public static void PatchBeforeConfirm(
+            [NotNull] this CustomizingWindow instance,
+            [CanBeNull] IAgentLayerInternals agentLayerInternals = null,
+            [CanBeNull] IWorkerSpriteManagerInternals workerSpriteManagerInternals = null
+        )
         {
-            Guard.Against.Null(instance, nameof(instance));
+            ThrowHelper.ThrowIfNull(instance, nameof(instance));
 
-            instance.SaveAppearanceData(agentLayerTestAdapter, workerSpriteManagerTestAdapter);
+            instance.SaveAppearanceData(agentLayerInternals, workerSpriteManagerInternals);
         }
 
         /// <summary>

@@ -1,0 +1,6 @@
+[submodule "LobCorp.ConfigurationManager"]
+	path = LobCorp.ConfigurationManager
+	url = https://github.com/CTristan/LobCorp.ConfigurationManager.git
+[submodule "open-lobotomy-tooling"]
+	path = open-lobotomy-tooling
+	url = https://github.com/open-lobotomy/Tooling.git

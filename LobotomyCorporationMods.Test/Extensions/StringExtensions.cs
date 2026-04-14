@@ -7,8 +7,7 @@ namespace LobotomyCorporationMods.Test.Extensions
     internal static class StringExtensions
     {
         [NotNull]
-        internal static string ShortenBy([NotNull] this string value,
-            int lengthToRemove)
+        internal static string ShortenBy([NotNull] this string value, int lengthToRemove)
         {
             var length = value.Length;
 

@@ -4,11 +4,12 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
 {
     internal sealed class SingingMachineEvaluator : CreatureEvaluator
     {
-        internal SingingMachineEvaluator(AgentModel agent,
+        internal SingingMachineEvaluator(
+            AgentModel agent,
             CreatureModel creature,
-            RwbpType skillType) : base(agent, creature, skillType)
-        {
-        }
+            RwbpType skillType
+        )
+            : base(agent, creature, skillType) { }
 
         protected override bool WillAgentDieFromThisCreature()
         {
@@ -25,7 +26,9 @@ namespace LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Implementation
             var fortitudeStatTooHigh = Agent.fortitudeStat >= FortitudeThreshold - GiftIncrease;
             var qliphothCounter = Creature.qliphothCounter;
 
-            return qliphothCounter == 0 || fortitudeStatTooHigh || Agent.temperanceLevel < MinTemperance;
+            return qliphothCounter == 0
+                || fortitudeStatTooHigh
+                || Agent.temperanceLevel < MinTemperance;
         }
     }
 }

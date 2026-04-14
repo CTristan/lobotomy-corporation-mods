@@ -2,16 +2,13 @@
 
 #region
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using AwesomeAssertions;
 using CommandWindow;
-using FluentAssertions;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Enums;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
-using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.Test.Extensions;
 using LobotomyCorporationMods.Test.Parameters;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking;
@@ -23,7 +20,7 @@ using UnityEngine;
 
 namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingTests
 {
-    public class WarnWhenAgentWillDieFromWorkingModTests
+    public class WarnWhenAgentWillDieFromWorkingModTests : IDisposable
     {
         private const string DeadAgentString = "AgentState_Dead";
         protected const AgentState IdleAgentState = AgentState.IDLE;
@@ -40,31 +37,39 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         {
             _ = new Harmony_Patch();
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
+            Harmony_Patch.Instance.SetLogger(mockLogger.Object);
         }
 
         private Color DeadAgentColor { get; } = Color.red;
         protected GameManager GameManager { get; } = UnityTestExtensions.CreateGameManager();
-        protected Mock<IImageTestAdapter> MockImageTestAdapter { get; } = new Mock<IImageTestAdapter>();
-        protected Mock<ITextTestAdapter> MockTextTestAdapter { get; } = new Mock<ITextTestAdapter>();
-        protected Mock<IYggdrasilAnimTestAdapter> MockYggdrasilAnimTestAdapter { get; } = new Mock<IYggdrasilAnimTestAdapter>();
-        protected Mock<IBeautyBeastAnimTestAdapter> MockBeautyBeastAnimTestAdapter { get; } = new Mock<IBeautyBeastAnimTestAdapter>();
+        protected Mock<IImageInternals> MockImageInternals { get; } = new Mock<IImageInternals>();
+        protected Mock<ITextInternals> MockTextInternals { get; } = new Mock<ITextInternals>();
+        protected Mock<IYggdrasilAnimInternals> MockYggdrasilAnimInternals { get; } =
+            new Mock<IYggdrasilAnimInternals>();
+        protected Mock<IBeautyBeastAnimInternals> MockBeautyBeastAnimInternals { get; } =
+            new Mock<IBeautyBeastAnimInternals>();
 
-        protected bool AgentWillDie([NotNull] IImageTestAdapter workFilterFill,
-            [NotNull] ITextTestAdapter workFilterTextTest)
+        protected bool AgentWillDie(
+            [NotNull] IImageInternals workFilterFill,
+            [NotNull] ITextInternals workFilterTextTest
+        )
         {
-            Guard.Against.Null(workFilterFill, nameof(workFilterFill));
-            Guard.Against.Null(workFilterTextTest, nameof(workFilterTextTest));
-            var agentWillDie = workFilterFill.Color == DeadAgentColor && workFilterTextTest.Text == DeadAgentString;
+            ThrowHelper.ThrowIfNull(workFilterFill, nameof(workFilterFill));
+            ThrowHelper.ThrowIfNull(workFilterTextTest, nameof(workFilterTextTest));
+            var agentWillDie =
+                workFilterFill.Color == DeadAgentColor
+                && workFilterTextTest.Text == DeadAgentString;
 
             return agentWillDie;
         }
 
         [NotNull]
-        private static AgentModel GetAgentWithGift(EquipmentIds giftIds = EquipmentIds.None,
-            IEnumerable<UnitBuf> unitBuffs = null)
+        private static AgentModel GetAgentWithGift(
+            EquipmentIds giftIds = EquipmentIds.None,
+            IEnumerable<UnitBuf> unitBuffs = null
+        )
         {
-            unitBuffs = unitBuffs.EnsureNotNullWithMethod(() => new List<UnitBuf>());
+            unitBuffs = unitBuffs.OrCreate(() => new List<UnitBuf>());
 
             var agentModelCreationParameters = new AgentModelCreationParameters
             {
@@ -80,61 +85,100 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         }
 
         [NotNull]
-        protected static AgentSlot InitializeAgentSlot(CreatureIds creatureId,
+        protected static AgentSlot InitializeAgentSlot(
+            CreatureIds creatureId,
             IEnumerable<UnitBuf> buffList = null,
             EquipmentIds giftIds = (EquipmentIds)1,
             RwbpType skillType = (RwbpType)1,
-            int qliphothCounter = 0)
+            int qliphothCounter = 0
+        )
         {
-            buffList = buffList.EnsureNotNullWithMethod(() => new List<UnitBuf>());
+            buffList = buffList.OrCreate(() => new List<UnitBuf>());
 
-            var creature = TestExtensions.GetCreatureWithGift(creatureId, qliphothCounter: qliphothCounter);
-            _ = TestExtensions.InitializeCommandWindowWithAbnormality(creature, skillType, DeadAgentString);
+            var creature = TestExtensions.GetCreatureWithGift(
+                creatureId,
+                qliphothCounter: qliphothCounter
+            );
+            _ = TestExtensions.InitializeCommandWindowWithAbnormality(
+                creature,
+                skillType,
+                DeadAgentString
+            );
             var agent = GetAgentWithGift(giftIds, buffList);
 
             return UnityTestExtensions.CreateAgentSlot(currentAgent: agent);
         }
 
-        protected static void SetupNothingThere([NotNull] AgentSlot agentSlot,
+        protected static void SetupNothingThere(
+            [NotNull] AgentSlot agentSlot,
             int fortitude,
-            bool isDisguised = false)
+            bool isDisguised = false
+        )
         {
-            Guard.Against.Null(agentSlot, nameof(agentSlot));
+            ThrowHelper.ThrowIfNull(agentSlot, nameof(agentSlot));
             agentSlot.CurrentAgent.primaryStat.hp = fortitude;
 
             var creature = (CreatureModel)CommandWindow.CommandWindow.CurrentWindow.CurrentTarget;
             creature.script = new Nothing();
-            ((Nothing)creature.script).copiedWorker = isDisguised ? UnityTestExtensions.CreateAgentModel() : null;
+            ((Nothing)creature.script).copiedWorker = isDisguised
+                ? UnityTestExtensions.CreateAgentModel()
+                : null;
         }
 
         protected void SetupParasiteTree(int numberOfFlowers)
         {
-            var mockFlower = new Mock<IGameObjectTestAdapter>();
+            var mockFlower = new Mock<IGameObjectInternals>();
             mockFlower.Setup(adapter => adapter.ActiveSelf).Returns(true);
 
-            var mockFlowers = new List<IGameObjectTestAdapter>();
+            var mockFlowers = new List<IGameObjectInternals>();
             for (var i = 0; i < numberOfFlowers; i++)
             {
                 mockFlowers.Add(mockFlower.Object);
             }
 
-            MockYggdrasilAnimTestAdapter.Setup(adapter => adapter.Flowers).Returns(mockFlowers);
+            MockYggdrasilAnimInternals.Setup(adapter => adapter.Flowers).Returns(mockFlowers);
         }
 
         protected void VerifyAgentWillDie([NotNull] AgentSlot agentSlot)
         {
-            agentSlot.PatchAfterSetFilter(IdleAgentState, GameManager, MockBeautyBeastAnimTestAdapter.Object, MockImageTestAdapter.Object, MockTextTestAdapter.Object,
-                MockYggdrasilAnimTestAdapter.Object);
+            agentSlot.PatchAfterSetFilter(
+                IdleAgentState,
+                GameManager,
+                MockBeautyBeastAnimInternals.Object,
+                MockImageInternals.Object,
+                MockTextInternals.Object,
+                MockYggdrasilAnimInternals.Object
+            );
 
-            AgentWillDie(MockImageTestAdapter.Object, MockTextTestAdapter.Object).Should().BeTrue();
+            AgentWillDie(MockImageInternals.Object, MockTextInternals.Object).Should().BeTrue();
         }
 
         protected void VerifyAgentWillNotDie([NotNull] AgentSlot agentSlot)
         {
-            agentSlot.PatchAfterSetFilter(IdleAgentState, GameManager, MockBeautyBeastAnimTestAdapter.Object, MockImageTestAdapter.Object, MockTextTestAdapter.Object,
-                MockYggdrasilAnimTestAdapter.Object);
+            agentSlot.PatchAfterSetFilter(
+                IdleAgentState,
+                GameManager,
+                MockBeautyBeastAnimInternals.Object,
+                MockImageInternals.Object,
+                MockTextInternals.Object,
+                MockYggdrasilAnimInternals.Object
+            );
 
-            AgentWillDie(MockImageTestAdapter.Object, MockTextTestAdapter.Object).Should().BeFalse();
+            AgentWillDie(MockImageInternals.Object, MockTextInternals.Object).Should().BeFalse();
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                UnityTestExtensions.ResetStaticFields();
+            }
         }
     }
 }

@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  ci:
+    name: CI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main repository
+        uses: actions/checkout@v4
+
+      - name: Checkout private references
+        if: ${{ vars.PRIVATE_REFERENCES_REPO != '' }}
+        uses: actions/checkout@v4
+        with:
+          path: external/LobotomyCorp_Data
+          persist-credentials: false
+          repository: ${{ vars.PRIVATE_REFERENCES_REPO }}
+          token: ${{ secrets.PRIVATE_REFERENCES_TOKEN }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.x
+
+      - name: Authenticate GitHub Packages
+        run: dotnet nuget update source github --username open-lobotomy --password ${{ secrets.PACKAGES_TOKEN }} --store-password-in-clear-text || true
+
+      - name: Restore dependencies
+        run: dotnet restore --ignore-failed-sources LobotomyCorporationMods.slnx
+
+      - name: Build
+        run: dotnet build --no-restore LobotomyCorporationMods.slnx
+
+      - name: Test
+        run: dotnet test --no-build --verbosity normal --blame-hang-timeout 10s LobotomyCorporationMods.slnx
+
+  status:
+    name: CI
+    needs: [ci]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check CI result
+        run: |
+          if [ "${{ needs.ci.result }}" != "success" ]; then
+            exit 1
+          fi

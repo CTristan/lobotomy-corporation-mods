@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <LobotomyCorporationModsCommonVersion>0.1.0-preview.21</LobotomyCorporationModsCommonVersion>
+    <!-- NU1801: local NuGet source does not exist (dev-only path, not available in CI) -->
+    <NoWarn>$(NoWarn);NU1801</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="coverlet.collector" Version="8.0.0" />
+    <PackageVersion Include="coverlet.msbuild" Version="8.0.0" />
+    <PackageVersion Include="AwesomeAssertions" Version="9.4.0" />
+    <PackageVersion
+      Include="LobotomyCorporation.Mods.Common"
+      Version="$(LobotomyCorporationModsCommonVersion)"
+    />
+    <PackageVersion Include="Microsoft.NETFramework.ReferenceAssemblies.net35" Version="1.0.3" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
+    <PackageVersion Include="Moq" Version="4.20.70" />
+    <PackageVersion
+      Include="OpenLobotomy.TheSilentOrchestrator.Testing"
+      Version="0.1.0-preview.17"
+    />
+    <PackageVersion Include="xunit.analyzers" Version="1.27.0" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
+    <PackageVersion Include="xunit.v3" Version="3.2.2" />
+    <PackageVersion Include="xunit.v3.runner.console" Version="3.2.2" />
+  </ItemGroup>
+</Project>

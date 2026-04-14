@@ -6,11 +6,8 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using JetBrains.Annotations;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces;
-using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
 
 #endregion
 
@@ -21,7 +18,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
     {
         public static void PatchAfterOnStageStart([NotNull] IAgentWorkTracker agentWorkTracker)
         {
-            Guard.Against.Null(agentWorkTracker, nameof(agentWorkTracker));
+            ThrowHelper.ThrowIfNull(agentWorkTracker, nameof(agentWorkTracker));
 
             agentWorkTracker.Load();
         }

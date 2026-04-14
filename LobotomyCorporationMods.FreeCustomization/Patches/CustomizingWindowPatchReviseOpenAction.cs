@@ -7,24 +7,22 @@ using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Implementations.Facades;
+using LobotomyCorporation.Mods.Common;
 
 #endregion
 
 namespace LobotomyCorporationMods.FreeCustomization.Patches
 {
-    [HarmonyPatch(typeof(CustomizingWindow), PrivateMethods.CustomizingWindow.ReviseOpenAction)]
+    [HarmonyPatch(typeof(CustomizingWindow), GameMethods.CustomizingWindow.ReviseOpenAction)]
     public static class CustomizingWindowPatchReviseOpenAction
     {
-        public static void PatchAfterReviseOpenAction([NotNull] this CustomizingWindow instance,
-            [NotNull] AgentModel agent)
+        public static void PatchAfterReviseOpenAction(
+            [NotNull] this CustomizingWindow instance,
+            [NotNull] AgentModel agent
+        )
         {
-            Guard.Against.Null(instance, nameof(instance));
-            Guard.Against.Null(agent, nameof(agent));
+            ThrowHelper.ThrowIfNull(instance, nameof(instance));
+            ThrowHelper.ThrowIfNull(agent, nameof(agent));
 
             instance.LoadAgentData(agent);
         }
@@ -33,8 +31,10 @@ namespace LobotomyCorporationMods.FreeCustomization.Patches
         // ReSharper disable InconsistentNaming
         [EntryPoint]
         [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-        public static void Postfix([NotNull] CustomizingWindow __instance,
-            [NotNull] AgentModel agent)
+        public static void Postfix(
+            [NotNull] CustomizingWindow __instance,
+            [NotNull] AgentModel agent
+        )
         {
             try
             {

@@ -12,6 +12,8 @@ global.json
 *.user
 *.userprefs
 *.sln.docstates
+.claude/
+.tso/
 .vs/
 .vscode/
 .run/
@@ -200,3 +202,6 @@ $RECYCLE.BIN/
 
 # WPF temp projects
 *wpftmp.*
+
+# E2E tests (local-only, require running game + TSO)
+LobotomyCorporationMods.E2E/

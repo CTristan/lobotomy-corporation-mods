@@ -6,12 +6,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Implementations.Facades;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
+using LobotomyCorporation.Mods.Common;
 
 #endregion
 
@@ -20,21 +15,23 @@ namespace LobotomyCorporationMods.BugFixes.Patches
     [HarmonyPatch(typeof(ArmorCreature), nameof(ArmorCreature.OnNotice))]
     public static class ArmorCreaturePatchOnNotice
     {
-        public static void PatchAfterOnNotice([NotNull] this ArmorCreature instance,
+        public static void PatchAfterOnNotice(
+            [NotNull] this ArmorCreature instance,
             [NotNull] string noticeName,
-            [CanBeNull] IArmorCreatureTestAdapter armorCreatureTestAdapter = null,
-            [NotNull] params object[] noticeParameters)
+            [CanBeNull] IArmorCreatureInternals armorCreatureInternals = null,
+            [NotNull] params object[] noticeParameters
+        )
         {
-            Guard.Against.Null(instance, nameof(instance));
-            Guard.Against.Null(noticeName, nameof(noticeName));
-            Guard.Against.Null(noticeParameters, nameof(noticeParameters));
+            ThrowHelper.ThrowIfNull(instance, nameof(instance));
+            ThrowHelper.ThrowIfNull(noticeName, nameof(noticeName));
+            ThrowHelper.ThrowIfNull(noticeParameters, nameof(noticeParameters));
 
             if (!noticeName.Equals(NoticeName.OnChangeGift, StringComparison.Ordinal))
             {
                 return;
             }
 
-            instance.ReloadCrumblingArmorAgentList(armorCreatureTestAdapter);
+            instance.ReloadCrumblingArmorAgentList(armorCreatureInternals);
         }
 
         /// <summary>Runs after the original OnNotice method to force Crumbling Armor to re-initialize it's internal list of agents.</summary>
@@ -77,9 +74,11 @@ namespace LobotomyCorporationMods.BugFixes.Patches
         [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
         // ReSharper disable once InconsistentNaming
         // ReSharper disable once UnusedMethodReturnValue.Global
-        public static void Postfix([NotNull] ArmorCreature __instance,
+        public static void Postfix(
+            [NotNull] ArmorCreature __instance,
             [NotNull] string notice,
-            [NotNull] params object[] param)
+            [NotNull] params object[] param
+        )
         {
             try
             {

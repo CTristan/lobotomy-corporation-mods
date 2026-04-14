@@ -2,8 +2,7 @@
 
 #region
 
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
-using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.FreeCustomization.Patches;
 using Moq;
 using Xunit;
@@ -18,13 +17,23 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests.PatchTest
         public void Opening_the_agent_window_automatically_opens_the_appearance_window()
         {
             var agentInfoWindow = InitializeAgentInfoWindow();
-            var mockAgentInfoWindowUiComponentsTestAdapter = new Mock<IAgentInfoWindowUiComponentsTestAdapter>();
-            var mockCustomizingWindowTestAdapter = new Mock<ICustomizingWindowTestAdapter>();
-            var mockGameObjectTestAdapter = new Mock<IGameObjectTestAdapter>();
+            var mockAgentInfoWindowUiComponentsInternals =
+                new Mock<IAgentInfoWindowUiComponentsInternals>();
+            var mockCustomizingWindowInternals = new Mock<ICustomizingWindowInternals>();
+            var mockCustomizingBlockInternals = new Mock<IGameObjectInternals>();
+            var mockAppearanceControlInternals = new Mock<IGameObjectInternals>();
 
-            agentInfoWindow.PatchAfterGenerateWindow(mockAgentInfoWindowUiComponentsTestAdapter.Object, mockCustomizingWindowTestAdapter.Object, mockGameObjectTestAdapter.Object);
+            agentInfoWindow.PatchAfterGenerateWindow(
+                mockAgentInfoWindowUiComponentsInternals.Object,
+                mockCustomizingWindowInternals.Object,
+                mockCustomizingBlockInternals.Object,
+                mockAppearanceControlInternals.Object
+            );
 
-            mockCustomizingWindowTestAdapter.Verify(adapter => adapter.OpenAppearanceWindow(), Times.Once);
+            mockCustomizingWindowInternals.Verify(
+                adapter => adapter.OpenAppearanceWindow(),
+                Times.Once
+            );
         }
     }
 }

@@ -87,13 +87,12 @@ Provides warnings for the following abnormalities and any of their conditions (
 
 #### Fixed
 
-- Nothing There
-  - No longer checks for Justice below Level 4 (doesn't kill the agent).
-  - Only checks for Fortitude below Level 4 if "Nothing There" is already
-    disguised (before it would warn for Fortitude below Level 4 even if "Nothing
-    There" was not disguised).
-  - No longer always warns when "Nothing There" is disguised ("Nothing There"
-    only kills while disguised if Fortitude is below Level 4).
+- Fixed Nothing There detection.
+  - Removed check for Justice below Level 4 (does not kill the agent).
+  - Limited Fortitude below Level 4 check to only trigger when "Nothing There"
+    is already disguised.
+  - Removed false warning when "Nothing There" is disguised but agent has
+    Fortitude above Level 3.
 
 ### [1.0.0] - 2023-02-09
 

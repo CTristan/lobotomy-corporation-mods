@@ -7,5 +7,6 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Interfaces
         long GetId();
         float GetWorkCount();
         void IncrementWorkCount(float numberOfTimes);
+        void ResetWorkCount();
     }
 }

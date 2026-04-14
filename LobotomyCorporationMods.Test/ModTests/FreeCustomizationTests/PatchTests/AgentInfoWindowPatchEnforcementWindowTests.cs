@@ -3,8 +3,7 @@
 #region
 
 using Customizing;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
-using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.FreeCustomization.Patches;
 using Moq;
 using Xunit;
@@ -22,17 +21,31 @@ namespace LobotomyCorporationMods.Test.ModTests.FreeCustomizationTests.PatchTest
             var sut = InitializeAgentInfoWindow();
             _ = InitializeCustomizingWindow();
 
-            var mockAgentInfoWindowUiComponentsTestAdapter = new Mock<IAgentInfoWindowUiComponentsTestAdapter>();
-            var mockCustomizingWindowTestAdapter = new Mock<ICustomizingWindowTestAdapter>();
-            var mockGameObjectTestAdapter = new Mock<IGameObjectTestAdapter>();
+            var mockAgentInfoWindowUiComponentsInternals =
+                new Mock<IAgentInfoWindowUiComponentsInternals>();
+            var mockCustomizingWindowInternals = new Mock<ICustomizingWindowInternals>();
+            var mockCustomizingBlockInternals = new Mock<IGameObjectInternals>();
+            var mockAppearanceControlInternals = new Mock<IGameObjectInternals>();
 
             // Act
-            sut.PatchAfterEnforcementWindow(mockAgentInfoWindowUiComponentsTestAdapter.Object, mockCustomizingWindowTestAdapter.Object, mockGameObjectTestAdapter.Object);
+            sut.PatchAfterEnforcementWindow(
+                mockAgentInfoWindowUiComponentsInternals.Object,
+                mockCustomizingWindowInternals.Object,
+                mockCustomizingBlockInternals.Object,
+                mockAppearanceControlInternals.Object
+            );
 
             // Assert
-            mockAgentInfoWindowUiComponentsTestAdapter.Verify(adapter => adapter.SetData(It.IsAny<AgentData>()), Times.Once);
-            mockCustomizingWindowTestAdapter.Verify(adapter => adapter.OpenAppearanceWindow(), Times.Once);
-            mockGameObjectTestAdapter.Verify(adapter => adapter.SetActive(true), Times.Exactly(Twice));
+            mockAgentInfoWindowUiComponentsInternals.Verify(
+                adapter => adapter.SetData(It.IsAny<AgentData>()),
+                Times.Once
+            );
+            mockCustomizingWindowInternals.Verify(
+                adapter => adapter.OpenAppearanceWindow(),
+                Times.Once
+            );
+            mockCustomizingBlockInternals.Verify(adapter => adapter.SetActive(true), Times.Once);
+            mockAppearanceControlInternals.Verify(adapter => adapter.SetActive(true), Times.Once);
         }
     }
 }

@@ -29,9 +29,10 @@ to notice them in the portrait or gift list for an agent.
 
 ### [1.1.0] - 2024-07-15
 
-- Notify When Agent Receives Gift [1.1.0]
-  - Added localization through external text files.
-  - Added Chinese localization thanks to 21474836(Lin).
+#### Added
+
+- Added localization through external text files.
+- Added Chinese localization thanks to 21474836(Lin).
 
 ### [1.0.0] - 2024-07-04
 

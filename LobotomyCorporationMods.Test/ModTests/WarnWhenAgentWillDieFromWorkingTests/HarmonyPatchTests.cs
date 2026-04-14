@@ -3,8 +3,8 @@
 #region
 
 using System;
+using AwesomeAssertions;
 using CommandWindow;
-using FluentAssertions;
 using LobotomyCorporationMods.Test.Extensions;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking;
 using LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking.Patches;
@@ -30,7 +30,7 @@ namespace LobotomyCorporationMods.Test.ModTests.WarnWhenAgentWillDieFromWorkingT
         public void Class_AgentSlot_Method_SetFilter_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
-            Harmony_Patch.Instance.AddLoggerTarget(mockLogger.Object);
+            Harmony_Patch.Instance.SetLogger(mockLogger.Object);
 
             void Action()
             {
