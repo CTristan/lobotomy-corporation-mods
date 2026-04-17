@@ -12,11 +12,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout main repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Checkout private references
         if: ${{ vars.PRIVATE_REFERENCES_REPO != '' }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: external/LobotomyCorp_Data
           persist-credentials: false
