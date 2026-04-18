@@ -12,7 +12,7 @@
       "assemblyName": "ConfigurationManager",
       "deploySubdir": "BaseMods/ConfigurationManager",
       "isMod": true,
-      "projectPath": "LobCorp.ConfigurationManager/LobCorp.ConfigurationManager/LobCorp.ConfigurationManager.csproj"
+      "projectPath": "../LobCorp.ConfigurationManager/LobCorp.ConfigurationManager/LobCorp.ConfigurationManager.csproj"
     },
     {
       "projectName": "BadLuckProtectionForGifts",
