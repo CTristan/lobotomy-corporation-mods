@@ -1,0 +1,64 @@
+name: Suggest a change to a mod
+description: Suggest a change or new feature for a mod that already exists.
+title: "[Mod Change] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for your idea. Please answer the questions below so we can understand what you would like.
+        If you are not sure about an answer, write what you know. Every detail helps.
+
+        Before you continue, please take a quick look at the [open issues](https://github.com/CTristan/lobotomy-corporation-mods/issues) to see if someone has already suggested the same change. If you find it, please add your information there instead.
+
+  - type: dropdown
+    id: mod
+    attributes:
+      label: Which mod do you want to improve?
+      description: If the change would affect more than one mod, pick "More than one mod".
+      options:
+        - Bad Luck Protection for Gifts
+        - Free Customization
+        - Gift Alert Icon
+        - Notify When Agent Receives Gift
+        - Unofficial Bug Fixes
+        - Warn When Agent Will Die From Working
+        - More than one mod
+        - I am not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: What would you like to add or change?
+      description: Please explain your idea. The more detail you give, the better.
+      placeholder: "Example: I want the mod to make a sound when something important happens."
+    validations:
+      required: true
+
+  - type: textarea
+    id: inspiration
+    attributes:
+      label: What inspired this idea? (optional)
+      description: You can tell us anything - something that happened in the game, a random thought, or an idea that just came to you. It helps us understand what you were picturing.
+      placeholder: "Example: I often miss new gifts because I am looking at a different screen."
+    validations:
+      required: false
+
+  - type: textarea
+    id: similar_mods
+    attributes:
+      label: Are there other mods that do something similar? (optional)
+      description: If you know of any, please list them. This helps us see what already exists and decide how your idea fits.
+      placeholder: "Example: I know about Mod X but it does not include the feature I want."
+    validations:
+      required: false
+
+  - type: textarea
+    id: extras
+    attributes:
+      label: Anything else? (optional)
+      description: Screenshots, save files, or links to other mods that do something similar.
+    validations:
+      required: false

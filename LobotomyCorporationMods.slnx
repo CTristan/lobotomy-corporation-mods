@@ -3,7 +3,6 @@
     <File Path=".editorconfig" />
     <File Path=".gitignore" />
     <File Path="CHANGELOG.md" />
-    <File Path="codecov.yml" />
     <File Path="CONTRIBUTING.md" />
     <File Path="DOCUMENTATION_UPDATING_CHECKLIST.md" />
     <File Path="INTEGRATION_TESTING_CHECKLIST.md" />
@@ -11,12 +10,12 @@
   </Folder>
   <Folder Name="/Solution Items/.github/" />
   <Folder Name="/Solution Items/.github/ISSUE_TEMPLATE/">
-    <File Path=".github/ISSUE_TEMPLATE/bug_report.md" />
-    <File Path=".github/ISSUE_TEMPLATE/existing-mod-update-request.md" />
-    <File Path=".github/ISSUE_TEMPLATE/new-mod-request.md" />
+    <File Path=".github/ISSUE_TEMPLATE/bug_report.yml" />
+    <File Path=".github/ISSUE_TEMPLATE/config.yml" />
+    <File Path=".github/ISSUE_TEMPLATE/existing-mod-update-request.yml" />
   </Folder>
   <Folder Name="/Solution Items/.github/workflows/">
-    <File Path=".github/workflows/dotnet.yml" />
+    <File Path=".github/workflows/ci.yml" />
   </Folder>
   <Project Path="LobotomyCorporationMods.BadLuckProtectionForGifts/LobotomyCorporationMods.BadLuckProtectionForGifts.csproj" />
   <Project Path="LobotomyCorporationMods.BugFixes/LobotomyCorporationMods.BugFixes.csproj" />

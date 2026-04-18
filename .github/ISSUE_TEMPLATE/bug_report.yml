@@ -1,0 +1,149 @@
+name: Bug report
+description: Tell us about a problem with one of the mods.
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a problem. Please answer the questions below so we can fix it.
+        If you are not sure about an answer, write what you know. Every detail helps.
+
+        Before you continue, please take a quick look at the [open issues](https://github.com/CTristan/lobotomy-corporation-mods/issues) to see if someone has already reported the same problem. If you find it, please add your information there instead.
+
+  - type: dropdown
+    id: mod
+    attributes:
+      label: Which mod has the bug?
+      description: If the bug happens with more than one mod, pick "More than one mod".
+      options:
+        - Bad Luck Protection for Gifts
+        - Free Customization
+        - Gift Alert Icon
+        - Notify When Agent Receives Gift
+        - Unofficial Bug Fixes
+        - Warn When Agent Will Die From Working
+        - More than one mod
+        - I am not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: what_happened
+    attributes:
+      label: What is wrong?
+      description: Tell us what the mod is doing or not doing. One or two sentences is enough.
+      placeholder: "Example: The game freezes when I click on an agent."
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: What were you doing when this happened? (optional)
+      description: Please list the steps so we can make the same problem happen on our computer.
+      placeholder: |
+        Example:
+        1. I started a new game.
+        2. I clicked on the first agent.
+        3. The game stopped working.
+    validations:
+      required: false
+
+  - type: dropdown
+    id: frequency
+    attributes:
+      label: How often does this happen? (optional)
+      description: This helps us tell the difference between a one-time problem and a problem that happens every time.
+      options:
+        - Every time I try
+        - Sometimes
+        - It only happened once
+        - I am not sure
+    validations:
+      required: false
+
+  - type: dropdown
+    id: mod_manager
+    attributes:
+      label: Which mod manager do you use? (optional)
+      options:
+        - Lobotomy Mod Manager (LMM)
+        - Basemod
+        - Other
+        - I am not sure
+    validations:
+      required: false
+
+  - type: input
+    id: mod_version
+    attributes:
+      label: Mod version (optional)
+      description: You can see the version in your mod manager (LMM shows it in the mod list), or on the mod page where you downloaded the mod.
+      placeholder: "Example: 2.3.0"
+    validations:
+      required: false
+
+  - type: input
+    id: game_version
+    attributes:
+      label: Game version (optional)
+      description: You can see the game version on the main menu screen, or on the Steam store page.
+      placeholder: "Example: 1.0.2.8"
+    validations:
+      required: false
+
+  - type: textarea
+    id: other_mods
+    attributes:
+      label: Which other mods are installed? (optional)
+      description: Please list every mod you have installed. Many bugs happen because two mods do not work together. If you have no other mods, write "None".
+      placeholder: |
+        Example:
+        - Bad Luck Protection for Gifts
+        - Some Other Mod Name
+    validations:
+      required: false
+
+  - type: dropdown
+    id: vanilla_check
+    attributes:
+      label: Does the bug still happen if you turn off every mod (including this one)? (optional)
+      description: This helps us tell the difference between a mod bug and a game bug. If you do not know how to turn off mods in your mod manager, choose "I have not tried yet".
+      options:
+        - "No - the bug only happens when mods are installed"
+        - "Yes - the bug happens even with no mods"
+        - "I have not tried yet"
+    validations:
+      required: false
+
+  - type: textarea
+    id: log
+    attributes:
+      label: Log file (optional)
+      description: |
+        The game writes a log file that helps us find problems.
+
+        On Windows, open this folder (replace `YourName` with your Windows username):
+
+        `C:\Users\YourName\AppData\LocalLow\Project Moon\LobotomyCorp\`
+
+        Or press `Windows key + R`, paste this path, and press Enter:
+
+        `%USERPROFILE%\AppData\LocalLow\Project Moon\LobotomyCorp\`
+
+        The file is called `Player.log`. You can paste the text below. If the file is very long, paste only the end of it (the last 100 lines is usually enough). You can also attach the file by dragging it into the issue after you create it.
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: extras
+    attributes:
+      label: Anything else? (optional)
+      description: |
+        Screenshots, save files, or any other information that might help.
+
+        Save files are stored in the same folder as the log file above (`...\Project Moon\LobotomyCorp\`).
+    validations:
+      required: false
