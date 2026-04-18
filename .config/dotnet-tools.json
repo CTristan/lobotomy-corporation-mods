@@ -3,7 +3,7 @@
   "isRoot": true,
   "tools": {
     "openlobotomy.tooling": {
-      "version": "1.0.0",
+      "version": "0.1.0-preview.21",
       "commands": [
         "ci"
       ],
