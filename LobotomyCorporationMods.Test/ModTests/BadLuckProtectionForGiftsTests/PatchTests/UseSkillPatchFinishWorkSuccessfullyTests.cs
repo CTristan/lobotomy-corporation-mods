@@ -33,7 +33,8 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
 
             useSkill.PatchAfterFinishWorkSuccessfully(
                 mockAgentWorkTracker.Object,
-                mockConfig.Object
+                mockConfig.Object,
+                hadGiftBeforeWork: false
             );
 
             mockAgentWorkTracker.Verify(
@@ -52,7 +53,8 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
 
             useSkill.PatchAfterFinishWorkSuccessfully(
                 mockAgentWorkTracker.Object,
-                mockConfig.Object
+                mockConfig.Object,
+                hadGiftBeforeWork: false
             );
 
             mockAgentWorkTracker.Verify(
@@ -73,7 +75,8 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
 
             useSkill.PatchAfterFinishWorkSuccessfully(
                 mockAgentWorkTracker.Object,
-                mockConfig.Object
+                mockConfig.Object,
+                hadGiftBeforeWork: false
             );
 
             mockAgentWorkTracker.Verify(
@@ -99,7 +102,8 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
 
             useSkill.PatchAfterFinishWorkSuccessfully(
                 mockAgentWorkTracker.Object,
-                mockConfig.Object
+                mockConfig.Object,
+                hadGiftBeforeWork: false
             );
 
             mockAgentWorkTracker.Verify(
@@ -125,7 +129,8 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
 
             useSkill.PatchAfterFinishWorkSuccessfully(
                 mockAgentWorkTracker.Object,
-                mockConfig.Object
+                mockConfig.Object,
+                hadGiftBeforeWork: false
             );
 
             mockAgentWorkTracker.Verify(
@@ -146,7 +151,8 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
             // Agent does NOT have the gift
             useSkill.PatchAfterFinishWorkSuccessfully(
                 mockAgentWorkTracker.Object,
-                mockConfig.Object
+                mockConfig.Object,
+                hadGiftBeforeWork: false
             );
 
             mockAgentWorkTracker.Verify(
@@ -170,7 +176,8 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
 
             useSkill.PatchAfterFinishWorkSuccessfully(
                 mockAgentWorkTracker.Object,
-                mockConfig.Object
+                mockConfig.Object,
+                hadGiftBeforeWork: false
             );
 
             // 5/10 = 0.5
@@ -195,7 +202,8 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
 
             useSkill.PatchAfterFinishWorkSuccessfully(
                 mockAgentWorkTracker.Object,
-                mockConfig.Object
+                mockConfig.Object,
+                hadGiftBeforeWork: false
             );
 
             // 10/10 = 1.0
@@ -220,7 +228,8 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
 
             useSkill.PatchAfterFinishWorkSuccessfully(
                 mockAgentWorkTracker.Object,
-                mockConfig.Object
+                mockConfig.Object,
+                hadGiftBeforeWork: false
             );
 
             mockAgentWorkTracker.Verify(
@@ -242,7 +251,8 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
 
             useSkill.PatchAfterFinishWorkSuccessfully(
                 mockAgentWorkTracker.Object,
-                mockConfig.Object
+                mockConfig.Object,
+                hadGiftBeforeWork: false
             );
 
             // Raw successCount, not normalized
@@ -261,6 +271,61 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
             var result = useSkill.PatchBeforeFinishWorkSuccessfully();
 
             result.Should().Be(expectedAgentId);
+        }
+
+        [Fact]
+        public void Work_count_does_not_reset_when_agent_already_had_gift_before_work()
+        {
+            var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
+            var mockConfig = CreateMockConfig(resetOnGiftReceived: true);
+            var useSkill = UnityTestExtensions.CreateUseSkill();
+            var creatureEquipmentMakeInfo = GetCreatureEquipmentMakeInfo(GiftName);
+            useSkill.targetCreature.metaInfo.equipMakeInfos.Add(creatureEquipmentMakeInfo);
+
+            // Agent had the gift before work started AND still has it after.
+            var giftModel = UnityTestExtensions.CreateEgoGiftModel(
+                creatureEquipmentMakeInfo.equipTypeInfo
+            );
+            useSkill.agent.Equipment.gifts.addedGifts.Add(giftModel);
+
+            useSkill.PatchAfterFinishWorkSuccessfully(
+                mockAgentWorkTracker.Object,
+                mockConfig.Object,
+                hadGiftBeforeWork: true
+            );
+
+            mockAgentWorkTracker.Verify(
+                tracker => tracker.ResetAgentWorkCountForGift(It.IsAny<string>(), It.IsAny<long>()),
+                Times.Never
+            );
+        }
+
+        [Fact]
+        public void DidAgentAlreadyHaveAbnormalityGift_returns_true_when_agent_has_gift()
+        {
+            var useSkill = UnityTestExtensions.CreateUseSkill();
+            var creatureEquipmentMakeInfo = GetCreatureEquipmentMakeInfo(GiftName);
+            useSkill.targetCreature.metaInfo.equipMakeInfos.Add(creatureEquipmentMakeInfo);
+            var giftModel = UnityTestExtensions.CreateEgoGiftModel(
+                creatureEquipmentMakeInfo.equipTypeInfo
+            );
+            useSkill.agent.Equipment.gifts.addedGifts.Add(giftModel);
+
+            var result = useSkill.DidAgentAlreadyHaveAbnormalityGift();
+
+            result.Should().BeTrue();
+        }
+
+        [Fact]
+        public void DidAgentAlreadyHaveAbnormalityGift_returns_false_when_agent_does_not_have_gift()
+        {
+            var useSkill = UnityTestExtensions.CreateUseSkill();
+            var creatureEquipmentMakeInfo = GetCreatureEquipmentMakeInfo(GiftName);
+            useSkill.targetCreature.metaInfo.equipMakeInfos.Add(creatureEquipmentMakeInfo);
+
+            var result = useSkill.DidAgentAlreadyHaveAbnormalityGift();
+
+            result.Should().BeFalse();
         }
 
         private static Mock<IBadLuckProtectionConfig> CreateMockConfig(

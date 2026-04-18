@@ -30,9 +30,16 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts
 
         /// <summary>
         ///     Set by Prefix on FinishWorkSuccessfully, read by GetProb Postfix, cleared by
-        ///     FinishWorkSuccessfully Postfix. Unity is single-threaded so no race conditions.
+        ///     FinishWorkSuccessfully Finalizer. Unity is single-threaded so no race conditions.
         /// </summary>
         internal long? CurrentWorkingAgentId { get; set; }
+
+        /// <summary>
+        ///     Set by Prefix on FinishWorkSuccessfully, read by the Postfix so that
+        ///     ResetOnGiftReceived only fires on the first work session where the agent
+        ///     actually receives the gift. Cleared by the Finalizer.
+        /// </summary>
+        internal bool CurrentWorkingAgentHadGiftBeforeWork { get; set; }
 
         internal IBadLuckProtectionConfig Config { get; }
     }

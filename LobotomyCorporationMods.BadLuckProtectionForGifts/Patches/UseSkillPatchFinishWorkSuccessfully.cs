@@ -25,10 +25,23 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             return instance.GetAgentId();
         }
 
+        /// <summary>Checks whether the agent already has the abnormality's gift before work begins.
+        /// Used so that ResetOnGiftReceived only fires on the work session where the agent first
+        /// receives the gift, not on every subsequent session where they already have it.</summary>
+        public static bool DidAgentAlreadyHaveAbnormalityGift([NotNull] this UseSkill instance)
+        {
+            ThrowHelper.ThrowIfNull(instance, nameof(instance));
+
+            var giftId = instance.GetAbnormalityGiftId();
+
+            return giftId.HasValue && instance.agent.HasGift(giftId);
+        }
+
         public static void PatchAfterFinishWorkSuccessfully(
             [NotNull] this UseSkill instance,
             [NotNull] IAgentWorkTracker agentWorkTracker,
-            [NotNull] IBadLuckProtectionConfig config
+            [NotNull] IBadLuckProtectionConfig config,
+            bool hadGiftBeforeWork
         )
         {
             ThrowHelper.ThrowIfNull(instance, nameof(instance));
@@ -62,7 +75,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
 
             agentWorkTracker.IncrementAgentWorkCount(giftName, agentId, incrementValue);
 
-            if (config.ResetOnGiftReceived)
+            if (config.ResetOnGiftReceived && !hadGiftBeforeWork)
             {
                 var giftId = instance.GetAbnormalityGiftId();
                 if (giftId.HasValue && instance.agent.HasGift(giftId))
@@ -72,19 +85,33 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             }
         }
 
-        /// <summary>Runs before FinishWorkSuccessfully to capture the current agent's ID.
-        /// Prefix is required because GetProb() is called inside the original method body,
-        /// and the GetProb patch needs to know which agent is currently working.</summary>
+        /// <summary>Runs before FinishWorkSuccessfully to capture the current agent's ID and
+        /// whether the agent already has the abnormality's gift. Prefix is required because
+        /// GetProb() is called inside the original method body, and the GetProb patch needs
+        /// to know which agent is currently working. The gift state must be captured before
+        /// the work runs because the work itself can grant the gift.
+        ///
+        /// Any stale captured state is cleared at the start of this method. The game ships
+        /// Harmony 1.0.9.1, which does not support HarmonyFinalizer, so if the original
+        /// FinishWorkSuccessfully throws, the Postfix (and its finally block) will not run
+        /// and the captured agent ID could otherwise leak into later GetProb calls.
+        /// Clearing at the start of the next Prefix bounds that leak to the period between
+        /// the failed call and the next FinishWorkSuccessfully call.</summary>
         /// <param name="__instance"></param>
         // ReSharper disable InconsistentNaming
         [EntryPoint]
         [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
         public static void Prefix([NotNull] UseSkill __instance)
         {
+            Harmony_Patch.Instance.CurrentWorkingAgentId = null;
+            Harmony_Patch.Instance.CurrentWorkingAgentHadGiftBeforeWork = false;
+
             try
             {
                 Harmony_Patch.Instance.CurrentWorkingAgentId =
                     __instance.PatchBeforeFinishWorkSuccessfully();
+                Harmony_Patch.Instance.CurrentWorkingAgentHadGiftBeforeWork =
+                    __instance.DidAgentAlreadyHaveAbnormalityGift();
             }
             catch (Exception ex)
             {
@@ -104,7 +131,8 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             {
                 __instance.PatchAfterFinishWorkSuccessfully(
                     Harmony_Patch.Instance.AgentWorkTracker,
-                    Harmony_Patch.Instance.Config
+                    Harmony_Patch.Instance.Config,
+                    Harmony_Patch.Instance.CurrentWorkingAgentHadGiftBeforeWork
                 );
             }
             catch (Exception ex)
@@ -116,6 +144,7 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             finally
             {
                 Harmony_Patch.Instance.CurrentWorkingAgentId = null;
+                Harmony_Patch.Instance.CurrentWorkingAgentHadGiftBeforeWork = false;
             }
         }
         // ReSharper enable InconsistentNaming
