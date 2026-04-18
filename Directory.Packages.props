@@ -5,6 +5,8 @@
     <LobotomyCorporationModsCommonVersion>0.1.0-preview.21</LobotomyCorporationModsCommonVersion>
   </PropertyGroup>
   <ItemGroup>
+    <PackageVersion Include="AutoFixture.AutoMoq" Version="4.18.1" />
+    <PackageVersion Include="AutoFixture.Xunit3" Version="4.19.0" />
     <PackageVersion Include="AwesomeAssertions" Version="9.4.0" />
     <PackageVersion Include="coverlet.collector" Version="10.0.0" />
     <!-- Pinned: coverlet.msbuild > 6.0.4 breaks net35 mod projects. Renovate pin enforced in renovate.json. -->

@@ -54,7 +54,7 @@ Patches must be **Postfix** unless Prefix is unavoidable (requires a comment exp
 
 ### Common Library
 
-Shared infrastructure is provided by the `LobotomyCorporation.Mods.Common` NuGet package (namespace: `LobotomyCorporation.Mods.Common`): `HarmonyPatchBase`, `FileManager`, `Logger`, extension methods for game types, attributes (`EntryPoint`, `ExcludeFromCodeCoverage`), and test adapters for Unity components. A local `LobotomyCorporationMods.Common` directory also exists for development.
+Shared infrastructure is provided by the `LobotomyCorporation.Mods.Common` NuGet package (namespace: `LobotomyCorporation.Mods.Common`): `HarmonyPatchBase`, `FileManager`, `Logger`, extension methods for game types, attributes (`EntryPoint`, `ExcludeFromCodeCoverage`), and test adapters for Unity components.
 
 ### Test Project (`LobotomyCorporationMods.Test`)
 
@@ -63,7 +63,11 @@ Single test project covering all mods. Organized as `ModTests/{ModName}Tests/` w
 - `HarmonyPatchTests.cs` - Validates patch attributes and exception handling
 - `PatchTests/` - Tests for individual patch extension methods
 
-**Stack:** xUnit, AwesomeAssertions, Moq. Test names use descriptive sentences with underscores. 100% coverage target for business logic.
+Use `UnityTestExtensions` (in `LobotomyCorporationMods.Test/Extensions/`) to construct Unity objects in tests — Unity types can't be `new`'d directly. Test base classes implement `IDisposable` and call `UnityTestExtensions.ResetStaticFields()` to keep tests isolated.
+
+For AutoFixture-driven tests, use `[LobotomyAutoData]` / `[LobotomyInlineAutoData]` (in `Attributes/`). Both apply `AutoMoqCustomization` (auto-mocks Moq interfaces) and `UnityCustomization` (routes Unity types through `UnityTestExtensions`).
+
+**Stack:** xUnit v3, AwesomeAssertions, Moq, AutoFixture + AutoMoq. Test names use descriptive sentences with underscores. 100% coverage target for business logic.
 
 ## Coding Conventions
 
