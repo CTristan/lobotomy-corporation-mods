@@ -3,12 +3,10 @@
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <LobotomyCorporationModsCommonVersion>0.1.0-preview.21</LobotomyCorporationModsCommonVersion>
-    <!-- NU1801: local NuGet source does not exist (dev-only path, not available in CI) -->
-    <NoWarn>$(NoWarn);NU1801</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="coverlet.collector" Version="8.0.1" />
-    <PackageVersion Include="coverlet.msbuild" Version="8.0.1" />
+    <PackageVersion Include="coverlet.collector" Version="6.0.2" />
+    <PackageVersion Include="coverlet.msbuild" Version="6.0.2" />
     <PackageVersion Include="AwesomeAssertions" Version="9.4.0" />
     <PackageVersion
       Include="LobotomyCorporation.Mods.Common"

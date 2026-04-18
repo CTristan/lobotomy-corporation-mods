@@ -1,0 +1,50 @@
+name: Existing mod update request
+description: Suggest a change or new feature for a mod that already exists.
+title: "[Enhancement] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for your idea. Please answer the questions below so we can understand what you would like.
+
+  - type: dropdown
+    id: mod
+    attributes:
+      label: Which mod do you want to improve?
+      options:
+        - Bad Luck Protection for Gifts
+        - Free Customization
+        - Gift Alert Icon
+        - Notify When Agent Receives Gift
+        - Unofficial Bug Fixes
+        - Warn When Agent Will Die From Working
+        - More than one mod
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: What would you like to add or change?
+      description: Please explain your idea. The more detail you give, the better.
+      placeholder: Example - It would be helpful if the Gift Alert Icon also played a sound when a new gift is ready.
+    validations:
+      required: true
+
+  - type: textarea
+    id: inspiration
+    attributes:
+      label: What gave you this idea?
+      description: Tell us the situation where you wanted this change. This helps us understand the problem you are solving.
+      placeholder: Example - I often miss new gifts because I am looking at a different screen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: extras
+    attributes:
+      label: Anything else? (optional)
+      description: Screenshots, save files, or links to other mods that do something similar.
+    validations:
+      required: false

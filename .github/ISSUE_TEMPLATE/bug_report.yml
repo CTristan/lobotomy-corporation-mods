@@ -1,0 +1,124 @@
+name: Bug report
+description: Tell us about a problem with one of the mods.
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a problem. Please answer the questions below so we can fix it.
+        If you are not sure about an answer, write what you know. Every detail helps.
+
+  - type: dropdown
+    id: mod
+    attributes:
+      label: Which mod has the bug?
+      description: If the bug happens with more than one mod, pick "More than one mod".
+      options:
+        - Bad Luck Protection for Gifts
+        - Free Customization
+        - Gift Alert Icon
+        - Notify When Agent Receives Gift
+        - Unofficial Bug Fixes
+        - Warn When Agent Will Die From Working
+        - More than one mod
+        - I am not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: what_happened
+    attributes:
+      label: What is wrong?
+      description: Tell us what the mod is doing or not doing. One or two sentences is enough.
+      placeholder: Example - The game freezes when I click on an agent.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: What were you doing when this happened?
+      description: Please list the steps so we can make the same problem happen on our computer.
+      placeholder: |
+        Example:
+        1. I started a new game.
+        2. I clicked on the first agent.
+        3. The game stopped working.
+    validations:
+      required: true
+
+  - type: input
+    id: mod_version
+    attributes:
+      label: Mod version
+      description: You can find the version number inside the mod folder, or on the mod page where you downloaded it.
+      placeholder: Example - 2.3.0
+    validations:
+      required: true
+
+  - type: input
+    id: game_version
+    attributes:
+      label: Game version
+      description: You can see the game version on the main menu screen, or on the Steam store page.
+      placeholder: Example - 1.0.2.8
+    validations:
+      required: true
+
+  - type: dropdown
+    id: mod_manager
+    attributes:
+      label: Which mod manager do you use?
+      options:
+        - Lobotomy Mod Manager (LMM)
+        - Basemod
+        - Other
+        - I am not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: other_mods
+    attributes:
+      label: Which other mods are installed?
+      description: Please list every mod you have installed. Many bugs happen because two mods do not work together. If you have no other mods, write "None".
+      placeholder: |
+        Example:
+        - Bad Luck Protection for Gifts
+        - Some Other Mod Name
+    validations:
+      required: true
+
+  - type: dropdown
+    id: vanilla_check
+    attributes:
+      label: Does the bug still happen with no mods installed?
+      description: Turn off every mod and start the game. Does the same problem still happen?
+      options:
+        - "No - the bug only happens when mods are installed"
+        - "Yes - the bug happens even with no mods"
+        - "I have not tried yet"
+    validations:
+      required: true
+
+  - type: textarea
+    id: log
+    attributes:
+      label: Log file (optional)
+      description: |
+        The game writes a log file that helps us find problems.
+        On Windows, open this folder:
+        `%USERPROFILE%\AppData\LocalLow\Project Moon\LobotomyCorp\`
+        The file is called `Player.log`. You can paste the text below, or drag the file into this box.
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: extras
+    attributes:
+      label: Anything else? (optional)
+      description: Screenshots, save files, or any other information that might help.
+    validations:
+      required: false
