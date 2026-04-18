@@ -32,6 +32,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).*
   - Added agent name and base chance to the gift chance display.
   - Added adjustable bonus percentage per risk level (ZAYIN, TETH, HE, WAW,
     ALEPH).
+  - Added an option to reset the bonus when an agent receives a gift.
   - Fixed a bug where the last agent's work count leaked into other agents'
     gift chance display.
 
