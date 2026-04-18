@@ -9,13 +9,6 @@
       ],
       "rollForward": false
     },
-    "openlobotomy.thesilentorchestrator": {
-      "version": "1.0.0",
-      "commands": [
-        "tso"
-      ],
-      "rollForward": false
-    },
     "csharpier": {
       "version": "1.2.6",
       "commands": [

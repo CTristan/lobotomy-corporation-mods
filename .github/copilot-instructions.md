@@ -56,11 +56,6 @@ Patches must be **Postfix** unless Prefix is unavoidable (requires a comment exp
 
 Shared infrastructure is provided by the `LobotomyCorporation.Mods.Common` NuGet package (namespace: `LobotomyCorporation.Mods.Common`): `HarmonyPatchBase`, `FileManager`, `Logger`, extension methods for game types, attributes (`EntryPoint`, `ExcludeFromCodeCoverage`), and test adapters for Unity components. A local `LobotomyCorporationMods.Common` directory also exists for development.
 
-### Submodules
-
-- `LobCorp.ConfigurationManager` — Configuration manager mod (separate solution)
-- `open-lobotomy-tooling` — Shared tooling (CI tool, Common library source)
-
 ### Test Project (`LobotomyCorporationMods.Test`)
 
 Single test project covering all mods. Organized as `ModTests/{ModName}Tests/` with:

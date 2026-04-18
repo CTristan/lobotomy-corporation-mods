@@ -19,7 +19,6 @@
   </Folder>
   <Project Path="LobotomyCorporationMods.BadLuckProtectionForGifts/LobotomyCorporationMods.BadLuckProtectionForGifts.csproj" />
   <Project Path="LobotomyCorporationMods.BugFixes/LobotomyCorporationMods.BugFixes.csproj" />
-  <Project Path="LobotomyCorporationMods.E2E/LobotomyCorporationMods.E2E.csproj" />
   <Project Path="LobotomyCorporationMods.FreeCustomization/LobotomyCorporationMods.FreeCustomization.csproj" />
   <Project Path="LobotomyCorporationMods.GiftAlertIcon/LobotomyCorporationMods.GiftAlertIcon.csproj" />
   <Project Path="LobotomyCorporationMods.NotifyWhenAgentReceivesGift/LobotomyCorporationMods.NotifyWhenAgentReceivesGift.csproj" />
