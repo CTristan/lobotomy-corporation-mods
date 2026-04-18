@@ -1,0 +1,48 @@
+name: New mod request
+description: Suggest a new mod idea.
+title: "[New Mod Idea] "
+labels: ["new_mod"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for your idea. Please read the notes below before you continue.
+
+        **Please do not suggest a copy of another mod that already exists.**
+
+        - If another mod does not work with our mods, please use the "Bug report" template instead. We can then find out why and decide what to do.
+        - If an existing mod is missing a feature, please ask the original author first. Suggest it here only if they do not reply, or if they say no.
+
+  - type: textarea
+    id: idea
+    attributes:
+      label: What kind of mod would you like?
+      description: Please explain your idea. The more detail you give, the better.
+      placeholder: Example - A mod that shows a warning before an agent dies from fatigue.
+    validations:
+      required: true
+
+  - type: textarea
+    id: inspiration
+    attributes:
+      label: What gave you this idea?
+      description: Tell us the situation where you wanted this mod. This helps us understand the problem you are solving.
+    validations:
+      required: true
+
+  - type: textarea
+    id: similar_mods
+    attributes:
+      label: Are there other mods that do something similar? (optional)
+      description: If you know of any, please list them. This helps us avoid making a copy of a mod that already exists.
+      placeholder: Example - I know about Mod X but it does not include the warning feature.
+    validations:
+      required: false
+
+  - type: textarea
+    id: extras
+    attributes:
+      label: Anything else? (optional)
+      description: Screenshots, save files, or links to mods that have related features.
+    validations:
+      required: false
