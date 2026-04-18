@@ -1,8 +1,0 @@
-{
-  "overrides": [
-    {
-      "files": "*.xml",
-      "printWidth": 500
-    }
-  ]
-}

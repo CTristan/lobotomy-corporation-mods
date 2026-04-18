@@ -15,11 +15,13 @@
   <text id="BadLuckProtection_SectionGiftChanceBonus">Gift Chance Bonus</text>
   <text id="BadLuckProtection_EnumNormalized">Normalized</text>
   <text id="BadLuckProtection_EnumPerPEBox">Per PE-Box</text>
-  <text id="BadLuckProtection_DescBonusCalculationMode">Normalized: All abnormalities gain bonus at the same rate. The bonus is based on how many PE boxes you filled out of the total.
+  <text id="BadLuckProtection_DescBonusCalculationMode"
+    >Normalized: All abnormalities gain bonus at the same rate. The bonus is based on how many PE boxes you filled out of the total.
 Example: filling 5 out of 10 PE boxes counts as 0.5.
 
 Per PE-Box: Abnormalities with more PE boxes gain bonus faster. Each filled PE box adds 1 to the bonus.
-Example: filling 7 PE boxes counts as 7.</text>
+Example: filling 7 PE boxes counts as 7.</text
+  >
   <text id="BadLuckProtection_DescResetOnGiftReceived">When an agent receives a gift, reset their bonus for that gift to zero.</text>
   <text id="BadLuckProtection_DescGiftChanceDecimalPlaces">Number of decimal places shown in the gift chance display.</text>
   <text id="BadLuckProtection_DescShowBaseChance">Show the base gift chance alongside the boosted chance in the UI.</text>
