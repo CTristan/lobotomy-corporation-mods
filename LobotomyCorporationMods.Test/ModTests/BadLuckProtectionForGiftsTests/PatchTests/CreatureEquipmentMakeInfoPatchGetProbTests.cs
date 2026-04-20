@@ -286,6 +286,28 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests.P
         }
 
         [Fact]
+        public void Probability_is_clamped_to_one_hundred_percent_when_no_current_agent_context()
+        {
+            // Arrange - UI display context with an input probability already above 100%
+            var sut = GetCreatureEquipmentMakeInfo(GiftName);
+            const float OverflowProbability = 1.5f;
+
+            var mockAgentWorkTracker = new Mock<IAgentWorkTracker>();
+            var mockConfig = CreateMockConfig();
+
+            // Act
+            var actual = sut.PatchAfterGetProb(
+                OverflowProbability,
+                mockAgentWorkTracker.Object,
+                mockConfig.Object,
+                null
+            );
+
+            // Assert - clamped to 100% so UI branch matches the gift-roll branch's invariant
+            actual.Should().Be(1f);
+        }
+
+        [Fact]
         public void Probability_boost_uses_current_agent_work_count_not_most_recent_agent()
         {
             // Arrange - Agent A (id=1) has 100 work count, Agent B (id=2) has 5 work count

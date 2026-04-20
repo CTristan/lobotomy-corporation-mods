@@ -31,10 +31,11 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
             ThrowHelper.ThrowIfNull(agentWorkTracker, nameof(agentWorkTracker));
             ThrowHelper.ThrowIfNull(config, nameof(config));
 
-            // No agent context means this is a UI display call, not a gift roll
+            // No agent context means this is a UI display call, not a gift roll.
+            // Skip bonus logic, but still validate to preserve the same >100% clamp the gift-roll path applies.
             if (!currentAgentId.HasValue)
             {
-                return probability;
+                return ValidateProbability(probability);
             }
 
             var giftName = instance.GetAbnormalityGiftName();
