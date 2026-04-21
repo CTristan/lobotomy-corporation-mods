@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<info>
+    <name>Customization Overhaul v3.0.0</name>
+    <descs>
+        <desc>Overhaul of the Customization screen to provide the following</desc>
+        <desc>features:</desc>
+        <desc/>
+        <desc>* Removes the LOB cost for customizing agents.</desc>
+        <desc>* Enables re-customizing agents.</desc>
+        <desc>* Provides the ability to save and load presets.</desc>
+        <desc>* Makes all the Panic Faces available for Combat Faces.</desc>
+        <desc>* Fixes a bug where Panic Faces change after agent creation.</desc>
+    </descs>
+</info>
