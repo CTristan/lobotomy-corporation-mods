@@ -36,12 +36,17 @@
       <HintPath>..\external\LobotomyCorp_Data\Managed\Assembly-CSharp.dll</HintPath>
       <Private>false</Private>
     </Reference>
-    <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\external\LobotomyCorp_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="UnityEngine.UI">
-      <HintPath>..\external\LobotomyCorp_Data\Managed\UnityEngine.UI.dll</HintPath>
+  </ItemGroup>
+  <!--
+    Unity assembly references use a glob so authors get IntelliSense for every UnityEngine.*
+    type without having to update the csproj when a new module is needed. The game provides
+    these assemblies at runtime, so referencing extras costs nothing at build or ship time
+    and creates no LMM duplicate-assembly risk.
+  -->
+  <ItemGroup>
+    <_UnityAssembly Include="..\external\LobotomyCorp_Data\Managed\UnityEngine*.dll" />
+    <Reference Include="@(_UnityAssembly->'%(Filename)')">
+      <HintPath>..\external\LobotomyCorp_Data\Managed\%(Identity).dll</HintPath>
       <Private>false</Private>
     </Reference>
   </ItemGroup>
