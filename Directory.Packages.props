@@ -5,20 +5,19 @@
     <LobotomyCorporationModsCommonVersion>0.1.0-preview.21</LobotomyCorporationModsCommonVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="coverlet.collector" Version="10.0.0" />
-    <PackageVersion Include="coverlet.msbuild" Version="6.0.2" />
+    <PackageVersion Include="AutoFixture.AutoMoq" Version="4.18.1" />
+    <PackageVersion Include="AutoFixture.Xunit3" Version="4.19.0" />
     <PackageVersion Include="AwesomeAssertions" Version="9.4.0" />
+    <PackageVersion Include="coverlet.collector" Version="10.0.0" />
+    <!-- Pinned: coverlet.msbuild > 6.0.4 breaks net35 mod projects. Renovate pin enforced in renovate.json. -->
+    <PackageVersion Include="coverlet.msbuild" Version="6.0.4" />
     <PackageVersion
       Include="LobotomyCorporation.Mods.Common"
       Version="$(LobotomyCorporationModsCommonVersion)"
     />
-    <PackageVersion Include="Microsoft.NETFramework.ReferenceAssemblies.net35" Version="1.0.3" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.4.0" />
+    <PackageVersion Include="Microsoft.NETFramework.ReferenceAssemblies.net35" Version="1.0.3" />
     <PackageVersion Include="Moq" Version="4.20.70" />
-    <PackageVersion
-      Include="OpenLobotomy.TheSilentOrchestrator.Testing"
-      Version="0.1.0-preview.17"
-    />
     <PackageVersion Include="xunit.analyzers" Version="1.27.0" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
     <PackageVersion Include="xunit.v3" Version="3.2.2" />

@@ -10,9 +10,9 @@
   </Folder>
   <Folder Name="/Solution Items/.github/" />
   <Folder Name="/Solution Items/.github/ISSUE_TEMPLATE/">
-    <File Path=".github/ISSUE_TEMPLATE/bug_report.md" />
-    <File Path=".github/ISSUE_TEMPLATE/existing-mod-update-request.md" />
-    <File Path=".github/ISSUE_TEMPLATE/new-mod-request.md" />
+    <File Path=".github/ISSUE_TEMPLATE/bug_report.yml" />
+    <File Path=".github/ISSUE_TEMPLATE/config.yml" />
+    <File Path=".github/ISSUE_TEMPLATE/existing-mod-update-request.yml" />
   </Folder>
   <Folder Name="/Solution Items/.github/workflows/">
     <File Path=".github/workflows/ci.yml" />

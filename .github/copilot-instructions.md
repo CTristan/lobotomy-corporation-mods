@@ -26,6 +26,8 @@ dotnet ci --check  # Verify mode (no auto-fix, matches GitHub Actions)
 dotnet setup       # Copy game DLLs to external/, decompile Assembly-CSharp.dll
 ```
 
+A pre-commit hook runs `dotnet ci --check` on every `git commit`. Expect long output (~100KB) — that's the full test suite and coverage report, not a hang.
+
 Game DLLs in `external/LobotomyCorp_Data/Managed/` are required but not committed. CI pulls them from a private repo.
 
 ## Target Frameworks
@@ -44,22 +46,21 @@ Every mod project contains:
 - `Harmony_Patch.cs` - Required entry point class (Basemod convention). Extends `HarmonyPatchBase` from Common. Singleton pattern with `Instance` field.
 - `Patches/` - One class per patched game method, named `{TargetClass}Patch{MethodName}`
 
-### Two-Method Patch Pattern
+### Patch Class Structure
 
-Each patch class has exactly two methods:
-1. **Extension method** (`PatchAfter{MethodName}`) - Contains all business logic. Fully testable.
-2. **Postfix method** - Marked `[EntryPoint]` and `[ExcludeFromCodeCoverage]`. Delegates to the extension method, wraps in try/catch logging. Uses Harmony magic parameters (`__instance`, `__result`).
+The game ships Harmony 1.0.9.1 (old `Harmony` namespace, not `HarmonyLib`). Only `[HarmonyPrefix]`, `[HarmonyPostfix]`, and `[HarmonyTranspiler]` exist — there is no `HarmonyFinalizer`. Design exception-safe state with Prefix-start clearing or Postfix `finally` blocks.
+
+The governing principle is **separation of testable business logic from Unity-coupled code**. Every patch class has at minimum:
+1. **Extension method** (`PatchAfter{MethodName}`) — pure business logic, no Unity types. Fully testable.
+2. **Harmony entry point** — `[HarmonyPostfix]` method marked `[EntryPoint]` and `[ExcludeFromCodeCoverage]`. Delegates to the extension method, wraps in try/catch logging. Uses Harmony magic parameters (`__instance`, `__result`).
+
+Most patches are just these two methods. Additional Unity-dependent helpers (e.g. reaching through `AgentManager.instance` or other Unity singletons that can't be faked in the test seam) are acceptable in the patch class when marked `[ExcludeFromCodeCoverage]` — they preserve the separation by keeping Unity coupling out of the testable path.
 
 Patches must be **Postfix** unless Prefix is unavoidable (requires a comment explaining why).
 
 ### Common Library
 
-Shared infrastructure is provided by the `LobotomyCorporation.Mods.Common` NuGet package (namespace: `LobotomyCorporation.Mods.Common`): `HarmonyPatchBase`, `FileManager`, `Logger`, extension methods for game types, attributes (`EntryPoint`, `ExcludeFromCodeCoverage`), and test adapters for Unity components. A local `LobotomyCorporationMods.Common` directory also exists for development.
-
-### Submodules
-
-- `LobCorp.ConfigurationManager` — Configuration manager mod (separate solution)
-- `open-lobotomy-tooling` — Shared tooling (CI tool, Common library source)
+Shared infrastructure is provided by the `LobotomyCorporation.Mods.Common` NuGet package (namespace: `LobotomyCorporation.Mods.Common`): `HarmonyPatchBase`, `FileManager`, `Logger`, extension methods for game types, attributes (`EntryPoint`, `ExcludeFromCodeCoverage`), and test adapters for Unity components.
 
 ### Test Project (`LobotomyCorporationMods.Test`)
 
@@ -68,7 +69,11 @@ Single test project covering all mods. Organized as `ModTests/{ModName}Tests/` w
 - `HarmonyPatchTests.cs` - Validates patch attributes and exception handling
 - `PatchTests/` - Tests for individual patch extension methods
 
-**Stack:** xUnit, AwesomeAssertions, Moq. Test names use descriptive sentences with underscores. 100% coverage target for business logic.
+Use `UnityTestExtensions` (in `LobotomyCorporationMods.Test/Extensions/`) to construct Unity objects in tests — Unity types can't be `new`'d directly. Test base classes implement `IDisposable` and call `UnityTestExtensions.ResetStaticFields()` to keep tests isolated.
+
+For AutoFixture-driven tests, use `[LobotomyAutoData]` / `[LobotomyInlineAutoData]` (in `Attributes/`). Both apply `AutoMoqCustomization` (auto-mocks Moq interfaces) and `UnityCustomization` (routes Unity types through `UnityTestExtensions`).
+
+**Stack:** xUnit v3, AwesomeAssertions, Moq, AutoFixture + AutoMoq. Test names use descriptive sentences with underscores. 100% coverage target for business logic.
 
 ## Coding Conventions
 
@@ -81,6 +86,17 @@ Single test project covering all mods. Organized as `ModTests/{ModName}Tests/` w
 ## Documentation Checklist (when updating a mod)
 
 Update: `.csproj` version, `CHANGELOG.md`, `INTEGRATION_TESTING_CHECKLIST.md`, root `README.md`, mod `README.md`, and `Info/Info.xml`.
+
+`CHANGELOG.md` is for mod users (players). Only add entries a player would notice: new features, bug fixes affecting gameplay, UI changes, new configurable options. Do NOT add infra, tooling, test, refactor, or docs changes — those belong in the PR description or commit message.
+
+## Localization
+
+Mods have two independent localization tiers that can ship together or separately:
+
+- **Mod metadata** (`Info/{lang}/Info.xml`) — name and description shown by LMM/Basemod in the launcher. Often shipped by the maintainer alongside a new mod or feature.
+- **In-game UI text** (`Localize/{lang}/text_{lang}.xml`) — strings rendered inside the game. Typically contributed by native speakers in follow-up PRs rather than machine-translated by the maintainer.
+
+A PR that ships a new `Info/{lang}/Info.xml` without a matching `Localize/{lang}/text_{lang}.xml` is intentional, not incomplete.
 
 ## Audience & Language
 

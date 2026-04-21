@@ -85,6 +85,7 @@ msbuild.binlog
 
 # Visual Studio cache files
 *.sln.ide/
+*.lscache
 
 # Visual C++ cache files
 ipch/

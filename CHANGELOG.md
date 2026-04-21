@@ -23,6 +23,19 @@ Major.minor.patch.0
 *This does not apply to the individual mod versions, as they adhere
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).*
 
+## [6.1.0] - 2026-04-12
+
+### Added
+
+- Bad Luck Protection for Gifts [1.2.0]
+  - Added configuration support through ConfigurationManager (optional).
+  - Added agent name and base chance to the gift chance display.
+  - Added adjustable bonus percentage per risk level (ZAYIN, TETH, HE, WAW,
+    ALEPH).
+  - Added an option to reset the bonus when an agent receives a gift.
+  - Fixed a bug where the last agent's work count leaked into other agents'
+    gift chance display.
+
 ## [6.0.2] - 2024-08-07
 
 ### Fixed
@@ -42,7 +55,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).*
 ### Added
 
 - New mod: Gift Alert Icon [1.0.0]
-  - Shows an icon when a new or replacement gift is available for an agent.
+  - Added an icon that shows when a new or replacement gift is available for an
+    agent.
 - Notify When Agent Receives Gift [1.1.0]
   - Added localization through external text files.
   - Added Chinese localization thanks to 21474836(Lin).
@@ -52,10 +66,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).*
 ### Added
 
 - New mod: Notify When Agent Receives Gift [1.0.0]
-  - Whenever an agent receives a gift, a message will be displayed in the log.
+  - Added a log message whenever an agent receives a gift.
 - Unofficial Bug Fixes [3.0.0]
-  - Added fix for Crumbling Armor bug where replacing ANY gift would cause the
-    agent to no longer die from doing Attachment work.
+  - Fixed Crumbling Armor bug where replacing ANY gift would cause the agent to
+    no longer die from doing Attachment work.
 - Warn When Agent Will Die From Working [15.0.0]
   - Added check for Snow Queen when the agent is wearing the Feather of Honor
     armor.
@@ -71,13 +85,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).*
 ### Fixed
 
 - Warn When Agent Will Die From Working [14.1.0]
-  - Nothing There
-    - No longer checks for Justice below Level 4 (does not kill the agent).
-    - Only checks for Fortitude below Level 4 if "Nothing There" is already
-      disguised (before it would warn for Fortitude below Level 4 even if
-      "Nothing There" was not disguised).
-    - No longer always warns when "Nothing There" is disguised ("Nothing There"
-      only kills while disguised if Fortitude is below Level 4).
+  - Fixed Nothing There detection.
+    - Removed check for Justice below Level 4 (does not kill the agent).
+    - Limited Fortitude below Level 4 check to only trigger when "Nothing There"
+      is already disguised.
+    - Removed false warning when "Nothing There" is disguised but agent has
+      Fortitude above Level 3.
 
 ## [4.0.1] - 2023-02-10
 
@@ -92,8 +105,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).*
 ### Added
 
 - New mod: Warn When Agent Will Die From Working [14.0.0]
-  - Warns when assigning work to an agent who will die from an instant-kill
-    mechanic.
+  - Added a warning when assigning work to an agent who will die from an
+    instant-kill mechanic.
   - More information is available
     in [the mod's readme](LobotomyCorporationMods.WarnWhenAgentWillDieFromWorking/README.md).
 
@@ -102,8 +115,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).*
 ### Added
 
 - Unofficial Bug Fixes [2.0.0]
-  - Added bug fix for Crumbling Armor killing agents when they no longer had
-    Crumbling Armor's gift.
+  - Fixed Crumbling Armor killing agents when they no longer had Crumbling
+    Armor's gift.
 
 ## [3.1.0] - 2023-01-30
 
@@ -117,7 +130,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).*
 ### Added
 
 - New mod: Unofficial Bug Fixes [1.0.0]
-  - Fixes a game bug that could cause LOB points to be wasted with certain
+  - Fixed a game bug that could cause LOB points to be wasted with certain
     gifts.
   - More information is available
     in [the mod's readme](LobotomyCorporationMods.BugFixes/README.md).
@@ -127,7 +140,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).*
 ### Added
 
 - New mod: Free Customization [1.0.0]
-  - Customizing an agent no longer costs any LOB points.
+  - Removed LOB point cost from agent customization.
   - More information is available
     in [the mod's readme](LobotomyCorporationMods.FreeCustomization/README.md).
 
@@ -136,7 +149,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).*
 ### Fixed
 
 - Bad Luck Protection for Gifts [1.0.1]
-  - Finishing work on a creature with no gifts caused an infinite loop.
+  - Fixed an infinite loop when finishing work on a creature with no gifts.
 
 ## [1.0.0] - 2020-10-09
 
@@ -144,7 +157,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).*
 
 - First mod!
   - Bad Luck Protection for Gifts [1.0.0]
-  - The more an agent works with an abnormality, the higher chance for them to
-    receive their gift.
+  - Added increasing gift chance the more an agent works with an abnormality.
   - More information is available
     in [the mod's readme](LobotomyCorporationMods.BadLuckProtectionForGifts/README.md).

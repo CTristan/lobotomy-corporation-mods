@@ -16,21 +16,35 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
         /// <param name="instance">The instance of CreatureEquipmentMakeInfo.</param>
         /// <param name="probability">The original probability value.</param>
         /// <param name="agentWorkTracker">The agent work tracker.</param>
+        /// <param name="config">The configuration settings.</param>
+        /// <param name="currentAgentId">The current working agent's ID, or null if called from UI context.</param>
         /// <returns>The modified probability value.</returns>
         public static float PatchAfterGetProb(
             [NotNull] this CreatureEquipmentMakeInfo instance,
             float probability,
-            [NotNull] IAgentWorkTracker agentWorkTracker
+            [NotNull] IAgentWorkTracker agentWorkTracker,
+            [NotNull] IBadLuckProtectionConfig config,
+            long? currentAgentId
         )
         {
             ThrowHelper.ThrowIfNull(instance, nameof(instance));
             ThrowHelper.ThrowIfNull(agentWorkTracker, nameof(agentWorkTracker));
+            ThrowHelper.ThrowIfNull(config, nameof(config));
+
+            // No agent context means this is a UI display call, not a gift roll.
+            // Skip bonus logic, but still validate to preserve the same >100% clamp the gift-roll path applies.
+            if (!currentAgentId.HasValue)
+            {
+                return ValidateProbability(probability);
+            }
 
             var giftName = instance.GetAbnormalityGiftName();
             probability = ModifyProbabilityIfGiftNameIsValid(
                 probability,
                 agentWorkTracker,
-                giftName
+                config,
+                giftName,
+                currentAgentId.Value
             );
 
             return ValidateProbability(probability);
@@ -40,7 +54,9 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
         private static float ModifyProbabilityIfGiftNameIsValid(
             float probability,
             IAgentWorkTracker agentWorkTracker,
-            [CanBeNull] string giftName
+            IBadLuckProtectionConfig config,
+            [CanBeNull] string giftName,
+            long agentId
         )
         {
             if (string.IsNullOrEmpty(giftName))
@@ -48,7 +64,13 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
                 return probability;
             }
 
-            var probabilityBonus = agentWorkTracker.GetLastAgentWorkCountByGift(giftName) / 100f;
+            var workCount = agentWorkTracker.GetAgentWorkCountByGift(giftName, agentId);
+            var riskLevel = agentWorkTracker.GetRiskLevelByGift(giftName);
+            var bonusPercentage = riskLevel.HasValue
+                ? config.GetBonusPercentageForRiskLevel(riskLevel.Value)
+                : 1.0f;
+
+            var probabilityBonus = workCount * bonusPercentage / 100f;
             probability += probabilityBonus;
 
             return probability;
@@ -80,7 +102,9 @@ namespace LobotomyCorporationMods.BadLuckProtectionForGifts.Patches
                 __result = PatchAfterGetProb(
                     __instance,
                     __result,
-                    Harmony_Patch.Instance.AgentWorkTracker
+                    Harmony_Patch.Instance.AgentWorkTracker,
+                    Harmony_Patch.Instance.Config,
+                    Harmony_Patch.Instance.CurrentWorkingAgentId
                 );
             }
             catch (Exception ex)

@@ -1,0 +1,10 @@
+{
+  "overrides": [
+    {
+      "files": "**/Localize/**/*.xml",
+      "formatter": "xml",
+      "indentSize": 2,
+      "printWidth": 999
+    }
+  ]
+}

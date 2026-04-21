@@ -4,6 +4,7 @@
 
 using System;
 using AwesomeAssertions;
+using CreatureInfo;
 using LobotomyCorporationMods.BadLuckProtectionForGifts;
 using LobotomyCorporationMods.BadLuckProtectionForGifts.Patches;
 using LobotomyCorporationMods.Test.Extensions;
@@ -49,6 +50,32 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
                 // ReSharper disable once AssignNullToNotNullAttribute
                 // Forcing null argument to test exception logging.
                 CreatureEquipmentMakeInfoPatchGetProb.Postfix(null, ref result);
+            }
+
+            mockLogger.VerifyArgumentNullException(Action);
+        }
+
+        [Fact]
+        public void Class_GiftSlot_Method_SetProb_is_patched_correctly()
+        {
+            var patch = typeof(GiftSlotPatchSetProb);
+            var originalClass = typeof(GiftSlot);
+            const string MethodName = nameof(GiftSlot.SetProb);
+
+            patch.ValidateHarmonyPatch(originalClass, MethodName);
+        }
+
+        [Fact]
+        public void Class_GiftSlot_Method_SetProb_logs_exceptions()
+        {
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.SetLogger(mockLogger.Object);
+
+            void Action()
+            {
+                // ReSharper disable once AssignNullToNotNullAttribute
+                // Forcing null argument to test exception logging.
+                GiftSlotPatchSetProb.Postfix(null, 0f);
             }
 
             mockLogger.VerifyArgumentNullException(Action);
@@ -128,7 +155,23 @@ namespace LobotomyCorporationMods.Test.ModTests.BadLuckProtectionForGiftsTests
         }
 
         [Fact]
-        public void Class_UseSkill_Method_FinishWorkSuccessfully_logs_exceptions()
+        public void Class_UseSkill_Method_FinishWorkSuccessfully_Prefix_logs_exceptions()
+        {
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.SetLogger(mockLogger.Object);
+
+            void Action()
+            {
+                // ReSharper disable once AssignNullToNotNullAttribute
+                // Forcing null argument to test exception logging.
+                UseSkillPatchFinishWorkSuccessfully.Prefix(null);
+            }
+
+            mockLogger.VerifyArgumentNullException(Action);
+        }
+
+        [Fact]
+        public void Class_UseSkill_Method_FinishWorkSuccessfully_Postfix_logs_exceptions()
         {
             var mockLogger = TestExtensions.GetMockLogger();
             Harmony_Patch.Instance.SetLogger(mockLogger.Object);
