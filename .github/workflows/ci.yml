@@ -9,7 +9,7 @@ on:
 jobs:
   ci:
     name: CI
-    uses: open-lobotomy/.github/.github/workflows/dotnet-ci.yml@main
+    uses: open-lobotomy/.github/.github/workflows/dotnet-ci.yml@1f893503b211588da70add92af5bf8fe6463f3d1 # main
     with:
       private-references-repo: ${{ vars.PRIVATE_REFERENCES_REPO }}
     secrets:
