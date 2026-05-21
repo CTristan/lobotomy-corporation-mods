@@ -1,23 +1,26 @@
 ﻿// SPDX-License-Identifier: MIT
 
+using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Interfaces;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.CustomizationOverhaul.Constants;
 using LobotomyCorporationMods.CustomizationOverhaul.Interfaces;
 using LobotomyCorporationMods.CustomizationOverhaul.Objects;
 
 namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
 {
-    internal sealed class PresetWriter : IPresetWriter
+    public sealed class PresetWriter : IPresetWriter
     {
         private readonly IFileManager _fileManager;
         private readonly IPresetLoader _presetLoader;
         private readonly IUiController _uiController;
 
-        internal PresetWriter([NotNull] IFileManager fileManager,
+        public PresetWriter(
+            [NotNull] IFileManager fileManager,
             IPresetLoader presetLoader,
-            IUiController uiController)
+            IUiController uiController
+        )
         {
             _fileManager = fileManager;
             _presetLoader = presetLoader;
@@ -40,6 +43,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
             }
         }
 
+        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
         public void SavePreset()
         {
             var appearanceUi = CustomizingWindow.CurrentWindow.appearanceUI;
@@ -60,8 +64,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
             _uiController.UpdateSavePresetButtonText(agentName, appearanceData);
         }
 
-        private void SavePresetListToFile([NotNull] PresetList presetList,
-            string fileName)
+        private void SavePresetListToFile([NotNull] PresetList presetList, string fileName)
         {
             var jsonData = presetList.ToJson();
             _fileManager.WriteAllText(fileName, jsonData);

@@ -1,24 +1,21 @@
-﻿// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Customizing;
-using LobotomyCorporationMods.Common.Attributes.ValidCodeCoverageExceptionAttributes;
-using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations.UiComponents;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.CustomizationOverhaul.Constants;
+using LobotomyCorporationMods.CustomizationOverhaul.Implementations;
 using LobotomyCorporationMods.CustomizationOverhaul.UiComponents.BaseComponents;
 using UnityEngine;
 
 namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
 {
-    [UiComponent]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
     public class PresetSlotButton : AgentInfoWindowButton
     {
-        private UiButton _deleteButton;
+        private ButtonWithText _deleteButton;
         private DeletePresetConfirmationPanel _deletePresetConfirmationPanel;
         private string _presetName;
         private UiPresetList _uiPresetList;
@@ -29,15 +26,17 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
             {
                 base.Awake();
 
-                var imagePath = Harmony_Patch.Instance.FileManager.GetFile(UiComponentConstants.PresetPanelImagePath);
-                SetButtonImage(imagePath);
+                var imagePath = Harmony_Patch.Instance.FileManager.GetFile(
+                    UiComponentConstants.PresetPanelImagePath
+                );
+                Handle.Button.Sprite = SpriteLoader.LoadSpriteFromFile(imagePath);
 
                 InitializeDeleteButton();
                 InitializeDeletePresetConfirmationPanel();
             }
             catch (Exception exception)
             {
-                Harmony_Patch.Instance.Logger.LogError(exception);
+                Harmony_Patch.Instance.Logger.WriteException(exception);
 
                 throw;
             }
@@ -45,10 +44,17 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
 
         private void InitializeDeletePresetConfirmationPanel()
         {
-            _deletePresetConfirmationPanel = new GameObject().AddComponent<DeletePresetConfirmationPanel>();
+            _deletePresetConfirmationPanel =
+                new GameObject().AddComponent<DeletePresetConfirmationPanel>();
             _deletePresetConfirmationPanel.transform.SetParent(transform);
-            _deletePresetConfirmationPanel.SetImage(Harmony_Patch.Instance.FileManager.GetFile(UiComponentConstants.DeletePresetPanelImagePath));
-            _deletePresetConfirmationPanel.SetLocalPosition(0.0f, 0.0f);
+            var panelPath = Harmony_Patch.Instance.FileManager.GetFile(
+                UiComponentConstants.DeletePresetPanelImagePath
+            );
+            _deletePresetConfirmationPanel.Handle.Image.Sprite = SpriteLoader.LoadSpriteFromFile(
+                panelPath
+            );
+            _deletePresetConfirmationPanel.Handle.Image.RectTransform.AnchoredPosition =
+                new Vector2(0.0f, 0.0f);
             _deletePresetConfirmationPanel.gameObject.SetActive(false);
         }
 
@@ -56,16 +62,24 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
         {
             if (_deleteButton == null)
             {
-                _deleteButton = new GameObject().AddComponent<UiButton>();
-                _deleteButton.transform.SetParent(transform);
-                var imagePath = Harmony_Patch.Instance.FileManager.GetFile(UiComponentConstants.DeletePresetIconPath);
-                _deleteButton.SetButtonImage(imagePath);
-                _deleteButton.SetPosition(UiComponentConstants.DeletePresetButtonPositionX, UiComponentConstants.DeletePresetButtonPositionY);
-                _deleteButton.onClick.AddListener(DisplayDeleteConfirmMessage);
+                _deleteButton = UiFactory.CreateButtonWithText(
+                    transform,
+                    "DeleteButton",
+                    string.Empty
+                );
+                var imagePath = Harmony_Patch.Instance.FileManager.GetFile(
+                    UiComponentConstants.DeletePresetIconPath
+                );
+                _deleteButton.Button.Sprite = SpriteLoader.LoadSpriteFromFile(imagePath);
+                _deleteButton.Button.RectTransform.AnchoredPosition = new Vector2(
+                    UiComponentConstants.DeletePresetButtonPositionX,
+                    UiComponentConstants.DeletePresetButtonPositionY
+                );
+                _deleteButton.Button.AddClickListener(DisplayDeleteConfirmMessage);
             }
             else
             {
-                _deleteButton.gameObject.SetActive(true);
+                _deleteButton.Button.SetActive(true);
             }
         }
 
@@ -79,7 +93,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
             }
             catch (Exception exception)
             {
-                Harmony_Patch.Instance.Logger.LogError(exception);
+                Harmony_Patch.Instance.Logger.WriteException(exception);
 
                 throw;
             }
@@ -93,7 +107,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
             }
             catch (Exception exception)
             {
-                Harmony_Patch.Instance.Logger.LogError(exception);
+                Harmony_Patch.Instance.Logger.WriteException(exception);
 
                 throw;
             }
@@ -103,52 +117,67 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
         {
             _deletePresetConfirmationPanel.gameObject.SetActive(true);
 
-            var confirmationText = string.Format(CultureInfo.InvariantCulture, LocalizationIds.DeletePresetConfirmationText.GetLocalized(), _presetName);
+            var confirmationText = string.Format(
+                CultureInfo.InvariantCulture,
+                LocalizeTextDataModel.instance.GetText(
+                    LocalizationIds.DeletePresetConfirmationText
+                ),
+                _presetName
+            );
             _deletePresetConfirmationPanel.SwipeIn(this, confirmationText);
 
-            _deleteButton.gameObject.SetActive(false);
+            _deleteButton.Button.SetActive(false);
         }
 
         public void ClearButton()
         {
             try
             {
-                Text.text = string.Empty;
-                _deleteButton.gameObject.SetActive(false);
+                Handle.Label.Text = string.Empty;
+                _deleteButton.Button.SetActive(false);
                 _deletePresetConfirmationPanel.gameObject.SetActive(false);
             }
             catch (Exception exception)
             {
-                Harmony_Patch.Instance.Logger.LogError(exception);
+                Harmony_Patch.Instance.Logger.WriteException(exception);
 
                 throw;
             }
         }
 
-        public void UpdateButton(UiPresetList uiPresetList,
-            int buttonNum,
-            string presetName)
+        public void UpdateButton(UiPresetList uiPresetList, int buttonNum, string presetName)
         {
             try
             {
                 _presetName = presetName;
-                Text.text = _presetName;
+                Handle.Label.Text = _presetName;
 
-                image.SetLocalPosition(0.0f, UiComponentConstants.LoadPresetPanelPositionY - buttonNum * Height);
+                Handle.Button.RectTransform.AnchoredPosition = new Vector2(
+                    0.0f,
+                    UiComponentConstants.LoadPresetPanelPositionY
+                        - buttonNum * Handle.Button.RectTransform.Height
+                );
 
-                onClick.AddListener(delegate
-                {
-                    var loadedAgentData = Harmony_Patch.Instance.PresetLoader.LoadPreset(_presetName);
+                Handle.Button.AddClickListener(
+                    delegate
+                    {
+                        var loadedAgentData = Harmony_Patch.Instance.PresetLoader.LoadPreset(
+                            _presetName
+                        );
 
-                    var instance = CustomizingWindow.CurrentWindow.appearanceUI;
-                    instance.palette.OnSetColor(loadedAgentData.appearance.HairColor);
-                    instance.SetAppearanceSprite(loadedAgentData);
-                    instance.SetCreditControl(true);
+                        var instance = CustomizingWindow.CurrentWindow.appearanceUI;
+                        instance.palette.OnSetColor(loadedAgentData.appearance.HairColor);
+                        instance.SetAppearanceSprite(loadedAgentData);
+                        instance.SetCreditControl(true);
 
-                    Harmony_Patch.Instance.UiController.UpdateSavePresetButtonText(_presetName, loadedAgentData.appearance);
-                });
+                        Harmony_Patch.Instance.UiController.UpdateSavePresetButtonText(
+                            _presetName,
+                            loadedAgentData.appearance
+                        );
+                    }
+                );
 
-                _deleteButton.gameObject.SetActive(true);
+                _deleteButton.Button.SetActive(true);
 
                 if (_deletePresetConfirmationPanel.gameObject.activeSelf)
                 {
@@ -160,7 +189,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
             }
             catch (Exception e)
             {
-                Harmony_Patch.Instance.Logger.LogError(e);
+                Harmony_Patch.Instance.Logger.WriteException(e);
 
                 throw;
             }

@@ -2,8 +2,8 @@
 
 #region
 
+using AwesomeAssertions;
 using Customizing;
-using FluentAssertions;
 using LobotomyCorporationMods.CustomizationOverhaul.Patches;
 using Moq;
 using Xunit;

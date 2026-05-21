@@ -2,16 +2,14 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using LobotomyCorporationMods.Common.Attributes.ValidCodeCoverageExceptionAttributes;
-using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.CustomizationOverhaul.Constants;
+using LobotomyCorporationMods.CustomizationOverhaul.Implementations;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
 {
-    [UiComponent]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
     public sealed class LoadPresetPanel : Image
     {
@@ -25,15 +23,23 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
 
                 gameObject.SetActive(true);
                 transform.SetParent(AgentInfoWindow.currentWindow.gameObject.transform.GetChild(0));
-                this.SetImage(Application.dataPath + "/Managed/BaseMod/Image/Back.png");
-                this.SetSize(UiComponentConstants.LoadPresetPanelSizeX, UiComponentConstants.LoadPresetPanelSizeY);
-                this.SetLocalPosition(UiComponentConstants.LoadPresetPanelPositionX, UiComponentConstants.LoadPresetPanelPositionY);
+                sprite = SpriteLoader.LoadSpriteFromFile(
+                    Application.dataPath + "/Managed/BaseMod/Image/Back.png"
+                );
+                rectTransform.sizeDelta = new Vector2(
+                    UiComponentConstants.LoadPresetPanelSizeX,
+                    UiComponentConstants.LoadPresetPanelSizeY
+                );
+                rectTransform.anchoredPosition = new Vector2(
+                    UiComponentConstants.LoadPresetPanelPositionX,
+                    UiComponentConstants.LoadPresetPanelPositionY
+                );
 
                 UiPresetList = gameObject.AddComponent<UiPresetList>();
             }
             catch (Exception exception)
             {
-                Harmony_Patch.Instance.Logger.LogError(exception);
+                Harmony_Patch.Instance.Logger.WriteException(exception);
 
                 throw;
             }
@@ -47,7 +53,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
             }
             catch (Exception exception)
             {
-                Harmony_Patch.Instance.Logger.LogError(exception);
+                Harmony_Patch.Instance.Logger.WriteException(exception);
 
                 throw;
             }
@@ -63,7 +69,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
             }
             catch (Exception exception)
             {
-                Harmony_Patch.Instance.Logger.LogError(exception);
+                Harmony_Patch.Instance.Logger.WriteException(exception);
 
                 throw;
             }

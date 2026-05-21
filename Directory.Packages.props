@@ -2,7 +2,15 @@
 <Project>
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    <LobotomyCorporationModsCommonVersion>0.1.0-preview.21</LobotomyCorporationModsCommonVersion>
+    <!--
+      Pinned to the latest published version on GitHub Packages; Renovate bumps this line.
+      Override locally by setting the LobotomyCorporationModsCommonVersion environment
+      variable (e.g. when building against an unpublished local build of Common).
+    -->
+    <LobotomyCorporationModsCommonVersion
+      Condition="'$(LobotomyCorporationModsCommonVersion)' == ''"
+      >1.0.0</LobotomyCorporationModsCommonVersion
+    >
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="AutoFixture.AutoMoq" Version="4.18.1" />

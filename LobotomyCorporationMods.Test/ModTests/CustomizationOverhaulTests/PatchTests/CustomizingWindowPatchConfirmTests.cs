@@ -3,10 +3,10 @@
 #region
 
 using System.Collections.Generic;
+using AwesomeAssertions;
 using Customizing;
-using FluentAssertions;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.CustomizationOverhaul.Interfaces;
 using LobotomyCorporationMods.CustomizationOverhaul.Patches;
 using LobotomyCorporationMods.Test.Extensions;
@@ -20,9 +20,11 @@ namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests.Patch
 {
     public sealed class CustomizingWindowPatchConfirmTests : CustomizationOverhaulModTests
     {
-        private readonly Mock<IAgentLayerTestAdapter> _mockAgentLayerTestAdapter = new Mock<IAgentLayerTestAdapter>();
+        private readonly Mock<IAgentLayerInternals> _mockAgentLayerInternals =
+            new Mock<IAgentLayerInternals>();
         private readonly Mock<IUiController> _mockUiController = new Mock<IUiController>();
-        private readonly Mock<IWorkerSpriteManagerTestAdapter> _mockWorkerSpriteManagerTestAdapter = new Mock<IWorkerSpriteManagerTestAdapter>();
+        private readonly Mock<IWorkerSpriteManagerInternals> _mockWorkerSpriteManagerInternals =
+            new Mock<IWorkerSpriteManagerInternals>();
 
         [Fact]
         public void Changing_random_generated_agent_marks_them_as_custom()
@@ -33,7 +35,11 @@ namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests.Patch
             agent.iscustom = false;
 
             // Act
-            sut.PatchBeforeConfirm(_mockUiController.Object, _mockAgentLayerTestAdapter.Object, _mockWorkerSpriteManagerTestAdapter.Object);
+            sut.PatchBeforeConfirm(
+                _mockUiController.Object,
+                _mockAgentLayerInternals.Object,
+                _mockWorkerSpriteManagerInternals.Object
+            );
 
             // Assert
             sut.CurrentAgent.iscustom.Should().Be(true);
@@ -75,36 +81,40 @@ namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests.Patch
             sut.CurrentData.appearance = expectedAppearance;
 
             // Act
-            sut.PatchBeforeConfirm(_mockUiController.Object, _mockAgentLayerTestAdapter.Object, _mockWorkerSpriteManagerTestAdapter.Object);
+            sut.PatchBeforeConfirm(
+                _mockUiController.Object,
+                _mockAgentLayerInternals.Object,
+                _mockWorkerSpriteManagerInternals.Object
+            );
 
             // Assert
             sut.CurrentAgent.spriteData.Should().BeEquivalentTo(expectedAppearance.spriteSet);
-            sut.CurrentAgent.spriteData.BattleEyeBrow.GetHashCode().Should().Be(expectedSprite.GetHashCode());
+            sut.CurrentAgent.spriteData.BattleEyeBrow.GetHashCode()
+                .Should()
+                .Be(expectedSprite.GetHashCode());
             sut.CurrentAgent.spriteData.HairColor.Should().Be(expectedColor);
         }
 
         [Theory]
         [InlineData("CurrentName", "ExpectedName")]
         [InlineData("OldName", "NewName")]
-        public void Renaming_agent_changes_agent_name_successfully([NotNull] string currentName,
-            [NotNull] string expectedName)
+        public void Renaming_agent_changes_agent_name_successfully(
+            [NotNull] string currentName,
+            [NotNull] string expectedName
+        )
         {
             // Arrange
             var currentAgent = UnityTestExtensions.CreateAgentModel();
             currentAgent.name = currentName;
             currentAgent._agentName.nameDic = new Dictionary<string, string>
             {
-                {
-                    currentName, currentName
-                },
+                { currentName, currentName },
             };
 
             var expectedAgentName = UnityTestExtensions.CreateAgentName();
             expectedAgentName.nameDic = new Dictionary<string, string>
             {
-                {
-                    expectedName, expectedName
-                },
+                { expectedName, expectedName },
             };
 
             var expectedData = UnityTestExtensions.CreateAgentData();
@@ -115,7 +125,11 @@ namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests.Patch
             sut.CurrentData = expectedData;
 
             // Act
-            sut.PatchBeforeConfirm(_mockUiController.Object, _mockAgentLayerTestAdapter.Object, _mockWorkerSpriteManagerTestAdapter.Object);
+            sut.PatchBeforeConfirm(
+                _mockUiController.Object,
+                _mockAgentLayerInternals.Object,
+                _mockWorkerSpriteManagerInternals.Object
+            );
 
             // Assert
             sut.CurrentAgent.name.Should().Be(expectedName);
@@ -131,10 +145,21 @@ namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests.Patch
             var sut = InitializeCustomizingWindow();
 
             // Act
-            sut.PatchBeforeConfirm(_mockUiController.Object, _mockAgentLayerTestAdapter.Object, _mockWorkerSpriteManagerTestAdapter.Object);
+            sut.PatchBeforeConfirm(
+                _mockUiController.Object,
+                _mockAgentLayerInternals.Object,
+                _mockWorkerSpriteManagerInternals.Object
+            );
 
             // Assert
-            _mockWorkerSpriteManagerTestAdapter.Verify(x => x.SetAgentBasicData(It.IsAny<WorkerSprite.WorkerSprite>(), It.IsAny<Appearance>()), Times.Never);
+            _mockWorkerSpriteManagerInternals.Verify(
+                x =>
+                    x.SetAgentBasicData(
+                        It.IsAny<WorkerSprite.WorkerSprite>(),
+                        It.IsAny<Appearance>()
+                    ),
+                Times.Never
+            );
         }
     }
 }

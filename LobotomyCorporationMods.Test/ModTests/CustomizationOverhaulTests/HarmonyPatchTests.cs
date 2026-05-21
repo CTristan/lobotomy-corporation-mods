@@ -3,25 +3,20 @@
 #region
 
 using System;
+using AwesomeAssertions;
 using Customizing;
-using FluentAssertions;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.CustomizationOverhaul;
 using LobotomyCorporationMods.CustomizationOverhaul.Patches;
 using LobotomyCorporationMods.Test.Extensions;
-using Moq;
 using Xunit;
 
 #endregion
 
 namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests
 {
-    public sealed class HarmonyPatchTests : HarmonyPatchTestBase
+    public sealed class HarmonyPatchTests
     {
-        public HarmonyPatchTests()
-        {
-            Harmony_Patch.Instance.AddLoggerTarget(MockLogger.Object);
-        }
-
         /// <summary>Harmony requires the constructor to be public.</summary>
         [Fact]
         public void Constructor_is_public_and_externally_accessible()
@@ -39,15 +34,18 @@ namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests
         {
             var patch = typeof(AgentInfoWindowPatchAwake);
             var originalClass = typeof(AgentInfoWindow);
-            const string MethodName = nameof(PrivateMethods.AgentInfoWindow.Awake);
+            const string MethodName = "Awake";
 
-            ValidatePatch(patch, originalClass, MethodName);
+            patch.ValidateHarmonyPatch(originalClass, MethodName);
         }
 
         [Fact]
         public void Class_AgentInfoWindow_Method_Awake_logs_exceptions()
         {
-            VerifyArgumentNullExceptionLogging(AgentInfoWindowPatchAwake.Postfix);
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.SetLogger(mockLogger.Object);
+
+            mockLogger.VerifyArgumentNullException(AgentInfoWindowPatchAwake.Postfix);
         }
 
         [Fact]
@@ -57,13 +55,16 @@ namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests
             var originalClass = typeof(AgentInfoWindow);
             const string MethodName = nameof(AgentInfoWindow.CloseWindow);
 
-            ValidatePatch(patch, originalClass, MethodName);
+            patch.ValidateHarmonyPatch(originalClass, MethodName);
         }
 
         [Fact]
         public void Class_AgentInfoWindow_Method_CloseWindow_logs_exceptions()
         {
-            VerifyArgumentNullExceptionLogging(AgentInfoWindowPatchCloseWindow.Postfix);
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.SetLogger(mockLogger.Object);
+
+            mockLogger.VerifyArgumentNullException(AgentInfoWindowPatchCloseWindow.Postfix);
         }
 
         [Fact]
@@ -73,13 +74,16 @@ namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests
             var originalClass = typeof(AgentInfoWindow);
             const string MethodName = nameof(AgentInfoWindow.CreateWindow);
 
-            ValidatePatch(patch, originalClass, MethodName);
+            patch.ValidateHarmonyPatch(originalClass, MethodName);
         }
 
         [Fact]
         public void Class_AgentInfoWindow_Method_CreateWindow_logs_exceptions()
         {
-            VerifyArgumentNullExceptionLogging(AgentInfoWindowPatchCreateWindow.Postfix);
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.SetLogger(mockLogger.Object);
+
+            mockLogger.VerifyArgumentNullException(AgentInfoWindowPatchCreateWindow.Postfix);
         }
 
         [Fact]
@@ -89,13 +93,16 @@ namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests
             var originalClass = typeof(AgentInfoWindow);
             const string MethodName = nameof(AgentInfoWindow.EnforcementWindow);
 
-            ValidatePatch(patch, originalClass, MethodName);
+            patch.ValidateHarmonyPatch(originalClass, MethodName);
         }
 
         [Fact]
         public void Class_AgentInfoWindow_Method_EnforcementWindow_logs_exceptions()
         {
-            VerifyArgumentNullExceptionLogging(AgentInfoWindowPatchEnforcementWindow.Postfix);
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.SetLogger(mockLogger.Object);
+
+            mockLogger.VerifyArgumentNullException(AgentInfoWindowPatchEnforcementWindow.Postfix);
         }
 
         [Fact]
@@ -105,13 +112,16 @@ namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests
             var originalClass = typeof(AgentInfoWindow);
             const string MethodName = nameof(AgentInfoWindow.GenerateWindow);
 
-            ValidatePatch(patch, originalClass, MethodName);
+            patch.ValidateHarmonyPatch(originalClass, MethodName);
         }
 
         [Fact]
         public void Class_AgentInfoWindow_Method_GenerateWindow_logs_exceptions()
         {
-            VerifyArgumentNullExceptionLogging(AgentInfoWindowPatchGenerateWindow.Postfix);
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.SetLogger(mockLogger.Object);
+
+            mockLogger.VerifyArgumentNullException(AgentInfoWindowPatchGenerateWindow.Postfix);
         }
 
         [Fact]
@@ -121,15 +131,23 @@ namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests
             var originalClass = typeof(AppearanceUI);
             const string MethodName = nameof(AppearanceUI.CloseWindow);
 
-            ValidatePatch(patch, originalClass, MethodName);
+            patch.ValidateHarmonyPatch(originalClass, MethodName);
         }
 
         [Fact]
         public void Class_AppearanceUI_Method_CloseWindow_logs_exceptions()
         {
-            // ReSharper disable once AssignNullToNotNullAttribute
-            // Forcing null argument to test exception logging.
-            VerifyArgumentNullExceptionLogging(() => AppearanceUiPatchCloseWindow.Prefix(null));
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.SetLogger(mockLogger.Object);
+
+            void Action()
+            {
+                // ReSharper disable once AssignNullToNotNullAttribute
+                // Forcing null argument to test exception logging.
+                AppearanceUiPatchCloseWindow.Prefix(null);
+            }
+
+            mockLogger.VerifyArgumentNullException(Action);
         }
 
         [Fact]
@@ -139,15 +157,23 @@ namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests
             var originalClass = typeof(AppearanceUI);
             const string MethodName = nameof(AppearanceUI.InitialDataLoad);
 
-            ValidatePatch(patch, originalClass, MethodName);
+            patch.ValidateHarmonyPatch(originalClass, MethodName);
         }
 
         [Fact]
         public void Class_AppearanceUI_Method_InitialDataLoad_logs_exceptions()
         {
-            // ReSharper disable once AssignNullToNotNullAttribute
-            // Forcing null argument to test exception logging.
-            VerifyArgumentNullExceptionLogging(() => AppearanceUiPatchInitialDataLoad.Postfix(null));
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.SetLogger(mockLogger.Object);
+
+            void Action()
+            {
+                // ReSharper disable once AssignNullToNotNullAttribute
+                // Forcing null argument to test exception logging.
+                AppearanceUiPatchInitialDataLoad.Postfix(null);
+            }
+
+            mockLogger.VerifyArgumentNullException(Action);
         }
 
         [Fact]
@@ -157,15 +183,23 @@ namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests
             var originalClass = typeof(AppearanceUI);
             const string MethodName = nameof(AppearanceUI.UpdatePortrait);
 
-            ValidatePatch(patch, originalClass, MethodName);
+            patch.ValidateHarmonyPatch(originalClass, MethodName);
         }
 
         [Fact]
         public void Class_AppearanceUI_Method_UpdatePortrait_logs_exceptions()
         {
-            // ReSharper disable once AssignNullToNotNullAttribute
-            // Forcing null argument to test exception logging.
-            VerifyArgumentNullExceptionLogging(() => AppearanceUIPatchUpdatePortrait.Postfix(null));
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.SetLogger(mockLogger.Object);
+
+            void Action()
+            {
+                // ReSharper disable once AssignNullToNotNullAttribute
+                // Forcing null argument to test exception logging.
+                AppearanceUIPatchUpdatePortrait.Postfix(null);
+            }
+
+            mockLogger.VerifyArgumentNullException(Action);
         }
 
         [Fact]
@@ -175,15 +209,23 @@ namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests
             var originalClass = typeof(CustomizingWindow);
             const string MethodName = nameof(CustomizingWindow.Cancel);
 
-            ValidatePatch(patch, originalClass, MethodName);
+            patch.ValidateHarmonyPatch(originalClass, MethodName);
         }
 
         [Fact]
         public void Class_CustomizingWindow_Method_Cancel_logs_exceptions()
         {
-            // ReSharper disable once AssignNullToNotNullAttribute
-            // Forcing null argument to test exception logging.
-            VerifyArgumentNullExceptionLogging(() => CustomizingWindowPatchCancel.Postfix(null));
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.SetLogger(mockLogger.Object);
+
+            void Action()
+            {
+                // ReSharper disable once AssignNullToNotNullAttribute
+                // Forcing null argument to test exception logging.
+                CustomizingWindowPatchCancel.Postfix(null);
+            }
+
+            mockLogger.VerifyArgumentNullException(Action);
         }
 
         [Fact]
@@ -193,15 +235,23 @@ namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests
             var originalClass = typeof(CustomizingWindow);
             const string MethodName = nameof(CustomizingWindow.Confirm);
 
-            ValidatePatch(patch, originalClass, MethodName);
+            patch.ValidateHarmonyPatch(originalClass, MethodName);
         }
 
         [Fact]
         public void Class_CustomizingWindow_Method_Confirm_logs_exceptions()
         {
-            // ReSharper disable once AssignNullToNotNullAttribute
-            // Forcing null argument to test exception logging.
-            VerifyArgumentNullExceptionLogging(() => CustomizingWindowPatchConfirm.Prefix(null));
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.SetLogger(mockLogger.Object);
+
+            void Action()
+            {
+                // ReSharper disable once AssignNullToNotNullAttribute
+                // Forcing null argument to test exception logging.
+                CustomizingWindowPatchConfirm.Prefix(null);
+            }
+
+            mockLogger.VerifyArgumentNullException(Action);
         }
 
         [Fact]
@@ -211,15 +261,23 @@ namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests
             var originalClass = typeof(CustomizingWindow);
             const string MethodName = nameof(CustomizingWindow.OpenAppearanceWindow);
 
-            ValidatePatch(patch, originalClass, MethodName);
+            patch.ValidateHarmonyPatch(originalClass, MethodName);
         }
 
         [Fact]
         public void Class_CustomizingWindow_Method_OpenAppearanceWindow_logs_exceptions()
         {
-            // ReSharper disable once AssignNullToNotNullAttribute
-            // Forcing null argument to test exception logging.
-            VerifyArgumentNullExceptionLogging(() => CustomizingWindowPatchOpenAppearanceWindow.Postfix(null));
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.SetLogger(mockLogger.Object);
+
+            void Action()
+            {
+                // ReSharper disable once AssignNullToNotNullAttribute
+                // Forcing null argument to test exception logging.
+                CustomizingWindowPatchOpenAppearanceWindow.Postfix(null);
+            }
+
+            mockLogger.VerifyArgumentNullException(Action);
         }
 
         [Fact]
@@ -227,23 +285,25 @@ namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests
         {
             var patch = typeof(CustomizingWindowPatchReviseOpenAction);
             var originalClass = typeof(CustomizingWindow);
-            const string MethodName = PrivateMethods.CustomizingWindow.ReviseOpenAction;
+            const string MethodName = GameMethods.CustomizingWindow.ReviseOpenAction;
 
-            ValidatePatch(patch, originalClass, MethodName);
+            patch.ValidateHarmonyPatch(originalClass, MethodName);
         }
 
         [Fact]
         public void Class_CustomizingWindow_Method_ReviseOpenAction_logs_exceptions()
         {
-            var times = 1;
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.SetLogger(mockLogger.Object);
 
-            // ReSharper disable AssignNullToNotNullAttribute
-            // Forcing null arguments to test exception logging.
-            VerifyArgumentNullExceptionLogging(() => CustomizingWindowPatchReviseOpenAction.Postfix(null, null), Times.Exactly(times++));
-            // ReSharper enable AssignNullToNotNullAttribute
+            void Action()
+            {
+                // ReSharper disable once AssignNullToNotNullAttribute
+                // Forcing null arguments to test exception logging.
+                CustomizingWindowPatchReviseOpenAction.Postfix(null, null);
+            }
 
-            // Verify other arguments throw an exception if null
-            VerifyArgumentNullExceptionLogging(() => CustomizingWindowPatchReviseOpenAction.Postfix(UnityTestExtensions.CreateCustomizingWindow(), null), Times.Exactly(times));
+            mockLogger.VerifyArgumentNullException(Action);
         }
 
         [Fact]
@@ -253,15 +313,23 @@ namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests
             var originalClass = typeof(WorkerSpriteManager);
             const string MethodName = nameof(WorkerSpriteManager.LoadCustomSprites);
 
-            ValidatePatch(patch, originalClass, MethodName);
+            patch.ValidateHarmonyPatch(originalClass, MethodName);
         }
 
         [Fact]
         public void Class_WorkerSpriteManager_Method_LoadCustomSprites_logs_exceptions()
         {
-            // Forcing null arguments to test exception logging.
-            // ReSharper disable once AssignNullToNotNullAttribute
-            VerifyArgumentNullExceptionLogging(() => WorkerSpriteManagerPatchLoadCustomSprites.Postfix(null));
+            var mockLogger = TestExtensions.GetMockLogger();
+            Harmony_Patch.Instance.SetLogger(mockLogger.Object);
+
+            void Action()
+            {
+                // ReSharper disable once AssignNullToNotNullAttribute
+                // Forcing null argument to test exception logging.
+                WorkerSpriteManagerPatchLoadCustomSprites.Postfix(null);
+            }
+
+            mockLogger.VerifyArgumentNullException(Action);
         }
     }
 }

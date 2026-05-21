@@ -26,7 +26,9 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Objects
         [NotNull]
         private static PresetData ToPresetData([NotNull] object value)
         {
-            return value is Dictionary<string, object> dictionary ? ToPresetData(dictionary) : throw new ArgumentException("The value must be a dictionary");
+            return value is Dictionary<string, object> dictionary
+                ? ToPresetData(dictionary)
+                : throw new ArgumentException("The value must be a dictionary");
         }
 
         [NotNull]

@@ -1,10 +1,10 @@
-﻿// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.UiComponents;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.CustomizationOverhaul.Constants;
 using LobotomyCorporationMods.CustomizationOverhaul.Interfaces;
 using LobotomyCorporationMods.CustomizationOverhaul.UiComponents;
@@ -13,6 +13,7 @@ using UnityEngine.UI;
 
 namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
 {
+    [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
     internal sealed class UiController : IUiController
     {
         private static Button s_strengthenEmployeeButton;
@@ -39,7 +40,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
                 }
                 else
                 {
-                    LoadPresetButton.gameObject.SetActive(true);
+                    LoadPresetButton.Button.SetActive(true);
                 }
             }
             else
@@ -49,7 +50,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
                     return;
                 }
 
-                LoadPresetButton.gameObject.SetActive(false);
+                LoadPresetButton.Button.SetActive(false);
             }
         }
 
@@ -63,7 +64,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
                 }
                 else
                 {
-                    SavePresetButton.gameObject.SetActive(true);
+                    SavePresetButton.Button.SetActive(true);
                 }
             }
             else
@@ -73,20 +74,20 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
                     return;
                 }
 
-                SavePresetButton.gameObject.SetActive(false);
+                SavePresetButton.Button.SetActive(false);
             }
         }
 
         public void DisableAllCustomUiComponents()
         {
-            if (LoadPresetButton)
+            if (LoadPresetButton != null)
             {
-                LoadPresetButton.gameObject.SetActive(false);
+                LoadPresetButton.Button.SetActive(false);
             }
 
-            if (SavePresetButton)
+            if (SavePresetButton != null)
             {
-                SavePresetButton.gameObject.SetActive(false);
+                SavePresetButton.Button.SetActive(false);
             }
 
             if (LoadPresetPanel)
@@ -119,27 +120,32 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
             }
         }
 
-        public void UpdateSavePresetButtonText(string agentName,
-            Appearance appearance)
+        public void UpdateSavePresetButtonText(string agentName, Appearance appearance)
         {
             _presetLoader.InitializeDefaultCustomPresetFile();
-            SavePresetButton.gameObject.SetActive(true);
-            // SavePresetButton.SetTextColor(Harmony_Patch.Instance.PresetLoader.IsExactPreset(agentName, appearance) ? Color.grey : UiComponentConstants.PresetTextColor);
+            SavePresetButton.Button.SetActive(true);
         }
 
         private void InitializeLoadPresetButton()
         {
             var button = InitializeButton("LoadPresetButton");
-            button.SetPosition(button.transform.localPosition.x, UiComponentConstants.LoadPresetButtonPositionY);
-            button.SetText(LocalizationIds.LoadPresetIconText.GetLocalized());
-            button.onClick.AddListener(() => LoadButtonOnClick(Harmony_Patch.Instance.UiController));
+            var currentPos = button.Button.Transform.GameObject.localPosition;
+            button.Button.RectTransform.AnchoredPosition = new Vector2(
+                currentPos.x,
+                UiComponentConstants.LoadPresetButtonPositionY
+            );
+            button.Label.Text = LocalizeTextDataModel.instance.GetText(
+                LocalizationIds.LoadPresetIconText
+            );
+            button.Button.AddClickListener(() =>
+                LoadButtonOnClick(Harmony_Patch.Instance.UiController)
+            );
 
             LoadPresetButton = button;
         }
 
         private static void LoadButtonOnClick([NotNull] IUiController uiController)
         {
-            // Make sure that are presets are the most current whenever we click the load preset button
             Harmony_Patch.Instance.PresetLoader.ReloadPresetsFromFiles();
 
             if (uiController.LoadPresetPanel == null)
@@ -149,15 +155,25 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
                 return;
             }
 
-            uiController.LoadPresetPanel.gameObject.SetActive(!uiController.LoadPresetPanel.isActiveAndEnabled);
+            uiController.LoadPresetPanel.gameObject.SetActive(
+                !uiController.LoadPresetPanel.isActiveAndEnabled
+            );
         }
 
         private void InitializeSavePresetButton()
         {
             var button = InitializeButton("SavePresetButton");
-            button.SetPosition(button.transform.localPosition.x, UiComponentConstants.SavePresetButtonPositionY);
-            button.SetText(LocalizationIds.SavePresetIconText.GetLocalized());
-            button.onClick.AddListener(() => SaveButtonOnClick(Harmony_Patch.Instance.UiController));
+            var currentPos = button.Button.Transform.GameObject.localPosition;
+            button.Button.RectTransform.AnchoredPosition = new Vector2(
+                currentPos.x,
+                UiComponentConstants.SavePresetButtonPositionY
+            );
+            button.Label.Text = LocalizeTextDataModel.instance.GetText(
+                LocalizationIds.SavePresetIconText
+            );
+            button.Button.AddClickListener(() =>
+                SaveButtonOnClick(Harmony_Patch.Instance.UiController)
+            );
 
             SavePresetButton = button;
         }
@@ -173,13 +189,12 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
                     return;
                 }
 
-                // Reset the Preset Panel to load in the new preset
                 uiController.LoadPresetPanel.gameObject.SetActive(false);
                 uiController.LoadPresetPanel.gameObject.SetActive(true);
             }
             catch (Exception exception)
             {
-                Harmony_Patch.Instance.Logger.LogError(exception);
+                Harmony_Patch.Instance.Logger.WriteException(exception);
 
                 throw;
             }
@@ -190,17 +205,43 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
         {
             GetExistingGameObjectReferences();
 
-            var newButton = new GameObject(buttonName).AddComponent<ButtonWithText>();
-            newButton.CopyButton(s_strengthenEmployeeButton);
-            newButton.SetSize(newButton.Width, UiComponentConstants.ButtonSizeY);
-            newButton.CopyText(s_strengthenEmployeeButtonText);
+            var parent = s_strengthenEmployeeButton.transform.parent;
+            var composed = UiFactory.CreateButtonWithText(parent, buttonName, string.Empty);
 
-            var border = new GameObject("BottomBorder").AddComponent<Image>();
-            border.CopyImage(s_strengthenEmployeeButtonBorderImage, true);
-            border.transform.SetParent(newButton.image.transform);
-            border.SetLocalPosition(UiComponentConstants.PresetButtonBorderPositionX, UiComponentConstants.PresetButtonBorderPositionY);
+            var srcImage = s_strengthenEmployeeButton.GetComponent<Image>();
+            composed.Button.Sprite = srcImage.sprite;
+            composed.Button.Interactable = s_strengthenEmployeeButton.interactable;
+            composed.Button.GameObject.colors = s_strengthenEmployeeButton.colors;
 
-            return newButton;
+            composed.Button.RectTransform.SizeDelta = new Vector2(
+                composed.Button.RectTransform.Width,
+                UiComponentConstants.ButtonSizeY
+            );
+
+            composed.Label.SetStyle(
+                color: s_strengthenEmployeeButtonText.color,
+                font: s_strengthenEmployeeButtonText.font,
+                fontSize: s_strengthenEmployeeButtonText.fontSize,
+                alignment: s_strengthenEmployeeButtonText.alignment
+            );
+
+            var borderGo = new GameObject("BottomBorder", typeof(RectTransform));
+            borderGo.transform.SetParent(
+                composed.Button.GameObject.transform,
+                worldPositionStays: false
+            );
+            var border = borderGo.AddComponent<Image>();
+            border.sprite = s_strengthenEmployeeButtonBorderImage.sprite;
+            border.color = s_strengthenEmployeeButtonBorderImage.color;
+            border.rectTransform.sizeDelta = s_strengthenEmployeeButtonBorderImage
+                .rectTransform
+                .sizeDelta;
+            border.rectTransform.anchoredPosition = new Vector2(
+                UiComponentConstants.PresetButtonBorderPositionX,
+                UiComponentConstants.PresetButtonBorderPositionY
+            );
+
+            return composed;
         }
 
         private static void GetExistingGameObjectReferences()
@@ -211,17 +252,21 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
             }
 
             s_strengthenEmployeeButton = AgentInfoWindow.currentWindow.EnforcenButton;
-            s_strengthenEmployeeButtonText = s_strengthenEmployeeButton.GetComponentInChildren<Text>();
-            s_strengthenEmployeeButtonBorderImage = GetStrengthenEmployeeButtonBorderImage(s_strengthenEmployeeButton);
+            s_strengthenEmployeeButtonText =
+                s_strengthenEmployeeButton.GetComponentInChildren<Text>();
+            s_strengthenEmployeeButtonBorderImage = GetStrengthenEmployeeButtonBorderImage(
+                s_strengthenEmployeeButton
+            );
         }
 
-        /// <summary>Uses the button's transform to find the border image that we want.</summary>
-        /// <param name="strengthenEmployeeButton"></param>
-        /// <returns></returns>
-        private static Image GetStrengthenEmployeeButtonBorderImage([NotNull] Button strengthenEmployeeButton)
+        private static Image GetStrengthenEmployeeButtonBorderImage(
+            [NotNull] Button strengthenEmployeeButton
+        )
         {
             const string BorderGameObjectName = "Line_lower";
-            var borderImageTransform = strengthenEmployeeButton.transform.Find(BorderGameObjectName);
+            var borderImageTransform = strengthenEmployeeButton.transform.Find(
+                BorderGameObjectName
+            );
 
             return borderImageTransform.GetComponent<Image>();
         }

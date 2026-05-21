@@ -7,10 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.CustomizationOverhaul.Interfaces;
 
 #endregion
@@ -20,11 +17,13 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
     [HarmonyPatch(typeof(CustomizingWindow), nameof(CustomizingWindow.Cancel))]
     public static class CustomizingWindowPatchCancel
     {
-        public static void PatchAfterCancel([NotNull] this CustomizingWindow instance,
-            [NotNull] IUiController uiController)
+        public static void PatchAfterCancel(
+            [NotNull] this CustomizingWindow instance,
+            [NotNull] IUiController uiController
+        )
         {
-            Guard.Against.Null(instance, nameof(instance));
-            Guard.Against.Null(uiController, nameof(uiController));
+            ThrowHelper.ThrowIfNull(instance, nameof(instance));
+            ThrowHelper.ThrowIfNull(uiController, nameof(uiController));
 
             uiController.DisableAllCustomUiComponents();
         }
@@ -45,7 +44,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.LogError(ex);
+                Harmony_Patch.Instance.Logger.WriteException(ex);
 
                 throw;
             }

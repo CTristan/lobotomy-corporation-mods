@@ -19,7 +19,8 @@ namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests.Patch
         public void UI_components_are_disabled_when_day_is_started(GameState gameState)
         {
             // Arrange
-            UnityTestExtensions.CreateGameManager(gameState);
+            UnityTestExtensions.CreateGameManager();
+            GameManager.currentGameManager.state = gameState;
 
             // Act
             _sut.Object.PatchAfterCreateWindow(_uiControllerMock.Object);
@@ -32,7 +33,8 @@ namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests.Patch
         public void UI_components_are_not_disabled_when_day_is_stopped()
         {
             // Arrange
-            UnityTestExtensions.CreateGameManager(GameState.STOP);
+            UnityTestExtensions.CreateGameManager();
+            GameManager.currentGameManager.state = GameState.STOP;
 
             // Act
             _sut.Object.PatchAfterCreateWindow(_uiControllerMock.Object);

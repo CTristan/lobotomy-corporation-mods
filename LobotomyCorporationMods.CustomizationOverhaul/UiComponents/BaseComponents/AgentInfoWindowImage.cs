@@ -1,32 +1,33 @@
-﻿// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using LobotomyCorporationMods.Common.Attributes.ValidCodeCoverageExceptionAttributes;
-using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.UiComponents;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.CustomizationOverhaul.Constants;
 using UnityEngine;
 
 namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents.BaseComponents
 {
-    [UiComponent]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    public class AgentInfoWindowImage : ImageWithText
+    public class AgentInfoWindowImage : MonoBehaviour
     {
-        public new void Awake()
+        internal ImageWithText Handle { get; private set; }
+
+        public void Awake()
         {
             try
             {
-                base.Awake();
-                Text.font = DeployUI.instance.ordeal.font;
-                Text.fontSize = UiComponentConstants.ButtonTextFontSize;
-                Text.color = UiComponentConstants.PresetTextColor;
-                Text.alignment = TextAnchor.MiddleCenter;
+                Handle = UiFactory.CreateImageWithText(transform, gameObject.name, string.Empty);
+                Handle.Label.SetStyle(
+                    color: UiComponentConstants.PresetTextColor,
+                    font: DeployUI.instance.ordeal.font,
+                    fontSize: UiComponentConstants.ButtonTextFontSize,
+                    alignment: TextAnchor.MiddleCenter
+                );
             }
             catch (Exception exception)
             {
-                Harmony_Patch.Instance.Logger.LogError(exception);
+                Harmony_Patch.Instance.Logger.WriteException(exception);
 
                 throw;
             }

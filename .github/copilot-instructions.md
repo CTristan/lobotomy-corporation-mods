@@ -62,6 +62,28 @@ Patches must be **Postfix** unless Prefix is unavoidable (requires a comment exp
 
 Shared infrastructure is provided by the `LobotomyCorporation.Mods.Common` NuGet package (namespace: `LobotomyCorporation.Mods.Common`): `HarmonyPatchBase`, `FileManager`, `Logger`, extension methods for game types, attributes (`EntryPoint`, `ExcludeFromCodeCoverage`), and test adapters for Unity components.
 
+### Unity Assembly References
+
+When creating a new mod **or** adding major functionality to an existing mod, start with a glob include for `UnityEngine*.dll` in the csproj. This ensures IntelliSense covers every `UnityEngine.*` module so you don't work around or reinvent something an unreferenced assembly already provides. After the feature is implemented you may narrow the references down to only what's actually used, or leave the glob in place — the game provides these assemblies at runtime, so referencing extras costs nothing at build or ship time and creates no LMM duplicate-assembly risk.
+
+Mod csprojs in this repo are one level deep, so the HintPath uses `..\external\...`. Drop this block into the csproj (alongside or in place of the individual `UnityEngine.*` `<Reference>` entries):
+
+```xml
+<!--
+  Unity assembly references use a glob so authors get IntelliSense for every UnityEngine.*
+  type without having to update the csproj when a new module is needed. The game provides
+  these assemblies at runtime, so referencing extras costs nothing at build or ship time
+  and creates no LMM duplicate-assembly risk.
+-->
+<ItemGroup>
+  <_UnityAssembly Include="..\external\LobotomyCorp_Data\Managed\UnityEngine*.dll" />
+  <Reference Include="@(_UnityAssembly->'%(Filename)')">
+    <HintPath>..\external\LobotomyCorp_Data\Managed\%(Identity).dll</HintPath>
+    <Private>false</Private>
+  </Reference>
+</ItemGroup>
+```
+
 ### Test Project (`LobotomyCorporationMods.Test`)
 
 Single test project covering all mods. Organized as `ModTests/{ModName}Tests/` with:
@@ -82,6 +104,14 @@ For AutoFixture-driven tests, use `[LobotomyAutoData]` / `[LobotomyInlineAutoDat
 - File header: `// SPDX-License-Identifier: MIT`
 - Instance fields: `_camelCase`; static fields: `s_camelCase`; constants: `PascalCase`
 - `.editorconfig` enforces all formatting rules
+
+### Reflection
+
+Do not introduce `System.Reflection`, `BindingFlags`, `Traverse`, `FieldInfo`/`MethodInfo`/`PropertyInfo`, `NonPublic`, `GetNestedType`, or `.Invoke(...)` in any mod project in this repo. If a mod needs access to a private game field, method, or nested type, the reflection belongs in the `LobotomyCorporation.Mods.Common` NuGet package (source at `~/projects/open-lobotomy-tooling/src/LobotomyCorporation.Mods.Common/`) behind a typed adapter interface (`I*Internals`, marked with `[AdapterClass]`). Every consumer mod then gets a mockable, centrally-owned surface rather than reinventing reflection locally.
+
+When a migration or new feature surfaces a private-field wall, file an `open-lobotomy/Tooling#25` child issue to add the adapter member, then consume it from the mod.
+
+Harmony attribute-mediated access (`[HarmonyPatch(type, "privateMethod")]`) is explicitly allowed — that's Harmony's seam, not `System.Reflection`.
 
 ## Documentation Checklist (when updating a mod)
 

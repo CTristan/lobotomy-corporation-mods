@@ -10,7 +10,8 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Objects
     [Serializable]
     public class PresetList
     {
-        public Dictionary<string, PresetData> Presets { get; } = new Dictionary<string, PresetData>();
+        public Dictionary<string, PresetData> Presets { get; } =
+            new Dictionary<string, PresetData>();
 
         [NotNull]
         public string ToJson()

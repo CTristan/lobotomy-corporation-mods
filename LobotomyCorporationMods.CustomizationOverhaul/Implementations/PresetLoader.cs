@@ -2,11 +2,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using Customizing;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Interfaces;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.CustomizationOverhaul.Constants;
 using LobotomyCorporationMods.CustomizationOverhaul.Interfaces;
 using LobotomyCorporationMods.CustomizationOverhaul.Objects;
@@ -16,23 +17,31 @@ using WorkerSprite;
 
 namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
 {
-    internal sealed class PresetLoader : IPresetLoader
+    public sealed class PresetLoader : IPresetLoader
     {
         private readonly IFileManager _fileManager;
 
-        internal PresetLoader([NotNull] IFileManager fileManager)
+        public PresetLoader([NotNull] IFileManager fileManager)
         {
             _fileManager = fileManager;
         }
 
-        public Dictionary<string, PresetData> Presets { get; } = new Dictionary<string, PresetData>();
+        public Dictionary<string, PresetData> Presets { get; } =
+            new Dictionary<string, PresetData>();
 
         public IEnumerable<string> FindAllPresetFiles()
         {
-            // Need to first make sure the Presets directory actually exists, and if not, then create it
-            _fileManager.CreateDirectoryIfNotExists(UiComponentConstants.PresetsDirectoryName);
+            var presetsDirectory = _fileManager.GetFile(UiComponentConstants.PresetsDirectoryName);
+            if (!_fileManager.FileSystem.Directory.Exists(presetsDirectory))
+            {
+                _fileManager.FileSystem.Directory.Create(presetsDirectory);
+            }
 
-            return _fileManager.GetFilesFromDirectory(UiComponentConstants.PresetsDirectoryName, UiComponentConstants.JsonFileMask);
+            return _fileManager.FileSystem.Directory.GetFiles(
+                presetsDirectory,
+                UiComponentConstants.JsonFileMask,
+                SearchOption.TopDirectoryOnly
+            );
         }
 
         public bool HasPreset([NotNull] string agentName)
@@ -40,6 +49,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
             return Presets.ContainsKey(agentName);
         }
 
+        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
         public AgentData LoadPreset([NotNull] string agentName)
         {
             var customizingWindow = CustomizingWindow.CurrentWindow;
@@ -83,7 +93,9 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
 
         public void InitializeDefaultCustomPresetFile()
         {
-            var presetList = LoadPresetListFromFile(_fileManager.GetFile(UiComponentConstants.CustomFileName));
+            var presetList = LoadPresetListFromFile(
+                _fileManager.GetFile(UiComponentConstants.CustomFileName)
+            );
             foreach (var preset in presetList.Presets)
             {
                 Presets[preset.Key] = preset.Value;
@@ -96,9 +108,10 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
             InitializeAllPresetFiles();
         }
 
-        public bool IsExactPreset([NotNull] string agentName,
-            Appearance appearance)
+        public bool IsExactPreset([NotNull] string agentName, [NotNull] Appearance appearance)
         {
+            ThrowHelper.ThrowIfNull(appearance, nameof(appearance));
+
             if (!HasPreset(agentName))
             {
                 return false;
@@ -111,30 +124,47 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
                 return false;
             }
 
-            return IsSameSpriteName(preset.HairColor, appearance.HairColor.ToHtmlStringRgb()) && IsSameSpriteName(preset.EyeColor, appearance.EyeColor.ToHtmlStringRgb());
+            return IsSameSpriteName(
+                    preset.HairColor,
+                    ColorUtility.ToHtmlStringRGB(appearance.HairColor)
+                )
+                && IsSameSpriteName(
+                    preset.EyeColor,
+                    ColorUtility.ToHtmlStringRGB(appearance.EyeColor)
+                );
         }
 
         [NotNull]
         public PresetList LoadPresetsFromCustomFile([CanBeNull] string fileName = null)
         {
-            var presetFile = _fileManager.GetFile(!string.IsNullOrEmpty(fileName) ? fileName : UiComponentConstants.CustomFileName);
+            var presetFile = _fileManager.GetFile(
+                !string.IsNullOrEmpty(fileName) ? fileName : UiComponentConstants.CustomFileName
+            );
 
             return LoadPresetListFromFile(presetFile);
         }
 
-        private static bool CheckAllItemsHaveSameSprite([NotNull] PresetData preset,
-            [NotNull] Appearance appearance)
+        private static bool CheckAllItemsHaveSameSprite(
+            [NotNull] PresetData preset,
+            [NotNull] Appearance appearance
+        )
         {
             var presetComparisonList = CreatePresetComparisonList(preset, appearance);
             var areAllItemsSameSpriteName = presetComparisonList.TrueForAll(presetComparison =>
-                IsSameSpriteName(presetComparison.Key, presetComparison.Value == null ? string.Empty : presetComparison.Value.name));
+                IsSameSpriteName(
+                    presetComparison.Key,
+                    presetComparison.Value == null ? string.Empty : presetComparison.Value.name
+                )
+            );
 
             return areAllItemsSameSpriteName;
         }
 
         [NotNull]
-        private static List<KeyValuePair<string, Sprite>> CreatePresetComparisonList([NotNull] PresetData presetData,
-            [NotNull] Appearance appearance)
+        private static List<KeyValuePair<string, Sprite>> CreatePresetComparisonList(
+            [NotNull] PresetData presetData,
+            [NotNull] Appearance appearance
+        )
         {
             return new List<KeyValuePair<string, Sprite>>
             {
@@ -152,8 +182,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
             };
         }
 
-        private static KeyValuePair<string, Sprite> CreatePair(string preset,
-            Sprite appearance)
+        private static KeyValuePair<string, Sprite> CreatePair(string preset, Sprite appearance)
         {
             return new KeyValuePair<string, Sprite>(preset, appearance);
         }
@@ -162,7 +191,11 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
         {
             var presetFiles = FindAllPresetFiles();
 
-            foreach (var preset in presetFiles.Select(LoadPresetListFromFile).SelectMany(presetList => presetList.Presets))
+            foreach (
+                var preset in presetFiles
+                    .Select(LoadPresetListFromFile)
+                    .SelectMany(presetList => presetList.Presets)
+            )
             {
                 Presets[preset.Key] = preset.Value;
             }
@@ -171,9 +204,10 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
             InitializeDefaultCustomPresetFile();
         }
 
-
-        private static bool IsSameSpriteName([NotNull] string currentValue,
-            [CanBeNull] string newValue)
+        private static bool IsSameSpriteName(
+            [NotNull] string currentValue,
+            [CanBeNull] string newValue
+        )
         {
             // If either value is null, it can't be compared anyway, so let's say it's good
             if (string.IsNullOrEmpty(currentValue) || string.IsNullOrEmpty(newValue))
@@ -187,6 +221,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
         }
 
         [NotNull]
+        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
         private static WorkerSprite.WorkerSprite GetSpriteSet([NotNull] PresetData preset)
         {
             if (!ColorUtility.TryParseHtmlString(preset.HairColor, out var hairColor))
@@ -204,14 +239,26 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
                 FrontHair = GetSpriteFromGameData(BasicSpriteRegion.HAIR_FRONT, preset.FrontHair),
                 RearHair = GetSpriteFromGameData(BasicSpriteRegion.HAIR_REAR, preset.RearHair),
                 EyeBrow = GetSpriteFromGameData(BasicSpriteRegion.EYEBROW, preset.EyebrowDef),
-                BattleEyeBrow = GetSpriteFromGameData(BasicSpriteRegion.EYEBROW_BATTLE, preset.EyebrowBattle),
-                PanicEyeBrow = GetSpriteFromGameData(BasicSpriteRegion.EYEBROW_PANIC, preset.EyebrowPanic),
+                BattleEyeBrow = GetSpriteFromGameData(
+                    BasicSpriteRegion.EYEBROW_BATTLE,
+                    preset.EyebrowBattle
+                ),
+                PanicEyeBrow = GetSpriteFromGameData(
+                    BasicSpriteRegion.EYEBROW_PANIC,
+                    preset.EyebrowPanic
+                ),
                 Eye = GetSpriteFromGameData(BasicSpriteRegion.EYE_DEFAULT, preset.EyeDef),
                 EyePanic = GetSpriteFromGameData(BasicSpriteRegion.EYE_PANIC, preset.EyePanic),
                 EyeDead = GetSpriteFromGameData(BasicSpriteRegion.EYE_DEAD, preset.EyeDead),
                 Mouth = GetSpriteFromGameData(BasicSpriteRegion.MOUTH, preset.MouthDef),
-                BattleMouth = GetSpriteFromGameData(BasicSpriteRegion.MOUTH_BATTLE, preset.MouthBattle),
-                PanicMouth = GetSpriteFromGameData(BasicSpriteRegion.MOUTH_PANIC, preset.MouthPanic),
+                BattleMouth = GetSpriteFromGameData(
+                    BasicSpriteRegion.MOUTH_BATTLE,
+                    preset.MouthBattle
+                ),
+                PanicMouth = GetSpriteFromGameData(
+                    BasicSpriteRegion.MOUTH_PANIC,
+                    preset.MouthPanic
+                ),
                 HairColor = hairColor,
                 EyeColor = eyeColor,
             };
@@ -219,8 +266,8 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
             return workerSprite;
         }
 
-        private static Sprite GetSpriteFromGameData(BasicSpriteRegion region,
-            string spriteName)
+        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
+        private static Sprite GetSpriteFromGameData(BasicSpriteRegion region, string spriteName)
         {
             // Get the list of sprites loaded into the game
             var workerBasicSpriteController = WorkerSpriteDataLoader.Loader.basic;
@@ -266,7 +313,9 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Implementations
         }
 
         [NotNull]
-        private static SerializablePresetList LoadPresetDataToSerializablePresetList([NotNull] Dictionary<string, object> presetData)
+        private static SerializablePresetList LoadPresetDataToSerializablePresetList(
+            [NotNull] Dictionary<string, object> presetData
+        )
         {
             var loadedPresetData = new SerializablePresetList();
             foreach (var preset in presetData)

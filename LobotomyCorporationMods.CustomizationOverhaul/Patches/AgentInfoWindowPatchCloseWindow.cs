@@ -6,10 +6,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.CustomizationOverhaul.Interfaces;
 
 #endregion
@@ -19,11 +16,13 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
     [HarmonyPatch(typeof(AgentInfoWindow), nameof(AgentInfoWindow.CloseWindow))]
     public static class AgentInfoWindowPatchCloseWindow
     {
-        public static void PatchAfterCloseWindow([NotNull] this AgentInfoWindow instance,
-            [NotNull] IUiController uiController)
+        public static void PatchAfterCloseWindow(
+            [NotNull] this AgentInfoWindow instance,
+            [NotNull] IUiController uiController
+        )
         {
-            Guard.Against.Null(instance, nameof(instance));
-            Guard.Against.Null(uiController, nameof(uiController));
+            ThrowHelper.ThrowIfNull(instance, nameof(instance));
+            ThrowHelper.ThrowIfNull(uiController, nameof(uiController));
 
             uiController.DisableAllCustomUiComponents();
         }
@@ -42,7 +41,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.LogError(ex);
+                Harmony_Patch.Instance.Logger.WriteException(ex);
 
                 throw;
             }

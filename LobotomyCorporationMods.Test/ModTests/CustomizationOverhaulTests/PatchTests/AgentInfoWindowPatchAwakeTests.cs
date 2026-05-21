@@ -31,7 +31,8 @@ namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests.Patch
         {
             // Arrange
             var mockUiController = new Mock<IUiController>();
-            UnityTestExtensions.CreateGameManager(GameState.STOP);
+            UnityTestExtensions.CreateGameManager();
+            GameManager.currentGameManager.state = GameState.STOP;
 
             // Act
             _sut.Object.PatchAfterAwake(mockUiController.Object);

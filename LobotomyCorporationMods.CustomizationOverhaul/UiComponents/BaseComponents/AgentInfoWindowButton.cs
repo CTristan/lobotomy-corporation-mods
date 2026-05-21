@@ -1,32 +1,32 @@
-﻿// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using LobotomyCorporationMods.Common.Attributes.ValidCodeCoverageExceptionAttributes;
-using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.UiComponents;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.CustomizationOverhaul.Constants;
 using UnityEngine;
 
 namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents.BaseComponents
 {
-    [UiComponent]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
-    public class AgentInfoWindowButton : ButtonWithText
+    public class AgentInfoWindowButton : MonoBehaviour
     {
-        public new void Awake()
+        internal ButtonWithText Handle { get; private set; }
+
+        public void Awake()
         {
             try
             {
-                base.Awake();
-
-                Text.fontSize = UiComponentConstants.ButtonTextFontSize;
-                Text.color = UiComponentConstants.PresetTextColor;
-                Text.alignment = TextAnchor.MiddleCenter;
+                Handle = UiFactory.CreateButtonWithText(transform, gameObject.name, string.Empty);
+                Handle.Label.SetStyle(
+                    color: UiComponentConstants.PresetTextColor,
+                    fontSize: UiComponentConstants.ButtonTextFontSize,
+                    alignment: TextAnchor.MiddleCenter
+                );
             }
             catch (Exception exception)
             {
-                Harmony_Patch.Instance.Logger.LogError(exception);
+                Harmony_Patch.Instance.Logger.WriteException(exception);
 
                 throw;
             }

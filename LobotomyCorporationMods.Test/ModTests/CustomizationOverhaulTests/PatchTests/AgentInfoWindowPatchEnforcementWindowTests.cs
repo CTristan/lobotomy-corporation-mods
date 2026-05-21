@@ -3,8 +3,7 @@
 #region
 
 using Customizing;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
-using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.CustomizationOverhaul.Patches;
 using Moq;
 using Xunit;
@@ -25,17 +24,27 @@ namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests.Patch
             // Arrange
             InitializeCustomizingWindow();
 
-            var mockAgentInfoWindowUiComponents = new Mock<IAgentInfoWindowUiComponentsTestAdapter>();
-            var mockCustomizingWindow = new Mock<ICustomizingWindowTestAdapter>();
-            var mockGameObject = new Mock<IGameObjectTestAdapter>();
+            var mockAgentInfoWindowUiComponents = new Mock<IAgentInfoWindowUiComponentsInternals>();
+            var mockCustomizingWindow = new Mock<ICustomizingWindowInternals>();
+            var mockCustomizingBlock = new Mock<IGameObjectInternals>();
+            var mockAppearanceControl = new Mock<IGameObjectInternals>();
 
             // Act
-            _sut.Object.PatchAfterEnforcementWindow(mockAgentInfoWindowUiComponents.Object, mockCustomizingWindow.Object, mockGameObject.Object);
+            _sut.Object.PatchAfterEnforcementWindow(
+                mockAgentInfoWindowUiComponents.Object,
+                mockCustomizingWindow.Object,
+                mockCustomizingBlock.Object,
+                mockAppearanceControl.Object
+            );
 
             // Assert
-            mockAgentInfoWindowUiComponents.Verify(adapter => adapter.SetData(It.IsAny<AgentData>()), Times.Once);
+            mockAgentInfoWindowUiComponents.Verify(
+                adapter => adapter.SetData(It.IsAny<AgentData>()),
+                Times.Once
+            );
             mockCustomizingWindow.Verify(adapter => adapter.OpenAppearanceWindow(), Times.Once);
-            mockGameObject.Verify(adapter => adapter.SetActive(true), Times.Exactly(2));
+            mockCustomizingBlock.Verify(adapter => adapter.SetActive(true), Times.Once);
+            mockAppearanceControl.Verify(adapter => adapter.SetActive(true), Times.Once);
         }
     }
 }

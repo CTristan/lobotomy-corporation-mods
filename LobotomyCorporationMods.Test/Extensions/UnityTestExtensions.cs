@@ -176,6 +176,14 @@ namespace LobotomyCorporationMods.Test.Extensions
             return appearanceUi;
         }
 
+        internal static AppearanceUI CreateAppearanceUi(InputField nameInput)
+        {
+            var appearanceUi = CreateAppearanceUi();
+            appearanceUi.NameInput = nameInput;
+
+            return appearanceUi;
+        }
+
         [NotNull]
         internal static CommandWindow.CommandWindow CreateCommandWindow(
             UnitModel currentTarget = null,
@@ -447,6 +455,36 @@ namespace LobotomyCorporationMods.Test.Extensions
             newValues.Add("_currentGameManager", gameManager);
 
             return GetPopulatedUninitializedObject(gameManager, fields, newValues);
+        }
+
+        [NotNull]
+        internal static GlobalGameManager CreateGlobalGameManager(string language = "en")
+        {
+            CreateUninitializedObject<GlobalGameManager>(out var globalGameManager);
+
+            var fields = GetUninitializedFieldsIncludingBaseType(globalGameManager.GetType());
+            // GetCurrentLanguage() reads the `language` string field directly, not the `_language` enum
+            // set via the Language property, so tests must seed it explicitly.
+            var newValues = new Dictionary<string, object> { { "language", language } };
+            globalGameManager = GetPopulatedUninitializedObject(
+                globalGameManager,
+                fields,
+                newValues
+            );
+            newValues.Add("_instance", globalGameManager);
+
+            return GetPopulatedUninitializedObject(globalGameManager, fields, newValues);
+        }
+
+        [NotNull]
+        internal static InputField CreateInputField(string text = "")
+        {
+            CreateUninitializedObject<InputField>(out var inputField);
+
+            var fields = GetUninitializedFieldsIncludingBaseType(inputField.GetType());
+            var newValues = new Dictionary<string, object> { { "m_Text", text ?? string.Empty } };
+
+            return GetPopulatedUninitializedObject(inputField, fields, newValues);
         }
 
         private static GameObject CreateGameObject()

@@ -1,7 +1,7 @@
 ﻿// SPDX-License-Identifier: MIT
 
 using Customizing;
-using LobotomyCorporationMods.Common.UiComponents;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.CustomizationOverhaul.UiComponents;
 
 namespace LobotomyCorporationMods.CustomizationOverhaul.Interfaces
@@ -17,7 +17,6 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Interfaces
         void DisplaySavePresetButton();
         void DisableAllCustomUiComponents();
 
-        void UpdateSavePresetButtonText(string agentName,
-            Appearance appearance);
+        void UpdateSavePresetButtonText(string agentName, Appearance appearance);
     }
 }

@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 #region
-
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
-using LobotomyCorporationMods.Common.Interfaces.Adapters.BaseClasses;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.CustomizationOverhaul.Patches;
 using Moq;
 using Xunit;
@@ -21,13 +19,23 @@ namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests.Patch
         {
             InitializeCustomizingWindow();
 
-            var mockAgentInfoWindowUiComponentsTestAdapter = new Mock<IAgentInfoWindowUiComponentsTestAdapter>();
-            var mockCustomizingWindowTestAdapter = new Mock<ICustomizingWindowTestAdapter>();
-            var mockGameObjectTestAdapter = new Mock<IGameObjectTestAdapter>();
+            var mockAgentInfoWindowUiComponentsInternals =
+                new Mock<IAgentInfoWindowUiComponentsInternals>();
+            var mockCustomizingWindowInternals = new Mock<ICustomizingWindowInternals>();
+            var mockCustomizingBlockInternals = new Mock<IGameObjectInternals>();
+            var mockAppearanceControlInternals = new Mock<IGameObjectInternals>();
 
-            _sut.Object.PatchAfterGenerateWindow(mockAgentInfoWindowUiComponentsTestAdapter.Object, mockCustomizingWindowTestAdapter.Object, mockGameObjectTestAdapter.Object);
+            _sut.Object.PatchAfterGenerateWindow(
+                mockAgentInfoWindowUiComponentsInternals.Object,
+                mockCustomizingWindowInternals.Object,
+                mockCustomizingBlockInternals.Object,
+                mockAppearanceControlInternals.Object
+            );
 
-            mockCustomizingWindowTestAdapter.Verify(adapter => adapter.OpenAppearanceWindow(), Times.Once);
+            mockCustomizingWindowInternals.Verify(
+                adapter => adapter.OpenAppearanceWindow(),
+                Times.Once
+            );
         }
     }
 }

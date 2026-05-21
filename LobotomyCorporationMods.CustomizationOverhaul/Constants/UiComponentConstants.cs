@@ -1,9 +1,12 @@
 ﻿// SPDX-License-Identifier: MIT
 
+using System.Diagnostics.CodeAnalysis;
+using LobotomyCorporation.Mods.Common;
 using UnityEngine;
 
 namespace LobotomyCorporationMods.CustomizationOverhaul.Constants
 {
+    [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
     internal static class UiComponentConstants
     {
         internal const string AcceptDeletePresetIconPath = "Assets/preset-delete-confirm-icon.png";
@@ -45,6 +48,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Constants
         private const float PresetTextColorR = 1f;
         private const float PresetTextColorG = 0.580f;
         private const float PresetTextColorB = 0.254f;
-        internal static Color PresetTextColor => new Color(PresetTextColorR, PresetTextColorG, PresetTextColorB);
+        internal static Color PresetTextColor =>
+            new Color(PresetTextColorR, PresetTextColorG, PresetTextColorB);
     }
 }

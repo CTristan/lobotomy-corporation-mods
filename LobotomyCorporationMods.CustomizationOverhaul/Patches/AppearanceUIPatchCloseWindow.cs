@@ -7,11 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
-
+using LobotomyCorporation.Mods.Common;
 #endregion
 
 namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
@@ -21,7 +17,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
     {
         public static bool PatchBeforeCloseWindow([NotNull] this AppearanceUI instance)
         {
-            Guard.Against.Null(instance, nameof(instance));
+            ThrowHelper.ThrowIfNull(instance, nameof(instance));
 
             return instance.closeAction != null;
         }
@@ -43,7 +39,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.LogError(ex);
+                Harmony_Patch.Instance.Logger.WriteException(ex);
 
                 throw;
             }

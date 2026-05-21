@@ -16,7 +16,6 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Interfaces
         PresetList LoadPresetsFromCustomFile(string fileName = null);
         void ReloadPresetsFromFiles();
 
-        bool IsExactPreset(string agentName,
-            Appearance appearance);
+        bool IsExactPreset(string agentName, Appearance appearance);
     }
 }

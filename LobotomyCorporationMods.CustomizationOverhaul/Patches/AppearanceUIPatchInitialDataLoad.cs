@@ -1,12 +1,14 @@
+// SPDX-License-Identifier: MIT
+
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
+using LobotomyCorporation.Mods.Common;
+using UnityEngine;
+using WorkerSprite;
 
 namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
 {
@@ -15,9 +17,18 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
     {
         public static void PatchAfterInitialDataLoad([NotNull] this AppearanceUI instance)
         {
-            Guard.Against.Null(instance, nameof(instance));
+            ThrowHelper.ThrowIfNull(instance, nameof(instance));
 
-            instance.LoadPanicMouthSpritesIntoBattleMouths();
+            var mouthBattleSprites = new List<Sprite>();
+            mouthBattleSprites.AddRange(instance.mouth_Battle.SpriteList);
+
+            var basicData = WorkerSpriteManager.instance.basicData;
+            if (basicData.GetData(BasicSpriteRegion.MOUTH_PANIC, out var mouthPanicSprites))
+            {
+                mouthBattleSprites.AddRange(mouthPanicSprites.GetAllSprites());
+            }
+
+            instance.mouth_Battle.Init(mouthBattleSprites);
         }
 
         [EntryPoint]
@@ -27,12 +38,12 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
         {
             try
             {
-                Guard.Against.Null(__instance, nameof(__instance));
+                ThrowHelper.ThrowIfNull(__instance, nameof(__instance));
                 __instance.PatchAfterInitialDataLoad();
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.LogError(ex);
+                Harmony_Patch.Instance.Logger.WriteException(ex);
 
                 throw;
             }

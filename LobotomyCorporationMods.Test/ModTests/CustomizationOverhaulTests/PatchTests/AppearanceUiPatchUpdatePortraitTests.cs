@@ -37,7 +37,10 @@ namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests.Patch
             _sut.PatchAfterUpdatePortrait(_uiControllerMock.Object);
 
             _uiControllerMock.Verify(ui => ui.DisplaySavePresetButton(), Times.Once);
-            _uiControllerMock.Verify(ui => ui.UpdateSavePresetButtonText(agentName, It.IsAny<Appearance>()), Times.Once);
+            _uiControllerMock.Verify(
+                ui => ui.UpdateSavePresetButtonText(agentName, It.IsAny<Appearance>()),
+                Times.Once
+            );
         }
 
         [Theory]
@@ -55,21 +58,23 @@ namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests.Patch
             var agentNameTypeInfo = new AgentNameTypeInfo();
             agentNameTypeInfo.nameDic.Add("en", agentName);
             _sut = UnityTestExtensions.CreateAppearanceUi(nameInput);
-            _sut.copied = new AgentData
-            {
-                agentName = new AgentName(agentNameTypeInfo, 0),
-            };
+            _sut.copied = new AgentData { agentName = new AgentName(agentNameTypeInfo, 0) };
 
             _sut.PatchAfterUpdatePortrait(_uiControllerMock.Object);
 
             _uiControllerMock.Verify(ui => ui.DisplaySavePresetButton(), Times.Once);
-            _uiControllerMock.Verify(ui => ui.UpdateSavePresetButtonText(agentName, It.IsAny<Appearance>()), Times.Once);
+            _uiControllerMock.Verify(
+                ui => ui.UpdateSavePresetButtonText(agentName, It.IsAny<Appearance>()),
+                Times.Once
+            );
         }
 
         [Theory]
         [InlineData("AgentName")]
         [InlineData("a")]
-        public void Does_not_display_UI_components_if_AgentInfoWindow_is_not_instantiated(string agentName)
+        public void Does_not_display_UI_components_if_AgentInfoWindow_is_not_instantiated(
+            string agentName
+        )
         {
             AgentInfoWindow.currentWindow = null;
             var globalGameManager = UnityTestExtensions.CreateGlobalGameManager();
@@ -81,7 +86,10 @@ namespace LobotomyCorporationMods.Test.ModTests.CustomizationOverhaulTests.Patch
             _sut.PatchAfterUpdatePortrait(_uiControllerMock.Object);
 
             _uiControllerMock.Verify(ui => ui.DisplaySavePresetButton(), Times.Never);
-            _uiControllerMock.Verify(ui => ui.UpdateSavePresetButtonText(agentName, It.IsAny<Appearance>()), Times.Never);
+            _uiControllerMock.Verify(
+                ui => ui.UpdateSavePresetButtonText(agentName, It.IsAny<Appearance>()),
+                Times.Never
+            );
         }
     }
 }

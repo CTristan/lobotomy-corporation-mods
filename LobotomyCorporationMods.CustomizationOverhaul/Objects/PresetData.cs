@@ -4,9 +4,8 @@ using System;
 using System.Text;
 using Customizing;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Implementations.Facades;
+using LobotomyCorporation.Mods.Common;
+using UnityEngine;
 
 namespace LobotomyCorporationMods.CustomizationOverhaul.Objects
 {
@@ -29,26 +28,26 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Objects
         public string EyeColor { get; set; }
 
         [NotNull]
-        internal static PresetData FromAppearanceData([NotNull] Appearance appearance)
+        public static PresetData FromAppearanceData([NotNull] Appearance appearance)
         {
-            Guard.Against.Null(appearance, nameof(appearance));
+            ThrowHelper.ThrowIfNull(appearance, nameof(appearance));
 
             return new PresetData
             {
-                EyeBattle = appearance.Eye_Battle.GetSpriteName(),
-                EyeDead = appearance.Eye_Dead.GetSpriteName(),
-                EyeDef = appearance.Eye_Def.GetSpriteName(),
-                EyePanic = appearance.Eye_Panic.GetSpriteName(),
-                EyebrowBattle = appearance.Eyebrow_Battle.GetSpriteName(),
-                EyebrowDef = appearance.Eyebrow_Def.GetSpriteName(),
-                EyebrowPanic = appearance.Eyebrow_Panic.GetSpriteName(),
-                FrontHair = appearance.FrontHair.GetSpriteName(),
-                MouthBattle = appearance.Mouth_Battle.GetSpriteName(),
-                MouthDef = appearance.Mouth_Def.GetSpriteName(),
-                MouthPanic = appearance.Mouth_Panic.GetSpriteName(),
-                RearHair = appearance.RearHair.GetSpriteName(),
-                HairColor = appearance.HairColor.ToHtmlStringRgb(),
-                EyeColor = appearance.EyeColor.ToHtmlStringRgb(),
+                EyeBattle = appearance.Eye_Battle?.name,
+                EyeDead = appearance.Eye_Dead?.name,
+                EyeDef = appearance.Eye_Def?.name,
+                EyePanic = appearance.Eye_Panic?.name,
+                EyebrowBattle = appearance.Eyebrow_Battle?.name,
+                EyebrowDef = appearance.Eyebrow_Def?.name,
+                EyebrowPanic = appearance.Eyebrow_Panic?.name,
+                FrontHair = appearance.FrontHair?.name,
+                MouthBattle = appearance.Mouth_Battle?.name,
+                MouthDef = appearance.Mouth_Def?.name,
+                MouthPanic = appearance.Mouth_Panic?.name,
+                RearHair = appearance.RearHair?.name,
+                HairColor = ColorUtility.ToHtmlStringRGB(appearance.HairColor),
+                EyeColor = ColorUtility.ToHtmlStringRGB(appearance.EyeColor),
             };
         }
 
@@ -66,7 +65,9 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Objects
             jsonBuilder.AppendLine($"{nextIndent}\"{nameof(EyeDead)}\": \"{EyeDead}\",");
             jsonBuilder.AppendLine($"{nextIndent}\"{nameof(EyeDef)}\": \"{EyeDef}\",");
             jsonBuilder.AppendLine($"{nextIndent}\"{nameof(EyePanic)}\": \"{EyePanic}\",");
-            jsonBuilder.AppendLine($"{nextIndent}\"{nameof(EyebrowBattle)}\": \"{EyebrowBattle}\",");
+            jsonBuilder.AppendLine(
+                $"{nextIndent}\"{nameof(EyebrowBattle)}\": \"{EyebrowBattle}\","
+            );
             jsonBuilder.AppendLine($"{nextIndent}\"{nameof(EyebrowDef)}\": \"{EyebrowDef}\",");
             jsonBuilder.AppendLine($"{nextIndent}\"{nameof(EyebrowPanic)}\": \"{EyebrowPanic}\",");
             jsonBuilder.AppendLine($"{nextIndent}\"{nameof(FrontHair)}\": \"{FrontHair}\",");

@@ -6,17 +6,14 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.CustomizationOverhaul.Interfaces;
 
 #endregion
 
 namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
 {
-    [HarmonyPatch(typeof(AgentInfoWindow), PrivateMethods.AgentInfoWindow.Awake)]
+    [HarmonyPatch(typeof(AgentInfoWindow), "Awake")]
     public static class AgentInfoWindowPatchAwake
     {
         /// <summary>
@@ -25,11 +22,13 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
         /// </summary>
         /// <param name="instance">An instance of AgentInfoWindow</param>
         /// <param name="uiController">An instance of IUiController</param>
-        public static void PatchAfterAwake([NotNull] this AgentInfoWindow instance,
-            [NotNull] IUiController uiController)
+        public static void PatchAfterAwake(
+            [NotNull] this AgentInfoWindow instance,
+            [NotNull] IUiController uiController
+        )
         {
-            Guard.Against.Null(instance, nameof(instance));
-            Guard.Against.Null(uiController, nameof(uiController));
+            ThrowHelper.ThrowIfNull(instance, nameof(instance));
+            ThrowHelper.ThrowIfNull(uiController, nameof(uiController));
 
             if (GameManager.currentGameManager.state != GameState.STOP)
             {
@@ -50,7 +49,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.LogError(ex);
+                Harmony_Patch.Instance.Logger.WriteException(ex);
 
                 throw;
             }

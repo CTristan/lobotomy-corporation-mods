@@ -7,12 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using Customizing;
 using Harmony;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Attributes;
-using LobotomyCorporationMods.Common.Constants;
-using LobotomyCorporationMods.Common.Extensions;
-using LobotomyCorporationMods.Common.Implementations;
-using LobotomyCorporationMods.Common.Implementations.Facades;
-using LobotomyCorporationMods.Common.Interfaces.Adapters;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.CustomizationOverhaul.Interfaces;
 
 #endregion
@@ -22,15 +17,17 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
     [HarmonyPatch(typeof(CustomizingWindow), nameof(CustomizingWindow.Confirm))]
     public static class CustomizingWindowPatchConfirm
     {
-        public static void PatchBeforeConfirm([NotNull] this CustomizingWindow instance,
+        public static void PatchBeforeConfirm(
+            [NotNull] this CustomizingWindow instance,
             [NotNull] IUiController uiController,
-            [CanBeNull] IAgentLayerTestAdapter agentLayerTestAdapter = null,
-            [CanBeNull] IWorkerSpriteManagerTestAdapter workerSpriteManagerTestAdapter = null)
+            [CanBeNull] IAgentLayerInternals agentLayerInternals = null,
+            [CanBeNull] IWorkerSpriteManagerInternals workerSpriteManagerInternals = null
+        )
         {
-            Guard.Against.Null(instance, nameof(instance));
-            Guard.Against.Null(uiController, nameof(uiController));
+            ThrowHelper.ThrowIfNull(instance, nameof(instance));
+            ThrowHelper.ThrowIfNull(uiController, nameof(uiController));
 
-            instance.SaveAppearanceData(agentLayerTestAdapter, workerSpriteManagerTestAdapter);
+            instance.SaveAppearanceData(agentLayerInternals, workerSpriteManagerInternals);
             uiController.DisableAllCustomUiComponents();
         }
 
@@ -50,7 +47,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.Patches
             }
             catch (Exception ex)
             {
-                Harmony_Patch.Instance.Logger.LogError(ex);
+                Harmony_Patch.Instance.Logger.WriteException(ex);
 
                 throw;
             }

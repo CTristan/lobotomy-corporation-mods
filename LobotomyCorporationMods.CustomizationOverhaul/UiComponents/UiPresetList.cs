@@ -6,15 +6,13 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using JetBrains.Annotations;
-using LobotomyCorporationMods.Common.Attributes.ValidCodeCoverageExceptionAttributes;
-using LobotomyCorporationMods.Common.Constants;
+using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.CustomizationOverhaul.Objects;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
 {
-    [UiComponent]
     [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
     public sealed class UiPresetList : MonoBehaviour
     {
@@ -38,7 +36,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
             }
             catch (Exception exception)
             {
-                Harmony_Patch.Instance.Logger.LogError(exception);
+                Harmony_Patch.Instance.Logger.WriteException(exception);
 
                 throw;
             }
@@ -46,7 +44,9 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
 
         private void ReloadPresets()
         {
-            _presets = new List<KeyValuePair<string, PresetData>>(Harmony_Patch.Instance.PresetLoader.Presets.OrderBy(x => x.Key));
+            _presets = new List<KeyValuePair<string, PresetData>>(
+                Harmony_Patch.Instance.PresetLoader.Presets.OrderBy(x => x.Key)
+            );
         }
 
         private void InitializeArrows()
@@ -92,7 +92,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
             }
             catch (Exception exception)
             {
-                Harmony_Patch.Instance.Logger.LogError(exception);
+                Harmony_Patch.Instance.Logger.WriteException(exception);
 
                 throw;
             }
@@ -102,7 +102,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
         {
             for (var i = 0; i < NumberOfPresetsPerPage; i++)
             {
-                _panelButtonList[i].onClick.RemoveAllListeners();
+                _panelButtonList[i].Handle.Button.GameObject.onClick.RemoveAllListeners();
 
                 var presetIndex = pageStartIndex + i;
                 if (presetIndex < _presets.Count)
@@ -130,7 +130,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
             }
             catch (Exception exception)
             {
-                Harmony_Patch.Instance.Logger.LogError(exception);
+                Harmony_Patch.Instance.Logger.WriteException(exception);
 
                 throw;
             }
@@ -145,7 +145,11 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
             downButtonGameObject.transform.SetParent(gameObject.transform);
             var texture2D = new Texture2D(2, 2);
             texture2D.LoadImage(File.ReadAllBytes(_arrowIconPath));
-            var sprite = Sprite.Create(texture2D, new Rect(0f, 0f, texture2D.width, texture2D.height), new Vector2(0f, 0f));
+            var sprite = Sprite.Create(
+                texture2D,
+                new Rect(0f, 0f, texture2D.width, texture2D.height),
+                new Vector2(0f, 0f)
+            );
             image.sprite = sprite;
             image.rectTransform.sizeDelta = new Vector2(texture2D.width, texture2D.height);
             downButtonGameObject.transform.localScale = new Vector3(1f, 1f);
@@ -171,7 +175,7 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
             }
             catch (Exception exception)
             {
-                Harmony_Patch.Instance.Logger.LogError(exception);
+                Harmony_Patch.Instance.Logger.WriteException(exception);
 
                 throw;
             }
@@ -185,7 +189,11 @@ namespace LobotomyCorporationMods.CustomizationOverhaul.UiComponents
             upButtonGameObject.transform.SetParent(gameObject.transform);
             var texture2D = new Texture2D(2, 2);
             texture2D.LoadImage(File.ReadAllBytes(_arrowIconPath));
-            var sprite = Sprite.Create(texture2D, new Rect(0f, 0f, texture2D.width, texture2D.height), new Vector2(0f, 0f));
+            var sprite = Sprite.Create(
+                texture2D,
+                new Rect(0f, 0f, texture2D.width, texture2D.height),
+                new Vector2(0f, 0f)
+            );
             image.sprite = sprite;
             image.rectTransform.sizeDelta = new Vector2(texture2D.width, texture2D.height);
             upButtonGameObject.transform.localScale = new Vector3(1f, -1f);
