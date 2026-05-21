@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<info>
+  <name>Don't Chat Me v1.0.0</name>
+  <descs>
+    <desc>Lets viewers from a Twitch stream redeem effects that play out</desc>
+    <desc>in your facility while you manage it.</desc>
+    <desc />
+    <desc>This mod is the in-game receiver. It connects to a separate</desc>
+    <desc>chat-side service (such as HemoGrace) that decides which</desc>
+    <desc>effects to send. Without that service connected, this mod does</desc>
+    <desc>nothing.</desc>
+    <desc />
+    <desc>See the mod README for setup steps.</desc>
+  </descs>
+</info>

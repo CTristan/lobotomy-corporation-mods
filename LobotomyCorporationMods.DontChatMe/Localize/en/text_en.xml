@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<localize>
+  <text id="DontChatMe_SectionConnection">Connection</text>
+  <text id="DontChatMe_SectionEffects">Effects</text>
+  <text id="DontChatMe_SectionLimits">Limits</text>
+
+  <text id="DontChatMe_DisplayServerUrl">Server URL</text>
+  <text id="DontChatMe_DisplayAuthToken">Auth Token</text>
+  <text id="DontChatMe_DisplayEnabled">Enabled</text>
+  <text id="DontChatMe_DisplayDangerEffectsEnabled">Allow Danger Effects</text>
+  <text id="DontChatMe_DisplayMaxInFlight">Max In-Flight Redemptions</text>
+  <text id="DontChatMe_DisplayGlobalCooldownSeconds">Global Cooldown (seconds)</text>
+  <text id="DontChatMe_DisplayEnergyAmount">Energy Amount</text>
+  <text id="DontChatMe_DisplayMoneyAmount">Money Amount</text>
+
+  <text id="DontChatMe_DescServerUrl">Address of the chat-side server's WebSocket endpoint. Example: wss://example.com/mod/socket</text>
+  <text id="DontChatMe_DescAuthToken">Authentication token sent during connection. Treat this as a secret.</text>
+  <text id="DontChatMe_DescEnabled">When off, the mod stays disconnected and effects do not run.</text>
+  <text id="DontChatMe_DescDangerEffectsEnabled">When on, effects that can swing a run (such as releasing a creature) are allowed. When off, those effects are rejected.</text>
+  <text id="DontChatMe_DescMaxInFlight">Maximum number of effects waiting to run at once. Extra redemptions arriving past this limit are rejected immediately.</text>
+  <text id="DontChatMe_DescGlobalCooldownSeconds">Minimum seconds between any two effects. Set to 0 to disable global throttling.</text>
+  <text id="DontChatMe_DescEnergyAmount">Amount of energy added or removed when those effects fire.</text>
+  <text id="DontChatMe_DescMoneyAmount">Amount of LOB Points granted by the add money effect.</text>
+</localize>
