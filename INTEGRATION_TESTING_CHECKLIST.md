@@ -43,6 +43,42 @@ Note: this will contain spoilers.
 - [ ] Remove ConfigurationManager and verify the mod still loads and works with
   default settings.
 
+## Don't Chat Me
+
+These steps require a running chat-side service that speaks the documented
+plain-WS contract. With no service reachable, the mod stays idle and only the
+"no connection" checks below are testable.
+
+### Configuration
+
+- [ ] Set Server URL and Auth Token in ConfigurationManager. The mod connects
+  on the next game tick.
+- [ ] Leave Server URL empty. The mod logs "ServerUrl is unset" and does not
+  connect.
+- [ ] Set Enabled to false. The mod stays disconnected even with valid config.
+
+### Effects (one per slug, once the service is wired up)
+
+- [ ] `random_meltdown` — a random abnormality goes into meltdown.
+- [ ] `kill_random_agent` — a random living agent dies; equipment stays.
+- [ ] `random_agent_panic` — a random controllable agent panics, SP at zero.
+- [ ] `add_energy` — facility energy goes up by the configured amount.
+- [ ] `remove_energy` — facility energy goes down by the configured amount.
+- [ ] `add_money` — LOB points go up by the configured amount.
+- [ ] `show_system_message` — viewer name appears in the system log.
+- [ ] `set_game_speed` — game speed jumps to 2x.
+- [ ] `escape_random_creature` — only fires when Danger Effects is enabled,
+  rejected with `danger_effects_disabled` otherwise.
+
+### Reliability
+
+- [ ] Kill the chat-side service mid-session and confirm the mod reconnects
+  on its own within a minute of the service coming back up.
+- [ ] Spam-redeem an effect on cooldown; the mod replies `cooldown` instead of
+  re-running the effect.
+- [ ] Resend the same `redemption_id` twice; the mod replies
+  `duplicate_redemption` for the second arrival and does not re-run the effect.
+
 ## Unofficial Bugfixes
 
 - [ ] Wasted Stat Upgrades

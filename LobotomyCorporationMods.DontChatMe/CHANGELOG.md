@@ -4,4 +4,12 @@ All notable changes to this mod will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this mod adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.0.0] - Unreleased
+
+### Added
+
+- Initial release. Connects to a chat-side service over WebSocket and runs in-game effects redeemed by chat viewers.
+- Nine starter effects: Random Meltdown, Kill Random Agent, Random Agent Panic, Add Energy, Remove Energy, Add Money, Show System Message, Set Game Speed, and Escape Random Creature.
+- Configurable server URL, auth token, energy and money amounts, queue capacity, and global cooldown via ConfigurationManager.
+- "Allow Danger Effects" opt-in so creature-escape requests can be rejected by default.
+- Per-effect cooldowns to keep chat spam from overwhelming the game.

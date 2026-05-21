@@ -15,6 +15,8 @@ LMM).
 
 - [Bad Luck Protection for Gifts](https://www.nexusmods.com/lobotomycorporation/mods/476)
   - ([Readme](LobotomyCorporationMods.BadLuckProtectionForGifts/README.md))
+- Don't Chat Me (not yet on Nexus)
+  - ([Readme](LobotomyCorporationMods.DontChatMe/README.md))
 - [Free Customization](https://www.nexusmods.com/lobotomycorporation/mods/477)
   - ([Readme](LobotomyCorporationMods.FreeCustomization/README.md))
 - [Gift Alert Icon](https://www.nexusmods.com/lobotomycorporation/mods/494)
@@ -55,6 +57,20 @@ ConfigurationManager (optional).
 
 [Mod Readme](LobotomyCorporationMods.BadLuckProtectionForGifts/README.md) for
 full details.
+
+---
+
+### Don't Chat Me
+
+Lets viewers from a Twitch stream redeem effects that play out in your facility
+while you manage it. Each redemption triggers an in-game event such as a
+random meltdown, a forced agent panic, or a small energy bonus.
+
+This mod is the in-game receiver only. It connects to a separate chat-side
+service (such as HemoGrace) that decides which effects to send. Without that
+service running and reachable, this mod does nothing.
+
+[Mod Readme](LobotomyCorporationMods.DontChatMe/README.md) for full details.
 
 ---
 
