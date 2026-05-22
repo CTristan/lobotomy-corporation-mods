@@ -142,6 +142,13 @@ namespace LobotomyCorporationMods.DontChatMe.Transport
             SendRaw(state.ToJson());
         }
 
+        /// <summary>Sends an <c>effect_retry</c> frame. Best effort: drops on the floor if the socket is closed.</summary>
+        public void SendRetry(EffectRetryReply retry)
+        {
+            ThrowHelper.ThrowIfNull(retry, nameof(retry));
+            SendRaw(retry.ToJson());
+        }
+
         public void Dispose() => Stop();
 
         [SuppressMessage(

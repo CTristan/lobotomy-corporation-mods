@@ -57,6 +57,7 @@ namespace LobotomyCorporationMods.DontChatMe
                 cooldownGate: CooldownGate,
                 idempotencyCache: IdempotencyCache,
                 sendReply: Transport.SendReply,
+                sendRetry: Transport.SendRetry,
                 logger: new DeferredLogger(() => Logger),
                 onExecuted: HudState.RecordEffect
             );
@@ -136,8 +137,22 @@ namespace LobotomyCorporationMods.DontChatMe
                 return;
             }
 
-            Transport.SendReply(EffectReply.Failed(dispatch.RedemptionId, ErrorTags.Overloaded));
+            // Queue is full. Ask the chat-side to resubmit with the same redemption_id after a
+            // short delay rather than immediately refunding. The pump drains 4 items per game
+            // frame, so 1 second is enough time for the queue to clear under normal load. There
+            // is no DCM-side retry cap on overloaded: the queue is bounded and the chat-side
+            // controls retry cadence — if the queue stays full long enough that this loops, the
+            // problem is upstream of DCM.
+            Transport.SendRetry(
+                new EffectRetryReply(
+                    dispatch.RedemptionId,
+                    delayMs: OverloadedRetryDelayMs,
+                    error: ErrorTags.Overloaded
+                )
+            );
         }
+
+        private const int OverloadedRetryDelayMs = 1000;
 
         private void OnTransportStateChanged(ConnectionState state)
         {

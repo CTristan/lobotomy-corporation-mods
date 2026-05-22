@@ -22,5 +22,6 @@ namespace LobotomyCorporationMods.DontChatMe.Constants
         public const string Slug = "slug";
         public const string Selectable = "selectable";
         public const string Reason = "reason";
+        public const string DelayMs = "delay_ms";
     }
 }

@@ -75,7 +75,8 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.DispatchTests
             FakeConfig config = null,
             CooldownGate gate = null,
             IdempotencyCache cache = null,
-            Action<string> onExecuted = null
+            Action<string> onExecuted = null,
+            List<EffectRetryReply> retrySink = null
         )
         {
             return new EffectDispatcher(
@@ -84,6 +85,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.DispatchTests
                 cooldownGate: gate ?? new CooldownGate(now: () => 0f, globalCooldownSeconds: 0f),
                 idempotencyCache: cache ?? new IdempotencyCache(capacity: 16),
                 sendReply: sink.Add,
+                sendRetry: (retrySink ?? new List<EffectRetryReply>()).Add,
                 logger: new Mock<ILogger>().Object,
                 onExecuted: onExecuted
             );
@@ -119,7 +121,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.DispatchTests
         }
 
         [Fact]
-        public void Dispatch_emits_duplicate_redemption_when_the_id_was_seen_before()
+        public void Dispatch_emits_duplicate_redemption_when_a_terminal_id_is_resubmitted()
         {
             var sink = new List<EffectReply>();
             var executor = new FakeExecutor("add_money");
@@ -275,6 +277,104 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.DispatchTests
             dispatcher.Dispatch(MakeDispatch("kill_random_agent"));
 
             executed.Should().BeEmpty();
+        }
+
+        // ----- retry behavior -----
+
+        [Fact]
+        public void Dispatch_emits_effect_retry_for_game_not_ready_without_failing_the_redemption()
+        {
+            var replySink = new List<EffectReply>();
+            var retrySink = new List<EffectRetryReply>();
+            var executor = new FakeExecutor("add_money") { Behavior = _ => ErrorTags.GameNotReady };
+            var dispatcher = BuildDispatcher(replySink, executor, retrySink: retrySink);
+
+            dispatcher.Dispatch(MakeDispatch("add_money", "r-1"));
+
+            replySink.Should().BeEmpty();
+            retrySink.Should().ContainSingle();
+            retrySink[0].RedemptionId.Should().Be("r-1");
+            retrySink[0].Error.Should().Be(ErrorTags.GameNotReady);
+            retrySink[0].DelayMs.Should().Be(EffectDispatcher.GameNotReadyRetryDelayMs);
+        }
+
+        [Fact]
+        public void Dispatch_allows_the_same_redemption_id_to_be_resubmitted_after_a_retry()
+        {
+            var replySink = new List<EffectReply>();
+            var retrySink = new List<EffectRetryReply>();
+            var notReady = true;
+            var executor = new FakeExecutor("add_money")
+            {
+                Behavior = _ => notReady ? ErrorTags.GameNotReady : null,
+            };
+            var dispatcher = BuildDispatcher(replySink, executor, retrySink: retrySink);
+
+            dispatcher.Dispatch(MakeDispatch("add_money", "r-1"));
+            notReady = false;
+            dispatcher.Dispatch(MakeDispatch("add_money", "r-1"));
+
+            executor.InvocationCount.Should().Be(2);
+            retrySink.Should().ContainSingle();
+            replySink.Should().ContainSingle();
+            replySink[0].Kind.Should().Be(ReplyKind.EffectExecuted);
+        }
+
+        [Fact]
+        public void Dispatch_caps_retries_and_downgrades_to_a_terminal_effect_failed()
+        {
+            var replySink = new List<EffectReply>();
+            var retrySink = new List<EffectRetryReply>();
+            var executor = new FakeExecutor("add_money") { Behavior = _ => ErrorTags.GameNotReady };
+            var dispatcher = BuildDispatcher(replySink, executor, retrySink: retrySink);
+
+            for (var i = 0; i < EffectDispatcher.MaxRetries + 1; i++)
+            {
+                dispatcher.Dispatch(MakeDispatch("add_money", "r-stuck"));
+            }
+
+            retrySink.Should().HaveCount(EffectDispatcher.MaxRetries);
+            replySink.Should().ContainSingle();
+            replySink[0].Kind.Should().Be(ReplyKind.EffectFailed);
+            replySink[0].Error.Should().Be(ErrorTags.GameNotReady);
+        }
+
+        [Fact]
+        public void Dispatch_rejects_a_resubmit_after_the_retry_cap_downgraded_to_terminal()
+        {
+            var replySink = new List<EffectReply>();
+            var retrySink = new List<EffectRetryReply>();
+            var executor = new FakeExecutor("add_money") { Behavior = _ => ErrorTags.GameNotReady };
+            var dispatcher = BuildDispatcher(replySink, executor, retrySink: retrySink);
+
+            for (var i = 0; i < EffectDispatcher.MaxRetries + 1; i++)
+            {
+                dispatcher.Dispatch(MakeDispatch("add_money", "r-stuck"));
+            }
+
+            // After the cap is hit, the cache is terminal — a further resubmit is a duplicate.
+            dispatcher.Dispatch(MakeDispatch("add_money", "r-stuck"));
+
+            replySink.Should().HaveCount(2);
+            replySink[1].Error.Should().Be(ErrorTags.DuplicateRedemption);
+        }
+
+        [Fact]
+        public void Dispatch_does_not_use_retry_for_no_agents_or_other_non_transient_failures()
+        {
+            var replySink = new List<EffectReply>();
+            var retrySink = new List<EffectRetryReply>();
+            var executor = new FakeExecutor("kill_random_agent")
+            {
+                Behavior = _ => ErrorTags.NoAgents,
+            };
+            var dispatcher = BuildDispatcher(replySink, executor, retrySink: retrySink);
+
+            dispatcher.Dispatch(MakeDispatch("kill_random_agent", "r-1"));
+
+            retrySink.Should().BeEmpty();
+            replySink.Should().ContainSingle();
+            replySink[0].Error.Should().Be(ErrorTags.NoAgents);
         }
     }
 }
