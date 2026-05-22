@@ -61,6 +61,10 @@ This mod ships before the chat-side service it depends on. Once that side is up,
 
 Effects are intentionally noisy — this is a chaos mod for streams, not a balance tweak. Don't run it during a serious save.
 
+## End-to-end tests
+
+In-game e2e tests for Don't Chat Me live in the [open-lobotomy-e2e](https://github.com/open-lobotomy/open-lobotomy-e2e) repo. That repo deploys the mod via The Silent Orchestrator, hosts a stub chat-side WebSocket server in-process, and verifies the round-trip end to end.
+
 ## License
 
 MIT.
