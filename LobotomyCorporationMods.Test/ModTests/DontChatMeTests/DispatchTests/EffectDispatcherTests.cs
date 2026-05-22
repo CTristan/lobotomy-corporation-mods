@@ -41,6 +41,8 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.DispatchTests
             public float GlobalCooldownSeconds => 0f;
             public float EnergyAmount => 10f;
             public int MoneyAmount => 100;
+
+            public void Save() { }
         }
 
         private sealed class FakeExecutor : IEffectExecutor

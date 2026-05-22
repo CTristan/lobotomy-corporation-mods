@@ -33,7 +33,7 @@ namespace LobotomyCorporationMods.DontChatMe
         private Harmony_Patch(bool initialize)
             : base(initialize)
         {
-            Config = new DontChatMeConfig();
+            Config = new DontChatMeConfig(TryGetConfigFilePath());
             GameAdapter = new UnityGameAdapter();
             CooldownGate = new CooldownGate(
                 () => UnityEngine.Time.realtimeSinceStartup,
@@ -87,6 +87,11 @@ namespace LobotomyCorporationMods.DontChatMe
             Transport.EffectReceived += OnEffectReceived;
             Transport.StateChanged += HudState.SetConnectionState;
             Transport.StateChanged += OnTransportStateChanged;
+
+            // Start connecting immediately so the transport dials in as soon as the mod loads,
+            // regardless of which scene is active. The GameManager.Update hook also calls this
+            // but only fires once a game day is in progress.
+            EnsureTransportStarted();
         }
 
         public IDontChatMeConfig Config { get; }
@@ -114,7 +119,7 @@ namespace LobotomyCorporationMods.DontChatMe
                 return;
             }
 
-            if (!Config.Enabled)
+            if (!Config.Enabled || Config.ServerUrl == null)
             {
                 return;
             }
@@ -172,6 +177,11 @@ namespace LobotomyCorporationMods.DontChatMe
             {
                 AvailabilityProbe.RequestSnapshot();
                 GamePhaseProbe.RequestSnapshot();
+                // Tick immediately so the snapshot goes out on the socket thread (before the next
+                // GameManager.Update fires). This ensures the initial effect_state reaches the
+                // chat-side server even when the game is on the intro/title screen.
+                AvailabilityProbe.Tick();
+                GamePhaseProbe.Tick();
             }
         }
 
@@ -188,6 +198,33 @@ namespace LobotomyCorporationMods.DontChatMe
 
             StatusOverlay.Attach(HudState, SettingsState, Config);
             SettingsWindow.Attach(SettingsState, SettingsController, Config);
+        }
+
+        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
+        private static string TryGetConfigFilePath()
+        {
+            try
+            {
+                var persistentDataPath = UnityEngine.Application.persistentDataPath;
+                if (string.IsNullOrEmpty(persistentDataPath))
+                {
+                    return null;
+                }
+
+                return System.IO.Path.Combine(
+                    System.IO.Path.Combine(
+                        System.IO.Path.Combine(persistentDataPath, "LobotomyBaseMod"),
+                        "DontChatMe"
+                    ),
+                    "config.cfg"
+                );
+            }
+#pragma warning disable CA1031 // Application.persistentDataPath is unavailable outside a Unity runtime (e.g. in the test runner); treat as no-file-path.
+            catch (Exception)
+#pragma warning restore CA1031
+            {
+                return null;
+            }
         }
 
         private static IEffectExecutor[] BuildExecutors(

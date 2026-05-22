@@ -42,5 +42,12 @@ namespace LobotomyCorporationMods.DontChatMe.Configuration
 
         /// <summary>LOB Points granted by <c>add_money</c>.</summary>
         int MoneyAmount { get; }
+
+        /// <summary>
+        ///     Persists the three Connection-section settings (<c>ServerUrl</c>, <c>AuthToken</c>,
+        ///     <c>Enabled</c>) to disk so they survive game restarts. No-op when no backing file
+        ///     is configured (e.g. in tests).
+        /// </summary>
+        void Save();
     }
 }

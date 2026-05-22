@@ -174,5 +174,31 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.UiComponentTests
 
             restarter.RestartCount.Should().Be(1);
         }
+
+        [Fact]
+        public void Apply_persists_settings_to_config_on_Ok()
+        {
+            var config = new FakeConfig();
+            var restarter = new FakeRestarter();
+            var controller = BuildController(config, restarter);
+            var draft = new SettingsDraft("ws://127.0.0.1:8585/mod/socket/", "tok", true);
+
+            controller.Apply(draft);
+
+            config.SaveCount.Should().Be(1);
+        }
+
+        [Fact]
+        public void Apply_does_not_persist_settings_when_url_is_invalid()
+        {
+            var config = new FakeConfig();
+            var restarter = new FakeRestarter();
+            var controller = BuildController(config, restarter);
+            var draft = new SettingsDraft("not a url", "tok", true);
+
+            controller.Apply(draft);
+
+            config.SaveCount.Should().Be(0);
+        }
     }
 }

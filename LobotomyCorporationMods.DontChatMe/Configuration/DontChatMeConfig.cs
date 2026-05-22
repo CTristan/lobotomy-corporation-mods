@@ -3,6 +3,8 @@
 #region
 
 using System;
+using System.Collections.Generic;
+using System.IO;
 using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.DontChatMe.Constants;
 
@@ -27,8 +29,9 @@ namespace LobotomyCorporationMods.DontChatMe.Configuration
         private readonly IConfigEntry<float> _globalCooldownSeconds;
         private readonly IConfigEntry<float> _energyAmount;
         private readonly IConfigEntry<int> _moneyAmount;
+        private readonly string _configFilePath;
 
-        public DontChatMeConfig()
+        public DontChatMeConfig(string configFilePath = null)
         {
             var version = typeof(DontChatMeConfig).Assembly.GetName().Version.ToString(3);
             var config = new ModConfig(ModId, ModName, version);
@@ -116,6 +119,185 @@ namespace LobotomyCorporationMods.DontChatMe.Configuration
                 useSlider: true,
                 sectionDisplayName: limitsSectionName
             );
+
+            if (configFilePath != null)
+            {
+                _configFilePath = configFilePath;
+                LoadFromFile(configFilePath);
+            }
+        }
+
+        public void Save()
+        {
+            if (_configFilePath == null)
+            {
+                return;
+            }
+
+            try
+            {
+                var dir = Path.GetDirectoryName(_configFilePath);
+                if (dir != null)
+                {
+                    Directory.CreateDirectory(dir);
+                }
+
+                var lines = File.Exists(_configFilePath)
+                    ? new List<string>(File.ReadAllLines(_configFilePath))
+                    : new List<string>();
+
+                SetIniValue(lines, ConnectionSection, "ServerUrl", _serverUrl.Value);
+                SetIniValue(lines, ConnectionSection, "AuthToken", _authToken.Value);
+                SetIniValue(lines, ConnectionSection, "Enabled", _enabled.Value ? "True" : "False");
+
+                File.WriteAllLines(_configFilePath, lines.ToArray());
+            }
+            catch (IOException) { }
+            catch (UnauthorizedAccessException) { }
+        }
+
+        private void LoadFromFile(string filePath)
+        {
+            if (!File.Exists(filePath))
+            {
+                return;
+            }
+
+            try
+            {
+                var section = string.Empty;
+                foreach (var line in File.ReadAllLines(filePath))
+                {
+                    var trimmed = line.Trim();
+                    if (trimmed.Length == 0 || trimmed.StartsWith("#", StringComparison.Ordinal))
+                    {
+                        continue;
+                    }
+
+                    if (
+                        trimmed.StartsWith("[", StringComparison.Ordinal)
+                        && trimmed.EndsWith("]", StringComparison.Ordinal)
+                    )
+                    {
+                        section = trimmed.Substring(1, trimmed.Length - 2).Trim();
+                        continue;
+                    }
+
+                    if (
+                        !string.Equals(
+                            section,
+                            ConnectionSection,
+                            StringComparison.OrdinalIgnoreCase
+                        )
+                    )
+                    {
+                        continue;
+                    }
+
+                    var eq = trimmed.IndexOf('=');
+                    if (eq < 0)
+                    {
+                        continue;
+                    }
+
+                    var key = trimmed.Substring(0, eq).Trim();
+                    var value = trimmed.Substring(eq + 1).Trim();
+
+                    if (string.Equals(key, "ServerUrl", StringComparison.OrdinalIgnoreCase))
+                    {
+                        _serverUrl.Value = value;
+                    }
+                    else if (string.Equals(key, "AuthToken", StringComparison.OrdinalIgnoreCase))
+                    {
+                        _authToken.Value = value;
+                    }
+                    else if (string.Equals(key, "Enabled", StringComparison.OrdinalIgnoreCase))
+                    {
+                        bool b;
+                        if (bool.TryParse(value, out b))
+                        {
+                            _enabled.Value = b;
+                        }
+                    }
+                }
+            }
+            catch (IOException) { }
+            catch (UnauthorizedAccessException) { }
+        }
+
+        private static void SetIniValue(
+            List<string> lines,
+            string section,
+            string key,
+            string value
+        )
+        {
+            var sectionHeader = "[" + section + "]";
+            var inSection = false;
+
+            for (var i = 0; i < lines.Count; i++)
+            {
+                var trimmed = lines[i].Trim();
+
+                if (string.Equals(trimmed, sectionHeader, StringComparison.OrdinalIgnoreCase))
+                {
+                    inSection = true;
+                    continue;
+                }
+
+                if (trimmed.StartsWith("[", StringComparison.Ordinal))
+                {
+                    if (inSection)
+                    {
+                        // Key was absent from our section; insert before the next section header.
+                        lines.Insert(i, key + " = " + value);
+                        return;
+                    }
+
+                    inSection = false;
+                    continue;
+                }
+
+                if (
+                    !inSection
+                    || trimmed.StartsWith("#", StringComparison.Ordinal)
+                    || trimmed.Length == 0
+                )
+                {
+                    continue;
+                }
+
+                var eq = trimmed.IndexOf('=');
+                if (eq < 0)
+                {
+                    continue;
+                }
+
+                if (
+                    string.Equals(
+                        trimmed.Substring(0, eq).Trim(),
+                        key,
+                        StringComparison.OrdinalIgnoreCase
+                    )
+                )
+                {
+                    lines[i] = key + " = " + value;
+                    return;
+                }
+            }
+
+            // Section not found, or key missing from section at end-of-file — append.
+            if (!inSection)
+            {
+                if (lines.Count > 0 && lines[lines.Count - 1].Trim().Length > 0)
+                {
+                    lines.Add(string.Empty);
+                }
+
+                lines.Add(sectionHeader);
+            }
+
+            lines.Add(key + " = " + value);
         }
 
         public Uri ServerUrl

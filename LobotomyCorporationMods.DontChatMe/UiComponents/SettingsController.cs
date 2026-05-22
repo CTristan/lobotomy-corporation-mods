@@ -53,6 +53,7 @@ namespace LobotomyCorporationMods.DontChatMe.UiComponents
             _config.ServerUrl = parsed;
             _config.AuthToken = draft.AuthToken;
             _config.Enabled = draft.Enabled;
+            _config.Save();
             _transport.Restart();
             return SettingsApplyResult.Ok;
         }

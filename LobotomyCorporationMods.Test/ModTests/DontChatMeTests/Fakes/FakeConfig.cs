@@ -19,5 +19,11 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.Fakes
         public float GlobalCooldownSeconds { get; set; }
         public float EnergyAmount { get; set; } = 10f;
         public int MoneyAmount { get; set; } = 100;
+        public int SaveCount { get; private set; }
+
+        public void Save()
+        {
+            SaveCount++;
+        }
     }
 }
