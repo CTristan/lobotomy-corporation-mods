@@ -53,7 +53,7 @@ In ConfigurationManager (press F1 by default):
 
 ## How it talks to the chat side
 
-The wire is a plain WebSocket carrying newline-delimited JSON frames. The mod is the client; the chat-side service is the server. See the project plan for the full contract.
+The wire is a plain WebSocket carrying one JSON object per text frame. The mod is the client; the chat-side service is the server. See the project plan for the full contract.
 
 ## Caveats
 
