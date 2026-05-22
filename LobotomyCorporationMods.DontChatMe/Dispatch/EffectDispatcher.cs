@@ -26,6 +26,7 @@ namespace LobotomyCorporationMods.DontChatMe.Dispatch
         private readonly IdempotencyCache _idempotencyCache;
         private readonly Action<EffectReply> _sendReply;
         private readonly ILogger _logger;
+        private readonly Action<string> _onExecuted;
 
         public EffectDispatcher(
             IDontChatMeConfig config,
@@ -33,7 +34,8 @@ namespace LobotomyCorporationMods.DontChatMe.Dispatch
             CooldownGate cooldownGate,
             IdempotencyCache idempotencyCache,
             Action<EffectReply> sendReply,
-            ILogger logger
+            ILogger logger,
+            Action<string> onExecuted = null
         )
         {
             ThrowHelper.ThrowIfNull(config, nameof(config));
@@ -48,6 +50,7 @@ namespace LobotomyCorporationMods.DontChatMe.Dispatch
             _idempotencyCache = idempotencyCache;
             _sendReply = sendReply;
             _logger = logger;
+            _onExecuted = onExecuted;
             _executors = new Dictionary<string, IEffectExecutor>(StringComparer.Ordinal);
             foreach (var executor in executors)
             {
@@ -111,6 +114,10 @@ namespace LobotomyCorporationMods.DontChatMe.Dispatch
             {
                 _cooldownGate.Mark(executor.Slug);
                 _sendReply(EffectReply.Executed(dispatch.RedemptionId));
+                if (_onExecuted != null)
+                {
+                    _onExecuted(executor.Slug);
+                }
             }
             else
             {

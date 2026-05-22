@@ -68,7 +68,8 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.DispatchTests
             IEffectExecutor executor,
             FakeConfig config = null,
             CooldownGate gate = null,
-            IdempotencyCache cache = null
+            IdempotencyCache cache = null,
+            Action<string> onExecuted = null
         )
         {
             return new EffectDispatcher(
@@ -77,7 +78,8 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.DispatchTests
                 cooldownGate: gate ?? new CooldownGate(now: () => 0f, globalCooldownSeconds: 0f),
                 idempotencyCache: cache ?? new IdempotencyCache(capacity: 16),
                 sendReply: sink.Add,
-                logger: new Mock<ILogger>().Object
+                logger: new Mock<ILogger>().Object,
+                onExecuted: onExecuted
             );
         }
 
@@ -222,6 +224,51 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.DispatchTests
 
             sink[0].Kind.Should().Be(ReplyKind.EffectFailed);
             sink[0].Error.Should().Be(ErrorTags.NoAgents);
+        }
+
+        [Fact]
+        public void Dispatch_invokes_the_onExecuted_callback_with_the_slug_on_success()
+        {
+            var sink = new List<EffectReply>();
+            var executor = new FakeExecutor("add_money");
+            var executed = new List<string>();
+            var dispatcher = BuildDispatcher(sink, executor, onExecuted: executed.Add);
+
+            dispatcher.Dispatch(MakeDispatch("add_money"));
+
+            executed.Should().Equal("add_money");
+        }
+
+        [Fact]
+        public void Dispatch_does_not_invoke_onExecuted_when_the_executor_throws()
+        {
+            var sink = new List<EffectReply>();
+            var executor = new FakeExecutor("add_money")
+            {
+                Behavior = _ => throw new InvalidOperationException("boom"),
+            };
+            var executed = new List<string>();
+            var dispatcher = BuildDispatcher(sink, executor, onExecuted: executed.Add);
+
+            dispatcher.Dispatch(MakeDispatch("add_money"));
+
+            executed.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void Dispatch_does_not_invoke_onExecuted_when_the_executor_returns_an_error_tag()
+        {
+            var sink = new List<EffectReply>();
+            var executor = new FakeExecutor("kill_random_agent")
+            {
+                Behavior = _ => ErrorTags.NoAgents,
+            };
+            var executed = new List<string>();
+            var dispatcher = BuildDispatcher(sink, executor, onExecuted: executed.Add);
+
+            dispatcher.Dispatch(MakeDispatch("kill_random_agent"));
+
+            executed.Should().BeEmpty();
         }
     }
 }

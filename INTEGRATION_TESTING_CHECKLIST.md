@@ -79,6 +79,23 @@ plain-WS contract. With no service reachable, the mod stays idle and only the
 - [ ] Resend the same `redemption_id` twice; the mod replies
   `duplicate_redemption` for the second arrival and does not re-run the effect.
 
+### Status overlay
+
+- [ ] Overlay appears at the top center of the screen on game load and shows
+  "DCM" with a colored dot and a state label.
+- [ ] State label cycles through "connecting…" then "connected" once the
+  chat-side service accepts the hello frame.
+- [ ] When the chat-side service is unreachable, the label reads
+  "disconnected" (red) and the overlay does not crash the game.
+- [ ] When `Enabled` is false in ConfigurationManager, the label reads
+  "disabled" (gray) and no connection is attempted.
+- [ ] Press F8 to hide the overlay. Press F8 again to show it. The mod
+  continues to run effects while the overlay is hidden.
+- [ ] After redeeming an effect, the overlay shows `last: <slug>` for the
+  most recent successful redemption.
+- [ ] Spam many redemptions; the overlay shows `N queued` with a positive
+  number that decreases as effects drain on each frame.
+
 ## Unofficial Bugfixes
 
 - [ ] Wasted Stat Upgrades

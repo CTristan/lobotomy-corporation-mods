@@ -8,6 +8,7 @@ using AwesomeAssertions;
 using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.DontChatMe.Models;
 using LobotomyCorporationMods.DontChatMe.Transport;
+using LobotomyCorporationMods.DontChatMe.UiComponents;
 using LobotomyCorporationMods.Test.ModTests.DontChatMeTests.Fakes;
 using Moq;
 using Xunit;
@@ -26,6 +27,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.TransportTests
             public List<EffectDispatch> Effects { get; } = new List<EffectDispatch>();
             public List<string> ServerErrors { get; } = new List<string>();
             public List<Action> PendingSchedules { get; } = new List<Action>();
+            public List<ConnectionState> StateTransitions { get; } = new List<ConnectionState>();
 
             public Harness()
             {
@@ -49,6 +51,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.TransportTests
                 );
                 Transport.EffectReceived += d => Effects.Add(d);
                 Transport.ServerErrorReceived += code => ServerErrors.Add(code);
+                Transport.StateChanged += s => StateTransitions.Add(s);
             }
         }
 
@@ -256,6 +259,68 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.TransportTests
             h.Socket.SimulateOpen();
 
             h.Transport.ReconnectAttempts.Should().Be(0);
+        }
+
+        [Fact]
+        public void Start_raises_StateChanged_with_Connecting()
+        {
+            var h = new Harness();
+
+            h.Transport.Start();
+
+            h.StateTransitions.Should().Equal(ConnectionState.Connecting);
+        }
+
+        [Fact]
+        public void Start_raises_StateChanged_with_Disconnected_when_config_is_missing()
+        {
+            var h = new Harness();
+            h.Config.ServerUrl = null;
+
+            h.Transport.Start();
+
+            h.StateTransitions.Should().Equal(ConnectionState.Disconnected);
+        }
+
+        [Fact]
+        public void Receiving_a_welcome_frame_raises_StateChanged_with_Connected()
+        {
+            var h = new Harness();
+            h.Transport.Start();
+            h.Socket.SimulateOpen();
+            h.StateTransitions.Clear();
+
+            h.Socket.SimulateMessage("{\"type\":\"welcome\"}");
+
+            h.StateTransitions.Should().Equal(ConnectionState.Connected);
+        }
+
+        [Fact]
+        public void Closing_the_socket_raises_StateChanged_with_Disconnected_then_Connecting()
+        {
+            var h = new Harness();
+            h.Transport.Start();
+            h.Socket.SimulateOpen();
+            h.Socket.SimulateMessage("{\"type\":\"welcome\"}");
+            h.StateTransitions.Clear();
+
+            h.Socket.SimulateClose();
+            h.PendingSchedules[0]();
+
+            h.StateTransitions.Should()
+                .Equal(ConnectionState.Disconnected, ConnectionState.Connecting);
+        }
+
+        [Fact]
+        public void StateChanged_subscriber_exceptions_do_not_break_the_transport()
+        {
+            var h = new Harness();
+            h.Transport.StateChanged += _ => throw new InvalidOperationException("boom");
+
+            // Must not throw out of Start.
+            h.Transport.Start();
+
+            h.Socket.Should().NotBeNull();
         }
     }
 }

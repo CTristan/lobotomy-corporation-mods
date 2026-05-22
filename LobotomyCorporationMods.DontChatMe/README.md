@@ -22,6 +22,16 @@ Nine effects ship in v1:
 
 Each effect has a built-in cooldown so spam in chat does not overwhelm the game.
 
+## On-screen status
+
+A small overlay at the top center of the screen shows the mod's current state:
+
+- A colored dot and label for the connection: gray "disabled", red "disconnected", amber "connecting…", or green "connected"
+- The number of effects waiting in line, when the queue is not empty
+- The slug of the most recent effect that ran
+
+Press **F8** at any time to hide or show the overlay. Hiding it does not disconnect the mod — it only stops drawing the indicator.
+
 ## Install
 
 1. Install [Lobotomy Mod Manager](https://www.nexusmods.com/site/mods/765) or [Basemod](https://www.nexusmods.com/lobotomycorporation/mods/2).

@@ -10,6 +10,7 @@ using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.DontChatMe.Configuration;
 using LobotomyCorporationMods.DontChatMe.Constants;
 using LobotomyCorporationMods.DontChatMe.Models;
+using LobotomyCorporationMods.DontChatMe.UiComponents;
 
 #endregion
 
@@ -85,6 +86,13 @@ namespace LobotomyCorporationMods.DontChatMe.Transport
         /// <summary>Raised on a worker thread when the server returns a non-recoverable error during handshake.</summary>
         public event Action<string> ServerErrorReceived;
 
+        /// <summary>
+        ///     Raised when the connection's lifecycle state changes. Driven by socket-thread events
+        ///     (<c>OnClosed</c>, server welcome) and by the reconnect scheduler. The HUD overlay
+        ///     subscribes to this to show the current state to the streamer.
+        /// </summary>
+        public event Action<ConnectionState> StateChanged;
+
         /// <summary>Opens the socket. Idempotent: a second call while running is a no-op.</summary>
         public void Start()
         {
@@ -144,8 +152,11 @@ namespace LobotomyCorporationMods.DontChatMe.Transport
             if (_config.ServerUrl == null || string.IsNullOrEmpty(_config.AuthToken))
             {
                 _info("DontChatMe transport not starting: ServerUrl or AuthToken is unset.");
+                RaiseStateChanged(ConnectionState.Disconnected);
                 return;
             }
+
+            RaiseStateChanged(ConnectionState.Connecting);
 
             IWebSocket socket;
             try
@@ -226,7 +237,8 @@ namespace LobotomyCorporationMods.DontChatMe.Transport
             switch (frame.Type)
             {
                 case WireTypes.Welcome:
-                    // Welcome means server accepted our hello — nothing more to do.
+                    // Welcome means server accepted our hello.
+                    RaiseStateChanged(ConnectionState.Connected);
                     break;
 
                 case WireTypes.Ping:
@@ -275,7 +287,28 @@ namespace LobotomyCorporationMods.DontChatMe.Transport
         private void OnClosed()
         {
             _info(LogMessages.TransportDisconnected);
+            RaiseStateChanged(ConnectionState.Disconnected);
             ScheduleReconnect();
+        }
+
+        private void RaiseStateChanged(ConnectionState state)
+        {
+            var handler = StateChanged;
+            if (handler == null)
+            {
+                return;
+            }
+
+            try
+            {
+                handler(state);
+            }
+#pragma warning disable CA1031 // A subscriber throwing must not tear down the transport thread.
+            catch (Exception ex)
+#pragma warning restore CA1031
+            {
+                _onError(ex);
+            }
         }
 
         private void OnErrorOccurred(Exception ex)

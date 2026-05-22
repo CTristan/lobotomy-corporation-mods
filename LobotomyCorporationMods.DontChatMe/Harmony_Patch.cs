@@ -14,6 +14,7 @@ using LobotomyCorporationMods.DontChatMe.Implementations.Effects;
 using LobotomyCorporationMods.DontChatMe.Interfaces;
 using LobotomyCorporationMods.DontChatMe.Models;
 using LobotomyCorporationMods.DontChatMe.Transport;
+using LobotomyCorporationMods.DontChatMe.UiComponents;
 
 #endregion
 
@@ -25,6 +26,7 @@ namespace LobotomyCorporationMods.DontChatMe
         public static readonly Harmony_Patch Instance = new Harmony_Patch(true);
 
         private int _transportStarted;
+        private int _overlayAttached;
 
         public Harmony_Patch() { }
 
@@ -38,6 +40,7 @@ namespace LobotomyCorporationMods.DontChatMe
                 Config.GlobalCooldownSeconds
             );
             IdempotencyCache = new IdempotencyCache(capacity: 1024);
+            HudState = new HudState(initiallyEnabled: Config.Enabled);
 
             Transport = new WebSocketTransport(
                 webSocketFactory: uri => new WebSocketSharpAdapter(uri),
@@ -52,7 +55,8 @@ namespace LobotomyCorporationMods.DontChatMe
                 cooldownGate: CooldownGate,
                 idempotencyCache: IdempotencyCache,
                 sendReply: Transport.SendReply,
-                logger: new DeferredLogger(() => Logger)
+                logger: new DeferredLogger(() => Logger),
+                onExecuted: HudState.RecordEffect
             );
 
             Pump = new RequestPump(
@@ -62,12 +66,14 @@ namespace LobotomyCorporationMods.DontChatMe
             );
 
             Transport.EffectReceived += OnEffectReceived;
+            Transport.StateChanged += HudState.SetConnectionState;
         }
 
         public IDontChatMeConfig Config { get; }
         public IGameAdapter GameAdapter { get; }
         public CooldownGate CooldownGate { get; }
         public IdempotencyCache IdempotencyCache { get; }
+        public HudState HudState { get; }
         public WebSocketTransport Transport { get; }
         public EffectDispatcher Dispatcher { get; }
         public RequestPump Pump { get; }
@@ -120,6 +126,20 @@ namespace LobotomyCorporationMods.DontChatMe
             }
 
             Transport.SendReply(EffectReply.Failed(dispatch.RedemptionId, ErrorTags.Overloaded));
+        }
+
+        /// <summary>
+        ///     Lazily attaches the IMGUI overlay GameObject on the first game tick. Idempotent.
+        /// </summary>
+        [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
+        public void EnsureOverlayAttached()
+        {
+            if (Interlocked.Exchange(ref _overlayAttached, 1) == 1)
+            {
+                return;
+            }
+
+            StatusOverlay.Attach(HudState);
         }
 
         private static IEffectExecutor[] BuildExecutors(

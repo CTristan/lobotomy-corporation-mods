@@ -13,3 +13,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Configurable server URL, auth token, energy and money amounts, queue capacity, and global cooldown via ConfigurationManager.
 - "Allow Danger Effects" opt-in so creature-escape requests can be rejected by default.
 - Per-effect cooldowns to keep chat spam from overwhelming the game.
+- On-screen status overlay at the top center of the screen showing the connection state, the number of effects waiting in line, and the most recently run effect. Press F8 to hide or show the overlay during gameplay.

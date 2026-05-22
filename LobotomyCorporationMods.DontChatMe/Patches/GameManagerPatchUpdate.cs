@@ -24,7 +24,9 @@ namespace LobotomyCorporationMods.DontChatMe.Patches
         {
             ThrowHelper.ThrowIfNull(instance, nameof(instance));
             Harmony_Patch.Instance.EnsureTransportStarted();
+            Harmony_Patch.Instance.EnsureOverlayAttached();
             Harmony_Patch.Instance.Pump.Tick();
+            Harmony_Patch.Instance.HudState.SetQueuedCount(Harmony_Patch.Instance.Pump.Count);
         }
 
         [EntryPoint]
