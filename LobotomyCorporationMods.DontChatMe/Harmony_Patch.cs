@@ -41,6 +41,7 @@ namespace LobotomyCorporationMods.DontChatMe
             );
             IdempotencyCache = new IdempotencyCache(capacity: 1024);
             HudState = new HudState(initiallyEnabled: Config.Enabled);
+            SettingsState = new SettingsState();
 
             Transport = new WebSocketTransport(
                 webSocketFactory: uri => new WebSocketSharpAdapter(uri),
@@ -48,6 +49,8 @@ namespace LobotomyCorporationMods.DontChatMe
                 onError: ex => Logger?.WriteException(ex),
                 version: typeof(Harmony_Patch).Assembly.GetName().Version.ToString(3)
             );
+
+            SettingsController = new SettingsController(Config, Transport);
 
             var executors = BuildExecutors(GameAdapter, Config);
 
@@ -91,6 +94,8 @@ namespace LobotomyCorporationMods.DontChatMe
         public CooldownGate CooldownGate { get; }
         public IdempotencyCache IdempotencyCache { get; }
         public HudState HudState { get; }
+        public SettingsState SettingsState { get; }
+        public SettingsController SettingsController { get; }
         public WebSocketTransport Transport { get; }
         public EffectDispatcher Dispatcher { get; }
         public RequestPump Pump { get; }
@@ -181,7 +186,8 @@ namespace LobotomyCorporationMods.DontChatMe
                 return;
             }
 
-            StatusOverlay.Attach(HudState);
+            StatusOverlay.Attach(HudState, SettingsState, Config);
+            SettingsWindow.Attach(SettingsState, SettingsController, Config);
         }
 
         private static IEffectExecutor[] BuildExecutors(

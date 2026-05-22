@@ -322,5 +322,46 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.TransportTests
 
             h.Socket.Should().NotBeNull();
         }
+
+        [Fact]
+        public void Restart_constructs_a_new_socket_when_Enabled_is_true()
+        {
+            var h = new Harness();
+            h.Transport.Start();
+            var initialSocket = h.Socket;
+
+            h.Transport.Restart();
+
+            h.Socket.Should().NotBeSameAs(initialSocket);
+            h.Socket.ConnectCalled.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Restart_stops_without_reconnecting_when_Enabled_is_false()
+        {
+            var h = new Harness();
+            h.Transport.Start();
+            var initialSocket = h.Socket;
+            initialSocket.SimulateOpen();
+            h.Config.Enabled = false;
+
+            h.Transport.Restart();
+
+            h.Socket.Should().BeSameAs(initialSocket); // no new socket constructed
+            initialSocket.CloseCalled.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Restart_picks_up_the_updated_ServerUrl()
+        {
+            var h = new Harness();
+            h.Transport.Start();
+            var updatedUrl = new Uri("ws://localhost:9999/mod/socket");
+            h.Config.ServerUrl = updatedUrl;
+
+            h.Transport.Restart();
+
+            h.Socket.ConstructedFor.Should().Be(updatedUrl);
+        }
     }
 }

@@ -29,7 +29,7 @@ namespace LobotomyCorporationMods.DontChatMe.Transport
         "CA1003",
         Justification = "Events are an assembly-private callback channel; the Action<T> form keeps subscribers terse without adding EventArgs ceremony."
     )]
-    public sealed class WebSocketTransport : IDisposable
+    public sealed class WebSocketTransport : IDisposable, ITransportRestarter
     {
         private readonly Func<Uri, IWebSocket> _webSocketFactory;
         private readonly IDontChatMeConfig _config;
@@ -109,6 +109,20 @@ namespace LobotomyCorporationMods.DontChatMe.Transport
             }
 
             ConnectIfPossible();
+        }
+
+        /// <summary>
+        ///     Stops the current socket and reconnects using the current config. When
+        ///     <c>_config.Enabled</c> is false, the transport stops only. Called by the
+        ///     Settings UI after the user changes connection settings.
+        /// </summary>
+        public void Restart()
+        {
+            Stop();
+            if (_config.Enabled)
+            {
+                Start();
+            }
         }
 
         /// <summary>Closes the socket and stops the reconnect loop.</summary>

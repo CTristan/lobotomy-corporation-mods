@@ -30,5 +30,13 @@ namespace LobotomyCorporationMods.DontChatMe.Constants
         internal const string DescGlobalCooldownSeconds = "DontChatMe_DescGlobalCooldownSeconds";
         internal const string DescEnergyAmount = "DontChatMe_DescEnergyAmount";
         internal const string DescMoneyAmount = "DontChatMe_DescMoneyAmount";
+
+        // Settings window
+        internal const string DisplaySettingsTitle = "DontChatMe_DisplaySettingsTitle";
+        internal const string DisplayApply = "DontChatMe_DisplayApply";
+        internal const string DisplayCancel = "DontChatMe_DisplayCancel";
+        internal const string DisplayShow = "DontChatMe_DisplayShow";
+        internal const string DisplayHide = "DontChatMe_DisplayHide";
+        internal const string ErrorInvalidServerUrl = "DontChatMe_ErrorInvalidServerUrl";
     }
 }

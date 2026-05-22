@@ -131,10 +131,21 @@ namespace LobotomyCorporationMods.DontChatMe.Configuration
                 Uri parsed;
                 return Uri.TryCreate(raw, UriKind.Absolute, out parsed) ? parsed : null;
             }
+            set => _serverUrl.Value = value == null ? string.Empty : value.ToString();
         }
 
-        public string AuthToken => _authToken.Value;
-        public bool Enabled => _enabled.Value;
+        public string AuthToken
+        {
+            get => _authToken.Value;
+            set => _authToken.Value = value ?? string.Empty;
+        }
+
+        public bool Enabled
+        {
+            get => _enabled.Value;
+            set => _enabled.Value = value;
+        }
+
         public bool DangerEffectsEnabled => _dangerEffectsEnabled.Value;
         public int MaxInFlight => _maxInFlight.Value;
         public float GlobalCooldownSeconds => _globalCooldownSeconds.Value;

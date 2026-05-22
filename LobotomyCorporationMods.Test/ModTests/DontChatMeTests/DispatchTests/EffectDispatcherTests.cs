@@ -33,8 +33,8 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.DispatchTests
 
         private sealed class FakeConfig : IDontChatMeConfig
         {
-            public Uri ServerUrl => null;
-            public string AuthToken => string.Empty;
+            public Uri ServerUrl { get; set; }
+            public string AuthToken { get; set; } = string.Empty;
             public bool Enabled { get; set; } = true;
             public bool DangerEffectsEnabled { get; set; }
             public int MaxInFlight => 32;

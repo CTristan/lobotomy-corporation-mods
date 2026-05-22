@@ -18,15 +18,15 @@ namespace LobotomyCorporationMods.DontChatMe.Configuration
         /// <summary>
         ///     URL of the chat-side server's WebSocket endpoint, e.g. <c>wss://example.com/mod/socket</c>.
         ///     Returns <c>null</c> when the configured value is empty or not a parseable URI; the transport
-        ///     treats <c>null</c> as "disabled".
+        ///     treats <c>null</c> as "disabled". Setting writes the URL through to the persisted store.
         /// </summary>
-        Uri ServerUrl { get; }
+        Uri ServerUrl { get; set; }
 
         /// <summary>Auth token sent in the <c>hello</c> frame. Treat as a secret.</summary>
-        string AuthToken { get; }
+        string AuthToken { get; set; }
 
         /// <summary>Master switch. When false, the transport stays disconnected and effects don't run.</summary>
-        bool Enabled { get; }
+        bool Enabled { get; set; }
 
         /// <summary>When false, effects in the "danger" category (escape a creature, etc.) reply <c>danger_effects_disabled</c>.</summary>
         bool DangerEffectsEnabled { get; }

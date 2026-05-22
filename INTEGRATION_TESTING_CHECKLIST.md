@@ -49,13 +49,33 @@ These steps require a running chat-side service that speaks the documented
 plain-WS contract. With no service reachable, the mod stays idle and only the
 "no connection" checks below are testable.
 
-### Configuration
+### Configuration (built-in Settings window)
 
-- [ ] Set Server URL and Auth Token in ConfigurationManager. The mod connects
-  on the next game tick.
-- [ ] Leave Server URL empty. The mod logs "ServerUrl is unset" and does not
-  connect.
-- [ ] Set Enabled to false. The mod stays disconnected even with valid config.
+- [ ] Click the gear button on the overlay. The Settings window opens.
+- [ ] Press F9 with the overlay hidden (after pressing F8). The Settings
+  window still opens.
+- [ ] Server URL and Auth Token fields render as dots/asterisks on open.
+  Click Show next to each — the value reveals. Click Hide — it masks again.
+- [ ] Close the Settings window with Cancel, then reopen. Server URL and
+  Auth Token are masked again. (Reveal does not persist across opens.)
+- [ ] Enter a malformed URL ("not a url"). Click Apply. An error message
+  appears under the Server URL field; the window stays open; nothing is
+  written to disk.
+- [ ] Enter a non-ws scheme ("http://example.com/"). Click Apply. Same
+  error behavior as the malformed case.
+- [ ] Enter a valid URL ("ws://..." or "wss://...") and a token, click
+  Apply. The window closes; the connection dot flips amber, then green
+  once the chat-side service accepts the hello frame.
+- [ ] Reopen Settings and toggle Enabled off, click Apply. Connection drops
+  to gray "disabled". Toggle back on, click Apply. Connection reconnects.
+- [ ] Quit the game and relaunch. The Server URL and Token values persist.
+
+### Configuration (with ConfigurationManager)
+
+- [ ] Install ConfigurationManager and press F1. Edit Server URL there.
+  Reopen the built-in Settings window — the new value is reflected.
+- [ ] Edit Auth Token in the built-in Settings window. Open ConfigurationManager.
+  The new value is reflected.
 
 ### Effects (one per slug, once the service is wired up)
 

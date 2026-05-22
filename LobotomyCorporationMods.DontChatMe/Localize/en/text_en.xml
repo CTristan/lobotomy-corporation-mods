@@ -21,4 +21,11 @@
   <text id="DontChatMe_DescGlobalCooldownSeconds">Minimum seconds between any two effects. Set to 0 to disable global throttling.</text>
   <text id="DontChatMe_DescEnergyAmount">Amount of energy added or removed when those effects fire.</text>
   <text id="DontChatMe_DescMoneyAmount">Amount of LOB Points granted by the add money effect.</text>
+
+  <text id="DontChatMe_DisplaySettingsTitle">Don't Chat Me Settings</text>
+  <text id="DontChatMe_DisplayApply">Apply</text>
+  <text id="DontChatMe_DisplayCancel">Cancel</text>
+  <text id="DontChatMe_DisplayShow">Show</text>
+  <text id="DontChatMe_DisplayHide">Hide</text>
+  <text id="DontChatMe_ErrorInvalidServerUrl">Server URL must start with ws:// or wss://</text>
 </localize>
