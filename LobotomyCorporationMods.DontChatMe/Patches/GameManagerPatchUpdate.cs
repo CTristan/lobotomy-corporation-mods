@@ -27,6 +27,7 @@ namespace LobotomyCorporationMods.DontChatMe.Patches
             Harmony_Patch.Instance.EnsureOverlayAttached();
             Harmony_Patch.Instance.Pump.Tick();
             Harmony_Patch.Instance.AvailabilityProbe.Tick();
+            Harmony_Patch.Instance.GamePhaseProbe.Tick();
             Harmony_Patch.Instance.HudState.SetQueuedCount(Harmony_Patch.Instance.Pump.Count);
         }
 

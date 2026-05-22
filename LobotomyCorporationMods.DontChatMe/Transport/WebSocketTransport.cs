@@ -149,6 +149,13 @@ namespace LobotomyCorporationMods.DontChatMe.Transport
             SendRaw(retry.ToJson());
         }
 
+        /// <summary>Sends a <c>game_state</c> frame. Best effort: drops on the floor if the socket is closed.</summary>
+        public void SendGameState(GameStateReply gameState)
+        {
+            ThrowHelper.ThrowIfNull(gameState, nameof(gameState));
+            SendRaw(gameState.ToJson());
+        }
+
         public void Dispose() => Stop();
 
         [SuppressMessage(

@@ -23,5 +23,6 @@ namespace LobotomyCorporationMods.DontChatMe.Constants
         public const string Selectable = "selectable";
         public const string Reason = "reason";
         public const string DelayMs = "delay_ms";
+        public const string Phase = "phase";
     }
 }

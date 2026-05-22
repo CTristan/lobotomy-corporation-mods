@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using LobotomyCorporation.Mods.Common;
+using LobotomyCorporationMods.DontChatMe.Constants;
 using LobotomyCorporationMods.DontChatMe.Extensions;
 using LobotomyCorporationMods.DontChatMe.Interfaces;
 
@@ -117,6 +118,56 @@ namespace LobotomyCorporationMods.DontChatMe.Implementations
 
         public void SetGameSpeed(float speed) =>
             GameManager.currentGameManager.SetPlaySpeedForcely(speed);
+
+        public string ReadPhase()
+        {
+            var gm = GameManager.currentGameManager;
+            if (gm == null)
+            {
+                return GamePhases.NoDay;
+            }
+
+            switch (gm.state)
+            {
+                case GameState.STOP:
+                    return GamePhases.NoDay;
+                case GameState.PAUSE:
+                    return GamePhases.Paused;
+            }
+
+            // PLAYING — narrow further by whichever in-game special states are active.
+            var ordeals = OrdealManager.instance.GetActivatedOrdeals();
+            if (ordeals != null && ordeals.Count > 0)
+            {
+                return GamePhases.OrdealActive;
+            }
+
+            if (HasOverloadedCreature())
+            {
+                return GamePhases.MeltdownActive;
+            }
+
+            return GamePhases.Ready;
+        }
+
+        private static bool HasOverloadedCreature()
+        {
+            var creatures = CreatureManager.instance.GetCreatureList();
+            if (creatures == null)
+            {
+                return false;
+            }
+
+            foreach (var creature in creatures)
+            {
+                if (creature != null && creature.isOverloaded)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
 
         private static List<AgentModel> GetLivingAgents()
         {

@@ -75,6 +75,12 @@ namespace LobotomyCorporationMods.DontChatMe
                 now: () => UnityEngine.Time.realtimeSinceStartup
             );
 
+            GamePhaseProbe = new GamePhaseProbe(
+                adapter: GameAdapter,
+                send: Transport.SendGameState,
+                now: () => UnityEngine.Time.realtimeSinceStartup
+            );
+
             Transport.EffectReceived += OnEffectReceived;
             Transport.StateChanged += HudState.SetConnectionState;
             Transport.StateChanged += OnTransportStateChanged;
@@ -89,6 +95,7 @@ namespace LobotomyCorporationMods.DontChatMe
         public EffectDispatcher Dispatcher { get; }
         public RequestPump Pump { get; }
         public AvailabilityProbe AvailabilityProbe { get; }
+        public GamePhaseProbe GamePhaseProbe { get; }
 
         /// <summary>
         ///     Lazily opens the WebSocket on the first tick after the game enters play.
@@ -159,6 +166,7 @@ namespace LobotomyCorporationMods.DontChatMe
             if (state == ConnectionState.Connected)
             {
                 AvailabilityProbe.RequestSnapshot();
+                GamePhaseProbe.RequestSnapshot();
             }
         }
 

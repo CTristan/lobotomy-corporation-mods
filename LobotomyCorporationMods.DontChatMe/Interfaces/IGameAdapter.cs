@@ -37,5 +37,12 @@ namespace LobotomyCorporationMods.DontChatMe.Interfaces
         void AddMoney(int amount);
         void ShowSystemMessage(string message);
         void SetGameSpeed(float speed);
+
+        /// <summary>
+        ///     Returns the current game phase as one of the
+        ///     <see cref="Constants.GamePhases" /> string constants. Used by
+        ///     <c>GamePhaseProbe</c> to push <c>game_state</c> frames to the chat-side server.
+        /// </summary>
+        string ReadPhase();
     }
 }

@@ -13,6 +13,7 @@ namespace LobotomyCorporationMods.DontChatMe.Constants
         public const string EffectFailed = "effect_failed";
         public const string EffectRetry = "effect_retry";
         public const string EffectState = "effect_state";
+        public const string GameState = "game_state";
 
         // Inbound (server → mod)
         public const string Welcome = "welcome";

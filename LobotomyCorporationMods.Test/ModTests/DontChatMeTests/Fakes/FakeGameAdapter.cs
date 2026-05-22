@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using LobotomyCorporationMods.DontChatMe.Constants;
 using LobotomyCorporationMods.DontChatMe.Interfaces;
 
 #endregion
@@ -35,6 +36,8 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.Fakes
         public int LastMoneyAdded { get; private set; }
         public string LastSystemMessage { get; private set; }
         public float LastGameSpeed { get; private set; } = float.NaN;
+
+        public string Phase { get; set; } = GamePhases.Ready;
 
         public bool KillRandomLivingAgent()
         {
@@ -88,6 +91,12 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.Fakes
         {
             _calls.Add(nameof(SetGameSpeed));
             LastGameSpeed = speed;
+        }
+
+        public string ReadPhase()
+        {
+            _calls.Add(nameof(ReadPhase));
+            return Phase;
         }
     }
 }
