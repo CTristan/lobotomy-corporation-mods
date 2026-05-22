@@ -63,7 +63,7 @@ Effects are intentionally noisy — this is a chaos mod for streams, not a balan
 
 ## End-to-end tests
 
-In-game e2e tests for Don't Chat Me live in the [open-lobotomy-e2e](https://github.com/open-lobotomy/open-lobotomy-e2e) repo. That repo deploys the mod via The Silent Orchestrator, hosts a stub chat-side WebSocket server in-process, and verifies the round-trip end to end.
+In-game e2e tests for Don't Chat Me live in the [lobotomy-corporation-mods-e2e](https://github.com/CTristan/lobotomy-corporation-mods-e2e) repo. That repo deploys the mod via The Silent Orchestrator, hosts a stub chat-side WebSocket server in-process, and verifies the round-trip end to end.
 
 ## License
 
