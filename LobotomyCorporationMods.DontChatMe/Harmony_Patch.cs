@@ -49,9 +49,11 @@ namespace LobotomyCorporationMods.DontChatMe
                 version: typeof(Harmony_Patch).Assembly.GetName().Version.ToString(3)
             );
 
+            var executors = BuildExecutors(GameAdapter, Config);
+
             Dispatcher = new EffectDispatcher(
                 config: Config,
-                executors: BuildExecutors(GameAdapter, Config),
+                executors: executors,
                 cooldownGate: CooldownGate,
                 idempotencyCache: IdempotencyCache,
                 sendReply: Transport.SendReply,
@@ -65,8 +67,16 @@ namespace LobotomyCorporationMods.DontChatMe
                 drainCallback: Dispatcher.Dispatch
             );
 
+            AvailabilityProbe = new AvailabilityProbe(
+                executors: executors,
+                config: Config,
+                send: Transport.SendEffectState,
+                now: () => UnityEngine.Time.realtimeSinceStartup
+            );
+
             Transport.EffectReceived += OnEffectReceived;
             Transport.StateChanged += HudState.SetConnectionState;
+            Transport.StateChanged += OnTransportStateChanged;
         }
 
         public IDontChatMeConfig Config { get; }
@@ -77,6 +87,7 @@ namespace LobotomyCorporationMods.DontChatMe
         public WebSocketTransport Transport { get; }
         public EffectDispatcher Dispatcher { get; }
         public RequestPump Pump { get; }
+        public AvailabilityProbe AvailabilityProbe { get; }
 
         /// <summary>
         ///     Lazily opens the WebSocket on the first tick after the game enters play.
@@ -126,6 +137,14 @@ namespace LobotomyCorporationMods.DontChatMe
             }
 
             Transport.SendReply(EffectReply.Failed(dispatch.RedemptionId, ErrorTags.Overloaded));
+        }
+
+        private void OnTransportStateChanged(ConnectionState state)
+        {
+            if (state == ConnectionState.Connected)
+            {
+                AvailabilityProbe.RequestSnapshot();
+            }
         }
 
         /// <summary>

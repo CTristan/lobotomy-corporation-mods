@@ -40,5 +40,17 @@ namespace LobotomyCorporationMods.DontChatMe.Implementations.Effects
             _gameAdapter.AddMoney(_config.MoneyAmount);
             return null;
         }
+
+        public bool IsAvailableNow(out string reason)
+        {
+            if (!_gameAdapter.IsGameReady)
+            {
+                reason = ErrorTags.GameNotReady;
+                return false;
+            }
+
+            reason = null;
+            return true;
+        }
     }
 }

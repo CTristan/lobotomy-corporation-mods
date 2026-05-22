@@ -135,6 +135,13 @@ namespace LobotomyCorporationMods.DontChatMe.Transport
             SendRaw(reply.ToJson());
         }
 
+        /// <summary>Sends an <c>effect_state</c> frame. Best effort: drops on the floor if the socket is closed.</summary>
+        public void SendEffectState(EffectStateReply state)
+        {
+            ThrowHelper.ThrowIfNull(state, nameof(state));
+            SendRaw(state.ToJson());
+        }
+
         public void Dispose() => Stop();
 
         [SuppressMessage(

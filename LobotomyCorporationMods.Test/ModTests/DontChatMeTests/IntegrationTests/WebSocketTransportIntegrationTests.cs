@@ -7,8 +7,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using AwesomeAssertions;
+using LobotomyCorporationMods.DontChatMe.Constants;
+using LobotomyCorporationMods.DontChatMe.Dispatch;
+using LobotomyCorporationMods.DontChatMe.Implementations.Effects;
 using LobotomyCorporationMods.DontChatMe.Models;
 using LobotomyCorporationMods.DontChatMe.Transport;
+using LobotomyCorporationMods.DontChatMe.UiComponents;
 using LobotomyCorporationMods.Test.ModTests.DontChatMeTests.Fakes;
 using Xunit;
 
@@ -232,6 +236,101 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.IntegrationTests
             }
 
             return count;
+        }
+
+        [Fact]
+        public async Task On_welcome_the_probe_pushes_an_effect_state_snapshot_for_every_slug()
+        {
+            _transport = BuildTransport();
+            var clock = new MutableClock();
+            var probe = new AvailabilityProbe(
+                executors: new IEffectExecutor[]
+                {
+                    new StubExecutor("alpha", available: true),
+                    new StubExecutor("beta", available: false, reason: ErrorTags.NoAgents),
+                },
+                config: _config,
+                send: _transport.SendEffectState,
+                now: () => clock.Now
+            );
+            _transport.StateChanged += state =>
+            {
+                if (state == ConnectionState.Connected)
+                {
+                    probe.RequestSnapshot();
+                }
+            };
+
+            _transport.Start();
+
+            await _server
+                .WaitForFrameAsync(
+                    f => f.Contains("\"type\":\"hello\"", StringComparison.Ordinal),
+                    DefaultTimeout
+                )
+                .ConfigureAwait(true);
+            await _server.PushAsync("{\"type\":\"welcome\"}").ConfigureAwait(true);
+
+            // 1. The transport runs StateChanged on a worker thread; give it a beat to land before
+            // we tick the probe.
+            await LoopbackWebSocketServer
+                .WaitUntilAsync(() => probe != null, TimeSpan.FromMilliseconds(50))
+                .ConfigureAwait(true);
+
+            // 2. Tick the probe — in production this happens from the main-thread per-frame Postfix.
+            probe.Tick();
+
+            // 3. Both effect_state frames should round-trip to the loopback server.
+            await _server
+                .WaitForFrameAsync(
+                    f =>
+                        f.Contains("\"type\":\"effect_state\"", StringComparison.Ordinal)
+                        && f.Contains("\"slug\":\"alpha\"", StringComparison.Ordinal)
+                        && f.Contains("\"selectable\":true", StringComparison.Ordinal),
+                    DefaultTimeout
+                )
+                .ConfigureAwait(true);
+
+            var beta = await _server
+                .WaitForFrameAsync(
+                    f =>
+                        f.Contains("\"type\":\"effect_state\"", StringComparison.Ordinal)
+                        && f.Contains("\"slug\":\"beta\"", StringComparison.Ordinal),
+                    DefaultTimeout
+                )
+                .ConfigureAwait(true);
+            beta.Should().Contain("\"selectable\":false");
+            beta.Should().Contain("\"reason\":\"no_agents\"");
+        }
+
+        private sealed class MutableClock
+        {
+            public float Now { get; set; }
+        }
+
+        private sealed class StubExecutor : IEffectExecutor
+        {
+            private readonly bool _available;
+            private readonly string _reason;
+
+            public StubExecutor(string slug, bool available, string reason = null)
+            {
+                Slug = slug;
+                _available = available;
+                _reason = reason;
+            }
+
+            public string Slug { get; }
+            public float CooldownSeconds => 0f;
+            public bool IsDanger => false;
+
+            public string Execute(EffectDispatch dispatch) => null;
+
+            public bool IsAvailableNow(out string reason)
+            {
+                reason = _available ? null : _reason;
+                return _available;
+            }
         }
     }
 }

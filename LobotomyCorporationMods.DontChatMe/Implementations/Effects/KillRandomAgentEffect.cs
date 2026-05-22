@@ -40,5 +40,23 @@ namespace LobotomyCorporationMods.DontChatMe.Implementations.Effects
 
             return _gameAdapter.KillRandomLivingAgent() ? null : ErrorTags.ExecutionError;
         }
+
+        public bool IsAvailableNow(out string reason)
+        {
+            if (!_gameAdapter.IsGameReady)
+            {
+                reason = ErrorTags.GameNotReady;
+                return false;
+            }
+
+            if (_gameAdapter.LivingAgentCount == 0)
+            {
+                reason = ErrorTags.NoAgents;
+                return false;
+            }
+
+            reason = null;
+            return true;
+        }
     }
 }

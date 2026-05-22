@@ -42,5 +42,23 @@ namespace LobotomyCorporationMods.DontChatMe.Implementations.Effects
                 ? null
                 : ErrorTags.ExecutionError;
         }
+
+        public bool IsAvailableNow(out string reason)
+        {
+            if (!_gameAdapter.IsGameReady)
+            {
+                reason = ErrorTags.GameNotReady;
+                return false;
+            }
+
+            if (_gameAdapter.ControllableAgentCount == 0)
+            {
+                reason = ErrorTags.NoAgents;
+                return false;
+            }
+
+            reason = null;
+            return true;
+        }
     }
 }

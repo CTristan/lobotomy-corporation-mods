@@ -19,5 +19,8 @@ namespace LobotomyCorporationMods.DontChatMe.Constants
         public const string Error = "error";
         public const string Code = "code";
         public const string Message = "message";
+        public const string Slug = "slug";
+        public const string Selectable = "selectable";
+        public const string Reason = "reason";
     }
 }

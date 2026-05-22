@@ -44,6 +44,18 @@ namespace LobotomyCorporationMods.DontChatMe.Implementations.Effects
             return null;
         }
 
+        public bool IsAvailableNow(out string reason)
+        {
+            if (!_gameAdapter.IsGameReady)
+            {
+                reason = ErrorTags.GameNotReady;
+                return false;
+            }
+
+            reason = null;
+            return true;
+        }
+
         public static string BuildMessage(string userDisplayName)
         {
             return string.IsNullOrEmpty(userDisplayName)

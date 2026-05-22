@@ -61,6 +61,12 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.DispatchTests
                 InvocationCount++;
                 return Behavior(dispatch);
             }
+
+            public bool IsAvailableNow(out string reason)
+            {
+                reason = null;
+                return true;
+            }
         }
 
         private static EffectDispatcher BuildDispatcher(

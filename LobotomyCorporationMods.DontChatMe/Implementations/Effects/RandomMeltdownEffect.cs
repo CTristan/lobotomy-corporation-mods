@@ -35,5 +35,17 @@ namespace LobotomyCorporationMods.DontChatMe.Implementations.Effects
 
             return _gameAdapter.ActivateRandomMeltdown() ? null : ErrorTags.ExecutionError;
         }
+
+        public bool IsAvailableNow(out string reason)
+        {
+            if (!_gameAdapter.IsGameReady)
+            {
+                reason = ErrorTags.GameNotReady;
+                return false;
+            }
+
+            reason = null;
+            return true;
+        }
     }
 }

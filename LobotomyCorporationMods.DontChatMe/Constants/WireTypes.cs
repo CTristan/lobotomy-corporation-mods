@@ -11,6 +11,7 @@ namespace LobotomyCorporationMods.DontChatMe.Constants
         public const string DispatchAck = "dispatch_ack";
         public const string EffectExecuted = "effect_executed";
         public const string EffectFailed = "effect_failed";
+        public const string EffectState = "effect_state";
 
         // Inbound (server → mod)
         public const string Welcome = "welcome";
