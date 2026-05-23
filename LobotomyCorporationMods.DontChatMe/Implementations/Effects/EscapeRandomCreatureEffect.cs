@@ -30,28 +30,28 @@ namespace LobotomyCorporationMods.DontChatMe.Implementations.Effects
         {
             if (!_gameAdapter.IsGameReady)
             {
-                return ErrorTags.GameNotReady;
+                return StandardErrors.GameStateBlocked;
             }
 
             if (_gameAdapter.CreatureCount == 0)
             {
-                return ErrorTags.NoCreatures;
+                return StandardErrors.EffectUnavailableNow;
             }
 
-            return _gameAdapter.EscapeRandomCreature() ? null : ErrorTags.ExecutionError;
+            return _gameAdapter.EscapeRandomCreature() ? null : StandardErrors.ModInternalError;
         }
 
         public bool IsAvailableNow(out string reason)
         {
             if (!_gameAdapter.IsGameReady)
             {
-                reason = ErrorTags.GameNotReady;
+                reason = StandardErrors.GameStateBlocked;
                 return false;
             }
 
             if (_gameAdapter.CreatureCount == 0)
             {
-                reason = ErrorTags.NoCreatures;
+                reason = StandardErrors.EffectUnavailableNow;
                 return false;
             }
 

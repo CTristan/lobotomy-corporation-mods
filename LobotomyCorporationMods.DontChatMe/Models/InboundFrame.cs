@@ -9,9 +9,8 @@ using LobotomyCorporationMods.DontChatMe.Constants;
 namespace LobotomyCorporationMods.DontChatMe.Models
 {
     /// <summary>
-    ///     A parsed view of any inbound frame.
-    ///     The transport peeks at <see cref="Type" /> to decide what to do, then asks
-    ///     <see cref="TryGetEffectDispatch" /> when it needs the typed payload.
+    ///     A parsed view of any inbound frame. The transport peeks at <see cref="Type" /> to
+    ///     route, then calls the typed accessor for fields it needs.
     /// </summary>
     public sealed class InboundFrame
     {
@@ -26,8 +25,8 @@ namespace LobotomyCorporationMods.DontChatMe.Models
         public string Type { get; }
 
         /// <summary>
-        ///     Tries to parse <paramref name="json" /> into an inbound frame.
-        ///     Returns <c>false</c> if the input is not a JSON object or has no <c>type</c> field.
+        ///     Tries to parse <paramref name="json" /> into an inbound frame. Returns <c>false</c>
+        ///     when the input is not a JSON object or has no <c>type</c> field.
         /// </summary>
         public static bool TryParse(string json, out InboundFrame frame)
         {
@@ -49,12 +48,12 @@ namespace LobotomyCorporationMods.DontChatMe.Models
         }
 
         /// <summary>
-        ///     If this frame is an <c>effect_dispatched</c>, hydrates and returns the typed payload.
-        ///     Returns <c>false</c> otherwise (wrong type, missing required fields).
+        ///     If this frame is an <c>effect_dispatch</c>, hydrates and returns the typed payload.
+        ///     Returns <c>false</c> otherwise (wrong type or missing required fields).
         /// </summary>
         public bool TryGetEffectDispatch(out EffectDispatch dispatch)
         {
-            if (Type != WireTypes.EffectDispatched)
+            if (Type != WireTypes.EffectDispatch)
             {
                 dispatch = null;
                 return false;
@@ -63,10 +62,27 @@ namespace LobotomyCorporationMods.DontChatMe.Models
             return EffectDispatch.TryFromJson(_json, out dispatch);
         }
 
+        /// <summary>Monotonic frame identifier set by the server; <c>0</c> when absent.</summary>
+        public int GetId() => _json.GetInt(JsonKeys.Id, defaultValue: 0);
+
         /// <summary>Reads the <c>error.code</c> on an inbound <c>error</c> frame (or <c>null</c>).</summary>
         public string GetErrorCode() => _json.GetString(JsonKeys.Code);
 
         /// <summary>Reads the <c>error.message</c> on an inbound <c>error</c> frame (or <c>null</c>).</summary>
         public string GetErrorMessage() => _json.GetString(JsonKeys.Message);
+
+        /// <summary>
+        ///     Welcome metadata: queue depth at hello time. <c>0</c> when absent. The HUD shows
+        ///     this so the streamer knows how many redemptions are waiting on reconnect.
+        /// </summary>
+        public int GetWelcomeQueueDepth() => _json.GetInt(JsonKeys.QueueDepth, defaultValue: 0);
+
+        /// <summary>
+        ///     Welcome metadata: the in-flight redemption_id at hello time (the one the server
+        ///     is about to resend with <c>replay: true</c>), or <c>null</c> when the queue's
+        ///     head is empty.
+        /// </summary>
+        public string GetWelcomeInFlightRedemptionId() =>
+            _json.GetString(JsonKeys.InFlightRedemptionId);
     }
 }

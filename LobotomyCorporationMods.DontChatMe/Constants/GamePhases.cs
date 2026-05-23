@@ -3,31 +3,26 @@
 namespace LobotomyCorporationMods.DontChatMe.Constants
 {
     /// <summary>
-    ///     String values for the <c>phase</c> field of a <c>game_state</c> frame. The chat-side
-    ///     server uses these to drive its UI (e.g. show a "day in progress" banner or grey out
-    ///     all effects during a meltdown). Values are stable identifiers — never localized.
+    ///     String values for the <c>phase</c> field of a <c>game_state</c> frame. The server's
+    ///     <c>Hemograce.Dispatch.GameQueue</c> only dispatches when phase is
+    ///     <see cref="InPlay" />; every other phase pauses the entire queue (Case A — game-wide
+    ///     gate). Values are stable wire identifiers — never localized.
     /// </summary>
     public static class GamePhases
     {
-        /// <summary>Game is playing and no special state (meltdown/ordeal/pause) is active.</summary>
-        public const string Ready = "ready";
+        /// <summary>No mission is active — main menu, between-day, agent management.</summary>
+        public const string NotInPlay = "not_in_play";
 
-        /// <summary>Pre-shift management screen (agent hiring/equipping). Reserved for future use.</summary>
-        public const string AgentManagement = "agent_management";
+        /// <summary>Pre-mission briefing or setup screens. Queue stays paused.</summary>
+        public const string Briefing = "briefing";
 
-        /// <summary>End-of-day animation or summary screen. Reserved for future use.</summary>
-        public const string DayEnding = "day_ending";
-
-        /// <summary>One or more abnormalities are currently overloaded.</summary>
-        public const string MeltdownActive = "meltdown_active";
-
-        /// <summary>One or more ordeals are currently active.</summary>
-        public const string OrdealActive = "ordeal_active";
+        /// <summary>Mission is active and effects can run. Only phase that unblocks the queue.</summary>
+        public const string InPlay = "in_play";
 
         /// <summary>Game is paused (player-initiated or by an in-game event).</summary>
         public const string Paused = "paused";
 
-        /// <summary>No day is in progress (main menu, between-day, or the GameManager singleton is unavailable).</summary>
-        public const string NoDay = "no_day";
+        /// <summary>End-of-mission animation or summary screen.</summary>
+        public const string MissionEnded = "mission_ended";
     }
 }

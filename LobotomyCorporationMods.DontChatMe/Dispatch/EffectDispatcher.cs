@@ -15,32 +15,23 @@ using LobotomyCorporationMods.DontChatMe.Models;
 namespace LobotomyCorporationMods.DontChatMe.Dispatch
 {
     /// <summary>
-    ///     Decides what to do with one inbound <see cref="EffectDispatch" /> and emits the reply.
-    ///     Called from the main-thread <see cref="RequestPump" />, never from the transport thread.
-    ///     Transient game-state errors (e.g. <c>game_not_ready</c>) are returned as
-    ///     <see cref="EffectRetryReply" /> with a delay rather than an immediate refund; the chat-side
-    ///     resubmits the same redemption id, and the cap of <see cref="MaxRetries" /> protects against
-    ///     an indefinite loop if the state never resolves.
+    ///     Decides what to do with one inbound <see cref="EffectDispatch" /> and emits the
+    ///     single <see cref="EffectResponse" /> per dispatch. Runs on the main thread (driven
+    ///     by <see cref="RequestPump" />), never on the transport thread.
+    ///     Transient executor errors (<c>game_state_blocked</c>, <c>effect_unavailable_now</c>)
+    ///     map to <see cref="ResponseStatuses.Retry" />; the server's per-game queue holds the
+    ///     head and resends after <see cref="RetryHoldMs" />, governed by the 3-attempt budget.
     /// </summary>
     public sealed class EffectDispatcher
     {
-        /// <summary>
-        ///     Default cap on how many <c>effect_retry</c> replies the dispatcher will issue for one
-        ///     redemption before downgrading to a permanent <c>effect_failed</c>. Three is enough to
-        ///     ride out a day-boundary animation or short meltdown without blocking the wire on a
-        ///     permanently-stuck redemption.
-        /// </summary>
-        public const int MaxRetries = 3;
-
-        /// <summary>How long the chat-side should wait before resubmitting a <c>game_not_ready</c>.</summary>
-        public const int GameNotReadyRetryDelayMs = 5000;
+        /// <summary>Default <c>retry_after_ms</c> we ask the server's queue to wait before resending.</summary>
+        public const int RetryHoldMs = 5000;
 
         private readonly IDontChatMeConfig _config;
         private readonly Dictionary<string, IEffectExecutor> _executors;
         private readonly CooldownGate _cooldownGate;
         private readonly IdempotencyCache _idempotencyCache;
-        private readonly Action<EffectReply> _sendReply;
-        private readonly Action<EffectRetryReply> _sendRetry;
+        private readonly Action<EffectResponse> _sendResponse;
         private readonly ILogger _logger;
         private readonly Action<string> _onExecuted;
 
@@ -49,8 +40,7 @@ namespace LobotomyCorporationMods.DontChatMe.Dispatch
             IEnumerable<IEffectExecutor> executors,
             CooldownGate cooldownGate,
             IdempotencyCache idempotencyCache,
-            Action<EffectReply> sendReply,
-            Action<EffectRetryReply> sendRetry,
+            Action<EffectResponse> sendResponse,
             ILogger logger,
             Action<string> onExecuted = null
         )
@@ -59,15 +49,13 @@ namespace LobotomyCorporationMods.DontChatMe.Dispatch
             ThrowHelper.ThrowIfNull(executors, nameof(executors));
             ThrowHelper.ThrowIfNull(cooldownGate, nameof(cooldownGate));
             ThrowHelper.ThrowIfNull(idempotencyCache, nameof(idempotencyCache));
-            ThrowHelper.ThrowIfNull(sendReply, nameof(sendReply));
-            ThrowHelper.ThrowIfNull(sendRetry, nameof(sendRetry));
+            ThrowHelper.ThrowIfNull(sendResponse, nameof(sendResponse));
             ThrowHelper.ThrowIfNull(logger, nameof(logger));
 
             _config = config;
             _cooldownGate = cooldownGate;
             _idempotencyCache = idempotencyCache;
-            _sendReply = sendReply;
-            _sendRetry = sendRetry;
+            _sendResponse = sendResponse;
             _logger = logger;
             _onExecuted = onExecuted;
             _executors = new Dictionary<string, IEffectExecutor>(StringComparer.Ordinal);
@@ -86,30 +74,40 @@ namespace LobotomyCorporationMods.DontChatMe.Dispatch
         {
             ThrowHelper.ThrowIfNull(dispatch, nameof(dispatch));
 
-            if (!_idempotencyCache.TryEnter(dispatch.RedemptionId))
+            var cached = _idempotencyCache.LastTerminal(dispatch.RedemptionId);
+            if (cached != null)
             {
-                _sendReply(
-                    EffectReply.Failed(dispatch.RedemptionId, ErrorTags.DuplicateRedemption)
-                );
+                // A replay of a redemption we already terminated: re-send the cached outcome
+                // so the server can advance idempotently.
+                _sendResponse(cached);
                 return;
             }
 
             IEffectExecutor executor;
             if (!_executors.TryGetValue(dispatch.EffectSlug, out executor))
             {
-                FailTerminal(dispatch.RedemptionId, ErrorTags.UnknownSlug);
+                SendTerminal(
+                    dispatch.RedemptionId,
+                    EffectResponse.Failure(dispatch.RedemptionId, StandardErrors.EffectUnknown)
+                );
                 return;
             }
 
             if (executor.IsDanger && !_config.DangerEffectsEnabled)
             {
-                FailTerminal(dispatch.RedemptionId, ErrorTags.DangerEffectsDisabled);
+                SendTerminal(
+                    dispatch.RedemptionId,
+                    EffectResponse.Failure(dispatch.RedemptionId, StandardErrors.EffectDisabled)
+                );
                 return;
             }
 
             if (_cooldownGate.IsOnCooldown(executor.Slug, executor.CooldownSeconds))
             {
-                FailTerminal(dispatch.RedemptionId, ErrorTags.Cooldown);
+                SendTerminal(
+                    dispatch.RedemptionId,
+                    EffectResponse.Failure(dispatch.RedemptionId, StandardErrors.Cooldown)
+                );
                 return;
             }
 
@@ -118,20 +116,22 @@ namespace LobotomyCorporationMods.DontChatMe.Dispatch
             {
                 error = executor.Execute(dispatch);
             }
-#pragma warning disable CA1031 // The dispatcher is a per-frame stage on the main thread; one effect throwing an unexpected exception must not propagate up and kill the loop.
+#pragma warning disable CA1031 // The dispatcher is a per-frame stage on the main thread; one effect throwing must not propagate up and kill the loop.
             catch (Exception ex)
 #pragma warning restore CA1031
             {
                 _logger.WriteException(ex);
-                FailTerminal(dispatch.RedemptionId, ErrorTags.ExecutionError);
+                SendTerminal(
+                    dispatch.RedemptionId,
+                    EffectResponse.Failure(dispatch.RedemptionId, StandardErrors.ModInternalError)
+                );
                 return;
             }
 
             if (error == null)
             {
-                _idempotencyCache.MarkTerminal(dispatch.RedemptionId);
                 _cooldownGate.Mark(executor.Slug);
-                _sendReply(EffectReply.Executed(dispatch.RedemptionId));
+                SendTerminal(dispatch.RedemptionId, EffectResponse.Success(dispatch.RedemptionId));
                 if (_onExecuted != null)
                 {
                     _onExecuted(executor.Slug);
@@ -142,34 +142,32 @@ namespace LobotomyCorporationMods.DontChatMe.Dispatch
 
             if (IsRetryable(error))
             {
-                var retries = _idempotencyCache.RecordRetry(dispatch.RedemptionId);
-                if (retries > MaxRetries)
-                {
-                    FailTerminal(dispatch.RedemptionId, error);
-                    return;
-                }
-
-                _sendRetry(
-                    new EffectRetryReply(dispatch.RedemptionId, GameNotReadyRetryDelayMs, error)
-                );
+                // Don't cache: the server's queue will resend the same redemption_id and we want
+                // the next attempt to re-evaluate the executor's preconditions.
+                _sendResponse(EffectResponse.Retry(dispatch.RedemptionId, error, RetryHoldMs));
                 return;
             }
 
-            FailTerminal(dispatch.RedemptionId, error);
+            SendTerminal(
+                dispatch.RedemptionId,
+                EffectResponse.Failure(dispatch.RedemptionId, error)
+            );
         }
 
-        private void FailTerminal(string redemptionId, string error)
+        private void SendTerminal(string redemptionId, EffectResponse response)
         {
-            _idempotencyCache.MarkTerminal(redemptionId);
-            _sendReply(EffectReply.Failed(redemptionId, error));
+            _idempotencyCache.MarkTerminal(redemptionId, response);
+            _sendResponse(response);
         }
 
         private static bool IsRetryable(string error)
         {
-            // Only game_not_ready is returned by an executor today; overloaded never reaches the
-            // dispatcher (the pump itself rejects it before enqueue). The list lives here so future
-            // retryable tags can join without touching call sites.
-            return error == ErrorTags.GameNotReady;
+            // Transient blocks: the server should resend and re-evaluate preconditions. Game-wide
+            // phase gating (game_state_blocked) and per-effect availability blocks
+            // (effect_unavailable_now) are both transient by definition; the server's queue and
+            // 3-attempt budget bound how long we hold a head.
+            return error == StandardErrors.GameStateBlocked
+                || error == StandardErrors.EffectUnavailableNow;
         }
     }
 }

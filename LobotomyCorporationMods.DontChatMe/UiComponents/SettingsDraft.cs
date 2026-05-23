@@ -3,6 +3,7 @@
 #region
 
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.DontChatMe.Configuration;
 
@@ -27,15 +28,24 @@ namespace LobotomyCorporationMods.DontChatMe.UiComponents
     )]
     public sealed class SettingsDraft
     {
-        public SettingsDraft(string serverUrl, string authToken, bool enabled)
+        public SettingsDraft(string serverUrl, string authToken, string gameId, bool enabled)
         {
             ServerUrl = serverUrl ?? string.Empty;
             AuthToken = authToken ?? string.Empty;
+            GameId = gameId ?? string.Empty;
             Enabled = enabled;
         }
 
         public string ServerUrl { get; }
         public string AuthToken { get; }
+
+        /// <summary>
+        ///     The user's in-progress text for the Game ID field. Held as a string so the editor
+        ///     can show whatever they've typed mid-edit, including invalid values like "" or "abc".
+        ///     <see cref="SettingsController.Apply" /> parses and validates this into an <c>int</c>.
+        /// </summary>
+        public string GameId { get; }
+
         public bool Enabled { get; }
 
         /// <summary>
@@ -46,7 +56,11 @@ namespace LobotomyCorporationMods.DontChatMe.UiComponents
         {
             ThrowHelper.ThrowIfNull(config, nameof(config));
             var serverUrl = config.ServerUrl == null ? string.Empty : config.ServerUrl.ToString();
-            return new SettingsDraft(serverUrl, config.AuthToken, config.Enabled);
+            var gameId =
+                config.GameId == 0
+                    ? string.Empty
+                    : config.GameId.ToString(CultureInfo.InvariantCulture);
+            return new SettingsDraft(serverUrl, config.AuthToken, gameId, config.Enabled);
         }
     }
 }

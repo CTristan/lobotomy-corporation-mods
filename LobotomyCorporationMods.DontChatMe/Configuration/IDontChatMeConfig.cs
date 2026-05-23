@@ -22,17 +22,27 @@ namespace LobotomyCorporationMods.DontChatMe.Configuration
         /// </summary>
         Uri ServerUrl { get; set; }
 
-        /// <summary>Auth token sent in the <c>hello</c> frame. Treat as a secret.</summary>
+        /// <summary>
+        ///     Authentication identifier negotiated in the WebSocket subprotocol header at
+        ///     upgrade time. Treat as a secret.
+        /// </summary>
         string AuthToken { get; set; }
+
+        /// <summary>
+        ///     The game-row identifier this mod instance represents. Embedded in the
+        ///     <c>hello.game_id</c> field so the server can route dispatches and bind a
+        ///     per-game queue. Streamers configure this once per channel.
+        /// </summary>
+        int GameId { get; set; }
 
         /// <summary>Master switch. When false, the transport stays disconnected and effects don't run.</summary>
         bool Enabled { get; set; }
 
-        /// <summary>When false, effects in the "danger" category (escape a creature, etc.) reply <c>danger_effects_disabled</c>.</summary>
+        /// <summary>
+        ///     When false, effects in the "danger" category (escape a creature, etc.) reply
+        ///     <c>effect_disabled</c>.
+        /// </summary>
         bool DangerEffectsEnabled { get; }
-
-        /// <summary>Max simultaneous in-flight redemptions before the queue rejects new arrivals.</summary>
-        int MaxInFlight { get; }
 
         /// <summary>Minimum seconds between any two executed effects. <c>0</c> disables global throttling.</summary>
         float GlobalCooldownSeconds { get; }

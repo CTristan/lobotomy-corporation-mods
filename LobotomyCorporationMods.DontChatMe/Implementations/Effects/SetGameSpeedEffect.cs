@@ -35,7 +35,7 @@ namespace LobotomyCorporationMods.DontChatMe.Implementations.Effects
         {
             if (!_gameAdapter.IsGameReady)
             {
-                return ErrorTags.GameNotReady;
+                return StandardErrors.GameStateBlocked;
             }
 
             _gameAdapter.SetGameSpeed(FastSpeed);
@@ -46,7 +46,7 @@ namespace LobotomyCorporationMods.DontChatMe.Implementations.Effects
         {
             if (!_gameAdapter.IsGameReady)
             {
-                reason = ErrorTags.GameNotReady;
+                reason = StandardErrors.GameStateBlocked;
                 return false;
             }
 

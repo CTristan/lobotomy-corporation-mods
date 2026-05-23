@@ -39,15 +39,16 @@ namespace LobotomyCorporationMods.DontChatMe
                 () => UnityEngine.Time.realtimeSinceStartup,
                 Config.GlobalCooldownSeconds
             );
-            IdempotencyCache = new IdempotencyCache(capacity: 1024);
+            IdempotencyCache = new IdempotencyCache(capacity: 32);
             HudState = new HudState(initiallyEnabled: Config.Enabled);
             SettingsState = new SettingsState();
 
             Transport = new WebSocketTransport(
-                webSocketFactory: uri => new WebSocketSharpAdapter(uri),
+                webSocketFactory: (uri, sub) => new WebSocketSharpAdapter(uri, sub),
                 config: Config,
                 onError: ex => Logger?.WriteException(ex),
-                version: typeof(Harmony_Patch).Assembly.GetName().Version.ToString(3)
+                version: typeof(Harmony_Patch).Assembly.GetName().Version.ToString(3),
+                lastSeenRedemptionIdProvider: () => IdempotencyCache.MostRecentTerminalRedemptionId
             );
 
             SettingsController = new SettingsController(Config, Transport);
@@ -59,16 +60,18 @@ namespace LobotomyCorporationMods.DontChatMe
                 executors: executors,
                 cooldownGate: CooldownGate,
                 idempotencyCache: IdempotencyCache,
-                sendReply: Transport.SendReply,
-                sendRetry: Transport.SendRetry,
+                sendResponse: Transport.SendResponse,
                 logger: new DeferredLogger(() => Logger),
                 onExecuted: HudState.RecordEffect
             );
 
             Pump = new RequestPump(
-                capacity: Config.MaxInFlight,
-                maxPerTick: 4,
-                drainCallback: Dispatcher.Dispatch
+                drainCallback: Dispatcher.Dispatch,
+                onOverwrite: displaced =>
+                    UnityEngine.Debug.LogWarning(
+                        "DontChatMe RequestPump slot overwritten — server dispatched while a prior frame was pending. Displaced redemption: "
+                            + displaced.RedemptionId
+                    )
             );
 
             AvailabilityProbe = new AvailabilityProbe(
@@ -149,27 +152,11 @@ namespace LobotomyCorporationMods.DontChatMe
         [ExcludeFromCodeCoverage(Justification = Messages.UnityCodeCoverageJustification)]
         private void OnEffectReceived(EffectDispatch dispatch)
         {
-            if (Pump.TryEnqueue(dispatch))
-            {
-                return;
-            }
-
-            // Queue is full. Ask the chat-side to resubmit with the same redemption_id after a
-            // short delay rather than immediately refunding. The pump drains 4 items per game
-            // frame, so 1 second is enough time for the queue to clear under normal load. There
-            // is no DCM-side retry cap on overloaded: the queue is bounded and the chat-side
-            // controls retry cadence — if the queue stays full long enough that this loops, the
-            // problem is upstream of DCM.
-            Transport.SendRetry(
-                new EffectRetryReply(
-                    dispatch.RedemptionId,
-                    delayMs: OverloadedRetryDelayMs,
-                    error: ErrorTags.Overloaded
-                )
-            );
+            // Server sequences strictly — at most one in-flight per game — so the slot is
+            // expected to be empty here. If a prior dispatch is still pending, RequestPump
+            // logs and overwrites; we never need to refuse work or send back a queue-full.
+            Pump.Enqueue(dispatch);
         }
-
-        private const int OverloadedRetryDelayMs = 1000;
 
         private void OnTransportStateChanged(ConnectionState state)
         {

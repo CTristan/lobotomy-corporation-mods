@@ -3,6 +3,7 @@
 #region
 
 using System;
+using System.Globalization;
 using System.Text;
 using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.DontChatMe.Constants;
@@ -13,43 +14,48 @@ namespace LobotomyCorporationMods.DontChatMe.Models
 {
     /// <summary>
     ///     Outbound <c>effect_state</c> frame: announces whether a single effect slug is
-    ///     selectable right now, and (when not) which <see cref="ErrorTags" /> reason applies.
-    ///     The chat-side server uses these to grey out effects that would currently fail so
-    ///     viewers don't waste redemptions.
+    ///     currently available, and (when not) which <see cref="StandardErrors" /> reason
+    ///     applies. The server's <c>Hemograce.Dispatch.GameQueue</c> uses these to gate the
+    ///     queue head (Case B — per-effect scan-forward gate). The monotonic frame <c>id</c>
+    ///     is assigned by the transport at serialization time.
     /// </summary>
     public sealed class EffectStateReply : IEquatable<EffectStateReply>
     {
-        public EffectStateReply(string slug, bool selectable, string reason)
+        public EffectStateReply(string slug, bool available, string reason)
         {
             ThrowHelper.ThrowIfNull(slug, nameof(slug));
             Slug = slug;
-            Selectable = selectable;
+            Available = available;
             Reason = reason;
         }
 
         public string Slug { get; }
 
-        public bool Selectable { get; }
+        public bool Available { get; }
 
-        /// <summary>One of the <see cref="ErrorTags" /> strings when <see cref="Selectable" /> is false; <c>null</c> otherwise.</summary>
+        /// <summary>One of the <see cref="StandardErrors" /> strings when <see cref="Available" /> is false; <c>null</c> otherwise.</summary>
         public string Reason { get; }
 
-        public string ToJson()
+        public string ToJson(int id)
         {
-            var sb = new StringBuilder(96);
+            var sb = new StringBuilder(112);
             sb.Append("{\"");
             sb.Append(JsonKeys.Type);
+            sb.Append("\":\"");
+            sb.Append(WireTypes.EffectState);
+            sb.Append("\",\"");
+            sb.Append(JsonKeys.Id);
             sb.Append("\":");
-            JsonStringEscaper.AppendQuoted(sb, WireTypes.EffectState);
+            sb.Append(id.ToString(CultureInfo.InvariantCulture));
             sb.Append(",\"");
-            sb.Append(JsonKeys.Slug);
+            sb.Append(JsonKeys.EffectSlug);
             sb.Append("\":");
             JsonStringEscaper.AppendQuoted(sb, Slug);
             sb.Append(",\"");
-            sb.Append(JsonKeys.Selectable);
+            sb.Append(JsonKeys.Available);
             sb.Append("\":");
-            sb.Append(Selectable ? "true" : "false");
-            if (!Selectable && Reason != null)
+            sb.Append(Available ? "true" : "false");
+            if (!Available && Reason != null)
             {
                 sb.Append(",\"");
                 sb.Append(JsonKeys.Reason);
@@ -68,7 +74,7 @@ namespace LobotomyCorporationMods.DontChatMe.Models
                 return false;
             }
 
-            return Slug == other.Slug && Selectable == other.Selectable && Reason == other.Reason;
+            return Slug == other.Slug && Available == other.Available && Reason == other.Reason;
         }
 
         public override bool Equals(object obj) => Equals(obj as EffectStateReply);
@@ -78,7 +84,7 @@ namespace LobotomyCorporationMods.DontChatMe.Models
             unchecked
             {
                 var hash = Slug.GetHashCode();
-                hash = (hash * 397) ^ Selectable.GetHashCode();
+                hash = (hash * 397) ^ Available.GetHashCode();
                 hash = (hash * 397) ^ (Reason?.GetHashCode() ?? 0);
                 return hash;
             }

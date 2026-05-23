@@ -37,7 +37,7 @@ namespace LobotomyCorporationMods.DontChatMe.Implementations.Effects
             ThrowHelper.ThrowIfNull(dispatch, nameof(dispatch));
             if (!_gameAdapter.IsGameReady)
             {
-                return ErrorTags.GameNotReady;
+                return StandardErrors.GameStateBlocked;
             }
 
             _gameAdapter.ShowSystemMessage(BuildMessage(dispatch.UserDisplayName));
@@ -48,7 +48,7 @@ namespace LobotomyCorporationMods.DontChatMe.Implementations.Effects
         {
             if (!_gameAdapter.IsGameReady)
             {
-                reason = ErrorTags.GameNotReady;
+                reason = StandardErrors.GameStateBlocked;
                 return false;
             }
 

@@ -25,7 +25,7 @@ namespace LobotomyCorporationMods.DontChatMe.UiComponents
     {
         private const int WindowId = 0xDC0F;
         private const float WindowWidth = 420f;
-        private const float WindowHeight = 240f;
+        private const float WindowHeight = 290f;
         private const float FieldWidth = 280f;
         private const float RevealButtonWidth = 60f;
         private const char MaskChar = '*';
@@ -142,6 +142,10 @@ namespace LobotomyCorporationMods.DontChatMe.UiComponents
             );
 
             GUILayout.Space(6f);
+            GUILayout.Label(LocalizationIds.DisplayGameId.GetLocalized());
+            var newGameId = GUILayout.TextField(snapshot.Draft.GameId, GUILayout.Width(FieldWidth));
+
+            GUILayout.Space(6f);
             var newEnabled = GUILayout.Toggle(
                 snapshot.Draft.Enabled,
                 LocalizationIds.DisplayEnabled.GetLocalized()
@@ -150,10 +154,13 @@ namespace LobotomyCorporationMods.DontChatMe.UiComponents
             if (
                 newServerUrl != snapshot.Draft.ServerUrl
                 || newAuthToken != snapshot.Draft.AuthToken
+                || newGameId != snapshot.Draft.GameId
                 || newEnabled != snapshot.Draft.Enabled
             )
             {
-                _state.UpdateDraft(new SettingsDraft(newServerUrl, newAuthToken, newEnabled));
+                _state.UpdateDraft(
+                    new SettingsDraft(newServerUrl, newAuthToken, newGameId, newEnabled)
+                );
             }
 
             GUILayout.FlexibleSpace();
@@ -215,6 +222,9 @@ namespace LobotomyCorporationMods.DontChatMe.UiComponents
                     break;
                 case SettingsApplyResult.InvalidScheme:
                     _state.SetError(LocalizationIds.ErrorInvalidServerUrl.GetLocalized());
+                    break;
+                case SettingsApplyResult.InvalidGameId:
+                    _state.SetError(LocalizationIds.ErrorInvalidGameId.GetLocalized());
                     break;
             }
         }

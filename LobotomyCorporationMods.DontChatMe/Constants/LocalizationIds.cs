@@ -12,10 +12,10 @@ namespace LobotomyCorporationMods.DontChatMe.Constants
         // Display names
         internal const string DisplayServerUrl = "DontChatMe_DisplayServerUrl";
         internal const string DisplayAuthToken = "DontChatMe_DisplayAuthToken";
+        internal const string DisplayGameId = "DontChatMe_DisplayGameId";
         internal const string DisplayEnabled = "DontChatMe_DisplayEnabled";
         internal const string DisplayDangerEffectsEnabled =
             "DontChatMe_DisplayDangerEffectsEnabled";
-        internal const string DisplayMaxInFlight = "DontChatMe_DisplayMaxInFlight";
         internal const string DisplayGlobalCooldownSeconds =
             "DontChatMe_DisplayGlobalCooldownSeconds";
         internal const string DisplayEnergyAmount = "DontChatMe_DisplayEnergyAmount";
@@ -24,9 +24,9 @@ namespace LobotomyCorporationMods.DontChatMe.Constants
         // Descriptions
         internal const string DescServerUrl = "DontChatMe_DescServerUrl";
         internal const string DescAuthToken = "DontChatMe_DescAuthToken";
+        internal const string DescGameId = "DontChatMe_DescGameId";
         internal const string DescEnabled = "DontChatMe_DescEnabled";
         internal const string DescDangerEffectsEnabled = "DontChatMe_DescDangerEffectsEnabled";
-        internal const string DescMaxInFlight = "DontChatMe_DescMaxInFlight";
         internal const string DescGlobalCooldownSeconds = "DontChatMe_DescGlobalCooldownSeconds";
         internal const string DescEnergyAmount = "DontChatMe_DescEnergyAmount";
         internal const string DescMoneyAmount = "DontChatMe_DescMoneyAmount";
@@ -38,5 +38,6 @@ namespace LobotomyCorporationMods.DontChatMe.Constants
         internal const string DisplayShow = "DontChatMe_DisplayShow";
         internal const string DisplayHide = "DontChatMe_DisplayHide";
         internal const string ErrorInvalidServerUrl = "DontChatMe_ErrorInvalidServerUrl";
+        internal const string ErrorInvalidGameId = "DontChatMe_ErrorInvalidGameId";
     }
 }

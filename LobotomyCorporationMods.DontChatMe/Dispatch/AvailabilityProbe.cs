@@ -119,8 +119,8 @@ namespace LobotomyCorporationMods.DontChatMe.Dispatch
             {
                 return new EffectStateReply(
                     executor.Slug,
-                    selectable: false,
-                    reason: ErrorTags.DangerEffectsDisabled
+                    available: false,
+                    reason: StandardErrors.EffectDisabled
                 );
             }
 

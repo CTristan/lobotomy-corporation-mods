@@ -124,49 +124,21 @@ namespace LobotomyCorporationMods.DontChatMe.Implementations
             var gm = GameManager.currentGameManager;
             if (gm == null)
             {
-                return GamePhases.NoDay;
+                return GamePhases.NotInPlay;
             }
 
             switch (gm.state)
             {
                 case GameState.STOP:
-                    return GamePhases.NoDay;
+                    return GamePhases.NotInPlay;
                 case GameState.PAUSE:
                     return GamePhases.Paused;
+                default:
+                    // PLAYING — ordeals and meltdowns are still in-play for queue-gating
+                    // purposes; the HUD can show those as decoration by reading directly
+                    // from the game state.
+                    return GamePhases.InPlay;
             }
-
-            // PLAYING — narrow further by whichever in-game special states are active.
-            var ordeals = OrdealManager.instance.GetActivatedOrdeals();
-            if (ordeals != null && ordeals.Count > 0)
-            {
-                return GamePhases.OrdealActive;
-            }
-
-            if (HasOverloadedCreature())
-            {
-                return GamePhases.MeltdownActive;
-            }
-
-            return GamePhases.Ready;
-        }
-
-        private static bool HasOverloadedCreature()
-        {
-            var creatures = CreatureManager.instance.GetCreatureList();
-            if (creatures == null)
-            {
-                return false;
-            }
-
-            foreach (var creature in creatures)
-            {
-                if (creature != null && creature.isOverloaded)
-                {
-                    return true;
-                }
-            }
-
-            return false;
         }
 
         private static List<AgentModel> GetLivingAgents()

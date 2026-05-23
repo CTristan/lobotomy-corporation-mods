@@ -3,6 +3,7 @@
 #region
 
 using System;
+using System.Globalization;
 using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.DontChatMe.Configuration;
 using LobotomyCorporationMods.DontChatMe.Transport;
@@ -13,9 +14,9 @@ namespace LobotomyCorporationMods.DontChatMe.UiComponents
 {
     /// <summary>
     ///     Orchestrates the Apply step of the Settings window. Validates the user's draft,
-    ///     writes the three Connection-section settings through to the persistent config,
-    ///     and restarts the transport so the new values take effect immediately.
-    ///     Fully testable — the OnGUI body in <c>SettingsWindow</c> calls this and only this.
+    ///     writes the Connection-section settings through to the persistent config, and
+    ///     restarts the transport so the new values take effect immediately. Fully testable
+    ///     — the OnGUI body in <c>SettingsWindow</c> calls this and only this.
     /// </summary>
     public sealed class SettingsController
     {
@@ -50,8 +51,23 @@ namespace LobotomyCorporationMods.DontChatMe.UiComponents
                 return SettingsApplyResult.InvalidScheme;
             }
 
+            int parsedGameId;
+            if (
+                !int.TryParse(
+                    draft.GameId,
+                    NumberStyles.Integer,
+                    CultureInfo.InvariantCulture,
+                    out parsedGameId
+                )
+                || parsedGameId <= 0
+            )
+            {
+                return SettingsApplyResult.InvalidGameId;
+            }
+
             _config.ServerUrl = parsed;
             _config.AuthToken = draft.AuthToken;
+            _config.GameId = parsedGameId;
             _config.Enabled = draft.Enabled;
             _config.Save();
             _transport.Restart();

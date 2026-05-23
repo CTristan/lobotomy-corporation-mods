@@ -3,6 +3,7 @@
 #region
 
 using System;
+using System.Globalization;
 using System.Text;
 using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.DontChatMe.Constants;
@@ -13,9 +14,10 @@ namespace LobotomyCorporationMods.DontChatMe.Models
 {
     /// <summary>
     ///     Outbound <c>game_state</c> frame: announces the current <see cref="GamePhases" /> value
-    ///     so the chat-side server can show day/pause/meltdown context to viewers. Sent
-    ///     immediately when the phase changes and on a slow heartbeat to keep the chat-side
-    ///     resynchronized after a hiccup.
+    ///     so the chat-side server can show day/pause/meltdown context to viewers and apply the
+    ///     game-wide queue gate (Case A — when phase ≠ <c>in_play</c> the entire per-game queue
+    ///     pauses). Sent on phase transitions and on a slow heartbeat. The monotonic frame
+    ///     <c>id</c> is assigned by the transport at serialization time.
     /// </summary>
     public sealed class GameStateReply : IEquatable<GameStateReply>
     {
@@ -28,13 +30,17 @@ namespace LobotomyCorporationMods.DontChatMe.Models
         /// <summary>One of the <see cref="GamePhases" /> string constants.</summary>
         public string Phase { get; }
 
-        public string ToJson()
+        public string ToJson(int id)
         {
-            var sb = new StringBuilder(64);
+            var sb = new StringBuilder(80);
             sb.Append("{\"");
             sb.Append(JsonKeys.Type);
+            sb.Append("\":\"");
+            sb.Append(WireTypes.GameState);
+            sb.Append("\",\"");
+            sb.Append(JsonKeys.Id);
             sb.Append("\":");
-            JsonStringEscaper.AppendQuoted(sb, WireTypes.GameState);
+            sb.Append(id.ToString(CultureInfo.InvariantCulture));
             sb.Append(",\"");
             sb.Append(JsonKeys.Phase);
             sb.Append("\":");

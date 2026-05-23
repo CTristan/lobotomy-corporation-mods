@@ -5,17 +5,18 @@
 using System;
 using System.Collections.Generic;
 using LobotomyCorporation.Mods.Common;
+using LobotomyCorporationMods.DontChatMe.Models;
 
 #endregion
 
 namespace LobotomyCorporationMods.DontChatMe.Dispatch
 {
     /// <summary>
-    ///     LRU cache that tracks per-redemption lifecycle so the dispatcher can (a) refuse a duplicate
-    ///     dispatch that already produced a terminal reply, and (b) allow the same redemption_id to be
-    ///     resubmitted after an <c>effect_retry</c> reply. A redemption is "terminal" once it has
-    ///     produced an <c>effect_executed</c> or non-retryable <c>effect_failed</c>; until then,
-    ///     repeated <see cref="TryEnter" /> calls return <c>true</c> so retries can be processed.
+    ///     LRU of terminal redemption outcomes. The server sequences dispatches strictly
+    ///     (one in-flight per game), so the cache only needs to dedupe replays — the
+    ///     server resending the in-flight head after a reconnect. On a hit, the dispatcher
+    ///     re-emits the cached response so the server can advance idempotently; on a miss,
+    ///     normal execution proceeds.
     ///     Not thread-safe; only the main-thread dispatcher touches it.
     /// </summary>
     public sealed class IdempotencyCache
@@ -23,8 +24,7 @@ namespace LobotomyCorporationMods.DontChatMe.Dispatch
         private sealed class Entry
         {
             public LinkedListNode<string> OrderNode;
-            public int RetryCount;
-            public bool Terminal;
+            public EffectResponse TerminalResponse;
         }
 
         private readonly int _capacity;
@@ -46,84 +46,56 @@ namespace LobotomyCorporationMods.DontChatMe.Dispatch
         public int Count => _entries.Count;
 
         /// <summary>
-        ///     Returns <c>true</c> if the dispatcher is allowed to process this redemption (either
-        ///     never seen, or seen but only produced retries). Returns <c>false</c> if the redemption
-        ///     already produced a terminal reply — in that case the caller should emit
-        ///     <c>duplicate_redemption</c>. Refreshes LRU position either way.
+        ///     Returns the cached terminal <see cref="EffectResponse" /> for the redemption,
+        ///     or <c>null</c> when no terminal entry exists. Refreshes LRU position on hit.
         /// </summary>
-        public bool TryEnter(string redemptionId)
-        {
-            ThrowHelper.ThrowIfNull(redemptionId, nameof(redemptionId));
-
-            Entry existing;
-            if (_entries.TryGetValue(redemptionId, out existing))
-            {
-                Touch(existing);
-                return !existing.Terminal;
-            }
-
-            AddNew(redemptionId);
-            return true;
-        }
-
-        /// <summary>
-        ///     Increments and returns the retry counter for this redemption. The caller compares
-        ///     the result against its retry cap to decide whether to issue another <c>effect_retry</c>
-        ///     or downgrade to a permanent <c>effect_failed</c>.
-        /// </summary>
-        public int RecordRetry(string redemptionId)
+        public EffectResponse LastTerminal(string redemptionId)
         {
             ThrowHelper.ThrowIfNull(redemptionId, nameof(redemptionId));
 
             Entry entry;
             if (!_entries.TryGetValue(redemptionId, out entry))
             {
-                entry = AddNew(redemptionId);
-            }
-            else
-            {
-                Touch(entry);
+                return null;
             }
 
-            entry.RetryCount++;
-            return entry.RetryCount;
+            Touch(entry);
+            return entry.TerminalResponse;
         }
 
         /// <summary>
-        ///     Marks the redemption as terminal — future <see cref="TryEnter" /> calls will return
-        ///     <c>false</c> for this id until LRU eviction.
+        ///     Stores <paramref name="response" /> as the terminal outcome for this redemption.
+        ///     Future <see cref="LastTerminal" /> calls will return the same object until LRU eviction.
         /// </summary>
-        public void MarkTerminal(string redemptionId)
+        public void MarkTerminal(string redemptionId, EffectResponse response)
         {
             ThrowHelper.ThrowIfNull(redemptionId, nameof(redemptionId));
+            ThrowHelper.ThrowIfNull(response, nameof(response));
 
             Entry entry;
-            if (!_entries.TryGetValue(redemptionId, out entry))
+            if (_entries.TryGetValue(redemptionId, out entry))
             {
-                entry = AddNew(redemptionId);
-            }
-            else
-            {
+                entry.TerminalResponse = response;
                 Touch(entry);
+                return;
             }
 
-            entry.Terminal = true;
+            AddNew(redemptionId, response);
         }
 
-        /// <summary>Diagnostic: has this id ever been seen by the cache?</summary>
-        public bool Contains(string redemptionId) => _entries.ContainsKey(redemptionId);
+        /// <summary>
+        ///     The redemption_id at the head of the LRU — i.e. the most-recently terminal-acked
+        ///     dispatch. Sent in the <c>hello.last_seen_redemption_id</c> field so the server
+        ///     can skip a head that has already been delivered in a prior session. Returns
+        ///     <c>null</c> when the cache is empty.
+        /// </summary>
+        public string MostRecentTerminalRedemptionId =>
+            _order.First == null ? null : _order.First.Value;
 
-        /// <summary>Diagnostic: is this id in a terminal state?</summary>
-        public bool IsTerminal(string redemptionId)
-        {
-            Entry entry;
-            return _entries.TryGetValue(redemptionId, out entry) && entry.Terminal;
-        }
-
-        private Entry AddNew(string redemptionId)
+        private void AddNew(string redemptionId, EffectResponse response)
         {
             var node = _order.AddFirst(redemptionId);
-            var entry = new Entry { OrderNode = node };
+            var entry = new Entry { OrderNode = node, TerminalResponse = response };
             _entries[redemptionId] = entry;
 
             if (_entries.Count > _capacity)
@@ -132,8 +104,6 @@ namespace LobotomyCorporationMods.DontChatMe.Dispatch
                 _order.RemoveLast();
                 _entries.Remove(oldest.Value);
             }
-
-            return entry;
         }
 
         private void Touch(Entry entry)

@@ -34,7 +34,7 @@ namespace LobotomyCorporationMods.DontChatMe.Implementations.Effects
         {
             if (!_gameAdapter.IsGameReady)
             {
-                return ErrorTags.GameNotReady;
+                return StandardErrors.GameStateBlocked;
             }
 
             _gameAdapter.SubtractEnergy(_config.EnergyAmount);
@@ -45,7 +45,7 @@ namespace LobotomyCorporationMods.DontChatMe.Implementations.Effects
         {
             if (!_gameAdapter.IsGameReady)
             {
-                reason = ErrorTags.GameNotReady;
+                reason = StandardErrors.GameStateBlocked;
                 return false;
             }
 

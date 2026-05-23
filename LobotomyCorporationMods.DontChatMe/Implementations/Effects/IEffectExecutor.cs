@@ -12,7 +12,7 @@ namespace LobotomyCorporationMods.DontChatMe.Implementations.Effects
     ///     Contract every effect implements.
     ///     Lifecycle is: the dispatcher looks the effect up by <see cref="Slug" />, runs gate checks,
     ///     then calls <see cref="Execute" />. The executor returns <c>null</c> on success or one of
-    ///     the strings in <see cref="Constants.ErrorTags" /> on failure (e.g. precondition not met).
+    ///     the strings in <see cref="Constants.StandardErrors" /> on failure (e.g. precondition not met).
     /// </summary>
     public interface IEffectExecutor
     {
@@ -30,7 +30,7 @@ namespace LobotomyCorporationMods.DontChatMe.Implementations.Effects
 
         /// <summary>
         ///     Runs the effect on the Unity main thread.
-        ///     Returns <c>null</c> on success, or one of the <see cref="Constants.ErrorTags" /> strings.
+        ///     Returns <c>null</c> on success, or one of the <see cref="Constants.StandardErrors" /> strings.
         /// </summary>
         string Execute(EffectDispatch dispatch);
 
@@ -39,7 +39,7 @@ namespace LobotomyCorporationMods.DontChatMe.Implementations.Effects
         ///     preconditions. Used by <c>AvailabilityProbe</c> to push <c>effect_state</c> deltas so
         ///     the chat-side UI can grey out effects that can't currently fire.
         ///     Returns <c>true</c> and sets <paramref name="reason" /> to <c>null</c> on availability;
-        ///     <c>false</c> with one of the <see cref="Constants.ErrorTags" /> strings otherwise.
+        ///     <c>false</c> with one of the <see cref="Constants.StandardErrors" /> strings otherwise.
         ///     The <c>DangerEffectsEnabled</c> config flag is enforced by the probe, not here.
         /// </summary>
         bool IsAvailableNow(out string reason);

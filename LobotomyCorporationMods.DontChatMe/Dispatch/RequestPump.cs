@@ -3,7 +3,6 @@
 #region
 
 using System;
-using System.Collections.Generic;
 using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.DontChatMe.Models;
 
@@ -12,88 +11,84 @@ using LobotomyCorporationMods.DontChatMe.Models;
 namespace LobotomyCorporationMods.DontChatMe.Dispatch
 {
     /// <summary>
-    ///     Bounded thread-safe queue between the transport thread (producer) and the main-thread
-    ///     dispatcher (consumer). net35 has no <c>ConcurrentQueue&lt;T&gt;</c>, so this is a
-    ///     <c>Queue&lt;T&gt;</c> guarded by a private lock.
+    ///     One-slot mailbox between the transport thread (producer) and the main-thread
+    ///     dispatcher (consumer). The server sequences dispatches strictly (one in-flight
+    ///     per game), so a single-element slot is all we need. A producer arriving while
+    ///     the slot is already full is a protocol violation by the server; we log a
+    ///     warning and overwrite (newest dispatch wins — the server has clearly already
+    ///     advanced past the prior one).
     /// </summary>
     public sealed class RequestPump
     {
-        private readonly Queue<EffectDispatch> _queue = new Queue<EffectDispatch>();
         private readonly object _lock = new object();
-        private readonly int _capacity;
-        private readonly int _maxPerTick;
         private readonly Action<EffectDispatch> _drainCallback;
+        private readonly Action<EffectDispatch> _onOverwrite;
+        private EffectDispatch _pending;
 
-        public RequestPump(int capacity, int maxPerTick, Action<EffectDispatch> drainCallback)
+        public RequestPump(
+            Action<EffectDispatch> drainCallback,
+            Action<EffectDispatch> onOverwrite = null
+        )
         {
             ThrowHelper.ThrowIfNull(drainCallback, nameof(drainCallback));
-            if (capacity < 1)
-            {
-                capacity = 1;
-            }
-
-            if (maxPerTick < 1)
-            {
-                maxPerTick = 1;
-            }
-
-            _capacity = capacity;
-            _maxPerTick = maxPerTick;
             _drainCallback = drainCallback;
+            _onOverwrite = onOverwrite;
         }
 
-        public int Count
+        /// <summary>
+        ///     <c>true</c> when a dispatch is sitting in the slot waiting for the next main-thread
+        ///     <see cref="Tick" />.
+        /// </summary>
+        public bool HasPending
         {
             get
             {
                 lock (_lock)
                 {
-                    return _queue.Count;
+                    return _pending != null;
                 }
             }
         }
 
         /// <summary>
-        ///     Producer-side. Returns <c>false</c> when the queue is at <c>capacity</c>; the transport
-        ///     replies <c>effect_failed { error: "overloaded" }</c> in that case.
+        ///     Producer-side. Stages a dispatch for the next main-thread tick. If a prior
+        ///     dispatch is still sitting in the slot, the on-overwrite callback fires with
+        ///     the displaced one (so it can be logged) and the new one wins.
         /// </summary>
-        public bool TryEnqueue(EffectDispatch dispatch)
+        public void Enqueue(EffectDispatch dispatch)
         {
             ThrowHelper.ThrowIfNull(dispatch, nameof(dispatch));
+
+            EffectDispatch displaced;
             lock (_lock)
             {
-                if (_queue.Count >= _capacity)
-                {
-                    return false;
-                }
+                displaced = _pending;
+                _pending = dispatch;
+            }
 
-                _queue.Enqueue(dispatch);
-                return true;
+            if (displaced != null && _onOverwrite != null)
+            {
+                _onOverwrite(displaced);
             }
         }
 
-        /// <summary>Consumer-side. Drains up to <c>maxPerTick</c> items and returns the count drained.</summary>
-        public int Tick()
+        /// <summary>Consumer-side. Drains the slot if non-empty and runs the callback.</summary>
+        public bool Tick()
         {
-            var drained = 0;
-            while (drained < _maxPerTick)
+            EffectDispatch next;
+            lock (_lock)
             {
-                EffectDispatch next;
-                lock (_lock)
-                {
-                    if (_queue.Count == 0)
-                    {
-                        break;
-                    }
-
-                    next = _queue.Dequeue();
-                }
-
-                _drainCallback(next);
-                drained++;
+                next = _pending;
+                _pending = null;
             }
 
-            return drained;
+            if (next == null)
+            {
+                return false;
+            }
+
+            _drainCallback(next);
+            return true;
         }
     }
 }

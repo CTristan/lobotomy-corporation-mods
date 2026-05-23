@@ -72,6 +72,38 @@ namespace LobotomyCorporationMods.DontChatMe.Models
             return value as string ?? value.ToString();
         }
 
+        internal bool GetBool(string key, bool defaultValue)
+        {
+            object value;
+            if (!_raw.TryGetValue(key, out value) || value == null)
+            {
+                return defaultValue;
+            }
+
+            if (value is bool b)
+            {
+                return b;
+            }
+
+            var asString = value as string;
+            if (asString == null)
+            {
+                return defaultValue;
+            }
+
+            if (string.Equals(asString, "true", System.StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            if (string.Equals(asString, "false", System.StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            return defaultValue;
+        }
+
         internal int GetInt(string key, int defaultValue)
         {
             object value;

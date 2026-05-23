@@ -17,12 +17,14 @@ using LobotomyCorporationMods.DontChatMe.UiComponents;
 namespace LobotomyCorporationMods.DontChatMe.Transport
 {
     /// <summary>
-    ///     Owns the lifetime of the WebSocket connection to the chat-side server.
-    ///     Sends the <c>hello</c> handshake, parses inbound frames, replies to pings, raises
-    ///     <see cref="EffectReceived" /> for the dispatcher, and reconnects with exponential backoff
-    ///     when the socket drops.
-    ///     Thread-safe: events from the underlying socket fire on worker threads, but all state
-    ///     transitions happen behind <see cref="_lock" />.
+    ///     Owns the lifetime of the WebSocket connection to the chat-side server. Sends the
+    ///     <c>hello</c> handshake with the subprotocol-negotiated identifier, parses inbound
+    ///     frames, emits the periodic <c>keep_alive</c>, raises <see cref="EffectReceived" />
+    ///     for the dispatcher, and reconnects with exponential backoff when the socket drops
+    ///     unless the close code marks the disconnect as terminal (4001 superseded, 4401
+    ///     unknown_game).
+    ///     Thread-safe: events from the underlying socket fire on worker threads, but all
+    ///     state transitions happen behind <see cref="_lock" />.
     /// </summary>
     [SuppressMessage(
         "Design",
@@ -31,25 +33,45 @@ namespace LobotomyCorporationMods.DontChatMe.Transport
     )]
     public sealed class WebSocketTransport : IDisposable, ITransportRestarter
     {
-        private readonly Func<Uri, IWebSocket> _webSocketFactory;
+        /// <summary>Sub-second so we comfortably beat the server's 15s idle close.</summary>
+        public const int KeepAliveIntervalMs = 5000;
+
+        /// <summary>WebSocket close code the server uses to evict an older socket for the same game_id.</summary>
+        public const ushort CloseCodeSuperseded = 4001;
+
+        /// <summary>WebSocket close code for <c>hello.game_id</c> not resolving to a game row.</summary>
+        public const ushort CloseCodeUnknownGame = 4401;
+
+        /// <summary>Server <c>error.code</c> string that also marks the connection terminal.</summary>
+        public const string UnknownGameErrorCode = "unknown_game";
+
+        /// <summary>The <c>Sec-WebSocket-Protocol</c> prefix that carries the auth identifier.</summary>
+        public const string SubprotocolPrefix = "v1.token.";
+
+        private readonly Func<Uri, string, IWebSocket> _webSocketFactory;
         private readonly IDontChatMeConfig _config;
         private readonly Action<Exception> _onError;
         private readonly Action<string> _info;
         private readonly Func<double> _random;
         private readonly Action<int, Action> _scheduleAfter;
+        private readonly Func<string> _lastSeenRedemptionIdProvider;
         private readonly string _version;
         private readonly object _lock = new object();
 
         private IWebSocket _currentSocket;
         private bool _started;
         private bool _stopping;
+        private bool _terminal;
         private int _reconnectAttempt;
+        private int _outboundId;
+        private int _keepAliveGeneration;
 
         public WebSocketTransport(
-            Func<Uri, IWebSocket> webSocketFactory,
+            Func<Uri, string, IWebSocket> webSocketFactory,
             IDontChatMeConfig config,
             Action<Exception> onError,
             string version,
+            Func<string> lastSeenRedemptionIdProvider,
             Action<string> info = null,
             Func<double> random = null,
             Action<int, Action> scheduleAfter = null
@@ -59,10 +81,15 @@ namespace LobotomyCorporationMods.DontChatMe.Transport
             ThrowHelper.ThrowIfNull(config, nameof(config));
             ThrowHelper.ThrowIfNull(onError, nameof(onError));
             ThrowHelper.ThrowIfNull(version, nameof(version));
+            ThrowHelper.ThrowIfNull(
+                lastSeenRedemptionIdProvider,
+                nameof(lastSeenRedemptionIdProvider)
+            );
             _webSocketFactory = webSocketFactory;
             _config = config;
             _onError = onError;
             _version = version;
+            _lastSeenRedemptionIdProvider = lastSeenRedemptionIdProvider;
             _info = info ?? UnityEngine.Debug.Log;
             _random = random ?? DefaultRandom;
             _scheduleAfter = scheduleAfter ?? DefaultScheduleAfter;
@@ -80,16 +107,15 @@ namespace LobotomyCorporationMods.DontChatMe.Transport
             }
         }
 
-        /// <summary>Raised on a worker thread when the server pushes an <c>effect_dispatched</c> frame.</summary>
+        /// <summary>Raised on a worker thread when the server pushes an <c>effect_dispatch</c> frame.</summary>
         public event Action<EffectDispatch> EffectReceived;
 
         /// <summary>Raised on a worker thread when the server returns a non-recoverable error during handshake.</summary>
         public event Action<string> ServerErrorReceived;
 
         /// <summary>
-        ///     Raised when the connection's lifecycle state changes. Driven by socket-thread events
-        ///     (<c>OnClosed</c>, server welcome) and by the reconnect scheduler. The HUD overlay
-        ///     subscribes to this to show the current state to the streamer.
+        ///     Raised when the connection's lifecycle state changes. The HUD overlay subscribes
+        ///     to this to show the current state to the streamer.
         /// </summary>
         public event Action<ConnectionState> StateChanged;
 
@@ -105,6 +131,7 @@ namespace LobotomyCorporationMods.DontChatMe.Transport
 
                 _started = true;
                 _stopping = false;
+                _terminal = false;
                 _reconnectAttempt = 0;
             }
 
@@ -113,8 +140,7 @@ namespace LobotomyCorporationMods.DontChatMe.Transport
 
         /// <summary>
         ///     Stops the current socket and reconnects using the current config. When
-        ///     <c>_config.Enabled</c> is false, the transport stops only. Called by the
-        ///     Settings UI after the user changes connection settings.
+        ///     <c>_config.Enabled</c> is false, the transport stops only.
         /// </summary>
         public void Restart()
         {
@@ -135,39 +161,31 @@ namespace LobotomyCorporationMods.DontChatMe.Transport
                 _stopping = true;
                 socket = _currentSocket;
                 _currentSocket = null;
+                _keepAliveGeneration++;
             }
 
             CloseSocketSafely(socket);
-            // The pending reconnect thread (if any) will see _stopping when it wakes and exit
-            // without reconnecting.
         }
 
-        /// <summary>Sends a reply frame. Best effort: drops on the floor if the socket is closed.</summary>
-        public void SendReply(EffectReply reply)
+        /// <summary>Sends an <see cref="EffectResponse" /> frame. Drops on the floor if the socket is closed.</summary>
+        public void SendResponse(EffectResponse response)
         {
-            ThrowHelper.ThrowIfNull(reply, nameof(reply));
-            SendRaw(reply.ToJson());
+            ThrowHelper.ThrowIfNull(response, nameof(response));
+            SendRaw(response.ToJson(NextOutboundId()));
         }
 
-        /// <summary>Sends an <c>effect_state</c> frame. Best effort: drops on the floor if the socket is closed.</summary>
+        /// <summary>Sends an <c>effect_state</c> frame. Drops on the floor if the socket is closed.</summary>
         public void SendEffectState(EffectStateReply state)
         {
             ThrowHelper.ThrowIfNull(state, nameof(state));
-            SendRaw(state.ToJson());
+            SendRaw(state.ToJson(NextOutboundId()));
         }
 
-        /// <summary>Sends an <c>effect_retry</c> frame. Best effort: drops on the floor if the socket is closed.</summary>
-        public void SendRetry(EffectRetryReply retry)
-        {
-            ThrowHelper.ThrowIfNull(retry, nameof(retry));
-            SendRaw(retry.ToJson());
-        }
-
-        /// <summary>Sends a <c>game_state</c> frame. Best effort: drops on the floor if the socket is closed.</summary>
+        /// <summary>Sends a <c>game_state</c> frame. Drops on the floor if the socket is closed.</summary>
         public void SendGameState(GameStateReply gameState)
         {
             ThrowHelper.ThrowIfNull(gameState, nameof(gameState));
-            SendRaw(gameState.ToJson());
+            SendRaw(gameState.ToJson(NextOutboundId()));
         }
 
         public void Dispose() => Stop();
@@ -182,11 +200,19 @@ namespace LobotomyCorporationMods.DontChatMe.Transport
             return new Random().NextDouble();
         }
 
+        private int NextOutboundId() => Interlocked.Increment(ref _outboundId);
+
         private void ConnectIfPossible()
         {
-            if (_config.ServerUrl == null || string.IsNullOrEmpty(_config.AuthToken))
+            if (
+                _config.ServerUrl == null
+                || string.IsNullOrEmpty(_config.AuthToken)
+                || _config.GameId <= 0
+            )
             {
-                _info("DontChatMe transport not starting: ServerUrl or AuthToken is unset.");
+                _info(
+                    "DontChatMe transport not starting: ServerUrl, AuthToken, or GameId is unset."
+                );
                 RaiseStateChanged(ConnectionState.Disconnected);
                 return;
             }
@@ -196,7 +222,10 @@ namespace LobotomyCorporationMods.DontChatMe.Transport
             IWebSocket socket;
             try
             {
-                socket = _webSocketFactory(_config.ServerUrl);
+                socket = _webSocketFactory(
+                    _config.ServerUrl,
+                    SubprotocolPrefix + _config.AuthToken
+                );
             }
 #pragma warning disable CA1031 // Any construction error is treated as a connect failure and surfaced via the reconnect path.
             catch (Exception ex)
@@ -221,12 +250,11 @@ namespace LobotomyCorporationMods.DontChatMe.Transport
             {
                 socket.Connect();
             }
-#pragma warning disable CA1031 // A connect failure is normal and surfaces through OnClosed; we mustn't let it kill the caller.
+#pragma warning disable CA1031 // A connect failure is normal and surfaces through OnClosed.
             catch (Exception ex)
 #pragma warning restore CA1031
             {
                 _onError(ex);
-                // OnClosed should fire from the library but in case it doesn't:
                 ScheduleReconnect();
             }
         }
@@ -235,14 +263,25 @@ namespace LobotomyCorporationMods.DontChatMe.Transport
         {
             try
             {
-                SendRaw(HelloFrame.Build(_config.AuthToken, _version));
+                SendRaw(
+                    HelloFrame.Build(
+                        NextOutboundId(),
+                        _config.GameId,
+                        _version,
+                        _lastSeenRedemptionIdProvider()
+                    )
+                );
                 _info(LogMessages.TransportConnected);
+                int generation;
                 lock (_lock)
                 {
                     _reconnectAttempt = 0;
+                    generation = ++_keepAliveGeneration;
                 }
+
+                ScheduleKeepAlive(generation);
             }
-#pragma warning disable CA1031 // Any unexpected exception in the handshake is logged and surfaces as a disconnect; never let it propagate.
+#pragma warning disable CA1031 // Handshake exceptions are logged and surface as a disconnect; never propagate.
             catch (Exception ex)
 #pragma warning restore CA1031
             {
@@ -272,20 +311,22 @@ namespace LobotomyCorporationMods.DontChatMe.Transport
             switch (frame.Type)
             {
                 case WireTypes.Welcome:
-                    // Welcome means server accepted our hello.
                     RaiseStateChanged(ConnectionState.Connected);
+                    var depth = frame.GetWelcomeQueueDepth();
+                    var inFlight = frame.GetWelcomeInFlightRedemptionId();
+                    _info(
+                        string.Format(
+                            CultureInfo.InvariantCulture,
+                            "DontChatMe welcomed: queue_depth={0}, in_flight={1}",
+                            depth,
+                            inFlight ?? "(none)"
+                        )
+                    );
                     break;
 
-                case WireTypes.Ping:
-                    SendRaw(HelloFrame.BuildPong());
-                    break;
-
-                case WireTypes.EffectDispatched:
+                case WireTypes.EffectDispatch:
                     if (frame.TryGetEffectDispatch(out var dispatch))
                     {
-                        // Acknowledge immediately so we beat the chat-side 10s dispatch timeout
-                        // even if the per-frame pump on the main thread is busy.
-                        SendRaw(EffectReply.Ack(dispatch.RedemptionId).ToJson());
                         EffectReceived?.Invoke(dispatch);
                     }
                     else
@@ -301,10 +342,19 @@ namespace LobotomyCorporationMods.DontChatMe.Transport
 
                     break;
 
+                case WireTypes.KeepAlive:
+                    SendKeepAlive();
+                    break;
+
                 case WireTypes.Error:
                     var code = frame.GetErrorCode() ?? "unknown";
                     _info("DontChatMe server returned error: " + code);
                     ServerErrorReceived?.Invoke(code);
+                    if (string.Equals(code, UnknownGameErrorCode, StringComparison.Ordinal))
+                    {
+                        MarkTerminalAndStop();
+                    }
+
                     break;
 
                 default:
@@ -319,11 +369,88 @@ namespace LobotomyCorporationMods.DontChatMe.Transport
             }
         }
 
-        private void OnClosed()
+        private void OnClosed(ushort code, string reason)
         {
-            _info(LogMessages.TransportDisconnected);
+            _info(
+                string.Format(
+                    CultureInfo.InvariantCulture,
+                    "{0} (code {1} {2})",
+                    LogMessages.TransportDisconnected,
+                    code,
+                    reason
+                )
+            );
             RaiseStateChanged(ConnectionState.Disconnected);
+
+            lock (_lock)
+            {
+                _keepAliveGeneration++;
+            }
+
+            if (code == CloseCodeSuperseded || code == CloseCodeUnknownGame)
+            {
+                MarkTerminalAndStop();
+                return;
+            }
+
             ScheduleReconnect();
+        }
+
+        private void MarkTerminalAndStop()
+        {
+            IWebSocket socket;
+            lock (_lock)
+            {
+                _terminal = true;
+                _started = false;
+                _stopping = true;
+                socket = _currentSocket;
+                _currentSocket = null;
+                _keepAliveGeneration++;
+            }
+
+            CloseSocketSafely(socket);
+        }
+
+        private void SendKeepAlive()
+        {
+            var id = NextOutboundId();
+            SendRaw(
+                "{\""
+                    + JsonKeys.Type
+                    + "\":\""
+                    + WireTypes.KeepAlive
+                    + "\",\""
+                    + JsonKeys.Id
+                    + "\":"
+                    + id.ToString(CultureInfo.InvariantCulture)
+                    + "}"
+            );
+        }
+
+        private void ScheduleKeepAlive(int generation)
+        {
+            _scheduleAfter(
+                KeepAliveIntervalMs,
+                () =>
+                {
+                    lock (_lock)
+                    {
+                        if (
+                            _stopping
+                            || _terminal
+                            || generation != _keepAliveGeneration
+                            || _currentSocket == null
+                        )
+                        {
+                            return;
+                        }
+                    }
+
+                    SendKeepAlive();
+                    ScheduleKeepAlive(generation);
+                }
+            );
         }
 
         private void RaiseStateChanged(ConnectionState state)
@@ -356,7 +483,7 @@ namespace LobotomyCorporationMods.DontChatMe.Transport
             int attempt;
             lock (_lock)
             {
-                if (_stopping || !_started)
+                if (_stopping || !_started || _terminal)
                 {
                     return;
                 }
@@ -382,7 +509,7 @@ namespace LobotomyCorporationMods.DontChatMe.Transport
                 {
                     lock (_lock)
                     {
-                        if (_stopping || !_started)
+                        if (_stopping || !_started || _terminal)
                         {
                             return;
                         }
@@ -402,7 +529,7 @@ namespace LobotomyCorporationMods.DontChatMe.Transport
             })
             {
                 IsBackground = true,
-                Name = "DontChatMe.Reconnect",
+                Name = "DontChatMe.Schedule",
             };
             thread.Start();
         }

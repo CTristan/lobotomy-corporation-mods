@@ -16,5 +16,8 @@ namespace LobotomyCorporationMods.DontChatMe.UiComponents
 
         /// <summary>The Server URL parsed but used a scheme other than <c>ws</c> or <c>wss</c>.</summary>
         InvalidScheme,
+
+        /// <summary>The Game ID field was empty, non-numeric, or not a positive integer.</summary>
+        InvalidGameId,
     }
 }

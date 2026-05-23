@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using LobotomyCorporation.Mods.Common;
 using LobotomyCorporationMods.DontChatMe.Constants;
@@ -23,9 +24,9 @@ namespace LobotomyCorporationMods.DontChatMe.Configuration
 
         private readonly IConfigEntry<string> _serverUrl;
         private readonly IConfigEntry<string> _authToken;
+        private readonly IConfigEntry<int> _gameId;
         private readonly IConfigEntry<bool> _enabled;
         private readonly IConfigEntry<bool> _dangerEffectsEnabled;
-        private readonly IConfigEntry<int> _maxInFlight;
         private readonly IConfigEntry<float> _globalCooldownSeconds;
         private readonly IConfigEntry<float> _energyAmount;
         private readonly IConfigEntry<int> _moneyAmount;
@@ -55,6 +56,15 @@ namespace LobotomyCorporationMods.DontChatMe.Configuration
                 string.Empty,
                 LocalizationIds.DescAuthToken.GetLocalized(),
                 displayName: LocalizationIds.DisplayAuthToken.GetLocalized(),
+                sectionDisplayName: connectionSectionName
+            );
+
+            _gameId = config.Bind(
+                ConnectionSection,
+                "GameId",
+                defaultValue: 0,
+                LocalizationIds.DescGameId.GetLocalized(),
+                displayName: LocalizationIds.DisplayGameId.GetLocalized(),
                 sectionDisplayName: connectionSectionName
             );
 
@@ -98,17 +108,6 @@ namespace LobotomyCorporationMods.DontChatMe.Configuration
                 sectionDisplayName: effectsSectionName
             );
 
-            _maxInFlight = config.Bind(
-                LimitsSection,
-                "MaxInFlight",
-                defaultValue: 32,
-                LocalizationIds.DescMaxInFlight.GetLocalized(),
-                range: new AcceptableValueRange<int>(1, 256),
-                displayName: LocalizationIds.DisplayMaxInFlight.GetLocalized(),
-                useSlider: true,
-                sectionDisplayName: limitsSectionName
-            );
-
             _globalCooldownSeconds = config.Bind(
                 LimitsSection,
                 "GlobalCooldownSeconds",
@@ -148,6 +147,12 @@ namespace LobotomyCorporationMods.DontChatMe.Configuration
 
                 SetIniValue(lines, ConnectionSection, "ServerUrl", _serverUrl.Value);
                 SetIniValue(lines, ConnectionSection, "AuthToken", _authToken.Value);
+                SetIniValue(
+                    lines,
+                    ConnectionSection,
+                    "GameId",
+                    _gameId.Value.ToString(CultureInfo.InvariantCulture)
+                );
                 SetIniValue(lines, ConnectionSection, "Enabled", _enabled.Value ? "True" : "False");
 
                 File.WriteAllLines(_configFilePath, lines.ToArray());
@@ -210,6 +215,21 @@ namespace LobotomyCorporationMods.DontChatMe.Configuration
                     else if (string.Equals(key, "AuthToken", StringComparison.OrdinalIgnoreCase))
                     {
                         _authToken.Value = value;
+                    }
+                    else if (string.Equals(key, "GameId", StringComparison.OrdinalIgnoreCase))
+                    {
+                        int parsedGameId;
+                        if (
+                            int.TryParse(
+                                value,
+                                NumberStyles.Integer,
+                                CultureInfo.InvariantCulture,
+                                out parsedGameId
+                            )
+                        )
+                        {
+                            _gameId.Value = parsedGameId;
+                        }
                     }
                     else if (string.Equals(key, "Enabled", StringComparison.OrdinalIgnoreCase))
                     {
@@ -322,6 +342,12 @@ namespace LobotomyCorporationMods.DontChatMe.Configuration
             set => _authToken.Value = value ?? string.Empty;
         }
 
+        public int GameId
+        {
+            get => _gameId.Value;
+            set => _gameId.Value = value;
+        }
+
         public bool Enabled
         {
             get => _enabled.Value;
@@ -329,7 +355,6 @@ namespace LobotomyCorporationMods.DontChatMe.Configuration
         }
 
         public bool DangerEffectsEnabled => _dangerEffectsEnabled.Value;
-        public int MaxInFlight => _maxInFlight.Value;
         public float GlobalCooldownSeconds => _globalCooldownSeconds.Value;
         public float EnergyAmount => _energyAmount.Value;
         public int MoneyAmount => _moneyAmount.Value;

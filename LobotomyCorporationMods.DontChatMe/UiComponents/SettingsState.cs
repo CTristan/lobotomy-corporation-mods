@@ -24,7 +24,12 @@ namespace LobotomyCorporationMods.DontChatMe.UiComponents
     {
         private readonly object _lock = new object();
         private bool _isOpen;
-        private SettingsDraft _draft = new SettingsDraft(string.Empty, string.Empty, true);
+        private SettingsDraft _draft = new SettingsDraft(
+            string.Empty,
+            string.Empty,
+            string.Empty,
+            enabled: true
+        );
         private bool _isServerUrlRevealed;
         private bool _isAuthTokenRevealed;
         private string _lastError;

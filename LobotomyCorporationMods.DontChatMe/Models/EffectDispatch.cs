@@ -10,8 +10,8 @@ using LobotomyCorporationMods.DontChatMe.Constants;
 namespace LobotomyCorporationMods.DontChatMe.Models
 {
     /// <summary>
-    ///     One inbound <c>effect_dispatched</c> frame from the chat-side server.
-    ///     Mirrors the wire contract documented in the mod README.
+    ///     One inbound <c>effect_dispatch</c> frame from the chat-side server. Mirrors the
+    ///     wire contract documented in <c>apps/hemograce_web/docs/game_mod_protocol.md</c>.
     /// </summary>
     public sealed class EffectDispatch
     {
@@ -22,7 +22,9 @@ namespace LobotomyCorporationMods.DontChatMe.Models
             string userId,
             string userDisplayName,
             int gameId,
-            string dispatchedAt
+            string dispatchedAt,
+            int attempts,
+            bool replay
         )
         {
             ThrowHelper.ThrowIfNull(redemptionId, nameof(redemptionId));
@@ -34,6 +36,8 @@ namespace LobotomyCorporationMods.DontChatMe.Models
             UserDisplayName = userDisplayName;
             GameId = gameId;
             DispatchedAt = dispatchedAt;
+            Attempts = attempts;
+            Replay = replay;
         }
 
         public string RedemptionId { get; }
@@ -43,6 +47,16 @@ namespace LobotomyCorporationMods.DontChatMe.Models
         public string UserDisplayName { get; }
         public int GameId { get; }
         public string DispatchedAt { get; }
+
+        /// <summary>1-based attempt counter; rises on each server-side retry of the same redemption.</summary>
+        public int Attempts { get; }
+
+        /// <summary>
+        ///     <c>true</c> when the server resent this dispatch because a new socket registered
+        ///     while it was still in-flight. The mod's idempotency cache dedupes via
+        ///     <see cref="RedemptionId" /> so a replay is safe even if the prior attempt completed.
+        /// </summary>
+        public bool Replay { get; }
 
         /// <summary>
         ///     Tries to project a parsed JSON object into an <see cref="EffectDispatch" />.
@@ -70,7 +84,9 @@ namespace LobotomyCorporationMods.DontChatMe.Models
                 json.GetString(JsonKeys.UserId),
                 json.GetString(JsonKeys.UserDisplayName),
                 json.GetInt(JsonKeys.GameId, defaultValue: 0),
-                json.GetString(JsonKeys.DispatchedAt)
+                json.GetString(JsonKeys.DispatchedAt),
+                json.GetInt(JsonKeys.Attempts, defaultValue: 1),
+                json.GetBool(JsonKeys.Replay, defaultValue: false)
             );
             return true;
         }

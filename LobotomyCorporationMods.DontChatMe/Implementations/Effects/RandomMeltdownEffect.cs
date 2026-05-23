@@ -30,17 +30,17 @@ namespace LobotomyCorporationMods.DontChatMe.Implementations.Effects
         {
             if (!_gameAdapter.IsGameReady)
             {
-                return ErrorTags.GameNotReady;
+                return StandardErrors.GameStateBlocked;
             }
 
-            return _gameAdapter.ActivateRandomMeltdown() ? null : ErrorTags.ExecutionError;
+            return _gameAdapter.ActivateRandomMeltdown() ? null : StandardErrors.ModInternalError;
         }
 
         public bool IsAvailableNow(out string reason)
         {
             if (!_gameAdapter.IsGameReady)
             {
-                reason = ErrorTags.GameNotReady;
+                reason = StandardErrors.GameStateBlocked;
                 return false;
             }
 

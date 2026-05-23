@@ -28,7 +28,9 @@ namespace LobotomyCorporationMods.DontChatMe.Patches
             Harmony_Patch.Instance.Pump.Tick();
             Harmony_Patch.Instance.AvailabilityProbe.Tick();
             Harmony_Patch.Instance.GamePhaseProbe.Tick();
-            Harmony_Patch.Instance.HudState.SetQueuedCount(Harmony_Patch.Instance.Pump.Count);
+            Harmony_Patch.Instance.HudState.SetQueuedCount(
+                Harmony_Patch.Instance.Pump.HasPending ? 1 : 0
+            );
         }
 
         [EntryPoint]

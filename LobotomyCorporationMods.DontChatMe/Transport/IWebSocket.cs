@@ -29,8 +29,13 @@ namespace LobotomyCorporationMods.DontChatMe.Transport
         /// </summary>
         event Action<string> MessageReceived;
 
-        /// <summary>Raised on a worker thread when the socket closes for any reason.</summary>
-        event Action Closed;
+        /// <summary>
+        ///     Raised on a worker thread when the socket closes for any reason. The first
+        ///     argument is the close code (4001 means a newer connection has superseded this
+        ///     one; the transport stops reconnecting on that signal). The second argument is
+        ///     the human-readable close reason or <see cref="string.Empty" /> when none.
+        /// </summary>
+        event Action<ushort, string> Closed;
 
         /// <summary>Raised on a worker thread when the underlying library reports a transport error.</summary>
         event Action<Exception> ErrorOccurred;
