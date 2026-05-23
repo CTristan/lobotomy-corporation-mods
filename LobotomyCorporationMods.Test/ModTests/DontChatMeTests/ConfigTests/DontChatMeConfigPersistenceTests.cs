@@ -127,11 +127,12 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.ConfigTests
         }
 
         [Fact]
-        public void Save_then_load_round_trips_all_three_connection_values()
+        public void Save_then_load_round_trips_all_four_connection_values()
         {
             var config = BuildConfig();
             config.ServerUrl = new Uri("ws://127.0.0.1:8585/mod/socket/");
             config.AuthToken = "round-trip-token";
+            config.GameId = 99;
             config.Enabled = false;
             config.Save();
 
@@ -139,7 +140,35 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.ConfigTests
 
             reloaded.ServerUrl.Should().Be(new Uri("ws://127.0.0.1:8585/mod/socket/"));
             reloaded.AuthToken.Should().Be("round-trip-token");
+            reloaded.GameId.Should().Be(99);
             reloaded.Enabled.Should().BeFalse();
+        }
+
+        [Fact]
+        public void Constructor_loads_GameId_from_config_file()
+        {
+            var config = BuildConfig("[Connection]\nGameId = 7\n");
+
+            config.GameId.Should().Be(7);
+        }
+
+        [Fact]
+        public void Constructor_with_non_numeric_GameId_keeps_default_zero()
+        {
+            var config = BuildConfig("[Connection]\nGameId = abc\n");
+
+            config.GameId.Should().Be(0);
+        }
+
+        [Fact]
+        public void Save_writes_GameId_to_config_file()
+        {
+            var config = BuildConfig();
+            config.GameId = 42;
+
+            config.Save();
+
+            File.ReadAllText(_tempFile).Should().Contain("GameId = 42");
         }
 
         [Fact]

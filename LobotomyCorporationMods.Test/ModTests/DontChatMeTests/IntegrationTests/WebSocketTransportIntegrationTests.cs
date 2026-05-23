@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Threading.Tasks;
 using AwesomeAssertions;
 using LobotomyCorporationMods.DontChatMe.Constants;
@@ -27,6 +26,9 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.IntegrationTests
     ///     <see cref="LoopbackWebSocketServer" />. Complements the <see cref="FakeWebSocket" />-based
     ///     unit tests in <c>WebSocketTransportTests</c>, which cover the same state transitions in
     ///     isolation.
+    ///     Subprotocol-based auth negotiation isn't exercised here — these tests use a raw
+    ///     <see cref="ClientWebSocketAdapter" /> that does not propagate the subprotocol; the
+    ///     unit tests cover that path.
     /// </summary>
     public sealed class WebSocketTransportIntegrationTests : IDisposable
     {
@@ -42,7 +44,12 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.IntegrationTests
         {
             _server = new LoopbackWebSocketServer();
             _server.Start();
-            _config = new FakeConfig { ServerUrl = _server.Url, AuthToken = "tok-int" };
+            _config = new FakeConfig
+            {
+                ServerUrl = _server.Url,
+                AuthToken = "tok-int",
+                GameId = 42,
+            };
         }
 
         public void Dispose()
@@ -61,13 +68,14 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.IntegrationTests
             _server.Dispose();
         }
 
-        private WebSocketTransport BuildTransport()
+        private WebSocketTransport BuildTransport(Func<string> lastSeenRedemptionIdProvider = null)
         {
             var transport = new WebSocketTransport(
-                webSocketFactory: uri => new ClientWebSocketAdapter(uri),
+                webSocketFactory: (uri, _) => new ClientWebSocketAdapter(uri),
                 config: _config,
                 onError: _ => { },
                 version: "1.0.0",
+                lastSeenRedemptionIdProvider: lastSeenRedemptionIdProvider ?? (() => null),
                 info: _ => { },
                 random: () => 0,
                 scheduleAfter: (_, action) => _scheduledReconnects.Add(action)
@@ -77,7 +85,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.IntegrationTests
         }
 
         [Fact]
-        public async Task Full_lifecycle_handshake_through_executed_reply_round_trips_over_a_real_socket()
+        public async Task Full_lifecycle_handshake_through_success_response_round_trips_over_a_real_socket()
         {
             _transport = BuildTransport();
             _transport.Start();
@@ -89,38 +97,34 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.IntegrationTests
                     DefaultTimeout
                 )
                 .ConfigureAwait(true);
-            hello.Should().Contain("\"token\":\"tok-int\"");
-            hello.Should().Contain("\"version\":\"1.0.0\"");
+            hello.Should().Contain("\"game_id\":42");
+            hello.Should().Contain("\"client_version\":\"1.0.0\"");
+            // The auth token never appears in the frame body — it rides in the subprotocol header.
+            hello.Should().NotContain("tok-int");
 
             // 2. Server welcomes the client. Transport transitions to Connected.
-            await _server.PushAsync("{\"type\":\"welcome\"}").ConfigureAwait(true);
+            await _server
+                .PushAsync("{\"type\":\"welcome\",\"id\":1,\"queue_depth\":0}")
+                .ConfigureAwait(true);
 
-            // 3. Server pushes an effect dispatch. Transport must (a) ack and (b) raise the event.
+            // 3. Server pushes an effect dispatch.
             await _server
                 .PushAsync(
-                    "{\"type\":\"effect_dispatched\","
+                    "{\"type\":\"effect_dispatch\","
+                        + "\"id\":2,"
                         + "\"redemption_id\":\"r-int-1\","
                         + "\"effect_slug\":\"add_money\","
                         + "\"effect_name\":null,"
                         + "\"user_id\":null,"
                         + "\"user_display_name\":null,"
-                        + "\"game_id\":0,"
-                        + "\"dispatched_at\":null}"
+                        + "\"game_id\":42,"
+                        + "\"dispatched_at\":null,"
+                        + "\"attempts\":1,"
+                        + "\"replay\":false}"
                 )
                 .ConfigureAwait(true);
 
-            // 4. The ack must beat hemograce's 10s timeout. 3s is well under that and well above
-            // localhost round-trip jitter.
-            await _server
-                .WaitForFrameAsync(
-                    f =>
-                        f.Contains("\"type\":\"dispatch_ack\"", StringComparison.Ordinal)
-                        && f.Contains("\"redemption_id\":\"r-int-1\"", StringComparison.Ordinal),
-                    TimeSpan.FromSeconds(3)
-                )
-                .ConfigureAwait(true);
-
-            // 5. EffectReceived fires on the receive-loop worker thread; the production dispatcher
+            // 4. EffectReceived fires on the receive-loop worker thread; the production dispatcher
             // would drain it via RequestPump on the main thread. Here we just confirm the handoff.
             await LoopbackWebSocketServer
                 .WaitUntilAsync(() => _effectsReceived.Count == 1, DefaultTimeout)
@@ -128,22 +132,23 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.IntegrationTests
             _effectsReceived[0].RedemptionId.Should().Be("r-int-1");
             _effectsReceived[0].EffectSlug.Should().Be("add_money");
 
-            // 6. Test plays the role of the main-thread dispatcher and emits the executed reply.
-            _transport.SendReply(EffectReply.Executed("r-int-1"));
+            // 5. Test plays the role of the main-thread dispatcher and emits a single success response.
+            _transport.SendResponse(EffectResponse.Success("r-int-1"));
 
-            var executed = await _server
+            var response = await _server
                 .WaitForFrameAsync(
                     f =>
-                        f.Contains("\"type\":\"effect_executed\"", StringComparison.Ordinal)
-                        && f.Contains("\"redemption_id\":\"r-int-1\"", StringComparison.Ordinal),
+                        f.Contains("\"type\":\"effect_response\"", StringComparison.Ordinal)
+                        && f.Contains("\"redemption_id\":\"r-int-1\"", StringComparison.Ordinal)
+                        && f.Contains("\"status\":\"success\"", StringComparison.Ordinal),
                     DefaultTimeout
                 )
                 .ConfigureAwait(true);
-            executed.Should().NotBeNullOrEmpty();
+            response.Should().NotBeNullOrEmpty();
         }
 
         [Fact]
-        public async Task Inbound_ping_round_trips_a_pong_back_to_the_server()
+        public async Task Inbound_keep_alive_round_trips_a_keep_alive_back_to_the_server()
         {
             _transport = BuildTransport();
             _transport.Start();
@@ -154,11 +159,32 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.IntegrationTests
                 )
                 .ConfigureAwait(true);
 
-            await _server.PushAsync("{\"type\":\"ping\"}").ConfigureAwait(true);
+            await _server.PushAsync("{\"type\":\"keep_alive\",\"id\":50}").ConfigureAwait(true);
 
             await _server
-                .WaitForFrameAsync(f => f == "{\"type\":\"pong\"}", DefaultTimeout)
+                .WaitForFrameAsync(
+                    f =>
+                        f.Contains("\"type\":\"keep_alive\"", StringComparison.Ordinal)
+                        && f.Contains("\"id\":", StringComparison.Ordinal),
+                    DefaultTimeout
+                )
                 .ConfigureAwait(true);
+        }
+
+        [Fact]
+        public async Task Hello_includes_last_seen_redemption_id_when_the_provider_returns_one()
+        {
+            _transport = BuildTransport(lastSeenRedemptionIdProvider: () => "r-prev");
+            _transport.Start();
+
+            var hello = await _server
+                .WaitForFrameAsync(
+                    f => f.Contains("\"type\":\"hello\"", StringComparison.Ordinal),
+                    DefaultTimeout
+                )
+                .ConfigureAwait(true);
+
+            hello.Should().Contain("\"last_seen_redemption_id\":\"r-prev\"");
         }
 
         [Fact]
@@ -173,7 +199,13 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.IntegrationTests
                     DefaultTimeout
                 )
                 .ConfigureAwait(true);
-            await _server.PushAsync("{\"type\":\"welcome\"}").ConfigureAwait(true);
+            await _server
+                .PushAsync("{\"type\":\"welcome\",\"id\":1,\"queue_depth\":0}")
+                .ConfigureAwait(true);
+
+            // Discard the keep-alive heartbeat OnOpened scheduled; we want to isolate the
+            // reconnect callback added by SimulateClose / OnClose below.
+            _scheduledReconnects.Clear();
 
             // 1. Server initiates a close. Models any disconnect; the transport reconnects the
             // same way regardless of whether the close was orderly or a network drop.
@@ -181,9 +213,9 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.IntegrationTests
 
             // 2. Transport's worker thread observes the drop and queues a reconnect.
             await LoopbackWebSocketServer
-                .WaitUntilAsync(() => _scheduledReconnects.Count == 1, DefaultTimeout)
+                .WaitUntilAsync(() => _transport.ReconnectAttempts == 1, DefaultTimeout)
                 .ConfigureAwait(true);
-            _transport.ReconnectAttempts.Should().Be(1);
+            _scheduledReconnects.Should().NotBeEmpty();
 
             // 3. Fire the scheduled reconnect immediately (test owns the scheduler).
             _scheduledReconnects[0]();
@@ -197,17 +229,16 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.IntegrationTests
                 .ConfigureAwait(true);
 
             // 5. Server welcomes the new socket and pushes another dispatch.
-            await _server.PushAsync("{\"type\":\"welcome\"}").ConfigureAwait(true);
+            await _server
+                .PushAsync("{\"type\":\"welcome\",\"id\":1,\"queue_depth\":0}")
+                .ConfigureAwait(true);
             await _server
                 .PushAsync(
-                    "{\"type\":\"effect_dispatched\","
+                    "{\"type\":\"effect_dispatch\","
                         + "\"redemption_id\":\"r-int-2\","
                         + "\"effect_slug\":\"add_money\","
-                        + "\"effect_name\":null,"
-                        + "\"user_id\":null,"
-                        + "\"user_display_name\":null,"
-                        + "\"game_id\":0,"
-                        + "\"dispatched_at\":null}"
+                        + "\"attempts\":1,"
+                        + "\"replay\":false}"
                 )
                 .ConfigureAwait(true);
 
@@ -247,7 +278,11 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.IntegrationTests
                 executors: new IEffectExecutor[]
                 {
                     new StubExecutor("alpha", available: true),
-                    new StubExecutor("beta", available: false, reason: ErrorTags.NoAgents),
+                    new StubExecutor(
+                        "beta",
+                        available: false,
+                        reason: StandardErrors.EffectUnavailableNow
+                    ),
                 },
                 config: _config,
                 send: _transport.SendEffectState,
@@ -269,7 +304,9 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.IntegrationTests
                     DefaultTimeout
                 )
                 .ConfigureAwait(true);
-            await _server.PushAsync("{\"type\":\"welcome\"}").ConfigureAwait(true);
+            await _server
+                .PushAsync("{\"type\":\"welcome\",\"id\":1,\"queue_depth\":0}")
+                .ConfigureAwait(true);
 
             // 1. The transport runs StateChanged on a worker thread; give it a beat to land before
             // we tick the probe.
@@ -280,13 +317,14 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.IntegrationTests
             // 2. Tick the probe — in production this happens from the main-thread per-frame Postfix.
             probe.Tick();
 
-            // 3. Both effect_state frames should round-trip to the loopback server.
+            // 3. Both effect_state frames should round-trip to the loopback server, using the new
+            // `available` field (replaced the old `selectable`).
             await _server
                 .WaitForFrameAsync(
                     f =>
                         f.Contains("\"type\":\"effect_state\"", StringComparison.Ordinal)
-                        && f.Contains("\"slug\":\"alpha\"", StringComparison.Ordinal)
-                        && f.Contains("\"selectable\":true", StringComparison.Ordinal),
+                        && f.Contains("\"effect_slug\":\"alpha\"", StringComparison.Ordinal)
+                        && f.Contains("\"available\":true", StringComparison.Ordinal),
                     DefaultTimeout
                 )
                 .ConfigureAwait(true);
@@ -295,12 +333,12 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.IntegrationTests
                 .WaitForFrameAsync(
                     f =>
                         f.Contains("\"type\":\"effect_state\"", StringComparison.Ordinal)
-                        && f.Contains("\"slug\":\"beta\"", StringComparison.Ordinal),
+                        && f.Contains("\"effect_slug\":\"beta\"", StringComparison.Ordinal),
                     DefaultTimeout
                 )
                 .ConfigureAwait(true);
-            beta.Should().Contain("\"selectable\":false");
-            beta.Should().Contain("\"reason\":\"no_agents\"");
+            beta.Should().Contain("\"available\":false");
+            beta.Should().Contain("\"reason\":\"effect_unavailable_now\"");
         }
 
         private sealed class MutableClock

@@ -70,5 +70,15 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.ConfigTests
 
             config.Enabled.Should().BeFalse();
         }
+
+        [Fact]
+        public void Setting_GameId_round_trips_to_the_getter()
+        {
+            var config = Harmony_Patch.Instance.Config;
+
+            config.GameId = 42;
+
+            config.GameId.Should().Be(42);
+        }
     }
 }

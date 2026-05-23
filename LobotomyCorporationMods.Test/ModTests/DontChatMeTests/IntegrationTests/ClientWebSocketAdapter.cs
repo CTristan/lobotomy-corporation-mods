@@ -35,7 +35,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.IntegrationTests
 
         public event Action Opened;
         public event Action<string> MessageReceived;
-        public event Action Closed;
+        public event Action<ushort, string> Closed;
         public event Action<Exception> ErrorOccurred;
 
         public bool IsAlive => _isAlive;
@@ -52,7 +52,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.IntegrationTests
             {
                 ErrorOccurred?.Invoke(ex);
                 _isAlive = false;
-                Closed?.Invoke();
+                Closed?.Invoke((ushort)1006, ex.Message ?? string.Empty);
                 return;
             }
 
@@ -120,7 +120,10 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.IntegrationTests
             finally
             {
                 _isAlive = false;
-                Closed?.Invoke();
+                var closeStatus = _client.CloseStatus;
+                var code = closeStatus.HasValue ? (ushort)closeStatus.Value : (ushort)1006;
+                var reason = _client.CloseStatusDescription ?? string.Empty;
+                Closed?.Invoke(code, reason);
             }
         }
 

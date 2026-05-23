@@ -37,7 +37,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.Fakes
         public string LastSystemMessage { get; private set; }
         public float LastGameSpeed { get; private set; } = float.NaN;
 
-        public string Phase { get; set; } = GamePhases.Ready;
+        public string Phase { get; set; } = GamePhases.InPlay;
 
         public bool KillRandomLivingAgent()
         {

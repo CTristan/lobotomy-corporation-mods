@@ -73,7 +73,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.DispatchTests
             probe.Tick();
             sink.Should().ContainSingle();
             sink[0].Slug.Should().Be("a");
-            sink[0].Selectable.Should().BeTrue();
+            sink[0].Available.Should().BeTrue();
 
             // Subsequent tick before throttle elapses: should be ignored.
             clock.Now = 0.5f;
@@ -99,13 +99,13 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.DispatchTests
 
             // Agents die — flip to unavailable.
             executor.Available = false;
-            executor.Reason = ErrorTags.NoAgents;
+            executor.Reason = StandardErrors.EffectUnavailableNow;
             clock.Now = 1.5f;
             probe.Tick();
 
             sink.Should().HaveCount(2);
-            sink[1].Selectable.Should().BeFalse();
-            sink[1].Reason.Should().Be(ErrorTags.NoAgents);
+            sink[1].Available.Should().BeFalse();
+            sink[1].Reason.Should().Be(StandardErrors.EffectUnavailableNow);
         }
 
         [Fact]
@@ -157,7 +157,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.DispatchTests
         }
 
         [Fact]
-        public void Danger_effect_reports_unselectable_with_danger_effects_disabled_when_the_config_flag_is_off()
+        public void Danger_effect_reports_unavailable_with_effect_disabled_when_the_config_flag_is_off()
         {
             var sink = new List<EffectStateReply>();
             var clock = new Clock { Now = 0f };
@@ -165,15 +165,15 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.DispatchTests
             var executor = new FakeExecutor("escape_random_creature")
             {
                 IsDanger = true,
-                Available = true, // would be selectable on game-state grounds alone
+                Available = true, // would be available on game-state grounds alone
             };
             var probe = Build(sink, config, clock, executor);
 
             probe.Tick();
 
             sink.Should().ContainSingle();
-            sink[0].Selectable.Should().BeFalse();
-            sink[0].Reason.Should().Be(ErrorTags.DangerEffectsDisabled);
+            sink[0].Available.Should().BeFalse();
+            sink[0].Reason.Should().Be(StandardErrors.EffectDisabled);
         }
 
         [Fact]
@@ -186,15 +186,15 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.DispatchTests
             {
                 IsDanger = true,
                 Available = false,
-                Reason = ErrorTags.NoCreatures,
+                Reason = StandardErrors.EffectUnavailableNow,
             };
             var probe = Build(sink, config, clock, executor);
 
             probe.Tick();
 
             sink.Should().ContainSingle();
-            sink[0].Selectable.Should().BeFalse();
-            sink[0].Reason.Should().Be(ErrorTags.NoCreatures);
+            sink[0].Available.Should().BeFalse();
+            sink[0].Reason.Should().Be(StandardErrors.EffectUnavailableNow);
         }
 
         [Fact]

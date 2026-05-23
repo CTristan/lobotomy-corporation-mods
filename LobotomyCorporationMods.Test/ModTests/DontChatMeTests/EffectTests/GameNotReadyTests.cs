@@ -20,7 +20,17 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.EffectTests
     public sealed class GameNotReadyTests : DontChatMeModTests
     {
         private static EffectDispatch Dispatch =>
-            new EffectDispatch("r", "any", null, null, null, 0, null);
+            new EffectDispatch(
+                redemptionId: "r",
+                effectSlug: "any",
+                effectName: null,
+                userId: null,
+                userDisplayName: null,
+                gameId: 0,
+                dispatchedAt: null,
+                attempts: 1,
+                replay: false
+            );
 
         private static FakeGameAdapter NotReady() => new FakeGameAdapter { IsGameReady = false };
 
@@ -30,7 +40,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.EffectTests
             new KillRandomAgentEffect(NotReady())
                 .Execute(Dispatch)
                 .Should()
-                .Be(ErrorTags.GameNotReady);
+                .Be(StandardErrors.GameStateBlocked);
         }
 
         [Fact]
@@ -39,7 +49,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.EffectTests
             new RandomAgentPanicEffect(NotReady())
                 .Execute(Dispatch)
                 .Should()
-                .Be(ErrorTags.GameNotReady);
+                .Be(StandardErrors.GameStateBlocked);
         }
 
         [Fact]
@@ -48,7 +58,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.EffectTests
             new RemoveEnergyEffect(NotReady(), new FakeConfig())
                 .Execute(Dispatch)
                 .Should()
-                .Be(ErrorTags.GameNotReady);
+                .Be(StandardErrors.GameStateBlocked);
         }
 
         [Fact]
@@ -57,7 +67,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.EffectTests
             new SetGameSpeedEffect(NotReady())
                 .Execute(Dispatch)
                 .Should()
-                .Be(ErrorTags.GameNotReady);
+                .Be(StandardErrors.GameStateBlocked);
         }
 
         [Fact]
@@ -66,7 +76,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.EffectTests
             new ShowSystemMessageEffect(NotReady())
                 .Execute(Dispatch)
                 .Should()
-                .Be(ErrorTags.GameNotReady);
+                .Be(StandardErrors.GameStateBlocked);
         }
 
         [Fact]
@@ -75,7 +85,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.EffectTests
             new EscapeRandomCreatureEffect(NotReady())
                 .Execute(Dispatch)
                 .Should()
-                .Be(ErrorTags.GameNotReady);
+                .Be(StandardErrors.GameStateBlocked);
         }
     }
 }

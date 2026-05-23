@@ -23,7 +23,9 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.EffectTests
                 userId: null,
                 userDisplayName: userDisplayName,
                 gameId: 0,
-                dispatchedAt: null
+                dispatchedAt: null,
+                attempts: 1,
+                replay: false
             );
 
         // ----- AddMoney -----
@@ -45,7 +47,10 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.EffectTests
             var adapter = new FakeGameAdapter { IsGameReady = false };
             var effect = new AddMoneyEffect(adapter, new FakeConfig());
 
-            effect.Execute(MakeDispatch(EffectSlugs.AddMoney)).Should().Be(ErrorTags.GameNotReady);
+            effect
+                .Execute(MakeDispatch(EffectSlugs.AddMoney))
+                .Should()
+                .Be(StandardErrors.GameStateBlocked);
         }
 
         // ----- ShowSystemMessage -----
@@ -105,7 +110,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.EffectTests
             effect
                 .Execute(MakeDispatch(EffectSlugs.EscapeRandomCreature))
                 .Should()
-                .Be(ErrorTags.NoCreatures);
+                .Be(StandardErrors.EffectUnavailableNow);
             adapter.Calls.Should().BeEmpty();
         }
 
@@ -133,7 +138,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.EffectTests
             effect
                 .Execute(MakeDispatch(EffectSlugs.EscapeRandomCreature))
                 .Should()
-                .Be(ErrorTags.ExecutionError);
+                .Be(StandardErrors.ModInternalError);
         }
     }
 }

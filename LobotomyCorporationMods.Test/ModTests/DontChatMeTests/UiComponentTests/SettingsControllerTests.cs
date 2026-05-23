@@ -14,11 +14,14 @@ using Xunit;
 namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.UiComponentTests
 {
     /// <summary>
-    ///     Covers the Settings window's Apply orchestration: URL validation, write-through to
-    ///     <c>IDontChatMeConfig</c>, and the transport-restart hand-off.
+    ///     Covers the Settings window's Apply orchestration: URL validation, game-id validation,
+    ///     write-through to <c>IDontChatMeConfig</c>, and the transport-restart hand-off.
     /// </summary>
     public sealed class SettingsControllerTests
     {
+        private const string ValidUrl = "ws://127.0.0.1:8585/ws/game_mod";
+        private const string ValidGameId = "42";
+
         private sealed class FakeRestarter : ITransportRestarter
         {
             public int RestartCount { get; private set; }
@@ -34,19 +37,26 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.UiComponentTests
             FakeRestarter restarter
         ) => new SettingsController(config, restarter);
 
+        private static SettingsDraft Draft(
+            string url = ValidUrl,
+            string token = "tok",
+            string gameId = ValidGameId,
+            bool enabled = true
+        ) => new SettingsDraft(url, token, gameId, enabled);
+
         [Fact]
-        public void Apply_with_valid_ws_url_returns_Ok_and_writes_all_three_fields()
+        public void Apply_with_valid_ws_url_returns_Ok_and_writes_all_four_fields()
         {
             var config = new FakeConfig();
             var restarter = new FakeRestarter();
             var controller = BuildController(config, restarter);
-            var draft = new SettingsDraft("ws://127.0.0.1:8585/mod/socket/", "tok", true);
 
-            var result = controller.Apply(draft);
+            var result = controller.Apply(Draft(gameId: "7"));
 
             result.Should().Be(SettingsApplyResult.Ok);
-            config.ServerUrl.Should().Be(new Uri("ws://127.0.0.1:8585/mod/socket/"));
+            config.ServerUrl.Should().Be(new Uri(ValidUrl));
             config.AuthToken.Should().Be("tok");
+            config.GameId.Should().Be(7);
             config.Enabled.Should().BeTrue();
         }
 
@@ -56,7 +66,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.UiComponentTests
             var config = new FakeConfig();
             var restarter = new FakeRestarter();
             var controller = BuildController(config, restarter);
-            var draft = new SettingsDraft("wss://chat.example/mod/socket", "tok", true);
+            var draft = Draft(url: "wss://chat.example/ws/game_mod");
 
             var result = controller.Apply(draft);
 
@@ -69,9 +79,8 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.UiComponentTests
             var config = new FakeConfig();
             var restarter = new FakeRestarter();
             var controller = BuildController(config, restarter);
-            var draft = new SettingsDraft("ws://127.0.0.1:8585/mod/socket/", "tok", true);
 
-            controller.Apply(draft);
+            controller.Apply(Draft());
 
             restarter.RestartCount.Should().Be(1);
         }
@@ -81,18 +90,19 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.UiComponentTests
         {
             var config = new FakeConfig
             {
-                ServerUrl = new Uri("ws://existing.example/mod/socket"),
+                ServerUrl = new Uri("ws://existing.example/ws/game_mod"),
                 AuthToken = "existing-tok",
+                GameId = 99,
             };
             var restarter = new FakeRestarter();
             var controller = BuildController(config, restarter);
-            var draft = new SettingsDraft("not a url", "new-tok", false);
 
-            var result = controller.Apply(draft);
+            var result = controller.Apply(Draft(url: "not a url"));
 
             result.Should().Be(SettingsApplyResult.InvalidServerUrl);
-            config.ServerUrl.Should().Be(new Uri("ws://existing.example/mod/socket"));
+            config.ServerUrl.Should().Be(new Uri("ws://existing.example/ws/game_mod"));
             config.AuthToken.Should().Be("existing-tok");
+            config.GameId.Should().Be(99);
         }
 
         [Fact]
@@ -101,9 +111,8 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.UiComponentTests
             var config = new FakeConfig();
             var restarter = new FakeRestarter();
             var controller = BuildController(config, restarter);
-            var draft = new SettingsDraft(string.Empty, "tok", true);
 
-            var result = controller.Apply(draft);
+            var result = controller.Apply(Draft(url: string.Empty));
 
             result.Should().Be(SettingsApplyResult.InvalidServerUrl);
         }
@@ -114,12 +123,60 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.UiComponentTests
             var config = new FakeConfig();
             var restarter = new FakeRestarter();
             var controller = BuildController(config, restarter);
-            var draft = new SettingsDraft("http://example.com/mod/socket", "tok", true);
 
-            var result = controller.Apply(draft);
+            var result = controller.Apply(Draft(url: "http://example.com/ws/game_mod"));
 
             result.Should().Be(SettingsApplyResult.InvalidScheme);
             config.ServerUrl.Should().BeNull();
+        }
+
+        [Fact]
+        public void Apply_with_non_numeric_game_id_returns_InvalidGameId_and_does_not_write()
+        {
+            var config = new FakeConfig { GameId = 99 };
+            var restarter = new FakeRestarter();
+            var controller = BuildController(config, restarter);
+
+            var result = controller.Apply(Draft(gameId: "abc"));
+
+            result.Should().Be(SettingsApplyResult.InvalidGameId);
+            config.GameId.Should().Be(99);
+        }
+
+        [Fact]
+        public void Apply_with_empty_game_id_returns_InvalidGameId()
+        {
+            var config = new FakeConfig();
+            var restarter = new FakeRestarter();
+            var controller = BuildController(config, restarter);
+
+            var result = controller.Apply(Draft(gameId: string.Empty));
+
+            result.Should().Be(SettingsApplyResult.InvalidGameId);
+        }
+
+        [Fact]
+        public void Apply_with_zero_game_id_returns_InvalidGameId()
+        {
+            var config = new FakeConfig();
+            var restarter = new FakeRestarter();
+            var controller = BuildController(config, restarter);
+
+            var result = controller.Apply(Draft(gameId: "0"));
+
+            result.Should().Be(SettingsApplyResult.InvalidGameId);
+        }
+
+        [Fact]
+        public void Apply_with_negative_game_id_returns_InvalidGameId()
+        {
+            var config = new FakeConfig();
+            var restarter = new FakeRestarter();
+            var controller = BuildController(config, restarter);
+
+            var result = controller.Apply(Draft(gameId: "-1"));
+
+            result.Should().Be(SettingsApplyResult.InvalidGameId);
         }
 
         [Fact]
@@ -128,9 +185,8 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.UiComponentTests
             var config = new FakeConfig();
             var restarter = new FakeRestarter();
             var controller = BuildController(config, restarter);
-            var draft = new SettingsDraft("not a url", "tok", true);
 
-            controller.Apply(draft);
+            controller.Apply(Draft(url: "not a url"));
 
             restarter.RestartCount.Should().Be(0);
         }
@@ -141,9 +197,20 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.UiComponentTests
             var config = new FakeConfig();
             var restarter = new FakeRestarter();
             var controller = BuildController(config, restarter);
-            var draft = new SettingsDraft("http://example.com/", "tok", true);
 
-            controller.Apply(draft);
+            controller.Apply(Draft(url: "http://example.com/"));
+
+            restarter.RestartCount.Should().Be(0);
+        }
+
+        [Fact]
+        public void Apply_with_invalid_game_id_does_not_restart_the_transport()
+        {
+            var config = new FakeConfig();
+            var restarter = new FakeRestarter();
+            var controller = BuildController(config, restarter);
+
+            controller.Apply(Draft(gameId: "abc"));
 
             restarter.RestartCount.Should().Be(0);
         }
@@ -154,9 +221,8 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.UiComponentTests
             var config = new FakeConfig { Enabled = true };
             var restarter = new FakeRestarter();
             var controller = BuildController(config, restarter);
-            var draft = new SettingsDraft("ws://127.0.0.1:8585/mod/socket/", "tok", false);
 
-            var result = controller.Apply(draft);
+            var result = controller.Apply(Draft(enabled: false));
 
             result.Should().Be(SettingsApplyResult.Ok);
             config.Enabled.Should().BeFalse();
@@ -168,9 +234,8 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.UiComponentTests
             var config = new FakeConfig();
             var restarter = new FakeRestarter();
             var controller = BuildController(config, restarter);
-            var draft = new SettingsDraft("ws://127.0.0.1:8585/mod/socket/", "tok", false);
 
-            controller.Apply(draft);
+            controller.Apply(Draft(enabled: false));
 
             restarter.RestartCount.Should().Be(1);
         }
@@ -181,9 +246,8 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.UiComponentTests
             var config = new FakeConfig();
             var restarter = new FakeRestarter();
             var controller = BuildController(config, restarter);
-            var draft = new SettingsDraft("ws://127.0.0.1:8585/mod/socket/", "tok", true);
 
-            controller.Apply(draft);
+            controller.Apply(Draft());
 
             config.SaveCount.Should().Be(1);
         }
@@ -194,9 +258,20 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.UiComponentTests
             var config = new FakeConfig();
             var restarter = new FakeRestarter();
             var controller = BuildController(config, restarter);
-            var draft = new SettingsDraft("not a url", "tok", true);
 
-            controller.Apply(draft);
+            controller.Apply(Draft(url: "not a url"));
+
+            config.SaveCount.Should().Be(0);
+        }
+
+        [Fact]
+        public void Apply_does_not_persist_settings_when_game_id_is_invalid()
+        {
+            var config = new FakeConfig();
+            var restarter = new FakeRestarter();
+            var controller = BuildController(config, restarter);
+
+            controller.Apply(Draft(gameId: "abc"));
 
             config.SaveCount.Should().Be(0);
         }

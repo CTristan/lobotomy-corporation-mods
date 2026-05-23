@@ -23,7 +23,9 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.EffectTests
                 userId: null,
                 userDisplayName: null,
                 gameId: 0,
-                dispatchedAt: null
+                dispatchedAt: null,
+                attempts: 1,
+                replay: false
             );
 
         // ----- RandomMeltdown -----
@@ -37,7 +39,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.EffectTests
             effect
                 .Execute(MakeDispatch(EffectSlugs.RandomMeltdown))
                 .Should()
-                .Be(ErrorTags.GameNotReady);
+                .Be(StandardErrors.GameStateBlocked);
             adapter.Calls.Should().BeEmpty();
         }
 
@@ -68,7 +70,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.EffectTests
             effect
                 .Execute(MakeDispatch(EffectSlugs.RandomMeltdown))
                 .Should()
-                .Be(ErrorTags.ExecutionError);
+                .Be(StandardErrors.ModInternalError);
         }
 
         // ----- KillRandomAgent -----
@@ -82,7 +84,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.EffectTests
             effect
                 .Execute(MakeDispatch(EffectSlugs.KillRandomAgent))
                 .Should()
-                .Be(ErrorTags.NoAgents);
+                .Be(StandardErrors.EffectUnavailableNow);
             adapter.Calls.Should().BeEmpty();
         }
 
@@ -107,7 +109,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.EffectTests
             effect
                 .Execute(MakeDispatch(EffectSlugs.RandomAgentPanic))
                 .Should()
-                .Be(ErrorTags.NoAgents);
+                .Be(StandardErrors.EffectUnavailableNow);
             adapter.Calls.Should().BeEmpty();
         }
 
@@ -141,7 +143,10 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.EffectTests
             var config = new FakeConfig { EnergyAmount = 25f };
             var effect = new AddEnergyEffect(adapter, config);
 
-            effect.Execute(MakeDispatch(EffectSlugs.AddEnergy)).Should().Be(ErrorTags.GameNotReady);
+            effect
+                .Execute(MakeDispatch(EffectSlugs.AddEnergy))
+                .Should()
+                .Be(StandardErrors.GameStateBlocked);
             adapter.Calls.Should().BeEmpty();
         }
 

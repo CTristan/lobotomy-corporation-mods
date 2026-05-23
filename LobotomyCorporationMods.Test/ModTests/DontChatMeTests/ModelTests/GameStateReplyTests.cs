@@ -15,19 +15,41 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.ModelTests
     public sealed class GameStateReplyTests : DontChatMeModTests
     {
         [Fact]
-        public void ToJson_emits_game_state_with_phase()
+        public void ToJson_emits_game_state_with_id_and_phase()
         {
-            var reply = new GameStateReply(GamePhases.Ready);
+            var reply = new GameStateReply(GamePhases.InPlay);
 
-            reply.ToJson().Should().Be("{\"type\":\"game_state\",\"phase\":\"ready\"}");
+            reply
+                .ToJson(id: 5)
+                .Should()
+                .Be("{\"type\":\"game_state\",\"id\":5,\"phase\":\"in_play\"}");
+        }
+
+        [Fact]
+        public void ToJson_serializes_each_phase_value()
+        {
+            new GameStateReply(GamePhases.NotInPlay).ToJson(1).Should().Contain("\"not_in_play\"");
+            new GameStateReply(GamePhases.Briefing).ToJson(1).Should().Contain("\"briefing\"");
+            new GameStateReply(GamePhases.Paused).ToJson(1).Should().Contain("\"paused\"");
+            new GameStateReply(GamePhases.MissionEnded)
+                .ToJson(1)
+                .Should()
+                .Contain("\"mission_ended\"");
+        }
+
+        [Fact]
+        public void ToJson_uses_invariant_culture_for_the_id_field()
+        {
+            new GameStateReply(GamePhases.InPlay).ToJson(id: 1234).Should().Contain("\"id\":1234");
         }
 
         [Fact]
         public void ToJson_escapes_special_characters_in_phase()
         {
-            var reply = new GameStateReply("a\"b\\c");
-
-            reply.ToJson().Should().Be("{\"type\":\"game_state\",\"phase\":\"a\\\"b\\\\c\"}");
+            new GameStateReply("a\"b\\c")
+                .ToJson(id: 1)
+                .Should()
+                .Be("{\"type\":\"game_state\",\"id\":1,\"phase\":\"a\\\"b\\\\c\"}");
         }
 
         [Fact]
@@ -41,8 +63,8 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.ModelTests
         [Fact]
         public void Equals_compares_phase()
         {
-            var a = new GameStateReply(GamePhases.MeltdownActive);
-            var b = new GameStateReply(GamePhases.MeltdownActive);
+            var a = new GameStateReply(GamePhases.InPlay);
+            var b = new GameStateReply(GamePhases.InPlay);
             var c = new GameStateReply(GamePhases.Paused);
 
             a.Equals(b).Should().BeTrue();

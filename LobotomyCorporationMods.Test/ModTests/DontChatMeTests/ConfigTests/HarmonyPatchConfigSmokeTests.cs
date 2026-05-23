@@ -24,7 +24,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.ConfigTests
             config.Should().NotBeNull();
             config.Enabled.Should().BeTrue();
             config.DangerEffectsEnabled.Should().BeFalse();
-            config.MaxInFlight.Should().BeGreaterThan(0);
+            config.GameId.Should().Be(0);
             config.AuthToken.Should().NotBeNull();
         }
 

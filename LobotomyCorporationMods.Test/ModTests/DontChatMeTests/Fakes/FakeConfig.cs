@@ -13,9 +13,9 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.Fakes
     {
         public Uri ServerUrl { get; set; }
         public string AuthToken { get; set; } = string.Empty;
+        public int GameId { get; set; } = 1;
         public bool Enabled { get; set; } = true;
         public bool DangerEffectsEnabled { get; set; }
-        public int MaxInFlight { get; set; } = 32;
         public float GlobalCooldownSeconds { get; set; }
         public float EnergyAmount { get; set; } = 10f;
         public int MoneyAmount { get; set; } = 100;

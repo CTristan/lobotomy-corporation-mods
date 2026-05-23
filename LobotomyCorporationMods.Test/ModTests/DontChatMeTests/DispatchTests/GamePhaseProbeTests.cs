@@ -35,13 +35,13 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.DispatchTests
         {
             var sink = new List<GameStateReply>();
             var clock = new Clock { Now = 0f };
-            var adapter = new FakeGameAdapter { Phase = GamePhases.Ready };
+            var adapter = new FakeGameAdapter { Phase = GamePhases.InPlay };
             var probe = Build(sink, adapter, clock);
 
             probe.Tick();
 
             sink.Should().ContainSingle();
-            sink[0].Phase.Should().Be(GamePhases.Ready);
+            sink[0].Phase.Should().Be(GamePhases.InPlay);
         }
 
         [Fact]
@@ -49,7 +49,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.DispatchTests
         {
             var sink = new List<GameStateReply>();
             var clock = new Clock { Now = 0f };
-            var adapter = new FakeGameAdapter { Phase = GamePhases.Ready };
+            var adapter = new FakeGameAdapter { Phase = GamePhases.InPlay };
             var probe = Build(sink, adapter, clock);
 
             probe.Tick(); // initial — emits
@@ -65,7 +65,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.DispatchTests
             clock.Now = GamePhaseProbe.HeartbeatIntervalSeconds + 0.01f;
             probe.Tick();
             sink.Should().HaveCount(2);
-            sink[1].Phase.Should().Be(GamePhases.Ready);
+            sink[1].Phase.Should().Be(GamePhases.InPlay);
         }
 
         [Fact]
@@ -73,7 +73,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.DispatchTests
         {
             var sink = new List<GameStateReply>();
             var clock = new Clock { Now = 0f };
-            var adapter = new FakeGameAdapter { Phase = GamePhases.Ready };
+            var adapter = new FakeGameAdapter { Phase = GamePhases.InPlay };
             var probe = Build(sink, adapter, clock);
 
             probe.Tick();
@@ -81,11 +81,11 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.DispatchTests
 
             // Phase flips a heartbeat short of the interval.
             clock.Now = 0.2f;
-            adapter.Phase = GamePhases.MeltdownActive;
+            adapter.Phase = GamePhases.Paused;
             probe.Tick();
 
             sink.Should().HaveCount(2);
-            sink[1].Phase.Should().Be(GamePhases.MeltdownActive);
+            sink[1].Phase.Should().Be(GamePhases.Paused);
         }
 
         [Fact]
@@ -93,7 +93,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.DispatchTests
         {
             var sink = new List<GameStateReply>();
             var clock = new Clock { Now = 0f };
-            var adapter = new FakeGameAdapter { Phase = GamePhases.Ready };
+            var adapter = new FakeGameAdapter { Phase = GamePhases.InPlay };
             var probe = Build(sink, adapter, clock);
 
             probe.Tick();
@@ -105,7 +105,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.DispatchTests
             probe.Tick();
 
             sink.Should().HaveCount(2);
-            sink[1].Phase.Should().Be(GamePhases.Ready);
+            sink[1].Phase.Should().Be(GamePhases.InPlay);
         }
 
         [Fact]

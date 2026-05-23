@@ -29,7 +29,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.Fakes
 
         public event Action Opened;
         public event Action<string> MessageReceived;
-        public event Action Closed;
+        public event Action<ushort, string> Closed;
         public event Action<Exception> ErrorOccurred;
 
         public void Connect()
@@ -59,10 +59,10 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.Fakes
 
         public void SimulateMessage(string text) => MessageReceived?.Invoke(text);
 
-        public void SimulateClose()
+        public void SimulateClose(ushort code = 1000, string reason = "")
         {
             IsAlive = false;
-            Closed?.Invoke();
+            Closed?.Invoke(code, reason);
         }
 
         public void SimulateError(Exception ex) => ErrorOccurred?.Invoke(ex);

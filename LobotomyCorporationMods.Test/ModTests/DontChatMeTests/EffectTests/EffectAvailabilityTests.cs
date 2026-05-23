@@ -27,7 +27,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.EffectTests
         {
             AssertUnavailable(
                 new RandomMeltdownEffect(new FakeGameAdapter { IsGameReady = false }),
-                ErrorTags.GameNotReady
+                StandardErrors.GameStateBlocked
             );
         }
 
@@ -38,7 +38,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.EffectTests
                 new KillRandomAgentEffect(
                     new FakeGameAdapter { IsGameReady = false, LivingAgentCount = 5 }
                 ),
-                ErrorTags.GameNotReady
+                StandardErrors.GameStateBlocked
             );
         }
 
@@ -49,7 +49,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.EffectTests
                 new RandomAgentPanicEffect(
                     new FakeGameAdapter { IsGameReady = false, ControllableAgentCount = 5 }
                 ),
-                ErrorTags.GameNotReady
+                StandardErrors.GameStateBlocked
             );
         }
 
@@ -58,7 +58,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.EffectTests
         {
             AssertUnavailable(
                 new AddEnergyEffect(new FakeGameAdapter { IsGameReady = false }, new FakeConfig()),
-                ErrorTags.GameNotReady
+                StandardErrors.GameStateBlocked
             );
         }
 
@@ -70,7 +70,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.EffectTests
                     new FakeGameAdapter { IsGameReady = false },
                     new FakeConfig()
                 ),
-                ErrorTags.GameNotReady
+                StandardErrors.GameStateBlocked
             );
         }
 
@@ -79,7 +79,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.EffectTests
         {
             AssertUnavailable(
                 new AddMoneyEffect(new FakeGameAdapter { IsGameReady = false }, new FakeConfig()),
-                ErrorTags.GameNotReady
+                StandardErrors.GameStateBlocked
             );
         }
 
@@ -88,7 +88,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.EffectTests
         {
             AssertUnavailable(
                 new ShowSystemMessageEffect(new FakeGameAdapter { IsGameReady = false }),
-                ErrorTags.GameNotReady
+                StandardErrors.GameStateBlocked
             );
         }
 
@@ -97,7 +97,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.EffectTests
         {
             AssertUnavailable(
                 new SetGameSpeedEffect(new FakeGameAdapter { IsGameReady = false }),
-                ErrorTags.GameNotReady
+                StandardErrors.GameStateBlocked
             );
         }
 
@@ -108,7 +108,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.EffectTests
                 new EscapeRandomCreatureEffect(
                     new FakeGameAdapter { IsGameReady = false, CreatureCount = 3 }
                 ),
-                ErrorTags.GameNotReady
+                StandardErrors.GameStateBlocked
             );
         }
 
@@ -121,7 +121,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.EffectTests
                 new KillRandomAgentEffect(
                     new FakeGameAdapter { IsGameReady = true, LivingAgentCount = 0 }
                 ),
-                ErrorTags.NoAgents
+                StandardErrors.EffectUnavailableNow
             );
         }
 
@@ -132,7 +132,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.EffectTests
                 new RandomAgentPanicEffect(
                     new FakeGameAdapter { IsGameReady = true, ControllableAgentCount = 0 }
                 ),
-                ErrorTags.NoAgents
+                StandardErrors.EffectUnavailableNow
             );
         }
 
@@ -143,7 +143,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.EffectTests
                 new EscapeRandomCreatureEffect(
                     new FakeGameAdapter { IsGameReady = true, CreatureCount = 0 }
                 ),
-                ErrorTags.NoCreatures
+                StandardErrors.EffectUnavailableNow
             );
         }
 

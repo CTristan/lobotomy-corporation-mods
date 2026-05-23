@@ -20,7 +20,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.UiComponentTests
     public sealed class SettingsStateTests
     {
         private static SettingsDraft Draft() =>
-            new SettingsDraft("ws://example.com/mod/socket", "tok", true);
+            new SettingsDraft("ws://example.com/ws/game_mod", "tok", "42", enabled: true);
 
         [Fact]
         public void Default_state_is_closed()
@@ -37,6 +37,7 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.UiComponentTests
 
             state.Snapshot.Draft.ServerUrl.Should().BeEmpty();
             state.Snapshot.Draft.AuthToken.Should().BeEmpty();
+            state.Snapshot.Draft.GameId.Should().BeEmpty();
             state.Snapshot.Draft.Enabled.Should().BeTrue();
         }
 
@@ -133,7 +134,12 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.UiComponentTests
         {
             var state = new SettingsState();
             state.Open(Draft());
-            var newDraft = new SettingsDraft("wss://new.example/mod/socket", "tok-2", false);
+            var newDraft = new SettingsDraft(
+                "wss://new.example/ws/game_mod",
+                "tok-2",
+                "100",
+                enabled: false
+            );
 
             state.UpdateDraft(newDraft);
 
@@ -179,15 +185,17 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.UiComponentTests
         {
             var config = new FakeConfig
             {
-                ServerUrl = new Uri("ws://example.com/mod/socket"),
+                ServerUrl = new Uri("ws://example.com/ws/game_mod"),
                 AuthToken = "tok-7",
+                GameId = 42,
                 Enabled = false,
             };
 
             var draft = SettingsDraft.FromConfig(config);
 
-            draft.ServerUrl.Should().Be("ws://example.com/mod/socket");
+            draft.ServerUrl.Should().Be("ws://example.com/ws/game_mod");
             draft.AuthToken.Should().Be("tok-7");
+            draft.GameId.Should().Be("42");
             draft.Enabled.Should().BeFalse();
         }
 
@@ -198,12 +206,44 @@ namespace LobotomyCorporationMods.Test.ModTests.DontChatMeTests.UiComponentTests
             {
                 ServerUrl = null,
                 AuthToken = "t",
+                GameId = 0,
                 Enabled = true,
             };
 
             var draft = SettingsDraft.FromConfig(config);
 
             draft.ServerUrl.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void FromConfig_uses_empty_string_when_GameId_is_zero()
+        {
+            var config = new FakeConfig
+            {
+                ServerUrl = new Uri("ws://x"),
+                AuthToken = "t",
+                GameId = 0,
+                Enabled = true,
+            };
+
+            var draft = SettingsDraft.FromConfig(config);
+
+            draft.GameId.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void SettingsDraft_constructor_coalesces_null_strings_to_empty()
+        {
+            var draft = new SettingsDraft(
+                serverUrl: null,
+                authToken: null,
+                gameId: null,
+                enabled: true
+            );
+
+            draft.ServerUrl.Should().BeEmpty();
+            draft.AuthToken.Should().BeEmpty();
+            draft.GameId.Should().BeEmpty();
         }
     }
 }
