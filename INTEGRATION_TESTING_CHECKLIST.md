@@ -43,6 +43,79 @@ Note: this will contain spoilers.
 - [ ] Remove ConfigurationManager and verify the mod still loads and works with
   default settings.
 
+## Don't Chat Me
+
+These steps require a running chat-side service that speaks the documented
+plain-WS contract. With no service reachable, the mod stays idle and only the
+"no connection" checks below are testable.
+
+### Configuration (built-in Settings window)
+
+- [ ] Click the gear button on the overlay. The Settings window opens.
+- [ ] Press F9 with the overlay hidden (after pressing F8). The Settings
+  window still opens.
+- [ ] Server URL and Auth Token fields render as dots/asterisks on open.
+  Click Show next to each — the value reveals. Click Hide — it masks again.
+- [ ] Close the Settings window with Cancel, then reopen. Server URL and
+  Auth Token are masked again. (Reveal does not persist across opens.)
+- [ ] Enter a malformed URL ("not a url"). Click Apply. An error message
+  appears under the Server URL field; the window stays open; nothing is
+  written to disk.
+- [ ] Enter a non-ws scheme ("http://example.com/"). Click Apply. Same
+  error behavior as the malformed case.
+- [ ] Enter a valid URL ("ws://..." or "wss://...") and a token, click
+  Apply. The window closes; the connection dot flips amber, then green
+  once the chat-side service accepts the hello frame.
+- [ ] Reopen Settings and toggle Enabled off, click Apply. Connection drops
+  to gray "disabled". Toggle back on, click Apply. Connection reconnects.
+- [ ] Quit the game and relaunch. The Server URL and Token values persist.
+
+### Configuration (with ConfigurationManager)
+
+- [ ] Install ConfigurationManager and press F1. Edit Server URL there.
+  Reopen the built-in Settings window — the new value is reflected.
+- [ ] Edit Auth Token in the built-in Settings window. Open ConfigurationManager.
+  The new value is reflected.
+
+### Effects (one per slug, once the service is wired up)
+
+- [ ] `random_meltdown` — a random abnormality goes into meltdown.
+- [ ] `kill_random_agent` — a random living agent dies; equipment stays.
+- [ ] `random_agent_panic` — a random controllable agent panics, SP at zero.
+- [ ] `add_energy` — facility energy goes up by the configured amount.
+- [ ] `remove_energy` — facility energy goes down by the configured amount.
+- [ ] `add_money` — LOB points go up by the configured amount.
+- [ ] `show_system_message` — viewer name appears in the system log.
+- [ ] `set_game_speed` — game speed jumps to 2x.
+- [ ] `escape_random_creature` — only fires when Danger Effects is enabled,
+  rejected with `danger_effects_disabled` otherwise.
+
+### Reliability
+
+- [ ] Kill the chat-side service mid-session and confirm the mod reconnects
+  on its own within a minute of the service coming back up.
+- [ ] Spam-redeem an effect on cooldown; the mod replies `cooldown` instead of
+  re-running the effect.
+- [ ] Resend the same `redemption_id` twice; the mod replies
+  `duplicate_redemption` for the second arrival and does not re-run the effect.
+
+### Status overlay
+
+- [ ] Overlay appears at the top center of the screen on game load and shows
+  "DCM" with a colored dot and a state label.
+- [ ] State label cycles through "connecting…" then "connected" once the
+  chat-side service accepts the hello frame.
+- [ ] When the chat-side service is unreachable, the label reads
+  "disconnected" (red) and the overlay does not crash the game.
+- [ ] When `Enabled` is false in ConfigurationManager, the label reads
+  "disabled" (gray) and no connection is attempted.
+- [ ] Press F8 to hide the overlay. Press F8 again to show it. The mod
+  continues to run effects while the overlay is hidden.
+- [ ] After redeeming an effect, the overlay shows `last: <slug>` for the
+  most recent successful redemption.
+- [ ] Spam many redemptions; the overlay shows `N queued` with a positive
+  number that decreases as effects drain on each frame.
+
 ## Unofficial Bugfixes
 
 - [ ] Wasted Stat Upgrades
