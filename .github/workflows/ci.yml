@@ -16,14 +16,28 @@ jobs:
       PRIVATE_REFERENCES_TOKEN: ${{ secrets.PRIVATE_REFERENCES_TOKEN }}
       PACKAGES_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
 
+  # Fast, dependency-free gate: the csproj <AssemblyVersion> is the source of
+  # truth; verify each mod's Info.xml display name is in sync. No .NET or game
+  # DLLs needed, so this fails fast and independently of the build.
+  version-check:
+    name: Version check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - name: Verify version drift gate (self-tests + all mods)
+        run: |
+          bash scripts/check-versions.sh --test
+          bash scripts/check-versions.sh --check all
+
   status:
     name: CI
-    needs: [ci]
+    needs: [ci, version-check]
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - name: Check CI result
+      - name: Check job results
         run: |
-          if [ "${{ needs.ci.result }}" != "success" ]; then
+          if [ "${{ needs.ci.result }}" != "success" ] || [ "${{ needs.version-check.result }}" != "success" ]; then
             exit 1
           fi
