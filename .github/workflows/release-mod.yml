@@ -1,0 +1,165 @@
+name: Release mod
+
+# Triggered by pushing a per-mod tag of the form <ModId>-v<X.Y.Z>
+# (for example: BugFixes-v3.0.2). The workflow rebuilds the whole mod set and
+# publishes a dated aggregate "snapshot" release that carries every mod, so the
+# Releases page always shows the full, current set with a meaningful "Latest".
+#
+# Versioning one mod touches no other mod's version: only the tagged mod's tag
+# and (in Phase 3b) its Nexus page change; the other mods are rebuilt unchanged
+# from their committed source.
+#
+# The Nexus auto-upload job is intentionally not here yet — it is added in
+# Phase 3b once the official upload action's current input contract has settled
+# (>7 days, no breaking changes). Until then, Nexus uploads are manual via
+# release/NEXUS_UPLOAD.md.
+
+on:
+  push:
+    tags:
+      - '*-v*'
+
+permissions: {}
+
+# Serialize releases so the "Latest" pointer and same-day snapshot suffixes are
+# deterministic when two mod tags are pushed close together.
+concurrency:
+  group: release-snapshot
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build & validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      mod: ${{ steps.parse.outputs.mod }}
+      ver: ${{ steps.parse.outputs.ver }}
+    steps:
+      - name: Checkout tagged commit (full history)
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 0
+
+      # Everything that could let a stray tag publish unreviewed content runs
+      # BEFORE any secret-bearing step (private references / packages token).
+      - name: Parse tag and verify ancestry
+        id: parse
+        run: |
+          set -euo pipefail
+          tag="${GITHUB_REF_NAME}"
+          case "$tag" in
+            *-v*) : ;;
+            *) echo "::error::tag '$tag' is not in <ModId>-v<X.Y.Z> form"; exit 1 ;;
+          esac
+          mod="${tag%-v*}"
+          ver="${tag##*-v}"
+          echo "mod=$mod" >> "$GITHUB_OUTPUT"
+          echo "ver=$ver" >> "$GITHUB_OUTPUT"
+          echo "Releasing mod='$mod' version='$ver'"
+          # The tagged commit must be an ancestor of origin/main: no releasing
+          # arbitrary or unreviewed content through a tag on a side commit.
+          git fetch --no-tags origin main
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" FETCH_HEAD; then
+            echo "::error::tagged commit $GITHUB_SHA is not an ancestor of origin/main"
+            exit 1
+          fi
+          echo "ancestry OK: $GITHUB_SHA is on main"
+
+      - name: Version gate (allowlist + tag == AssemblyVersion)
+        env:
+          TAG_VERSION: ${{ steps.parse.outputs.ver }}
+        run: |
+          set -euo pipefail
+          # --check fails if the mod is not a known deployable mod (allowlist),
+          # if the csproj <AssemblyVersion> != the tag version, or if the
+          # English Info.xml display suffix is out of sync.
+          bash scripts/check-versions.sh --check "${{ steps.parse.outputs.mod }}"
+
+      - name: Checkout private references
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          path: external/LobotomyCorp_Data
+          persist-credentials: false
+          repository: ${{ vars.PRIVATE_REFERENCES_REPO }}
+          token: ${{ secrets.PRIVATE_REFERENCES_TOKEN }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4.3.1
+        with:
+          dotnet-version: '10.x'
+
+      - name: Authenticate GitHub Packages
+        run: dotnet nuget update source github --username open-lobotomy --password "${{ secrets.PACKAGES_TOKEN || github.token }}" --store-password-in-clear-text || true
+
+      - name: Build and package all mods
+        run: bash scripts/package-mods.sh "${{ runner.temp }}/artifacts"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: mods
+          path: ${{ runner.temp }}/artifacts
+          retention-days: 7
+
+  snapshot:
+    name: Publish snapshot release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - name: Download artifacts
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: mods
+          path: artifacts
+
+      - name: Create dated snapshot release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MOD: ${{ needs.build.outputs.mod }}
+          VER: ${{ needs.build.outputs.ver }}
+        run: |
+          set -euo pipefail
+
+          # CalVer: the snapshot version is the date. If a snapshot already
+          # exists for today, append .N. The tag never contains "-v", so it
+          # cannot re-trigger this workflow.
+          date="$(date -u +%Y.%m.%d)"
+          tag="snapshot-$date"
+          label="$date"
+          n=2
+          while gh release view "$tag" >/dev/null 2>&1; do
+            tag="snapshot-$date.$n"; label="$date.$n"; n=$((n + 1))
+          done
+
+          count="$(jq 'length' artifacts/versions.json)"
+          {
+            echo "This snapshot contains all $count mods. Download **all-mods.zip** for"
+            echo "the full set, or an individual mod's zip from the assets below."
+            echo
+            echo "**Changed in this release:** \`$MOD\` v$VER"
+            echo
+            jq -r 'to_entries
+                   | (["| Mod | Version |", "| --- | --- |"]
+                      + (map("| \(.key) | \(.value) |")))
+                   | .[]' artifacts/versions.json
+            echo
+            echo "_Per-mod versions are the real signal; the snapshot version is a date-ordered marker._"
+          } > "${RUNNER_TEMP}/notes.md"
+
+          # --latest sets the "Latest" badge by flag (GitHub does not sort the
+          # version string), so dated snapshots cleanly supersede old v6.x tags.
+          gh release create "$tag" \
+            --target "$GITHUB_SHA" \
+            --title "Mods — $label" \
+            --notes-file "${RUNNER_TEMP}/notes.md" \
+            --latest \
+            artifacts/*.zip artifacts/versions.json
+
+          echo "Published release '$tag' (Latest) with $count mods; changed: $MOD v$VER"

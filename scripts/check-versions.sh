@@ -291,4 +291,9 @@ main() {
   esac
 }
 
-main "$@"
+# Run only when executed directly; allow `source`-ing as a library (this lets
+# scripts/package-mods.sh reuse discover_mods + the version helpers, so the
+# packager and the drift gate always agree on what a mod is).
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  main "$@"
+fi
