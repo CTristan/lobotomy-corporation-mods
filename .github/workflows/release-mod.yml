@@ -41,6 +41,10 @@ jobs:
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 0
+          # No git operation here needs the token: the ancestry check fetches a
+          # public ref anonymously. Don't persist credentials before the
+          # artifact-producing steps run.
+          persist-credentials: false
 
       # Everything that could let a stray tag publish unreviewed content runs
       # BEFORE any secret-bearing step (private references / packages token).
@@ -70,12 +74,16 @@ jobs:
       - name: Version gate (allowlist + tag == AssemblyVersion)
         env:
           TAG_VERSION: ${{ steps.parse.outputs.ver }}
+          # Bind the tag-derived mod id through the environment rather than
+          # interpolating ${{ }} into the shell, so a tag with shell
+          # metacharacters cannot inject commands.
+          MOD_ID: ${{ steps.parse.outputs.mod }}
         run: |
           set -euo pipefail
           # --check fails if the mod is not a known deployable mod (allowlist),
           # if the csproj <AssemblyVersion> != the tag version, or if the
           # English Info.xml display suffix is out of sync.
-          bash scripts/check-versions.sh --check "${{ steps.parse.outputs.mod }}"
+          bash scripts/check-versions.sh --check "$MOD_ID"
 
       - name: Checkout private references
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -112,6 +120,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          # gh release create authenticates via GH_TOKEN, not git credentials,
+          # so nothing here needs the persisted token.
+          persist-credentials: false
 
       - name: Download artifacts
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
@@ -133,7 +145,9 @@ jobs:
           date="$(date -u +%Y.%m.%d)"
           tag="snapshot-$date"
           label="$date"
-          n=2
+          # First same-day collision becomes .1, then .2, ... (no gap): the tag
+          # is assigned before n is incremented, so starting at 1 yields .1 first.
+          n=1
           while gh release view "$tag" >/dev/null 2>&1; do
             tag="snapshot-$date.$n"; label="$date.$n"; n=$((n + 1))
           done

@@ -22,7 +22,7 @@ first upload (the Nexus upload API cannot create new pages).
 
 ## Steps
 
-1. Confirm the GitHub snapshot release published and is marked **Latest**.
+1. Confirm the GitHub snapshot release was published and is marked **Latest**.
 2. Download the changed mod's `<ModId>.zip` from that release's assets.
 3. Open the mod's Nexus page (table above) and sign in as the mod author.
 4. Add a new file:

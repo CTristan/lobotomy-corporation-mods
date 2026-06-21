@@ -174,7 +174,7 @@ check_mod() {
     if [[ "$disp" == "$ver" ]]; then
       ok "$id [$lang]: display v$disp matches"
     elif [[ "$lang" == "en" ]]; then
-      err "$id [en]: display v$disp != source of truth v$ver (run: $0 --write $id)"
+      err "$id [en]: display v$disp != source of truth v$ver (run: scripts/check-versions.sh --write $id)"
       errors=$((errors + 1))
     else
       warn "$id [$lang]: display v$disp != source of truth v$ver (translator-owned; not auto-fixed)"

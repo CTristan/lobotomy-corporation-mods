@@ -13,10 +13,8 @@ LMM).
 
 ## Download
 
-You can install these mods two ways. Both need
-[Lobotomy Mod Manager](https://www.nexusmods.com/site/mods/765)
-or [Basemod](https://www.nexusmods.com/lobotomycorporation/mods/2) (included in
-LMM).
+You can install these mods two ways. Both need Lobotomy Mod Manager or Basemod
+(linked at the top of this page).
 
 **From GitHub (always the newest build):**
 
