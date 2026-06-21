@@ -41,8 +41,11 @@ if [[ -t 1 ]]; then
 else
   C_OK=''; C_WARN=''; C_ERR=''; C_OFF=''
 fi
+# Print a success line (green when stdout is a TTY).
 ok()   { printf '%s[ ok ]%s   %s\n'   "$C_OK"   "$C_OFF" "$*"; }
+# Print a warning line (yellow when stdout is a TTY).
 warn() { printf '%s[warn]%s   %s\n'   "$C_WARN" "$C_OFF" "$*"; }
+# Print a failure line (red when stdout is a TTY).
 err()  { printf '%s[FAIL]%s   %s\n'   "$C_ERR"  "$C_OFF" "$*"; }
 
 # ---- version helpers ---------------------------------------------------------
@@ -61,6 +64,7 @@ normalize3() {
   printf '%s.%s.%s' "$a" "$b" "$c"
 }
 
+# True if $1 is a dotted version of 2-4 numeric components (e.g. 1.2 or 1.2.3.4).
 is_well_formed() { [[ "$1" =~ ^[0-9]+(\.[0-9]+){1,3}$ ]]; }
 
 # Extract the trailing display version (the LAST "v<X.Y.Z>" before </name>).
@@ -106,6 +110,7 @@ mod_dir_for() {
 
 # ---- write -------------------------------------------------------------------
 
+# Sync one mod's Info.xml display suffixes to its csproj version; log each change.
 write_mod() {
   local id="$1" dir="$2" csproj raw ver f changed=0
   # shellcheck disable=SC2012
@@ -127,8 +132,8 @@ write_mod() {
 }
 
 # ---- check -------------------------------------------------------------------
-# Echoes nothing; returns the number of ERRORS for this mod (warnings excluded).
 
+# Echoes nothing; returns the number of ERRORS for this mod (warnings excluded).
 check_mod() {
   local id="$1" dir="$2" csproj raw ver errors=0 f lang disp
   # shellcheck disable=SC2012
@@ -181,6 +186,7 @@ check_mod() {
 
 # ---- mode dispatch -----------------------------------------------------------
 
+# Run "write" or "check" over one ModId or every mod ("all"); aggregate errors.
 run_over_target() {
   local action="$1" target="$2" id dir total_errors=0 count=0
   if [[ "$target" == "all" ]]; then
@@ -215,15 +221,19 @@ run_over_target() {
 
 # ---- self-tests --------------------------------------------------------------
 
+# Exercise the display-name regex against golden fixtures; return nonzero on fail.
 self_test() {
   local tmp pass=0 fail=0 rc=0
   tmp=$(mktemp -d)
 
+  # Assert actual ($2) equals expected ($3), tallying a pass or fail.
   _expect() { # desc, actual, expected
     if [[ "$2" == "$3" ]]; then ok "test: $1"; pass=$((pass + 1));
     else err "test: $1 -- got [$2] expected [$3]"; fail=$((fail + 1)); fi
   }
+  # Write an Info.xml fixture whose <name> is $1 to file $2.
   _name() { printf '<info>\n  <name>%s</name>\n</info>\n' "$1" > "$2"; }
+  # Read back the <name> text from an Info.xml fixture file.
   _read() { perl -CSD -ne 'if (m{<name>(.*)</name>}) { print $1; exit }' "$1"; }
 
   # en with a space separator
@@ -271,6 +281,7 @@ self_test() {
 
 # ---- entrypoint --------------------------------------------------------------
 
+# Print usage to stderr and exit 2.
 usage() {
   cat >&2 <<EOF
 Usage:
@@ -281,6 +292,7 @@ EOF
   exit 2
 }
 
+# Parse the mode flag and dispatch to --write, --check, or --test.
 main() {
   [[ $# -ge 1 ]] || usage
   case "$1" in

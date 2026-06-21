@@ -25,6 +25,8 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=scripts/check-versions.sh
 source "$HERE/check-versions.sh"   # discover_mods, csproj_version_raw, normalize3
 
+# Build every discovered mod in Release and emit per-mod zips, all-mods.zip, and
+# versions.json into <output-dir> (the sole positional argument).
 package_main() {
   local out="${1:-}"
   [[ -n "$out" ]] || { echo "usage: $0 <output-dir>" >&2; exit 2; }
