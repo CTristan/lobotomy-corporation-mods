@@ -12,7 +12,7 @@ name: Release mod
 # The Nexus auto-upload job is intentionally not here yet — it is added in
 # Phase 3b once the official upload action's current input contract has settled
 # (>7 days, no breaking changes). Until then, Nexus uploads are manual via
-# release/NEXUS_UPLOAD.md.
+# releasing/NEXUS_UPLOAD.md.
 
 on:
   push:
