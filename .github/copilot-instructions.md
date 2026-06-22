@@ -89,7 +89,7 @@ The mod's `.csproj` `<AssemblyVersion>` is the single source of truth for its ve
 
 1. Bump `<AssemblyVersion>` in the mod's `.csproj`, then run `scripts/check-versions.sh --write <ModId>` to sync the `Info/{lang}/Info.xml` display names. Update the mod `README.md`, root `CHANGELOG.md`, and `INTEGRATION_TESTING_CHECKLIST.md` as needed.
 2. After the PR merges, tag and push: `git tag <ModId>-v<X.Y.Z> && git push origin <ModId>-v<X.Y.Z>`. The `Release mod` workflow rebuilds the whole set and publishes a dated snapshot release (`Mods — <date>`, marked Latest).
-3. Upload the changed mod to Nexus by hand per `releasing/NEXUS_UPLOAD.md` (auto-upload is deferred to Phase 3b).
+3. Upload the changed mod to Nexus by hand per `releasing/NEXUS_UPLOAD.md` (auto-upload is deferred to Phase 3b — tracked in #172).
 
 The version drift gate runs in CI (`scripts/check-versions.sh --check all`): the csproj version must be well-formed and match the tag at release; the English `Info.xml` suffix must match (hard fail); other locales only warn (translator-owned). See `DOCUMENTATION_UPDATING_CHECKLIST.md` for the full runbook. `WarnWhenAgentWillDieFromWorking` versions its **major number as the count of abnormalities it warns about** — not standard SemVer.
 

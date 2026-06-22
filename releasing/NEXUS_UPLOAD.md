@@ -1,6 +1,6 @@
 # Nexus upload checklist (manual)
 
-Until the automated Nexus upload lands (release pipeline Phase 3b), upload the
+Until the automated Nexus upload lands (release pipeline Phase 3b — tracked in #172), upload the
 changed mod to Nexus Mods by hand after the GitHub snapshot release is published.
 
 This is per-mod: upload only the mod whose version you just changed. The other

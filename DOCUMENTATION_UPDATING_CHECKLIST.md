@@ -33,7 +33,7 @@ version; everything else is synced or generated from it.
 
 - [ ] Upload the changed mod to Nexus by hand — see
       [releasing/NEXUS_UPLOAD.md](releasing/NEXUS_UPLOAD.md). (Automated upload is
-      planned as Phase 3b of the release pipeline.)
+      planned as Phase 3b of the release pipeline — tracked in #172.)
 
 ## Notes
 

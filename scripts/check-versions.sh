@@ -106,7 +106,7 @@ discover_mods() {
     [[ -d "$dir" ]] || continue
     global="$dir/Info/GlobalInfo.xml"
     [[ -f "$global" ]] || continue
-    # shellcheck disable=SC2012
+    # shellcheck disable=SC2012  # mod csproj names are controlled; ls is fine
     csproj=$(ls "$dir"/*.csproj 2>/dev/null | head -1 || true)
     [[ -n "$csproj" ]] || continue
     id=$(perl -ne 'if (m{<ID>\s*([^<]+?)\s*</ID>}) { print $1; exit }' "$global")
@@ -129,7 +129,7 @@ mod_dir_for() {
 # Sync one mod's Info.xml display suffixes to its csproj version; log each change.
 write_mod() {
   local id="$1" dir="$2" csproj ver f changed=0
-  # shellcheck disable=SC2012
+  # shellcheck disable=SC2012  # mod csproj names are controlled; ls is fine
   csproj=$(ls "$dir"/*.csproj | head -1)
   # Refuse to write a bad version into the display names: it would silently
   # become v0.0.0. The source of truth must be valid before we touch Info.xml.
@@ -155,8 +155,8 @@ write_mod() {
 
 # Echoes nothing; returns the number of ERRORS for this mod (warnings excluded).
 check_mod() {
-  local id="$1" dir="$2" csproj ver tagver errors=0 f lang disp
-  # shellcheck disable=SC2012
+  local id="$1" dir="$2" csproj ver tagver errors=0 f lang disp found_en=0
+  # shellcheck disable=SC2012  # mod csproj names are controlled; ls is fine
   csproj=$(ls "$dir"/*.csproj | head -1)
 
   # Primary: well-formed source of truth.
@@ -183,6 +183,7 @@ check_mod() {
   # Secondary cosmetic: per-locale display suffix.
   while IFS= read -r f; do
     lang=$(basename "$(dirname "$f")")
+    [[ "$lang" == "en" ]] && found_en=1
     disp=$(info_display_version "$f")
     if [[ -z "$disp" ]]; then
       if [[ "$lang" == "en" ]]; then
@@ -202,6 +203,14 @@ check_mod() {
       warn "$id [$lang]: display v$disp != source of truth v$ver (translator-owned; not auto-fixed)"
     fi
   done < <(find "$dir/Info" -mindepth 2 -maxdepth 2 -name 'Info.xml' 2>/dev/null | sort)
+
+  # A deployable mod must ship an English Info.xml: the launcher shows that display
+  # name, and en is the maintainer-owned baseline (other locales only warn). Without
+  # this guard, a discovered mod with zero en Info.xml passes the loop silently.
+  if [[ "$found_en" -eq 0 ]]; then
+    err "$id [en]: no Info/en/Info.xml found (required for the launcher display name)"
+    errors=$((errors + 1))
+  fi
 
   return "$errors"
 }
@@ -316,6 +325,23 @@ self_test() {
   _expect "normalized_or_fail normalizes a valid string" "$(normalized_or_fail "1.2")" "1.2.0"
   _expect_fail "normalized_or_fail rejects a v-prefixed string" normalized_or_fail "v1.0.0"
   _expect_fail "normalized_or_fail rejects an empty string" normalized_or_fail ""
+
+  # check_mod: a discovered mod with no en Info.xml must hard-fail. The cn display
+  # matches its version, so the en guard is the only possible error source.
+  mkdir -p "$tmp/mod_noen/Info/cn"
+  _csproj "1.2.0" "$tmp/mod_noen/TestNoEn.csproj"
+  _name "测试 v1.2.0" "$tmp/mod_noen/Info/cn/Info.xml"
+  _expect_fail "check_mod fails when a mod has no en Info.xml" check_mod "TestNoEn" "$tmp/mod_noen"
+
+  # check_mod: the same shape with an en Info.xml present passes (errors == 0).
+  mkdir -p "$tmp/mod_en/Info/en"
+  _csproj "1.2.0" "$tmp/mod_en/TestEn.csproj"
+  _name "Test Mod v1.2.0" "$tmp/mod_en/Info/en/Info.xml"
+  if check_mod "TestEn" "$tmp/mod_en" >/dev/null 2>&1; then
+    ok "test: check_mod passes when en Info.xml is present"; pass=$((pass + 1))
+  else
+    err "test: check_mod passes when en Info.xml is present -- unexpectedly failed"; fail=$((fail + 1))
+  fi
 
   echo
   if [[ "$fail" -gt 0 ]]; then

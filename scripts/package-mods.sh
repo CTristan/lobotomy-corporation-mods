@@ -33,7 +33,7 @@ package_main() {
   mkdir -p "$out"; out="$(cd "$out" && pwd)"
 
   local stage; stage="$(mktemp -d)"
-  # shellcheck disable=SC2064
+  # shellcheck disable=SC2064  # expand $stage now so the trap removes this exact temp dir
   trap "rm -rf '$stage'" EXIT
 
   local id dir csproj ver count=0

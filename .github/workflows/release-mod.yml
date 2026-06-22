@@ -10,14 +10,14 @@ name: Release mod
 # from their committed source.
 #
 # The Nexus auto-upload job is intentionally not here yet — it is added in
-# Phase 3b once the official upload action's current input contract has settled
-# (>7 days, no breaking changes). Until then, Nexus uploads are manual via
-# releasing/NEXUS_UPLOAD.md.
+# Phase 3b (tracked in #172) once the official upload action's current input
+# contract has settled (>7 days, no breaking changes). Until then, Nexus
+# uploads are manual via releasing/NEXUS_UPLOAD.md.
 
 on:
   push:
     tags:
-      - '*-v*'
+      - '*-v[0-9]*'
 
 permissions: {}
 
@@ -71,7 +71,7 @@ jobs:
           fi
           echo "ancestry OK: $GITHUB_SHA is on main"
 
-      - name: Version gate (allowlist + tag == AssemblyVersion)
+      - name: Version gate (mod discovery + tag == AssemblyVersion)
         env:
           TAG_VERSION: ${{ steps.parse.outputs.ver }}
           # Bind the tag-derived mod id through the environment rather than
@@ -80,9 +80,11 @@ jobs:
           MOD_ID: ${{ steps.parse.outputs.mod }}
         run: |
           set -euo pipefail
-          # --check fails if the mod is not a known deployable mod (allowlist),
-          # if the csproj <AssemblyVersion> != the tag version, or if the
-          # English Info.xml display suffix is out of sync.
+          # --check fails if the mod is not a discovered deployable mod
+          # (discovery is dynamic: any LobotomyCorporationMods.* dir with a
+          # GlobalInfo.xml <ID> and a .csproj), if the csproj <AssemblyVersion>
+          # != the tag version, or if the English Info.xml display suffix is out
+          # of sync.
           bash scripts/check-versions.sh --check "$MOD_ID"
 
       - name: Checkout private references
@@ -103,7 +105,7 @@ jobs:
           # Bind the token through the environment rather than interpolating ${{ }}
           # into the shell (GitHub Actions injection-safety best practice).
           NUGET_PASSWORD: ${{ secrets.PACKAGES_TOKEN || github.token }}
-        run: dotnet nuget update source github --username open-lobotomy --password "$NUGET_PASSWORD" --store-password-in-clear-text || true
+        run: dotnet nuget update source github --username open-lobotomy --password "$NUGET_PASSWORD" --store-password-in-clear-text
 
       - name: Build and package all mods
         run: bash scripts/package-mods.sh "${{ runner.temp }}/artifacts"
@@ -123,13 +125,6 @@ jobs:
       # gh release create needs write access to create the snapshot tag and release
       contents: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
-        with:
-          # gh release create authenticates via GH_TOKEN, not git credentials,
-          # so nothing here needs the persisted token.
-          persist-credentials: false
-
       - name: Download artifacts
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:

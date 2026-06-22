@@ -21,8 +21,9 @@ You can install these mods two ways. Both need Lobotomy Mod Manager or Basemod
 1. Open the
    [latest release](https://github.com/CTristan/lobotomy-corporation-mods/releases/latest).
    It is named `Mods — <date>` and contains every mod.
-2. Download `all-mods.zip` to get all mods at once, or download a single
-   `<ModName>.zip` to get just one mod.
+2. Download `all-mods.zip` to get all mods at once, or download a single mod's
+   zip to get just one mod. Each mod's zip is named by its ID, for example
+   `BugFixes.zip`.
 3. Extract the zip into your game's `LobotomyCorp_Data/BaseMods` folder. Each mod
    becomes its own folder there (for example, `BaseMods/BugFixes`).
 4. Start the game through LMM or Basemod and turn on the mods you want.
