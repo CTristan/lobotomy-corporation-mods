@@ -23,7 +23,7 @@ set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=scripts/check-versions.sh
-source "$HERE/check-versions.sh"   # discover_mods, csproj_version_raw, normalize3
+source "$HERE/check-versions.sh"   # discover_mods, resolved_version (+ helpers)
 
 # Build every discovered mod in Release and emit per-mod zips, all-mods.zip, and
 # versions.json into <output-dir> (the sole positional argument).
@@ -43,7 +43,12 @@ package_main() {
   while IFS=$'\t' read -r id dir; do
     # shellcheck disable=SC2012  # mod csproj names are controlled; ls is fine
     csproj=$(ls "$dir"/*.csproj | head -1)
-    ver=$(normalize3 "$(csproj_version_raw "$csproj")")
+    # Validate the source of truth before building or writing versions.json, so a
+    # missing/malformed <AssemblyVersion> fails loudly instead of shipping v0.0.0.
+    if ! ver=$(resolved_version "$csproj"); then
+      echo "error: $id has a missing or malformed <AssemblyVersion> (${csproj#"$ROOT"/})" >&2
+      exit 1
+    fi
     echo ">> building $id (v$ver) -c Release"
     rm -rf "${dir:?}/bin" "${dir:?}/obj"
     dotnet build "$csproj" -c Release --nologo -v minimal

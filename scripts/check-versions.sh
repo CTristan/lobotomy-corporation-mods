@@ -67,6 +67,17 @@ normalize3() {
 # True if $1 is a dotted version of 2-4 numeric components (e.g. 1.2 or 1.2.3.4).
 is_well_formed() { [[ "$1" =~ ^[0-9]+(\.[0-9]+){1,3}$ ]]; }
 
+# Resolve a csproj's <AssemblyVersion> to a normalized X.Y.Z, echoed to stdout.
+# Returns nonzero and echoes nothing when the version is missing or malformed.
+# This is the single chokepoint so the checker, the writer, and the packager
+# all agree on what a valid version is and none silently turns a bad one into
+# "0.0.0"; callers report the failure (with the offending csproj path).
+resolved_version() {
+  local raw; raw=$(csproj_version_raw "$1")
+  is_well_formed "$raw" || return 1
+  normalize3 "$raw"
+}
+
 # Extract the trailing display version (the LAST "v<X.Y.Z>" before </name>).
 info_display_version() {
   perl -CSD -ne 'if (m{<name>.*v([0-9]+\.[0-9]+\.[0-9]+)</name>}) { print $1; exit }' "$1"
@@ -112,11 +123,15 @@ mod_dir_for() {
 
 # Sync one mod's Info.xml display suffixes to its csproj version; log each change.
 write_mod() {
-  local id="$1" dir="$2" csproj raw ver f changed=0
+  local id="$1" dir="$2" csproj ver f changed=0
   # shellcheck disable=SC2012
   csproj=$(ls "$dir"/*.csproj | head -1)
-  raw=$(csproj_version_raw "$csproj")
-  ver=$(normalize3 "$raw")
+  # Refuse to write a bad version into the display names: it would silently
+  # become v0.0.0. The source of truth must be valid before we touch Info.xml.
+  if ! ver=$(resolved_version "$csproj"); then
+    err "$id: csproj <AssemblyVersion> missing or malformed; refusing to write (${csproj#"$ROOT"/})"
+    return 1
+  fi
   while IFS= read -r f; do
     local before after
     before=$(cat "$f")
@@ -135,17 +150,15 @@ write_mod() {
 
 # Echoes nothing; returns the number of ERRORS for this mod (warnings excluded).
 check_mod() {
-  local id="$1" dir="$2" csproj raw ver errors=0 f lang disp
+  local id="$1" dir="$2" csproj ver errors=0 f lang disp
   # shellcheck disable=SC2012
   csproj=$(ls "$dir"/*.csproj | head -1)
-  raw=$(csproj_version_raw "$csproj")
 
   # Primary: well-formed source of truth.
-  if [[ -z "$raw" ]] || ! is_well_formed "$raw"; then
-    err "$id: csproj <AssemblyVersion> missing or malformed: '${raw:-<none>}'"
+  if ! ver=$(resolved_version "$csproj"); then
+    err "$id: csproj <AssemblyVersion> missing or malformed (${csproj#"$ROOT"/})"
     return 1
   fi
-  ver=$(normalize3 "$raw")
 
   # Primary: tag/version match at release time.
   if [[ -n "${TAG_VERSION:-}" ]]; then
@@ -235,6 +248,19 @@ self_test() {
   _name() { printf '<info>\n  <name>%s</name>\n</info>\n' "$1" > "$2"; }
   # Read back the <name> text from an Info.xml fixture file.
   _read() { perl -CSD -ne 'if (m{<name>(.*)</name>}) { print $1; exit }' "$1"; }
+  # Write a minimal csproj whose <AssemblyVersion> is $1 (omit/empty for none) to $2.
+  _csproj() {
+    if [[ -n "$1" ]]; then
+      printf '<Project><PropertyGroup><AssemblyVersion>%s</AssemblyVersion></PropertyGroup></Project>\n' "$1" > "$2"
+    else
+      printf '<Project><PropertyGroup></PropertyGroup></Project>\n' > "$2"
+    fi
+  }
+  # Assert that running $2... exits nonzero, tallying a pass or fail.
+  _expect_fail() { # desc, cmd...
+    if "${@:2}" >/dev/null 2>&1; then err "test: $1 -- unexpectedly succeeded"; fail=$((fail + 1));
+    else ok "test: $1"; pass=$((pass + 1)); fi
+  }
 
   # en with a space separator
   _name "Gift Alert Icon v1.0.2" "$tmp/en.xml"
@@ -268,6 +294,14 @@ self_test() {
   # normalize3
   _expect "normalize 2-part" "$(normalize3 "1.2")" "1.2.0"
   _expect "normalize 4-part" "$(normalize3 "15.0.0.0")" "15.0.0"
+
+  # resolved_version: valid -> normalized; missing/malformed -> nonzero (never 0.0.0).
+  _csproj "1.2" "$tmp/good.csproj"
+  _expect "resolved_version normalizes a valid version" "$(resolved_version "$tmp/good.csproj")" "1.2.0"
+  _csproj "" "$tmp/missing.csproj"
+  _expect_fail "resolved_version rejects a missing version" resolved_version "$tmp/missing.csproj"
+  _csproj "1.2.3.4.5" "$tmp/malformed.csproj"
+  _expect_fail "resolved_version rejects a malformed version" resolved_version "$tmp/malformed.csproj"
 
   echo
   if [[ "$fail" -gt 0 ]]; then
