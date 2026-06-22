@@ -67,15 +67,20 @@ normalize3() {
 # True if $1 is a dotted version of 2-4 numeric components (e.g. 1.2 or 1.2.3.4).
 is_well_formed() { [[ "$1" =~ ^[0-9]+(\.[0-9]+){1,3}$ ]]; }
 
-# Resolve a csproj's <AssemblyVersion> to a normalized X.Y.Z, echoed to stdout.
-# Returns nonzero and echoes nothing when the version is missing or malformed.
-# This is the single chokepoint so the checker, the writer, and the packager
-# all agree on what a valid version is and none silently turns a bad one into
-# "0.0.0"; callers report the failure (with the offending csproj path).
+# Normalize a raw version STRING to X.Y.Z, echoed to stdout; nonzero (and echoes
+# nothing) when it is missing or malformed. The single validate-then-normalize
+# chokepoint: no caller feeds normalize3 unchecked input (which would silently
+# fabricate values like 0.0.0 or abc.0.0). Guards both the csproj source of
+# truth and the release tag. Callers report the failure.
+normalized_or_fail() {
+  is_well_formed "$1" || return 1
+  normalize3 "$1"
+}
+
+# Resolve a csproj's <AssemblyVersion> to a normalized X.Y.Z (nonzero if missing
+# or malformed) — the file-reading wrapper over normalized_or_fail.
 resolved_version() {
-  local raw; raw=$(csproj_version_raw "$1")
-  is_well_formed "$raw" || return 1
-  normalize3 "$raw"
+  normalized_or_fail "$(csproj_version_raw "$1")"
 }
 
 # Extract the trailing display version (the LAST "v<X.Y.Z>" before </name>).
@@ -150,7 +155,7 @@ write_mod() {
 
 # Echoes nothing; returns the number of ERRORS for this mod (warnings excluded).
 check_mod() {
-  local id="$1" dir="$2" csproj ver errors=0 f lang disp
+  local id="$1" dir="$2" csproj ver tagver errors=0 f lang disp
   # shellcheck disable=SC2012
   csproj=$(ls "$dir"/*.csproj | head -1)
 
@@ -160,14 +165,18 @@ check_mod() {
     return 1
   fi
 
-  # Primary: tag/version match at release time.
+  # Primary: tag/version match at release time. Validate before normalizing so a
+  # malformed tag (e.g. a stray "v" prefix) fails loudly instead of being coerced
+  # into a bogus value that the comparison then silently mis-judges.
   if [[ -n "${TAG_VERSION:-}" ]]; then
-    local tagver; tagver=$(normalize3 "$TAG_VERSION")
-    if [[ "$ver" != "$tagver" ]]; then
+    if ! tagver=$(normalized_or_fail "$TAG_VERSION"); then
+      err "$id: tag version '$TAG_VERSION' is malformed (expected X.Y.Z)"
+      errors=$((errors + 1))
+    elif [[ "$ver" == "$tagver" ]]; then
+      ok "$id: tag v$tagver == csproj v$ver"
+    else
       err "$id: tag version v$tagver != csproj <AssemblyVersion> v$ver"
       errors=$((errors + 1))
-    else
-      ok "$id: tag v$tagver == csproj v$ver"
     fi
   fi
 
@@ -302,6 +311,11 @@ self_test() {
   _expect_fail "resolved_version rejects a missing version" resolved_version "$tmp/missing.csproj"
   _csproj "1.2.3.4.5" "$tmp/malformed.csproj"
   _expect_fail "resolved_version rejects a malformed version" resolved_version "$tmp/malformed.csproj"
+
+  # normalized_or_fail: the validate-then-normalize chokepoint (also guards TAG_VERSION).
+  _expect "normalized_or_fail normalizes a valid string" "$(normalized_or_fail "1.2")" "1.2.0"
+  _expect_fail "normalized_or_fail rejects a v-prefixed string" normalized_or_fail "v1.0.0"
+  _expect_fail "normalized_or_fail rejects an empty string" normalized_or_fail ""
 
   echo
   if [[ "$fail" -gt 0 ]]; then

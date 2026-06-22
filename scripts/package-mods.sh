@@ -52,6 +52,12 @@ package_main() {
     echo ">> building $id (v$ver) -c Release"
     rm -rf "${dir:?}/bin" "${dir:?}/obj"
     dotnet build "$csproj" -c Release --nologo -v minimal
+    # The build can succeed without producing the expected net35 output (e.g. a
+    # retargeted TFM); fail with a clear message instead of a cryptic cp error.
+    if [[ ! -d "$dir/bin/net35" ]]; then
+      echo "error: $id build succeeded but produced no bin/net35 output" >&2
+      exit 1
+    fi
     mkdir -p "$stage/$id"
     cp -R "$dir/bin/net35/." "$stage/$id/"
     ( cd "$stage" && zip -qr "$out/$id.zip" "$id" )

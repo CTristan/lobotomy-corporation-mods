@@ -116,6 +116,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     permissions:
+      # gh release create needs write access to create the snapshot tag and release
       contents: write
     steps:
       - name: Checkout
