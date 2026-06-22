@@ -40,7 +40,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check job results
+        env:
+          # Bind results through the environment rather than interpolating ${{ }}
+          # into the shell (GitHub Actions injection-safety best practice).
+          CI_RESULT: ${{ needs.ci.result }}
+          VERSION_CHECK_RESULT: ${{ needs.version-check.result }}
         run: |
-          if [ "${{ needs.ci.result }}" != "success" ] || [ "${{ needs.version-check.result }}" != "success" ]; then
+          if [ "$CI_RESULT" != "success" ] || [ "$VERSION_CHECK_RESULT" != "success" ]; then
             exit 1
           fi

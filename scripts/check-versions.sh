@@ -146,7 +146,7 @@ write_mod() {
       ok "$id: wrote v$ver -> ${f#"$ROOT"/}"
       changed=1
     fi
-  done < <(find "$dir/Info" -mindepth 2 -name 'Info.xml' 2>/dev/null | sort)
+  done < <(find "$dir/Info" -mindepth 2 -maxdepth 2 -name 'Info.xml' 2>/dev/null | sort)
   [[ "$changed" -eq 0 ]] && ok "$id: already in sync (v$ver)"
   return 0
 }
@@ -201,7 +201,7 @@ check_mod() {
     else
       warn "$id [$lang]: display v$disp != source of truth v$ver (translator-owned; not auto-fixed)"
     fi
-  done < <(find "$dir/Info" -mindepth 2 -name 'Info.xml' 2>/dev/null | sort)
+  done < <(find "$dir/Info" -mindepth 2 -maxdepth 2 -name 'Info.xml' 2>/dev/null | sort)
 
   return "$errors"
 }

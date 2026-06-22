@@ -99,7 +99,11 @@ jobs:
           dotnet-version: '10.x'
 
       - name: Authenticate GitHub Packages
-        run: dotnet nuget update source github --username open-lobotomy --password "${{ secrets.PACKAGES_TOKEN || github.token }}" --store-password-in-clear-text || true
+        env:
+          # Bind the token through the environment rather than interpolating ${{ }}
+          # into the shell (GitHub Actions injection-safety best practice).
+          NUGET_PASSWORD: ${{ secrets.PACKAGES_TOKEN || github.token }}
+        run: dotnet nuget update source github --username open-lobotomy --password "$NUGET_PASSWORD" --store-password-in-clear-text || true
 
       - name: Build and package all mods
         run: bash scripts/package-mods.sh "${{ runner.temp }}/artifacts"
