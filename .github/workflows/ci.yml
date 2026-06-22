@@ -16,14 +16,36 @@ jobs:
       PRIVATE_REFERENCES_TOKEN: ${{ secrets.PRIVATE_REFERENCES_TOKEN }}
       PACKAGES_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
 
+  # Fast, dependency-free gate: the csproj <AssemblyVersion> is the source of
+  # truth; verify each mod's Info.xml display name is in sync. No .NET or game
+  # DLLs needed, so this fails fast and independently of the build.
+  version-check:
+    name: Version check
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - name: Verify version drift gate (self-tests + all mods)
+        run: |
+          bash scripts/check-versions.sh --test
+          bash scripts/check-versions.sh --check all
+
   status:
     name: CI
-    needs: [ci]
+    needs: [ci, version-check]
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - name: Check CI result
+      - name: Check job results
+        env:
+          # Bind results through the environment rather than interpolating ${{ }}
+          # into the shell (GitHub Actions injection-safety best practice).
+          CI_RESULT: ${{ needs.ci.result }}
+          VERSION_CHECK_RESULT: ${{ needs.version-check.result }}
         run: |
-          if [ "${{ needs.ci.result }}" != "success" ]; then
+          if [ "$CI_RESULT" != "success" ] || [ "$VERSION_CHECK_RESULT" != "success" ]; then
             exit 1
           fi

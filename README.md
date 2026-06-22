@@ -11,6 +11,25 @@ Requires either [Lobotomy Mod Manager](https://www.nexusmods.com/site/mods/765)
 or [Basemod](https://www.nexusmods.com/lobotomycorporation/mods/2) (included in
 LMM).
 
+## Download
+
+You can install these mods two ways. Both need Lobotomy Mod Manager or Basemod
+(linked at the top of this page).
+
+**From GitHub (always the newest build):**
+
+1. Open the
+   [latest release](https://github.com/CTristan/lobotomy-corporation-mods/releases/latest).
+   It is named `Mods — <date>` and contains every mod.
+2. Download `all-mods.zip` to get all mods at once, or download a single mod's
+   zip to get just one mod. Each mod's zip is named by its ID, for example
+   `BugFixes.zip`.
+3. Extract the zip into your game's `LobotomyCorp_Data/BaseMods` folder. Each mod
+   becomes its own folder there (for example, `BaseMods/BugFixes`).
+4. Start the game through LMM or Basemod and turn on the mods you want.
+
+**From Nexus Mods:** open the per-mod pages listed below and download from there.
+
 ## Nexus Mods pages
 
 - [Bad Luck Protection for Gifts](https://www.nexusmods.com/lobotomycorporation/mods/476)

@@ -83,9 +83,15 @@ For AutoFixture-driven tests, use `[LobotomyAutoData]` / `[LobotomyInlineAutoDat
 - Instance fields: `_camelCase`; static fields: `s_camelCase`; constants: `PascalCase`
 - `.editorconfig` enforces all formatting rules
 
-## Documentation Checklist (when updating a mod)
+## Releasing a mod
 
-Update: `.csproj` version, `CHANGELOG.md`, `INTEGRATION_TESTING_CHECKLIST.md`, root `README.md`, mod `README.md`, and `Info/Info.xml`.
+The mod's `.csproj` `<AssemblyVersion>` is the single source of truth for its version. To release one mod without touching any other:
+
+1. Bump `<AssemblyVersion>` in the mod's `.csproj`, then run `scripts/check-versions.sh --write <ModId>` to sync the `Info/{lang}/Info.xml` display names. Update the mod `README.md`, root `CHANGELOG.md`, and `INTEGRATION_TESTING_CHECKLIST.md` as needed.
+2. After the PR merges, tag and push: `git tag <ModId>-v<X.Y.Z> && git push origin <ModId>-v<X.Y.Z>`. The `Release mod` workflow rebuilds the whole set and publishes a dated snapshot release (`Mods — <date>`, marked Latest).
+3. Upload the changed mod to Nexus by hand per `releasing/NEXUS_UPLOAD.md` (auto-upload is deferred to Phase 3b — tracked in #172).
+
+The version drift gate runs in CI (`scripts/check-versions.sh --check all`): the csproj version must be well-formed and match the tag at release; the English `Info.xml` suffix must match (hard fail); other locales only warn (translator-owned). See `DOCUMENTATION_UPDATING_CHECKLIST.md` for the full runbook. `WarnWhenAgentWillDieFromWorking` versions its **major number as the count of abnormalities it warns about** — not standard SemVer.
 
 `CHANGELOG.md` is for mod users (players). Only add entries a player would notice: new features, bug fixes affecting gameplay, UI changes, new configurable options. Do NOT add infra, tooling, test, refactor, or docs changes — those belong in the PR description or commit message.
 

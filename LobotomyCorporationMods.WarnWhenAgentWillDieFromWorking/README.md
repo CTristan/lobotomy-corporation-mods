@@ -76,6 +76,15 @@ Provides warnings for the following abnormalities and any of their conditions (
 - **Warm-Hearted Woodsman**
   - Qliphoth Counter is 0.
 
+## Versioning
+
+This mod uses a custom versioning scheme. The **major version number is the
+number of abnormalities the mod warns about** (the abnormalities listed above).
+For example, version 15.x.x means the mod warns about 15 abnormalities. Adding a
+warning for a new abnormality raises the major version by one. The minor and
+patch numbers change for features and fixes that do not change the number of
+abnormalities the mod warns about.
+
 ## Changelog
 
 ### [1.1.0] - 2024-06-23
