@@ -105,8 +105,9 @@ These games came up during the research but didn't earn a listed reference slot 
 - **Library of Ruina** is Project Moon's own deterministic deckbuilder, ranked high early on lineage value. But lineage isn't mechanical applicability, and its actual lesson (deep card interaction in a deterministic system) is taught more directly by Slay the Spire and Balatro, both atop Approach 1. Valuable to you, redundant mechanically.
 - **Loop Hero** has one genuinely novel idea (you assemble the gauntlet that then challenges you), but it's a single idea, not a deep system. It's outclassed in drafted-loadout (Slay the Spire, Balatro, Monster Train, and Blue Prince are richer) and in structural-restructuring (FTL, Into the Breach, and RimWorld are more applicable), so it tops no section. Worth one look for the inversion concept, not a primary reference.
 - **Inscryption** surfaced in the research and is a superb game, but its strength is a one-time meta-narrative experience, and its roguelite replay mode is secondary. As a *replayability* teacher specifically, the only thing being ranked here, it tops nothing. Right game, wrong question.
+- **Returnal** surfaced as a procedural roguelite, but its lessons are either redundant or cautionary. Its fair-procedural-generation trick (hand-built rooms shuffled into fresh orders) is already taught by Spelunky and Into the Breach, and the one system reviewers agree works, the parasites, is just "couple cost to power" made legible, which the Diablo-style affixes already cover. Where Returnal is distinctive it's a warning, because the hidden-benefit items and thin meta-progression make risk illegible in a high-skill game, so skilled players rationally ignore the roguelite layer. The cautionary tale, not the model.
 
-Also surfaced but not individually evaluated: the searches turned up several recent titles (Shogun Showdown, Returnal, Sol Cesto, and others) that I didn't drill into, because none clearly served one of the six approaches better than the entries already listed. Worth a glance for fresh examples, but none looked like a missing piece.
+Also surfaced but not individually evaluated: the searches turned up several recent titles (Shogun Showdown, Sol Cesto, and others) that I didn't drill into, because none clearly served one of the six approaches better than the entries already listed. Worth a glance for fresh examples, but none looked like a missing piece.
 
 ---
 
@@ -165,6 +166,7 @@ The worked example above is partly ticketed. Its core members are **#150** (grav
 ## Decision log
 
 - **rev 1, 2026-06-27.** Imported the replayability research map as the living design doc for the Roguelite mode (#79). Built the approach-to-issue map from the #79 and #150–166 bodies. Surfaced that approaches 1, 2, and 3 are un-ticketed while the 16 children cluster on 4/5/6.
+- **rev 2, 2026-06-27.** Drilled Returnal off the surfaced-games backlog. It scored below the section floor (high confidence), so it lands in the Appendix as a redundant-or-cautionary cut, because its procedural-fairness and cost-coupled-affix lessons duplicate Spelunky, Into the Breach, and the Diablo affixes, and its one distinctive trait (illegible risk plus thin meta-progression in a high-skill game) is a warning the doc already teaches. Removed it from the surfaced-but-not-evaluated line.
 
 ## Syncing
 
