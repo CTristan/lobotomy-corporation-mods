@@ -40,6 +40,9 @@ Replayability needs variance that is **imposed**, **forces deviation** from a kn
 ## Design principles
 
 These cut across every approach below, because they're how you keep any of them fair and legible.
+Each one is argued in full, with its evidence and boundaries, in
+`docs/roguelite-replayability-lessons.md`, so this list stays the one-line rubric and that doc
+holds the reasoning.
 
 - **Forced, not chosen, variance.** The system hands you a different problem each run.
 - **Make the pieces interact.** Value is contextual, not solved in a vacuum.
@@ -212,6 +215,11 @@ The worked example above is partly ticketed. Its core members are **#150** (grav
 - **rev 3, 2026-06-27.** Adversarial methodology pass over the whole map. Reframed the scores as one game-level calibration score per game on a banded 0–100 scale (95–100 reserved, 90–94 keystone, 85–89 strong, 80–84 solid, below 80 cut), with the within-band number as a soft ordering and the scale itself revisable when a game breaks the bands. Dropped the percent glyph, because the scores are anchored ordinals, not percentages. Into the Breach moved from the strong band into keystone (90), the only reclass, and no number changed. Made the cautionary-scoring rule explicit (a warning scores on whether it is *uniquely* instructive). Fixed internal inconsistencies: #156 is a static rewind ramp and doesn't cover the adaptive director, #79 carries the Approach 1 POC as well as the Approach 5 container, and the blind-pick POC now states it must keep stakes legible per the Into the Breach rule. Removed leftover background lore and restatement fluff.
 - **rev 5, 2026-07-01.** Added per-lever scoring and drilled Against the Storm. Per-lever scoring: each game keeps its game-level calibration score and now also carries a per-approach score, shown as a second number on a bullet when the approach is a secondary lever, and that per-lever score orders each Research list. It reordered only Approach 2, moving Diablo-style affixes above dotAGE and Against the Storm, and changed no game-level score. Against the Storm scored 86 (high confidence), tying dotAGE as the second in-genre management-roguelite anchor, so it slotted into Approach 1 at its 86 draft peak and Approach 2 at 85, both uncapped with no displacement. It also teaches Approach 4 meta-progression through the Smoldering City tree and a soft Approach 3 through the three-clan mix, but I left both unslotted, because dotAGE already carries the in-genre proof there and Approach 4 is at its cap.
 - **rev 6, 2026-07-01.** Removed the per-section count cap. A reference now earns a section slot by clearing the 80 per-lever floor without being redundant, with no fixed count, which makes the rubric consistent with what the doc already did, because Approaches 4 and 6 already ran four references each. Redundancy replaces the headcount as the anti-sprawl valve, so a game clearing 80 is still an Appendix cut when a listed reference teaches its lever-lesson more directly. This re-grounds rev 5's Approach 4 call, because Against the Storm stays out of Approach 4 on redundancy alone now, since dotAGE covers the in-genre meta-tree and Dead Cells covers pool-expansion, not because of a cap. Updated the skill to drop the cap.
+- **rev 7, 2026-07-05.** Linked the Design principles to the new cross-game lessons doc
+  (`docs/roguelite-replayability-lessons.md`), which argues each principle in full with per-game
+  evidence. The list here stays the one-line rubric of record for scoring, principles land and get
+  argued in the lessons doc first (via `/lobcorp-game-debrief`), and a principle graduates into
+  this list only through `/lobcorp-replayability-eval`, logged here.
 
 ## Syncing
 
