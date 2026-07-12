@@ -150,8 +150,9 @@ These games came up during the research but earned no listed reference slot in a
 - **Loop Hero** has one genuinely novel idea (you assemble the gauntlet that then challenges you), but it's a single idea, not a deep system. It's outclassed in drafted-loadout (Slay the Spire, Blue Prince, Against the Storm, and Balatro are richer) and in structural-restructuring (FTL, Into the Breach, and RimWorld are more applicable), so it tops no section. Worth one look for the inversion concept, not a primary reference.
 - **Inscryption** surfaced in the research and is a superb game, but its strength is a one-time meta-narrative experience, and its roguelite replay mode is secondary. As a *replayability* teacher specifically, the only thing being ranked here, it tops nothing. Right game, wrong question.
 - **Returnal** surfaced as a procedural roguelite, but its lessons are either redundant or cautionary. Its fair-procedural-generation trick (hand-built rooms shuffled into fresh orders) is already taught by Spelunky and Into the Breach, and the one system reviewers agree works, the parasites, is just "couple cost to power" made legible, which the Diablo-style affixes already cover. Where Returnal is distinctive it's a warning, because the hidden-benefit items and a meta-progression lighter than Hades' make risk illegible in a high-skill game, so skilled players rationally ignore the roguelite layer. The cautionary tale, not the model.
+- **Shogun Showdown** surfaced as a recent tactics roguelite, but every lesson it teaches is already listed more directly. Its deterministic, fully-telegraphed combat is the Into the Breach rule, its tiny always-available tile kit deepened by upgrades is Balatro's small-base-plus-modifiers at even smaller scale, and its skull-bought unlocks widen future offer pools the way Dead Cells' blueprints do. Even its five characters share one weapon-unlock pool, so the asymmetry Slay the Spire teaches stays shallow here. Well made, nothing new.
 
-Also surfaced but not individually evaluated: the searches turned up several recent titles (Shogun Showdown, Sol Cesto, and others) that I didn't drill into, because none clearly served one of the six approaches better than the entries already listed. Worth a glance for fresh examples, but none looked like a missing piece.
+Also surfaced but not individually evaluated: the searches turned up several recent titles (Sol Cesto and others) that I didn't drill into, because none clearly served one of the six approaches better than the entries already listed. Worth a glance for fresh examples, but none looked like a missing piece.
 
 ---
 
@@ -233,6 +234,14 @@ The worked example above is partly ticketed. Its core members are **#150** (grav
   caveat to the Approach 1 LobCorp line. The new principle is named here ahead of its lessons-doc
   argument, so it still owes a full write-up in `docs/roguelite-replayability-lessons.md` via
   `/lobcorp-game-debrief`.
+- **rev 9, 2026-07-12.** Drilled Shogun Showdown off the surfaced-games backlog. It scored below
+  the section floor at every lever (roughly 75 game-level, high confidence), so it lands in the
+  Appendix as a redundant cut, because its deterministic telegraphed combat is the Into the Breach
+  rule, its tiny-kit-plus-upgrades recombination is Balatro's small-base lesson, its unlock pool is
+  Dead Cells' pool-expansion, and its five characters share one weapon-unlock pool, so the
+  asymmetry Slay the Spire teaches at 90 stays shallow. Its reward picks are also skippable and
+  net-positive, the weakest draft fidelity under the rev 8 criterion. Removed it from the
+  surfaced-but-not-evaluated line.
 
 ## Syncing
 
