@@ -63,18 +63,21 @@ runs than twenty variants.
 - **For the mod:** patron-Sephirah factions should each rewrite rules and available abnormalities,
   and fewer, deeper patrons beat full Sephirot coverage.
 
-### Randomize the pairings, or the system gets re-solved one level up *(provisional)*
+### Randomize the pairings, or the system gets re-solved one level up *(established)*
 
 Players don't memorize pieces, they memorize solutions to pairings, so fixed pairings collapse into
 a lookup table one abstraction level above the pieces; shuffling which pieces meet keeps the learned
 knowledge general instead of rote.
 
-- **Evidence:** Master map, Design principles — stated as rubric; no listed reference argues it
-  directly yet. Monster Train — pairing two clans per run multiplies starts without authoring each
-  combination (master map, Approach 3; secondhand, and the pairing link is inferred rather than
-  stated).
+- **Evidence:** dotAGE — the cheese-candidate roll pairs against independently rolled animal types,
+  so the same candidate poses a different question run to run (notebook Mechanic inventory,
+  2026-07-19; firsthand). Monster Train — pairing two clans per run multiplies starts without
+  authoring each combination (master map, Approach 3; secondhand, and the pairing link is inferred
+  rather than stated). Master map, Design principles — stated as rubric.
 - **Boundary:** it breaks when one pairing is strictly dominant, because the player then rerolls
-  toward it mentally, so the pool needs rough pairing parity.
+  toward it mentally, so the pool needs rough pairing parity. Pairing freedom is also subject to
+  the workable-line guarantee, so rolls couple exactly where independence would strand the player
+  (dotAGE's key-chain filter) and stay independent everywhere else.
 - **Feeds:** Approaches 1 (drafted loadout), 2 (procedural/affixed content).
 - **For the mod:** shuffled work-affinities and abnormality-agent pairings, so a memorized work
   matrix can't be carried between runs.
@@ -110,9 +113,12 @@ enforces it at the generator (carve the critical path first, decorate after), wh
 strongest form, an invariant by construction rather than by testing.
 
 - **Evidence:** Spelunky — every level guaranteed solvable, because the generator carves a critical
-  path before it decorates around it (master map, Approach 2; secondhand). Blue Prince — the
-  counter-example, rolling RNG that blocks applying knowledge you already earned (master map,
-  Approach 1; secondhand).
+  path before it decorates around it (master map, Approach 2; secondhand). dotAGE — the reshuffled
+  research tree filters each node's candidate pool by construction, so a building whose key
+  prerequisite isn't in this run's tree cannot roll, and the UI shows the excluded candidate with
+  the reason, which makes the guarantee itself legible (notebook Mechanic inventory, 2026-07-19;
+  firsthand). Blue Prince — the counter-example, rolling RNG that blocks applying knowledge you
+  already earned (master map, Approach 1; secondhand).
 - **Boundary:** the guarantee covers a workable line existing, not a comfortable one, so difficulty
   spikes are fine as long as some line survives.
 - **Feeds:** Approaches 2 (procedural/affixed content), 5 (structural run-restructuring).
@@ -136,6 +142,32 @@ every other roll.
   back to a priced player decision (a risky work order, a power dial, a cracked containment),
   never a flat roll.
 
+### Telegraph the category, hide the piece *(provisional)*
+
+An imposed roll produces decisions only while it can't be pre-solved: disclosing the category
+lets the player commit to a plan, hiding the specific piece keeps that commitment a hedge, and
+the hedging is the variance paying out as play. Revealing the resolution early lets the player
+optimize toward it before it lands, which collapses the roll back into determinism, so this
+entry is the ceiling on the disclosure dial whose floor "fair means legible" sets.
+
+- **Evidence:** dotAGE — a research node telegraphs its output resource while the reshuffled
+  tree hides which of the node's candidates this run rolled, and the candidates diverge to
+  recipe level (3 milk → 2 cheese against 1 milk + 2 hemp → 1 cheese), so the spatial and
+  chain commitments stay hedges until the roll resolves (notebook Mechanic inventory,
+  2026-07-19; firsthand).
+- **Boundary:** it breaks at both edges, because a hidden candidate that dominates
+  context-free turns the hedge back into a known-best line, and a hidden candidate that can be
+  unworkable in the run that rolled it turns the hedge into a trap. dotAGE guards both by
+  construction: candidates whose key building isn't in this run's tree are filtered out of the
+  pool with the exclusion shown, and candidate value stays contextual, so every resolution is
+  workable and none is pre-rankable.
+- **Feeds:** Approaches 1 (drafted loadout), 2 (procedural/affixed content), 4
+  (meta-progression pools).
+- **For the mod:** the blind-pick already commits to this granularity (risk tier and rough
+  category legible, identity hidden), and this is its first in-genre proof; the same dial
+  extends to the roguelite research tree, where a rolled unlock telegraphs its category, hides
+  its identity, and never rolls a piece the run can't support.
+
 ## Recombination & drafts
 
 Why contextual value is the engine of drafted variance, because a solved piece is a dead piece.
@@ -149,7 +181,11 @@ so the variance lives in the interactions rather than the pieces.
 - **Evidence:** Slay the Spire — a card that is dead weight in one deck is a build-around in
   another, and relics swing whole archetypes (notebook Mechanic inventory; master map keystone,
   Approach 1; secondhand). Against the Storm — the clan mix tilts which drafted buildings pay off
-  (notebook Mechanic inventory, 2026-07-01; firsthand verification pending).
+  (notebook Mechanic inventory, 2026-07-01; firsthand verification pending). dotAGE — which of a
+  node's hidden candidates you would even prefer is priced by state rolled elsewhere, because a
+  milk-hungry recipe wins with cows at 2 milk each while a milk-light one wins with sheep at 1, so
+  evaluation stays contextual before the piece even arrives (notebook Mechanic inventory,
+  2026-07-19; firsthand).
 - **Boundary:** it breaks at both densities, because interactions everywhere mean every pick works
   (choice stops mattering) and interactions nowhere mean one right pick. The open question both
   notebooks are chasing sits here too: whether the *offer* must read your state, or a flat pool of
@@ -241,7 +277,10 @@ varied, so the two currencies stop competing.
 
 - **Evidence:** Dead Cells — blueprints feed the run's drop tables, widening what can appear rather
   than what you start with (master map, Approach 4; secondhand). Hades — Mirror upgrades change how
-  you approach a run, not just raw power (master map, Approach 4; secondhand).
+  you approach a run, not just raw power (master map, Approach 4; secondhand). dotAGE — a node's
+  candidate pool renders a greyed memory-locked slot beside the unlocked candidates, so memory
+  unlocks visibly widen the roll pool at existing nodes rather than the starting position (notebook
+  Mechanic inventory, 2026-07-19; firsthand).
 - **Boundary:** pure pool-widening with no power floor frustrates, and where to split power between
   within-run and across-run is dotAGE's hardest balance question, still open.
 - **Feeds:** Approach 4 (meta-progression/unlock divergence).
@@ -275,6 +314,13 @@ expensive trap.
   secondhand (the map's reads), marked honestly per entry, and the Slay the Spire flat-pool
   hypothesis stays out until its assigned task lands, because unverified hypotheses are not
   lessons.
+- **rev 2, 2026-07-19.** Landed "Telegraph the category, hide the piece" from the dotAGE
+  debrief, placed under Fairness & legibility because it is the ceiling on the disclosure dial
+  whose floor "fair means legible" sets, even though its payoff is variance staying
+  productive. Added firsthand dotAGE evidence to zero-workable-line, widen-what-can-appear,
+  make-the-pieces-interact, and randomize-the-pairings, and promoted randomize-the-pairings to
+  established on its second game citation, noting honestly that the Monster Train citation is
+  secondhand and inferred, so dotAGE is its first firsthand leg.
 
 ## Syncing
 
