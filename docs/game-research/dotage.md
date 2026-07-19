@@ -52,6 +52,19 @@ Seeded from the master map's read plus public write-ups, to verify and deepen by
   and beating the game on hard-or-harder unlocks a custom challenge mode. This is the tuning
   layer over the Prophecy curve.
 
+Screenshots (2026-07-19 session, evidencing the preview bullet above):
+
+![Research tree with greyed memory-locked slots and exclamation-marked prerequisite flags](images/dotage-research-tree.png)
+*The Growth tab: greyed puzzle-piece slots advertise memory-locked content, and exclamation
+marks flag buildings that need a tech from an unresearched branch.*
+
+![Cheese node candidate pool: two unlocked buildings and one memory-locked slot](images/dotage-cheese-candidates.png)
+*The cheese node's candidate pool: Dairy, Herbal Dairy, and a memory-locked third slot.*
+
+![Fabric node candidates with key icons; the excluded one reads "Requires: Cow Ranch — the key building is not in the tree"](images/dotage-fabric-key-filter.png)
+*The key-chain filter shown at the fabric node: the cow-leather candidate cannot roll because
+this run rolled the Sheep Pen, and the UI says why.*
+
 ## Approach mapping *(graduating)*
 
 - **1 drafted loadout + interacting pieces —** not this game's lever. dotAGE's within-run
