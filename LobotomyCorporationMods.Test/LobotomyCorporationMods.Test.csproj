@@ -63,7 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="LobotomyCorporation.Mods.Common">
-      <HintPath>$(PkgLobotomyCorporation_Mods_Common)\lib\net35\LobotomyCorporation.Mods.Common.$(LobotomyCorporationModsCommonVersion).dll</HintPath>
+      <HintPath>$(PkgLobotomyCorporation_Mods_Common)\lib\net35\LobotomyCorporation.Mods.Common.$([System.IO.Path]::GetFileName('$(PkgLobotomyCorporation_Mods_Common)')).dll</HintPath>
     </Reference>
     <Reference Include="0Harmony">
       <HintPath>..\external\LobotomyCorp_Data\Managed\0Harmony.dll</HintPath>
